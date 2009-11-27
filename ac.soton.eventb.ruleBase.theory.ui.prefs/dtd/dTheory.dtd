@@ -1,0 +1,42 @@
+<!--
+   Copyright (c) 2009 University of Southampton.
+
+   All rights reserved. This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License v1.0
+   which accompanies this distribution, and is available at
+   http://www.eclipse.org/legal/epl-v10.html
+   
+   DTD for deployed theory files loaded as part of the rule base.
+-->
+
+<!ELEMENT theory (metaSet| metaVariable| rewriteRule)* >
+<!ATTLIST theory 
+	category CDATA #REQUIRED>
+
+<!ELEMENT metaSet EMPTY>
+<!ATTLIST metaSet
+	name CDATA  #REQUIRED
+	identifier CDATA #REQUIRED>
+	
+<!ELEMENT metaVariable EMPTY>
+<!ATTLIST metaVariable
+	name CDATA  #REQUIRED
+	identifier CDATA #REQUIRED
+	type CDATA  #REQUIRED>
+	
+<!ELEMENT rewriteRule (ruleRHS+)>
+<!ATTLIST rewriteRule
+	automatic (true | false) #REQUIRED
+	complete (true | false) #REQUIRED
+	interactive (true | false) #REQUIRED
+	toolTip CDATA #REQUIRED
+	desc CDATA #REQUIRED
+	lhs CDATA  #REQUIRED
+	name CDATA  #REQUIRED
+	sound (true | false) #REQUIRED>
+	
+<!ELEMENT ruleRHS EMPTY>
+<!ATTLIST ruleRHS
+	rhs CDATA  #REQUIRED
+	name CDATA  #REQUIRED
+	predicate CDATA  #REQUIRED>

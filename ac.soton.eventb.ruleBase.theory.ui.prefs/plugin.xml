@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eventb.ui.preferences.eventB"
+            class="ac.soton.eventb.ruleBase.theory.ui.prefs.preferences.TheoryPreferencePage"
+            id="ac.soton.eventb.ruleBase.theory.ui.theoryPrefs"
+            name="%preferencePage.theoryPrefsPage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="ac.soton.eventb.ruleBase.theory.ui.prefs.preferences.TheoryPreferencesInitialiser">
+      </initializer>
+   </extension>
+
+</plugin>

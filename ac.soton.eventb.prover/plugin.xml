@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eventb.core.seqprover.reasoners">
+      <reasoner
+            class="ac.soton.eventb.prover.reasoner.AutoRewriteReasoner"
+            id="ruleBaseAutoReasoner"
+            name="%ruleBaseAutoReasoner">
+      </reasoner>
+      <reasoner
+            class="ac.soton.eventb.prover.reasoner.ManualRewriteReasoner"
+            id="ruleBaseManualReasoner"
+            name="%ruleBaseManualReasoner">
+      </reasoner>
+   </extension>
+   <extension
+         point="org.eventb.core.seqprover.autoTactics">
+      <autoTactic
+            class="ac.soton.eventb.prover.internal.tactic.AutoTactic"
+            description="%ruleBaseAutoTactic.desc"
+            id="ruleBaseAutoTactic"
+            name="%ruleBaseAutoTactic">
+      </autoTactic>
+   </extension>
+   <extension
+         point="org.eventb.core.pomTactics">
+      <tactic
+            id="ac.soton.eventb.prover.ruleBaseAutoTactic">
+      </tactic>
+   </extension>
+   <extension
+         point="org.eventb.core.postTactics">
+      <tactic
+            id="ac.soton.eventb.prover.ruleBaseAutoTactic">
+      </tactic>
+   </extension>
+   <extension
+         point="org.eventb.ui.proofTactics">
+      <tactic
+            icon="null"
+            id="ruleBaseGoalTactic"
+            interrupt="true"
+            name="Rule-base Goal Tactic"
+            priorty="5"
+            skipPostTactic="false"
+            tacticProvider="ac.soton.eventb.prover.tactic.RuleBaseManualTactic"
+            target="goal"
+            tooltip="apply rule-base rule to goal">
+      </tactic>
+      <tactic
+            icon="null"
+            id="ruleBaseHypTactic"
+            interrupt="true"
+            name="Rule-base Hypotheses Tactic"
+            priorty="5"
+            skipPostTactic="false"
+            tacticProvider="ac.soton.eventb.prover.tactic.RuleBaseManualTactic"
+            target="hypothesis"
+            tooltip="apply rule-base rule to hypotheses">
+      </tactic>
+   </extension>
+
+</plugin>

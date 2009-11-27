@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: ac.soton.eventb.prover;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Vendor: %Bundle-Vendor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Localization: plugin
+Require-Bundle: ac.soton.eventb.ruleBase.theory.deploy;bundle-version="0.0.1",
+ org.eventb.core;bundle-version="1.0.0",
+ org.eventb.ui
+Import-Package: org.eclipse.core.runtime,
+ org.eclipse.swt.graphics,
+ org.osgi.framework
+Export-Package: ac.soton.eventb.prover.tactic

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: ac.soton.eventb.ruleBase.theory.core;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Vendor: %Bundle-Vendor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.core.runtime,
+ org.rodinp.core;bundle-version="1.0.0",
+ org.eventb.core;bundle-version="1.0.0",
+ org.eventb.core.ast;bundle-version="1.0.0",
+ ac.soton.eventb.ruleBase.theory.ui.prefs;bundle-version="0.0.1"
+Bundle-Localization: plugin
+Bundle-Activator: ac.soton.eventb.ruleBase.theory.core.plugin.TheoryPlugin
+Export-Package: ac.soton.eventb.ruleBase.theory.core
+Bundle-ActivationPolicy: lazy
