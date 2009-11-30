@@ -9,12 +9,12 @@ public class ParsedLHSFormula extends State implements IParsedLHSFormula {
 
 	private Formula<?> formula;
 
-	@Override
+	
 	public Formula<?> getLHSFormula() {
 		return formula;
 	}
 
-	@Override
+	
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
@@ -23,7 +23,7 @@ public class ParsedLHSFormula extends State implements IParsedLHSFormula {
 		formula = f;
 	}
 
-	@Override
+	
 	public String toString() {
 		return formula.toString();
 	}

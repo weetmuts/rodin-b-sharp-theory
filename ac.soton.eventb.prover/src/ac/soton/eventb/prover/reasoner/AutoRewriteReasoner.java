@@ -25,7 +25,6 @@ public class AutoRewriteReasoner extends AbstractAutoRewrites implements IReason
 		super(rewriter, true);
 	}
 
-	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

@@ -34,14 +34,14 @@ public class TheoryRewriteRuleCompleteModule extends SCFilterModule {
 
 	private ILabelSymbolTable labelSymbolTable;
 
-	@Override
+	
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		labelSymbolTable = getLabelSymbolTable(repository);
 	}
 
-	@Override
+	
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		ICompleteElement compElement = (ICompleteElement) element;
@@ -61,14 +61,14 @@ public class TheoryRewriteRuleCompleteModule extends SCFilterModule {
 		return true;
 	}
 
-	@Override
+	
 	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		labelSymbolTable = null;
 		super.endModule(repository, monitor);
 	}
 
-	@Override
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

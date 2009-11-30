@@ -46,7 +46,7 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 	private ITypeEnvironment typeEnvironment;
 	private IIdentifierSymbolTable identifierSymbolTable;
 	
-	@Override
+	
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
@@ -56,7 +56,7 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 		identifierSymbolTable = (IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 	}
 	
-	@Override
+	
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IRewriteRule rule = (IRewriteRule) element;
@@ -89,7 +89,7 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 		return true;
 	}
 
-	@Override
+	
 	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
@@ -99,7 +99,7 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 		super.endModule(repository, monitor);
 	}
 	
-	@Override
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

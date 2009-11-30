@@ -24,7 +24,7 @@ public class TheoryRewriteRuleSidesModule extends SCFilterModule {
 	public static final IModuleType<TheoryRewriteRuleSidesModule> MODULE_TYPE = SCCore
 		.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryRewriteRuleSidesModule");
 	
-	@Override
+	
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IRewriteRule rule = (IRewriteRule) element;
@@ -36,7 +36,7 @@ public class TheoryRewriteRuleSidesModule extends SCFilterModule {
 		return true;
 	}
 
-	@Override
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

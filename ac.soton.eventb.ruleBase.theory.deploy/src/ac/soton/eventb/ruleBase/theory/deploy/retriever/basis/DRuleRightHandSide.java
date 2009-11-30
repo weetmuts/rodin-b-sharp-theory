@@ -18,17 +18,17 @@ public class DRuleRightHandSide implements IDRuleRightHandSide{
 		this.rhs = rhs;
 	}
 	
-	@Override
+	
 	public Predicate getCondition() {
 		return condition;
 	}
 
-	@Override
+	
 	public Formula<?> getRHSFormula() {
 		return rhs;
 	}
 
-	@Override
+	
 	public String getRHSName() {
 		return rhsName;
 	}

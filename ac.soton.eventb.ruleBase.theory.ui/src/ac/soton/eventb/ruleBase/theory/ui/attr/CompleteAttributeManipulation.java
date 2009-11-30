@@ -15,33 +15,33 @@ public class CompleteAttributeManipulation extends AbstractBooleanManipulation{
 		super(Messages.rewriteRule_isComplete, Messages.rewriteRule_isIncomplete);
 	}
 
-	@Override
+	
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return getText(asComplete(element).getAttributeValue(COMPLETE_ATTRIBUTE));
 	}
 
-	@Override
+	
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asComplete(element).hasComplete();
 	}
 
-	@Override
+	
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asComplete(element).removeAttribute(COMPLETE_ATTRIBUTE, monitor);
 
 	}
 
-	@Override
+	
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asComplete(element).setComplete(false, monitor);
 
 	}
 
-	@Override
+	
 	public void setValue(IRodinElement element, String value,
 			IProgressMonitor monitor) throws RodinDBException {
 		if(value.equals(TRUE)){

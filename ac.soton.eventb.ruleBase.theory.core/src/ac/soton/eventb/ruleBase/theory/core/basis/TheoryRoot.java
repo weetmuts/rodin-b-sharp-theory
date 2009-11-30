@@ -20,7 +20,7 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 		super(name, parent);
 	}
 
-	@Override
+	
 	public IInternalElementType<ITheoryRoot> getElementType() {
 		return ELEMENT_TYPE;
 	}
@@ -65,12 +65,12 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 		return getChildrenOfType(IVariable.ELEMENT_TYPE);
 	}
 
-	@Override
+	
 	public ICategory[] getCategories() throws RodinDBException {
 		return getChildrenOfType(ICategory.ELEMENT_TYPE);
 	}
 	
-	@Override
+	
 	public ICategory getCategory(String catName) {
 		return getInternalElement(ICategory.ELEMENT_TYPE, catName);
 	}

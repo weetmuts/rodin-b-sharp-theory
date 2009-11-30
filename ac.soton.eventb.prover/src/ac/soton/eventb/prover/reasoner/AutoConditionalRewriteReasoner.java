@@ -37,7 +37,6 @@ public class AutoConditionalRewriteReasoner extends EmptyInputReasoner{
 		return DISPLAY_NAME;
 	}
 	
-	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

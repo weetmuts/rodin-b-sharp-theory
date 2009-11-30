@@ -38,7 +38,6 @@ public class ManualRewriteReasoner implements IReasoner{
 	
 	private static final RuleBaseManualRewriter rewriter = new RuleBaseManualRewriter();
 	
-	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput,
 			IProofMonitor pm) {
 		final Input input = (Input) reasonerInput;
@@ -76,7 +75,6 @@ public class ManualRewriteReasoner implements IReasoner{
 		return rewriter.getAntecedents(pred, position, isGoal, theoryName, ruleName);
 	}
 	
-	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		final FormulaFactory ff = FormulaFactory.getDefault();
@@ -105,12 +103,10 @@ public class ManualRewriteReasoner implements IReasoner{
 		return new Input(theoryString, ruleString, ruleDesc,pred, position);
 	}
 	
-	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
-	@Override
 	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
 			throws SerializeException {
 		writer.putString(POSITION_KEY, ((Input) input).position.toString());

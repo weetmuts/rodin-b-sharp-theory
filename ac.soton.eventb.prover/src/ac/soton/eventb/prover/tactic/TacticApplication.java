@@ -21,24 +21,24 @@ public class TacticApplication implements IPositionApplication{
 		this.linkLabel = linklabel;
 	}
 	
-	@Override
+	
 	public Point getHyperlinkBounds(String parsedString,
 			Predicate parsedPredicate) {
 		return TacticProviderUtils.getOperatorPosition(parsedPredicate,
 				parsedString, input.position);
 	}
 
-	@Override
+	
 	public String getHyperlinkLabel() {
 		return linkLabel;
 	}
 
-	@Override
+	
 	public ITactic getTactic(String[] inputs, String globalInput) {
 		return BasicTactics.reasonerTac(new ManualRewriteReasoner(), input);
 	}
 
-	@Override
+	
 	public String getTacticID() {
 		if(input.pred == null)
 			return ProverPlugIn.PLUGIN_ID + "ruleBaseGoalTactic";

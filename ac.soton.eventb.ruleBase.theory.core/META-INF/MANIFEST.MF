@@ -4,7 +4,7 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: ac.soton.eventb.ruleBase.theory.core;singleton:=true
 Bundle-Version: 0.0.1
 Bundle-Vendor: %Bundle-Vendor
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core;bundle-version="1.0.0",
  org.eventb.core;bundle-version="1.0.0",

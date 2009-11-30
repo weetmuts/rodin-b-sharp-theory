@@ -77,7 +77,6 @@ public class RulesCache {
 				interCache, 
 				new IRewriteRuleFilter(){
 
-					@Override
 					public boolean filter(IDRewriteRule rule) {
 						// TODO Auto-generated method stub
 						return rule.isInteracive();
@@ -91,7 +90,6 @@ public class RulesCache {
 				autoUncondCache, 
 				new IRewriteRuleFilter(){
 
-					@Override
 					public boolean filter(IDRewriteRule rule) {
 						// TODO Auto-generated method stub
 						return rule.isAutomatic() && 
@@ -106,7 +104,6 @@ public class RulesCache {
 				autoCondCache, 
 				new IRewriteRuleFilter(){
 
-					@Override
 					public boolean filter(IDRewriteRule rule) {
 						// TODO Auto-generated method stub
 						return rule.isAutomatic() &&

@@ -29,14 +29,14 @@ public class DeployedTheoriesManager implements IDeployedTheoriesManager{
 		factory = FormulaFactory.getDefault();
 	}
 	
-	@Override
+	
 	public List<IDTheoryFile> getTheories() {
 		File dir = new File(getDeploymentPath());
 		if(!dir.exists() || !dir.isDirectory()){
 			return NO_THEORIES;
 		}
 		String[] thyFiles = dir.list(new FilenameFilter(){
-			@Override
+			
 			public boolean accept(File dir, String name) {
 				return name.endsWith(Utilities.DEPLOYED_THEORY_FILE_EXT);
 			}
@@ -51,7 +51,7 @@ public class DeployedTheoriesManager implements IDeployedTheoriesManager{
 		return Collections.unmodifiableList(theoryFiles);
 	}
 	
-	@Override
+	
 	public IDTheoryFile getTheory(String name) {
 		DTheoryFile file = new DTheoryFile(name, factory);
 		if(file.loadTheory(getDeploymentPath())){

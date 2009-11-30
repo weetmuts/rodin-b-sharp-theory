@@ -43,12 +43,12 @@ public abstract class TheoryElement extends EventBElement implements
 		return hasAttribute(TheoryAttributes.AUTOMATIC_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public boolean hasComplete() throws RodinDBException {
 		return hasAttribute(TheoryAttributes.COMPLETE_ATTRIBUTE);
 	}
 	
-	@Override
+	
 	public boolean hasInteractive() throws RodinDBException {
 		return hasAttribute(TheoryAttributes.INTERACTIVE_ATTRIBUTE);
 	}
@@ -65,12 +65,12 @@ public abstract class TheoryElement extends EventBElement implements
 		return getAttributeValue(TheoryAttributes.AUTOMATIC_ATTRIBUTE);
 	}
 	
-	@Override
+	
 	public boolean isComplete() throws RodinDBException {
 		return getAttributeValue(TheoryAttributes.COMPLETE_ATTRIBUTE);
 	}
 	
-	@Override
+	
 	public boolean isInteractive() throws RodinDBException {
 		return getAttributeValue(TheoryAttributes.INTERACTIVE_ATTRIBUTE);
 	}
@@ -80,14 +80,14 @@ public abstract class TheoryElement extends EventBElement implements
 		setAttributeValue(TheoryAttributes.AUTOMATIC_ATTRIBUTE, auto, pm);
 	}
 	
-	@Override
+	
 	public void setComplete(boolean isComplete, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(TheoryAttributes.COMPLETE_ATTRIBUTE, isComplete, pm);
 		
 	}
 
-	@Override
+	
 	public void setInteractive(boolean isInteractive, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(TheoryAttributes.INTERACTIVE_ATTRIBUTE, isInteractive, pm);
@@ -101,24 +101,24 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 
 
-	@Override
+	
 	public void setRHSString(String form, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(TheoryAttributes.RHS_ATTRIBUTE, form, pm);
 		
 	}
 	
-	@Override
+	
 	public String getCategory() throws RodinDBException {
 		return getAttributeValue(TheoryAttributes.CATEGORY_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public boolean hasCategory() throws RodinDBException {
 		return hasAttribute(TheoryAttributes.CATEGORY_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public void setCategory(String newCat, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(TheoryAttributes.CATEGORY_ATTRIBUTE, newCat, pm);

@@ -16,7 +16,7 @@ import ac.soton.eventb.ruleBase.theory.core.ITheoryRoot;
  */
 public class TheoryStaticChecker extends StaticChecker {
 
-	@Override
+	
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)
 			throws CoreException {
 		try {

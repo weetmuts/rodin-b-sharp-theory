@@ -34,12 +34,12 @@ public class TheoryVariableModule extends IdentifierWithTypingModule {
 	public static final IModuleType<TheoryVariableModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryVariableModule");
 
-	@Override
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	@Override
+	
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -52,7 +52,7 @@ public class TheoryVariableModule extends IdentifierWithTypingModule {
 		fetchSymbolsWithTheirTypes(vars, target, repository, monitor);
 	}
 
-	@Override
+	
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
 			IIdentifierElement element) {
 		IEventBRoot theory = (IEventBRoot) element.getParent();

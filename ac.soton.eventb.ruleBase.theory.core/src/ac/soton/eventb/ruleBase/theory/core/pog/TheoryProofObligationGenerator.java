@@ -17,7 +17,6 @@ import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
  */
 public class TheoryProofObligationGenerator extends ProofObligationGenerator {
 
-	@Override
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)
 			throws CoreException {
 		try {

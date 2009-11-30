@@ -30,36 +30,24 @@ public class RuleBaseManager implements IRuleBaseManager{
 		return instance;
 	}
 
-
-
-	@Override
 	public List<IDRewriteRule> getAutoConditionalRules(
 			Class<?> clazz) {
 		// TODO Auto-generated method stub
 		return cache.getAutoConditionalRules(clazz);
 	}
 
-
-
-	@Override
 	public List<IDRewriteRule> getAutoUnconditionalRules(
 			Class<?> clazz) {
 		// TODO Auto-generated method stub
 		return cache.getAutoUnconditionalRules(clazz);
 	}
 
-
-
-	@Override
 	public List<IDRewriteRule> getInteractiveRules(
 			Class<?> clazz) {
 		// TODO Auto-generated method stub
 		return cache.getInteractiveRules(clazz);
 	}
 
-
-
-	@Override
 	public IDRewriteRule getInteractiveRule(String ruleName, String theoryName, Class<?> clazz) {
 		// TODO Auto-generated method stub
 		return cache.getInteractiveRule(ruleName, theoryName, clazz);

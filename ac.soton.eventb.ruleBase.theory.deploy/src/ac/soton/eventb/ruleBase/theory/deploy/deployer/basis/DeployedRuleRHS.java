@@ -22,22 +22,22 @@ public class DeployedRuleRHS extends EventBElement implements IDeployedRuleRHS{
 		super(name, parent);
 	}
 
-	@Override
+	
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
-	@Override
+	
 	public String getRHSString() throws RodinDBException {
 		return getAttributeValue(RHS_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public boolean hasRHSString() throws RodinDBException {
 		return hasAttribute(RHS_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public void setRHSString(String form, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(RHS_ATTRIBUTE, form, pm);

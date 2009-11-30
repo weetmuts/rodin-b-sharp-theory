@@ -15,19 +15,19 @@ public class GivenSets extends State implements IGivenSets{
 		givenSets = new ArrayList<String>();
 	}
 	
-	@Override
+	
 	public void addGivenSet(String set) {
 		
 		givenSets.add(set);
 		
 	}
 
-	@Override
+	
 	public List<String> getGivenSets() {
 		return givenSets;
 	}
 
-	@Override
+	
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

@@ -60,22 +60,22 @@ public class DTheoryFile implements IDTheoryFile{
 		this.factory = factory;
 	}
 	
-	@Override
+	
 	public List<IDRewriteRule> getExpressionRewriteRules() {
 		return expRewriteRules;
 	}
 
-	@Override
+	
 	public ITypeEnvironment getGloablTypeEnvironment() {
 		return typeEnvironment.clone();
 	};
 	
-	@Override
+	
 	public List<IDRewriteRule> getPredicateRewriteRules() {
 		return predRewriteRules;
 	}
 	
-	@Override
+	
 	public String getTheoryName() {
 		return theoryName;
 	}

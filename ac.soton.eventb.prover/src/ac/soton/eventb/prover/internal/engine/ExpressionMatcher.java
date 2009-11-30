@@ -15,7 +15,6 @@ public abstract class ExpressionMatcher<E extends Expression> implements IExpres
 		this.type = type;
 	}
 
-	@Override
 	public boolean match(Expression form, Expression pattern,
 			IBinding existingBinding) {
 		E eForm = cast(form);

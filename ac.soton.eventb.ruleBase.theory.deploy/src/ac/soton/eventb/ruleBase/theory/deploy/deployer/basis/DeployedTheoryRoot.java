@@ -22,38 +22,38 @@ public class DeployedTheoryRoot extends TheoryElement implements IDeployedTheory
 		super(name, parent);
 	}
 
-	@Override
+	
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
-	@Override
+	
 	public IMetaSet getMetaSet(String name){
 		return getInternalElement(IMetaSet.ELEMENT_TYPE, name);
 	}
 
-	@Override
+	
 	public IMetaSet[] getMetaSets() throws RodinDBException {
 		return getChildrenOfType(IMetaSet.ELEMENT_TYPE);
 	}
 
 
-	@Override
+	
 	public IMetaVariable getMetaVariable(String name){
 		return getInternalElement(IMetaVariable.ELEMENT_TYPE, name);
 	}
 
-	@Override
+	
 	public IMetaVariable[] getMetaVariables() throws RodinDBException {
 		return getChildrenOfType(IMetaVariable.ELEMENT_TYPE);
 	}
 
-	@Override
+	
 	public IDeployedRewriteRule getRewriteRule(String ruleName){
 		return getInternalElement(IDeployedRewriteRule.ELEMENT_TYPE, ruleName);
 	}
 
-	@Override
+	
 	public IDeployedRewriteRule[] getRewriteRules() throws RodinDBException {
 		return getChildrenOfType(IDeployedRewriteRule.ELEMENT_TYPE);
 	}

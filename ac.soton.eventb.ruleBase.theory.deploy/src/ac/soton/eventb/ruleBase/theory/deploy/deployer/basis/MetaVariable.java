@@ -22,22 +22,22 @@ public class MetaVariable extends EventBElement implements IMetaVariable{
 		super(name, parent);
 	}
 
-	@Override
+	
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
-	@Override
+	
 	public String getTypingString() throws RodinDBException {
 		return getAttributeValue(TYPING_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public boolean hasTypingString() throws RodinDBException {
 		return hasAttribute(TYPING_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public void setTypingString(String expression, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(TYPING_ATTRIBUTE, expression, monitor);

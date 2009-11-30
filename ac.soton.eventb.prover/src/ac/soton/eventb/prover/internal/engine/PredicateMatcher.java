@@ -14,7 +14,6 @@ public abstract class PredicateMatcher<P extends Predicate> implements IPredicat
 		this.type = type;
 	}
 
-	@Override
 	public boolean match(Predicate form, Predicate pattern,
 			IBinding existingBinding) {
 		P pForm = cast(form);

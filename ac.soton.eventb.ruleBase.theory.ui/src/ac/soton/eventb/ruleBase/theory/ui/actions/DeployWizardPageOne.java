@@ -58,7 +58,7 @@ public class DeployWizardPageOne extends WizardPage {
 		{
 			theoryCombo = new Combo(container, SWT.READ_ONLY);
 			theoryCombo.addSelectionListener(new SelectionAdapter() {
-				@Override
+				
 				public void widgetSelected(SelectionEvent e) {
 					String value = theoryCombo.getItem(theoryCombo
 							.getSelectionIndex());
@@ -90,7 +90,7 @@ public class DeployWizardPageOne extends WizardPage {
 		{
 			projCombo = new Combo(container, SWT.READ_ONLY);
 			projCombo.addSelectionListener(new SelectionAdapter() {
-				@Override
+				
 				public void widgetSelected(SelectionEvent e) {
 					String value = projCombo.getItem(projCombo.getSelectionIndex());
 					if(projectName != null && projectName.equals(value) ){
@@ -115,7 +115,7 @@ public class DeployWizardPageOne extends WizardPage {
 		{
 			btnKeepThe = new Button(container, SWT.CHECK);
 			btnKeepThe.addSelectionListener(new SelectionAdapter() {
-				@Override
+				
 				public void widgetSelected(SelectionEvent e) {
 					useDiffName = btnKeepThe.getSelection();
 					if(useDiffName){
@@ -143,7 +143,7 @@ public class DeployWizardPageOne extends WizardPage {
 			newNameText = new Text(container, SWT.BORDER);
 			newNameText.setBounds(100, 137, 307, 19);
 			newNameText.addModifyListener(new ModifyListener(){
-				@Override
+				
 				public void modifyText(ModifyEvent e) {
 					dialogChanged();
 				}

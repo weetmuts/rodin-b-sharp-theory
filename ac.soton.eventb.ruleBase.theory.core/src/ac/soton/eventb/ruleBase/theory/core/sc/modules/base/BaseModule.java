@@ -20,13 +20,13 @@ public abstract class BaseModule extends SCProcessorModule {
 
 	private final static int IDENT_SYMTAB_SIZE = 2047;
 
-	@Override
+	
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		endProcessorModules(element, repository, monitor);
 	}
 
-	@Override
+	
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -36,7 +36,7 @@ public abstract class BaseModule extends SCProcessorModule {
 		initProcessorModules(element, repository, monitor);
 	}
 
-	@Override
+	
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

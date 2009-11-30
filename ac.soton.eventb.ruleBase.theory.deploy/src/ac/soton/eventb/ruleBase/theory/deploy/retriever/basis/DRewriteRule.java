@@ -45,67 +45,67 @@ public class DRewriteRule implements IDRewriteRule{
 		this.globalTypeEnv = typeEnv;
 	}
 	
-	@Override
+	
 	public String getDescription() {
 		return description;
 	}
 
-	@Override
+	
 	public Formula<?> getLeftHandSide() {
 		return lhs;
 	}
 
-	@Override
+	
 	public List<IDRuleRightHandSide> getRightHandSides() {
 		return ruleRHSs;
 	}
 
-	@Override
+	
 	public String getRuleName() {
 		return ruleName;
 	}
 
-	@Override
+	
 	public String getTheoryName() {
 		return theoryName;
 	}
 
-	@Override
+	
 	public String getToolTip() {
 		return toolTip;
 	}
 
-	@Override
+	
 	public ITypeEnvironment getTypeEnvironment() {
 		return globalTypeEnv.clone();
 	}
 
-	@Override
+	
 	public boolean isAutomatic() {
 		return isAutomatic;
 	}
 
-	@Override
+	
 	public boolean isComplete() {
 		return isComplete;
 	}
 
-	@Override
+	
 	public boolean isConditional() {
 		return isConditional;
 	}
 	
-	@Override
+	
 	public boolean isExpression() {
 		return lhs instanceof Expression;
 	}
 
-	@Override
+	
 	public boolean isInteracive() {
 		return isInteractive;
 	}
 
-	@Override
+	
 	public boolean isSound() {
 		return isSound;
 	}

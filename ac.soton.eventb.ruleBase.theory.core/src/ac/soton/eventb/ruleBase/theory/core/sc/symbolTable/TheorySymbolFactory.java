@@ -87,7 +87,7 @@ public final class TheorySymbolFactory {
 			// public constructor
 		}
 
-		@Override
+		
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
@@ -97,7 +97,7 @@ public final class TheorySymbolFactory {
 
 		}
 
-		@Override
+		
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),

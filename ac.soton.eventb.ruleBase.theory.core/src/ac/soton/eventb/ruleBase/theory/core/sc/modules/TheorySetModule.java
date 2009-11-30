@@ -33,12 +33,12 @@ public class TheorySetModule extends IdentifierModule {
 
 	private IGivenSets givenSets;
 	
-	@Override
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	@Override
+	
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -46,7 +46,7 @@ public class TheorySetModule extends IdentifierModule {
 		super.initModule(element, repository, monitor);
 	}
 	
-	@Override
+	
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -59,14 +59,14 @@ public class TheorySetModule extends IdentifierModule {
 		}
 	}
 
-	@Override
+	
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		givenSets = null;
 		super.endModule(element, repository, monitor);
 	}
 	
-	@Override
+	
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
 			IIdentifierElement element) {
 		IEventBRoot theory = (IEventBRoot) element.getParent();
@@ -74,7 +74,7 @@ public class TheorySetModule extends IdentifierModule {
 				theory.getComponentName());
 	}
 
-	@Override
+	
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
 			ITypeEnvironment environment) throws CoreException {
 		environment.addGivenSet(newSymbolInfo.getSymbol());

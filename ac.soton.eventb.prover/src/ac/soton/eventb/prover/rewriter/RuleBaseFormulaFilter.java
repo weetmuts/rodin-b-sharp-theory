@@ -47,97 +47,97 @@ public class RuleBaseFormulaFilter implements IFormulaFilter{
 		ruleBaseSelector = new RuleBaseSelector(emptyInfos);
 	}
 	
-	@Override
+	
 	public boolean select(AssociativeExpression expression) {
 		return ruleBaseSelector.select(expression);
 	}
 
-	@Override
+	
 	public boolean select(AssociativePredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}
 
-	@Override
+	
 	public boolean select(AtomicExpression expression) {
 		return ruleBaseSelector.select(expression);
 	}
 
-	@Override
+	
 	public boolean select(BinaryExpression expression) {
 		return ruleBaseSelector.select(expression);
 	}
 
-	@Override
+	
 	public boolean select(BinaryPredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}
 
-	@Override
+	
 	public boolean select(BoolExpression expression) {
 		return ruleBaseSelector.select(expression);
 	}
 
-	@Override
+	
 	public boolean select(BoundIdentDecl decl) {
 		return false;
 	}
 
-	@Override
+	
 	public boolean select(BoundIdentifier identifier) {
 		return false;
 	}
 
-	@Override
+	
 	public boolean select(FreeIdentifier identifier) {
 		return false;
 	}
 
-	@Override
+	
 	public boolean select(IntegerLiteral literal) {
 		return ruleBaseSelector.select(literal);
 	}
 
-	@Override
+	
 	public boolean select(LiteralPredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}
 
-	@Override
+	
 	public boolean select(MultiplePredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}
 
-	@Override
+	
 	public boolean select(QuantifiedExpression expression) {
 		return ruleBaseSelector.select(expression);
 	}
 
-	@Override
+	
 	public boolean select(QuantifiedPredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}
 
-	@Override
+	
 	public boolean select(RelationalPredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}
 
-	@Override
+	
 	public boolean select(SetExtension expression) {
 		return ruleBaseSelector.select(expression);
 	}
 
-	@Override
+	
 	public boolean select(SimplePredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}
 
-	@Override
+	
 	public boolean select(UnaryExpression expression) {
 		return ruleBaseSelector.select(expression);
 	}
 
-	@Override
+	
 	public boolean select(UnaryPredicate predicate) {
 		return ruleBaseSelector.select(predicate);
 	}

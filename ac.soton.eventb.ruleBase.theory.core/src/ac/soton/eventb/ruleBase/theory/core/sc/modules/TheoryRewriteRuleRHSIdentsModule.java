@@ -46,7 +46,7 @@ public class TheoryRewriteRuleRHSIdentsModule extends SCFilterModule {
 	private IParsedRHSFormula parsedRHS;
 	private IParsedLHSFormula parsedLHS;
 
-	@Override
+	
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		parsedLHS = (IParsedLHSFormula) repository
@@ -57,7 +57,7 @@ public class TheoryRewriteRuleRHSIdentsModule extends SCFilterModule {
 				.getState(IParsedRHSFormula.STATE_TYPE);
 	}
 
-	@Override
+	
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		boolean ok = true;
@@ -108,7 +108,7 @@ public class TheoryRewriteRuleRHSIdentsModule extends SCFilterModule {
 		return ok;
 	}
 
-	@Override
+	
 	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		parsedCond = null;
@@ -116,7 +116,7 @@ public class TheoryRewriteRuleRHSIdentsModule extends SCFilterModule {
 		parsedLHS = null;
 	}
 
-	@Override
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

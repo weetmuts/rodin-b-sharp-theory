@@ -39,7 +39,6 @@ public class TheoryCategoryModule extends SCProcessorModule {
 	public static final IModuleType<TheoryCategoryModule> MODULE_TYPE = SCCore
 		.getModuleType(TheoryPlugin.PLUGIN_ID + ".categoryModule");
 	
-	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -76,7 +75,7 @@ public class TheoryCategoryModule extends SCProcessorModule {
 		}
 	}
 
-	@Override
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

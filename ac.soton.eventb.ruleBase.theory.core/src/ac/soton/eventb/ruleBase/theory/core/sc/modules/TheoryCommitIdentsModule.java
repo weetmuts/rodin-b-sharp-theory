@@ -25,12 +25,12 @@ public class TheoryCommitIdentsModule extends SCProcessorModule {
 	public static final IModuleType<TheoryCommitIdentsModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryCommitIdentsModule");
 
-	@Override
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	@Override
+
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

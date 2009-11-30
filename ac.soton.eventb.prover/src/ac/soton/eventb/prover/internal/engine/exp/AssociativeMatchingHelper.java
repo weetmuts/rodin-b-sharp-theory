@@ -257,7 +257,6 @@ class IndexedExpression implements Comparable<IndexedExpression>{
 		this.index = index;
 	}
 	
-	@Override
 	public int compareTo(IndexedExpression indexer) {
 		if(indexer.equals(this)){
 			return 0;
@@ -317,7 +316,6 @@ class PossibleMatchesInfo implements Comparable<PossibleMatchesInfo>{
 		this.possibleMatches = possibleMatches;
 	}
 
-	@Override
 	public int compareTo(PossibleMatchesInfo info) {
 		if(info.equals(this)){
 			return 0;

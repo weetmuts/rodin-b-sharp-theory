@@ -11,7 +11,7 @@ public class RewriteRuleContentProvider extends AbstractContentProvider {
 		super(IRewriteRule.ELEMENT_TYPE);
 	}
 
-	@Override
+	
 	public Object getParent(Object element) {
 		IModelElement model = TheoryModelController.getModelElement(element);
 		if (model != null) {

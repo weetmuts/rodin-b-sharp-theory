@@ -17,18 +17,18 @@ public class FilteredLHSs extends State implements IFilteredLHSs{
 		rulesLhss = new HashMap<IRewriteRule, Formula<?>>();
 	}
 	
-	@Override
+	
 	public void addLHS(IRewriteRule rule, Formula<?> lhs) {
 		rulesLhss.put(rule, lhs);
 		
 	}
 
-	@Override
+	
 	public HashMap<IRewriteRule, Formula<?>> getRulesLHSs() {
 		return rulesLhss;
 	}
 
-	@Override
+	
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

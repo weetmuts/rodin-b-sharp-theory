@@ -78,17 +78,17 @@ public enum TheoryGraphProblem implements IRodinProblem {
 		return arity;
 	}
 
-	@Override
+	
 	public String getErrorCode() {
 		return errorCode;
 	}
 
-	@Override
+	
 	public String getLocalizedMessage(Object[] args) {
 		return MessageFormat.format(message, args);
 	}
 
-	@Override
+	
 	public int getSeverity() {
 		return severity;
 	}

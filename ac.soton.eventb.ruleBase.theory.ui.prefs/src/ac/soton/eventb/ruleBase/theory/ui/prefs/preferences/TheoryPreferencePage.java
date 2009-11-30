@@ -20,7 +20,6 @@ public class TheoryPreferencePage extends FieldEditorPreferencePage implements
 		setDescription("Preferences for theory deployment");
 	}
 
-	@Override
 	public void init(IWorkbench workbench) {
 		// nothing
 	}

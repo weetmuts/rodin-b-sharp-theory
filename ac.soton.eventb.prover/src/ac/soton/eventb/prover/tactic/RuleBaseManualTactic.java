@@ -17,7 +17,6 @@ import ac.soton.eventb.prover.rewriter.RuleBaseFormulaFilter;
 
 public class RuleBaseManualTactic implements ITacticProvider2 {
 
-	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		Predicate pred = (hyp == null ? node.getSequent().goal() : hyp);

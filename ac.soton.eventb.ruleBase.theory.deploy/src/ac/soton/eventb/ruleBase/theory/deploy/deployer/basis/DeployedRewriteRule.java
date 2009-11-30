@@ -23,32 +23,32 @@ public class DeployedRewriteRule extends TheoryElement implements IDeployedRewri
 		super(name, parent);
 	}
 
-	@Override
+	
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
-	@Override
+	
 	public IDeployedRuleRHS getRHS(String rhsName){
 		return getInternalElement(IDeployedRuleRHS.ELEMENT_TYPE, rhsName);
 	}
 
-	@Override
+	
 	public IDeployedRuleRHS[] getRHSs() throws RodinDBException {
 		return getChildrenOfType(IDeployedRuleRHS.ELEMENT_TYPE);
 	}
 
-	@Override
+	
 	public boolean hasSound() throws RodinDBException {
 		return hasAttribute(SOUND_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public boolean isSound() throws RodinDBException {
 		return getAttributeValue(SOUND_ATTRIBUTE);
 	}
 
-	@Override
+	
 	public void setSound(boolean isSound, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(SOUND_ATTRIBUTE, isSound, monitor);

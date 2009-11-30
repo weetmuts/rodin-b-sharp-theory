@@ -68,12 +68,11 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 		}
 	}
 
-	@Override
+
 	public ICategory[] getCategories() throws RodinDBException {
 		return getChildrenOfType(ICategory.ELEMENT_TYPE);
 	}
 
-	@Override
 	public ICategory getCategory(String catName) {
 		return getInternalElement(ICategory.ELEMENT_TYPE, catName);
 	}

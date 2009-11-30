@@ -49,7 +49,7 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 	private IFilteredLHSs filteredLHSs;
 	private IRewriteRule[] rules;
 	
-	@Override
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -66,7 +66,7 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 
 	}
 	
-	@Override
+
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

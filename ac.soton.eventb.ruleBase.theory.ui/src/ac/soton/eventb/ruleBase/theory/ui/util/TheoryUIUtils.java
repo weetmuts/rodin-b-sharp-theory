@@ -62,7 +62,7 @@ public class TheoryUIUtils {
 		PrefsRepresentative.checkAndCreateTheoriesDirectory();
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
-			@Override
+			
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				monitor.beginTask("Deploying theory " + theoryName + " ...", 15);
@@ -300,7 +300,7 @@ public class TheoryUIUtils {
 	private static void cleanUp(final String projectName, final String deployPath,IProgressMonitor monitor){
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
-				@Override
+				
 				public void run(IProgressMonitor monitor)
 						throws CoreException {
 					monitor.subTask("Cleaning up ...");

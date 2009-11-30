@@ -21,7 +21,7 @@ public class DeployTheoryActionDelegate implements IEditorActionDelegate {
 
 	IEventBEditor<ITheoryRoot> editor;
 
-	@Override
+	
 	public void run(IAction action) {
 		IWorkbenchPartSite site = editor.getSite();
 		IWorkbenchWindow window = site.getWorkbenchWindow();
@@ -32,11 +32,11 @@ public class DeployTheoryActionDelegate implements IEditorActionDelegate {
 		dialog.open();
 	}
 
-	@Override
+	
 	public void selectionChanged(IAction action, ISelection selection) {}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor) {
 			editor = (IEventBEditor<ITheoryRoot>) targetEditor;

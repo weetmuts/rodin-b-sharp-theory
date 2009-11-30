@@ -13,40 +13,40 @@ import ac.soton.eventb.ruleBase.theory.core.IToolTipElement;
 public class ToolTipAttributeManipulation extends AbstractAttributeManipulation 
 implements IAttributeManipulation {
 
-	@Override
+	
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		logCantGetPossibleValues(TOOL_TIP_ATTRIBUTE);
 		return null;
 	}
 
-	@Override
+	
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asTipElement(element).getToolTip();
 	}
 
-	@Override
+	
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asTipElement(element).hasToolTip();
 	}
 
-	@Override
+	
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		logCantRemove(TOOL_TIP_ATTRIBUTE);
 
 	}
 
-	@Override
+	
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asTipElement(element).setToolTip("Change Me!", monitor);
 
 	}
 
-	@Override
+	
 	public void setValue(IRodinElement element, String value,
 			IProgressMonitor monitor) throws RodinDBException {
 		asTipElement(element).setToolTip(value, monitor);

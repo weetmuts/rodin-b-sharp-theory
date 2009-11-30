@@ -76,12 +76,12 @@ public class TheoryRewriteRuleRHSModule extends LabeledElementModule {
 
 	private IIdentifierSymbolTable identifierSymbolTable;
 
-	@Override
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	@Override
+	
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -98,7 +98,7 @@ public class TheoryRewriteRuleRHSModule extends LabeledElementModule {
 				.getState(IIdentifierSymbolTable.STATE_TYPE);
 	}
 
-	@Override
+	
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -124,14 +124,14 @@ public class TheoryRewriteRuleRHSModule extends LabeledElementModule {
 		super.endModule(element, repository, monitor);
 	}
 
-	@Override
+	
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
 		return TheorySymbolFactory.getInstance().makeLocalRHS(symbol, true,
 				element, component);
 	}
 
-	@Override
+	
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository

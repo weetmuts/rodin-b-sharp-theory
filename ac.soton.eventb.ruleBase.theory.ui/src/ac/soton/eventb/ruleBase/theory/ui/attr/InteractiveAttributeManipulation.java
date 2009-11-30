@@ -18,33 +18,33 @@ public class InteractiveAttributeManipulation extends
 		super(Messages.rewriteRule_isInteractive, Messages.rewriteRule_isUnInteractive);
 	}
 
-	@Override
+	
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return getText(asInteractive(element).getAttributeValue(INTERACTIVE_ATTRIBUTE));
 	}
 
-	@Override
+	
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asInteractive(element).hasInteractive();
 	}
 
-	@Override
+	
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asInteractive(element).removeAttribute(INTERACTIVE_ATTRIBUTE, monitor);
 
 	}
 
-	@Override
+	
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asInteractive(element).setInteractive(true, monitor);
 
 	}
 
-	@Override
+	
 	public void setValue(IRodinElement element, String value,
 			IProgressMonitor monitor) throws RodinDBException {
 		if(value.equals(TRUE)){

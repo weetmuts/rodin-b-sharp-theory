@@ -33,18 +33,18 @@ public class Input implements IReasonerInput{
 		this.ruleName = ruleName;
 		this.theoryName = theoryName;
 	}
-	@Override
+	
 	public void applyHints(ReplayHints renaming) {
 		if(pred !=null){
 			renaming.applyHints(pred);
 		}
 		
 	}
-	@Override
+	
 	public String getError() {
 		return null;
 	}
-	@Override
+	
 	public boolean hasError() {
 		return false;
 	}

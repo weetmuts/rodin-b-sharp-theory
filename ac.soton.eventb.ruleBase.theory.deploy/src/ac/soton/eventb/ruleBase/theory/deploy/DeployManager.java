@@ -174,7 +174,7 @@ public class DeployManager {
 		monitor.subTask("Creating deployed theory ...");
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			@Override
+			
 			public void run(IProgressMonitor monitor) throws CoreException {
 				tempFile = root.getRodinProject().getRodinFile(
 						Utilities.TEMP_THEORY);
@@ -295,18 +295,18 @@ public class DeployManager {
 	    DocumentBuilder builder = factory.newDocumentBuilder();
 	    builder.setErrorHandler(new ErrorHandler(){
 
-			@Override
+			
 			public void error(SAXParseException exception) throws SAXException {
 				// ignore
 			}
 
-			@Override
+			
 			public void fatalError(SAXParseException exception)
 					throws SAXException {
 			   throw exception;
 			}
 
-			@Override
+			
 			public void warning(SAXParseException exception)
 					throws SAXException {
 				// ignore

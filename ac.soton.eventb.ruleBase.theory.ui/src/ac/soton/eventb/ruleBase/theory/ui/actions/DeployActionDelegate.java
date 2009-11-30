@@ -19,16 +19,16 @@ public class DeployActionDelegate implements IWorkbenchWindowActionDelegate {
 	private final String EVENTB_PERSPECTIVE = "org.eventb.ui.perspective.eventb";
 	private IWorkbenchWindow window;
 	
-	@Override
+	
 	public void dispose() {}
 
-	@Override
+	
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 
 	}
 
-	@Override
+	
 	public void run(IAction action) {
 		// switch to Event-B perspective
 		try {
@@ -42,7 +42,7 @@ public class DeployActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	}
 
-	@Override
+	
 	public void selectionChanged(IAction action, ISelection selection) {}
 
 }
