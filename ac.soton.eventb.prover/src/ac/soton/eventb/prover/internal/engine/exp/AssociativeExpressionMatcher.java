@@ -34,7 +34,7 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 		//*************************************************************************
 		if(form.getTag() == AssociativeExpression.BCOMP ||
 				form.getTag() == AssociativeExpression.FCOMP){
-			
+			return false;
 		}
 		
 		//*************************Associative Commutative*************************

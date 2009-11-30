@@ -236,9 +236,7 @@ public abstract class IdentifierWithTypingModule extends SCProcessorModule{
 			// just issue that the ident has not been declared
 			if(!allowed){
 				createProblemMarker(typingElmnt,
-						TheoryAttributes.TYPING_ATTRIBUTE,
-						ident.getSourceLocation().getStart(), 
-						ident.getSourceLocation().getEnd(), 
+						TheoryAttributes.TYPING_ATTRIBUTE, 
 						GraphProblem.UndeclaredFreeIdentifierError, 
 						ident.getName(), ident.getName());
 				return false;

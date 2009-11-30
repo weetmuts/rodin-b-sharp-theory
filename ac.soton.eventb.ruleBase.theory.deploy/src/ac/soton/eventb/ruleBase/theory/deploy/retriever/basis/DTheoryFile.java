@@ -157,6 +157,9 @@ public class DTheoryFile implements IDTheoryFile{
 				continue;
 			}
 			boolean isSound = holder.getBoolean();
+			// load sound rules only
+			if(!isSound)
+				continue;
 			//
 			holder = getAttributeValue(InfoType.StringType, Utilities.TOOL_TIP, map, factory);
 			if(holder == null){

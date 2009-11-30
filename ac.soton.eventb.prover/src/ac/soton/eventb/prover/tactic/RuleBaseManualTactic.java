@@ -27,6 +27,7 @@ public class RuleBaseManualTactic implements ITacticProvider2 {
 				.getPositions(new RuleBaseFormulaFilter(infos));
 		for (IPosition pos : positions) {
 			Formula<?> subFormula = pred.getSubFormula(pos);
+			List<String> usedInfos = new ArrayList<String>();
 			for (RewriteRuleApplicabilityInfo info : infos) {
 				if (subFormula.equals(info.getSubFormula())) {
 					// check for top level constraints
@@ -35,13 +36,17 @@ public class RuleBaseManualTactic implements ITacticProvider2 {
 							continue;
 						}
 					}
-					apps.add(new TacticApplication(
-							new Input(info.getTheoryName(), 
+					if(usedInfos.contains(info.getTheoryName()+"."+info.getRuleName()))
+						continue;
+					ITacticApplication tApp = new TacticApplication(
+								new Input(info.getTheoryName(), 
 									info.getRuleName(), 
 									info.getDescription(), 
 									hyp, 
 									pos), 
-							info.getToolTip()));
+								info.getToolTip());
+					apps.add(tApp);
+					usedInfos.add(info.getTheoryName()+"."+info.getRuleName());
 				}
 			}
 			

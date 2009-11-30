@@ -2,6 +2,7 @@ package ac.soton.eventb.prover.internal.engine.exp;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,13 +74,10 @@ public class AssociativeMatchingHelper {
 				matchesInfos.add(new PossibleMatchesInfo(pExpIndexer, possibleMatches));
 			}
 			// try a mapping 
-			// this keeps track of the previous mapping in case we fail
-			Set<MatchEntry> oldMapping = new HashSet<MatchEntry>();
 			Set<MatchEntry> currentMapping = null;
 			// keeps track of the available expressions . initially all exp are available
 			List<IndexedExpression> listOfAvailableExpressions = createIndexedExpList(expressions);
-			while((currentMapping= getPotentialMapping(matchesInfos, oldMapping))!= null){
-				oldMapping = currentMapping;
+			while((currentMapping= getPotentialMapping(matchesInfos))!= null){
 				finalBinding = Binding.createBinding();
 				// list of used expressions
 				ArrayList<IndexedExpression> usedExpressions = new ArrayList<IndexedExpression>();
@@ -117,14 +115,19 @@ public class AssociativeMatchingHelper {
 				// if no problems occurred above
 				if(!problemMapping){
 					// map the final ident
-					if(!finalBinding.putMapping(
+					if(patternIdents.size() >= 1){
+						if(!finalBinding.putMapping(
 							// the free ident
 							(FreeIdentifier)(patternIdents.get(patternIdents.size()-1).expression), 
 							// the final expression : make an associative one if necessary
 							(extractExpressions(listOfAvailableExpressions).length > 1 ? 
 									factory.makeAssociativeExpression(tag, extractExpressions(listOfAvailableExpressions), null) : 
 									extractExpressions(listOfAvailableExpressions)[0]))){
-						continue;
+							continue;
+						}
+					}
+					else {
+						
 					}
 					// if all ok, break out of the while loop
 					break;
@@ -213,34 +216,30 @@ public class AssociativeMatchingHelper {
 	 * @param oldMapping
 	 * @return
 	 */
-	private static Set<MatchEntry> getPotentialMapping(SortedSet<PossibleMatchesInfo> allPossibleMappings, Set<MatchEntry> oldMapping){
+	private static Set<MatchEntry> getPotentialMapping(SortedSet<PossibleMatchesInfo> allPossibleMappings){
 		List<IndexedExpression> usedExpressions = new ArrayList<IndexedExpression>();
-		Set<MatchEntry> matchEntries = oldMapping;
-		while (matchEntries.equals(oldMapping)) {
-			matchEntries = new HashSet<MatchEntry>();
-			for (PossibleMatchesInfo holder : allPossibleMappings) {
-				Expression chosen = null;
-				IndexedExpression indexer = null;
-				while (holder.possibleMatches.keySet().iterator().hasNext()) {
-					indexer = holder.possibleMatches.keySet().iterator().next();
-					chosen = indexer.expression;
-					if (oldMapping.contains(new MatchEntry(
-							holder.patternExpression, indexer,
-							holder.possibleMatches.get(indexer)))) {
-						continue;
-					}
-					if (!usedExpressions.contains(indexer)) {
-						break;
-					}
+		Set<MatchEntry> matchEntries;
+		
+		matchEntries = new HashSet<MatchEntry>();
+		for (PossibleMatchesInfo holder : allPossibleMappings) {
+			Expression chosen = null;
+			IndexedExpression indexer = null;
+			Iterator<IndexedExpression> itr = holder.possibleMatches.keySet().iterator();
+			while (itr.hasNext()) {
+				indexer = itr.next();
+				chosen = indexer.expression;
+				if (!usedExpressions.contains(indexer)) {
+					break;
 				}
-				// no binding is possible if chosen is null
-				if (chosen == null)
-					return null;
-				usedExpressions.add(indexer);
-				matchEntries.add(new MatchEntry(holder.patternExpression,
-						indexer, holder.possibleMatches.get(indexer)));
 			}
+			// no binding is possible if chosen is null
+			if (chosen == null)
+				return null;
+			usedExpressions.add(indexer);
+			matchEntries.add(new MatchEntry(holder.patternExpression,
+					indexer, holder.possibleMatches.get(indexer)));
 		}
+		
 		return matchEntries;
 	}
 }

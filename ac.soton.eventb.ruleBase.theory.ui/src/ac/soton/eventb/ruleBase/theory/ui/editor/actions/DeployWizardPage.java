@@ -21,7 +21,6 @@ import org.rodinp.core.RodinDBException;
 
 import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
 import ac.soton.eventb.ruleBase.theory.ui.perspective.ResourceManager;
-import ac.soton.eventb.ruleBase.theory.ui.perspective.SWTResourceManager;
 import ac.soton.eventb.ruleBase.theory.ui.prefs.facade.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 import org.eclipse.swt.events.ModifyListener;
@@ -89,7 +88,6 @@ public class DeployWizardPage extends WizardPage {
 		setControl(container);
 		{
 			Label lblTheoryName = new Label(container, SWT.NONE);
-			lblTheoryName.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND));
 			lblTheoryName.setBounds(10, 30, 99, 13);
 			lblTheoryName.setText("Theory: ");
 		}
