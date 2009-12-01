@@ -66,19 +66,19 @@ class DTheoryValidator {
 		try {
 			DocumentBuilderFactory theoryFactory = DocumentBuilderFactory
 					.newInstance();
-			theoryFactory.setValidating(true);
+			theoryFactory.setValidating(false);
 			DocumentBuilder builder = theoryFactory.newDocumentBuilder();
 			builder.setErrorHandler(new ErrorHandler() {
 				
 				public void error(SAXParseException exception)
 						throws SAXException {
-					hasProblems.setValue(true);
+					//hasProblems.setValue(true);
 				}
 
 				
 				public void fatalError(SAXParseException exception)
 						throws SAXException {
-					hasProblems.setValue(true);
+					//hasProblems.setValue(true);
 				}
 
 				

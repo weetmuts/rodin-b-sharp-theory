@@ -5,17 +5,21 @@
       version="0.0.1"
       provider-name="University of Southampton">
 
-   <description url="http://www.example.com/description">
+   <description>
       %description
    </description>
 
-   <copyright url="http://www.example.com/copyright">
+   <copyright>
       %copyright
    </copyright>
 
    <license url="http://www.example.com/license">
       %license
    </license>
+
+   <url>
+      <discovery label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/>
+   </url>
 
    <requires>
       <import plugin="org.eventb.core" version="1.0.0" match="greaterOrEqual"/>
