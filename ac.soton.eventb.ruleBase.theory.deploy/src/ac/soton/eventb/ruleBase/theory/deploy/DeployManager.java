@@ -403,7 +403,7 @@ public class DeployManager {
 		sWriter.write(seq.toString());
 		sWriter.flush();
 		sWriter.close();
-		//generateDtd(file);
+		generateDtd(file);
 	}
 
 	/**

@@ -72,13 +72,13 @@ class DTheoryValidator {
 				
 				public void error(SAXParseException exception)
 						throws SAXException {
-					//hasProblems.setValue(true);
+					hasProblems.setValue(true);
 				}
 
 				
 				public void fatalError(SAXParseException exception)
 						throws SAXException {
-					//hasProblems.setValue(true);
+					hasProblems.setValue(true);
 				}
 
 				

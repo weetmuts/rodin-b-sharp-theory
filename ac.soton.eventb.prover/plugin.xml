@@ -38,7 +38,7 @@
    <extension
          point="org.eventb.ui.proofTactics">
       <tactic
-            icon="null"
+            icon="icons/pending.gif"
             id="ruleBaseGoalTactic"
             interrupt="true"
             name="Rule-base Goal Tactic"
@@ -49,7 +49,7 @@
             tooltip="apply rule-base rule to goal">
       </tactic>
       <tactic
-            icon="null"
+            icon="icons/pending.gif"
             id="ruleBaseHypTactic"
             interrupt="true"
             name="Rule-base Hypotheses Tactic"
@@ -62,3 +62,4 @@
    </extension>
 
 </plugin>
+

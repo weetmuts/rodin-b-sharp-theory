@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: ac.soton.eventb.prover;singleton:=true
-Bundle-Version: 0.0.1
+Bundle-Version: 0.1.0
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
-Require-Bundle: ac.soton.eventb.ruleBase.theory.deploy;bundle-version="0.0.1",
+Require-Bundle: ac.soton.eventb.ruleBase.theory.deploy;bundle-version="0.1.0",
  org.eventb.core;bundle-version="1.0.0",
  org.eventb.ui
 Import-Package: org.eclipse.core.runtime,
