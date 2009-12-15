@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ac.soton.eventb.theory_feature"
-      label="Event-B Theory Feature"
-      version="0.0.1"
-      provider-name="University of Southampton">
+      id="ac.soton.eventb.ruleBasedProver_feature"
+      label="%featureName"
+      version="0.1.0"
+      provider-name="%providerName">
 
    <description>
       %description
@@ -13,7 +13,7 @@
       %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license>
       %license
    </license>
 
@@ -41,35 +41,35 @@
          id="ac.soton.eventb.prover"
          download-size="0"
          install-size="0"
-         version="0.0.1"
+         version="0.1.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.core"
          download-size="0"
          install-size="0"
-         version="0.0.1"
+         version="0.1.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.deploy"
          download-size="0"
          install-size="0"
-         version="0.0.1"
+         version="0.1.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.ui"
          download-size="0"
          install-size="0"
-         version="0.0.1"
+         version="0.1.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.ui.prefs"
          download-size="0"
          install-size="0"
-         version="0.0.1"
+         version="0.1.0"
          unpack="false"/>
 
 </feature>
