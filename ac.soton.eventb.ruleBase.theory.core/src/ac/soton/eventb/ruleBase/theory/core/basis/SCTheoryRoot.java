@@ -51,19 +51,19 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException {
 		ITypeEnvironment typenv = factory.makeTypeEnvironment();
-		augmentTypeEnvironment(this, typenv, factory);
+		augmentTypeEnvironment(typenv, factory);
 		return typenv;
 	}
 
 	// Utility method
-	private void augmentTypeEnvironment(ISCTheoryRoot thy,
+	private void augmentTypeEnvironment(
 			ITypeEnvironment typenv, FormulaFactory factory)
 			throws RodinDBException {
 
-		for (ISCSet set : thy.getSCSets()) {
+		for (ISCSet set : getSCSets()) {
 			typenv.addGivenSet(set.getIdentifierString());
 		}
-		for (ISCVariable var : thy.getSCVariables()) {
+		for (ISCVariable var : getSCVariables()) {
 			typenv.addName(var.getIdentifierString(), var.getType(factory));
 		}
 	}

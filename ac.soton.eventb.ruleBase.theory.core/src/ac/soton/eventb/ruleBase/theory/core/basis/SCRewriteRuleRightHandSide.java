@@ -50,13 +50,7 @@ public class SCRewriteRuleRightHandSide extends SCPredicateElement implements IS
 	
 	public void setRHSFormula(Formula<?> form, IProgressMonitor monitor)
 			throws RodinDBException {
-		setFormulaString(form.toStringWithTypes(), monitor);
-		
-	}
-
-	public void setRHSString(String form, IProgressMonitor pm)
-			throws RodinDBException {
-		setAttributeValue(TheoryAttributes.RHS_ATTRIBUTE, form, pm);
+		setAttributeValue(TheoryAttributes.RHS_ATTRIBUTE, form.toStringWithTypes(), monitor);
 		
 	}
 	
@@ -86,8 +80,4 @@ public class SCRewriteRuleRightHandSide extends SCPredicateElement implements IS
 		return result;
 	}
 
-	private void setFormulaString(String form,
-			IProgressMonitor pm) throws RodinDBException {
-		setAttributeValue(TheoryAttributes.RHS_ATTRIBUTE, form, pm);
-	}
 }

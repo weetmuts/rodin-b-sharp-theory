@@ -60,10 +60,10 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	public void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
 		setPredicateString(predicate.toStringWithTypes(), monitor);
 	}
-	
-	@Deprecated
+
 	public void setPredicate(Predicate predicate) throws RodinDBException {
-		setPredicate(predicate, null);
+		// TODO Auto-generated method stub
+		
 	}
 
 }

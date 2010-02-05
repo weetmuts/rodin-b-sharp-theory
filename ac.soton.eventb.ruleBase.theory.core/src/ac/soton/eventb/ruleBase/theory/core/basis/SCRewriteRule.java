@@ -57,7 +57,7 @@ public class SCRewriteRule extends TheoryElement implements ISCRewriteRule{
 
 	public void setLHSFormula(Formula<?> form, IProgressMonitor monitor)
 	throws RodinDBException {
-		setFormulaString(form.toStringWithTypes(), monitor);
+		setAttributeValue(TheoryAttributes.LHS_ATTRIBUTE, form.toStringWithTypes(), monitor);
 	}
 	
 	// Utility methods
@@ -86,10 +86,6 @@ public class SCRewriteRule extends TheoryElement implements ISCRewriteRule{
 		return result;
 	}
 
-	private void setFormulaString(String form,
-			IProgressMonitor pm) throws RodinDBException {
-		setAttributeValue(TheoryAttributes.LHS_ATTRIBUTE, form, pm);
-	}
 	
 	
 }
