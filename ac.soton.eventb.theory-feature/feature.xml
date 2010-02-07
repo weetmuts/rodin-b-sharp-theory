@@ -2,7 +2,7 @@
 <feature
       id="ac.soton.eventb.ruleBasedProver_feature"
       label="%featureName"
-      version="0.1.0"
+      version="0.2.0"
       provider-name="%providerName">
 
    <description>
@@ -41,35 +41,35 @@
          id="ac.soton.eventb.prover"
          download-size="0"
          install-size="0"
-         version="0.1.0"
+         version="0.2.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.core"
          download-size="0"
          install-size="0"
-         version="0.1.0"
+         version="0.2.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.deploy"
          download-size="0"
          install-size="0"
-         version="0.1.0"
+         version="0.2.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.ui"
          download-size="0"
          install-size="0"
-         version="0.1.0"
+         version="0.2.0"
          unpack="false"/>
 
    <plugin
          id="ac.soton.eventb.ruleBase.theory.ui.prefs"
          download-size="0"
          install-size="0"
-         version="0.1.0"
+         version="0.2.0"
          unpack="false"/>
 
 </feature>

@@ -19,6 +19,8 @@
  *******************************************************************************/
 package ac.soton.eventb.ruleBase.theory.ui.editor;
 
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +40,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -53,6 +56,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
@@ -67,6 +71,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBFormText;
+import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IAttributeType;
@@ -81,8 +86,6 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
 import ac.soton.eventb.ruleBase.theory.core.ITheoryRoot;
-import ac.soton.eventb.ruleBase.theory.ui.editor.images.ITheoryImages;
-import ac.soton.eventb.ruleBase.theory.ui.editor.images.TheoryImage;
 
 /**
  * <p> This should mirror <code>EditPage</code>.</p>
@@ -94,40 +97,6 @@ import ac.soton.eventb.ruleBase.theory.ui.editor.images.TheoryImage;
 public class TheoryEditPage extends EditPage implements
 		IElementChangedListener, IResourceChangeListener {
 
-	// The set of pairs between element and the type of the children that has
-	// changed.
-	Set<Pair<IRodinElement, IElementType<?>>> childrenHasChanged;
-	// The main scrolled form
-	ScrolledForm form;
-
-	// The set of elements that has been added.
-	Set<IRodinElement> isAdded;
-
-	// The set of elements that has changed.
-	Set<IRodinElement> isChanged;
-
-	// The set of elements that has been removed.
-	Set<IRodinElement> isRemoved;
-
-	Map<IElementType<?>, ISectionComposite> mapComps;
-
-	// The next two variables maintain a link to the sections embedded in this
-	// page. The list gives the order of the sections, while the map allows
-	// direct access to a section, based on the type of the elements it
-	// contains.
-	List<ISectionComposite> sectionComps;
-
-	// Set of all sections for which prefix marker must be refreshed
-	Set<ISectionComposite> toRefreshPrefixMarker;
-
-	// The maintain the current selection.
-	private ISelection currentSelection = new StructuredSelection();
-
-	// The last selected element (from ButtonComposite).
-	private IRodinElement lastSelectedElement;
-
-	private IEditComposite[] rootComps;
-
 	/**
 	 * Constructor: This default constructor will be used to create the page
 	 */
@@ -135,70 +104,26 @@ public class TheoryEditPage extends EditPage implements
 		super();
 	}
 
-	public void addToRefreshPrefixMarker(ISectionComposite section) {
-		toRefreshPrefixMarker.add(section);
-	}
+	// The next two variables maintain a link to the sections embedded in this
+	// page. The list gives the order of the sections, while the map allows
+	// direct access to a section, based on the type of the elements it
+	// contains.
+	List<ISectionComposite> sectionComps;
+	Map<IElementType<?>, ISectionComposite> mapComps;
+
+	// Set of all sections for which prefix marker must be refreshed
+	Set<ISectionComposite> toRefreshPrefixMarker;
+	
+	// The main scrolled form
+	ScrolledForm form;
+	
+	private IEditComposite[] rootComps;
+
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
-	 */
-	@Override
-	public void dispose() {
-		IEventBEditor<?> editor = this.getEventBEditor();
-		editor.removeElementChangedListener(this);
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		super.dispose();
-	}
-
-	public void edit(IInternalElement element, IAttributeType attributeType,
-			int charStart, int charEnd) {
-		final ISectionComposite comp = getCompositeTowards(element);
-		if (comp != null) {
-			comp.edit(element, attributeType, charStart, charEnd);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core
-	 * .ElementChangedEvent)
-	 */
-	public void elementChanged(ElementChangedEvent event) {
-		// Record the starting time.
-		long beforeTime = System.currentTimeMillis();
-
-		// Reset the information collected for the changed event.
-		// TODO: What about concurrency?
-		isChanged = new HashSet<IRodinElement>();
-		isRemoved = new HashSet<IRodinElement>();
-		isAdded = new HashSet<IRodinElement>();
-		childrenHasChanged = new HashSet<Pair<IRodinElement, IElementType<?>>>();
-
-		// Process the input changed event.
-		processElementDelta(event.getDelta());
-
-		// Refresh the page according to the collected information.
-		postRefresh();
-
-		// Record the end time.
-		long afterTime = System.currentTimeMillis();
-
-		// Measure the duration for refreshing the page.
-		if (EventBEditorUtils.DEBUG)
-			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
-					+ " ms");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms
-	 * .editor.FormEditor)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
 	 */
 	@Override
 	public void initialize(FormEditor editor) {
@@ -207,123 +132,17 @@ public class TheoryEditPage extends EditPage implements
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
-	public void recursiveExpand(IRodinElement element) {
-		final IInternalElement rodinInput = getRodinInput();
-		if (element.equals(rodinInput) || element.isAncestorOf(rodinInput)) {
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.recursiveExpand(element);
-			}
-		} else {
-			final ISectionComposite comp = getCompositeTowards(element);
-			if (comp != null) {
-				comp.recursiveExpand(element);
-			}
-		}
-	}
-
-	public void resourceChanged(IResourceChangeEvent event) {
-		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
-		IFile file = getRodinInput().getResource();
-		IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
-		for (IMarkerDelta delta : rodinProblemMarkerDeltas) {
-			IResource resource = delta.getResource();
-			if (file.equals(resource)) {
-				if (EventBEditorUtils.DEBUG) {
-					printRodinMarkerDelta(delta);
-				}
-				IRodinElement element = RodinMarkerUtil.getElement(delta);
-				if (element == null)
-					continue;
-				IAttributeType attributeType = RodinMarkerUtil
-						.getAttributeType(delta);
-				addToMap(map, element, attributeType);
-			}
-		}
-		if (EventBEditorUtils.DEBUG) {
-			printMarkers(map);
-		}
-		resourceChangedRefresh(map);
-
-	}
-
-	// This is related to how the page is refreshed.
-
-	public boolean select(IRodinElement element, boolean select) {
-		final ISectionComposite comp = getCompositeTowards(element);
-		if (comp != null) {
-			return comp.select(element, select);
-		}
-		return false;
-	}
-
-	// This is the callback from ButtonComposite for selecting an element with
-	// the input specifies if Shift is pressed.
-	public void selectionChanges(IRodinElement element, boolean shiftPressed) {
-		long beginTime = System.currentTimeMillis();
-		if (currentSelection instanceof StructuredSelection
-				&& ((StructuredSelection) currentSelection).size() == 1
-				&& ((StructuredSelection) currentSelection).getFirstElement()
-						.equals(element)) {
-			setTheoryEditorSelection(new StructuredSelection());
-			return;
-
-		} else {
-			if (shiftPressed
-					&& lastSelectedElement != null
-					&& element.getParent().equals(
-							lastSelectedElement.getParent())
-					&& element.getElementType().equals(
-							lastSelectedElement.getElementType())) {
-				selectRange(lastSelectedElement, element);
-			} else {
-				lastSelectedElement = element;
-				setTheoryEditorSelection(new StructuredSelection(element));
-			}
-		}
-		long afterTime = System.currentTimeMillis();
-		if (EventBEditorUtils.DEBUG) {
-			EventBEditorUtils.debug("Duration " + (afterTime - beginTime)
-					+ " ms");
-		}
-	}
-
-	// This should be called from Event-B Editor only.
-	public void setSelection(ISelection selection) {
-		// TODO Should try to compare the selection first ?
-		// De-select the current selection
-		deselect(currentSelection);
-
-		List<IRodinElement> elements = new ArrayList<IRodinElement>();
-
-		if (selection instanceof StructuredSelection) {
-			for (Iterator<?> it = ((StructuredSelection) selection).iterator(); it
-					.hasNext();) {
-				Object obj = it.next();
-				if (obj instanceof IRodinElement) {
-					if (select((IRodinElement) obj, true)) {
-						elements.add((IRodinElement) obj);
-					}
-				}
-			}
-		}
-
-		// Create a new selection with the set of selected elements.
-		currentSelection = new StructuredSelection(elements);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui
-	 * .forms.IManagedForm)
+	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
+
 		// Store the reference to the main scrolled form.
 		form = managedForm.getForm();
-
+		
 		// The body of the main scrolled form has a grid layout (by default has
 		// only one column).
 		Composite body = form.getBody();
@@ -338,61 +157,83 @@ public class TheoryEditPage extends EditPage implements
 					.setBackground(EventBSharedColor
 							.getSystemColor(SWT.COLOR_BLUE));
 		}
-
-		// Create the top declaration.
+		
+		// Create the top declaration. 
 		createDeclaration(body);
 
 		// Create the different section composites.
 		createSections(body);
-
+		
 		// Refresh the main scrolled form.
 		form.reflow(true);
 	}
 
-	protected ISectionComposite getCompositeTowards(IRodinElement element) {
-		final IRodinElement child = EventBEditorUtils.getChildTowards(
-				getRodinInput(), element);
-		if (child == null || mapComps == null)
-			return null;
-		final IElementType<?> type = child.getElementType();
-		return mapComps.get(type);
-	}
-
-	protected IInternalElement getRodinInput() {
-		final IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
-		return editor.getRodinInput();
+	/**
+	 * Search the first occurrence of the given element and return the previous
+	 * element
+	 * 
+	 * @param array
+	 *            an IInternalElement array
+	 */
+	private IInternalElement getPreviousElement(IInternalElement[] array,
+			IInternalElement element) {
+		IInternalElement previous = null;
+		for (int i = 0; i < array.length; ++i) {
+			if (array[i].equals(element))
+				break;
+			previous = array[i];
+		}
+		return previous;
 	}
 
 	/**
-	 * Utility method to check if an element is currently selected within the
-	 * page.
+	 * Search the first occurrence of the given element and return the next
+	 * element
 	 * 
-	 * @param element
-	 *            a Rodin element.
-	 * @return <code>true</code> if the element is selected. Return
-	 *         <code>false<code> otherwise.
+	 * @param array
+	 *            an IInternalElement array
 	 */
-	protected boolean isSelected(IRodinElement element) {
-		if (currentSelection instanceof StructuredSelection) {
-			StructuredSelection ssel = (StructuredSelection) currentSelection;
-			for (Iterator<?> it = ssel.iterator(); it.hasNext();) {
-				if (it.next().equals(element))
-					return true;
-			}
-		}
-		return false;
+	private IInternalElement getNextElement(IInternalElement[] array,
+			IInternalElement element) {
+		IInternalElement[] revert = getReverse(array);
+		return getPreviousElement(revert, element);
 	}
 
+	/**
+	 * Utility method for getting the reverse array of a given array of
+	 * IInternalElement
+	 * 
+	 * @param array
+	 *            an IInternalElement array to revert
+	 */
+	private IInternalElement[] getReverse(IInternalElement[] array) {
+		IInternalElement[] revert = new IInternalElement[array.length];
+		for (int i = 0; i < array.length; ++i) {
+			int revertPos = array.length - 1 - i;
+			revert[revertPos] = array[i];
+		}
+		return revert;
+	}
+
+	private Object[] getCurrentSelection(){
+		if (currentSelection instanceof StructuredSelection) {
+			StructuredSelection ssel = (StructuredSelection) currentSelection;
+			return ssel.toArray();
+		}else{
+			return new Object[0];
+		}
+	}
+	
 	/**
 	 * Utility method for moving elements up and down. An important assumption
 	 * here is that the current selection contain the list of consecutive
 	 * elements of the same type and has the same parent.
 	 * 
-	 * @param type
+	 * @param type 
 	 *            the type of the elements to be moved.
 	 * @param up
-	 *            <code>true</code> for moving up, <code>false</code> for moving
-	 *            down.
+	 *            <code>true</code> for moving up, <code>false</code> for
+	 *            moving down.
 	 */
 	protected void move(final IInternalElementType<?> type, final boolean up) {
 
@@ -407,7 +248,7 @@ public class TheoryEditPage extends EditPage implements
 			return;
 		final IRodinElement parent = firstElement.getParent();
 		final IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
-
+		
 		if (parent != null && parent instanceof IInternalElement) {
 			IInternalElement iparent = (IInternalElement) parent;
 
@@ -431,118 +272,6 @@ public class TheoryEditPage extends EditPage implements
 	}
 
 	/**
-	 * Utility method for packing the composite to the preferred size.
-	 * 
-	 * @param c
-	 *            the composite to be packed.
-	 */
-	void packInternally(Composite c) {
-		if (c.equals(form.getBody())) {
-			if (EventBEditorUtils.DEBUG)
-				EventBEditorUtils.debug("Full resize");
-			form.reflow(true);
-		}
-		Rectangle bounds = c.getBounds();
-		Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-
-		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
-			packInternally(c.getParent());
-		} else {
-			c.layout(true);
-			c.setBounds(bounds);
-		}
-	}
-
-	/**
-	 * Process the delta to collect the information about changes.
-	 * 
-	 * @param delta
-	 *            a Rodin Element Delta.
-	 */
-	void processElementDelta(IRodinElementDelta delta) {
-		IRodinElement element = delta.getElement();
-		int kind = delta.getKind();
-		if (element instanceof IRodinFile && kind == IRodinElementDelta.CHANGED) {
-			for (IRodinElementDelta subDelta : delta.getAffectedChildren()) {
-				processElementDelta(subDelta);
-			}
-			return;
-		}
-
-		if (kind == IRodinElementDelta.ADDED) {
-			isAdded.add(element);
-			childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
-					element.getParent(), element.getElementType()));
-			return;
-		}
-		if (kind == IRodinElementDelta.REMOVED) {
-			isRemoved.add(element);
-			childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
-					element.getParent(), element.getElementType()));
-			return;
-		} else { // kind == CHANGED
-			int flags = delta.getFlags();
-			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				if (EventBEditorUtils.DEBUG)
-					EventBEditorUtils.debug("REORDERED");
-				childrenHasChanged
-						.add(new Pair<IRodinElement, IElementType<?>>(element
-								.getParent(), element.getElementType()));
-				return;
-			}
-			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				for (IRodinElementDelta subDelta : delta.getAffectedChildren()) {
-					processElementDelta(subDelta);
-				}
-			}
-			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				isChanged.add(element);
-				childrenHasChanged
-						.add(new Pair<IRodinElement, IElementType<?>>(element
-								.getParent(), element.getElementType()));
-			}
-			return;
-		}
-
-	}
-
-	void refreshPrefixMarkers() {
-		for (ISectionComposite comp : toRefreshPrefixMarker) {
-			comp.refreshPrefixMarker();
-		}
-	}
-
-	void setTheoryEditorSelection(ISelection selection) {
-		IEventBEditor<?> eventBEditor = this.getEventBEditor();
-		eventBEditor.getSite().getSelectionProvider().setSelection(selection);
-	}
-
-	/**
-	 * Utility method for updating comment of the file.
-	 */
-	void updateRootAttributes() {
-		for (IEditComposite editComp : rootComps) {
-			editComp.refresh(true);
-		}
-		if (form != null) {
-			packInternally(form.getBody());
-		}
-	}
-
-	private void addToMap(Map<IRodinElement, Set<IAttributeType>> markers,
-			IRodinElement element, IAttributeType attributeType) {
-		Set<IAttributeType> list = markers.get(element);
-		if (list == null) {
-			list = new HashSet<IAttributeType>();
-			if (attributeType != null)
-				list.add(attributeType);
-			markers.put(element, list);
-		} else if (list.size() != 0 && attributeType != null) {
-			list.add(attributeType);
-		}
-	}
-
-	/**
 	 * Utility method for creating the declaration part of this Edit page.
 	 * 
 	 * @param parent
@@ -553,7 +282,7 @@ public class TheoryEditPage extends EditPage implements
 		final Composite comp = toolkit.createComposite(parent);
 		final boolean borderEnabled = EventBPreferenceStore
 				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE);
-
+		
 		if (EventBEditorUtils.DEBUG) {
 			comp
 					.setBackground(EventBSharedColor
@@ -563,20 +292,18 @@ public class TheoryEditPage extends EditPage implements
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 5;
 		comp.setLayout(gridLayout);
-
+		
 		// Expand/Collapse all button
 		final IHyperlinkListener expandAllListener = new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.recursiveExpand();
+					sectionComp.setExpand(true, true);
 				}
 			}
-
 			public void linkEntered(HyperlinkEvent e) {
 				// Do nothing
 			}
-
 			public void linkExited(HyperlinkEvent e) {
 				// Do nothing
 			}
@@ -585,22 +312,18 @@ public class TheoryEditPage extends EditPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.recursiveCollapse();
+					sectionComp.setExpand(false, true);
 				}
 			}
-
 			public void linkEntered(HyperlinkEvent e) {
 				// Do nothing
 			}
-
 			public void linkExited(HyperlinkEvent e) {
 				// Do nothing
 			}
 		};
-		createHyperLink(toolkit, comp, expandAllListener,
-				ITheoryImages.IMG_EXPAND_ALL);
-		createHyperLink(toolkit, comp, collapseAllListener,
-				ITheoryImages.IMG_COLLAPSE_ALL);
+		createHyperLink(toolkit, comp, expandAllListener, IEventBSharedImages.IMG_EXPAND_ALL);
+		createHyperLink(toolkit, comp, collapseAllListener, IEventBSharedImages.IMG_COLLAPSE_ALL);
 
 		FormText widget = toolkit.createFormText(comp, true);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
@@ -622,6 +345,37 @@ public class TheoryEditPage extends EditPage implements
 			toolkit.paintBordersFor(comp);
 		}
 	}
+	
+	private static void removeFocusListener(ImageHyperlink hyperlink) {
+		for (Listener l : hyperlink.getListeners(SWT.FocusIn)) {
+			hyperlink.removeListener(SWT.FocusIn, l);
+		}
+	}
+	
+	private static void createHyperLink(FormToolkit toolkit, final Composite comp,
+			IHyperlinkListener listener, String image) {
+		ImageHyperlink hyperlinkExpand =
+				toolkit.createImageHyperlink(comp, SWT.TOP);
+		// to fix bug 2420471
+		removeFocusListener(hyperlinkExpand);
+		setHyperlinkImage(hyperlinkExpand, EventBImage.getImage(image));
+		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+		hyperlinkExpand.setLayoutData(gd);
+		hyperlinkExpand.addHyperlinkListener(listener);
+	}
+
+	/**
+	 * Utility method for creating different sections composite. The information
+	 * about the section composites is read from the element relationship UI
+	 * Spec. registry.
+	 * 
+	 * @param parent
+	 *            the composite parent of the section composites.
+	 */
+	private void createSections(final Composite parent) {
+		final FormToolkit toolkit = this.getManagedForm().getToolkit();
+		createSectionComps(parent, toolkit);
+	}
 
 	private void createRootAttrs(Composite parent, FormToolkit toolkit) {
 		final IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
@@ -633,7 +387,7 @@ public class TheoryEditPage extends EditPage implements
 	private void createSectionComps(Composite parent, FormToolkit toolkit) {
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 		final IInternalElement rodinInput = getRodinInput();
-
+		
 		// Get the list of possible element type depending on the type (e.g.
 		// IMachineFile or IContextFile) of the input file.
 		final IElementType<?>[] childTypes = registry.getChildTypes(rodinInput
@@ -654,86 +408,85 @@ public class TheoryEditPage extends EditPage implements
 
 	}
 
-	/**
-	 * Utility method for creating different sections composite. The information
-	 * about the section composites is read from the element relationship UI
-	 * Spec. registry.
+	// This is related to how the page is refreshed.
+	
+	// The set of elements that has changed.
+	Set<IRodinElement> isChanged;
+
+	// The set of elements that has been removed.
+	Set<IRodinElement> isRemoved;
+
+	// The set of elements that has been added.
+	Set<IRodinElement> isAdded;
+
+	// The set of pairs between element and the type of the children that has
+	// changed.
+	Set<Pair<IRodinElement, IElementType<?>>> childrenHasChanged;
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param parent
-	 *            the composite parent of the section composites.
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
-	private void createSections(final Composite parent) {
-		final FormToolkit toolkit = this.getManagedForm().getToolkit();
-		createSectionComps(parent, toolkit);
+	public void elementChanged(ElementChangedEvent event) {
+		// Record the starting time.
+		long beforeTime = System.currentTimeMillis();
+		
+		// Reset the information collected for the changed event.
+		// TODO: What about concurrency?
+		isChanged = new HashSet<IRodinElement>();
+		isRemoved = new HashSet<IRodinElement>();
+		isAdded = new HashSet<IRodinElement>();
+		childrenHasChanged = new HashSet<Pair<IRodinElement, IElementType<?>>>();
+		
+		// Process the input changed event.
+		processRodinDelta(event.getDelta());
+		
+		// Refresh the page according to the collected information.
+		postRefresh();
+
+		// Record the end time.
+		long afterTime = System.currentTimeMillis();
+		
+		// Measure the duration for refreshing the page. 
+		if (EventBEditorUtils.DEBUG)
+			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
+					+ " ms");
 	}
 
-	private void deselect(ISelection ssel) {
-
-		if (ssel instanceof StructuredSelection) {
-			for (Iterator<?> it = ((StructuredSelection) ssel).iterator(); it
-					.hasNext();) {
-				Object obj = it.next();
-				if (obj instanceof IRodinElement) {
-					select((IRodinElement) obj, false);
-				}
-			}
+	/**
+	 * Utility method for updating comment of the file.
+	 */
+	void updateRootAttributes() {
+		for (IEditComposite editComp: rootComps) {
+			editComp.refresh(true);
+		}
+		if (form != null) {
+			packInternally(form.getBody());
 		}
 	}
+	
+	/**
+	 * Utility method for packing the composite to the preferred size.
+	 * 
+	 * @param c
+	 *            the composite to be packed.
+	 */
+	void packInternally(Composite c) {
+		if (c.equals(form.getBody())) {
+			if (EventBEditorUtils.DEBUG)
+				EventBEditorUtils.debug("Full resize");
+			form.reflow(true);			
+		}
+		Rectangle bounds = c.getBounds();
+		Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-	private Object[] getCurrentSelection() {
-		if (currentSelection instanceof StructuredSelection) {
-			StructuredSelection ssel = (StructuredSelection) currentSelection;
-			return ssel.toArray();
+		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
+			packInternally(c.getParent());
 		} else {
-			return new Object[0];
+			c.layout(true);
+			c.setBounds(bounds);
 		}
-	}
-
-	/**
-	 * Search the first occurrence of the given element and return the next
-	 * element
-	 * 
-	 * @param array
-	 *            an IInternalElement array
-	 */
-	private IInternalElement getNextElement(IInternalElement[] array,
-			IInternalElement element) {
-		IInternalElement[] revert = getReverse(array);
-		return getPreviousElement(revert, element);
-	}
-
-	/**
-	 * Search the first occurrence of the given element and return the previous
-	 * element
-	 * 
-	 * @param array
-	 *            an IInternalElement array
-	 */
-	private IInternalElement getPreviousElement(IInternalElement[] array,
-			IInternalElement element) {
-		IInternalElement previous = null;
-		for (int i = 0; i < array.length; ++i) {
-			if (array[i].equals(element))
-				break;
-			previous = array[i];
-		}
-		return previous;
-	}
-
-	/**
-	 * Utility method for getting the reverse array of a given array of
-	 * IInternalElement
-	 * 
-	 * @param array
-	 *            an IInternalElement array to revert
-	 */
-	private IInternalElement[] getReverse(IInternalElement[] array) {
-		IInternalElement[] revert = new IInternalElement[array.length];
-		for (int i = 0; i < array.length; ++i) {
-			int revertPos = array.length - 1 - i;
-			revert[revertPos] = array[i];
-		}
-		return revert;
 	}
 
 	/**
@@ -758,7 +511,7 @@ public class TheoryEditPage extends EditPage implements
 						comp.elementRemoved(element);
 					}
 					if (isSelected(element)) {
-						setTheoryEditorSelection(new StructuredSelection());
+						setSelectionForEditor(new StructuredSelection());
 					}
 				}
 
@@ -780,7 +533,7 @@ public class TheoryEditPage extends EditPage implements
 						updateRootAttributes();
 					}
 				}
-
+			
 				// Process the elements that changed order last.
 				for (Pair<IRodinElement, IElementType<?>> pair : childrenHasChanged) {
 					final IRodinElement parent = pair.getFirst();
@@ -805,47 +558,152 @@ public class TheoryEditPage extends EditPage implements
 		});
 	}
 
-	private void printMarkers(Map<IRodinElement, Set<IAttributeType>> markers) {
-		EventBEditorUtils.debug(markers.toString());
+	/**
+	 * Utility method to check if an element is currently selected within the
+	 * page.
+	 * 
+	 * @param element
+	 *            a Rodin element.
+	 * @return <code>true</code> if the element is selected. Return
+	 *         <code>false<code> otherwise.
+	 */
+	protected boolean isSelected(IRodinElement element) {
+		if (currentSelection instanceof StructuredSelection) {
+			StructuredSelection ssel = (StructuredSelection) currentSelection;
+			for (Iterator<?> it = ssel.iterator(); it.hasNext();) {
+				if (it.next().equals(element))
+					return true;
+			}
+		}
+		return false;
 	}
 
-	private void printRodinMarkerDelta(IMarkerDelta delta) {
-		EventBEditorUtils.debug("******");
+	/**
+	 * Process the delta to collect the information about changes.
+	 * 
+	 * @param delta
+	 *            a Rodin Element Delta.
+	 */
+	void processRodinDelta(IRodinElementDelta delta) {
+		IRodinElement element = delta.getElement();
 		int kind = delta.getKind();
-		if (kind == IResourceDelta.ADDED) {
-			EventBEditorUtils.debug("Marker added");
-		} else if (kind == IResourceDelta.REMOVED) {
-			EventBEditorUtils.debug("Marker removed");
-		} else if (kind == IResourceDelta.CHANGED) {
-			EventBEditorUtils.debug("Marker changed");
+		if (element instanceof IRodinFile && kind == IRodinElementDelta.CHANGED) {
+			for (IRodinElementDelta subDelta : delta.getAffectedChildren()) {
+				processRodinDelta(subDelta);
+			}
+			return;
 		}
-		Map<?, ?> attributes = delta.getAttributes();
-		Set<?> keySet = attributes.keySet();
-		for (Object key : keySet) {
-			EventBEditorUtils.debug(key.toString() + " --> "
-					+ attributes.get(key).toString());
+
+		if (kind == IRodinElementDelta.ADDED) {
+			isAdded.add(element);
+			childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
+					element.getParent(), element.getElementType()));
+			return;
 		}
+		if (kind == IRodinElementDelta.REMOVED) {
+			isRemoved.add(element);
+			childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
+					element.getParent(), element.getElementType()));
+			return;
+		} else { // kind == CHANGED
+			int flags = delta.getFlags();
+			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
+				if (EventBEditorUtils.DEBUG)
+					EventBEditorUtils.debug("REORDERED");
+				childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
+						element.getParent(), element.getElementType()));
+				return;
+			} 
+			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
+				for (IRodinElementDelta subDelta : delta.getAffectedChildren()) {
+					processRodinDelta(subDelta);
+				}
+			}
+			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+				isChanged.add(element);
+				childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
+						element.getParent(), element.getElementType()));
+			}
+			return;
+		}
+
 	}
 
-	private void resourceChangedRefresh(
-			final Map<IRodinElement, Set<IAttributeType>> map) {
-		final Display display = this.getSite().getShell().getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				toRefreshPrefixMarker = new HashSet<ISectionComposite>();
-				for (Entry<IRodinElement, Set<IAttributeType>> entry : map
-						.entrySet()) {
-					final IRodinElement key = entry.getKey();
-					final Set<IAttributeType> set = entry.getValue();
-					final ISectionComposite comp = getCompositeTowards(key);
-					if (comp != null) {
-						addToRefreshPrefixMarker(comp);
-						comp.refresh(key, set);
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
+	 */
+	@Override
+	public void dispose() {
+		IEventBEditor<?> editor = this.getEventBEditor();
+		editor.removeElementChangedListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		super.dispose();
+	}
+
+	// The maintain the current selection.
+	private ISelection currentSelection = new StructuredSelection();
+
+	// This should be called from Event-B Editor only.
+	public void setSelection(ISelection selection) {
+		// TODO Should try to compare the selection first ?
+		// De-select the current selection
+		deselect(currentSelection);
+
+		List<IRodinElement> elements = new ArrayList<IRodinElement>();
+		
+		if (selection instanceof StructuredSelection) {
+			for (Iterator<?> it = ((StructuredSelection) selection).iterator(); it
+					.hasNext();) {
+				Object obj = it.next();
+				if (obj instanceof IRodinElement) {
+					if (select((IRodinElement) obj, true)) {
+						elements.add((IRodinElement) obj);
 					}
 				}
-				refreshPrefixMarkers();
 			}
-		});
+		}
+
+		// Create a new selection with the set of selected elements.
+		currentSelection = new StructuredSelection(elements);			
+	}
+
+	// The last selected element (from ButtonComposite).
+	private IRodinElement lastSelectedElement;
+
+	// This is the callback from ButtonComposite for selecting an element with
+	// the input specifies if Shift is pressed.
+	public void selectionChanges(IRodinElement element, boolean shiftPressed) {
+		long beginTime = System.currentTimeMillis();
+		if (currentSelection instanceof StructuredSelection
+				&& ((StructuredSelection) currentSelection).size() == 1
+				&& ((StructuredSelection) currentSelection).getFirstElement()
+						.equals(element)) {
+			setSelectionForEditor(new StructuredSelection());
+			return;
+
+		} else {
+			if (shiftPressed
+					&& lastSelectedElement != null
+					&& element.getParent().equals(
+							lastSelectedElement.getParent())
+					&& element.getElementType().equals(
+							lastSelectedElement.getElementType())) {
+				selectRange(lastSelectedElement, element);
+			} else {
+				lastSelectedElement = element;
+				setSelectionForEditor(new StructuredSelection(element));
+			}
+		}
+		long afterTime = System.currentTimeMillis();
+		if (EventBEditorUtils.DEBUG) {
+			EventBEditorUtils.debug("Duration " + (afterTime - beginTime)
+					+ " ms");
+		}
+	}
+
+	void setSelectionForEditor(ISelection selection) {
+		IEventBEditor<?> eventBEditor = this.getEventBEditor();
+		eventBEditor.getSite().getSelectionProvider().setSelection(selection);
 	}
 
 	private void selectRange(IRodinElement firstElement,
@@ -875,28 +733,170 @@ public class TheoryEditPage extends EditPage implements
 					}
 				}
 			}
-			setTheoryEditorSelection(new StructuredSelection(selected));
+			setSelectionForEditor(new StructuredSelection(selected));
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private static void createHyperLink(FormToolkit toolkit,
-			final Composite comp, IHyperlinkListener listener, String image) {
-		ImageHyperlink hyperlinkExpand = toolkit.createImageHyperlink(comp,
-				SWT.TOP);
-		// to fix bug 2420471
-		removeFocusListener(hyperlinkExpand);
-		hyperlinkExpand.setImage(TheoryImage.getImage(image));
-		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-		hyperlinkExpand.setLayoutData(gd);
-		hyperlinkExpand.addHyperlinkListener(listener);
+	private void deselect(ISelection ssel) {
+		
+		if (ssel instanceof StructuredSelection) {
+			for (Iterator<?> it = ((StructuredSelection) ssel).iterator(); it
+					.hasNext();) {
+				Object obj = it.next();
+				if (obj instanceof IRodinElement) {
+					select((IRodinElement) obj, false);
+				}
+			}
+		}
 	}
 
-	private static void removeFocusListener(ImageHyperlink hyperlink) {
-		for (Listener l : hyperlink.getListeners(SWT.FocusIn)) {
-			hyperlink.removeListener(SWT.FocusIn, l);
+	public boolean select(IRodinElement element, boolean select) {
+		final ISectionComposite comp = getCompositeTowards(element);
+		if (comp != null) {
+			return comp.select(element, select);
 		}
+		return false;
+	}
+
+	public void recursiveExpand(IRodinElement element) {
+		final IInternalElement rodinInput = getRodinInput();
+		if (element.equals(rodinInput) || element.isAncestorOf(rodinInput)) {
+			for (ISectionComposite sectionComp : sectionComps) {
+				sectionComp.recursiveExpand(element);
+			}
+		} else {
+			final ISectionComposite comp = getCompositeTowards(element);
+			if (comp != null) {
+				comp.recursiveExpand(element);
+			}
+		}
+	}
+
+	public void edit(IInternalElement element, IAttributeType attributeType,
+			int charStart, int charEnd) {
+		final ISectionComposite comp = getCompositeTowards(element);
+		if (comp != null) {
+			comp.edit(element, attributeType, charStart, charEnd);
+		}
+	}
+	
+	public void resourceChanged(IResourceChangeEvent event) {
+		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
+		IFile file = getRodinInput().getResource();
+		IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
+			RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
+		for (IMarkerDelta delta : rodinProblemMarkerDeltas) {
+			IResource resource = delta.getResource();
+			if (file.equals(resource)) {
+				if (EventBEditorUtils.DEBUG) {
+					printRodinMarkerDelta(delta);
+				}
+				IRodinElement element = RodinMarkerUtil.getElement(delta);
+				if (element == null)
+					continue;
+				IAttributeType attributeType = RodinMarkerUtil
+						.getAttributeType(delta);
+				addToMap(map, element, attributeType);
+			}
+		}
+		if (EventBEditorUtils.DEBUG) {
+			printMarkers(map);
+		}
+		resourceChangedRefresh(map);
+		
+	}
+
+	private void printMarkers(Map<IRodinElement, Set<IAttributeType>> markers) {
+		EventBEditorUtils.debug(markers.toString());
+	}
+
+	private void addToMap(Map<IRodinElement, Set<IAttributeType>> markers,
+			IRodinElement element, IAttributeType attributeType) {
+		Set<IAttributeType> list = markers.get(element);
+		if (list == null) {
+			list = new HashSet<IAttributeType>();
+			if (attributeType != null)
+				list.add(attributeType);
+			markers.put(element, list);
+		}
+		else if (list.size() != 0 && attributeType != null) {
+			list.add(attributeType);
+		}
+	}
+
+	private void printRodinMarkerDelta(IMarkerDelta delta) {
+		EventBEditorUtils.debug("******");
+		int kind = delta.getKind();
+		if (kind == IResourceDelta.ADDED) {
+			EventBEditorUtils.debug("Marker added");
+		} else if (kind == IResourceDelta.REMOVED) {
+			EventBEditorUtils.debug("Marker removed");
+		} else if (kind == IResourceDelta.CHANGED) {
+			EventBEditorUtils.debug("Marker changed");
+		}
+		Map<?,?> attributes = delta.getAttributes();
+		Set<?> keySet = attributes.keySet();
+		for (Object key : keySet) {
+			EventBEditorUtils.debug(key.toString() + " --> "
+					+ attributes.get(key).toString());
+		}
+	}
+
+	private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
+		final Display display = this.getSite().getShell().getDisplay();
+		if (display.isDisposed()) {
+			return;
+		}
+		try {
+			display.syncExec(new Runnable() {
+				public void run() {
+					toRefreshPrefixMarker = new HashSet<ISectionComposite>();
+					for (Entry<IRodinElement, Set<IAttributeType>> entry : map
+							.entrySet()) {
+						final IRodinElement key = entry.getKey();
+						final Set<IAttributeType> set = entry.getValue();
+						final ISectionComposite comp = getCompositeTowards(key);
+						if (comp != null) {
+							addToRefreshPrefixMarker(comp);
+							comp.refresh(key, set);
+						}
+					}
+					refreshThePrefixMarker();
+				}
+			});
+		} catch (SWTException e) {
+			if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
+				// do not refresh
+				return;
+			}
+			throw e;
+		}
+	}
+
+	void refreshThePrefixMarker() {
+		for (ISectionComposite comp : toRefreshPrefixMarker) {
+			comp.refreshPrefixMarker();
+		}
+	}
+
+	public void addToRefreshPrefixMarker(ISectionComposite section) {
+		toRefreshPrefixMarker.add(section);
+	}
+	
+	protected ISectionComposite getCompositeTowards(IRodinElement element) {
+		final IRodinElement child = EventBEditorUtils.getChildTowards(
+				getRodinInput(), element);
+		if (child == null || mapComps == null)
+			return null;
+		final IElementType<?> type = child.getElementType();
+		return mapComps.get(type);
+	}
+
+	protected IInternalElement getRodinInput() {
+		final IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
+		return editor.getRodinInput();
 	}
 }
