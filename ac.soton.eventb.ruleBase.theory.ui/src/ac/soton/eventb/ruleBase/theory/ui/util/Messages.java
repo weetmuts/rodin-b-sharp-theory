@@ -28,6 +28,8 @@ public class Messages {
 	public static String theoryUIUtils_deployCleanupError;
 	public static String theoryUIUtils_deploySuccess;
 	public static String theoryUIUtils_unexpectedError;
+	public static String editorPage_html_title;
+	public static String editorPage_html_tabTitle;
 	
 	private static final String BUNDLE_NAME = "ac.soton.eventb.ruleBase.theory.ui.util.messages"; //$NON-NLS-1$
 

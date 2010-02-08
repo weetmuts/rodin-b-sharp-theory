@@ -22,7 +22,7 @@
       <editor
             class="ac.soton.eventb.ruleBase.theory.ui.editor.TheoryEditor"
             contributorClass="ac.soton.eventb.ruleBase.theory.ui.editor.TheoryEditorContributor"
-            default="false"
+            default="true"
             extensions="but"
             icon="icons/thy.gif"
             id="ac.soton.eventb.ruleBase.theory.ui.editors.theory"

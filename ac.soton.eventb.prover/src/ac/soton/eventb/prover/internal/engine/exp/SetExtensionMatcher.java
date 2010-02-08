@@ -15,6 +15,13 @@ public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
 	@Override
 	protected boolean gatherBindings(SetExtension form, SetExtension pattern,
 			IBinding existingBinding)  {
+		if(form.getMembers().length == 1 && pattern.getMembers().length == 1){
+			Expression formMem = form.getMembers()[0];
+			Expression patternMem = pattern.getMembers()[0];
+			if(engine.match(formMem, patternMem, existingBinding)){
+				return true;
+			}
+		}
 		return false;
 		
 	}
