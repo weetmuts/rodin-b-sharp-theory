@@ -43,6 +43,7 @@ public class TheoryPreferencePage extends FieldEditorPreferencePage implements
 		directoryEditor = new DirectoryFieldEditor(
 				TheoryPrefsPlugIn.THEORY_DIR_KEY, "&Theories Directory: ",
 				getFieldEditorParent());
+		directoryEditor.getTextControl(getFieldEditorParent()).setEditable(false);
 		addField(directoryEditor);
 		categoriesEditor = new CustomisedListEditor(
 				TheoryPrefsPlugIn.THEORY_CAT_KEY, "&Available Categories: ",
