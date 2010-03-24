@@ -41,7 +41,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
 import ac.soton.eventb.ruleBase.theory.core.ICategory;
 import ac.soton.eventb.ruleBase.theory.core.ISCRewriteRule;
 import ac.soton.eventb.ruleBase.theory.core.ISCRewriteRuleRightHandSide;
@@ -54,7 +53,6 @@ import ac.soton.eventb.ruleBase.theory.deploy.deployer.IDeployedTheoryRoot;
 import ac.soton.eventb.ruleBase.theory.deploy.deployer.IMetaSet;
 import ac.soton.eventb.ruleBase.theory.deploy.deployer.IMetaVariable;
 import ac.soton.eventb.ruleBase.theory.deploy.util.Utilities;
-import ac.soton.eventb.ruleBase.theory.ui.prefs.facade.PrefsRepresentative;
 
 /**
  * <p>
@@ -119,11 +117,11 @@ public class DeployManager {
 	}
 	private static DeployManager instance;
 	
-	private static IRodinFile tempFile;
-	private String theoriesDirectory;
+	private static String theoriesDirectory;
 	
+	private IRodinFile tempFile;
+	//private String theoriesDirectory;
 	
-
 	private FormulaFactory factory;
 
 	private HashMap<String, Utilities.StatusInfo> rulesSoundness;
@@ -131,25 +129,7 @@ public class DeployManager {
 	private DeployManager() {
 		factory = FormulaFactory.getDefault();
 		rulesSoundness =  new HashMap<String, Utilities.StatusInfo>();
-		theoriesDirectory = PrefsRepresentative.getTheoriesDirectory();
 		instance = this;
-	}
-
-	/**
-	 * <p> Removes the temp theory file from the specified project. 
-	 * This method should be called from within a <code>IWorkspaceRunnable</code>.</p>
-	 * @param projectName
-	 * @throws RodinDBException if problem occurred
-	 */
-	public void cleanUp(String projectName) throws RodinDBException{
-		IRodinProject proj = RodinCore.getRodinDB().getRodinProject(projectName);
-		if(proj.exists()){
-			IRodinFile temp =  proj.getRodinFile(Utilities.TEMP_THEORY);
-			if(temp.exists()){
-				temp.close();
-				temp.delete(true, null);
-			}
-		}
 	}
 	
 	/**
@@ -169,9 +149,10 @@ public class DeployManager {
 	 * @return the resultant rodin file
 	 * @throws RodinDBException if a problem occurred
 	 */
-	public void deployTheory(final ISCTheoryRoot root, final String dName, final boolean force,
+	public void deployTheory(final ISCTheoryRoot root, final String dName, final boolean force, final String deployTheoriesDir,
 			IProgressMonitor monitor) throws RodinDBException {
 		monitor.subTask("Creating deployed theory ...");
+		theoriesDirectory = deployTheoriesDir;
 		RodinCore.run(new IWorkspaceRunnable() {
 
 			
@@ -265,61 +246,6 @@ public class DeployManager {
 			metaVar.setTypingString(var.getType(factory).toString(), null);
 		}
 	}
-	
-	private void convertToManageableThyFile(IRodinFile file, String destName,
-			boolean force) throws 
-			IOException, TransformerException, SAXException, ParserConfigurationException {
-		assert file.getRoot() instanceof IDeployedTheoryRoot;
-		transformFile(file, destName, force);
-	}
-
-	// Converts the contents of a file into a CharSequence
-	private CharSequence fromFile(IRodinFile file) throws IOException {
-
-		FileInputStream input = new FileInputStream(file
-				.getCorrespondingResource().getLocation().toFile());
-		FileChannel channel = input.getChannel();
-
-		// Create a read-only CharBuffer on the file
-		ByteBuffer bbuf = channel.map(FileChannel.MapMode.READ_ONLY, 0,
-				(int) channel.size());
-		CharBuffer cbuf = Charset.forName(Utilities.FILE_ENCODING).newDecoder().decode(bbuf);
-		return cbuf;
-	}
-
-	private void generateDtd(File file) 
-	throws TransformerException, SAXException, IOException, ParserConfigurationException{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	    factory.setValidating(true); 
-	    factory.setExpandEntityReferences(false);
-	    DocumentBuilder builder = factory.newDocumentBuilder();
-	    builder.setErrorHandler(new ErrorHandler(){
-
-			
-			public void error(SAXParseException exception) throws SAXException {
-				// ignore
-			}
-
-			
-			public void fatalError(SAXParseException exception)
-					throws SAXException {
-			   throw exception;
-			}
-
-			
-			public void warning(SAXParseException exception)
-					throws SAXException {
-				// ignore
-			}
-	    	
-	    });
-	    Document doc = builder.parse(file);
-	    Transformer xformer = TransformerFactory.newInstance().newTransformer();
-	    xformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "dTheory.dtd");
-	    Source source = new DOMSource(doc);
-	    Result result = new StreamResult(file);
-	    xformer.transform(source, result);
-	}
 
 	private boolean isSound(ISCRewriteRule rule) throws RodinDBException {
 		return rulesSoundness.get(rule.getLabel()).equals(Utilities.StatusInfo.Sound);
@@ -373,6 +299,41 @@ public class DeployManager {
 		dRHS.setRHSString(scRuleRhs.getRHSString(), null);
 	}
 
+
+	/**
+	 * <p> Removes the temp theory file from the specified project. 
+	 * This method should be called from within a <code>IWorkspaceRunnable</code>.</p>
+	 * @param projectName
+	 * @throws RodinDBException if problem occurred
+	 */
+	public void cleanUp(String projectName) throws RodinDBException{
+		IRodinProject proj = RodinCore.getRodinDB().getRodinProject(projectName);
+		if(proj.exists()){
+			IRodinFile temp =  proj.getRodinFile(Utilities.TEMP_THEORY);
+			if(temp.exists()){
+				temp.close();
+				temp.delete(true, null);
+			}
+		}
+	}
+	
+	/**
+	 * <p>Returns the default instance that has the ability to deploy theories to the deployment directory.</p>
+	 * @return the default instance
+	 */
+	public static DeployManager getInstance() {
+		if (instance == null)
+			instance = new DeployManager();
+		return instance;
+	}
+	
+	private void convertToManageableThyFile(IRodinFile file, String destName,
+			boolean force) throws 
+			IOException, TransformerException, SAXException, ParserConfigurationException {
+		assert file.getRoot() instanceof IDeployedTheoryRoot;
+		transformFile(file, destName, force);
+	}
+
 	private void transformFile(IRodinFile dTheoryfile, String destName,
 			boolean force) throws FileNotFoundException, IOException,
 			TransformerException, SAXException, ParserConfigurationException {
@@ -403,16 +364,54 @@ public class DeployManager {
 		sWriter.write(seq.toString());
 		sWriter.flush();
 		sWriter.close();
-		//generateDtd(file);
+		generateDtd(file);
+	}
+	
+	// Converts the contents of a file into a CharSequence
+	private CharSequence fromFile(IRodinFile file) throws IOException {
+
+		FileInputStream input = new FileInputStream(file
+				.getCorrespondingResource().getLocation().toFile());
+		FileChannel channel = input.getChannel();
+
+		// Create a read-only CharBuffer on the file
+		ByteBuffer bbuf = channel.map(FileChannel.MapMode.READ_ONLY, 0,
+				(int) channel.size());
+		CharBuffer cbuf = Charset.forName(Utilities.FILE_ENCODING).newDecoder().decode(bbuf);
+		return cbuf;
 	}
 
-	/**
-	 * <p>Returns the default instance that has the ability to deploy theories to the deployment directory.</p>
-	 * @return the default instance
-	 */
-	public static DeployManager getInstance() {
-		if (instance == null)
-			instance = new DeployManager();
-		return instance;
+	private void generateDtd(File file) 
+	throws TransformerException, SAXException, IOException, ParserConfigurationException{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	    factory.setValidating(true); 
+	    factory.setExpandEntityReferences(false);
+	    DocumentBuilder builder = factory.newDocumentBuilder();
+	    builder.setErrorHandler(new ErrorHandler(){
+
+			
+			public void error(SAXParseException exception) throws SAXException {
+				// ignore
+			}
+
+			
+			public void fatalError(SAXParseException exception)
+					throws SAXException {
+			   throw exception;
+			}
+
+			
+			public void warning(SAXParseException exception)
+					throws SAXException {
+				// ignore
+			}
+	    	
+	    });
+	    Document doc = builder.parse(file);
+	    Transformer xformer = TransformerFactory.newInstance().newTransformer();
+	    xformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "dTheory.dtd");
+	    Source source = new DOMSource(doc);
+	    Result result = new StreamResult(file);
+	    xformer.transform(source, result);
 	}
 }
