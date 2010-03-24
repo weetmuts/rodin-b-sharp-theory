@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  fr.systerel.explorer,
  ac.soton.eventb.ruleBase.theory.core;bundle-version="0.2.0",
  ac.soton.eventb.ruleBase.theory.deploy;bundle-version="0.2.0",
- ac.soton.eventb.ruleBase.theory.ui.prefs;bundle-version="0.2.0"
+ ac.soton.eventb.prover;bundle-version="0.2.0"
 Import-Package: org.eclipse.ui.navigator
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ac.soton.eventb.ruleBase.theory.ui.plugin.TheoryUIPlugIn
