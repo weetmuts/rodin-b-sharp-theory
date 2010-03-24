@@ -5,8 +5,8 @@ import java.util.List;
 import org.eventb.core.ast.Formula;
 
 import ac.soton.eventb.prover.engine.IBinding;
+import ac.soton.eventb.prover.internal.base.IDRewriteRule;
 import ac.soton.eventb.prover.reasoner.AutoRewriteReasoner;
-import ac.soton.eventb.ruleBase.theory.deploy.IDRewriteRule;
 
 /**
  * Automatic unconditional rules applyer singleton implementation.

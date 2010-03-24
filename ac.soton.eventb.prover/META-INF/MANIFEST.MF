@@ -6,10 +6,12 @@ Bundle-Version: 0.2.0
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
-Require-Bundle: ac.soton.eventb.ruleBase.theory.deploy;bundle-version="0.2.0",
- org.eventb.core;bundle-version="1.2.0",
+Require-Bundle: org.eventb.core;bundle-version="1.2.0",
  org.eventb.ui
-Import-Package: org.eclipse.core.runtime,
+Import-Package: org.eclipse.core.filesystem,
+ org.eclipse.core.runtime,
  org.eclipse.swt.graphics,
  org.osgi.framework
-Export-Package: ac.soton.eventb.prover.tactic
+Export-Package: ac.soton.eventb.prover.prefs
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: ac.soton.eventb.prover.plugin.ProverPlugIn

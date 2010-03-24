@@ -15,8 +15,8 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 import ac.soton.eventb.prover.engine.IBinding;
-import ac.soton.eventb.ruleBase.theory.deploy.IDRewriteRule;
-import ac.soton.eventb.ruleBase.theory.deploy.IDRuleRightHandSide;
+import ac.soton.eventb.prover.internal.base.IDRewriteRule;
+import ac.soton.eventb.prover.internal.base.IDRuleRightHandSide;
 
 /**
  * A manual rule applyer singleton implemntation.

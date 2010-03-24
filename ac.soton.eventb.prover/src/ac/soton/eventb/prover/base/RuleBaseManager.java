@@ -2,8 +2,8 @@ package ac.soton.eventb.prover.base;
 
 import java.util.List;
 
+import ac.soton.eventb.prover.internal.base.IDRewriteRule;
 import ac.soton.eventb.prover.internal.base.RulesCache;
-import ac.soton.eventb.ruleBase.theory.deploy.IDRewriteRule;
 
 /**
  * <p>An implementation of a rule base manager.</p>

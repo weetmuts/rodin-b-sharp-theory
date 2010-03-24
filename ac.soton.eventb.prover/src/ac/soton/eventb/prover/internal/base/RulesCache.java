@@ -6,11 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import ac.soton.eventb.ruleBase.theory.deploy.DeployedTheoriesManager;
-import ac.soton.eventb.ruleBase.theory.deploy.IDRewriteRule;
-import ac.soton.eventb.ruleBase.theory.deploy.IDTheoryFile;
-import ac.soton.eventb.ruleBase.theory.deploy.IDeployedTheoriesManager;
-
 /**
  * <p>
  * A simple cache implementation. This class is internal API.

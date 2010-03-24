@@ -18,7 +18,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 
-import ac.soton.eventb.ruleBase.theory.deploy.IDRewriteRule;
+import ac.soton.eventb.prover.internal.base.IDRewriteRule;
 
 public class GeneralUtilities {
 	

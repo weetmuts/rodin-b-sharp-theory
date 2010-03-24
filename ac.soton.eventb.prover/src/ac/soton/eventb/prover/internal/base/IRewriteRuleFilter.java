@@ -1,6 +1,5 @@
 package ac.soton.eventb.prover.internal.base;
 
-import ac.soton.eventb.ruleBase.theory.deploy.IDRewriteRule;
 
 /**
  * Common protocol for a filter of rewrite rules.

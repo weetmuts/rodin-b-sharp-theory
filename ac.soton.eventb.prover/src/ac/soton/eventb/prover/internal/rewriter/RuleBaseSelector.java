@@ -8,8 +8,8 @@ import ac.soton.eventb.prover.base.IRuleBaseManager;
 import ac.soton.eventb.prover.base.RuleBaseManager;
 import ac.soton.eventb.prover.engine.IBinding;
 import ac.soton.eventb.prover.engine.MatchFinder;
+import ac.soton.eventb.prover.internal.base.IDRewriteRule;
 import ac.soton.eventb.prover.internal.tactic.RewriteRuleApplicabilityInfo;
-import ac.soton.eventb.ruleBase.theory.deploy.IDRewriteRule;
 
 /**
  * The rule base selector provides the following capabilities:

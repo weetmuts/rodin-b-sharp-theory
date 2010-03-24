@@ -60,6 +60,21 @@
             tooltip="apply rule-base rule to hypotheses">
       </tactic>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eventb.ui.preferences.eventB"
+            class="ac.soton.eventb.prover.internal.prefs.TheoryPreferencePage"
+            id="ac.soton.eventb.ruleBase.theory.ui.theoryPrefs"
+            name="%preferencePage.theoryPrefsPage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="ac.soton.eventb.prover.internal.prefs.TheoryPreferencesInitialiser">
+      </initializer>
+   </extension>
 
 </plugin>
 
