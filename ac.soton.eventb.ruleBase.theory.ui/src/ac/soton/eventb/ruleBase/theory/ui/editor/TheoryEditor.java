@@ -45,12 +45,17 @@ public class TheoryEditor extends EventBEditor<ITheoryRoot> {
 	// @Override
 	@Override
 	protected void addPages() {
-		EventBEditorPage page = new TheoryEditPage();
-		page.initialize(this);
+		EventBEditorPage editPage = new TheoryEditPage();
+		//EventBEditorPage htmlPage = new TheoryHTMLPage();
+		editPage.initialize(this);
+		//htmlPage.initialize(this);
 		try {
-			addPage(page);
+			addPage(editPage);
+			//addPage(htmlPage);
 		} catch (PartInitException e) {
-			TheoryUIUtils.log(e, "Failed to initialise page " + page.getId());
+			TheoryUIUtils.log(e, 
+					"Failed to initialise page " + editPage.getId() +
+					" or page "+ editPage.getId());
 		}
 	}
 

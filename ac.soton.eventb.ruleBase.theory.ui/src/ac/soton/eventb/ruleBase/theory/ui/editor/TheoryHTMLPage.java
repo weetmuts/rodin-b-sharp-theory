@@ -43,7 +43,7 @@ import ac.soton.eventb.ruleBase.theory.ui.plugin.TheoryUIPlugIn;
 import ac.soton.eventb.ruleBase.theory.ui.util.Messages;
 
 @SuppressWarnings("restriction")
-public class HTMLPage extends EventBEditorPage implements
+public class TheoryHTMLPage extends EventBEditorPage implements
 		IElementChangedListener {
 
 	// Title, tab title and ID of the page.
@@ -72,27 +72,17 @@ public class HTMLPage extends EventBEditorPage implements
 	/**
 	 * Constructor: This default constructor will be used to create the page
 	 */
-	public HTMLPage() {
+	public TheoryHTMLPage() {
 		super(PAGE_ID, PAGE_TAB_TITLE, PAGE_TITLE);
 		astConverter = new Ast2HtmlConverter();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
-	 */
 	@Override
 	public void initialize(FormEditor editor) {
 		super.initialize(editor);
 		RodinCore.addElementChangedListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
@@ -148,11 +138,6 @@ public class HTMLPage extends EventBEditorPage implements
 		form.reflow(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (browser != null) {

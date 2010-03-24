@@ -65,6 +65,8 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_VARIABLE_IDENTIFIER = "</td>";
 		BEGIN_SET_IDENTIFIER = "<td class=\"setIdentifier\" align=\"left\" valign=\"center\">";
 		END_SET_IDENTIFIER = "</td>";
+		BEGIN_VARIABLE_TYPE = "<td class=\"setIdentifier\" align=\"left\" valign=\"center\">";
+		END_VARIABLE_TYPE = "</td>";
 		SPACE = "&nbsp;&nbsp;&nbsp;";
 	}
 	
