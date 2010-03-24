@@ -1,6 +1,7 @@
 package ac.soton.eventb.ruleBase.theory.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -13,12 +14,14 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 import ac.soton.eventb.ruleBase.theory.core.ISCRewriteRule;
 import ac.soton.eventb.ruleBase.theory.core.ISCRewriteRuleRightHandSide;
@@ -75,6 +78,7 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 				.getState(ITheoryHypothesesManager.STATE_TYPE);
 	}
 
+	@SuppressWarnings("restriction")
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IPORoot target = repository.getTarget();
@@ -88,10 +92,11 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 			Formula<?> lhs = rule.getLHSFormula(factory, typeEnvironment);
 			Predicate lhsWD = lhs.getWDPredicate(factory);
 			ArrayList<Predicate> allConditions = new ArrayList<Predicate>();
+			ArrayList<Predicate> wdAllConditions = new ArrayList<Predicate>();
 			String ruleName = ((ILabeledElement)rule).getLabel();
 			IPOGSource[] sources = new IPOGSource[] {
 					makeSource(IPOSource.DEFAULT_ROLE, rule.getSource())};
-			IPOGHint[] hints = getTypingHints(scTheoryRoot, lhs.getFreeIdentifiers());
+			List<IPOGHint> hints = getTypingHints(scTheoryRoot, lhs.getFreeIdentifiers());
 			ISCRewriteRuleRightHandSide[] scRHSs = rule.getSCRuleRHSs();
 			for(ISCRewriteRuleRightHandSide rhs : scRHSs){
 				String rhsLabel = rhs.getLabel();
@@ -102,8 +107,8 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 						.getPredicate(factory, typeEnvironment);
 				// since we will make a disjunction, disregard bottom?
 				allConditions.add(condition);
-				
 				Predicate conditionWD = condition.getWDPredicate(factory);
+				wdAllConditions.add(conditionWD);
 				Predicate soundnessPredicate = null;
 				if (lhs instanceof Expression) {
 					soundnessPredicate = factory.makeRelationalPredicate(
@@ -117,13 +122,20 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 				//-------------------------------------------------------
 				// --------------------------WD-Preservation of Condition
 				//-------------------------------------------------------
+				// lhsWD => conditionWD
 				if (!goalIsTrivial(conditionWD)) {
-					Predicate toProve = makeCondWDPredicate(conditionWD, lhsWD);
-					createPO(target, ruleName + RULE_C_WD_SUFFIX +rhsLabel,
-							RULE_C_WD_DESC, theoryHypothesesManager
-							.getFullHypothesis(), null, makePredicate(
-							toProve, rule.getSource()), sources, hints,
+					String poName = ruleName + RULE_C_WD_SUFFIX +rhsLabel;
+					List<IPOGPredicate> hyps = new ArrayList<IPOGPredicate>();
+					addIfNotTrueAndNotAlreadyIn(hyps, lhsWD, rule);
+					IPOGHint hint = getLocalHypothesisSelectionHint(target, poName);
+					hints.add(hint);
+					createPO(target, poName, 
+							natureFactory.getNature(RULE_C_WD_DESC),
+							theoryHypothesesManager.getFullHypothesis(), 
+							hyps, makePredicate(conditionWD, rule.getSource()), 
+							sources, hints.toArray(new IPOGHint[hints.size()]), 
 							theoryHypothesesManager.theoryIsAccurate(), monitor);
+					hints.remove(hint);
 				} else {
 					if (DEBUG_TRIVIAL)
 						debugTraceTrivial("WD-C");
@@ -131,14 +143,22 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 				//-------------------------------------------------------
 				//----------------------------WD-Preservation of RHS
 				//-------------------------------------------------------
+				// lhsWD & conditionWD & condition => rhsWD
 				if (!goalIsTrivial(rhsWD)) {
-					Predicate toProve = makeRhsWDorSoundnessPredicate(rhsWD, lhsWD, condition);
-					createPO(target, ruleName + RULE_RHS_WD_SUFFIX +rhsLabel,
-							RULE_RHS_WD_DESC,
-							theoryHypothesesManager.getFullHypothesis(),
-							null, makePredicate(toProve, rule.getSource()),
-							sources, hints, theoryHypothesesManager
-									.theoryIsAccurate(), monitor);
+					String poName = ruleName + RULE_RHS_WD_SUFFIX +rhsLabel;
+					List<IPOGPredicate> hyps = new ArrayList<IPOGPredicate>();
+					addIfNotTrueAndNotAlreadyIn(hyps, lhsWD, rule);
+					addIfNotTrueAndNotAlreadyIn(hyps, conditionWD, rule);
+					addIfNotTrueAndNotAlreadyIn(hyps, condition, rule);
+					IPOGHint hint = getLocalHypothesisSelectionHint(target, poName);
+					hints.add(hint);
+					createPO(target, poName, 
+							natureFactory.getNature(RULE_RHS_WD_DESC),
+							theoryHypothesesManager.getFullHypothesis(), 
+							hyps, makePredicate(rhsWD, rule.getSource()), 
+							sources, hints.toArray(new IPOGHint[hints.size()]), 
+							theoryHypothesesManager.theoryIsAccurate(), monitor);
+					hints.remove(hint);
 				} else {
 					if (DEBUG_TRIVIAL)
 						debugTraceTrivial("WD-RHS");
@@ -146,37 +166,59 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 				//-------------------------------------------------------
 				//------------------------------Soundness of RHS
 				//-------------------------------------------------------
+				// lhsWD & conditionWD & condition & rhsWD => lhs = rhs
 				if(!goalIsTrivial(soundnessPredicate)){
-					Predicate toProve = makeRhsWDorSoundnessPredicate(soundnessPredicate, lhsWD, condition);
-					createPO(target, ruleName + RULE_S_SUFFIX+rhsLabel, RULE_SOUNDNESS_DESC,
+					String poName = ruleName + RULE_S_SUFFIX +rhsLabel;
+					List<IPOGPredicate> hyps = new ArrayList<IPOGPredicate>();
+					addIfNotTrueAndNotAlreadyIn(hyps, lhsWD, rule);
+					addIfNotTrueAndNotAlreadyIn(hyps, rhsWD, rule);
+					addIfNotTrueAndNotAlreadyIn(hyps, conditionWD, rule);
+					addIfNotTrueAndNotAlreadyIn(hyps, condition, rule);
+					IPOGHint hint = getLocalHypothesisSelectionHint(target, poName);
+					hints.add(hint);
+					createPO(target, poName, 
+							natureFactory.getNature(RULE_SOUNDNESS_DESC),
 							theoryHypothesesManager.getFullHypothesis(), 
-							null, makePredicate(toProve, rule.getSource()), 
-							sources, hints, theoryHypothesesManager.theoryIsAccurate(), monitor);
+							hyps, makePredicate(soundnessPredicate, rule.getSource()), 
+							sources, hints.toArray(new IPOGHint[hints.size()]), 
+							theoryHypothesesManager.theoryIsAccurate(), monitor);
+					hints.remove(hint);
 				}
 				else {
 					if (DEBUG_TRIVIAL)
 						debugTraceTrivial("S");
 				}
+				
 			}
 			//-------------------------------------------------------
 			//----------------------------------Completeness of Rule
 			//-------------------------------------------------------
+			// A conditionWD => V condition
 			if(rule.isComplete() && 
 					allConditions.size() > 0){
-				Predicate toProve = makeCompletenessPredicate(allConditions, lhsWD);
-				createPO(target, ruleName + RULE_C_SUFFIX,
-						RULE_COMPLETENESS_DESC,
-						theoryHypothesesManager.getFullHypothesis(),
-						null, makePredicate(toProve, rule.getSource()),
-						sources, hints, theoryHypothesesManager
-								.theoryIsAccurate(), monitor);
+				String poName = ruleName + RULE_C_SUFFIX;
+				List<IPOGPredicate> hyps = new ArrayList<IPOGPredicate>();
+				for(Predicate wd: wdAllConditions){
+					addIfNotTrueAndNotAlreadyIn(hyps, wd, rule);
+				}
+				IPOGHint hint = getLocalHypothesisSelectionHint(target, poName);
+				hints.add(hint);
+				Predicate goal = 
+					allConditions.size()==1? allConditions.get(0):factory.makeAssociativePredicate(Formula.LOR, allConditions, null);
+				createPO(target, poName, 
+						natureFactory.getNature(RULE_COMPLETENESS_DESC),
+						theoryHypothesesManager.getFullHypothesis(), 
+						hyps, makePredicate(goal, rule.getSource()), 
+						sources, hints.toArray(new IPOGHint[hints.size()]), 
+						theoryHypothesesManager.theoryIsAccurate(), monitor);
+				hints.remove(hint);
 			}
 		}
 		
 	}
 	
-	// may pose a performance issue
-	private IPOGHint[] getTypingHints(ISCTheoryRoot scRoot, FreeIdentifier[] identifierContext) throws CoreException{
+	private List<IPOGHint> getTypingHints(ISCTheoryRoot scRoot, 
+			FreeIdentifier[] identifierContext)throws CoreException {
 		ArrayList<IPOGHint> hints = new ArrayList<IPOGHint>();
 		ISCVariable[] vars = scRoot .getSCVariables();
 		for(FreeIdentifier fi : identifierContext){
@@ -189,6 +231,22 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 				}
 			}
 		}
-		return hints.toArray(new IPOGHint[hints.size()]);
+		return hints;
+	}
+	
+	private void addIfNotTrueAndNotAlreadyIn(List<IPOGPredicate> hyps, Predicate pred, IRodinElement source){
+		if(!pred.equals(btrue)){
+			IPOGPredicate pogPred = new POGPredicate(pred, source);
+			if(!hyps.contains(pogPred)){
+				hyps.add(pogPred);
+			}
+		}
+	}
+	
+	protected IPOGHint getLocalHypothesisSelectionHint(IPORoot target, String sequentName) 
+	throws RodinDBException {
+		return makeIntervalSelectionHint(
+				theoryHypothesesManager.getRootHypothesis(),
+				getSequentHypothesis(target, sequentName));
 	}
 }

@@ -23,15 +23,20 @@ import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.internal.core.pog.POGNatureFactory;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
+@SuppressWarnings("restriction")
 public abstract class UtilityModule extends POGProcessorModule {
 	
 	public static boolean DEBUG_TRIVIAL = false;
+	
+	protected POGNatureFactory natureFactory = POGNatureFactory.getInstance();
 
 	
 	protected static final IPOGSource[] NO_SOURCES = new IPOGSource[0];
@@ -91,69 +96,54 @@ public abstract class UtilityModule extends POGProcessorModule {
 	protected boolean goalIsTrivial(Predicate goal) {
 		return goal.equals(btrue) || goalIsNotRestricting(goal);
 	}
-	
-	protected Predicate makeCompletenessPredicate(
-			ArrayList<Predicate> allConditions, Predicate lhsWD) {
-		assert allConditions . size() > 0;
-		Predicate toProve = null;
-		Predicate right = null;
-		if(allConditions.size() == 1){
-			allConditions.trimToSize();
-			right = (Predicate) allConditions.get(0);
-		}
-		else 
-			right = factory.makeAssociativePredicate(Formula.LOR, 
-					allConditions, 
-					null);
-		if(!lhsWD.equals(btrue)){
-			toProve = factory.makeBinaryPredicate(Formula.LIMP, 
-					lhsWD, 
-					right, 
-					null);
-		}
-		else {
-			toProve = right;
-		}
-		return toProve;
-	}
-	protected Predicate makeCondWDPredicate(Predicate condWD, Predicate lhsWD){
-		Predicate toProve = null;
-		if(!lhsWD.equals(btrue)){
-			toProve = factory.makeBinaryPredicate(Formula.LIMP, lhsWD, condWD, null);
-		}
-		else {
-			toProve = condWD;
-		}
-		return toProve;
-	}
-	
-	protected Predicate makeRhsWDorSoundnessPredicate(Predicate pred, Predicate lhsWD, Predicate condition){
-		Predicate toProve = null;
-		if(!lhsWD.equals(btrue)){
-			Predicate conj;
-			if(!condition.equals(btrue)){
-				conj = factory.makeAssociativePredicate(Formula.LAND, 
-						new Predicate[]{lhsWD, condition}, null);
-			}
-			else {
-				conj = lhsWD;
-			}
-			toProve = factory.makeBinaryPredicate(Formula.LIMP, conj, pred, null);
-		}
-		else {
-			if(!condition.equals(btrue)){
-				toProve = factory.makeBinaryPredicate(Formula.LIMP, condition, pred, null);
-			}
-			else {
-				toProve = pred;
-			}
-		}
-		return toProve;
-	}
-	
-	
+
 	protected void debugTraceTrivial(String sequentName) {
 		System.out.println("POG: " + getClass().getSimpleName() + ": Filtered trivial PO: " + sequentName);
 	}
 
 }
+
+
+/**
+ * All predicates stored in a PO file have an associated source reference.
+ * @see IPOPredicate
+ * 
+ * @author Stefan Hallerstede
+ *
+ */
+class POGPredicate implements IPOGPredicate {
+	
+	private final IRodinElement source;
+	private final Predicate predicate;
+	
+	/**
+	 * Creates a predicate with an associated source reference to be stored in a PO file.
+	 * @param predicate a predicate
+	 * @param source an associated source
+	 */
+	POGPredicate(Predicate predicate, IRodinElement source) {
+		this.source = source;
+		this.predicate = predicate;
+	}
+	
+	/**
+	 * Returns the source reference for the predicate.
+	 * 
+	 * @return the source reference for the predicate
+	 * @throws RodinDBException if there was a problem accessing the source reference
+	 */
+	public IRodinElement getSource() throws RodinDBException {
+		return source;
+	}
+	
+	/**
+	 * Returns the predicate.
+	 * 
+	 * @return the predicate
+	 */
+	public Predicate getPredicate() {
+		return predicate;
+	}
+
+}
+
