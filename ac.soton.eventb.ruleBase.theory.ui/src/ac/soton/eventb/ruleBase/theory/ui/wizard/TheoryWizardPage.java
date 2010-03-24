@@ -23,8 +23,8 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
+import ac.soton.eventb.prover.prefs.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.ui.plugin.TheoryUIPlugIn;
-import ac.soton.eventb.ruleBase.theory.ui.prefs.facade.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 
 /**

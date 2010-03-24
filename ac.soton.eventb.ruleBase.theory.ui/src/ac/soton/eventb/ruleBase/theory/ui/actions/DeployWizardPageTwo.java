@@ -15,10 +15,10 @@ import org.eventb.core.seqprover.ProverLib;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
+import ac.soton.eventb.prover.prefs.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
 import ac.soton.eventb.ruleBase.theory.ui.editor.actions.DeployWizardPage;
 import ac.soton.eventb.ruleBase.theory.ui.perspective.ResourceManager;
-import ac.soton.eventb.ruleBase.theory.ui.prefs.facade.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 
 /**

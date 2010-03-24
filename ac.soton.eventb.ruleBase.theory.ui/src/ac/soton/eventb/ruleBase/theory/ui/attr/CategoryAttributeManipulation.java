@@ -7,8 +7,8 @@ import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+import ac.soton.eventb.prover.prefs.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.core.ICategoryElement;
-import ac.soton.eventb.ruleBase.theory.ui.prefs.facade.PrefsRepresentative;
 
 public class CategoryAttributeManipulation implements IAttributeManipulation {
 

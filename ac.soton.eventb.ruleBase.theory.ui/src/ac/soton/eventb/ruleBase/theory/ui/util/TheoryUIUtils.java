@@ -31,12 +31,12 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+import ac.soton.eventb.prover.prefs.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
 import ac.soton.eventb.ruleBase.theory.core.ITheoryRoot;
 import ac.soton.eventb.ruleBase.theory.deploy.DeployManager;
 import ac.soton.eventb.ruleBase.theory.ui.editor.TheoryEditor;
 import ac.soton.eventb.ruleBase.theory.ui.plugin.TheoryUIPlugIn;
-import ac.soton.eventb.ruleBase.theory.ui.prefs.facade.PrefsRepresentative;
 
 /**
  * @author maamria
@@ -76,17 +76,17 @@ public class TheoryUIUtils {
 						+ TheoryUIPlugIn.DEPLOYED_THEORY_FILE_EXT;
 				try {
 					DeployManager.getInstance().deployTheory(targetRoot,
-							destFileName, true, monitor);
+							destFileName, true, deployPath, monitor);
 
 				} catch (final RodinDBException e) {
 					log(e, e.getMessage());
 					// in any case delete the temp file if it exists
-					cleanUp(projectName, deployPath,monitor);
+					cleanUp(projectName, monitor);
 					monitor.done();
 					throw new InvocationTargetException(e);
 				} 
 				// in any case delete the temp file if it exists
-				cleanUp(projectName, deployPath,monitor);
+				cleanUp(projectName, monitor);
 				monitor.done();
 			}
 
@@ -114,7 +114,7 @@ public class TheoryUIUtils {
 					fileToDelete.delete();
 				}
 				// progress monitor of dialog no longer available
-				cleanUp(projectName, deployPath,null);
+				cleanUp(projectName, null);
 			} else {
 				MessageDialog.openInformation(shell,
 						"Deploy Theory",Messages.bind(Messages.theoryUIUtils_deploySuccess,theoryName));
@@ -297,7 +297,7 @@ public class TheoryUIUtils {
 	 * @param deployPath
 	 * @param monitor
 	 */
-	private static void cleanUp(final String projectName, final String deployPath,IProgressMonitor monitor){
+	private static void cleanUp(final String projectName, IProgressMonitor monitor){
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 				
