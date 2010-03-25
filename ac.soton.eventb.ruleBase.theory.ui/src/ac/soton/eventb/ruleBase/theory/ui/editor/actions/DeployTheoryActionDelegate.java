@@ -2,12 +2,12 @@ package ac.soton.eventb.ruleBase.theory.ui.editor.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 
 import ac.soton.eventb.ruleBase.theory.core.ITheoryRoot;
 
@@ -24,19 +24,18 @@ public class DeployTheoryActionDelegate implements IEditorActionDelegate {
 	
 	public void run(IAction action) {
 		IWorkbenchPartSite site = editor.getSite();
-		IWorkbenchWindow window = site.getWorkbenchWindow();
-		String bareName = editor.getRodinInput().getRodinFile().getBareName();
-		String pName = editor.getRodinInput().getRodinFile().getRodinProject().getElementName();
-		DeployTheoryWizard wizard = new DeployTheoryWizard(bareName, pName, editor.getSite().getShell());
-		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-		dialog.open();
+		IRodinFile file = editor.getRodinInput().getRodinFile();
+		IRodinProject project = editor.getRodinInput().getRodinFile().getRodinProject();
+		TheoryDeployer deployer = new TheoryDeployer(file.getBareName(), 
+				project, site.getShell());
+		deployer.deploy();
 	}
 
 	
 	public void selectionChanged(IAction action, ISelection selection) {}
 
-	@SuppressWarnings("unchecked")
 	
+	@SuppressWarnings("unchecked")
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor) {
 			editor = (IEventBEditor<ITheoryRoot>) targetEditor;
