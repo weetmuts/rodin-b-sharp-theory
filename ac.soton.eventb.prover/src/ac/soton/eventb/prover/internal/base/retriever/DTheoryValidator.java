@@ -66,7 +66,7 @@ class DTheoryValidator {
 		try {
 			DocumentBuilderFactory theoryFactory = DocumentBuilderFactory
 					.newInstance();
-			theoryFactory.setValidating(false);
+			theoryFactory.setValidating(true);
 			DocumentBuilder builder = theoryFactory.newDocumentBuilder();
 			builder.setErrorHandler(new ErrorHandler() {
 				
