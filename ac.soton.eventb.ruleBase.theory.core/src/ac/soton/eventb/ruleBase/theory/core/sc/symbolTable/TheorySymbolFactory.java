@@ -13,6 +13,13 @@ package ac.soton.eventb.ruleBase.theory.core.sc.symbolTable;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
+import org.eventb.core.sc.state.ISymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.ISymbolProblem;
+import org.eventb.internal.core.sc.symbolTable.ITypedSymbolProblem;
+import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -22,13 +29,12 @@ import ac.soton.eventb.ruleBase.theory.core.ISCRewriteRuleRightHandSide;
 import ac.soton.eventb.ruleBase.theory.core.ISCSet;
 import ac.soton.eventb.ruleBase.theory.core.ISCVariable;
 import ac.soton.eventb.ruleBase.theory.core.sc.TheoryGraphProblem;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.ILabelSymbolInfo;
 
 /**
  * @author maamria
  * 
  */
+@SuppressWarnings("restriction")
 public final class TheorySymbolFactory {
 
 	private static class LocalTheorySetSymbolProblem extends

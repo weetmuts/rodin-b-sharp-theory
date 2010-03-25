@@ -16,6 +16,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -25,8 +27,6 @@ import org.rodinp.core.RodinDBException;
 import ac.soton.eventb.ruleBase.theory.core.ITypingElement;
 import ac.soton.eventb.ruleBase.theory.core.TheoryAttributes;
 import ac.soton.eventb.ruleBase.theory.core.sc.states.IGivenSets;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolTable;
 import ac.soton.eventb.ruleBase.theory.core.utils.TheoryUtils;
 
 /**

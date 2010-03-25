@@ -14,8 +14,8 @@ import ac.soton.eventb.ruleBase.theory.core.IRewriteRule;
 import ac.soton.eventb.ruleBase.theory.core.TheoryAttributes;
 import ac.soton.eventb.ruleBase.theory.core.plugin.TheoryPlugin;
 import ac.soton.eventb.ruleBase.theory.core.sc.TheoryGraphProblem;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.ILabelSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.ILabelSymbolTable;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
 import ac.soton.eventb.ruleBase.theory.core.sc.states.ITheoryLabelSymbolTable;
 
 /**

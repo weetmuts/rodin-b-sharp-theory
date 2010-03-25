@@ -10,8 +10,8 @@ import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 
 import ac.soton.eventb.ruleBase.theory.core.plugin.TheoryPlugin;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.ILabelSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.ILabelSymbolTable;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
 import ac.soton.eventb.ruleBase.theory.core.IAutomaticElement;
 import ac.soton.eventb.ruleBase.theory.core.TheoryAttributes;
 import ac.soton.eventb.ruleBase.theory.core.sc.TheoryGraphProblem;

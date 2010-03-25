@@ -4,10 +4,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-
-import ac.soton.eventb.ruleBase.theory.core.sc.symbolTable.IdentifierSymbolTable;
 
 
 /**
@@ -16,6 +15,7 @@ import ac.soton.eventb.ruleBase.theory.core.sc.symbolTable.IdentifierSymbolTable
  * @author maamria
  * 
  */
+@SuppressWarnings("restriction")
 public abstract class BaseModule extends SCProcessorModule {
 
 	private final static int IDENT_SYMTAB_SIZE = 2047;

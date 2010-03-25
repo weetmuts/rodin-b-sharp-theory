@@ -27,14 +27,13 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolTable;
 
 /**
  * @author Stefan Hallerstede

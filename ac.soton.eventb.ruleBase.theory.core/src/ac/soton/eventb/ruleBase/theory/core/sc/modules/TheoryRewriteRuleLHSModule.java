@@ -20,8 +20,8 @@ import ac.soton.eventb.ruleBase.theory.core.IRewriteRule;
 import ac.soton.eventb.ruleBase.theory.core.plugin.TheoryPlugin;
 import ac.soton.eventb.ruleBase.theory.core.sc.TheoryGraphProblem;
 import ac.soton.eventb.ruleBase.theory.core.sc.states.IFilteredLHSs;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import ac.soton.eventb.ruleBase.theory.core.utils.TheoryUtils;
 
 /**

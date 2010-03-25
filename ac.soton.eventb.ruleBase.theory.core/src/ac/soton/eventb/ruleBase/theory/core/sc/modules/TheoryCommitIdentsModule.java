@@ -5,14 +5,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 import ac.soton.eventb.ruleBase.theory.core.plugin.TheoryPlugin;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolTable;
 
 /**
  * A module for commiting all free identifiers (sets and variables).

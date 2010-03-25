@@ -13,12 +13,11 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-
-import ac.soton.eventb.ruleBase.theory.core.sc.states.ILabelSymbolInfo;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.ILabelSymbolTable;
 
 /**
  * @author Stefan Hallerstede

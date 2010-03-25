@@ -188,11 +188,6 @@
             name="%rewriteRuleLabelSymbolTable">
       </stateType>
       <stateType
-            class="ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolTable"
-            id="identifierSymbolTable"
-            name="%identifierSymbolTable">
-      </stateType>
-      <stateType
             class="ac.soton.eventb.ruleBase.theory.core.sc.states.IParsedLHSFormula"
             id="parsedLHSFormula"
             name="%parsedLHSFormula">

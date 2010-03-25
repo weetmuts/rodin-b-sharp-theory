@@ -17,7 +17,7 @@ import ac.soton.eventb.ruleBase.theory.core.IVariable;
 import ac.soton.eventb.ruleBase.theory.core.plugin.TheoryPlugin;
 import ac.soton.eventb.ruleBase.theory.core.sc.Messages;
 import ac.soton.eventb.ruleBase.theory.core.sc.modules.base.IdentifierWithTypingModule;
-import ac.soton.eventb.ruleBase.theory.core.sc.states.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import ac.soton.eventb.ruleBase.theory.core.sc.symbolTable.TheorySymbolFactory;
 
 /**
