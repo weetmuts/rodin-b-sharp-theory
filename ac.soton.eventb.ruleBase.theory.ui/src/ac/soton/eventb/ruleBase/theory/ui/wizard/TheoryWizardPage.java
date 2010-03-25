@@ -1,5 +1,9 @@
 package ac.soton.eventb.ruleBase.theory.ui.wizard;
 
+import static org.rodinp.core.RodinCore.asRodinElement;
+
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -231,22 +235,8 @@ public class TheoryWizardPage extends WizardPage {
 
 	private void initialize() {
 		IRodinProject project = null;
-		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
-				return;
-			Object element = ssel.getFirstElement();
-			IRodinElement curr;
-			if (element instanceof IRodinElement) {
-				curr = (IRodinElement) element;
-			} else
-				curr = null;
-			while (!(curr instanceof IRodinProject || curr == null)) {
-				curr = curr.getParent();
-			}
-			project = (IRodinProject) curr;
-		}
+		project = getProjectFromSelection();
+		
 		if (project != null) {
 			projectText.setText(project.getElementName());
 			theoryText.setFocus();
@@ -261,6 +251,20 @@ public class TheoryWizardPage extends WizardPage {
 		list.setItems(PrefsRepresentative.getCategories());
 	}
 
+	private IRodinProject getProjectFromSelection() {
+		if (!(selection instanceof IStructuredSelection))
+			return null;
+		final Iterator<?> iter = ((IStructuredSelection) selection).iterator();
+		while (iter.hasNext()) {
+			final Object obj = iter.next();
+			final IRodinElement element = asRodinElement(obj);
+			if (element != null) {
+				return element.getRodinProject();
+			}
+		}
+		return null;
+	}
+	
 	private void updateStatus(String message) {
 		setErrorMessage(message);
 		setPageComplete(message == null);
