@@ -5,11 +5,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 
-import ac.soton.eventb.ruleBase.theory.ui.editor.actions.DeployTheoryWizard;
 import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 
 /**
- * @see DeployTheoryWizard
  * @author maamria
  *
  */

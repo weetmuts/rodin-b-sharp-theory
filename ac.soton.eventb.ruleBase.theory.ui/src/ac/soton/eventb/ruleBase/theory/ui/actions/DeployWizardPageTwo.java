@@ -17,12 +17,10 @@ import org.rodinp.core.RodinDBException;
 
 import ac.soton.eventb.prover.prefs.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
-import ac.soton.eventb.ruleBase.theory.ui.editor.actions.DeployWizardPage;
 import ac.soton.eventb.ruleBase.theory.ui.perspective.ResourceManager;
 import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 
 /**
- * @see DeployWizardPage
  * @author maamria
  *
  */
@@ -120,7 +118,7 @@ public class DeployWizardPageTwo extends WizardPage {
 					.getTheoryName();
 			txtTheory.setText(projectName+"\\"+theoryName);
 			txtTheory.setEditable(false);
-			IRodinFile file = TheoryUIUtils.getTheoryInProject(theoryName, ISCTheoryRoot.ELEMENT_TYPE, projectName);
+			IRodinFile file = TheoryUIUtils.getSCTheoryInProject(theoryName, projectName);
 			populatePOs(file);
 			dTitle = "Discharged POs (" + dPOs.size() + "/" + totalNumPOs + ")";
 			rTitle = "Reviewed POs (" + rPOs.size() + "/" + totalNumPOs + ")";

@@ -13,11 +13,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
-import ac.soton.eventb.ruleBase.theory.ui.editor.actions.DeployWizardPage;
 import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 
 /**
- * @see DeployWizardPage
  * @author maamria
  *
  */
