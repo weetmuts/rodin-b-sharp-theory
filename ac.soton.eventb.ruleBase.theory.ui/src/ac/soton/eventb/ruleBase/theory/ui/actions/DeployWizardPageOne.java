@@ -22,7 +22,6 @@ import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 public class DeployWizardPageOne extends WizardPage {
 	
 	private Button btnKeepThe;
-	private Label lblnewName;
 	private Text newNameText;
 	private Combo projCombo;
 	private String projectName;
@@ -70,7 +69,6 @@ public class DeployWizardPageOne extends WizardPage {
 					theoryName = value;
 					btnKeepThe.setSelection(false);
 					btnKeepThe.setEnabled(true);
-					lblnewName.setEnabled(false);
 					newNameText.setText("");
 					newNameText.setEnabled(false);
 					useDiffName = false;
@@ -118,12 +116,10 @@ public class DeployWizardPageOne extends WizardPage {
 					useDiffName = btnKeepThe.getSelection();
 					if(useDiffName){
 						newNameText.setEnabled(true);
-						lblnewName.setEnabled(true);
 						dialogChanged();
 					}
 					else {
 						newNameText.setEnabled(false);
-						lblnewName.setEnabled(false);
 						dialogChanged();
 					}
 				}
@@ -133,13 +129,8 @@ public class DeployWizardPageOne extends WizardPage {
 			btnKeepThe.setText("Use a different name for the deployed theory.");
 		}
 		{
-			lblnewName = new Label(container, SWT.NONE);
-			lblnewName.setBounds(49, 140, 45, 13);
-			lblnewName.setText("&Name: ");
-		}
-		{
 			newNameText = new Text(container, SWT.BORDER);
-			newNameText.setBounds(100, 137, 307, 19);
+			newNameText.setBounds(100, 137, 307, 21);
 			newNameText.addModifyListener(new ModifyListener(){
 				
 				public void modifyText(ModifyEvent e) {
@@ -198,7 +189,6 @@ public class DeployWizardPageOne extends WizardPage {
 		newNameText.setEnabled(false);
 		newNameText.setText("");
 		btnKeepThe.setEnabled(false);
-		lblnewName.setEnabled(false);
 	}
 	
 	private void updateStatus(String message) {

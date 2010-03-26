@@ -6,7 +6,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IPSRoot;
@@ -25,7 +24,6 @@ import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
  *
  */
 public class DeployWizardPageTwo extends WizardPage {
-	private Text deployText;
 	private ArrayList<String> dPOs;
 	private String dTitle;
 
@@ -41,9 +39,10 @@ public class DeployWizardPageTwo extends WizardPage {
 	private TreeItem trtmReviewedPos;
 	
 	private TreeItem trtmUndischargedPos;
-	private Text txtTheory;
 	private ArrayList<String> uPOs;
 	private String uTitle;
+	private Label theoryLabel;
+	private Label theoryDirLabel;
 	
 	
 	/**
@@ -68,10 +67,6 @@ public class DeployWizardPageTwo extends WizardPage {
 			Label lblTheoryName = new Label(container, SWT.NONE);
 			lblTheoryName.setBounds(10, 30, 99, 13);
 			lblTheoryName.setText("Theory: ");
-		}
-		{
-			txtTheory = new Text(container, SWT.NONE);
-			txtTheory.setBounds(125, 30, 279, 19);
 		}
 		{
 			Label lblTheorySoundness = new Label(container, SWT.NONE);
@@ -102,12 +97,14 @@ public class DeployWizardPageTwo extends WizardPage {
 			lblTheoriesDirectory.setBounds(10, 60, 99, 13);
 			lblTheoriesDirectory.setText("Theories Directory");
 		}
-		{
-			deployText = new Text(container, SWT.NONE);
-			deployText.setBounds(125, 60, 279, 19);
-			deployText.setText(PrefsRepresentative.getTheoriesDirectory());
-			deployText.setEditable(false);
-		}
+		
+		theoryLabel = new Label(container, SWT.NONE);
+		theoryLabel.setBounds(125, 30, 279, 19);
+		theoryLabel.setText("New Label");
+		
+		theoryDirLabel = new Label(container, SWT.NONE);
+		theoryDirLabel.setBounds(125, 60, 279, 22);
+		theoryDirLabel.setText(PrefsRepresentative.getTheoriesDirectory());
 	}
 	
 	public void setVisible(boolean visible){
@@ -116,8 +113,7 @@ public class DeployWizardPageTwo extends WizardPage {
 					.getProjectName();
 			theoryName = ((DeployWizardPageOne) getPreviousPage())
 					.getTheoryName();
-			txtTheory.setText(projectName+"\\"+theoryName);
-			txtTheory.setEditable(false);
+			theoryLabel.setText(projectName+"\\"+theoryName);
 			IRodinFile file = TheoryUIUtils.getSCTheoryInProject(theoryName, projectName);
 			populatePOs(file);
 			dTitle = "Discharged POs (" + dPOs.size() + "/" + totalNumPOs + ")";
