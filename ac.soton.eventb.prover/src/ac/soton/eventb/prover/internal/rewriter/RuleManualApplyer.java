@@ -66,13 +66,14 @@ public class RuleManualApplyer extends AbstractRewriteRuleApplyer{
 		}
 		List<IDRuleRightHandSide> ruleRHSs = rule.getRightHandSides();
 		assert ruleRHSs.size() > 0;
-		
+		// @BUG FIX: when rule is unconditional there is no need to generate extra antecedent
+		boolean doesNotRequiresAdditionalAntecedents = rule.isComplete() || !rule.isConditional();
 		IAntecedent[] antecedents = 
-			(rule.isComplete()? new IAntecedent[ruleRHSs.size()] : 
+			(doesNotRequiresAdditionalAntecedents? new IAntecedent[ruleRHSs.size()] : 
 								new IAntecedent[ruleRHSs.size()+1]);
 		// may need to make an extra antecedent if rule incomplete
 		List<Predicate> allConditions = 
-			(rule.isComplete() ? null : 
+			(doesNotRequiresAdditionalAntecedents ? null : 
 								 new ArrayList<Predicate>());
 		int index = 0;
 		// for each right hand side make an antecedent
@@ -80,7 +81,7 @@ public class RuleManualApplyer extends AbstractRewriteRuleApplyer{
 			// get the condition
 			Predicate condition = (Predicate) simpleBinder.applyBinding(rhs.getCondition(), binding);
 			// if rule is incomplete keep it till later as we will make negation of disj of all conditions
-			if(!rule.isComplete())
+			if(!doesNotRequiresAdditionalAntecedents)
 				allConditions.add(condition);
 			// get the new subformula
 			Formula<?> rhsFormula = simpleBinder.applyBinding(rhs.getRHSFormula(), binding);
@@ -109,7 +110,7 @@ public class RuleManualApplyer extends AbstractRewriteRuleApplyer{
 			antecedents[index] = ProverFactory.makeAntecedent(goal, addedHyps, null, hypActions);
 			index ++;
 		}
-		if(!rule.isComplete()){
+		if(!doesNotRequiresAdditionalAntecedents){
 			// we have one left to fill
 			assert allConditions.size() >= 1;
 			Predicate negOfDisj = factory.makeUnaryPredicate(Formula.NOT, 
