@@ -11,5 +11,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eventb.core.ast;bundle-version="1.2.0"
 Bundle-Localization: plugin
 Bundle-Activator: ac.soton.eventb.ruleBase.theory.core.plugin.TheoryPlugin
-Export-Package: ac.soton.eventb.ruleBase.theory.core
+Export-Package: ac.soton.eventb.ruleBase.theory.core,
+ ac.soton.eventb.ruleBase.theory.core.deploy
 Bundle-ActivationPolicy: lazy
