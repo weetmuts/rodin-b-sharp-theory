@@ -67,6 +67,11 @@ public class TheoryModelProject extends ModelProject {
 		if (element instanceof ITheoryRoot) {
 			return getTheory((ITheoryRoot) element);
 		}
+		IEventBRoot parent= element.getAncestor(ITheoryRoot.ELEMENT_TYPE);
+		ModelTheory theory = theories.get(parent);
+		if (theory != null) {
+			return theory.getModelElement(element);
+		}
 		return null;
 
 	}

@@ -3,8 +3,11 @@
  */
 package ac.soton.eventb.ruleBase.theory.ui.explorer.model;
 
+import java.util.HashMap;
+
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.UIUtils;
@@ -27,6 +30,7 @@ public class ModelTheory extends ModelPOContainer{
 	public boolean poNeedsProcessing = true;
 	public final TheoryModelElementNode poNode;
 
+	private HashMap<IRewriteRule, ModelRewriteRule> rules = new HashMap<IRewriteRule, ModelRewriteRule>();
 
 	//indicate whether the poRoot or the psRoot should be processed freshly
 	public boolean psNeedsProcessing = true;
@@ -73,9 +77,30 @@ public class ModelTheory extends ModelPOContainer{
 	}
 
 	public void processChildren() {
-
+		rules.clear();
+		try {
+			for (IRewriteRule rule : theoryRoot.getRewriteRules()) {
+				addRule(rule);
+			}
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "when accessing rewrite rule of "+theoryRoot);
+		}
 	}
 
+	/**
+	 * Adds a new ModelAxiom to this Context.
+	 * @param axiom The axiom to add.
+	 */
+	public void addRule(IRewriteRule rule) {
+		rules.put(rule, new ModelRewriteRule(rule, this));
+	}
+	
+	public IModelElement getModelElement(IRodinElement element) {
+		if (element instanceof IRewriteRule ) {
+			return rules.get(element);
+		}
+		return null;
+	}
 	
 	/**
 	 * Processes the PORoot that belongs to this context.
@@ -97,6 +122,14 @@ public class ModelTheory extends ModelPOContainer{
 						pos++;
 						po.setTheory(this);
 						proofObligations.put(sequent, po);
+						IPOSource[] sources = sequent.getSources();
+						for (int j = 0; j < sources.length; j++) {
+							IRodinElement source = sources[j].getSource();
+							//only process sources that belong to this context.
+							if (theoryRoot.isAncestorOf(source)) {
+								processSource(source, po);
+							}
+						}
 					}
 				}
 			} catch (RodinDBException e) {
@@ -106,7 +139,24 @@ public class ModelTheory extends ModelPOContainer{
 		}
 	}
 	
-	
+	/**
+	 * Processes a source belonging to a given Proof Obligation
+	 * 
+	 * @param source
+	 *            The source to process
+	 * @param po
+	 *            The proof obligation the source belongs to
+	 */
+	protected void processSource (IRodinElement source, ModelProofObligation po) {
+		if (source instanceof IRewriteRule) {
+			if (rules.containsKey(source)) {
+				ModelRewriteRule r = rules.get(source);
+				po.addRule(r);
+				r.addProofObligation(po);
+			}
+		}
+		
+	}
 
 	/**
 	 * Processes the PSRoot that belongs to this Context. Each status is added to

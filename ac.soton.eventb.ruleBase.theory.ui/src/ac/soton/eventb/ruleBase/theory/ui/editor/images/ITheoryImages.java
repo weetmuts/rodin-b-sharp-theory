@@ -30,7 +30,7 @@ public interface ITheoryImages extends IEventBSharedImages{
 	public static final String IMG_SET_PATH = "icons/full/obj16/set_obj.gif";
 	public static final String IMG_THEORY = "Theory";
 	
-	public static final String IMG_THEORY_PATH = "icons/full/thy.gif";
+	public static final String IMG_THEORY_PATH = "icons/thy.gif";
 	
 	public static final String IMG_TYPE_AXIOM = "Type Axiom";
 

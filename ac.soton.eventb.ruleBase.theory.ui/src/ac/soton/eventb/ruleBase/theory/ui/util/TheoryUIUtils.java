@@ -33,8 +33,7 @@ import org.rodinp.core.RodinDBException;
 
 import ac.soton.eventb.prover.prefs.PrefsRepresentative;
 import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
-import ac.soton.eventb.ruleBase.theory.core.ITheoryRoot;
-import ac.soton.eventb.ruleBase.theory.deploy.DeployManager;
+import ac.soton.eventb.ruleBase.theory.core.deploy.DeployManager;
 import ac.soton.eventb.ruleBase.theory.ui.editor.TheoryEditor;
 import ac.soton.eventb.ruleBase.theory.ui.plugin.TheoryUIPlugIn;
 
@@ -68,8 +67,7 @@ public class TheoryUIUtils {
 				monitor.beginTask("Deploying theory " + theoryName + " ...", 15);
 				monitor.subTask("Getting statically checked file ...");
 				ISCTheoryRoot targetRoot = (ISCTheoryRoot) TheoryUIUtils
-						.getTheoryInProject(theoryName,
-								ISCTheoryRoot.ELEMENT_TYPE, projectName)
+						.getSCTheoryInProject(theoryName, projectName)
 						.getRoot();
 				monitor.worked(2);
 				String destFileName = destName
@@ -194,29 +192,26 @@ public class TheoryUIUtils {
 	public static String getTheoryFileName(String bareName) {
 		return bareName + TheoryUIPlugIn.THEORY_FILE_EXT;
 	}
-
+	
 	/**
-	 * <p>
-	 * This is a facility to get a theory-related file i.e., but and bct files.
-	 * </p>
-	 * 
-	 * @param <T>
+	 * Get an EXISTING SC theory rather than the temp SC file bct_tmp.
+	 * Returns the 1st encountered file.
 	 * @param theoryName
-	 * @param type
 	 * @param projectName
-	 * @return the file
+	 * @return
 	 */
-	public static <T extends IEventBRoot> IRodinFile getTheoryInProject(
-			String theoryName, IInternalElementType<T> type, String projectName) {
-		assert type == ISCTheoryRoot.ELEMENT_TYPE
-				|| type == ITheoryRoot.ELEMENT_TYPE;
+	public static IRodinFile getSCTheoryInProject(
+			String theoryName, String projectName) {
 		IRodinFile file = null;
 		try {
-			T[] roots = RodinCore.getRodinDB().getRodinProject(projectName)
-					.getRootElementsOfType(type);
-			for (T root : roots) {
+			ISCTheoryRoot[] roots = RodinCore.getRodinDB().getRodinProject(projectName)
+					.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
+			for (ISCTheoryRoot root : roots) {
 				if (root.getElementName().equals(theoryName)) {
-					file = root.getRodinFile();
+					if(root.exists()){
+						file = root.getRodinFile();
+						break;
+					}
 				}
 			}
 		} catch (RodinDBException e) {
@@ -224,7 +219,7 @@ public class TheoryUIUtils {
 		}
 		return file;
 	}
-
+	
 	/**
 	 * <p>Links to the Event-B editor configured to work with the specified rodin file.</p>
 	 * @param rodinFile the file
@@ -325,5 +320,21 @@ public class TheoryUIUtils {
 			return msg;
 		}
 		return e.getClass().getName();
+	}
+	/**
+	 * Returns whether the theory contains no rewrite rules.
+	 * @param root
+	 * @return
+	 */
+	public static boolean isTheoryEmpty(ISCTheoryRoot root){
+		int l = 0;
+		try {
+			if(root.exists())
+				l=root.getSCRewriteRules().length;
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return  l == 0;
 	}
 }

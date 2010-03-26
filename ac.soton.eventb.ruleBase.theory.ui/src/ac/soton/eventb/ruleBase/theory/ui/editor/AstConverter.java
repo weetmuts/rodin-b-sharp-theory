@@ -269,13 +269,6 @@ public abstract class AstConverter {
 	}
 
 	
-	private void beginLevel2() {
-		htmlString.append(BEGIN_LEVEL_2);
-	}
-
-	private void beginLevel3() {
-		htmlString.append(BEGIN_LEVEL_3);
-	}
 
 	private void endLevel0() {
 		htmlString.append(END_LEVEL_0);
@@ -284,7 +277,7 @@ public abstract class AstConverter {
 	private void endLevel1() {
 		htmlString.append(END_LEVEL_1);
 	}
-
+/*
 	private void endLevel2() {
 		htmlString.append(END_LEVEL_2);
 	}
@@ -293,16 +286,17 @@ public abstract class AstConverter {
 		htmlString.append(END_LEVEL_3);
 	}
 
+
+	private void beginLevel2() {
+		htmlString.append(BEGIN_LEVEL_2);
+	}
+
+	private void beginLevel3() {
+		htmlString.append(BEGIN_LEVEL_3);
+	}
 	private void emptyLine() {
 		htmlString.append(EMPTY_LINE);
 	}
-	
-	private void masterKeyword(String str) {
-		htmlString.append(BEGIN_MASTER_KEYWORD);
-		htmlString.append(str);
-		htmlString.append(END_MASTER_KEYWORD);
-	}
-	
 	private void keyword(String str, int level) {
 		switch (level) {
 		case 0:
@@ -323,7 +317,14 @@ public abstract class AstConverter {
 			htmlString.append(END_KEYWORD_1);
 			break;
 		}
+	}*/
+	private void masterKeyword(String str) {
+		htmlString.append(BEGIN_MASTER_KEYWORD);
+		htmlString.append(str);
+		htmlString.append(END_MASTER_KEYWORD);
 	}
+	
+	
 
 	private void appendComponentName(String label) {
 		append(label, BEGIN_COMPONENT_NAME, END_COMPONENT_NAME,

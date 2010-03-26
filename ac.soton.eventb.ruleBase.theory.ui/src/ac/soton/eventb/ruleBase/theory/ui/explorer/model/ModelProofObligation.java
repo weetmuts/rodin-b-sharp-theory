@@ -1,10 +1,14 @@
 package ac.soton.eventb.ruleBase.theory.ui.explorer.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
+
 
 /**
  * Represents a Proof Obligation in the Model.
@@ -17,6 +21,8 @@ public class ModelProofObligation extends fr.systerel.internal.explorer.model.Mo
 	private boolean discharged = false;
 	private IPOSequent internal_sequent;
 
+	private List<ModelRewriteRule> rewRules = new LinkedList<ModelRewriteRule>();
+	
 	private IPSStatus internal_status;
 	private boolean manual = false;
 	private int position;
@@ -53,6 +59,17 @@ public class ModelProofObligation extends fr.systerel.internal.explorer.model.Mo
 		return internal_sequent.getElementName();
 	}
 
+	public ModelRewriteRule[] getRewRules() {
+		return rewRules.toArray(new ModelRewriteRule[rewRules.size()]);
+	}
+
+	public void addRewRule(ModelRewriteRule r) {
+		rewRules.add(r);
+	}
+
+	public void removeRewRule(ModelRewriteRule r) {
+		rewRules.remove(r);
+	}
 
 	/**
 	 * 
@@ -111,6 +128,11 @@ public class ModelProofObligation extends fr.systerel.internal.explorer.model.Mo
 
 	public void setTheory(ModelTheory thy) {
 		theory = thy;
+	}
+
+	public void addRule(ModelRewriteRule r) {
+		rewRules.add(r);
+		
 	}
 
 }

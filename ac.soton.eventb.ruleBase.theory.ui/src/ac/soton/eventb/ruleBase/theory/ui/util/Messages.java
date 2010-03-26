@@ -27,6 +27,8 @@ public class Messages {
 	
 	public static String theoryUIUtils_deployCleanupError;
 	public static String theoryUIUtils_deploySuccess;
+	public static String theoryUIUtils_deployNothing;
+	public static String theoryUIUtils_deployConfirm;
 	public static String theoryUIUtils_unexpectedError;
 	public static String editorPage_html_title;
 	public static String editorPage_html_tabTitle;

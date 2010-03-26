@@ -21,8 +21,8 @@ public class TheoryDeployer {
 	}
 	
 	public void deploy(){
-		ISCTheoryRoot root = (ISCTheoryRoot) TheoryUIUtils.getTheoryInProject(theoryName,
-				ISCTheoryRoot.ELEMENT_TYPE, project.getElementName()).getRoot();
+		ISCTheoryRoot root = (ISCTheoryRoot) TheoryUIUtils.getSCTheoryInProject(theoryName,
+				project.getElementName()).getRoot();
 		if(TheoryUIUtils.isTheoryEmpty(root)){
 			MessageDialog.openInformation(shell, "Deploy Theory", 
 					Messages.bind(Messages.theoryUIUtils_deployNothing,
