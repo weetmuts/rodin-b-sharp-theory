@@ -98,6 +98,7 @@ public class DeployWizardPageOne extends WizardPage {
 					}
 					projectName = value ;
 					String names[]= TheoryUIUtils.getNonEmptySCTheoryNames(projectName);
+					// BUG FIX DONE FIXME when there are no non-empty theories.
 					if(names != null)
 						theoryCombo.setItems(names);
 					initialise();

@@ -6,6 +6,7 @@ package ac.soton.eventb.ruleBase.theory.ui.util;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -152,6 +153,9 @@ public class TheoryUIUtils {
 
 	/**
 	 * Returns an array of the names of non-empty SC theories.
+	 * <p>
+	 * BUG FIX DONE TODO FIXME fixed bug: returning a list of theories some of which can be empty, which 
+	 * causes the deploy wizard from the top-menu to behave unexpectedly.
 	 * @param project
 	 * @return
 	 */
@@ -169,19 +173,15 @@ public class TheoryUIUtils {
 		if (roots == null) {
 			return null;
 		}
-		String names[] = new String[roots.length];
-		int i = 0;
-		boolean noNonEmptyThy = true;
+		List<String> thyNames =  new ArrayList<String>();
 		for (ISCTheoryRoot root : roots) {
 			if(!isTheoryEmpty(root)){
-				noNonEmptyThy = false;
-				names[i] = root.getElementName();
-				i++;
+				thyNames.add(root.getElementName());
 			}
 		}
-		if(noNonEmptyThy)
+		if(thyNames.size() == 0)
 			return null;
-		return names;
+		return thyNames.toArray(new String[thyNames.size()]);
 	}
 	/**
 	 * <p>Returns the full name of the given theory bare name.</p>

@@ -12,6 +12,12 @@ import ac.soton.eventb.prover.internal.base.IDRewriteRule;
 public interface IRuleBaseManager {
 
 	/**
+	 * Reloads all rules from the theories in the deployment directory.
+	 * TODO be smarter with this later!
+	 */
+	public void reload();
+	
+	/**
 	 * Returns the list if interactive rules that are applicable to the given formula class.
 	 * @param clazz the class of the formula
 	 * @return an unmodifiable list of potential applicable rules

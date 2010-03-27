@@ -43,7 +43,6 @@
             interrupt="true"
             name="Rule-base Goal Tactic"
             priorty="5"
-            skipPostTactic="false"
             tacticProvider="ac.soton.eventb.prover.tactic.RuleBaseManualTactic"
             target="goal"
             tooltip="apply rule-base rule to goal">
@@ -54,7 +53,6 @@
             interrupt="true"
             name="Rule-base Hypotheses Tactic"
             priorty="5"
-            skipPostTactic="false"
             tacticProvider="ac.soton.eventb.prover.tactic.RuleBaseManualTactic"
             target="hypothesis"
             tooltip="apply rule-base rule to hypotheses">
@@ -74,6 +72,20 @@
       <initializer
             class="ac.soton.eventb.prover.internal.prefs.TheoryPreferencesInitialiser">
       </initializer>
+   </extension>
+   <extension
+         point="org.eventb.ui.proofTactics">
+      <tactic
+            icon="icons/reload.gif"
+            id="reloadRuleBase"
+            interrupt="true"
+            name="%proofTactics.reloadRuleBase.name"
+            priorty="7"
+            tacticProvider="ac.soton.eventb.prover.tactic.ReloadBaseTactic"
+            target="global"
+            toolbar="org.eventb.ui.sequentToolbar"
+            tooltip="%prooftactics.reloadRuleBase">
+      </tactic>
    </extension>
 
 </plugin>

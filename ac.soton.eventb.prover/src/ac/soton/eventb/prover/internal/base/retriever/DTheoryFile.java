@@ -24,7 +24,7 @@ import ac.soton.eventb.prover.internal.base.IDRuleRightHandSide;
 import ac.soton.eventb.prover.internal.base.IDTheoryFile;
 import ac.soton.eventb.prover.internal.base.retriever.DTheoryValidator.ValidationResult;
 /**
- * TODO Cache
+ * DONE FIXME TODO Cache
  * @author maamria
  *
  */

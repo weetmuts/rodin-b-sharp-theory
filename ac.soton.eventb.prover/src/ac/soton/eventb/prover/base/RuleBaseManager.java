@@ -53,4 +53,9 @@ public class RuleBaseManager implements IRuleBaseManager{
 		return cache.getInteractiveRule(ruleName, theoryName, clazz);
 	}
 
+	public void reload() {
+		cache = new RulesCache();
+		
+	}
+
 }
