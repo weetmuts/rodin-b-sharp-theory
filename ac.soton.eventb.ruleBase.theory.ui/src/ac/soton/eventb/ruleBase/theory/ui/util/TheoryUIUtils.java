@@ -22,8 +22,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eventb.core.IEventBRoot;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -151,24 +149,20 @@ public class TheoryUIUtils {
 		}
 		return names.toArray(new String[names.size()]);
 	}
-	
+
 	/**
-	 * <p>Returns a list of Event-B roots of the given type that reside in the given project.</p>
-	 * @param <T> the root
-	 * @param project 
-	 * @param type the element type
-	 * @return a list of names
+	 * Returns an array of the names of non-empty SC theories.
+	 * @param project
+	 * @return
 	 */
-	public static <T extends IEventBRoot> String[] getRootNames(String project,
-			IInternalElementType<T> type) {
-		IRodinProject proj = TheoryUIPlugIn.getRodinDatabase().getRodinProject(
-				project);
+	public static String[] getNonEmptySCTheoryNames(String project) {
+		IRodinProject proj = TheoryUIPlugIn.getRodinDatabase().getRodinProject(project);
 		if (proj == null) {
 			return null;
 		}
-		T[] roots = null;
+		ISCTheoryRoot[] roots = null;
 		try {
-			roots = proj.getRootElementsOfType(type);
+			roots = proj.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -177,13 +171,18 @@ public class TheoryUIUtils {
 		}
 		String names[] = new String[roots.length];
 		int i = 0;
-		for (T root : roots) {
-			names[i] = root.getElementName();
-			i++;
+		boolean noNonEmptyThy = true;
+		for (ISCTheoryRoot root : roots) {
+			if(!isTheoryEmpty(root)){
+				noNonEmptyThy = false;
+				names[i] = root.getElementName();
+				i++;
+			}
 		}
+		if(noNonEmptyThy)
+			return null;
 		return names;
 	}
-
 	/**
 	 * <p>Returns the full name of the given theory bare name.</p>
 	 * @param bareName

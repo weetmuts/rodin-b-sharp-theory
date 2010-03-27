@@ -460,4 +460,20 @@
        
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="ac.soton.eventb.ruleBase.theory.ui.newTheory"
+            targetID="fr.systerel.explorer.navigator.view">
+         <action
+               class="ac.soton.eventb.ruleBase.theory.ui.explorer.actionProvider.NewTheoryActionDelegate"
+               icon="icons/newThy.gif"
+               id="ac.soton.eventb.ruleBase.theory.ui.newTheory"
+               label="%viewActions.newTheory.label"
+               style="push"
+               toolbarPath="new"
+               tooltip="%viewActions.newTheory.tooltip">
+         </action>
+      </viewContribution>
+   </extension>
 </plugin>

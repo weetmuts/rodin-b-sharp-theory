@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ac.soton.eventb.ruleBase.theory.core.ISCTheoryRoot;
 import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
 
 /**
@@ -36,7 +35,7 @@ public class DeployWizardPageOne extends WizardPage {
 	public DeployWizardPageOne() {
 		super("dWizardPage1");
 		setTitle("Select theory");
-		setDescription("Select theory to deploy");
+		setDescription("Select a theory to deploy. The theory must be non-empty.");
 	}
 
 	/**
@@ -77,6 +76,7 @@ public class DeployWizardPageOne extends WizardPage {
 				}
 			});
 			theoryCombo.setBounds(100, 39, 307, 21);
+			theoryCombo.setToolTipText("Select a non-empty theory to deploy");
 		}
 		{
 			Label lblproject = new Label(container, SWT.NONE);
@@ -97,8 +97,9 @@ public class DeployWizardPageOne extends WizardPage {
 						return;
 					}
 					projectName = value ;
-					String names[]= TheoryUIUtils.getRootNames(projectName, ISCTheoryRoot.ELEMENT_TYPE);
-					theoryCombo.setItems(names);
+					String names[]= TheoryUIUtils.getNonEmptySCTheoryNames(projectName);
+					if(names != null)
+						theoryCombo.setItems(names);
 					initialise();
 					dialogChanged();
 					
