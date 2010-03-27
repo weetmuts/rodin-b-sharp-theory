@@ -425,7 +425,7 @@
                actionID="ac.soton.eventb.ruleBase.theory.ui.editor.exportTheory"
                class="ac.soton.eventb.ruleBase.theory.ui.editor.actions.DeployTheoryActionDelegate"
                disabledIcon="icons/thyDis.gif"
-               icon="icons/thy.gif"
+               icon="icons/deploy.gif"
                id="ac.soton.eventb.ruleBase.theory.ui.editor.actions.exportTheory"
                label="%actions.exportTheory"
                style="push"
@@ -450,7 +450,7 @@
          </menu>
          <action
                class="ac.soton.eventb.ruleBase.theory.ui.actions.DeployActionDelegate"
-               icon="icons/thy.gif"
+               icon="icons/deploy.gif"
                id="ac.soton.eventb.ruleBase.theory.ui.actions.deployTheory"
                label="%actions.exportTheory"
                menubarPath="ac.soton.eventb.ruleBase.theory.ui.theoryMenu/deploy"

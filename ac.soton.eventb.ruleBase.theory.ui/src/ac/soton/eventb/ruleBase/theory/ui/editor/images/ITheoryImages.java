@@ -32,6 +32,14 @@ public interface ITheoryImages extends IEventBSharedImages{
 	
 	public static final String IMG_THEORY_PATH = "icons/thy.gif";
 	
+	public static final String IMG_DEPLOY = "Deploy";
+	
+	public static final String IMG_DEPLOY_PATH = "icons/deploy.gif";
+	
+	public static final String IMG_RELOAD = "Reload";
+	
+	public static final String IMG_RELOAD_PATH = "icons/reload.gif";
+	
 	public static final String IMG_TYPE_AXIOM = "Type Axiom";
 
 	public static final String IMG_TYPE_AXIOM_PATH = "icons/full/obj16/axm_obj.gif";

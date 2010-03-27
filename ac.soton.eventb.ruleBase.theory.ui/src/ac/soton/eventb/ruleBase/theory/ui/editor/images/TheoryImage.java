@@ -314,6 +314,11 @@ public class TheoryImage {
 				ITheoryImages.IMG_SET_PATH);
 		registerImage(registry, ITheoryImages.IMG_THEORY,
 				ITheoryImages.IMG_THEORY_PATH);
+		
+		registerImage(registry, ITheoryImages.IMG_DEPLOY,
+				ITheoryImages.IMG_DEPLOY_PATH);
+		registerImage(registry, ITheoryImages.IMG_RELOAD,
+				ITheoryImages.IMG_RELOAD_PATH);
 		registerImage(registry, ITheoryImages.IMG_TYPE_AXIOM,
 				ITheoryImages.IMG_TYPE_AXIOM_PATH);
 		// Other images

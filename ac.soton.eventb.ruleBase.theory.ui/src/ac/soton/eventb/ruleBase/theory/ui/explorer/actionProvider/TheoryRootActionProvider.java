@@ -57,7 +57,7 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 			}
 		};
 		action.setText("&Deploy");
-		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_THEORY_PATH));
+		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_DEPLOY_PATH));
 		return action;
 	}
 	
