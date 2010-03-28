@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
@@ -24,6 +26,7 @@ import ac.soton.eventb.ruleBase.theory.ui.util.TheoryUIUtils;
  *
  */
 public class DeployWizardPageTwo extends WizardPage {
+
 	private ArrayList<String> dPOs;
 	private String dTitle;
 
@@ -44,67 +47,76 @@ public class DeployWizardPageTwo extends WizardPage {
 	private Label theoryLabel;
 	private Label theoryDirLabel;
 	
-	
-	/**
-	 * Create the wizard.
-	 */
-	public DeployWizardPageTwo() {
+	protected DeployWizardPageTwo() {
 		super("deployWizard");
 		setTitle("Deploy theory ");
-		setDescription("Deploy theory file to deployment directory");
+		setDescription("Deploy theory file to deployment directory.");
 	}
-	
 
-	/**
-	 * Create contents of the wizard.
-	 * @param parent
-	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
-
+		GridLayout layout = new GridLayout();
+		container.setLayout(layout);
+		layout.numColumns = 3;
+		layout.verticalSpacing = 10;
+		layout.horizontalSpacing = 10;
+		{
+			Label label = new Label(container, SWT.NULL);
+			label.setText("Theory:");
+		}
+		
+		theoryLabel = new Label(container, SWT.BORDER | SWT.SINGLE);
+		{
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			theoryLabel.setLayoutData(gd);
+		}
+		
+		new Label(container, SWT.NULL);
+		{
+			Label label = new Label(container, SWT.NULL);
+			label.setText("Deployment Directory:");
+		}
+		theoryDirLabel = new Label(container, SWT.BORDER | SWT.SINGLE);
+		{
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			theoryDirLabel.setLayoutData(gd);
+			theoryDirLabel.setText(PrefsRepresentative.getTheoriesDirectory());
+		}
+		new Label(container, SWT.NULL);
+		new Label(container, SWT.NULL);
+		new Label(container, SWT.NULL);
+		new Label(container, SWT.NULL);
+		{
+			Label label = new Label(container, SWT.NULL);
+			label.setText("Theory Soundness:");
+		}
+		new Label(container, SWT.NULL);
+		new Label(container, SWT.NULL);
+		new Label(container, SWT.NULL);
+		
+		tree = new Tree(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
+		{
+			trtmDischargedPos = new TreeItem(tree, SWT.NONE);
+			trtmDischargedPos.setImage(ResourceManager.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/discharged.gif"));
+			
+		}
+		{
+			trtmReviewedPos = new TreeItem(tree, SWT.NONE);
+			trtmReviewedPos.setImage(ResourceManager.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/reviewed.gif"));
+			
+		}
+		{
+			trtmUndischargedPos = new TreeItem(tree, SWT.NONE);
+			trtmUndischargedPos.setImage(ResourceManager.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/pending.gif"));
+			
+		}
+		{
+			GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
+			gridData.verticalSpan = 3;
+			tree.setLayoutData(gridData);
+		}
 		setControl(container);
-		{
-			Label lblTheoryName = new Label(container, SWT.NONE);
-			lblTheoryName.setBounds(10, 30, 99, 13);
-			lblTheoryName.setText("Theory: ");
-		}
-		{
-			Label lblTheorySoundness = new Label(container, SWT.NONE);
-			lblTheorySoundness.setBounds(10, 183, 99, 13);
-			lblTheorySoundness.setText("Theory Soundness:");
-		}
-		{
-			tree = new Tree(container, SWT.BORDER);
-			tree.setBounds(125, 88, 279, 202);
-			{
-				trtmDischargedPos = new TreeItem(tree, SWT.NONE);
-				trtmDischargedPos.setImage(ResourceManager.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/discharged.gif"));
-				
-			}
-			{
-				trtmReviewedPos = new TreeItem(tree, SWT.NONE);
-				trtmReviewedPos.setImage(ResourceManager.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/reviewed.gif"));
-				
-			}
-			{
-				trtmUndischargedPos = new TreeItem(tree, SWT.NONE);
-				trtmUndischargedPos.setImage(ResourceManager.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/pending.gif"));
-				
-			}
-		}
-		{
-			Label lblTheoriesDirectory = new Label(container, SWT.NONE);
-			lblTheoriesDirectory.setBounds(10, 60, 99, 13);
-			lblTheoriesDirectory.setText("Theories Directory");
-		}
-		
-		theoryLabel = new Label(container, SWT.NONE);
-		theoryLabel.setBounds(125, 30, 279, 19);
-		theoryLabel.setText("New Label");
-		
-		theoryDirLabel = new Label(container, SWT.NONE);
-		theoryDirLabel.setBounds(125, 60, 279, 22);
-		theoryDirLabel.setText(PrefsRepresentative.getTheoriesDirectory());
+
 	}
 	
 	public void setVisible(boolean visible){
@@ -182,4 +194,5 @@ public class DeployWizardPageTwo extends WizardPage {
 		}
 		
 	}
+
 }
