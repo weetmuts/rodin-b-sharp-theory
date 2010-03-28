@@ -101,9 +101,6 @@ public class TheoryWizardPage extends WizardPage {
 				dialogChanged();
 			}
 		});
-		initialize();
-		dialogChanged();
-		setControl(container);
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
@@ -116,18 +113,21 @@ public class TheoryWizardPage extends WizardPage {
 			lblcategory.setLayoutData(gridData);
 		}
 		lblcategory.setText("&Categories: ");
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		list = new List(container, SWT.BORDER | SWT.MULTI);
+		list = new List(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
 		{
-			GridData gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-			gridData.heightHint = 130;
-			gridData.widthHint = 244;
+			GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
+			gridData.verticalSpan = 3;
 			list.setLayoutData(gridData);
 			populateCategories(list);
 		}
 		new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
+		initialize();
+		dialogChanged();
+		setControl(container);
 	}
 
 	public String[] getCategories (){

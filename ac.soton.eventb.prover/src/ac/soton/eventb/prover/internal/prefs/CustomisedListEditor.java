@@ -253,10 +253,9 @@ final class CustomisedListEditor extends FieldEditor {
         control.setLayoutData(gd);
 
         list = getListControl(parent);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.verticalAlignment = GridData.FILL;
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
         gd.horizontalSpan = numColumns - 1;
-        gd.grabExcessHorizontalSpace = true;
+        gd.verticalSpan = 3;
         list.setLayoutData(gd);
 
         buttonBox = getButtonBoxControl(parent);
