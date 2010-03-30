@@ -26,6 +26,9 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
+import ac.soton.eventb.ruleBase.theory.core.ICategory;
+import ac.soton.eventb.ruleBase.theory.core.IRewriteRule;
+import ac.soton.eventb.ruleBase.theory.core.IRewriteRuleRightHandSide;
 import ac.soton.eventb.ruleBase.theory.core.ISet;
 import ac.soton.eventb.ruleBase.theory.core.ITheoryRoot;
 import ac.soton.eventb.ruleBase.theory.core.IVariable;
@@ -34,16 +37,23 @@ import ac.soton.eventb.ruleBase.theory.core.IVariable;
  * Common implementation for conversion from a Rodin file to a string (used for
  * the pretty print page of event-B editors).
  * 
- * @author htson
+ * @author maamria
  */
 @SuppressWarnings("restriction")
 public abstract class AstConverter {
+	
+	protected static final String NON_INTERACTIVE_STR = "non-interactive";
+	protected static final String INTERACTIVE_STR = "interactive";
+	protected static final String NON_AUTOMATIC_STR = "non-automatic";
+	protected static final String AUTOMATIC_STR = "automatic";
+	protected static final String COVERAGE_INCOMPLETE_STR = "coverage-incomplete";
+	protected static final String COVERAGE_COMPLETE_STR = "coverage-complete";
 	
 	protected String SPACE = "";
 	protected String HEADER = "";
 	protected String FOOTER = "";
 	protected String BEGIN_MASTER_KEYWORD = "";
-	protected String BEGIN_KEYWORD_1 = "";
+	protected String BEGIN_KEYWORD_1 = ""; 
 	protected String END_MASTER_KEYWORD = "";
 	protected String END_KEYWORD_1 = "";
 	protected String BEGIN_LEVEL_0 = "";
@@ -74,7 +84,7 @@ public abstract class AstConverter {
 	protected String BEGIN_VARIABLE_IDENTIFIER = "";
 	protected String END_VARIABLE_IDENTIFIER = "";
 	protected String BEGIN_VARIABLE_IDENTIFIER_SEPARATOR = null;
-	protected String END_VARIABLE_IDENTIFIER_SEPARATOR = ":";
+	protected String END_VARIABLE_IDENTIFIER_SEPARATOR = "\u2208";
 	protected String BEGIN_VARIABLE_TYPE = "";
 	protected String END_VARIABLE_TYPE = "";
 	protected String BEGIN_VARIABLE_TYPE_SEPARATOR = null;
@@ -86,27 +96,11 @@ public abstract class AstConverter {
 	protected String BEGIN_RULE_LHS = "";
 	protected String END_RULE_LHS = "";
 	protected String BEGIN_RULE_LHS_SEPARATOR = null;
-	protected String END_RULE_LHS_SEPARATOR = null;
-	protected String BEGIN_CC = "";
-	protected String END_CC = "";
-	protected String BEGIN_CC_SEPARATOR = null;
-	protected String END_CC_SEPARATOR = null;
-	protected String BEGIN_AUTO = "";
-	protected String END_AUTO = "";
-	protected String BEGIN_AUTO_SEPARATOR = null;
-	protected String END_AUTO_SEPARATOR = null;
-	protected String BEGIN_INTER = "";
-	protected String END_INTER = "";
-	protected String BEGIN_INTER_SEPARATOR = null;
-	protected String END_INTER_SEPARATOR = null;
-	protected String BEGIN_DESC = "";
-	protected String END_DESC = "";
-	protected String BEGIN_DESC_SEPARATOR = null;
-	protected String END_DESC_SEPARATOR = null;
-	protected String BEGIN_TIP = "";
-	protected String END_TIP = "";
-	protected String BEGIN_TIP_SEPARATOR = null;
-	protected String END_TIP_SEPARATOR = null;
+	protected String END_RULE_LHS_SEPARATOR = "";
+	protected String BEGIN_ATTR = "";
+	protected String END_ATTR = "";
+	protected String BEGIN_ATTR_SEPARATOR = null;
+	protected String END_ATTR_SEPARATOR = null;
 	protected String BEGIN_RHS_LABEL = "";
 	protected String END_RHS_LABEL = "";
 	protected String BEGIN_RHS_LABEL_SEPARATOR = null;
@@ -120,6 +114,10 @@ public abstract class AstConverter {
 	protected String BEGIN_RHS_SEPARATOR = null;
 	protected String END_RHS_SEPARATOR = null;
 	
+	protected String BEGIN_CATEGORY = "";
+	protected String END_CATEGORY = "";
+	protected String BEGIN_CATEGORY_SEPARATOR = null;
+	protected String END_CATEGORY_SEPARATOR = null;
 	
 	// The content string of the form text
 	private StringBuilder htmlString;
@@ -135,8 +133,10 @@ public abstract class AstConverter {
 		addDeclaration(root);
 		if(root instanceof ITheoryRoot){
 			ITheoryRoot thy = (ITheoryRoot) root;
+			addCategories(thy, monitor);
 			addSets(thy, monitor);
 			addMetaVariables(thy, monitor);
+			addRewriteRules(thy, monitor);
 		}
 		masterKeyword("END");
 		htmlString.append(FOOTER);
@@ -144,6 +144,132 @@ public abstract class AstConverter {
 		return htmlString.toString();
 	}
 	
+	private void addCategories(ITheoryRoot thy, IProgressMonitor monitor) {
+		ICategory[] cats;
+		try {
+			cats = thy.getChildrenOfType(ICategory.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBEditorUtils.debugAndLogError(e, "Cannot get categories for "
+					+ thy.getRodinFile().getElementName());
+			return;
+		}
+		if(cats.length != 0){
+			masterKeyword("CATEGORIES");
+			for(ICategory cat : cats){
+				beginLevel1();
+				try {
+					append(cat.getCategory(), BEGIN_CATEGORY, END_CATEGORY, BEGIN_CATEGORY_SEPARATOR, END_CATEGORY_SEPARATOR);
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get details for category "
+									+ cat.getElementName());
+				}
+				endLevel1();
+			}
+		}
+	}
+
+
+	private void addRewriteRules(ITheoryRoot thy, IProgressMonitor monitor) {
+		IRewriteRule[] rules;
+		try {
+			rules = thy.getChildrenOfType(IRewriteRule.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBEditorUtils.debugAndLogError(e, "Cannot get rewrite rules for "
+					+ thy.getRodinFile().getElementName());
+			return;
+		}
+		if(rules.length != 0 ){
+			masterKeyword("REWRITE RULES");
+			emptyLine();
+			for (IRewriteRule rule: rules) {
+				beginLevel1();
+				try {
+					final String handle = rule.getHandleIdentifier();
+					final String label = wrapString(rule.getLabel());
+					append(makeHyperlink(handle, label),BEGIN_RULE_LABEL, END_RULE_LABEL, 
+							BEGIN_RULE_LABEL_SEPARATOR, END_RULE_LABEL_SEPARATOR);
+					append(rule.getLHSString(), BEGIN_RULE_LHS, END_RULE_LHS, 
+							BEGIN_RULE_LHS_SEPARATOR, END_RULE_LHS_SEPARATOR);
+					boolean isCC = rule.isComplete();
+					boolean isAuto = rule.isAutomatic();
+					boolean isInter = rule.isInteractive();
+					String attrToDisplay= "("+(isCC?COVERAGE_COMPLETE_STR:COVERAGE_INCOMPLETE_STR)+", "+
+						(isAuto?AUTOMATIC_STR:NON_AUTOMATIC_STR)+", "+(isInter?INTERACTIVE_STR:NON_INTERACTIVE_STR)+")"; 
+					append(wrapString(attrToDisplay), BEGIN_ATTR, END_ATTR, BEGIN_ATTR_SEPARATOR, END_ATTR_SEPARATOR);
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get details for variable "
+									+ rule.getElementName());
+				}
+				addComment(rule);
+				endLevel1();
+				addRuleRHSs(rule, monitor);
+				emptyLine();
+			}
+		}
+	}
+
+
+	private void addRuleRHSs(IRewriteRule rule, IProgressMonitor monitor) {
+		IRewriteRuleRightHandSide[] rhss;
+		try {
+			rhss = rule.getRuleRHSs();
+		} catch (RodinDBException e) {
+			EventBEditorUtils.debugAndLogError(e, "Cannot get rhs's for rule"
+					+ rule.getElementName()+" in file " + rule.getRodinFile());
+			return;
+		}
+		if(rhss.length != 0){
+			keyword("\u2259",  1);
+			for(IRewriteRuleRightHandSide rhs: rhss){
+				beginLevel2();
+				try {
+					final String handle = rhs.getHandleIdentifier();
+					final String label = wrapString(rhs.getLabel());
+					append(makeHyperlink(handle, label),BEGIN_RHS_LABEL, END_RHS_LABEL, 
+							BEGIN_RHS_LABEL_SEPARATOR, END_RHS_LABEL_SEPARATOR);
+					append(rhs.getPredicateString(), BEGIN_RHS_C, END_RHS_C, BEGIN_RHS_C_SEPARATOR, END_RHS_C_SEPARATOR);
+					append(rhs.getRHSString(), BEGIN_RHS, END_RHS, BEGIN_RHS_SEPARATOR, END_RHS_SEPARATOR);
+				} catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				addComment(rhs);
+				endLevel2();
+			}
+			
+			
+		}
+	}
+	
+	private void keyword(String str, int level) {
+		switch (level) {
+		case 0:
+			htmlString.append(BEGIN_MASTER_KEYWORD);
+			break;
+		case 1:
+			htmlString.append(BEGIN_KEYWORD_1);
+			break;
+		}
+		
+		htmlString.append(str);
+		
+		switch (level) {
+		case 0:
+			htmlString.append(END_MASTER_KEYWORD);
+			break;
+		case 1:
+			htmlString.append(END_KEYWORD_1);
+			break;
+		}
+	}
+
+	private void beginLevel2() {
+		htmlString.append(BEGIN_LEVEL_2);
+	}
+	private void endLevel2() {
+		htmlString.append(END_LEVEL_2);
+	}
 	private void addMetaVariables(ITheoryRoot root, IProgressMonitor monitor){
 		IVariable[] vars;
 		try {
@@ -277,47 +403,7 @@ public abstract class AstConverter {
 	private void endLevel1() {
 		htmlString.append(END_LEVEL_1);
 	}
-/*
-	private void endLevel2() {
-		htmlString.append(END_LEVEL_2);
-	}
 
-	private void endLevel3() {
-		htmlString.append(END_LEVEL_3);
-	}
-
-
-	private void beginLevel2() {
-		htmlString.append(BEGIN_LEVEL_2);
-	}
-
-	private void beginLevel3() {
-		htmlString.append(BEGIN_LEVEL_3);
-	}
-	private void emptyLine() {
-		htmlString.append(EMPTY_LINE);
-	}
-	private void keyword(String str, int level) {
-		switch (level) {
-		case 0:
-			htmlString.append(BEGIN_MASTER_KEYWORD);
-			break;
-		case 1:
-			htmlString.append(BEGIN_KEYWORD_1);
-			break;
-		}
-		
-		htmlString.append(str);
-		
-		switch (level) {
-		case 0:
-			htmlString.append(END_MASTER_KEYWORD);
-			break;
-		case 1:
-			htmlString.append(END_KEYWORD_1);
-			break;
-		}
-	}*/
 	private void masterKeyword(String str) {
 		htmlString.append(BEGIN_MASTER_KEYWORD);
 		htmlString.append(str);
@@ -382,6 +468,10 @@ public abstract class AstConverter {
 			htmlString.append(END_MULTILINE);
 		}
 		
+	}
+	
+	private void emptyLine() {
+		htmlString.append(EMPTY_LINE);
 	}
 	
 	protected abstract String makeHyperlink(String link, String text);

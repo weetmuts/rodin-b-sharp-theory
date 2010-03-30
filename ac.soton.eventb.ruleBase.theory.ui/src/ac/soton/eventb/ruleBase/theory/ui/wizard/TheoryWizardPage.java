@@ -113,7 +113,8 @@ public class TheoryWizardPage extends WizardPage {
 			lblcategory.setLayoutData(gridData);
 		}
 		lblcategory.setText("&Categories: ");
-		list = new List(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
+		// BUG FIXED FIXME changed the list so that it accepts multi-selection.
+		list = new List(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		{
 			GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
 			gridData.verticalSpan = 3;

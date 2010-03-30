@@ -35,7 +35,8 @@ public class TheoryEditor extends EventBEditor<ITheoryRoot> {
 	}
 
 	public void setSelection(ISelection selection) {
-		// Pass the selection to Theory Page
+		// Pass the selection to Theory Edit Page
+		setActivePage(TheoryEditPage.PAGE_ID);
 		IFormPage page = getActivePageInstance();
 		if (page instanceof TheoryEditPage) {
 			((TheoryEditPage) page).setSelection(selection);
@@ -46,16 +47,16 @@ public class TheoryEditor extends EventBEditor<ITheoryRoot> {
 	@Override
 	protected void addPages() {
 		EventBEditorPage editPage = new TheoryEditPage();
-		//EventBEditorPage htmlPage = new TheoryHTMLPage();
+		EventBEditorPage htmlPage = new TheoryHTMLPage();
+		htmlPage.initialize(this);
 		editPage.initialize(this);
-		//htmlPage.initialize(this);
 		try {
+			addPage(htmlPage);
 			addPage(editPage);
-			//addPage(htmlPage);
 		} catch (PartInitException e) {
 			TheoryUIUtils.log(e, 
 					"Failed to initialise page " + editPage.getId() +
-					" or page "+ editPage.getId());
+					" or page "+ htmlPage.getId());
 		}
 	}
 

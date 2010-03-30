@@ -19,8 +19,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eventb.internal.ui.BundledFileExtractor;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.EventBUIPlugin;
 import org.osgi.framework.Bundle;
+
+import ac.soton.eventb.ruleBase.theory.ui.plugin.TheoryUIPlugIn;
 
 
 /**
@@ -30,7 +31,7 @@ import org.osgi.framework.Bundle;
 public class Ast2HtmlConverter extends AstConverter {
 	
 	public Ast2HtmlConverter() {
-		Bundle bundle = EventBUIPlugin.getDefault().getBundle();
+		Bundle bundle = TheoryUIPlugIn.getDefault().getBundle();
 		IPath path = new Path("html/style.css");
 		IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
 		HEADER = "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
@@ -67,6 +68,22 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_SET_IDENTIFIER = "</td>";
 		BEGIN_VARIABLE_TYPE = "<td class=\"setIdentifier\" align=\"left\" valign=\"center\">";
 		END_VARIABLE_TYPE = "</td>";
+		BEGIN_RULE_LABEL = "<td class=\"rewriteRuleLabel\" align=\"left\" valign=\"center\">";
+		END_RULE_LABEL = "</td>";
+		BEGIN_RULE_LHS = "<td class=\"rewriteLHS\" align=\"left\" valign=\"center\">";
+		END_RULE_LHS = "</td>";
+		BEGIN_ATTR = "<td class=\"descriptive\" align=\"left\" valign=\"center\">";
+		END_ATTR = "</td>";
+		BEGIN_RHS_LABEL = "<td class=\"rhsLabel\" align=\"left\" valign=\"center\">";
+		END_RHS_LABEL = "</td>";
+		END_RHS_LABEL_SEPARATOR =":";
+		BEGIN_RHS_C = "<td class=\"setIdentifier\" align=\"left\" valign=\"center\">";
+		END_RHS_C = "</td>";
+		END_RHS_C_SEPARATOR = "\u2192";
+		BEGIN_RHS = "<td class=\"rewriteLHS\" align=\"left\" valign=\"center\">";
+		END_RHS = "</td>";
+		BEGIN_CATEGORY = "<td class=\"descriptive\" align=\"left\" valign=\"center\">";
+		END_CATEGORY = "</td>";
 		SPACE = "&nbsp;&nbsp;&nbsp;";
 	}
 	
