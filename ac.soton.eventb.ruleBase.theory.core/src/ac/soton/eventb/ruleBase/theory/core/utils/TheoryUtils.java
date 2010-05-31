@@ -288,10 +288,10 @@ public class TheoryUtils {
 		IParseResult predResult = null;
 		boolean isExpression = true;
 		expResult = factory
-				.parseExpression(toParse, LanguageVersion.V2, element);
+				.parseExpressionPattern(toParse, LanguageVersion.V2, element);
 		if (expResult.hasProblem()) {
 			isExpression = false;
-			predResult = factory.parsePredicate(toParse, LanguageVersion.V2,
+			predResult = factory.parsePredicatePattern(toParse, LanguageVersion.V2,
 					element);
 			if (TheoryUtils.issueASTProblemMarkers(element, attrType,
 					predResult, module)) {

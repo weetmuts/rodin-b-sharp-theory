@@ -90,6 +90,10 @@ public class TheoryRewriteRuleModule extends UtilityModule {
 				continue;
 			}
 			Formula<?> lhs = rule.getLHSFormula(factory, typeEnvironment);
+			//if lhs contains predicate variables, DONOT generate POs
+			if(lhs.hasPredicateVariable()){
+				continue;
+			}
 			Predicate lhsWD = lhs.getWDPredicate(factory);
 			ArrayList<Predicate> allConditions = new ArrayList<Predicate>();
 			ArrayList<Predicate> wdAllConditions = new ArrayList<Predicate>();

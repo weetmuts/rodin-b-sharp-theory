@@ -60,10 +60,10 @@ public class SCRewriteRuleRightHandSide extends SCPredicateElement implements IS
 		String contents = null;
 		boolean isExpression = true;
 		contents = getRHSString();
-		IParseResult parserResult = factory.parseExpression(contents, V2, null);
+		IParseResult parserResult = factory.parseExpressionPattern(contents, V2, null);
 		if (parserResult.getProblems().size() != 0) {
 			isExpression = false;
-			parserResult = factory.parsePredicate(contents, V2, null);
+			parserResult = factory.parsePredicatePattern(contents, V2, null);
 			// If neither expression nor predicate
 			if (parserResult.getProblems().size() != 0) {
 				throw TheoryUtils.newRodinDBException(

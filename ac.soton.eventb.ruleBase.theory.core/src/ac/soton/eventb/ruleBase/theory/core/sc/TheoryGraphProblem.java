@@ -45,7 +45,8 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			DuplicateCategoryWarning(IMarker.SEVERITY_WARNING, Messages.scuser_DuplicateCategory),
 			NoToolTipWarning(IMarker.SEVERITY_WARNING, Messages.scuser_NoToolTipWarning),
 			NoRuleDescWarning(IMarker.SEVERITY_WARNING, Messages.scuser_NoRuleDescWarning), 
-			LHSIsIdentErr(IMarker.SEVERITY_ERROR, Messages.scuser_LHSIsIdentErr)
+			LHSIsIdentErr(IMarker.SEVERITY_ERROR, Messages.scuser_LHSIsIdentErr),
+			RHSPredVarsNOTSubsetOFLHS(IMarker.SEVERITY_ERROR, Messages.scuser_RHSPredVarsNOTSubsetOFLHS)
 			;
 
 	private int arity;

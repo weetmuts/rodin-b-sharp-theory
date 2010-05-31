@@ -222,11 +222,11 @@ public class TheoryRewriteRuleRHSModule extends LabeledElementModule {
 			}
 			string = rhsSide.getRHSString();
 
-			expResult = factory.parseExpression(string, LanguageVersion.V2,
+			expResult = factory.parseExpressionPattern(string, LanguageVersion.V2,
 					rhsSide);
 			if (expResult.hasProblem()) {
 				isExpression = false;
-				predResult = factory.parsePredicate(string, LanguageVersion.V2,
+				predResult = factory.parsePredicatePattern(string, LanguageVersion.V2,
 						rhsSide);
 				if (TheoryUtils.issueASTProblemMarkers(rhsSide, attributeType,
 						predResult, this)) {

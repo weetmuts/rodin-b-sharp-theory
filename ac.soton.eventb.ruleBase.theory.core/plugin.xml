@@ -302,6 +302,12 @@
             name="%theoryRewriteRuleRHSFormulasIdentModule"
             parent="ac.soton.eventb.ruleBase.theory.core.theoryRewriteRuleRHSModule">
       </filterType>
+      <filterType
+            class="ac.soton.eventb.ruleBase.theory.core.sc.modules.TheoryRewriteRuleRHSPredVarsModule"
+            id="theoryRewriteRuleRHSFormulasPredVarsModule"
+            name="%theoryRewriteRuleRHSFormulasPredVarsModule"
+            parent="ac.soton.eventb.ruleBase.theory.core.theoryRewriteRuleRHSModule">
+      </filterType>
    </extension>
    <extension
          point="org.eventb.core.pogStateTypes">
@@ -401,6 +407,9 @@
          </scModule>
          <scModule
                id="ac.soton.eventb.ruleBase.theory.core.theoryRewriteRuleLHSModule">
+         </scModule>
+         <scModule
+               id="ac.soton.eventb.ruleBase.theory.core.theoryRewriteRuleRHSFormulasPredVarsModule">
          </scModule>
       </configuration>
       <configuration

@@ -64,6 +64,7 @@ public final class Messages {
 	public static String scuser_NoRuleDescWarning;
 	public static String scuser_DescNotSupplied;
 	public static String scuser_LHSIsIdentErr;
+	public static String scuser_RHSPredVarsNOTSubsetOFLHS;
 	
 	private static final String BUNDLE_NAME = "ac.soton.eventb.ruleBase.theory.core.sc.messages";
 
