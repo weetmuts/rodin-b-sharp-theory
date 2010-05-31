@@ -67,7 +67,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IEditComposite;
 import org.eventb.internal.ui.eventbeditor.editpage.ISectionComposite;
 import org.eventb.internal.ui.eventbeditor.editpage.SectionComposite;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBFormText;
@@ -390,20 +390,18 @@ public class TheoryEditPage extends EditPage implements
 		
 		// Get the list of possible element type depending on the type (e.g.
 		// IMachineFile or IContextFile) of the input file.
-		final IElementType<?>[] childTypes = registry.getChildTypes(rodinInput
-				.getElementType());
+		final IElementRelationship[] childRelationships = registry
+				.getChildRelationships(rodinInput.getElementType());
 		// Create the section composite corresponding with each relationship.
-		sectionComps = new ArrayList<ISectionComposite>(childTypes.length);
+		sectionComps = new ArrayList<ISectionComposite>(
+				childRelationships.length);
 		mapComps = new HashMap<IElementType<?>, ISectionComposite>();
-		for (IElementType<?> childType : childTypes) {
+		for (IElementRelationship rel : childRelationships) {
 			// Create the section composite
-			final ElementDescRelationship rel = new ElementDescRelationship(
-					rodinInput.getElementType(),
-					(IInternalElementType<?>) childType);
 			SectionComposite sectionComp = new SectionComposite(this, toolkit,
 					form, parent, rodinInput, rel, 0);
 			sectionComps.add(sectionComp);
-			mapComps.put(childType, sectionComp);
+			mapComps.put(rel.getChildType(), sectionComp);
 		}
 
 	}
