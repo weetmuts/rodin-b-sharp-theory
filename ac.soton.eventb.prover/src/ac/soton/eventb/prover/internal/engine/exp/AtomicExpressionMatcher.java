@@ -5,7 +5,7 @@ import org.eventb.core.ast.Expression;
 
 import ac.soton.eventb.prover.engine.IBinding;
 import ac.soton.eventb.prover.internal.engine.ExpressionMatcher;
-import ac.soton.eventb.prover.utils.GeneralUtilities;
+import ac.soton.eventb.prover.utils.ProverUtilities;
 
 public class AtomicExpressionMatcher extends ExpressionMatcher<AtomicExpression> {
 
@@ -22,7 +22,7 @@ public class AtomicExpressionMatcher extends ExpressionMatcher<AtomicExpression>
 		}
 		// tags equal, unify types
 		else {
-			if(!GeneralUtilities.canUnifyTypes(form.getType(), pattern.getType())){
+			if(!ProverUtilities.canUnifyTypes(form.getType(), pattern.getType())){
 				return false;
 			}
 		}

@@ -27,8 +27,8 @@ public class MatchFinder {
 	 * @param pattern
 	 * @return the binding or <code>null</code> if the matching failed
 	 */
-	public IBinding calculateBindings(Formula<?> form, Formula<?> pattern){
-		IBinding initialBinding = Binding.createBinding();
+	public IBinding calculateBindings(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch){
+		IBinding initialBinding = Binding.createBinding(form, pattern, acceptPartialMatch);
 		
 		if(!engine.match(form, pattern, initialBinding)){
 			return null;

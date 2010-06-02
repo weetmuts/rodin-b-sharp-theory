@@ -5,6 +5,7 @@ import org.eventb.core.ast.Expression;
 
 import ac.soton.eventb.prover.engine.IBinding;
 import ac.soton.eventb.prover.internal.engine.ExpressionMatcher;
+import ac.soton.eventb.prover.utils.ProverUtilities;
 
 public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeExpression> {
 
@@ -27,29 +28,15 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 		// if the pattern has more children
 		if(patternChildren.length > formChildren.length)
 			return false;
+		boolean isAC = ProverUtilities.isAssociativeCommutative(pattern.getTag());
 		
-		//*************************Associative only********************************
-		//*************************************************************************
-		//*************************************************************************
-		//*************************************************************************
-		if(form.getTag() == AssociativeExpression.BCOMP ||
-				form.getTag() == AssociativeExpression.FCOMP){
+		IBinding binding = AssociativeHelper.match(
+				formChildren, patternChildren, isAC, form.getTag(), existingBinding);
+		if(binding == null)
 			return false;
-		}
-		
-		//*************************Associative Commutative*************************
-		//*************************************************************************
-		//*************************************************************************
-		//*************************************************************************
-		else {
-			IBinding binding = AssociativeMatchingHelper.match(
-					formChildren, patternChildren, true, form.getTag(), existingBinding);
-			if(binding == null)
-				return false;
-			binding.makeImmutable();
-			if(!existingBinding.insertAllMappings(binding)){
-				return false;
-			}
+		binding.makeImmutable();
+		if(!existingBinding.insertAllMappings(binding)){
+			return false;
 		}
 		return true;
 		

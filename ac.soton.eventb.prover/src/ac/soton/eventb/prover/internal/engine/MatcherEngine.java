@@ -5,7 +5,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 
 import ac.soton.eventb.prover.engine.IBinding;
-import ac.soton.eventb.prover.utils.GeneralUtilities;
+import ac.soton.eventb.prover.utils.ProverUtilities;
 
 /**
  * 
@@ -35,7 +35,7 @@ public class MatcherEngine {
 	 * @return whether the matching succeeded
 	 */
 	public boolean match(Formula<?> form, Formula<?> pattern, IBinding initialBinding){
-		if(!GeneralUtilities.sameClass(form, pattern)){
+		if(!ProverUtilities.sameClass(form, pattern)){
 			return false;
 		}
 		assert initialBinding != null;

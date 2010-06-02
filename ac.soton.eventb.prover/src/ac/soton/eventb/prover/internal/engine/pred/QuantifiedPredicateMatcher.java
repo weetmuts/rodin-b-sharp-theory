@@ -6,7 +6,7 @@ import org.eventb.core.ast.QuantifiedPredicate;
 
 import ac.soton.eventb.prover.engine.IBinding;
 import ac.soton.eventb.prover.internal.engine.PredicateMatcher;
-import ac.soton.eventb.prover.utils.GeneralUtilities;
+import ac.soton.eventb.prover.utils.ProverUtilities;
 
 public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredicate> {
 
@@ -51,7 +51,7 @@ public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredi
 			int index = 0;
 			for(BoundIdentDecl pDec: patternDecs){
 				BoundIdentDecl fDec = formulaDecs[index];
-				if(!GeneralUtilities.canUnifyTypes(fDec.getType(), pDec.getType())){
+				if(!ProverUtilities.canUnifyTypes(fDec.getType(), pDec.getType())){
 					return false;
 				}
 				index++;

@@ -60,7 +60,7 @@ public class RuleManualApplyer extends AbstractRewriteRuleApplyer{
 		}
 		Formula<?> ruleLhs = rule.getLeftHandSide();
 		// calculate binding between rule lhs and subformula
-		IBinding binding = finder.calculateBindings(formula, ruleLhs);
+		IBinding binding = finder.calculateBindings(formula, ruleLhs, true);
 		if(binding == null){
 			return null;
 		}
@@ -79,12 +79,12 @@ public class RuleManualApplyer extends AbstractRewriteRuleApplyer{
 		// for each right hand side make an antecedent
 		for(IDRuleRightHandSide rhs : ruleRHSs){
 			// get the condition
-			Predicate condition = (Predicate) simpleBinder.applyBinding(rhs.getCondition(), binding);
+			Predicate condition = (Predicate) simpleBinder.bind(rhs.getCondition(), binding, false);
 			// if rule is incomplete keep it till later as we will make negation of disj of all conditions
 			if(!doesNotRequiresAdditionalAntecedents)
 				allConditions.add(condition);
 			// get the new subformula
-			Formula<?> rhsFormula = simpleBinder.applyBinding(rhs.getRHSFormula(), binding);
+			Formula<?> rhsFormula = simpleBinder.bind(rhs.getRHSFormula(), binding, true);
 			// apply the rewriting at the given position
 			Predicate newPred = pred.rewriteSubFormula(position, rhsFormula, factory);
 			

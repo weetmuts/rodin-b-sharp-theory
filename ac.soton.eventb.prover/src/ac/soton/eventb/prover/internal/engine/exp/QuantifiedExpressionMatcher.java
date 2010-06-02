@@ -9,7 +9,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 
 import ac.soton.eventb.prover.engine.IBinding;
 import ac.soton.eventb.prover.internal.engine.ExpressionMatcher;
-import ac.soton.eventb.prover.utils.GeneralUtilities;
+import ac.soton.eventb.prover.utils.ProverUtilities;
 
 public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedExpression>{
 
@@ -74,7 +74,7 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 			int index = 0;
 			for(BoundIdentDecl pDec: patternDecs){
 				BoundIdentDecl fDec = formulaDecs[index];
-				if(!GeneralUtilities.canUnifyTypes(fDec.getType(), pDec.getType())){
+				if(!ProverUtilities.canUnifyTypes(fDec.getType(), pDec.getType())){
 					return false;
 				}
 				index++;

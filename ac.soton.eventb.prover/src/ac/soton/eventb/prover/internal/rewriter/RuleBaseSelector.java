@@ -68,7 +68,7 @@ public class RuleBaseSelector {
 	 */
 	protected boolean canFindABinding(Formula<?> form, IDRewriteRule rule){
 		Formula<?> lhs = rule.getLeftHandSide();
-		IBinding binding = finder.calculateBindings(form, lhs);
+		IBinding binding = finder.calculateBindings(form, lhs, true);
 		if(binding == null)
 			return false;
 		return true;

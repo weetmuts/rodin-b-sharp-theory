@@ -43,13 +43,13 @@ public class UnconditionalRuleAutoApplyer extends AbstractRewriteRuleApplyer{
 	
 	private Formula<?> applyRule(Formula<?> original, IDRewriteRule rule){
 		Formula<?> ruleLhs = rule.getLeftHandSide();
-		IBinding binding = finder.calculateBindings(original, ruleLhs);
+		IBinding binding = finder.calculateBindings(original, ruleLhs, true);
 		if(binding == null){
 			return original;
 		}
 		// since rule is unconditional
 		Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
-		Formula<?> result = simpleBinder.applyBinding(ruleRhs, binding);
+		Formula<?> result = simpleBinder.bind(ruleRhs, binding, true);
 		
 		addUsedTheory(rule.getTheoryName());
 

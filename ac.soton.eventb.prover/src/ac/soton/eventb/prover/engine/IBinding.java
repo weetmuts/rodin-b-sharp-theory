@@ -3,8 +3,11 @@ package ac.soton.eventb.prover.engine;
 import java.util.Map;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 
 /**
  * <p></p>
@@ -19,76 +22,54 @@ import org.eventb.core.ast.ITypeEnvironment;
  *
  */
 public interface IBinding {
-
-	/**
-	 * <p>Returns the final binding.</p>
-	 * <p>Callers should ensure that this method is called after a call to <code>IBinding.makeImmutable()</code> is made.</p>
-	 * @return the final binding
-	 * @throws UnsupportedOperationException if called before binding is made immutable
-	 */
-	public Map<FreeIdentifier, Expression> getMappings();
 	
-	/**
-	 * <p>Returns the internal type environment of this binding.</p>
-	 * <p>Callers should ensure that this method is called after a call to <code>IBinding.makeImmutable()</code> is made.</p>
-	 * @return the internal type environment
-	 * @throws UnsupportedOperationException if called before binding is made immutable
-	 */
-	public ITypeEnvironment getTypeEnvironment();
-	
-	/**
-	 * <p>Makes the binding immutable, and therefore, not accepting new mappings.</p>
-	 * <p>A call to this method will generate the internal type environment of this binding.</p>
-	 */
-	public void makeImmutable();
-	
-	/**
-	 * <p>Adds the given mapping between <code>ident</code> and <code>e</code> if the following three conditions hold:</p>
-	 *<ul>
-	 * <p>1- If a binding for <code>ident</code> already exists, then the new binding has to equal the old binding.</p>
-	 * <p>2- If a binding for <code>ident</code> does not exist, then the type of <code>ident</code> and <code>e</code> must be unifiable.</p>
-	 * <p>3- If <code>ident</code> is a given type, then <code>e</code> must be a type expression.</p>
-	 * </ul>
-	 * <p>Adding a new mapping is possible so long as the binding is not immutable.</p>
-	 * <p>Returns whether the mapping has been insterted (therefore meeting the aforementioned conditions).</p>
-	 * @param ident the pattern identifier
-	 * @param e the expression
-	 * @return whether the mapping is added
-	 * @throws UnsupportedOperationException if called after binding is made immutable
-	 */
-	public boolean putMapping(FreeIdentifier ident, Expression e);
-	
-	/**
-	 *  <p>Returns whether all mapping in <code>another</code> have been successfully added to this binding.</p> 
-	 * @param another the other binding
-	 * @return whether all entries of <code>another</code> have been successfully added
-	 * @throws UnsupportedOperationException if called after binding is made immutable
-	 * @throws IllegalArgumentException if <code>another</code> is not immutable
-	 */
-	public boolean insertAllMappings(IBinding another);
-	
-	/**
-	 * Returns whether this binding is immutable.
-	 * @return <code>true</code> if this binding is immutable
-	 */
 	public boolean isImmutable();
 	
-	/**
-	 * Returns whether the potential mapping between <code>ident</code> and <code>e</code> is an acceptable mapping i.e., satisfies 
-	 * <code>IBinding.putMapping(FreeIdentifier, Expression)</code> constraints.
-	 * <p>If the binding is immutable, this method returns <code>false</code>.</p>
-	 * @param ident the free identifier to map
-	 * @param e the expression
-	 * @return <code>true</code> if the mapping is acceptable
-	 */
-	public boolean isMappingInsertable(FreeIdentifier ident, Expression e);
+	public boolean isBindingInsertable(IBinding binding);
+	
+	public boolean putMapping(FreeIdentifier ident, Expression e);
+	
+	public boolean putPredicateMapping(PredicateVariable var, Predicate p);
+	
+	public boolean insertAllMappings(IBinding another);
+	
+	public void makeImmutable();
+	
+	public Map<FreeIdentifier, Expression> getMappings();
+	
+	public Map<PredicateVariable, Predicate> getPredicateMappings();
+	
+	public ITypeEnvironment getTypeEnvironment();	
 	
 	/**
-	 * Returns whether <code>binding</code> is insertable in this binding.
-	 * <p>If the binding is immutable, this method returns <code>false</code>.</p>
-	 * <p>Callers must ensure that <code>binding</code> is immutable.</p>
-	 * @param binding the binding to insert
-	 * @return whether all the mappings in <code>binding</code> are acceptable
+	 * Returns the formula to be matched against a pattern.
+	 * @return the formula to be matched
 	 */
-	public boolean isBindingInsertable(IBinding binding);
+	public Formula<?> getFormula();
+	
+	/**
+	 * Returns the pattern formula against which matching is carried out.
+	 * @return the pattern formula
+	 */
+	public Formula<?> getPattern();
+	
+	/**
+	 * Returns whether a partial match is acceptable.
+	 * <p>This only applies to associative (including associative commutative) expressions.</p>
+	 * @return whether a partial match is acceptable
+	 */
+	public boolean isPartialMatchAcceptable();
+	
+	/**
+	 * Keeps track of the expressions that are unmatched in the case where a partial match is acceptable.
+	 * @param comp the associative complement object
+	 */
+	public void setAssociativeExpressionComplement(AssociativeExpressionComplement comp);
+	
+	/**
+	 * Returns an object containing information about unmatched expressions.
+	 * @return the associative complement
+	 */
+	public AssociativeExpressionComplement getAssociativeExpressionComplement();
+	
 }

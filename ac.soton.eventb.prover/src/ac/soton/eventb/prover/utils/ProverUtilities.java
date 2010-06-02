@@ -1,61 +1,138 @@
 package ac.soton.eventb.prover.utils;
 
-import java.util.List;
+import static org.eventb.core.ast.LanguageVersion.V2;
 
-import org.eclipse.swt.graphics.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.Type;
+
+import ac.soton.eventb.prover.internal.base.IDRewriteRule;
 
 public class ProverUtilities {
-
+	
+	public static boolean DEBUG = true;
+	
 	/**
-	 * An utility method to return the operator source location within the range
-	 * (start, end).
-	 * <p>
-	 * 
-	 * @param predStr
-	 *            the actual predicate string.
-	 * @param start
-	 *            the starting index for searching.
-	 * @param end
-	 *            the last index for searching
-	 * @return the location in the predicate string ignore the empty spaces or
-	 *         brackets in the beginning and in the end.
+	 * <p>Utility to check whether two types can be considered as matchable.</p>
+	 * @param expressionType 
+	 * @param patternType
+	 * @return whether the two types are unifyable
 	 */
-	public static Point getOperatorPosition(String predStr, int start, int end) {
-		int i = start;
-		int x = start;
-		int y;
-		boolean letter = false;
-		while (i < end) {
-			char c = predStr.charAt(i);
-			if (letter == false && !ProverUtilities.isSpaceOrBracket(c)) {
-				x = i;
-				letter = true;
-			} else if (letter == true && ProverUtilities.isSpaceOrBracket(c)) {
-				y = i;
-				return new Point(x, y);
-			}
-			++i;
+	public static boolean canUnifyTypes(Type expressionType, Type patternType){
+		if(patternType instanceof IntegerType){
+			return expressionType instanceof IntegerType;
 		}
-		if (letter == true)
-			return new Point(x, end);
-		else
-			return new Point(start, end);
+		else if(patternType instanceof BooleanType){
+			return expressionType instanceof BooleanType;
+		}
+		else if(patternType instanceof GivenType){
+			return true;
+		}
+		else if(patternType instanceof PowerSetType){
+			if(expressionType instanceof PowerSetType){
+				Type pBase = patternType.getBaseType();
+				Type fBase = expressionType.getBaseType();
+				return canUnifyTypes(fBase, pBase);
+			}
+			else{
+				return false;
+			}
+		}
+		else if(patternType instanceof ProductType){
+			if(expressionType instanceof ProductType){
+				Type pLeft = ((ProductType)patternType).getLeft();
+				Type fLeft = ((ProductType)expressionType).getLeft();
+				
+				Type pRight = ((ProductType)patternType).getRight();
+				Type fRight = ((ProductType)expressionType).getRight();
+				
+				return canUnifyTypes(fLeft, pLeft) && canUnifyTypes(fRight, pRight);
+			}
+			else {
+				return false;
+			}
+		}
+		// unification not possible
+		return false;
 	}
 
 	/**
-	 * A utility method to check if a character is either a space or a
-	 * bracket.
-	 * <p>
-	 * 
-	 * @param c
-	 *            the character to check.
-	 * @return <code>true</code> if the character is a space or bracket,
-	 *         otherwise return <code>false</code>.
+	 * Make sure tag is for an associative expression.<p>
+	 * This method checks whether the operator is ac.
+	 * @param tag
+	 * @return
 	 */
-	public static boolean isSpaceOrBracket(char c) {
-		return (c == '\t' || c == '\n' || c == ' ' || c == '(' || c == ')');
+	public static boolean isAssociativeCommutative(int tag){
+		if(tag==AssociativeExpression.BCOMP || 
+				tag==AssociativeExpression.FCOMP){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * <p>Utility to check whether a given formula is an expression.</p>
+	 * @param form
+	 * @return whether form is an expression
+	 */
+	public static boolean isExpression(Formula<?> form){
+		return form instanceof Expression;
 	}
 
+	/**
+	 * <p>Utility to check whether the given formula is a theory formula.</p>
+	 * @param form to check
+	 * @return whether <code>form</code> is a theory formula
+	 */
+	public static boolean isTheoryFormula(Formula<?> form){
+		return (form instanceof Expression) || (form instanceof Predicate);
+	}
+	/**
+	 * <p> Merges all the lists of rules in the <code>Map</code> <code>allRules</code>.</p>
+	 * @param allRules
+	 * @return the merged list
+	 */
+	public static List<IDRewriteRule> mergeLists(Map<String, List<IDRewriteRule>> allRules ){
+		List<IDRewriteRule> result = new ArrayList<IDRewriteRule>();
+		for(String key : allRules.keySet()){
+			result.addAll(allRules.get(key));
+		}
+		return result;
+	}
+	
+	/**
+	 * <p>Utility method to parse a string as a formula knowing beforehand whether it is a an expression or predicate.</p>
+	 * <p>Use only for theory formulas.</p>
+	 * @param formStr the formula string
+	 * @param isExpression whether to parse an expression or a predicate
+	 * @return the parsed formula or <code>null</code> if there was an error
+	 */
+	public static Formula<?> parseAndTypeFormulaString(String formStr, boolean isExpression, FormulaFactory factory){
+		
+		Formula<?> form = null;
+		if(isExpression){
+			IParseResult r = factory.parseExpression(formStr, V2, null);
+			form = r.getParsedExpression();
+		}
+		else {
+			IParseResult r = factory.parsePredicate(formStr, V2, null);
+			form = r.getParsedPredicate();
+		}
+		return form;
+	}
 	/**
 	 * <p>Utility to print items in a list in a displayable fashion.</p>
 	 * <p>The return of this method will be of the shape: {<}item0,...,itemn{>}</p>
@@ -82,4 +159,29 @@ public class ProverUtilities {
 		return result;
 	}
 
+	
+
+	/**
+	 * <p>Checks whether two objects are of the same class.</p>
+	 * @param o1
+	 * @param o2
+	 * @return whether the two objects are of the same class
+	 */
+	public static boolean sameClass(Object o1, Object o2){
+		return o1.getClass().equals(o2.getClass());
+	}
+	
+	public static Expression makeAssociativeExpression(int tag, Expression[] exps, FormulaFactory factory){
+		List<Expression> es = new ArrayList<Expression>();
+		for (Expression e : exps){
+			if(e != null){
+				es.add(e);
+			}
+		}
+		if(es.size() == 1)
+			return es.get(0);
+		else {
+			return factory.makeAssociativeExpression(tag, es.toArray(new Expression[es.size()]), null);
+		}
+	}
 }
