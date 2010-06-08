@@ -2,6 +2,11 @@ package ac.soton.eventb.prover.engine;
 
 import org.eventb.core.ast.Expression;
 
+/**
+ * An implementation of a complement to an associative expression.
+ * @author Issam Maamria
+ *
+ */
 public class AssociativeExpressionComplement implements AssociativeComplement<Expression>{
 
 	private int tag;

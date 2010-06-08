@@ -23,6 +23,7 @@ import ac.soton.eventb.prover.internal.base.IDRewriteRule;
 import ac.soton.eventb.prover.internal.base.IDRuleRightHandSide;
 import ac.soton.eventb.prover.internal.base.IDTheoryFile;
 import ac.soton.eventb.prover.internal.base.retriever.DTheoryValidator.ValidationResult;
+import ac.soton.eventb.prover.utils.ProverUtilities;
 /**
  * DONE FIXME TODO Cache
  * @author maamria
@@ -340,7 +341,7 @@ public class DTheoryFile implements IDTheoryFile{
 				return null;
 			}
 			String attr =node.getNodeValue();
-			Formula<?> form = parseFormula(attr, factory);
+			Formula<?> form = ProverUtilities.parseFormula(attr, factory);
 			if(form ==  null){
 				return null;
 			}	
@@ -348,22 +349,6 @@ public class DTheoryFile implements IDTheoryFile{
 		}
 		return holder;
 	}
-	// to parse a Theory formula i.e. predicate or expression
-	private static Formula<?> parseFormula(String formula, FormulaFactory factory){
-		IParseResult res = factory.parseExpression(formula, V2, null);
-		if(res.hasProblem()){
-			res = factory.parsePredicate(formula, V2, null);
-			if (res.hasProblem()){
-				return null;
-			}
-			else 
-				return res.getParsedPredicate();
-		}
-		else
-			return res.getParsedExpression();
-			
-	}
-
 
 	public boolean isEmpty() {
 		return expRewriteRules==null && predRewriteRules==null;

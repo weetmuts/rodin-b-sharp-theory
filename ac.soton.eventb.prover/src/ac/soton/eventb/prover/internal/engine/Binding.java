@@ -15,6 +15,7 @@ import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
 
 import ac.soton.eventb.prover.engine.AssociativeExpressionComplement;
+import ac.soton.eventb.prover.engine.AssociativePredicateComplement;
 import ac.soton.eventb.prover.engine.IBinding;
 import ac.soton.eventb.prover.utils.ProverUtilities;
 
@@ -47,6 +48,7 @@ public class Binding implements IBinding{
 	private Formula<?> formula;
 	private boolean isPartialMatchAcceptable;
 	private AssociativeExpressionComplement expComplement;
+	private AssociativePredicateComplement predComplement;
 	private ITypeEnvironment typeEnvironment;
 	
 	private Binding(Formula<?> formula, Formula<?> pattern, boolean isPartialMatchAcceptable){
@@ -68,14 +70,19 @@ public class Binding implements IBinding{
 			return false;
 		if(isImmutable)
 			return false;
-		Map<FreeIdentifier, Expression> map = ((Binding)binding).binding;
-		for (FreeIdentifier ident : map.keySet())
+		Map<FreeIdentifier, Expression> identMap = ((Binding)binding).binding;
+		Map<PredicateVariable, Predicate> predMap = ((Binding) binding).predBinding;
+		for (FreeIdentifier ident : identMap.keySet())
 		{
-			if(!isMappingInsertable(ident, map.get(ident))){
+			if(!isMappingInsertable(ident, identMap.get(ident))){
 				return false;
 			}
 		}
-		
+		for(PredicateVariable var: predMap.keySet()){
+			if(!isPredicateMappingInsertable(var, predMap.get(var))){
+				return false;
+			}
+		}
 		return true;
 	}
 	
@@ -84,17 +91,11 @@ public class Binding implements IBinding{
 			throw new UnsupportedOperationException(
 					"Trying to add a mapping after the matching process finished.");
 		if(!c1_CanUnifyTypes(e.getType(),ident.getType()) || 
-				!c2_IdentifierIsGivenType(ident, e)){
+				!c2_IdentifierIsGivenType(ident, e) ||
+				(binding.get(ident) !=null && !e.equals(binding.get(ident)))){
 			return false;
 		}
-		if(binding.get(ident) == null){
-			binding.put(ident, e);
-		}
-		else {
-			if(!binding.get(ident).equals(e)){
-				return false;
-			}
-		}
+		binding.put(ident, e);
 		return true;
 	}
 	
@@ -110,8 +111,15 @@ public class Binding implements IBinding{
 				return false;
 			}
 		}
+		for (PredicateVariable var: another.getPredicateMappings().keySet()){
+			if(!putPredicateMapping(var, another.getPredicateMappings().get(var))){
+				return false;
+			}
+		}
 		setAssociativeExpressionComplement(
 				another.getAssociativeExpressionComplement());
+		setAssociativePredicateComplement(
+				another.getAssociativePredicateComplement());
 		return true;
 	}
 
@@ -212,22 +220,26 @@ public class Binding implements IBinding{
 	 * @return whether an individual mapping is insertable
 	 */
 	protected boolean isMappingInsertable(FreeIdentifier ident, Expression e) {
-		if(isImmutable)
-			return false;
-		// IF types are OK
-		if(!c1_CanUnifyTypes(e.getType(),ident.getType()) || 
-				!c2_IdentifierIsGivenType(ident, e)){
+		if(isImmutable||
+				!c1_CanUnifyTypes(e.getType(),ident.getType()) || 
+				!c2_IdentifierIsGivenType(ident, e)||
+				(binding.get(ident) != null && !e.equals(binding.get(ident)))){
 			return false;
 		}
-		// IF mapping does not exist already, BUT if it does the expression has to be the same.
-		if(binding.get(ident) != null){
-			if(!binding.get(ident).equals(e)){
-				return false;
-			}
-		}
+		
 		return true;
 	}
 
+	protected boolean isPredicateMappingInsertable(PredicateVariable var, Predicate p){
+		if(
+				isImmutable || 
+				(predBinding.get(var) != null && !p.equals(predBinding.get(var)))
+				)
+			return false;
+		
+		return true;
+	}
+	
 	public Map<PredicateVariable, Predicate> getPredicateMappings() {
 		if(!isImmutable)
 			throw new UnsupportedOperationException(
@@ -239,14 +251,21 @@ public class Binding implements IBinding{
 		if(isImmutable)
 			throw new UnsupportedOperationException(
 					"Trying to add a mapping after the matching process finished.");
-		if(predBinding.get(var) == null){
-			predBinding.put(var, p);
+		if(predBinding.get(var) != null && !p.equals(predBinding.get(var))){
+			return false;
 		}
-		else {
-			if(!predBinding.get(var).equals(p)){
-				return false;
-			}
-		}
+		predBinding.put(var, p);
 		return true;
+	}
+
+	public AssociativePredicateComplement getAssociativePredicateComplement() {
+		// TODO Auto-generated method stub
+		return predComplement;
+	}
+
+	public void setAssociativePredicateComplement(
+			AssociativePredicateComplement comp) {
+		// TODO Auto-generated method stub
+		this.predComplement = comp;
 	}
 }

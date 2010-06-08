@@ -4,10 +4,11 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 
+import ac.soton.eventb.prover.internal.engine.PredicateVariableSubstituter;
 import ac.soton.eventb.prover.utils.ProverUtilities;
 
 /**
- * A simple binder is implemented as a singeleton.
+ * A simple binder is implemented as a singleton.
  * 
  * @author maamria
  * 
@@ -23,11 +24,15 @@ public class SimpleBinder {
 	}
 
 	public Formula<?> bind(Formula<?> pattern, IBinding binding, boolean isPatternRHS){
-		Formula<?> rhs = ProverUtilities.parseAndTypeFormulaString(pattern
+		Formula<?> rhs = ProverUtilities.parseFormulaString(pattern
 				.toString(), ProverUtilities.isExpression(pattern), factory);
-		rhs.typeCheck(binding.getTypeEnvironment());
-		Formula<?> formula = rhs.substituteFreeIdents(binding
+		Formula<?> rhs2 = rhs.rewrite(new PredicateVariableSubstituter(
+				binding.getPredicateMappings(), factory));
+		rhs2.typeCheck(binding.getTypeEnvironment());
+		Formula<?> formula = rhs2.substituteFreeIdents(binding
 				.getMappings(), FormulaFactory.getDefault());
+		
+		
 		if(isPatternRHS){
 			AssociativeExpressionComplement comp;
 			if ((comp = binding.getAssociativeExpressionComplement()) != null) {

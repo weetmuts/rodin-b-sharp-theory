@@ -2,6 +2,7 @@ package ac.soton.eventb.prover.internal.engine.pred;
 
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 
 import ac.soton.eventb.prover.engine.IBinding;
 import ac.soton.eventb.prover.internal.engine.PredicateMatcher;
@@ -21,13 +22,21 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 		}
 		Predicate fLeft = bpForm.getLeft();
 		Predicate pLeft = bpPattern.getLeft();
-		if(!engine.match(fLeft, pLeft, existingBinding)){
+		if(pLeft instanceof PredicateVariable){
+			existingBinding.putPredicateMapping(
+					(PredicateVariable)pLeft, fLeft);
+		}
+		else if(!engine.match(fLeft, pLeft, existingBinding)){
 			return false;
 		}
 		
 		Predicate fRight = bpForm.getRight();
 		Predicate pRight = bpPattern.getRight();
-		if(!engine.match(fRight, pRight, existingBinding)){
+		if(pRight instanceof PredicateVariable){
+			existingBinding.putPredicateMapping(
+					(PredicateVariable)pRight, fRight);
+		}
+		else if(!engine.match(fRight, pRight, existingBinding)){
 			return false;
 		}
 		return true;

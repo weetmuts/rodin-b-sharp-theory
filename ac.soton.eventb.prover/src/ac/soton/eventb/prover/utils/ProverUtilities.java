@@ -120,18 +120,34 @@ public class ProverUtilities {
 	 * @param isExpression whether to parse an expression or a predicate
 	 * @return the parsed formula or <code>null</code> if there was an error
 	 */
-	public static Formula<?> parseAndTypeFormulaString(String formStr, boolean isExpression, FormulaFactory factory){
+	public static Formula<?> parseFormulaString(String formStr, boolean isExpression, FormulaFactory factory){
 		
 		Formula<?> form = null;
 		if(isExpression){
-			IParseResult r = factory.parseExpression(formStr, V2, null);
+			IParseResult r = factory.parseExpressionPattern(formStr, V2, null);
 			form = r.getParsedExpression();
 		}
 		else {
-			IParseResult r = factory.parsePredicate(formStr, V2, null);
+			IParseResult r = factory.parsePredicatePattern(formStr, V2, null);
 			form = r.getParsedPredicate();
 		}
 		return form;
+	}
+	
+	// to parse a Theory formula i.e. predicate or expression
+	public static Formula<?> parseFormula(String formula, FormulaFactory factory){
+		IParseResult res = factory.parseExpressionPattern(formula, V2, null);
+		if(res.hasProblem()){
+			res = factory.parsePredicatePattern(formula, V2, null);
+			if (res.hasProblem()){
+				return null;
+			}
+			else 
+				return res.getParsedPredicate();
+		}
+		else
+			return res.getParsedExpression();
+			
 	}
 	/**
 	 * <p>Utility to print items in a list in a displayable fashion.</p>
