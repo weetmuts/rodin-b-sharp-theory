@@ -304,7 +304,7 @@ public class DTheoryFile implements IDTheoryFile{
 				return null;
 			}
 			String predAttr = node.getNodeValue();
-			IParseResult predParseRes = factory.parsePredicate(predAttr, V2, null);
+			IParseResult predParseRes = factory.parsePredicatePattern(predAttr, V2, null);
 			if(predParseRes.hasProblem()){
 				return null;
 			}

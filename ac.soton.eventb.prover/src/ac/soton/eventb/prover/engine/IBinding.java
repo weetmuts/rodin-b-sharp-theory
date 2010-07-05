@@ -78,8 +78,13 @@ public interface IBinding {
 	 */
 	public Map<PredicateVariable, Predicate> getPredicateMappings();
 	/**
-	 * Returns the type environment of the binding
-	 * @return
+	 * Returns the type environment assigning types to the pattern free variables
+	 * that are compatible with their matches in the matched formula.
+	 * <p>This type environment is used to typecheck the right hand sides of rewrite rules so that
+	 * applying the substitutions is allowed.</p>
+	 * <p>Callers must ensure that the binding is immutable.</p>
+	 * 
+	 * @return the type environment
 	 */
 	public ITypeEnvironment getTypeEnvironment();	
 	
@@ -97,7 +102,7 @@ public interface IBinding {
 	
 	/**
 	 * Returns whether a partial match is acceptable.
-	 * <p>This only applies to associative (including associative commutative) expressions.</p>
+	 * <p>This only applies to associative (including associative commutative) expressions and predicates.</p>
 	 * @return whether a partial match is acceptable
 	 */
 	public boolean isPartialMatchAcceptable();
@@ -114,7 +119,15 @@ public interface IBinding {
 	 */
 	public AssociativeExpressionComplement getAssociativeExpressionComplement();
 	
+	/**
+	 * Keeps track of the predicates that are unmatched in the case where a partial match is acceptable.
+	 * @param comp the associative complement object
+	 */
 	public void setAssociativePredicateComplement(AssociativePredicateComplement comp);
 	
+	/**
+	 * Returns an object containing information about unmatched predicates.
+	 * @return the associative complement
+	 */
 	public AssociativePredicateComplement getAssociativePredicateComplement();
 }

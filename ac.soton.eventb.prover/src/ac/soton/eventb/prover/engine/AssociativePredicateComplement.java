@@ -9,16 +9,27 @@ import org.eventb.core.ast.Predicate;
  */
 public class AssociativePredicateComplement implements AssociativeComplement<Predicate>{
 
+	private int tag;
+	private Predicate toAppend;
+	private Predicate toPrepend;
+	
+	public AssociativePredicateComplement(int tag, Predicate toAppend, 
+			Predicate toPrepend){
+		this.tag = tag;
+		this.toAppend = toAppend;
+		this.toPrepend = toPrepend;
+	}
+	
 	public int getTag() {
-		return 0;
+		return tag;
 	}
 
 	public Predicate getToAppend() {
-		return null;
+		return toAppend;
 	}
 
 	public Predicate getToPrepend() {
-		return null;
+		return toPrepend;
 	}
 
 }
