@@ -63,12 +63,13 @@ public class SCRewriteRule extends TheoryElement implements ISCRewriteRule{
 	// Utility methods
 	private Formula<?> getFormula(FormulaFactory factory)
 			throws RodinDBException {
-		String contents = null;
+		String contents = getLHSString();
 		boolean isExpression = true;
-		contents = getLHSString();
+		// parse a pattern
 		IParseResult parserResult = factory.parseExpressionPattern(contents, V2, null);
 		if (parserResult.getProblems().size() != 0) {
 			isExpression = false;
+			// parse a pattern
 			parserResult = factory.parsePredicatePattern(contents, V2, null);
 			// If neither expression nor predicate
 			if (parserResult.getProblems().size() != 0) {

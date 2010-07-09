@@ -28,9 +28,10 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 		return ISCVariable.ELEMENT_TYPE;
 	}
 
-	@Deprecated
+	// could not extend SCPredicateElement (Java multi inheritance)
 	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
 		String contents = getPredicateString();
+		// no predicate pattern here
 		IParseResult parserResult = factory.parsePredicate(contents, V2, null);
 		if (parserResult.getProblems().size() != 0) {
 			throw TheoryUtils.newRodinDBException(
