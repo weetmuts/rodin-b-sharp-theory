@@ -363,6 +363,18 @@
              name="%operatorDefinitionFilterModule"
              parent="org.eventb.theory.core.newOperatorDefinitionModule">
        </filterType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.OperatorArgumentModule"
+             id="operatorArgumentModule"
+             name="%operatorArgumentModule"
+             parent="org.eventb.theory.core.newOperatorDefinitionModule">
+       </processorType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.OperatorArgumentFilterModule"
+             id="operatorArgumentFilterModule"
+             name="%operatorArgumentFilterModule"
+             parent="org.eventb.theory.core.operatorArgumentModule">
+       </filterType>
    </extension>
    <extension
          point="org.eventb.core.configurations">
@@ -402,6 +414,12 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorDefinitionFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorArgumentModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorArgumentFilterModule">
          </scModule>
       </configuration>
       <configuration

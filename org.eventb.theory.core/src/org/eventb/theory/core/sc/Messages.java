@@ -78,6 +78,17 @@ public final class Messages {
 	public static String scuser_MissingOpLabelIDError;
 	public static String scuser_OperatorIDConflictWarning;
 	public static String scuser_OperatorIDConflictError;
+	public static String scuser_OperatorIDExistsError;
+	public static String scuser_OperatorSynMissingError;
+	public static String scuser_OperatorSynExistsError;
+	public static String scuser_OperatorFormTypeMissingError;
+	public static String scuser_OperatorNotationTypeMissingError;
+	public static String scuser_OperatorAssocMissingWarning;
+	public static String scuser_OperatorCommutMissingWarning;
+	public static String scuser_UntypedOperatorArgumentError;
+	public static String scuser_OperatorArgumentNameConflict;
+	public static String scuser_TypeAttrMissingForOpArgError;
+	public static String scuser_IdentIsNotTypeParError;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

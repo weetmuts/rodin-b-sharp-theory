@@ -13,11 +13,9 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.eventb.theory.core.INewOperatorDefinition;
@@ -29,7 +27,6 @@ import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.internal.core.sc.base.LabeledElementModule;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
-import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -65,7 +62,7 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 		ILabelSymbolInfo[] operators = fetchOperators(file, repository, monitor);
 		ISCNewOperatorDefinition scNewOpDefs[] = new ISCNewOperatorDefinition[newOpDefs.length];
 		commitOperators(root, targetRoot, scNewOpDefs,operators, monitor);
-		//processOperators(scNewOpDefs, repository, operators, monitor);
+		processOperators(scNewOpDefs, repository, operators, monitor);
 		monitor.worked(2);
 		
 	}
@@ -76,10 +73,9 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 	 * @param operators
 	 * @param monitor
 	 */
-	@SuppressWarnings("restriction")
 	private void processOperators(ISCNewOperatorDefinition[] scNewOpDefs,
 			ISCStateRepository repository, ILabelSymbolInfo[] operators,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) throws CoreException{
 		for (int i = 0; i < newOpDefs.length; i++) {
 
 			if (operators[i] != null) {
@@ -89,20 +85,16 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 						factory));
 
 
-				ITypeEnvironment eventTypeEnvironment = factory
-						.makeTypeEnvironment();
-				eventTypeEnvironment.addAll(globalTypeEnvironment);
-				repository.setTypeEnvironment(eventTypeEnvironment);
+				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
+				opTypeEnvironment.addAll(globalTypeEnvironment);
+				repository.setTypeEnvironment(opTypeEnvironment);
 
-				initProcessorModules(events[i], repository, null);
+				initProcessorModules(newOpDefs[i], repository, null);
 
-				processModules(events[i], scEvents[i], repository, monitor);
+				processModules(newOpDefs[i], scNewOpDefs[i], repository, monitor);
 
-				endProcessorModules(events[i], repository, null);
+				endProcessorModules(newOpDefs[i], repository, null);
 
-				if (scEvents[i] != null)
-					scEvents[i].setAccuracy(concreteEventInfo.isAccurate(),
-							null);
 			}
 
 			monitor.worked(1);

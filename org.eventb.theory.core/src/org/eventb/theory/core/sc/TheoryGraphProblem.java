@@ -14,7 +14,10 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 public enum TheoryGraphProblem implements IRodinProblem {
 		TheoryTypeParameterNameConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoryTypeParameterNameConflict), 
 		TheoryTypeParameterNameConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_TheoryTypeParameterNameConflict),
+		OperatorArgumentNameConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorArgumentNameConflict), 
+		OperatorArgumentNameConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_OperatorArgumentNameConflict),
 		UntypedTheoryTypeParameterError(IMarker.SEVERITY_ERROR,Messages.scuser_UntypedTypeParameterError), 
+		UntypedOperatorArgumentError(IMarker.SEVERITY_ERROR,Messages.scuser_UntypedOperatorArgumentError), 
 		DatatypeNameAlreadyATypeParError(IMarker.SEVERITY_ERROR, Messages.scuser_DatatypeNameAlreadyATypeParError),
 		TypeArgMissingError(IMarker.SEVERITY_ERROR, Messages.scuser_TypeArgMissingError),
 		TypeArgNotDefinedError(IMarker.SEVERITY_ERROR, Messages.scuser_TypeArgNotDefinedError),
@@ -28,12 +31,21 @@ public enum TheoryGraphProblem implements IRodinProblem {
 		MissingConstructorNameError(IMarker.SEVERITY_ERROR, Messages.scuser_MissingConstructorNameError),
 		MissingDatatypeNameError(IMarker.SEVERITY_ERROR, Messages.scuser_MissingDatatypeNameError),
 		TypeIsNotRefTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_TypeIsNotRefTypeError),
+		IdentIsNotTypeParError(IMarker.SEVERITY_ERROR, Messages.scuser_IdentIsNotTypeParError),
 		IdenIsADatatypeNameError(IMarker.SEVERITY_ERROR, Messages.scuser_IdenIsADatatypeNameError),
 		IdenIsAConsNameError(IMarker.SEVERITY_ERROR, Messages.scuser_IdenIsAConsNameError),
 		IdenIsADesNameError(IMarker.SEVERITY_ERROR, Messages.scuser_IdenIsADesNameError),
 		MissingOpLabelIDError(IMarker.SEVERITY_ERROR, Messages.scuser_MissingOpLabelIDError),
 		OperatorIDConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_OperatorIDConflictWarning), 
-		OperatorIDConflictError(IMarker.SEVERITY_WARNING, Messages.scuser_OperatorIDConflictError), 
+		OperatorIDConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorIDConflictError), 
+		OperatorIDExistsError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorIDExistsError), 
+		OperatorSynMissingError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorSynMissingError), 
+		OperatorSynExistsError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorSynExistsError), 
+		OperatorFormTypeMissingError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorFormTypeMissingError),
+		OperatorNotationTypeMissingError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorNotationTypeMissingError),
+		OperatorAssocMissingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_OperatorAssocMissingWarning),
+		OperatorCommutMissingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_OperatorCommutMissingWarning),
+		TypeAttrMissingForOpArgError(IMarker.SEVERITY_ERROR, Messages.scuser_TypeAttrMissingForOpArgError),
 			AutoUndefWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AutoUndefWarning), 
 			InterUndefWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InterUndefWarning),
 			ToolTipNotSupplied(IMarker.SEVERITY_INFO, Messages.scuser_ToolTipNotSupplied),
@@ -56,7 +68,8 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			NoToolTipWarning(IMarker.SEVERITY_WARNING, Messages.scuser_NoToolTipWarning),
 			NoRuleDescWarning(IMarker.SEVERITY_WARNING, Messages.scuser_NoRuleDescWarning), 
 			LHSIsIdentErr(IMarker.SEVERITY_ERROR, Messages.scuser_LHSIsIdentErr),
-			RHSPredVarsNOTSubsetOFLHS(IMarker.SEVERITY_ERROR, Messages.scuser_RHSPredVarsNOTSubsetOFLHS)
+			RHSPredVarsNOTSubsetOFLHS(IMarker.SEVERITY_ERROR, Messages.scuser_RHSPredVarsNOTSubsetOFLHS), 
+			
 			;
 
 	private int arity;

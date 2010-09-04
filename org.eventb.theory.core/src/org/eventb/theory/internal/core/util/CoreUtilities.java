@@ -9,6 +9,7 @@ package org.eventb.theory.internal.core.util;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -24,8 +25,10 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
@@ -127,13 +130,6 @@ public class CoreUtilities {
 			FormulaFactory factory, IMarkerDisplay display) 
 	throws CoreException{
 		IAttributeType.String attributeType = TheoryAttributes.TYPE_ATTRIBUTE;
-
-		if (!typingElmnt.hasType()) {
-			display.createProblemMarker(typingElmnt,
-					attributeType,
-					GraphProblem.ExpressionUndefError);
-			return null;
-		}
 		String expString = typingElmnt.getType();
 
 		IParseResult parseResult = factory.parseType(expString, V2);
@@ -374,5 +370,24 @@ public class CoreUtilities {
 		}
 		
 		return formula;
+	}
+	
+	public static List<String> getGivenSetsNames(ITypeEnvironment typeEnvironment){
+		List<String> result = new ArrayList<String>();
+		for (String name : typeEnvironment.getNames()){
+			if(isGivenSet(typeEnvironment, name)){
+				result .add(name);
+			}
+		}
+		return result;
+	}
+	
+	public static boolean isGivenSet(ITypeEnvironment typeEnvironment, String name) {
+		final Type baseType = typeEnvironment.getType(name).getBaseType();
+		if (baseType instanceof GivenType) {
+			GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
 	}
 }

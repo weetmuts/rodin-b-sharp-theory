@@ -7,33 +7,111 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc;
 
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.theory.core.INewOperatorDefinition;
+import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
+import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
  *
  */
+@SuppressWarnings("restriction")
 public class OperatorDefinitionFilterModule extends SCFilterModule{
 
 	IModuleType<OperatorDefinitionFilterModule> MODULE_TYPE = 
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorDefinitionFilterModule");
 	
+	private AbstractTheoryLabelSymbolTable labelSymbolTable;
+	private FormulaFactory factory;
+	
 	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		return false;
+		INewOperatorDefinition opDef = (INewOperatorDefinition) element;
+		String opID = opDef.getLabel();
+		ILabelSymbolInfo symbolInfo = labelSymbolTable.getSymbolInfo(opID);
+		// check ID is unique
+		if(!MathExtensionsUtilities.checkOperatorID(opDef.getLabel(), factory)){
+			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorIDExistsError, opID);
+			return false;
+		}
+		if(!opDef.hasSyntaxSymbol() || opDef.getSyntaxSymbol().equals("")){
+			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorSynMissingError, opID);
+			return false;
+		}
+		String syntax = opDef.getSyntaxSymbol();
+		// check syntax
+		if(!MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
+			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorSynExistsError, syntax);
+			return false;
+		}
+		symbolInfo.setAttributeValue(TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, syntax);
+		if(!opDef.hasFormulaType()){
+			createProblemMarker(opDef, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorFormTypeMissingError, opID);
+			return false;
+		}
+		FormulaType formType = opDef.getFormulaType();
+		symbolInfo.setAttributeValue(TheoryAttributes.FORMULA_TYPE_ATTRIBUTE, TheoryCoreFacade.isExpressionOperator(formType));
+		if(!opDef.hasNotationType()){
+			createProblemMarker(opDef, TheoryAttributes.NOTATION_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorNotationTypeMissingError, opID);
+			return false;
+		}
+		Notation notation = opDef.getNotationType();
+		symbolInfo.setAttributeValue(TheoryAttributes.NOTATION_TYPE_ATTRIBUTE, TheoryCoreFacade.convertTypeToStr(notation));
+		if(!opDef.hasAssociativeAttribute()){
+			// warn
+			createProblemMarker(opDef, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE, TheoryGraphProblem.OperatorAssocMissingWarning, opID);
+		}
+		else 
+			symbolInfo.setAttributeValue(TheoryAttributes.ASSOCIATIVE_ATTRIBUTE, opDef.isAssociative());
+		if(!opDef.hasCommutativeAttribute()){
+			// warn
+			createProblemMarker(opDef, TheoryAttributes.COMMUTATIVE_ATTRIBUTE, TheoryGraphProblem.OperatorCommutMissingWarning, opID);
+		}
+		else
+			symbolInfo.setAttributeValue(TheoryAttributes.COMMUTATIVE_ATTRIBUTE, opDef.isCommutative());
+		return true;
 	}
 
 	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
+	}
+	
+	@Override
+	public void initModule(
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		super.initModule(repository, monitor);
+		labelSymbolTable = (AbstractTheoryLabelSymbolTable) repository.getState(OperatorLabelSymbolTable.STATE_TYPE);
+		factory = repository.getFormulaFactory();
+	}
+	
+	@Override
+	public void endModule(
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		labelSymbolTable = null;
+		factory = null;
+		super.endModule(repository, monitor);
 	}
 
 }

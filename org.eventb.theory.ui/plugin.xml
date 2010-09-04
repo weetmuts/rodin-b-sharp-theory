@@ -104,7 +104,7 @@
             class="org.eventb.theory.internal.ui.attr.SyntaxSymbolAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.theory.ui.syntaxSymbol"
-            isMath="false"
+            isMath="true"
             prefix="Syntax"
             style="single"
             typeId="org.eventb.theory.core.syntaxSymbol">

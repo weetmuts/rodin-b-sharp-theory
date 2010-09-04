@@ -8,6 +8,7 @@
 package org.eventb.theory.internal.core.sc.states;
 
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IIdentifierElement;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -26,33 +27,50 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author maamria
  * 
- * TODO more symbols needed here
+ *         TODO more symbols needed here
  * 
  */
 @SuppressWarnings({ "restriction", "unused" })
 public class TheorySymbolFactory {
 
 	private static TheorySymbolFactory factory = new TheorySymbolFactory();
-	
+
 	private static LocalTypeParameterSymbolProblem localTypeParameterSymbolProblem = new LocalTypeParameterSymbolProblem();
 	private static OperatorIDSymbolProblem operatorIDSymbolProblem = new OperatorIDSymbolProblem();
-	/*private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new RewriteRuleSymbolProblem();*/
-	/*private static RhsSymbolProblem rhsSymbolProblem = new RhsSymbolProblem();*/
-	
-	/*public ILabelSymbolInfo makeLocalRewriteRule(String symbol,
-			boolean persistent, IInternalElement problemElement,
-			String component) {
-		return new LabelSymbolInfo(symbol, ISCRewriteRule.ELEMENT_TYPE,
-				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
-				component, rewriteRuleSymbolProblem);
-	}*/
-	
+	private static LocalOperatorArgumentSymbolProblem operatorArgumentSymbolProblem = new LocalOperatorArgumentSymbolProblem();
+
+	/*
+	 * private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new
+	 * RewriteRuleSymbolProblem();
+	 */
+	/*
+	 * private static RhsSymbolProblem rhsSymbolProblem = new
+	 * RhsSymbolProblem();
+	 */
+
+	/*
+	 * public ILabelSymbolInfo makeLocalRewriteRule(String symbol, boolean
+	 * persistent, IInternalElement problemElement, String component) { return
+	 * new LabelSymbolInfo(symbol, ISCRewriteRule.ELEMENT_TYPE, persistent,
+	 * problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+	 * rewriteRuleSymbolProblem); }
+	 */
+
+	public IIdentifierSymbolInfo makeLocalOperatorArgument(String name,
+			boolean persistent, IIdentifierElement element, String parentName) {
+		return new IdentifierSymbolInfo(name, ISCTypeParameter.ELEMENT_TYPE,
+				persistent, element,
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, parentName,
+				operatorArgumentSymbolProblem);
+	}
+
 	public ILabelSymbolInfo makeLocalOperator(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
-		return new LabelSymbolInfo(symbol, ISCNewOperatorDefinition.ELEMENT_TYPE,
-				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
-				component, operatorIDSymbolProblem);
+		return new LabelSymbolInfo(symbol,
+				ISCNewOperatorDefinition.ELEMENT_TYPE, persistent,
+				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+				operatorIDSymbolProblem);
 	}
 
 	public IIdentifierSymbolInfo makeLocalTypeParameter(String symbol,
@@ -64,12 +82,13 @@ public class TheorySymbolFactory {
 				localTypeParameterSymbolProblem);
 	}
 
-	/*public ILabelSymbolInfo makeLocalRHS(String symbol, boolean persistent,
-			IInternalElement problemElement, String component) {
-		return new LabelSymbolInfo(symbol, ISCRewriteRuleRightHandSide.ELEMENT_TYPE, persistent,
-				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
-				rhsSymbolProblem);
-	}*/
+	/*
+	 * public ILabelSymbolInfo makeLocalRHS(String symbol, boolean persistent,
+	 * IInternalElement problemElement, String component) { return new
+	 * LabelSymbolInfo(symbol, ISCRewriteRuleRightHandSide.ELEMENT_TYPE,
+	 * persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+	 * rhsSymbolProblem); }
+	 */
 
 	public static TheorySymbolFactory getInstance() {
 		return factory;
@@ -95,6 +114,31 @@ public class TheorySymbolFactory {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					TheoryGraphProblem.TheoryTypeParameterNameConflictWarning,
+					symbolInfo.getSymbol());
+		}
+
+	}
+
+	private static class LocalOperatorArgumentSymbolProblem extends
+			OperatorArgumentSymbolProblem {
+
+		public LocalOperatorArgumentSymbolProblem() {
+			// public constructor
+		}
+
+		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.OperatorArgumentNameConflictError,
+					symbolInfo.getSymbol());
+		}
+
+		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.OperatorArgumentNameConflictWarning,
 					symbolInfo.getSymbol());
 		}
 
@@ -151,7 +195,7 @@ public class TheorySymbolFactory {
 		}
 
 	}
-	
+
 	private abstract static class TypeParameterSymbolProblem implements
 			ITypedSymbolProblem {
 
@@ -161,6 +205,19 @@ public class TheorySymbolFactory {
 
 		public IRodinProblem getUntypedError() {
 			return TheoryGraphProblem.UntypedTheoryTypeParameterError;
+		}
+
+	}
+
+	private abstract static class OperatorArgumentSymbolProblem implements
+			ITypedSymbolProblem {
+
+		public OperatorArgumentSymbolProblem() {
+			// public constructor
+		}
+
+		public IRodinProblem getUntypedError() {
+			return TheoryGraphProblem.UntypedOperatorArgumentError;
 		}
 
 	}
@@ -188,5 +245,4 @@ public class TheorySymbolFactory {
 		}
 
 	}
-
 }

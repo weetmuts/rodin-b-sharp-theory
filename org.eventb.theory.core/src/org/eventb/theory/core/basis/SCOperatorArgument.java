@@ -7,17 +7,11 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Type;
 import org.eventb.core.basis.SCIdentifierElement;
 import org.eventb.theory.core.ISCOperatorArgument;
-import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria
@@ -31,24 +25,6 @@ public class SCOperatorArgument extends SCIdentifierElement implements ISCOperat
 	 */
 	public SCOperatorArgument(String name, IRodinElement parent) {
 		super(name, parent);
-	}
-
-	@Override
-	public boolean hasSCType() throws RodinDBException {
-		return hasAttribute(TheoryAttributes.TYPE_ATTRIBUTE);
-	}
-
-	@Override
-	public Type getSCType(FormulaFactory ff) throws RodinDBException {
-		String typeStr = getAttributeValue(TheoryAttributes.TYPE_ATTRIBUTE);
-		return CoreUtilities.parseType(typeStr, ff);
-	}
-
-	@Override
-	public void setSCType(Type type, IProgressMonitor monitor)
-			throws RodinDBException {
-		setAttributeValue(TheoryAttributes.TYPE_ATTRIBUTE, type.toString(), monitor);
-		
 	}
 
 	@Override

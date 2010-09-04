@@ -16,7 +16,7 @@ import org.rodinp.core.RodinCore;
  * @author maamria
  *
  */
-public interface ISCOperatorArgument extends ISCTypeElement, ISCIdentifierElement{
+public interface ISCOperatorArgument extends ISCIdentifierElement{
 
 	IInternalElementType<ISCOperatorArgument> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scOperatorArgument");

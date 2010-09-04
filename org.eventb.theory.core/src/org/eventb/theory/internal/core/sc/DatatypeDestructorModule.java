@@ -98,7 +98,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 						datatypeTable.setErrorProne();
 						continue;
 					}
-					if (!consArg.hasType()) {
+					if (!consArg.hasType() || consArg.getType().equals("")) {
 						createProblemMarker(consArg,
 								TheoryAttributes.TYPE_ATTRIBUTE,
 								TheoryGraphProblem.MissingDestructorTypeError, name);
