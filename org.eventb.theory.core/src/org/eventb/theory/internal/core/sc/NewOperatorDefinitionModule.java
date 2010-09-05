@@ -30,6 +30,7 @@ import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -80,12 +81,13 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 			IProgressMonitor monitor) throws CoreException{
 		for (int i = 0; i < newOpDefs.length; i++) {
 
-			if (operators[i] != null) {
+			if (operators[i] != null && !operators[i].hasError()) {
 
 				repository.setState(new StackedIdentifierSymbolTable(
 						identifierSymbolTable, OP_IDENT_SYMTAB_SIZE,
 						factory));
-
+				factory = repository.getFormulaFactory();
+				globalTypeEnvironment = repository.getTypeEnvironment();
 
 				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
@@ -101,6 +103,7 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 
 				// update the factory
 				factory = repository.getFormulaFactory();
+				globalTypeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 			}
 
 			monitor.worked(1);

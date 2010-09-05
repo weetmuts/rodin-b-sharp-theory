@@ -35,7 +35,7 @@ public abstract class AbstractOperatorExtension implements IFormulaExtension{
 	protected Predicate wdCondition;
 	protected Formula<?> directDefinition;
 	protected HashMap<String, Type> opArguments;
-	protected TypeInstantiations instantiations;
+	protected IPolymorphicTypeManipulation instantiations;
 	
 	protected FormulaFactory factory;
 	
@@ -52,7 +52,7 @@ public abstract class AbstractOperatorExtension implements IFormulaExtension{
 		this.directDefinition =directDefinition;
 		this.wdCondition = wdCondition;
 		this.opArguments = opArguments;
-		this.instantiations = new TypeInstantiations(factory); 
+		this.instantiations = new PolymorphicTypeManipulation(factory); 
 	}
 	
 	@Override

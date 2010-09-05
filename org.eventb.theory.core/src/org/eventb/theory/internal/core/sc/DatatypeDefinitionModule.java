@@ -119,7 +119,8 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 					
 					repository.setFormulaFactory(decoy);
 					factory = decoy;
-					
+					typeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+					repository.setTypeEnvironment(typeEnvironment);
 					repository.setState(new AddedTypeExpression(typeExpression));
 					repository.setState(referencedTypes);
 					
@@ -142,7 +143,8 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 					
 					repository.setFormulaFactory(datatypeTable.augmentFormulaFactory());
 					factory = repository.getFormulaFactory();
-					
+					typeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+					repository.setTypeEnvironment(typeEnvironment);
 					repository.removeState(AddedTypeExpression.STATE_TYPE);
 					repository.removeState(ReferencedTypes.STATE_TYPE);
 				}

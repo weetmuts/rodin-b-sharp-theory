@@ -30,14 +30,14 @@ import org.eventb.theory.internal.core.util.CoreUtilities;
  * @author maamria
  *
  */
-public class TypeInstantiations {
+public class PolymorphicTypeManipulation implements IPolymorphicTypeManipulation{
 	private Map<String, Type> instantiations;
 	private Map<String, Expression> argumentInstantiations;
 	private Map<FreeIdentifier, Expression> overallInstantiations;
 	private FormulaFactory factory;
 	private Type definitionType;
 
-	public TypeInstantiations(FormulaFactory factory) {
+	public PolymorphicTypeManipulation(FormulaFactory factory) {
 		this.factory = factory;
 		instantiations = new HashMap<String, Type>();
 		argumentInstantiations = new HashMap<String, Expression>();
@@ -52,6 +52,9 @@ public class TypeInstantiations {
 	public Type synthesiseType(Type definitionType)
 			throws InvalidExpressionException {
 		this.definitionType = definitionType;
+		if(definitionType == null){
+			return null;
+		}
 		Expression typeExpression = definitionType.toExpression(factory);
 		String rawTypeExp = typeExpression.toString();
 		Expression exp = factory.parseExpression(rawTypeExp,
