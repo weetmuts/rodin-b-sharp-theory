@@ -31,7 +31,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.sc.states.OperatorInformation;
+import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -48,7 +48,7 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 
 	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
-	private OperatorInformation operatorInformation;
+	private IOperatorInformation operatorInformation;
 
 	private int index = 0;
 
@@ -202,8 +202,8 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
-		operatorInformation = (OperatorInformation) repository
-				.getState(OperatorInformation.STATE_TYPE);
+		operatorInformation = (IOperatorInformation) repository
+				.getState(IOperatorInformation.STATE_TYPE);
 	}
 
 	@Override

@@ -23,11 +23,11 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
+import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -95,8 +95,8 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		labelSymbolTable = (AbstractTheoryLabelSymbolTable) repository.getState(OperatorLabelSymbolTable.STATE_TYPE);
 		factory = repository.getFormulaFactory();
+		labelSymbolTable = (AbstractTheoryLabelSymbolTable) repository.getState(OperatorLabelSymbolTable.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
 	}
 	

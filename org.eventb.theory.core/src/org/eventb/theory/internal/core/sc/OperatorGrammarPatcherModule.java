@@ -15,7 +15,7 @@ import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.sc.states.OperatorInformation;
+import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -31,7 +31,7 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 					+ ".operatorGrammarPatcherModule");
 	
 	private FormulaFactory factory;
-	private OperatorInformation operatorInformation;
+	private IOperatorInformation operatorInformation;
 	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -39,8 +39,9 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 			throws CoreException {
 		if(!operatorInformation.hasError()){
 			FormulaFactory newFactory = factory.withExtensions(
-					CoreUtilities.singletonSet(operatorInformation.getExtension()));
+					CoreUtilities.singletonSet(operatorInformation.getExtension(factory)));
 			repository.setFormulaFactory(newFactory);
+			factory = repository.getFormulaFactory();
 		}
 		
 	}
@@ -56,8 +57,8 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
-		operatorInformation = (OperatorInformation) repository
-				.getState(OperatorInformation.STATE_TYPE);
+		operatorInformation = (IOperatorInformation) repository
+				.getState(IOperatorInformation.STATE_TYPE);
 	}
 
 	@Override

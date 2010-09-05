@@ -296,7 +296,7 @@
             name="%operatorLabelSymbolTable">
       </stateType>
       <stateType
-            class="org.eventb.theory.internal.core.sc.states.OperatorInformation"
+            class="org.eventb.theory.internal.core.sc.states.IOperatorInformation"
             id="operatorInformation"
             name="%operatorInformation">
       </stateType>

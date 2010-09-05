@@ -22,7 +22,7 @@ import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.sc.states.OperatorInformation;
+import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -38,7 +38,7 @@ public class NewOperatorAttributesModule extends SCProcessorModule {
 					+ ".newOperatorAttributesModule");
 	
 	private ITypeEnvironment typeEnvironment;
-	private OperatorInformation operatorInformation;
+	private IOperatorInformation operatorInformation;
 
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -131,8 +131,8 @@ public class NewOperatorAttributesModule extends SCProcessorModule {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		typeEnvironment = repository.getTypeEnvironment();
-		operatorInformation = (OperatorInformation) repository
-				.getState(OperatorInformation.STATE_TYPE);
+		operatorInformation = (IOperatorInformation) repository
+				.getState(IOperatorInformation.STATE_TYPE);
 
 	}
 

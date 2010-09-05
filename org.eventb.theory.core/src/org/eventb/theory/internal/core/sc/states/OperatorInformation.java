@@ -8,49 +8,29 @@
 package org.eventb.theory.internal.core.sc.states;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.ExtensionFactory;
-import org.eventb.core.ast.extension.ICompatibilityMediator;
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.ast.extension.IPriorityMediator;
-import org.eventb.core.ast.extension.ITypeCheckMediator;
-import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
-import org.eventb.internal.core.ast.extension.ExtensionKind;
 import org.eventb.internal.core.tool.state.State;
-import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
 
 /**
  * @author maamria
  * 
  */
 @SuppressWarnings("restriction")
-public class OperatorInformation extends State implements ISCState {
-
-	/**
-	 * 
-	 */
-	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
-
-	public final static IStateType<OperatorInformation> STATE_TYPE = SCCore
-			.getToolStateType(TheoryPlugin.PLUGIN_ID + ".operatorInformation");
+public class OperatorInformation extends State implements IOperatorInformation {
 
 	private String operatorID;
 	private String syntax;
@@ -61,42 +41,20 @@ public class OperatorInformation extends State implements ISCState {
 	private Predicate wdCondition;
 	private List<String> allowedIdentifiers;
 	private Formula<?> directDefinition;
-	private List<Type> argumentTypes;
+	private HashMap<String, Type> opArguments;
 	private Type expressionType;
+	private FormulaFactory factory;
 
 	private boolean hasError = false;
 
-	public OperatorInformation(String operatorID) {
+	private ITypeEnvironment typeEnvironment;
+
+	public OperatorInformation(String operatorID, FormulaFactory factory) {
 		this.operatorID = operatorID;
 		this.allowedIdentifiers = new ArrayList<String>();
-		this.argumentTypes = new ArrayList<Type>();
-	}
-
-	public void addAllowedIdentifier(FreeIdentifier ident) {
-		addAllowedIdentifier(ident.getName());
-	}
-
-	public void addAllowedIdentifier(String ident) {
-		if (!allowedIdentifiers.contains(ident))
-			allowedIdentifiers.add(ident);
-	}
-
-	public void addAllowedIdentifiers(FreeIdentifier[] idents) {
-		for (FreeIdentifier ident : idents) {
-			addAllowedIdentifier(ident);
-		}
-	}
-
-	public void addArgumentType(Type type) {
-		argumentTypes.add(type);
-	}
-
-	public List<Type> getArgumentTypesList() {
-		return argumentTypes;
-	}
-
-	public Type[] getArgumentTypesArray() {
-		return argumentTypes.toArray(new Type[argumentTypes.size()]);
+		this.opArguments = new HashMap<String, Type>();
+		this.factory = factory;
+		this.typeEnvironment = this.factory.makeTypeEnvironment();
 	}
 
 	public boolean isAllowedIdentifier(FreeIdentifier ident) {
@@ -227,6 +185,42 @@ public class OperatorInformation extends State implements ISCState {
 	}
 
 	@Override
+	public void addAllowedIdentifiers(FreeIdentifier[] idents) {
+		for (FreeIdentifier ident : idents) {
+			addAllowedIdentifier(ident);
+		}
+
+	}
+
+	public void addAllowedIdentifier(FreeIdentifier ident) {
+		addAllowedIdentifier(ident.getName());
+	}
+
+	public void addAllowedIdentifier(String ident) {
+		if (!allowedIdentifiers.contains(ident)) {
+			typeEnvironment.addGivenSet(ident);
+			allowedIdentifiers.add(ident);
+		}
+	}
+
+	@Override
+	public void addOperatorArgument(FreeIdentifier ident, Type type) {
+		// TODO check correct matching types if attempting to reinsert an ident
+		addOperatorArgument(ident.getName(), type);
+
+	}
+
+	@Override
+	public void addOperatorArgument(String ident, Type type) {
+		if (!opArguments.containsKey(ident)) {
+			typeEnvironment.addName(ident, type);
+			opArguments.put(ident, type);
+			allowedIdentifiers.add(ident);
+		}
+
+	}
+
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
@@ -246,151 +240,11 @@ public class OperatorInformation extends State implements ISCState {
 		return hasError;
 	}
 
-	public IFormulaExtension getExtension() {
-		if (isExpressionOperator()) {
-			return new IExpressionExtension() {
+	public IFormulaExtension getExtension(final FormulaFactory formulaFactory) {
 
-				@Override
-				public Predicate getWDPredicate(IExtendedFormula formula,
-						IWDMediator wdMediator) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public String getSyntaxSymbol() {
-					return syntax;
-				}
-
-				@Override
-				public Object getOrigin() {
-					return null;
-				}
-
-				@Override
-				public IExtensionKind getKind() {
-					return new ExtensionKind(notation, formulaType,
-							ExtensionFactory.makeAllExpr(ExtensionFactory
-									.makeArity(argumentTypes.size(),
-											argumentTypes.size())),
-							isAssociative);
-
-				}
-
-				@Override
-				public String getId() {
-					return operatorID;
-				}
-
-				@Override
-				public String getGroupId() {
-					return DUMMY_OPERATOR_GROUP;
-				}
-
-				@Override
-				public boolean conjoinChildrenWD() {
-					return true;
-				}
-
-				@Override
-				public void addPriorities(IPriorityMediator mediator) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void addCompatibilities(ICompatibilityMediator mediator) {
-					if (isAssociative)
-						mediator.addAssociativity(operatorID);
-				}
-
-				@Override
-				public boolean verifyType(Type proposedType,
-						Expression[] childExprs, Predicate[] childPreds) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-
-				@Override
-				public Type typeCheck(ExtendedExpression expression,
-						ITypeCheckMediator tcMediator) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public Type synthesizeType(Expression[] childExprs,
-						Predicate[] childPreds, ITypeMediator mediator) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public boolean isATypeConstructor() {
-					return false;
-				}
-			};
-		} else {
-			return new IPredicateExtension() {
-
-				@Override
-				public Predicate getWDPredicate(IExtendedFormula formula,
-						IWDMediator wdMediator) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public String getSyntaxSymbol() {
-					return syntax;
-				}
-
-				@Override
-				public Object getOrigin() {
-					return null;
-				}
-
-				@Override
-				public IExtensionKind getKind() {
-					return new ExtensionKind(notation, formulaType,
-							ExtensionFactory.makeAllExpr(ExtensionFactory
-									.makeArity(argumentTypes.size(),
-											argumentTypes.size())),
-							false);
-				}
-
-				@Override
-				public String getId() {
-					return operatorID;
-				}
-
-				@Override
-				public String getGroupId() {
-					return DUMMY_OPERATOR_GROUP;
-				}
-
-				@Override
-				public boolean conjoinChildrenWD() {
-					return true;
-				}
-
-				@Override
-				public void addPriorities(IPriorityMediator mediator) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void addCompatibilities(ICompatibilityMediator mediator) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void typeCheck(ExtendedPredicate predicate,
-						ITypeCheckMediator tcMediator) {
-					// TODO Auto-generated method stub
-
-				}
-			};
-		}
+		return MathExtensionsUtilities.getFormulaExtension(formulaFactory, isExpressionOperator(), 
+				operatorID, syntax, formulaType, notation, isAssociative, isCommutative, 
+				directDefinition, wdCondition, opArguments);
+		
 	}
-
 }

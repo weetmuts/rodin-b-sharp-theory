@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
@@ -36,6 +37,7 @@ public class TheoryModule extends SCProcessorModule {
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
 		endProcessorModules(element, repository, monitor);
+		removeStates(repository);
 	}
 
 	public IModuleType<?> getModuleType() {
@@ -76,6 +78,17 @@ public class TheoryModule extends SCProcessorModule {
 		theoryRoot = (ISCTheoryRoot) target;
 		source = element;
 		processModules(element, target, repository, monitor);
+	}
+
+	/**
+	 * @param repository
+	 */
+	private void removeStates(ISCStateRepository repository) throws CoreException{
+		repository.removeState(TheoryLabelSymbolTable.STATE_TYPE);
+		repository.removeState(IIdentifierSymbolTable.STATE_TYPE);
+		repository.removeState(DatatypeTable.STATE_TYPE);
+		repository.removeState(OperatorLabelSymbolTable.STATE_TYPE);
+		repository.removeState(TheoryAccuracyInfo.STATE_TYPE);
 	}
 
 }

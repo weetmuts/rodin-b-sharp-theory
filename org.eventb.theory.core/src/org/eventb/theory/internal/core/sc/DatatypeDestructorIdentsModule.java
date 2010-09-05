@@ -90,8 +90,8 @@ public class DatatypeDestructorIdentsModule  extends SCFilterModule{
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		referencedTypes = (ReferencedTypes) repository.getState(ReferencedTypes.STATE_TYPE);
 		factory = repository.getFormulaFactory();
+		referencedTypes = (ReferencedTypes) repository.getState(ReferencedTypes.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
 	}
 	

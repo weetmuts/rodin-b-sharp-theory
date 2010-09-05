@@ -51,9 +51,7 @@ public class DatatypeConstructorModule extends SCProcessorModule{
 		IDatatypeDefinition dtd = (IDatatypeDefinition) element;
 		scDtd = (ISCDatatypeDefinition) target;
 		IDatatypeConstructor[] dtConss = dtd.getDatatypeConstructors();
-		
 		processConstructors(dtConss,dtd, scDtd, repository, monitor);
-		
 		monitor.worked(1);
 	}
 
@@ -129,8 +127,8 @@ public class DatatypeConstructorModule extends SCProcessorModule{
 			IProgressMonitor monitor) throws CoreException {
 		scDtd.setHasError(datatypeTable.isErrorProne(), monitor);
 		datatypeTable = null;
-		factory = null;
 		typeEnvironment = null;
+		factory =null;
 		super.endModule(element, repository, monitor);
 	}
 

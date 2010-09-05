@@ -22,7 +22,7 @@ import org.eventb.theory.core.IOperatorArgument;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.sc.states.OperatorInformation;
+import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -44,8 +44,8 @@ public class OperatorArgumentModule extends IdentifierModule {
 		INewOperatorDefinition newOpDef = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scNewOpDef = (ISCNewOperatorDefinition) target;
 		IOperatorArgument[] arguments = newOpDef.getOperatorArguments();
-		OperatorInformation operatorInformation = (OperatorInformation) 
-										repository.getState(OperatorInformation.STATE_TYPE);
+		IOperatorInformation operatorInformation = (IOperatorInformation) 
+										repository.getState(IOperatorInformation.STATE_TYPE);
 		fetchSymbols(arguments, scNewOpDef, repository, monitor);
 		for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable
 				.getSymbolInfosFromTop()) {
@@ -57,9 +57,8 @@ public class OperatorArgumentModule extends IdentifierModule {
 					symbolInfo.setError();
 					operatorInformation.setHasError();
 				} else if (!symbolInfo.hasError()) {
-					operatorInformation.addAllowedIdentifier(symbolInfo.getSymbol());
+					operatorInformation.addOperatorArgument(symbolInfo.getSymbol(), type);
 					operatorInformation.addAllowedIdentifiers(type.toExpression(factory).getFreeIdentifiers());
-					operatorInformation.addArgumentType(type);
 					if(target != null){
 						symbolInfo.createSCElement(target, null);
 					}

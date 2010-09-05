@@ -23,7 +23,7 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IOperatorWDCondition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.sc.states.OperatorInformation;
+import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -38,7 +38,7 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorWDConditionModule");
 	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
-	private OperatorInformation operatorInformation;
+	private IOperatorInformation operatorInformation;
 
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -93,7 +93,7 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
-		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
+		operatorInformation = (IOperatorInformation) repository.getState(IOperatorInformation.STATE_TYPE);
 		
 	}
 
