@@ -8,6 +8,7 @@
 package org.eventb.theory.core;
 
 import org.eventb.core.ILabeledElement;
+import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
@@ -20,7 +21,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCNewOperatorDefinition extends ILabeledElement, ISyntaxSymbolElement,
 	IFormulaTypeElement, INotationTypeElement,IAssociativeElement, ICommutativeElement,
-	ITraceableElement, IHasErrorElement
+	ITraceableElement, IHasErrorElement, ISCPredicateElement
 	{
 	
 	IInternalElementType<ISCNewOperatorDefinition> ELEMENT_TYPE = 
@@ -29,10 +30,6 @@ public interface ISCNewOperatorDefinition extends ILabeledElement, ISyntaxSymbol
 	ISCOperatorArgument getOperatorArgument(String name);
 	
 	ISCOperatorArgument[] getOperatorArguments() throws RodinDBException;
-	
-	ISCOperatorWDCondition getOperatorWDCondition(String name);
-	
-	ISCOperatorWDCondition[] getIOperatorWDConditions() throws RodinDBException;
 	
 	ISCDirectOperatorDefinition getDirectOperatorDefinition(String name);
 	

@@ -89,6 +89,24 @@ public final class Messages {
 	public static String scuser_OperatorArgumentNameConflict;
 	public static String scuser_TypeAttrMissingForOpArgError;
 	public static String scuser_IdentIsNotTypeParError;
+	public static String scuser_OperatorCannotBeCommutWarning;
+	public static String scuser_OperatorCannotBeAssosWarning;
+
+	public static String scuser_WDPredUndefError;
+
+	public static String scuser_OpCannotReferToTheseTypes;
+
+	public static String scuser_OperatorSynIsATypeParError;
+
+	public static String scuser_OperatorHasMoreThan1DirectDefError;
+
+	public static String scuser_MissingFormulaAttrError;
+
+	public static String scuser_OperatorNoDirectDefError;
+
+	public static String scuser_OperatorDefNotExpError;
+
+	public static String scuser_OperatorDefNotPredError;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

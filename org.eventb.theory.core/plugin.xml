@@ -236,11 +236,6 @@
             id="scOperatorArgument"
             name="%scOperatorArgument">
       </internalElementType>
-      <internalElementType
-            class="org.eventb.theory.core.basis.SCOperatorWDCondition"
-            id="scOperatorWDCondition"
-            name="%scOperatorWDCondition">
-      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.fileAssociations">
@@ -299,6 +294,11 @@
             class="org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable"
             id="operatorLabelSymbolTable"
             name="%operatorLabelSymbolTable">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.internal.core.sc.states.OperatorInformation"
+            id="operatorInformation"
+            name="%operatorInformation">
       </stateType>
    </extension>
    <extension
@@ -375,6 +375,48 @@
              name="%operatorArgumentFilterModule"
              parent="org.eventb.theory.core.operatorArgumentModule">
        </filterType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.OperatorWDConditionModule"
+             id="operatorWDConditionModule"
+             name="%operatorWDConditionModule"
+             parent="org.eventb.theory.core.newOperatorDefinitionModule">
+          <prereq
+                id="org.eventb.theory.core.operatorArgumentModule">
+          </prereq>
+       </processorType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.OperatorWDConditionFilterModule"
+             id="operatorWDConditionFilterModule"
+             name="%operatorWDConditionFilterModule"
+             parent="org.eventb.theory.core.operatorWDConditionModule">
+       </filterType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.DirectOperatorDefinitionModule"
+             id="directOperatorDefinitionModule"
+             name="%directOperatorDefinitionModule"
+             parent="org.eventb.theory.core.newOperatorDefinitionModule">
+          <prereq
+                id="org.eventb.theory.core.operatorWDConditionModule">
+          </prereq>
+       </processorType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.NewOperatorAttributesModule"
+             id="newOperatorAttributesModule"
+             name="%newOperatorAttributesModule"
+             parent="org.eventb.theory.core.newOperatorDefinitionModule">
+          <prereq
+                id="org.eventb.theory.core.directOperatorDefinitionModule">
+          </prereq>
+       </processorType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.OperatorGrammarPatcherModule"
+             id="operatorGrammarPatcherModule"
+             name="%operatorGrammarPatcherModule"
+             parent="org.eventb.theory.core.newOperatorDefinitionModule">
+          <prereq
+                id="org.eventb.theory.core.newOperatorAttributesModule">
+          </prereq>
+       </processorType>
    </extension>
    <extension
          point="org.eventb.core.configurations">
@@ -420,6 +462,21 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorArgumentFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.newOperatorAttributesModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorWDConditionModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorWDConditionFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.directOperatorDefinitionModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorGrammarPatcherModule">
          </scModule>
       </configuration>
       <configuration

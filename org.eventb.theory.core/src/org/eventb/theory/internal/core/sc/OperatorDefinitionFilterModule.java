@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -41,6 +42,7 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 	
 	private AbstractTheoryLabelSymbolTable labelSymbolTable;
 	private FormulaFactory factory;
+	private ITypeEnvironment typeEnvironment;
 	
 	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
@@ -59,6 +61,10 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 		}
 		String syntax = opDef.getSyntaxSymbol();
 		// check syntax
+		if(typeEnvironment.contains(syntax)){
+			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorSynIsATypeParError, syntax);
+			return false;
+		}
 		if(!MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
 			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorSynExistsError, syntax);
 			return false;
@@ -76,18 +82,6 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 		}
 		Notation notation = opDef.getNotationType();
 		symbolInfo.setAttributeValue(TheoryAttributes.NOTATION_TYPE_ATTRIBUTE, TheoryCoreFacade.convertTypeToStr(notation));
-		if(!opDef.hasAssociativeAttribute()){
-			// warn
-			createProblemMarker(opDef, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE, TheoryGraphProblem.OperatorAssocMissingWarning, opID);
-		}
-		else 
-			symbolInfo.setAttributeValue(TheoryAttributes.ASSOCIATIVE_ATTRIBUTE, opDef.isAssociative());
-		if(!opDef.hasCommutativeAttribute()){
-			// warn
-			createProblemMarker(opDef, TheoryAttributes.COMMUTATIVE_ATTRIBUTE, TheoryGraphProblem.OperatorCommutMissingWarning, opID);
-		}
-		else
-			symbolInfo.setAttributeValue(TheoryAttributes.COMMUTATIVE_ATTRIBUTE, opDef.isCommutative());
 		return true;
 	}
 
@@ -103,6 +97,7 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 		super.initModule(repository, monitor);
 		labelSymbolTable = (AbstractTheoryLabelSymbolTable) repository.getState(OperatorLabelSymbolTable.STATE_TYPE);
 		factory = repository.getFormulaFactory();
+		typeEnvironment = repository.getTypeEnvironment();
 	}
 	
 	@Override
@@ -111,6 +106,7 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 			IProgressMonitor monitor) throws CoreException {
 		labelSymbolTable = null;
 		factory = null;
+		typeEnvironment = null;
 		super.endModule(repository, monitor);
 	}
 

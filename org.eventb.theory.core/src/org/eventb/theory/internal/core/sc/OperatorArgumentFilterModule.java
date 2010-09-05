@@ -72,6 +72,7 @@ public class OperatorArgumentFilterModule extends SCFilterModule {
 
 	/**
 	 * @param type
+	 * @param name 
 	 * @param opArg
 	 * @param typeEnvironment
 	 */
@@ -81,7 +82,7 @@ public class OperatorArgumentFilterModule extends SCFilterModule {
 				.getSyntacticallyFreeIdentifiers();
 		List<String> givenSets = CoreUtilities.getGivenSetsNames(typeEnvironment);
 		for (FreeIdentifier ident : idents) {
-
+			
 			if (!typeEnvironment.contains(ident.getName())) {
 				createProblemMarker(opArg, TheoryAttributes.TYPE_ATTRIBUTE,
 						GraphProblem.UndeclaredFreeIdentifierError,

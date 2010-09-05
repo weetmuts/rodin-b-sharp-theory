@@ -26,6 +26,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.internal.core.sc.base.LabeledElementModule;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
+import org.eventb.theory.internal.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
@@ -88,7 +89,9 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
-
+				OperatorInformation operatorInformation = new OperatorInformation(operators[i].getSymbol());
+				repository.setState(operatorInformation);
+				populateOperatorInformation(operatorInformation, operators[i], newOpDefs[i]);
 				initProcessorModules(newOpDefs[i], repository, null);
 
 				processModules(newOpDefs[i], scNewOpDefs[i], repository, monitor);
@@ -101,6 +104,23 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 		}
 
 		
+	}
+
+	/**
+	 * @param operatorInformation
+	 * @param iLabelSymbolInfo
+	 * @param newOpDefs2 
+	 */
+	private void populateOperatorInformation(
+			OperatorInformation operatorInformation,
+			ILabelSymbolInfo symbolInfo, 
+			INewOperatorDefinition newOpDef) throws CoreException{
+		assert symbolInfo.getSymbol().equals(newOpDef.getLabel());
+		if(!symbolInfo.hasError()){
+			operatorInformation.setFormulaType(newOpDef.getFormulaType());
+			operatorInformation.setNotation(newOpDef.getNotationType());
+			operatorInformation.setSyntax(newOpDef.getSyntaxSymbol());
+		}
 	}
 
 	/**

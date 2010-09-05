@@ -18,6 +18,7 @@ import org.eventb.internal.core.sc.symbolTable.ITypedSymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.rodinp.core.IInternalElement;
@@ -58,7 +59,7 @@ public class TheorySymbolFactory {
 
 	public IIdentifierSymbolInfo makeLocalOperatorArgument(String name,
 			boolean persistent, IIdentifierElement element, String parentName) {
-		return new IdentifierSymbolInfo(name, ISCTypeParameter.ELEMENT_TYPE,
+		return new IdentifierSymbolInfo(name, ISCOperatorArgument.ELEMENT_TYPE,
 				persistent, element,
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, parentName,
 				operatorArgumentSymbolProblem);

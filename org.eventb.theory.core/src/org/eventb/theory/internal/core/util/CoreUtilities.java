@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -28,14 +29,17 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
+import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
@@ -54,7 +58,20 @@ import org.rodinp.core.RodinDBException;
 public class CoreUtilities {
 
 	private static final Object[] NO_OBJECT = new Object[0];
+	
+	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
 
+	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff){
+		if(preds.size() == 0){
+			return BTRUE;
+		}
+		if(preds.size() == 1){
+			return preds.get(0);
+		}
+		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
+	}
+	
+	
 	/**
 	 * @param bareName
 	 * @return
@@ -140,6 +157,64 @@ public class CoreUtilities {
 		}
 		Type type = parseResult.getParsedType();
 		return type;
+	}
+	
+	public static Formula<?> parseAndCheckFormula(IFormulaElement element,
+			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
+			throws CoreException{
+		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
+		String form = element.getFormula();
+		Formula<?> formula = null;
+		IParseResult result = ff.parsePredicate(form, V2, null);
+		if(result.hasProblem()){
+			result = ff.parseExpression(form, V2, null);
+			if(issueASTProblemMarkers(element, attributeType, result, display)){
+				return null;
+			}
+			else{
+				formula = result.getParsedExpression();
+			}
+		}
+		else{
+			formula = result.getParsedPredicate();
+		}
+		
+		FreeIdentifier[] idents = formula.getFreeIdentifiers();
+		for(FreeIdentifier ident : idents){
+			if(!typeEnvironment.contains(ident.getName())){
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+				return null;
+			}
+		}
+		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
+		if(issueASTProblemMarkers(element, attributeType, tcResult, display)){
+			return null;
+		}
+		return formula;
+	}
+	
+	public static Predicate parseAndCheckPredicate(IPredicateElement element, 
+			FormulaFactory ff, ITypeEnvironment typeEnvironment,
+			IMarkerDisplay display) throws CoreException{
+		IAttributeType.String attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
+		String pred = element.getPredicateString();
+		IParseResult result = ff.parsePredicate(pred, V2, null);
+		if(issueASTProblemMarkers(element, attributeType, result, display)){
+			return null;
+		}
+		Predicate predicate = result.getParsedPredicate();
+		FreeIdentifier[] idents = predicate.getFreeIdentifiers();
+		for(FreeIdentifier ident : idents){
+			if(!typeEnvironment.contains(ident.getName())){
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+				return null;
+			}
+		}
+		ITypeCheckResult tcResult = predicate.typeCheck(typeEnvironment);
+		if(issueASTProblemMarkers(element, attributeType, tcResult, display)){
+			return null;
+		}
+		return predicate;
 	}
 	
 	/**
@@ -372,6 +447,13 @@ public class CoreUtilities {
 		return formula;
 	}
 	
+	public static List<String> getOperatorArguments(ITypeEnvironment typeEnvironment){
+		Set<String> all = typeEnvironment.clone().getNames();
+		all.removeAll(getGivenSetsNames(typeEnvironment));
+		
+		return new ArrayList<String>(all);
+	}
+	
 	public static List<String> getGivenSetsNames(ITypeEnvironment typeEnvironment){
 		List<String> result = new ArrayList<String>();
 		for (String name : typeEnvironment.getNames()){
@@ -389,5 +471,16 @@ public class CoreUtilities {
 			return givenType.getName().equals(name);
 		}
 		return false;
+	}
+	
+	public static String toString(List<String> list){
+		String result = "";
+		for(int i =0 ; i < list.size() ; i++){
+			result+=list.get(i);
+			if(i < list.size()-1){
+				result += ", ";
+			}
+		}
+		return result;
 	}
 }
