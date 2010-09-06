@@ -21,6 +21,7 @@ import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.rodinp.core.IInternalElement;
@@ -42,6 +43,7 @@ public class TheorySymbolFactory {
 	private static OperatorIDSymbolProblem operatorIDSymbolProblem = new OperatorIDSymbolProblem();
 	private static LocalOperatorArgumentSymbolProblem operatorArgumentSymbolProblem = new LocalOperatorArgumentSymbolProblem();
 	private static RulesBlockSymbolProblem rulesBlockSymbolProblem = new RulesBlockSymbolProblem();
+	private static TheoremSymbolProblem theoremSymbolProblem = new TheoremSymbolProblem();
 	private static LocalMetavariableSymbolProblem localMetavariableSymbolProblem = new LocalMetavariableSymbolProblem();
 	
 	/*
@@ -67,6 +69,14 @@ public class TheorySymbolFactory {
 		return new LabelSymbolInfo(symbol, ISCProofRulesBlock.ELEMENT_TYPE,
 				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
 				component, rulesBlockSymbolProblem);
+	}
+	
+	public ILabelSymbolInfo makeLocalTheorem(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			String component) {
+		return new LabelSymbolInfo(symbol, ISCTheorem.ELEMENT_TYPE,
+				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
+				component, theoremSymbolProblem);
 	}
 
 	public IIdentifierSymbolInfo makeLocalOperatorArgument(String name,
@@ -237,6 +247,32 @@ public class TheorySymbolFactory {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					TheoryGraphProblem.RulesBlockLabelProblemWarning,
+					symbolInfo.getSymbol());
+
+		}
+
+	}
+	
+	private static class TheoremSymbolProblem implements ISymbolProblem {
+
+		public TheoremSymbolProblem() {
+			// public constructor
+		}
+
+		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.TheoremLabelProblemError,
+					symbolInfo.getSymbol());
+
+		}
+
+		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.TheoremLabelProblemWarning,
 					symbolInfo.getSymbol());
 
 		}

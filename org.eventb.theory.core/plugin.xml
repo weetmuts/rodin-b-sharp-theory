@@ -478,6 +478,21 @@
              name="%metavariableFilterModule"
              parent="org.eventb.theory.core.metavariableModule">
        </filterType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.TheoremModule"
+             id="theoremModule"
+             name="%theoremModule"
+             parent="org.eventb.theory.core.theoryModule">
+          <prereq
+                id="org.eventb.theory.core.newOperatorDefinitionModule">
+          </prereq>
+       </processorType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoremFilterModule"
+             id="theoremFilterModule"
+             name="%theoremFilterModule"
+             parent="org.eventb.theory.core.theoremModule">
+       </filterType>
    </extension>
    <extension
          point="org.eventb.core.configurations">
@@ -547,6 +562,12 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.metavariableFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoremModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoremFilterModule">
          </scModule>
       </configuration>
       <configuration

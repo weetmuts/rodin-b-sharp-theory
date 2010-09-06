@@ -79,7 +79,10 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			IMarker.SEVERITY_ERROR, Messages.scuser_OperatorInvalidSynError), RulesBlockLabelProblemError(
 			IMarker.SEVERITY_ERROR, Messages.scuser_RulesBlockLabelProblemError), RulesBlockLabelProblemWarning(
 			IMarker.SEVERITY_WARNING,
-			Messages.scuser_RulesBlockLabelProblemWarning), AutoUndefWarning(
+			Messages.scuser_RulesBlockLabelProblemWarning),
+			TheoremPredMissingError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremPredMissingError),
+			TheoremLabelProblemError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremLabelProblemError),	
+			TheoremLabelProblemWarning(IMarker.SEVERITY_WARNING,Messages.scuser_TheoremLabelProblemWarning), AutoUndefWarning(
 			IMarker.SEVERITY_WARNING, Messages.scuser_AutoUndefWarning), UntypedMetavariableError(
 			IMarker.SEVERITY_ERROR, Messages.scuser_UntypedMetavariableError), InterUndefWarning(
 			IMarker.SEVERITY_WARNING, Messages.scuser_InterUndefWarning), ToolTipNotSupplied(

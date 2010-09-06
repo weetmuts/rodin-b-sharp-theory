@@ -91,6 +91,7 @@ public final class Messages {
 	public static String scuser_IdentIsNotTypeParError;
 	public static String scuser_OperatorCannotBeCommutWarning;
 	public static String scuser_OperatorCannotBeAssosWarning;
+	public static String scuser_TheoremPredMissingError;
 
 	public static String scuser_WDPredUndefError;
 
@@ -118,6 +119,10 @@ public final class Messages {
 	public static String scuser_UntypedMetavariableError;
 
 	public static String scuser_TheoryMetaVarNameConflict;
+
+	public static String scuser_TheoremLabelProblemError;
+
+	public static String scuser_TheoremLabelProblemWarning;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
