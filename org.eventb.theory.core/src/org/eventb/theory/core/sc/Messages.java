@@ -107,6 +107,17 @@ public final class Messages {
 	public static String scuser_OperatorDefNotExpError;
 
 	public static String scuser_OperatorDefNotPredError;
+
+	public static String scuser_OperatorWithSameSynJustBeenAdded;
+
+	public static String scuser_OperatorInvalidSynError;
+
+	public static String scuser_RulesBlockLabelProblemError;
+
+	public static String scuser_RulesBlockLabelProblemWarning;
+	public static String scuser_UntypedMetavariableError;
+
+	public static String scuser_TheoryMetaVarNameConflict;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

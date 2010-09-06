@@ -5,28 +5,32 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.basis;
 
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.state.ILabelSymbolInfo;
-import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.internal.core.sc.symbolTable.SymbolTable;
+import org.eventb.core.basis.SCPredicateElement;
+import org.eventb.theory.core.ISCInfer;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
  *
  */
-@SuppressWarnings("restriction")
-public abstract class AbstractTheoryLabelSymbolTable extends
-	SymbolTable<ILabeledElement, IInternalElementType<? extends ILabeledElement>, ILabelSymbolInfo>
-	implements ILabelSymbolTable{
+public class SCInfer extends SCPredicateElement implements ISCInfer{
 
 	/**
-	 * @param size
+	 * @param name
+	 * @param parent
 	 */
-	public AbstractTheoryLabelSymbolTable(int size) {
-		super(size);
+	public SCInfer(String name, IRodinElement parent) {
+		super(name, parent);
+	}
+
+	@Override
+	public IInternalElementType<? extends IInternalElement> getElementType() {
+		// TODO Auto-generated method stub
+		return ELEMENT_TYPE;
 	}
 
 }

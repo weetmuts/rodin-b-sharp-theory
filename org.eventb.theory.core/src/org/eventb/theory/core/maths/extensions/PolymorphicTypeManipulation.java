@@ -95,7 +95,7 @@ public class PolymorphicTypeManipulation implements IPolymorphicTypeManipulation
 		return synthesiseType(definitionType);
 	}
 
-	public Map<FreeIdentifier, Expression> getTypeSubstitution() {
+	protected Map<FreeIdentifier, Expression> getTypeSubstitution() {
 		Map<FreeIdentifier, Expression> map = new HashMap<FreeIdentifier, Expression>();
 		for (String ident : instantiations.keySet()) {
 			map.put(factory.makeFreeIdentifier(ident, null, instantiations

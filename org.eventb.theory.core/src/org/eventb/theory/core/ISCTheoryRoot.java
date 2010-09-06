@@ -35,6 +35,13 @@ public interface ISCTheoryRoot extends IEventBRoot, IAccuracyElement, IConfigura
 	
 	ISCDatatypeDefinition[] getSCDatatypeDefinitions() throws RodinDBException;
 	
+	public ISCProofRulesBlock getProofRulesBlock(String name);
+	
+	public ISCProofRulesBlock[] getProofRulesBlocks() throws RodinDBException;
+	
+	public ISCTheorem getTheorem(String name);
+	
+	public ISCTheorem[] getTheorems() throws RodinDBException;
 	
 	/**
 	 * <p>Returns the global type environment of this SC theory.</p>

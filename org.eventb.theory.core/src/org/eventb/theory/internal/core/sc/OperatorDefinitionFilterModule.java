@@ -69,6 +69,10 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorSynExistsError, syntax);
 			return false;
 		}
+		if(syntax.contains(" ")){
+			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorInvalidSynError, syntax);
+			return false;
+		}
 		symbolInfo.setAttributeValue(TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, syntax);
 		if(!opDef.hasFormulaType()){
 			createProblemMarker(opDef, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorFormTypeMissingError, opID);

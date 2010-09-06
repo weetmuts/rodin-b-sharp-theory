@@ -14,7 +14,11 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.theory.core.INewOperatorDefinition;
+import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
@@ -38,10 +42,19 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		if(!operatorInformation.hasError()){
-			FormulaFactory newFactory = factory.withExtensions(
-					CoreUtilities.singletonSet(operatorInformation.getExtension(factory)));
-			repository.setFormulaFactory(newFactory);
-			factory = repository.getFormulaFactory();
+			String syntax = operatorInformation.getSyntax();
+			if(MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
+				FormulaFactory newFactory = factory.withExtensions(
+						CoreUtilities.singletonSet(operatorInformation.getExtension(factory)));
+				repository.setFormulaFactory(newFactory);
+				factory = repository.getFormulaFactory();
+			}
+			else {
+				createProblemMarker((INewOperatorDefinition) element,TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, 
+						TheoryGraphProblem.OperatorWithSameSynJustBeenAdded, syntax);
+				operatorInformation.setHasError();
+			}
+			
 		}
 		
 	}

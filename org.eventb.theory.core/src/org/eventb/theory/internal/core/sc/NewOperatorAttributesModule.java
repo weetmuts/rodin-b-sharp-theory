@@ -59,8 +59,10 @@ public class NewOperatorAttributesModule extends SCProcessorModule {
 			} else{
 				boolean isAssos = opDef.isAssociative();
 				if(isAssos){
-					if(checkAssociativity(args))
+					if(checkAssociativity(args)){
 						scNewOpDef.setAssociative(isAssos, monitor);
+						operatorInformation.setAssociative(isAssos);
+					}
 					else{
 						createProblemMarker(opDef,
 								TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
@@ -76,8 +78,10 @@ public class NewOperatorAttributesModule extends SCProcessorModule {
 			} else{
 				boolean isCommut = opDef.isCommutative();
 				if(isCommut){
-					if(checkCommutativity(args))
+					if(checkCommutativity(args)){
 						scNewOpDef.setCommutative(isCommut, monitor);
+						operatorInformation.setCommutative(isCommut);
+					}
 					else{
 						createProblemMarker(opDef,
 								TheoryAttributes.COMMUTATIVE_ATTRIBUTE,

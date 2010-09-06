@@ -13,25 +13,23 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.modules.LabeledElementModule;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
-import org.eventb.theory.core.INewOperatorDefinition;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.IProofRulesBlock;
+import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
-import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
-import org.eventb.theory.internal.core.sc.states.OperatorInformation;
-import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -41,19 +39,18 @@ import org.rodinp.core.IRodinFile;
  *
  */
 @SuppressWarnings("restriction")
-public class NewOperatorDefinitionModule extends LabeledElementModule{
+public class ProofRulesBlockModule extends LabeledElementModule{
 
-	private static final int OP_IDENT_SYMTAB_SIZE = 2047;
-
-	IModuleType<NewOperatorDefinitionModule> MODULE_TYPE = 
-		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".newOperatorDefinitionModule");
+	IModuleType<ProofRulesBlockModule> MODULE_TYPE = 
+		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".proofRulesBlockModule");
 	
-	private FormulaFactory factory;
+	private static final int PRB_IDENT_SYMTAB_SIZE = 2047;
+	
+	private IProofRulesBlock[] rulesBlocks;
 	private ITypeEnvironment globalTypeEnvironment;
-	private IdentifierSymbolTable identifierSymbolTable;
+	private FormulaFactory factory;
+	private IIdentifierSymbolTable identifierSymbolTable;
 	private TheoryAccuracyInfo theoryAccuracyInfo;
-	
-	private INewOperatorDefinition newOpDefs[];
 	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -62,76 +59,48 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 		IRodinFile file = (IRodinFile) element;
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		ISCTheoryRoot targetRoot = (ISCTheoryRoot) target;
-		monitor.subTask(Messages.progress_TheoryOperators);
+		monitor.subTask(Messages.progress_TheoryProofRules);
 		monitor.worked(1);
-		ILabelSymbolInfo[] operators = fetchOperators(file, repository, monitor);
-		ISCNewOperatorDefinition scNewOpDefs[] = new ISCNewOperatorDefinition[newOpDefs.length];
-		commitOperators(root, targetRoot, scNewOpDefs,operators, monitor);
-		processOperators(scNewOpDefs, repository, operators, monitor);
-		monitor.worked(2);
-		
+		ILabelSymbolInfo[] blocks = fetchBlocks(file, repository, monitor);
+		ISCProofRulesBlock[] scProofRulesBlocks = new ISCProofRulesBlock[blocks.length];
+		commitBlocks(root, targetRoot, scProofRulesBlocks, blocks, monitor);
+		processBlocks(scProofRulesBlocks, repository, blocks, monitor);
 	}
-
-	/**
-	 * @param scNewOpDefs
-	 * @param repository
-	 * @param operators
-	 * @param monitor
-	 */
-	private void processOperators(ISCNewOperatorDefinition[] scNewOpDefs,
-			ISCStateRepository repository, ILabelSymbolInfo[] operators,
+	
+	private void processBlocks(ISCProofRulesBlock[] scProofRulesBlocks,
+			ISCStateRepository repository, ILabelSymbolInfo[] blocks,
 			IProgressMonitor monitor) throws CoreException{
-		for (int i = 0; i < newOpDefs.length; i++) {
+		factory = repository.getFormulaFactory();
+		globalTypeEnvironment = repository.getTypeEnvironment();
+		for (int i = 0; i < rulesBlocks.length; i++) {
 
-			if (operators[i] != null && !operators[i].hasError()) {
-				factory = repository.getFormulaFactory();
-				repository.setState(new StackedIdentifierSymbolTable(
-						identifierSymbolTable, OP_IDENT_SYMTAB_SIZE,
-						factory));
-
+			if (blocks[i] != null && !blocks[i].hasError()) {
+				
+				IIdentifierSymbolTable stackedIdentSymbolTable =
+					new StackedIdentifierSymbolTable(
+							identifierSymbolTable, PRB_IDENT_SYMTAB_SIZE,
+							factory);
+				
+				repository.setState(stackedIdentSymbolTable);
+				
 				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
-				IOperatorInformation operatorInformation = new OperatorInformation(operators[i].getSymbol(), factory);
-				repository.setState(operatorInformation);
-				populateOperatorInformation(operatorInformation, operators[i], newOpDefs[i]);
-				initProcessorModules(newOpDefs[i], repository, null);
-
-				processModules(newOpDefs[i], scNewOpDefs[i], repository, monitor);
-
-				endProcessorModules(newOpDefs[i], repository, null);
-
-				// update the factory
-				factory = repository.getFormulaFactory();
-				globalTypeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+				
+				initProcessorModules(rulesBlocks[i], repository, null);
+				processModules(rulesBlocks[i], scProofRulesBlocks[i], repository, monitor);
+				endProcessorModules(rulesBlocks[i], repository, null);
 			}
 			else {
 				theoryAccuracyInfo.setNotAccurate();
 			}
+			repository.setTypeEnvironment(globalTypeEnvironment);
 			monitor.worked(1);
 		}
-		// get the new type environment corresponding to the factory
-		globalTypeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
-		repository.setTypeEnvironment(globalTypeEnvironment);
-	}
 
-	/**
-	 * @param operatorInformation
-	 * @param iLabelSymbolInfo
-	 * @param newOpDefs2 
-	 */
-	private void populateOperatorInformation(
-			IOperatorInformation operatorInformation,
-			ILabelSymbolInfo symbolInfo, 
-			INewOperatorDefinition newOpDef) throws CoreException{
-		assert symbolInfo.getSymbol().equals(newOpDef.getLabel());
-		if(!symbolInfo.hasError()){
-			operatorInformation.setFormulaType(newOpDef.getFormulaType());
-			operatorInformation.setNotation(newOpDef.getNotationType());
-			operatorInformation.setSyntax(newOpDef.getSyntaxSymbol());
-		}
+		
 	}
-
+	
 	/**
 	 * @param root
 	 * @param targetRoot
@@ -139,54 +108,46 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 	 * @param operators
 	 * @param monitor
 	 */
-	private void commitOperators(ITheoryRoot root, ISCTheoryRoot targetRoot,
-			ISCNewOperatorDefinition[] scNewOpDefs,
+	private void commitBlocks(ITheoryRoot root, ISCTheoryRoot targetRoot,
+			ISCProofRulesBlock[] scProofRulesBlocks,
 			ILabelSymbolInfo[] labelSymbolInfos, IProgressMonitor monitor) 
 	throws CoreException{
 		int index = 0;
 
-		for (int i = 0; i < newOpDefs.length; i++) {
+		for (int i = 0; i < rulesBlocks.length; i++) {
 			if (labelSymbolInfos[i] != null && !labelSymbolInfos[i].hasError()) {
-				scNewOpDefs[i] = createSCNewOpDef(targetRoot, index++, labelSymbolInfos[i],
-						newOpDefs[i], monitor);
+				scProofRulesBlocks[i] = createSCBlock(targetRoot, index++, labelSymbolInfos[i],
+						rulesBlocks[i], monitor);
 			}
 		}
 		
 	}
-
-	private static final String OP_NAME_PREFIX = "NewOP";
 	
-	/**
-	 * @param targetRoot
-	 * @param i
-	 * @param iLabelSymbolInfo
-	 * @param iNewOperatorDefinition
-	 * @param monitor
-	 * @return
-	 */
-	private ISCNewOperatorDefinition createSCNewOpDef(ISCTheoryRoot targetRoot,
+	private static final String PRB_NAME_PREFIX = "PRB";
+	
+	private ISCProofRulesBlock createSCBlock(ISCTheoryRoot targetRoot,
 			int index, ILabelSymbolInfo symbolInfo,
-			INewOperatorDefinition iNewOperatorDefinition,
+			IProofRulesBlock proofRulesBlock,
 			IProgressMonitor monitor) throws CoreException {
 		
-		ILabeledElement scNewOpDef = symbolInfo.createSCElement(targetRoot,
-				OP_NAME_PREFIX + index, monitor);
-		return (ISCNewOperatorDefinition) scNewOpDef;
+		ILabeledElement scProofRulesBlock = symbolInfo.createSCElement(targetRoot,
+				PRB_NAME_PREFIX + index, monitor);
+		return (ISCProofRulesBlock) scProofRulesBlock;
 	}
 
-	protected ILabelSymbolInfo[] fetchOperators(IRodinFile theoryFile,
+	protected ILabelSymbolInfo[] fetchBlocks(IRodinFile theoryFile,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		String theoryName = theoryFile.getElementName();
 		initFilterModules(repository, monitor);
-		ILabelSymbolInfo[] labelSymbolInfos = new ILabelSymbolInfo[newOpDefs.length];
-		for(int i = 0 ; i < newOpDefs.length; i++){
-			INewOperatorDefinition opDef = newOpDefs[i];
-			labelSymbolInfos[i] = fetchLabel(opDef, theoryName, monitor);
+		ILabelSymbolInfo[] labelSymbolInfos = new ILabelSymbolInfo[rulesBlocks.length];
+		for(int i = 0 ; i < rulesBlocks.length; i++){
+			IProofRulesBlock block = rulesBlocks[i];
+			labelSymbolInfos[i] = fetchLabel(block, theoryName, monitor);
 			if(labelSymbolInfos[i] == null){
 				continue;
 			}
-			if (!filterModules(opDef, repository, null)) {
+			if (!filterModules(block, repository, null)) {
 
 				labelSymbolInfos[i].setError();
 
@@ -196,13 +157,11 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 
 		return labelSymbolInfos;
 	}
-	
-
 	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
-	
+
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -210,7 +169,7 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 		super.initModule(element, repository, monitor);
 		IRodinFile file = (IRodinFile) element;
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
-		newOpDefs = root.getNewOperatorDefinitions();
+		rulesBlocks = root.getProofRulesBlocks();
 		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		factory = repository.getFormulaFactory();
 		globalTypeEnvironment = repository.getTypeEnvironment();
@@ -226,22 +185,22 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 		identifierSymbolTable = null;
 		factory = null;
 		globalTypeEnvironment = null;
-		newOpDefs = null;
+		rulesBlocks = null;
 		super.endModule(element, repository, monitor);
 	}
-
+	
 	@Override
 	protected AbstractTheoryLabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
 		return (AbstractTheoryLabelSymbolTable) 
-					repository.getState(OperatorLabelSymbolTable.STATE_TYPE);
+				repository.getState(TheoryLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return TheorySymbolFactory.getInstance().makeLocalOperator(symbol, true, element,
-				component);
+		return TheorySymbolFactory.getInstance().makeLocalRulesBlock(symbol, 
+				true, element, component);
 	}
 
 }

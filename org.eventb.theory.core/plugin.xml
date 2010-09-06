@@ -236,6 +236,46 @@
             id="scOperatorArgument"
             name="%scOperatorArgument">
       </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCGiven"
+            id="scGiven"
+            name="%scGiven">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCInfer"
+            id="scInfer"
+            name="%scInfer">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCInferenceRule"
+            id="scInferenceRule"
+            name="%scInferenceRule">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCMetavariable"
+            id="scMetavariable"
+            name="%scMetavariable">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCTheorem"
+            id="scTheorem"
+            name="%scTheorem">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCRewriteRuleRightHandSide"
+            id="scRewriteRuleRHS"
+            name="%scRewriteRuleRHS">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCRewriteRule"
+            id="scRewriteRule"
+            name="%scRewriteRule">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCProofRulesBlock"
+            id="scProofRulesBlock"
+            name="%scProofRulesBlock">
+      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.fileAssociations">
@@ -417,6 +457,27 @@
                 id="org.eventb.theory.core.newOperatorAttributesModule">
           </prereq>
        </processorType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.ProofRulesBlockModule"
+             id="proofRulesBlockModule"
+             name="%proofRulesBlockModule"
+             parent="org.eventb.theory.core.theoryModule">
+          <prereq
+                id="org.eventb.theory.core.newOperatorDefinitionModule">
+          </prereq>
+       </processorType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.MetavariableModule"
+             id="metavariableModule"
+             name="%metavariableModule"
+             parent="org.eventb.theory.core.proofRulesBlockModule">
+       </processorType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.MetavariableFilterModule"
+             id="metavariableFilterModule"
+             name="%metavariableFilterModule"
+             parent="org.eventb.theory.core.metavariableModule">
+       </filterType>
    </extension>
    <extension
          point="org.eventb.core.configurations">
@@ -477,6 +538,15 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorGrammarPatcherModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.proofRulesBlockModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.metavariableModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.metavariableFilterModule">
          </scModule>
       </configuration>
       <configuration

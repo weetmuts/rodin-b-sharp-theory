@@ -5,28 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core;
 
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.state.ILabelSymbolInfo;
-import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.internal.core.sc.symbolTable.SymbolTable;
+import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ITraceableElement;
+import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author maamria
  *
  */
-@SuppressWarnings("restriction")
-public abstract class AbstractTheoryLabelSymbolTable extends
-	SymbolTable<ILabeledElement, IInternalElementType<? extends ILabeledElement>, ILabelSymbolInfo>
-	implements ILabelSymbolTable{
+public interface ISCRewriteRuleRightHandSide extends ILabeledElement, 
+ISCPredicateElement, ISCFormulaElement, ITraceableElement{
 
-	/**
-	 * @param size
-	 */
-	public AbstractTheoryLabelSymbolTable(int size) {
-		super(size);
-	}
-
+	IInternalElementType<ISCRewriteRuleRightHandSide> ELEMENT_TYPE = RodinCore
+		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scRewriteRuleRHS");
 }

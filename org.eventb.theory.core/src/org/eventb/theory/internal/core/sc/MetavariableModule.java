@@ -17,60 +17,56 @@ import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.modules.IdentifierModule;
-import org.eventb.theory.core.INewOperatorDefinition;
-import org.eventb.theory.core.IOperatorArgument;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCOperatorArgument;
+import org.eventb.theory.core.IMetavariable;
+import org.eventb.theory.core.IProofRulesBlock;
+import org.eventb.theory.core.ISCMetavariable;
+import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
- *
+ * 
  */
 @SuppressWarnings("restriction")
-public class OperatorArgumentModule extends IdentifierModule {
-	
-	IModuleType<OperatorArgumentModule> MODULE_TYPE = 
-		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorArgumentModule");
-	
+public class MetavariableModule extends IdentifierModule {
+
+	IModuleType<MetavariableModule> MODULE_TYPE = SCCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".metavariableModule");
+
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		INewOperatorDefinition newOpDef = (INewOperatorDefinition) element;
-		ISCNewOperatorDefinition scNewOpDef = (ISCNewOperatorDefinition) target;
-		IOperatorArgument[] arguments = newOpDef.getOperatorArguments();
-		IOperatorInformation operatorInformation = (IOperatorInformation) 
-										repository.getState(IOperatorInformation.STATE_TYPE);
-		fetchSymbols(arguments, scNewOpDef, repository, monitor);
+		IProofRulesBlock rulesBlock = (IProofRulesBlock) element;
+		ISCProofRulesBlock scRulesBlock = (ISCProofRulesBlock) target;
+		IMetavariable[] metavars = rulesBlock.getMetavariables();
+		fetchSymbols(metavars, scRulesBlock, repository, monitor);
 		for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable
 				.getSymbolInfosFromTop()) {
-			if (symbolInfo.getSymbolType() == ISCOperatorArgument.ELEMENT_TYPE && 
-					symbolInfo.isPersistent()) {
+			if (symbolInfo.getSymbolType() == ISCMetavariable.ELEMENT_TYPE
+					&& symbolInfo.isPersistent()) {
 				Type type = symbolInfo.getType();
 				if (type == null) { // identifier could not be typed
 					symbolInfo.createUntypedErrorMarker(this);
 					symbolInfo.setError();
-					operatorInformation.setHasError();
 				} else if (!symbolInfo.hasError()) {
-					operatorInformation.addOperatorArgument(symbolInfo.getSymbol(), type);
-					operatorInformation.addAllowedIdentifiers(type.toExpression(factory).getFreeIdentifiers());
-					if(target != null){
+					if (target != null) {
 						symbolInfo.createSCElement(target, null);
 					}
-					else{
-						operatorInformation.setHasError();
-					}
+
 				}
-				symbolInfo.makeImmutable();
 			}
 		}
+	}
 
+	@Override
+	public IModuleType<?> getModuleType() {
+		// TODO Auto-generated method stub
+		return MODULE_TYPE;
 	}
 
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
@@ -78,17 +74,17 @@ public class OperatorArgumentModule extends IdentifierModule {
 		environment.addName(newSymbolInfo.getSymbol(), newSymbolInfo.getType());
 	}
 	
-	@Override
-	public IModuleType<?> getModuleType() {
-		return MODULE_TYPE;
-	}
-
+	
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
 			IIdentifierElement element) {
-		INewOperatorDefinition opDef = (INewOperatorDefinition) element.getParent();
-		return TheorySymbolFactory.getInstance().makeLocalOperatorArgument(name, true,
-				element, opDef.getAncestor(ITheoryRoot.ELEMENT_TYPE).getComponentName());
+		// TODO Auto-generated method stub
+		return TheorySymbolFactory.getInstance().makeLocalMetavariable(
+				name,
+				true,
+				element,
+				element.getAncestor(ITheoryRoot.ELEMENT_TYPE)
+						.getComponentName());
 	}
 
 }

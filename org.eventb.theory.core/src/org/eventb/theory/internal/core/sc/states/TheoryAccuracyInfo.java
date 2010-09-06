@@ -1,13 +1,13 @@
 package org.eventb.theory.internal.core.sc.states;
 
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.ISCState;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 @SuppressWarnings("restriction")
-public class TheoryAccuracyInfo extends State implements ISCState{
+public class TheoryAccuracyInfo extends State implements IAccuracyInfo{
 
 	
 	public final static IStateType<TheoryAccuracyInfo> STATE_TYPE = SCCore

@@ -17,8 +17,10 @@ import org.eventb.internal.core.sc.symbolTable.ISymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.ITypedSymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo;
+import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
+import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.rodinp.core.IInternalElement;
@@ -39,7 +41,9 @@ public class TheorySymbolFactory {
 	private static LocalTypeParameterSymbolProblem localTypeParameterSymbolProblem = new LocalTypeParameterSymbolProblem();
 	private static OperatorIDSymbolProblem operatorIDSymbolProblem = new OperatorIDSymbolProblem();
 	private static LocalOperatorArgumentSymbolProblem operatorArgumentSymbolProblem = new LocalOperatorArgumentSymbolProblem();
-
+	private static RulesBlockSymbolProblem rulesBlockSymbolProblem = new RulesBlockSymbolProblem();
+	private static LocalMetavariableSymbolProblem localMetavariableSymbolProblem = new LocalMetavariableSymbolProblem();
+	
 	/*
 	 * private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new
 	 * RewriteRuleSymbolProblem();
@@ -57,12 +61,19 @@ public class TheorySymbolFactory {
 	 * rewriteRuleSymbolProblem); }
 	 */
 
+	public ILabelSymbolInfo makeLocalRulesBlock(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			String component) {
+		return new LabelSymbolInfo(symbol, ISCProofRulesBlock.ELEMENT_TYPE,
+				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
+				component, rulesBlockSymbolProblem);
+	}
+
 	public IIdentifierSymbolInfo makeLocalOperatorArgument(String name,
 			boolean persistent, IIdentifierElement element, String parentName) {
 		return new IdentifierSymbolInfo(name, ISCOperatorArgument.ELEMENT_TYPE,
-				persistent, element,
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, parentName,
-				operatorArgumentSymbolProblem);
+				persistent, element, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+				parentName, operatorArgumentSymbolProblem);
 	}
 
 	public ILabelSymbolInfo makeLocalOperator(String symbol,
@@ -82,6 +93,16 @@ public class TheorySymbolFactory {
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, component,
 				localTypeParameterSymbolProblem);
 	}
+	
+	public IIdentifierSymbolInfo makeLocalMetavariable(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			String component) {
+		return new IdentifierSymbolInfo(symbol, ISCMetavariable.ELEMENT_TYPE,
+				persistent, problemElement,
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, component,
+				localMetavariableSymbolProblem);
+	}
+
 
 	/*
 	 * public ILabelSymbolInfo makeLocalRHS(String symbol, boolean persistent,
@@ -115,6 +136,31 @@ public class TheorySymbolFactory {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					TheoryGraphProblem.TheoryTypeParameterNameConflictWarning,
+					symbolInfo.getSymbol());
+		}
+
+	}
+
+	private static class LocalMetavariableSymbolProblem extends
+			MetavariableSymbolProblem {
+
+		public LocalMetavariableSymbolProblem() {
+			// public constructor
+		}
+
+		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.TheoryMetaVarNameConflict,
+					symbolInfo.getSymbol());
+		}
+
+		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.TheoryMetaVarNameConflict,
 					symbolInfo.getSymbol());
 		}
 
@@ -171,6 +217,32 @@ public class TheorySymbolFactory {
 
 	}
 
+	private static class RulesBlockSymbolProblem implements ISymbolProblem {
+
+		public RulesBlockSymbolProblem() {
+			// public constructor
+		}
+
+		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.RulesBlockLabelProblemError,
+					symbolInfo.getSymbol());
+
+		}
+
+		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.RulesBlockLabelProblemWarning,
+					symbolInfo.getSymbol());
+
+		}
+
+	}
+
 	private static class OperatorIDSymbolProblem implements ISymbolProblem {
 
 		public OperatorIDSymbolProblem() {
@@ -206,6 +278,19 @@ public class TheorySymbolFactory {
 
 		public IRodinProblem getUntypedError() {
 			return TheoryGraphProblem.UntypedTheoryTypeParameterError;
+		}
+
+	}
+
+	private abstract static class MetavariableSymbolProblem implements
+			ITypedSymbolProblem {
+
+		public MetavariableSymbolProblem() {
+			// public constructor
+		}
+
+		public IRodinProblem getUntypedError() {
+			return TheoryGraphProblem.UntypedMetavariableError;
 		}
 
 	}

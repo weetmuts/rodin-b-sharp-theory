@@ -156,7 +156,8 @@ public abstract class TheoryElement extends EventBElement implements
 	
 	@Override
 	public String getSyntaxSymbol() throws RodinDBException {
-		return getAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE);
+		// remove trailing spaces
+		return getAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE).trim();
 	}
 
 	
@@ -169,7 +170,7 @@ public abstract class TheoryElement extends EventBElement implements
 	@Override
 	public void setSyntaxSymbol(String newSymbol, IProgressMonitor monitor)
 			throws RodinDBException {
-		setAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE, newSymbol, monitor);
+		setAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE, newSymbol.trim(), monitor);
 		
 	}
 

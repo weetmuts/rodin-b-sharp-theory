@@ -88,6 +88,8 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 		boolean hasError = false;
 		if(dtdef != null && dtdef.length > 0){
 			for (IDatatypeDefinition dtd : dtdef){
+				factory = repository.getFormulaFactory();
+				typeEnvironment = repository.getTypeEnvironment();
 				if(!dtd.hasIdentifierString()){
 					createProblemMarker(dtd, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
 							TheoryGraphProblem.MissingDatatypeNameError);
