@@ -97,6 +97,8 @@ implements IExpressionTypeChecker{
 		Expression exp = factory.parseExpression(rawTypeExp,
 				LanguageVersion.V2, null).getParsedExpression();
 		Map<FreeIdentifier, Expression> typeSubs = getTypeSubstitutions(childrenTypes, factory);
+		if(typeSubs == null)
+			return null;
 		ITypeEnvironment typeEnvironment = generateTypeParametersTypeEnvironment(typeSubs, factory);
 		exp.typeCheck(typeEnvironment);
 		Expression actTypeExpression = exp.substituteFreeIdents(typeSubs, factory);

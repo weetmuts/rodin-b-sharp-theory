@@ -109,6 +109,9 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 						}
 					}
 				}
+				else {
+					operatorInformation.setHasError();
+				}
 			} else {
 				operatorInformation.setHasError();
 				if (opDefs.length == 0) {

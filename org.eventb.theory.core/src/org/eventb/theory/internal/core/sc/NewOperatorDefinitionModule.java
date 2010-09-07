@@ -104,6 +104,7 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 				// update the factory
 				factory = repository.getFormulaFactory();
 				globalTypeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+				repository.setTypeEnvironment(globalTypeEnvironment);
 			}
 			else {
 				theoryAccuracyInfo.setNotAccurate();
@@ -111,6 +112,7 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 			monitor.worked(1);
 		}
 		// get the new type environment corresponding to the factory
+		factory = repository.getFormulaFactory();
 		globalTypeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 		repository.setTypeEnvironment(globalTypeEnvironment);
 	}

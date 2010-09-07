@@ -14,7 +14,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -53,7 +52,7 @@ public class TheoremFilterModule extends SCFilterModule{
 		}
 		
 		Predicate thmPredicate = CoreUtilities.parseAndCheckPredicate(thm, factory, typeEnvironment, this);
-		if(thmPredicate != null && checkAgainstTypeParameters(thm, thmPredicate)){
+		if(thmPredicate != null){
 			ILabelSymbolInfo info = labelSymbolTable.getSymbolInfo(label);
 			info.setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, thmPredicate.toString());
 			return true;
@@ -61,13 +60,21 @@ public class TheoremFilterModule extends SCFilterModule{
 		return false;
 	}
 
+	/**
+	 * May not be needed after all.
+	 * @param thm
+	 * @param pred
+	 * @return
+	 * @throws CoreException
+	 */
 	protected boolean checkAgainstTypeParameters(ITheorem thm, Predicate pred)
 	throws CoreException{
 		FreeIdentifier[] idents = pred.getFreeIdentifiers();
 		for(FreeIdentifier ident : idents){
 			if(!CoreUtilities.isGivenSet(typeEnvironment, ident.getName())){
 				createProblemMarker(thm, EventBAttributes.PREDICATE_ATTRIBUTE, 
-						GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+						ident.getSourceLocation().getStart(), ident.getSourceLocation().getEnd(), 
+						TheoryGraphProblem.TheoremNonTypeParOccurError);
 				return false;
 			}
 		}

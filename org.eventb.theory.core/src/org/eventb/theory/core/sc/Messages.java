@@ -123,6 +123,8 @@ public final class Messages {
 	public static String scuser_TheoremLabelProblemError;
 
 	public static String scuser_TheoremLabelProblemWarning;
+
+	public static String scuser_TheoremNonTypeParOccurError;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

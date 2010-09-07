@@ -109,7 +109,8 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			IMarker.SEVERITY_WARNING, Messages.scuser_NoToolTipWarning), NoRuleDescWarning(
 			IMarker.SEVERITY_WARNING, Messages.scuser_NoRuleDescWarning), LHSIsIdentErr(
 			IMarker.SEVERITY_ERROR, Messages.scuser_LHSIsIdentErr), RHSPredVarsNOTSubsetOFLHS(
-			IMarker.SEVERITY_ERROR, Messages.scuser_RHSPredVarsNOTSubsetOFLHS),
+			IMarker.SEVERITY_ERROR, Messages.scuser_RHSPredVarsNOTSubsetOFLHS), 
+			TheoremNonTypeParOccurError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremNonTypeParOccurError),
 
 	;
 

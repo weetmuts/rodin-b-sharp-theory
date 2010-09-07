@@ -77,9 +77,12 @@ public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 			IWDMediator wdMediator) {
 		FormulaFactory factory = wdMediator.getFormulaFactory();
 		Expression[] childrenExprs = formula.getChildExpressions();
+		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(childrenExprs, factory);
+		if(allSubs == null){
+			return null;
+		}
 		String rawWD = wdPredicate.toString();
 		Predicate pred = factory.parsePredicate(rawWD, LanguageVersion.V2, null).getParsedPredicate();
-		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(childrenExprs, factory);
 		ITypeEnvironment typeEnvironment = generateOverallTypeEnvironment(allSubs, factory);
 		pred.typeCheck(typeEnvironment);
 		Predicate actWDPred = pred.substituteFreeIdents(allSubs, factory);
