@@ -33,12 +33,6 @@ public interface IOperatorInformation extends ISCState{
 	
 	public boolean isAllowedIdentifier(FreeIdentifier ident) ;
 	
-	public void addAllowedIdentifiers(FreeIdentifier[] idents);
-	
-	public void addAllowedIdentifier(String ident);
-	
-	public void addAllowedIdentifier(FreeIdentifier ident);
-	
 	public void addOperatorArgument(FreeIdentifier ident, Type type);
 	
 	public void addOperatorArgument(String ident, Type type);

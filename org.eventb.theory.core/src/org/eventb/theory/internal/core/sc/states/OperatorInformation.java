@@ -15,6 +15,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -23,7 +24,9 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
+import org.eventb.theory.core.maths.OperatorArgument;
 import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
  * @author maamria
@@ -41,9 +44,12 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	private Predicate wdCondition;
 	private List<String> allowedIdentifiers;
 	private Formula<?> directDefinition;
-	private HashMap<String, Type> opArguments;
+	private HashMap<String, OperatorArgument> opArguments;
 	private Type expressionType;
+	private List<GivenType> typeParameters;
 	private FormulaFactory factory;
+	
+	private int currentArgumentIndex = 0;
 
 	private boolean hasError = false;
 
@@ -52,7 +58,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	public OperatorInformation(String operatorID, FormulaFactory factory) {
 		this.operatorID = operatorID;
 		this.allowedIdentifiers = new ArrayList<String>();
-		this.opArguments = new HashMap<String, Type>();
+		this.opArguments = new HashMap<String, OperatorArgument>();
+		this.typeParameters = new ArrayList<GivenType>();
 		this.factory = factory;
 		this.typeEnvironment = this.factory.makeTypeEnvironment();
 	}
@@ -184,24 +191,6 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		return operatorID;
 	}
 
-	@Override
-	public void addAllowedIdentifiers(FreeIdentifier[] idents) {
-		for (FreeIdentifier ident : idents) {
-			addAllowedIdentifier(ident);
-		}
-
-	}
-
-	public void addAllowedIdentifier(FreeIdentifier ident) {
-		addAllowedIdentifier(ident.getName());
-	}
-
-	public void addAllowedIdentifier(String ident) {
-		if (!allowedIdentifiers.contains(ident)) {
-			typeEnvironment.addGivenSet(ident);
-			allowedIdentifiers.add(ident);
-		}
-	}
 
 	@Override
 	public void addOperatorArgument(FreeIdentifier ident, Type type) {
@@ -213,9 +202,20 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	@Override
 	public void addOperatorArgument(String ident, Type type) {
 		if (!opArguments.containsKey(ident)) {
+			for(GivenType gtype : CoreUtilities.getTypesOccurringIn(type, factory)){
+				if(!typeParameters.contains(gtype)){
+					typeParameters.add(gtype);
+					typeEnvironment.addGivenSet(gtype.getName());
+				}
+				if(!allowedIdentifiers.contains(gtype.getName())){
+					allowedIdentifiers.add(gtype.getName());
+				}
+			}
 			typeEnvironment.addName(ident, type);
-			opArguments.put(ident, type);
+			opArguments.put(
+					ident, new OperatorArgument(currentArgumentIndex++, ident, type));
 			allowedIdentifiers.add(ident);
+			
 		}
 
 	}
@@ -242,9 +242,9 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	public IFormulaExtension getExtension(final FormulaFactory formulaFactory) {
 
-		return MathExtensionsUtilities.getFormulaExtension(formulaFactory, isExpressionOperator(), 
+		return MathExtensionsUtilities.getFormulaExtension(isExpressionOperator(), 
 				operatorID, syntax, formulaType, notation, isAssociative, isCommutative, 
-				directDefinition, wdCondition, opArguments);
+				directDefinition, wdCondition, opArguments, typeParameters);
 		
 	}
 }

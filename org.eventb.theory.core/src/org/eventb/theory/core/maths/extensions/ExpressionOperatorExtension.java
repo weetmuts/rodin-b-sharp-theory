@@ -8,12 +8,11 @@
 package org.eventb.theory.core.maths.extensions;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.InvalidExpressionException;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ExtensionFactory;
@@ -26,36 +25,43 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
+import org.eventb.theory.core.maths.ExpressionOperatorTypingRule;
+import org.eventb.theory.core.maths.OperatorArgument;
 
 /**
  * @author maamria
- *
+ * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionOperatorExtension extends AbstractOperatorExtension implements IExpressionExtension{
+public class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpressionExtension>
+		implements IExpressionExtension {
 
 	private boolean isAssociative = false;
-	boolean isCommutative = false;
-	
-	
-	public ExpressionOperatorExtension(FormulaFactory factory,
+
+	public ExpressionOperatorExtension(
 			String operatorID, String syntax, FormulaType formulaType,
 			Notation notation, boolean isAssociative, boolean isCommutative,
-			Formula<?> directDefinition, Predicate wdCondition, 
-			HashMap<String, Type> opArguments) {
-		super(factory, operatorID, syntax, formulaType, notation, directDefinition, wdCondition, opArguments);
-		
+			Expression directDefinition, Predicate wdCondition,
+			HashMap<String, OperatorArgument> opArguments, List<GivenType> typeParameters) {
+		super(operatorID, syntax, formulaType, notation, isCommutative,
+				directDefinition, wdCondition, opArguments);
+
 		this.isAssociative = isAssociative;
-		this.isCommutative = isCommutative;
-		
+		this.operatorTypeRule = new ExpressionOperatorTypingRule(this, directDefinition.getType());
+		List<OperatorArgument> sortedOperatorArguments = 
+			MathExtensionsUtilities.getSortedList(opArguments.values());
+		for(OperatorArgument arg : sortedOperatorArguments){
+			this.operatorTypeRule.addOperatorArgument(arg);
+		}
+		this.operatorTypeRule.addTypeParameters(typeParameters);
+		this.operatorTypeRule.setWDPredicate(wdCondition);
 	}
 
 	@Override
 	public IExtensionKind getKind() {
 		return new ExtensionKind(notation, formulaType,
-				ExtensionFactory.makeAllExpr(ExtensionFactory
-						.makeArity(opArguments.size(),
-								opArguments.size())), isAssociative);
+				ExtensionFactory.makeAllExpr(ExtensionFactory.makeArity(
+						opArguments.size(), opArguments.size())), isAssociative);
 
 	}
 
@@ -76,59 +82,21 @@ public class ExpressionOperatorExtension extends AbstractOperatorExtension imple
 	}
 
 	@Override
-	public boolean verifyType(Type proposedType,
-			Expression[] childExprs, Predicate[] childPreds) {
-		try {
-			return instantiations.verifyType(proposedType);
-		} catch (InvalidExpressionException e) {
-			e.printStackTrace();
-		}
-		return false;
+	public boolean verifyType(Type proposedType, Expression[] childExprs,
+			Predicate[] childPreds) {
+		return getTypingRule().verifyType(proposedType, childExprs, childPreds);
 	}
 
 	@Override
 	public Type typeCheck(ExtendedExpression expression,
 			ITypeCheckMediator tcMediator) {
-		Expression[] children = expression.getChildExpressions();
-		Expression directDefExpr = (Expression) directDefinition;
-		if (children.length != opArguments.size()) {
-			return null;
-		}
-		String[] arguments = opArguments.keySet().toArray(
-				new String[children.length]);
-		for (int i = 0; i < arguments.length; i++) {
-			instantiations.addArgumentMapping(arguments[i],
-					children[i]);
-		}
-		Type[] argumentTypes = opArguments.values().toArray(
-				new Type[arguments.length]);
-		for (int i = 0; i < children.length; i++) {
-			if (!instantiations.unifyTypes(argumentTypes[i],
-					children[i].getType())) {
-				tcMediator.sameType(argumentTypes[i],
-						children[i].getType());
-				return null;
-			}
-		}
-		try {
-			return instantiations.synthesiseType(directDefExpr
-					.getType());
-		} catch (InvalidExpressionException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return getTypingRule().typeCheck(expression, tcMediator);
 	}
 
 	@Override
-	public Type synthesizeType(Expression[] childExprs,
-			Predicate[] childPreds, ITypeMediator mediator) {
-
-		try {
-			return instantiations.getFinalType();
-		} catch (InvalidExpressionException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
+			ITypeMediator mediator) {
+		return getTypingRule().synthesizeType(childExprs, childPreds, mediator);
 	}
 
 	@Override
@@ -136,4 +104,7 @@ public class ExpressionOperatorExtension extends AbstractOperatorExtension imple
 		return false;
 	}
 
+	protected ExpressionOperatorTypingRule getTypingRule(){
+		return (ExpressionOperatorTypingRule) operatorTypeRule;
+	}
 }

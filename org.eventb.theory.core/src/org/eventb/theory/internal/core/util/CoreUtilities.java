@@ -492,4 +492,13 @@ public class CoreUtilities {
 		}
 		return newTypeEnvironment;
 	}
+	
+	public static GivenType[] getTypesOccurringIn(Type type, FormulaFactory factory){
+		List<GivenType> types = new ArrayList<GivenType>();
+		FreeIdentifier[] idents = type.toExpression(factory).getFreeIdentifiers();
+		for(FreeIdentifier ident : idents){
+			types.add(factory.makeGivenType(ident.getName()));
+		}
+		return types.toArray(new GivenType[types.size()]);
+	}
 }

@@ -10,21 +10,20 @@ package org.eventb.theory.core.maths.extensions;
 import java.util.HashMap;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.theory.core.maths.IOperatorTypingRule;
+import org.eventb.theory.core.maths.OperatorArgument;
 
 /**
  * @author maamria
  *
  */
-public abstract class AbstractOperatorExtension implements IFormulaExtension{
+public abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements IFormulaExtension{
 	
 	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
 	
@@ -34,17 +33,16 @@ public abstract class AbstractOperatorExtension implements IFormulaExtension{
 	protected Notation notation;
 	protected Predicate wdCondition;
 	protected Formula<?> directDefinition;
-	protected HashMap<String, Type> opArguments;
-	protected IPolymorphicTypeManipulation instantiations;
+	protected HashMap<String, OperatorArgument> opArguments;
+	protected IOperatorTypingRule<F> operatorTypeRule;
+	protected boolean isCommutative = false;
 	
-	protected FormulaFactory factory;
-	
-	protected AbstractOperatorExtension(FormulaFactory factory,
+	protected AbstractOperatorExtension(
 			String operatorID, String syntax,
 			FormulaType formulaType,
-			Notation notation, Formula<?> directDefinition, Predicate wdCondition, 
-			HashMap<String, Type> opArguments){
-		this.factory = factory;
+			Notation notation, boolean isCommutative,
+			Formula<?> directDefinition, Predicate wdCondition, 
+			HashMap<String, OperatorArgument> opArguments){
 		this.operatorID = operatorID;
 		this.syntax =syntax;
 		this.formulaType = formulaType;
@@ -52,7 +50,7 @@ public abstract class AbstractOperatorExtension implements IFormulaExtension{
 		this.directDefinition =directDefinition;
 		this.wdCondition = wdCondition;
 		this.opArguments = opArguments;
-		this.instantiations = new PolymorphicTypeManipulation(factory); 
+		this.isCommutative = isCommutative;
 	}
 	
 	@Override
@@ -73,11 +71,7 @@ public abstract class AbstractOperatorExtension implements IFormulaExtension{
 	@Override
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
-		if (wdCondition == null
-				|| wdCondition.equals(CoreUtilities.BTRUE)) {
-			return wdMediator.makeTrueWD();
-		}
-		return instantiations.getWDPredicate(wdCondition);
+		return operatorTypeRule.getWDPredicate(formula, wdMediator);
 	}
 	
 	@Override

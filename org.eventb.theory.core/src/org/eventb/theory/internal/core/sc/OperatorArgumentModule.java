@@ -59,7 +59,6 @@ public class OperatorArgumentModule extends IdentifierModule {
 					operatorInformation.setHasError();
 				} else if (!symbolInfo.hasError()) {
 					operatorInformation.addOperatorArgument(symbolInfo.getSymbol(), type);
-					operatorInformation.addAllowedIdentifiers(type.toExpression(factory).getFreeIdentifiers());
 					if(target != null){
 						symbolInfo.createSCElement(target, null);
 					}
