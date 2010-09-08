@@ -5,7 +5,7 @@ import org.osgi.framework.BundleContext;
 
 public class RBPPlugin extends Plugin {
 	
-	public static final String PLUGIN_ID = "org.eventb.theory.mathextensions";
+	public static final String PLUGIN_ID = "org.eventb.theory.rbp";
 
 	private static RBPPlugin plugin;
 	

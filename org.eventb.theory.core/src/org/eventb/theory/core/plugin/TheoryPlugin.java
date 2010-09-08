@@ -14,6 +14,7 @@ public class TheoryPlugin extends Plugin {
 	// The shared instance
 	private static TheoryPlugin plugin;
 	
+	public static final int SC_STARTING_INDEX = 1;
 	/**
 	 * The constructor
 	 */

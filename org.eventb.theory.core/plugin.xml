@@ -340,6 +340,31 @@
             id="operatorInformation"
             name="%operatorInformation">
       </stateType>
+      <stateType
+            class="org.eventb.theory.internal.core.sc.states.FilteredLHSs"
+            id="filteredLHSs"
+            name="%filteredLHSs">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.internal.core.sc.states.ParsedLHSFormula"
+            id="parsedLHSFormula"
+            name="%parsedLHSFormula">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.internal.core.sc.states.ParsedRHSFormula"
+            id="parsedRHSFormula"
+            name="%parsedRHSFormula">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.internal.core.sc.states.RewriteRuleLabelSymbolTable"
+            id="rewriteRuleLabelSymbolTable"
+            name="%rewriteRuleLabelSymbolTable">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo"
+            id="ruleAccuracyInfo"
+            name="%ruleAccuracyInfo">
+      </stateType>
    </extension>
    <extension
          point="org.eventb.core.scModuleTypes">
@@ -493,6 +518,63 @@
              name="%theoremFilterModule"
              parent="org.eventb.theory.core.theoremModule">
        </filterType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleModule"
+             id="theoryRewriteRuleModule"
+             name="%theoryRewriteRuleModule"
+             parent="org.eventb.theory.core.proofRulesBlockModule">
+          <prereq
+                id="org.eventb.theory.core.metavariableModule">
+          </prereq>
+       </processorType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleAutoModule"
+             id="theoryRewriteRuleAutoModule"
+             name="%theoryRewriteRuleAutoModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleModule">
+       </filterType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleCompleteModule"
+             id="theoryRewriteRuleCompleteModule"
+             name="%theoryRewriteRuleCompleteModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleModule">
+       </filterType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleInterModule"
+             id="theoryRewriteRuleInterModule"
+             name="%theoryRewriteRuleInterModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleModule">
+       </filterType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleLHSModule"
+             id="theoryRewriteRuleLHSModule"
+             name="%theoryRewriteRuleLHSModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleModule">
+       </filterType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleSidesModule"
+             id="theoryRewriteRuleSidesModule"
+             name="%theoryRewriteRuleSidesModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleModule">
+       </filterType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSModule"
+             id="theoryRewriteRuleRHSModule"
+             name="%theoryRewriteRuleRHSModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleModule">
+       </processorType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSIdentsModule"
+             id="theoryRewriteRuleRHSFormulasIdentModule"
+             name="%theoryRewriteRuleRHSFormulasIdentModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleRHSModule">
+       </filterType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSPredVarsModule"
+             id="theoryRewriteRuleRHSFormulasPredVarsModule"
+             name="%theoryRewriteRuleRHSFormulasPredVarsModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleRHSModule">
+       </filterType>
    </extension>
    <extension
          point="org.eventb.core.configurations">
@@ -568,6 +650,33 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.theoremFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleAutoModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleCompleteModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleInterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleLHSModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleRHSFormulasIdentModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleRHSModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleRHSFormulasPredVarsModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoryRewriteRuleSidesModule">
          </scModule>
       </configuration>
       <configuration

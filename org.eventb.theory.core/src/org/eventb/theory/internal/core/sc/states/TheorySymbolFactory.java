@@ -21,6 +21,8 @@ import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
+import org.eventb.theory.core.ISCRewriteRule;
+import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -34,7 +36,7 @@ import org.rodinp.core.RodinDBException;
  *         TODO more symbols needed here
  * 
  */
-@SuppressWarnings({ "restriction", "unused" })
+@SuppressWarnings("restriction")
 public class TheorySymbolFactory {
 
 	private static TheorySymbolFactory factory = new TheorySymbolFactory();
@@ -45,23 +47,17 @@ public class TheorySymbolFactory {
 	private static RulesBlockSymbolProblem rulesBlockSymbolProblem = new RulesBlockSymbolProblem();
 	private static TheoremSymbolProblem theoremSymbolProblem = new TheoremSymbolProblem();
 	private static LocalMetavariableSymbolProblem localMetavariableSymbolProblem = new LocalMetavariableSymbolProblem();
-	
-	/*
-	 * private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new
-	 * RewriteRuleSymbolProblem();
-	 */
-	/*
-	 * private static RhsSymbolProblem rhsSymbolProblem = new
-	 * RhsSymbolProblem();
-	 */
+	private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new RewriteRuleSymbolProblem();
 
-	/*
-	 * public ILabelSymbolInfo makeLocalRewriteRule(String symbol, boolean
-	 * persistent, IInternalElement problemElement, String component) { return
-	 * new LabelSymbolInfo(symbol, ISCRewriteRule.ELEMENT_TYPE, persistent,
-	 * problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
-	 * rewriteRuleSymbolProblem); }
-	 */
+	private static RhsSymbolProblem rhsSymbolProblem = new RhsSymbolProblem();
+
+	public ILabelSymbolInfo makeLocalRewriteRule(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			String component) {
+		return new LabelSymbolInfo(symbol, ISCRewriteRule.ELEMENT_TYPE,
+				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
+				component, rewriteRuleSymbolProblem);
+	}
 
 	public ILabelSymbolInfo makeLocalRulesBlock(String symbol,
 			boolean persistent, IInternalElement problemElement,
@@ -70,13 +66,12 @@ public class TheorySymbolFactory {
 				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
 				component, rulesBlockSymbolProblem);
 	}
-	
-	public ILabelSymbolInfo makeLocalTheorem(String symbol,
-			boolean persistent, IInternalElement problemElement,
-			String component) {
-		return new LabelSymbolInfo(symbol, ISCTheorem.ELEMENT_TYPE,
-				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
-				component, theoremSymbolProblem);
+
+	public ILabelSymbolInfo makeLocalTheorem(String symbol, boolean persistent,
+			IInternalElement problemElement, String component) {
+		return new LabelSymbolInfo(symbol, ISCTheorem.ELEMENT_TYPE, persistent,
+				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+				theoremSymbolProblem);
 	}
 
 	public IIdentifierSymbolInfo makeLocalOperatorArgument(String name,
@@ -103,7 +98,7 @@ public class TheorySymbolFactory {
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, component,
 				localTypeParameterSymbolProblem);
 	}
-	
+
 	public IIdentifierSymbolInfo makeLocalMetavariable(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
@@ -113,14 +108,13 @@ public class TheorySymbolFactory {
 				localMetavariableSymbolProblem);
 	}
 
-
-	/*
-	 * public ILabelSymbolInfo makeLocalRHS(String symbol, boolean persistent,
-	 * IInternalElement problemElement, String component) { return new
-	 * LabelSymbolInfo(symbol, ISCRewriteRuleRightHandSide.ELEMENT_TYPE,
-	 * persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
-	 * rhsSymbolProblem); }
-	 */
+	public ILabelSymbolInfo makeLocalRHS(String symbol, boolean persistent,
+			IInternalElement problemElement, String component) {
+		return new LabelSymbolInfo(symbol,
+				ISCRewriteRuleRightHandSide.ELEMENT_TYPE, persistent,
+				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+				rhsSymbolProblem);
+	}
 
 	public static TheorySymbolFactory getInstance() {
 		return factory;
@@ -252,7 +246,7 @@ public class TheorySymbolFactory {
 		}
 
 	}
-	
+
 	private static class TheoremSymbolProblem implements ISymbolProblem {
 
 		public TheoremSymbolProblem() {

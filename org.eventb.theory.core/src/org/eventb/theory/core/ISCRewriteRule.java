@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eventb.core.IAccuracyElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -20,7 +21,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCRewriteRule extends ILabeledElement,
 	ISCFormulaElement, IAutomaticElement, IInteractiveElement, ICompleteElement,
-	IToolTipElement, IDescriptionElement, ITraceableElement{
+	IToolTipElement, IDescriptionElement, ITraceableElement, IAccuracyElement{
 
 	IInternalElementType<ISCRewriteRule> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scRewriteRule");

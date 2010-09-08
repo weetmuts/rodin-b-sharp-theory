@@ -61,6 +61,34 @@ public class CoreUtilities {
 	
 	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
 
+	/**
+	 * <p>A utility to check if an object is present in an array of objects. This method uses <code>Object.equals(Object)</code></p>
+	 * @param objs the container array of objects
+	 * @param o the object to check
+	 * @return whether <code>o</code> is in <code>objs</code>
+	 */
+	public static boolean contains(Object[] objs, Object o) {
+		for (Object obj : objs) {
+			if (obj.equals(o))
+				return true;
+		}
+		return false;
+	}
+	/**
+	 * <p> Utility to check whether <code>objs</code> contains all of <code>os</code>.
+	 * </p>
+	 * @param objs the container array of objects
+	 * @param os the array of objects
+	 * @return whether <code>objs</code> contains all of <code>os</code>.
+	 */
+	public static boolean subset(Object[] objs, Object[] os) {
+		for (Object o : os) {
+			if (!contains(objs, o))
+				return false;
+		}
+		return true;
+	}
+	
 	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff){
 		if(preds.size() == 0){
 			return BTRUE;
@@ -168,6 +196,40 @@ public class CoreUtilities {
 		IParseResult result = ff.parsePredicate(form, V2, null);
 		if(result.hasProblem()){
 			result = ff.parseExpression(form, V2, null);
+			if(issueASTProblemMarkers(element, attributeType, result, display)){
+				return null;
+			}
+			else{
+				formula = result.getParsedExpression();
+			}
+		}
+		else{
+			formula = result.getParsedPredicate();
+		}
+		
+		FreeIdentifier[] idents = formula.getFreeIdentifiers();
+		for(FreeIdentifier ident : idents){
+			if(!typeEnvironment.contains(ident.getName())){
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+				return null;
+			}
+		}
+		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
+		if(issueASTProblemMarkers(element, attributeType, tcResult, display)){
+			return null;
+		}
+		return formula;
+	}
+	
+	public static Formula<?> parseAndCheckPatternFormula(IFormulaElement element,
+			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
+			throws CoreException{
+		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
+		String form = element.getFormula();
+		Formula<?> formula = null;
+		IParseResult result = ff.parsePredicatePattern(form, V2, null);
+		if(result.hasProblem()){
+			result = ff.parseExpressionPattern(form, V2, null);
 			if(issueASTProblemMarkers(element, attributeType, result, display)){
 				return null;
 			}
