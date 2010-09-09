@@ -44,7 +44,7 @@ import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.sc.states.DatatypeTable.ERROR_CODE;
+import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;

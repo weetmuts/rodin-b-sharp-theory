@@ -20,26 +20,15 @@ import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
-import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
-import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
  * @author maamria
  *
  */
 @SuppressWarnings("restriction")
-public class DatatypeTable extends State implements ISCState{
-	
-	public static enum ERROR_CODE{NAME_IS_A_DATATYPE, NAME_IS_A_CONSTRUCTOR, NAME_IS_A_DESTRUCTOR};
-	
-	public final static IStateType<DatatypeTable> STATE_TYPE = SCCore.getToolStateType(
-			TheoryPlugin.PLUGIN_ID + ".datatypeTable");
-	
-	final static String DATATYPE_ID = " Datatype";
-	final static String CONS_ID = " Constructor";
+public class DatatypeTable extends State implements IDatatypeTable{
 	
 	private HashMap<String, DatatypeEntry> datatypes;
 	
@@ -102,11 +91,6 @@ public class DatatypeTable extends State implements ISCState{
 		return true;
 	}
 	
-	/**
-	 * A call to method <code>isNameOk(String)</code> should be made to ensure unique names.
-	 * @param name
-	 * @param typeArgs
-	 */
 	public void addDatatype(String name, String[] typeArgs){
 		datatypes.put(name, new DatatypeEntry(name, typeArgs));
 		currentDatatype = name;

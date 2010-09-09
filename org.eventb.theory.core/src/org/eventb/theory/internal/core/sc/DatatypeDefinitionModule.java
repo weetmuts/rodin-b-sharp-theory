@@ -31,9 +31,9 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.AddedTypeExpression;
-import org.eventb.theory.internal.core.sc.states.DatatypeTable;
+import org.eventb.theory.internal.core.sc.states.IDatatypeTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.DatatypeTable.ERROR_CODE;
+import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.eventb.theory.internal.core.sc.states.ReferencedTypes;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
@@ -49,7 +49,7 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 	IModuleType<DatatypeDefinitionModule> MODULE_TYPE = 
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinitionModule");
 	
-	private DatatypeTable datatypeTable;
+	private IDatatypeTable datatypeTable;
 	
 	private ITypeEnvironment typeEnvironment;
 	private FormulaFactory factory;
@@ -228,7 +228,7 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
-		datatypeTable = (DatatypeTable) repository.getState(DatatypeTable.STATE_TYPE);
+		datatypeTable = (IDatatypeTable) repository.getState(IDatatypeTable.STATE_TYPE);
 		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		
 	}

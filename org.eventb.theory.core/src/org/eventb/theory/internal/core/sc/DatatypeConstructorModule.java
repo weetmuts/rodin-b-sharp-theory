@@ -23,8 +23,8 @@ import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.sc.states.DatatypeTable;
-import org.eventb.theory.internal.core.sc.states.DatatypeTable.ERROR_CODE;
+import org.eventb.theory.internal.core.sc.states.IDatatypeTable;
+import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -41,7 +41,7 @@ public class DatatypeConstructorModule extends SCProcessorModule{
 	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
 	
-	private DatatypeTable datatypeTable;
+	private IDatatypeTable datatypeTable;
 	private ISCDatatypeDefinition scDtd;
 	
 	@Override
@@ -119,7 +119,7 @@ public class DatatypeConstructorModule extends SCProcessorModule{
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
-		datatypeTable = (DatatypeTable) repository.getState(DatatypeTable.STATE_TYPE);		
+		datatypeTable = (IDatatypeTable) repository.getState(IDatatypeTable.STATE_TYPE);		
 	}
 
 	@Override

@@ -326,7 +326,7 @@
             name="%referencedTypes">
       </stateType>
       <stateType
-            class="org.eventb.theory.internal.core.sc.states.DatatypeTable"
+            class="org.eventb.theory.internal.core.sc.states.IDatatypeTable"
             id="datatypeTable"
             name="%datatypeTable">
       </stateType>
