@@ -86,6 +86,21 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 		}
 		Notation notation = opDef.getNotationType();
 		symbolInfo.setAttributeValue(TheoryAttributes.NOTATION_TYPE_ATTRIBUTE, TheoryCoreFacade.convertTypeToStr(notation));
+		
+		if (!opDef.hasAssociativeAttribute()) {
+			createProblemMarker(opDef,
+					TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
+					TheoryGraphProblem.OperatorAssocMissingError, opID);
+			return false;
+		}
+		symbolInfo.setAttributeValue(TheoryAttributes.ASSOCIATIVE_ATTRIBUTE, opDef.isAssociative());
+		if (!opDef.hasCommutativeAttribute()) {
+			createProblemMarker(opDef,
+					TheoryAttributes.COMMUTATIVE_ATTRIBUTE,
+					TheoryGraphProblem.OperatorCommutMissingError, opID);
+			return false;
+		}
+		symbolInfo.setAttributeValue(TheoryAttributes.COMMUTATIVE_ATTRIBUTE, opDef.isCommutative());
 		return true;
 	}
 

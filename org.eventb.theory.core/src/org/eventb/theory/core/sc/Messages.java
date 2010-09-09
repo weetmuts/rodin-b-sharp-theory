@@ -27,7 +27,7 @@ public final class Messages {
 
 	public static String build_extracting;
 	public static String build_runningSC;
-	
+
 	public static String progress_TheoryTypeParameters;
 	public static String progress_TheoryOperators;
 	public static String progress_TheoryDatatypes;
@@ -35,7 +35,7 @@ public final class Messages {
 	public static String progress_TheoryInferenceRules;
 	public static String progress_TheoryRewriteRules;
 	public static String progress_TheoryTheorems;
-	
+
 	public static String scuser_AutoUndefWarning;
 	public static String scuser_LhsAndRhsNotSynClassMatching;
 	public static String scuser_LHSUndef;
@@ -58,7 +58,6 @@ public final class Messages {
 	public static String scuser_DescNotSupplied;
 	public static String scuser_LHSIsIdentErr;
 	public static String scuser_RHSPredVarsNOTSubsetOFLHS;
-
 	public static String scuser_DatatypeNameAlreadyATypeParError;
 	public static String scuser_TypeArgMissingError;
 	public static String scuser_TypeArgNotDefinedError;
@@ -89,43 +88,32 @@ public final class Messages {
 	public static String scuser_OperatorArgumentNameConflict;
 	public static String scuser_TypeAttrMissingForOpArgError;
 	public static String scuser_IdentIsNotTypeParError;
-	public static String scuser_OperatorCannotBeCommutWarning;
-	public static String scuser_OperatorCannotBeAssosWarning;
+	public static String scuser_OperatorCannotBeCommutError;
+	public static String scuser_OperatorCannotBeAssosError;
 	public static String scuser_TheoremPredMissingError;
-
 	public static String scuser_WDPredUndefError;
-
 	public static String scuser_OpCannotReferToTheseTypes;
-
 	public static String scuser_OperatorSynIsATypeParError;
-
 	public static String scuser_OperatorHasMoreThan1DirectDefError;
-
 	public static String scuser_MissingFormulaAttrError;
-
 	public static String scuser_OperatorNoDirectDefError;
-
 	public static String scuser_OperatorDefNotExpError;
-
 	public static String scuser_OperatorDefNotPredError;
-
 	public static String scuser_OperatorWithSameSynJustBeenAdded;
-
 	public static String scuser_OperatorInvalidSynError;
-
 	public static String scuser_RulesBlockLabelProblemError;
-
 	public static String scuser_RulesBlockLabelProblemWarning;
 	public static String scuser_UntypedMetavariableError;
-
 	public static String scuser_TheoryMetaVarNameConflict;
-
 	public static String scuser_TheoremLabelProblemError;
-
 	public static String scuser_TheoremLabelProblemWarning;
-
 	public static String scuser_TheoremNonTypeParOccurError;
-	
+	public static String scuser_OperatorPredOnlyPrefix;
+	public static String scuser_OperatorPredNeedOneOrMoreArgs;
+	public static String scuser_OperatorExpInfixNeedsAtLeastTwoArgs;
+	public static String scuser_OperatorExpPrefixCannotBeAssos;
+	public static String scuser_OperatorPredCannotBeAssos;
+	public static String scuser_OperatorExpCannotBePostfix;
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
 	static {

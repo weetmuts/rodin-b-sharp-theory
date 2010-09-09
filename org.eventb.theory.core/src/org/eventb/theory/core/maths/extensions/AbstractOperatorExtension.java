@@ -25,7 +25,7 @@ import org.eventb.theory.core.maths.OperatorArgument;
  */
 public abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements IFormulaExtension{
 	
-	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
+	
 	
 	protected String operatorID;
 	protected String syntax;
@@ -65,7 +65,7 @@ public abstract class AbstractOperatorExtension<F extends IFormulaExtension> imp
 
 	@Override
 	public String getGroupId() {
-		return DUMMY_OPERATOR_GROUP;
+		return MathExtensionsUtilities.getGroupFor(formulaType, notation, opArguments.size());
 	}
 
 	@Override

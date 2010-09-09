@@ -465,9 +465,9 @@
           </prereq>
        </processorType>
        <processorType
-             class="org.eventb.theory.internal.core.sc.NewOperatorAttributesModule"
-             id="newOperatorAttributesModule"
-             name="%newOperatorAttributesModule"
+             class="org.eventb.theory.internal.core.sc.OperatorPropertiesModule"
+             id="operatorPropertiesModule"
+             name="%operatorPropertiesModule"
              parent="org.eventb.theory.core.newOperatorDefinitionModule">
           <prereq
                 id="org.eventb.theory.core.directOperatorDefinitionModule">
@@ -479,7 +479,7 @@
              name="%operatorGrammarPatcherModule"
              parent="org.eventb.theory.core.newOperatorDefinitionModule">
           <prereq
-                id="org.eventb.theory.core.newOperatorAttributesModule">
+                id="org.eventb.theory.core.operatorPropertiesModule">
           </prereq>
        </processorType>
        <processorType
@@ -622,7 +622,7 @@
                id="org.eventb.theory.core.operatorArgumentFilterModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.newOperatorAttributesModule">
+               id="org.eventb.theory.core.operatorPropertiesModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorWDConditionModule">

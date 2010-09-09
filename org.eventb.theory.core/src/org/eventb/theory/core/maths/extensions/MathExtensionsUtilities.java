@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,22 +33,104 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.theory.core.maths.OperatorArgument;
 
 /**
- * Utilities class for obtaining information related to grammars and operators plus other utilities.
+ * Utilities class for obtaining information related to grammars and operators
+ * plus other utilities.
  * 
  * @author maamria
  * 
  */
 public class MathExtensionsUtilities {
 
+	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
+
 	/**
-	 * Checks whether an operator with the given ID is already in the given factory.
-	 * @param id the ID of the new operator
-	 * @param ff the formula factory
+	 * Operator groups used in <link>BMath</link>.
+	 */
+	public static final String RELOP_PRED = "Relational Operator Predicate";
+	public static final String QUANTIFICATION = "Quantification";
+	public static final String PAIR = "Pair";
+	public static final String RELATION = "Set of Relations";
+	public static final String BINOP = "Binary Operator";
+	public static final String INTERVAL = "Interval";
+	public static final String ARITHMETIC = "Arithmetic";
+	public static final String UNARY_RELATION = "Unary Relation";
+	public static final String FUNCTIONAL = "Functional";
+	public static final String BRACE_SETS = "Brace Sets";
+	public static final String QUANTIFIED_PRED = "Quantified";
+	public static final String LOGIC_PRED = "Logic Predicate";
+	public static final String INFIX_PRED = "Infix Predicate";
+	public static final String NOT_PRED = "Not Predicate";
+	public static final String ATOMIC_PRED = "Atomic Predicate";
+	public static final String ATOMIC_EXPR = "Atomic Expression";
+	public static final String BOUND_UNARY = "Bound Unary";
+	public static final String BOOL_EXPR = "Bool";
+	public static final String INFIX_SUBST = "Infix Substitution";
+
+	public static String getGroupFor(FormulaType formulaType,
+			Notation notation, int arity) {
+		String group = DUMMY_OPERATOR_GROUP;
+		switch (formulaType) {
+		case EXPRESSION: {
+			switch (notation) {
+			case INFIX: {
+				break;
+			}
+			case PREFIX: {
+				if(arity > 0){
+					group = BOUND_UNARY;
+				}
+				else {
+					group = ATOMIC_EXPR;
+				}
+				break;
+			}
+			case POSTFIX: {
+				// leave as part of the dummy group TODO check this
+			}
+			}
+			break;
+		}
+		case PREDICATE: {
+			switch (notation) {
+			case INFIX: {
+				if(arity == 0){
+					group = ATOMIC_PRED;
+				}
+				// infix makes sense for ops with more than two args
+				if(arity > 1){
+					group = INFIX_PRED;
+				}
+				break;
+			}
+			case PREFIX: {
+				if(arity > 0){
+					group = BOUND_UNARY;
+				}
+				else {
+					group = ATOMIC_PRED;
+				}
+				break;
+			}
+			case POSTFIX: {
+				// leave as part of the dummy group TODO check this
+			}
+			}
+		}
+		}
+		return group;
+	}
+
+	/**
+	 * Checks whether an operator with the given ID is already in the given
+	 * factory.
+	 * 
+	 * @param id
+	 *            the ID of the new operator
+	 * @param ff
+	 *            the formula factory
 	 * @return whether an operator with the given ID already exists
 	 */
 	public static boolean checkOperatorID(String id, FormulaFactory ff) {
@@ -53,9 +138,13 @@ public class MathExtensionsUtilities {
 	}
 
 	/**
-	 * Checks whether an operator with the given syntax symbol is already in the given factory.
-	 * @param symbol the syntax symbol of the new operator
-	 * @param ff the formula factory
+	 * Checks whether an operator with the given syntax symbol is already in the
+	 * given factory.
+	 * 
+	 * @param symbol
+	 *            the syntax symbol of the new operator
+	 * @param ff
+	 *            the formula factory
 	 * @return whether an operator with the given symbol already exists
 	 */
 	public static boolean checkOperatorSyntaxSymbol(String symbol,
@@ -65,8 +154,11 @@ public class MathExtensionsUtilities {
 
 	/**
 	 * Checks whether a group with the given ID is already in the given factory.
-	 * @param id the ID of the new group
-	 * @param ff the formula factory
+	 * 
+	 * @param id
+	 *            the ID of the new group
+	 * @param ff
+	 *            the formula factory
 	 * @return whether a group with the given ID already exists
 	 */
 	public static boolean checkGroupID(String id, FormulaFactory ff) {
@@ -106,32 +198,43 @@ public class MathExtensionsUtilities {
 
 	/**
 	 * Returns the formula extension corresponding to the supplied details.
-	 * @param isExpression whether this an expression extension
-	 * @param operatorID the operator ID
-	 * @param syntax the syntax symbol
-	 * @param formulaType the formula type
-	 * @param notation the notation
-	 * @param isAssociative whether the operator is associative
-	 * @param isCommutative whether the operator is commutative
-	 * @param directDefinition the direct definition of the operator
-	 * @param wdCondition the pattern well-definedness condition
-	 * @param opArguments the arguments of the new operator
+	 * 
+	 * @param isExpression
+	 *            whether this an expression extension
+	 * @param operatorID
+	 *            the operator ID
+	 * @param syntax
+	 *            the syntax symbol
+	 * @param formulaType
+	 *            the formula type
+	 * @param notation
+	 *            the notation
+	 * @param isAssociative
+	 *            whether the operator is associative
+	 * @param isCommutative
+	 *            whether the operator is commutative
+	 * @param directDefinition
+	 *            the direct definition of the operator
+	 * @param wdCondition
+	 *            the pattern well-definedness condition
+	 * @param opArguments
+	 *            the arguments of the new operator
 	 * @return the new formula extension
 	 */
-	public static IFormulaExtension getFormulaExtension(
-			boolean isExpression, String operatorID, String syntax,
-			FormulaType formulaType, Notation notation, boolean isAssociative,
-			boolean isCommutative, Formula<?> directDefinition,
-			Predicate wdCondition, HashMap<String, OperatorArgument> opArguments,
+	public static IFormulaExtension getFormulaExtension(boolean isExpression,
+			String operatorID, String syntax, FormulaType formulaType,
+			Notation notation, boolean isAssociative, boolean isCommutative,
+			Formula<?> directDefinition, Predicate wdCondition,
+			HashMap<String, OperatorArgument> opArguments,
 			List<GivenType> typeParameters) {
 		if (isExpression) {
-			return new ExpressionOperatorExtension(
-					operatorID, syntax, formulaType, notation, 
-					isAssociative, isCommutative, (Expression) directDefinition, 
-					wdCondition, opArguments, typeParameters);
+			return new ExpressionOperatorExtension(operatorID, syntax,
+					formulaType, notation, isAssociative, isCommutative,
+					(Expression) directDefinition, wdCondition, opArguments,
+					typeParameters);
 		} else {
-			return new PredicateOperatorExtension(
-					operatorID, syntax, formulaType, notation, isCommutative, 
+			return new PredicateOperatorExtension(operatorID, syntax,
+					formulaType, notation, isCommutative,
 					(Predicate) directDefinition, wdCondition, opArguments,
 					typeParameters);
 		}
@@ -139,12 +242,17 @@ public class MathExtensionsUtilities {
 
 	/**
 	 * Returns the type parameters occurring in the given type.
-	 * @param type the type
-	 * @param factory the formula factory
+	 * 
+	 * @param type
+	 *            the type
+	 * @param factory
+	 *            the formula factory
 	 * @return the list of occurring types parameters
 	 */
-	public static List<Type> getTypeParametersInType(Type type, FormulaFactory factory) {
-		FreeIdentifier[] idents = type.toExpression(factory).getFreeIdentifiers();
+	public static List<Type> getTypeParametersInType(Type type,
+			FormulaFactory factory) {
+		FreeIdentifier[] idents = type.toExpression(factory)
+				.getFreeIdentifiers();
 		List<Type> types = new ArrayList<Type>();
 		for (FreeIdentifier ident : idents) {
 			types.add(factory.makeGivenType(ident.getName()));
@@ -169,43 +277,49 @@ public class MathExtensionsUtilities {
 						constructPatternTypeFor(
 								((ProductType) theoryType).getRight(),
 								parToTypeVarMap, mediator));
-			} else if(theoryType instanceof ParametricType){
-				Type[] typePars = ((ParametricType) theoryType).getTypeParameters();
+			} else if (theoryType instanceof ParametricType) {
+				Type[] typePars = ((ParametricType) theoryType)
+						.getTypeParameters();
 				Type[] newTypePars = new Type[typePars.length];
-				for(int i = 0 ; i < typePars.length ; i++){
-					newTypePars[i] = constructPatternTypeFor(typePars[i], 
+				for (int i = 0; i < typePars.length; i++) {
+					newTypePars[i] = constructPatternTypeFor(typePars[i],
 							parToTypeVarMap, mediator);
 				}
-				return mediator.makeParametricType(
-						Arrays.asList(newTypePars), 
+				return mediator.makeParametricType(Arrays.asList(newTypePars),
 						((ParametricType) theoryType).getExprExtension());
 			}
 		}
 		return theoryType;
 	}
-	
+
 	/**
 	 * Returns the types of the given expressions.
-	 * @param exps the expressions
+	 * 
+	 * @param exps
+	 *            the expressions
 	 * @return the corresponding types
 	 */
-	public static Type[] getTypes(Expression[] exps){
+	public static Type[] getTypes(Expression[] exps) {
 		Type[] types = new Type[exps.length];
-		for(int i = 0 ; i < types.length ; i++){
+		for (int i = 0; i < types.length; i++) {
 			types[i] = exps[i].getType();
 		}
 		return types;
 	}
-	
+
 	/**
 	 * Creates a sorted list of the given element type.
-	 * @param <E> the type of the elements
-	 * @param collection the original collection
+	 * 
+	 * @param <E>
+	 *            the type of the elements
+	 * @param collection
+	 *            the original collection
 	 * @return the sorted list
 	 */
-	public static <E extends Comparable<E>> List<E> getSortedList(Collection<E> collection){
+	public static <E extends Comparable<E>> List<E> getSortedList(
+			Collection<E> collection) {
 		List<E> list = new ArrayList<E>();
-		for(E item : collection){
+		for (E item : collection) {
 			list.add(item);
 		}
 		Collections.sort(list);
