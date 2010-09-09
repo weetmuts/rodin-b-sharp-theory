@@ -2,6 +2,7 @@ package org.eventb.theory.internal.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
@@ -14,6 +15,7 @@ import org.eventb.theory.internal.core.sc.states.DatatypeTable;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -48,7 +50,8 @@ public class TheoryModule extends SCProcessorModule {
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-
+		// add cond extension
+		repository.setFormulaFactory(FormulaFactory.getInstance(CoreUtilities.singletonCondExtension(FormulaFactory.getCond())));
 		accuracyInfo = new TheoryAccuracyInfo();
 		final TheoryLabelSymbolTable labelSymbolTable = 
 			new TheoryLabelSymbolTable(

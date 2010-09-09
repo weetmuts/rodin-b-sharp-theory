@@ -7,18 +7,14 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
+import org.eventb.core.ICommentedElement;
+import org.eventb.core.ILabeledElement;
 
 /**
  * @author maamria
  *
  */
-public interface IInfer extends IInferenceClause{
-	
-	IInternalElementType<IInfer> ELEMENT_TYPE =
-		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".infer");
-		
+public interface IRule extends 
+		ILabeledElement, IAutomaticElement, IInteractiveElement, IToolTipElement, IDescriptionElement,ICommentedElement{
 
 }

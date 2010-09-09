@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.ICommentedElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -19,7 +17,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IInferenceRule extends 
-	ILabeledElement, IAutomaticElement, IInteractiveElement, IToolTipElement, IDescriptionElement,ICommentedElement{
+	IRule{
 
 	IInternalElementType<IInferenceRule> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".inferenceRule");

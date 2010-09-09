@@ -1,7 +1,5 @@
 package org.eventb.theory.core;
 
-import org.eventb.core.ICommentedElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -14,9 +12,8 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface IRewriteRule extends ICommentedElement, ILabeledElement,
-		IFormulaElement, IAutomaticElement, IInteractiveElement, ICompleteElement,
-		IToolTipElement, IDescriptionElement{
+public interface IRewriteRule extends 
+		IFormulaElement, ICompleteElement, IRule{
 
 	IInternalElementType<IRewriteRule> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".rewriteRule");

@@ -8,11 +8,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
-import org.eventb.core.sc.state.IIdentifierSymbolInfo;
-import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IRewriteRule;
@@ -20,7 +17,6 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.FilteredLHSs;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -43,7 +39,6 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 	private FormulaFactory factory;
 	private FilteredLHSs filteredLHSs;
 	private ITypeEnvironment typeEnvironment;
-	private IIdentifierSymbolTable identifierSymbolTable;
 	
 	
 	public void initModule(ISCStateRepository repository,
@@ -52,7 +47,6 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 		factory = repository.getFormulaFactory();
 		filteredLHSs = (FilteredLHSs) repository.getState(FilteredLHSs.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
-		identifierSymbolTable = (IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 	}
 	
 	
@@ -75,13 +69,8 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 					TheoryGraphProblem.LHSIsIdentErr);
 			return false;
 		}
-		FreeIdentifier[] freeIdentifiers = lhsForm.getFreeIdentifiers();
-		for (FreeIdentifier freeIdentifier : freeIdentifiers) {
-			IIdentifierSymbolInfo symbolInfo = getSymbolInfo(rule,
-					freeIdentifier, null);
-			if (symbolInfo == null) {
-				return false;
-			}
+		if(!CoreUtilities.checkAgainstTypeParameters(rule, lhsForm, typeEnvironment, this)){
+			return false;
 		}
 		filteredLHSs.addLHS(rule.getLabel(), lhsForm);
 		return true;
@@ -93,34 +82,11 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 		factory = null;
 		filteredLHSs = null;
 		typeEnvironment = null;
-		identifierSymbolTable = null;
 		super.endModule(repository, monitor);
 	}
 	
 	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
-	}
-	
-	protected IIdentifierSymbolInfo getSymbolInfo(IInternalElement element,
-			FreeIdentifier freeIdentifier, IProgressMonitor monitor)
-			throws CoreException {
-		IIdentifierSymbolInfo symbolInfo = identifierSymbolTable
-				.getSymbolInfo(freeIdentifier.getName());
-		if (symbolInfo == null) {
-			createProblemMarker(element, FORMULA_ATTRIBUTE, freeIdentifier
-					.getSourceLocation().getStart(), freeIdentifier
-					.getSourceLocation().getEnd(),
-					GraphProblem.UndeclaredFreeIdentifierError, freeIdentifier
-							.getName());
-		} else if (symbolInfo.hasError()) {
-			createProblemMarker(element, FORMULA_ATTRIBUTE, freeIdentifier
-					.getSourceLocation().getStart(), freeIdentifier
-					.getSourceLocation().getEnd(),
-					GraphProblem.FreeIdentifierFaultyDeclError, freeIdentifier
-							.getName());
-			symbolInfo = null;
-		}
-		return symbolInfo;
 	}
 }

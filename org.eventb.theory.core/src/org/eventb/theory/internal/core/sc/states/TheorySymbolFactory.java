@@ -17,6 +17,7 @@ import org.eventb.internal.core.sc.symbolTable.ISymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.ITypedSymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo;
+import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
@@ -48,7 +49,7 @@ public class TheorySymbolFactory {
 	private static TheoremSymbolProblem theoremSymbolProblem = new TheoremSymbolProblem();
 	private static LocalMetavariableSymbolProblem localMetavariableSymbolProblem = new LocalMetavariableSymbolProblem();
 	private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new RewriteRuleSymbolProblem();
-
+	private static InferenceRuleSymbolProblem inferenceRuleSymbolProblem = new InferenceRuleSymbolProblem();
 	private static RhsSymbolProblem rhsSymbolProblem = new RhsSymbolProblem();
 
 	public ILabelSymbolInfo makeLocalRewriteRule(String symbol,
@@ -57,6 +58,14 @@ public class TheorySymbolFactory {
 		return new LabelSymbolInfo(symbol, ISCRewriteRule.ELEMENT_TYPE,
 				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
 				component, rewriteRuleSymbolProblem);
+	}
+	
+	public ILabelSymbolInfo makeLocalInferenceRule(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			String component) {
+		return new LabelSymbolInfo(symbol, ISCInferenceRule.ELEMENT_TYPE,
+				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
+				component, inferenceRuleSymbolProblem);
 	}
 
 	public ILabelSymbolInfo makeLocalRulesBlock(String symbol,
@@ -195,6 +204,30 @@ public class TheorySymbolFactory {
 
 	}
 
+	private static class InferenceRuleSymbolProblem implements ISymbolProblem {
+
+		public InferenceRuleSymbolProblem() {
+			// public constructor
+		}
+
+		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.InferenceRuleLabelConflictError,
+					symbolInfo.getSymbol());
+
+		}
+
+		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.InferenceRuleLabelConflictWarning,
+					symbolInfo.getSymbol());
+
+		}
+	}
 	private static class RewriteRuleSymbolProblem implements ISymbolProblem {
 
 		public RewriteRuleSymbolProblem() {

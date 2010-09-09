@@ -36,6 +36,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
@@ -109,6 +110,49 @@ public class CoreUtilities {
 		return bareName + "." + TheoryCoreFacade.SC_THEORY_FILE_EXTENSION;
 	}
 	
+
+	/**
+	 * 
+	 * @param element
+	 * @param pred
+	 * @param typeEnvironment
+	 * @param display
+	 * @return
+	 * @throws CoreException
+	 */
+	public static boolean checkAgainstTypeParameters(IPredicateElement element, Predicate pred, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
+	throws CoreException{
+		return checkAgainstTypeParameters(element, pred, EventBAttributes.PREDICATE_ATTRIBUTE, typeEnvironment, display);
+	}
+
+	/**
+	 * 
+	 * @param element
+	 * @param formula
+	 * @param typeEnvironment
+	 * @param display
+	 * @return
+	 * @throws CoreException
+	 */
+	public static boolean checkAgainstTypeParameters(IFormulaElement element, Formula<?> formula, 
+			ITypeEnvironment typeEnvironment, IMarkerDisplay display)
+	throws CoreException{
+		return checkAgainstTypeParameters(element, formula, TheoryAttributes.FORMULA_ATTRIBUTE, typeEnvironment, display);
+	}
+	
+	protected static boolean checkAgainstTypeParameters(IInternalElement element, Formula<?> formula, IAttributeType attrType,
+			ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws RodinDBException{
+		Set<GivenType> types = formula.getGivenTypes();
+		boolean ok = true;
+		for(GivenType type : types){
+			if(!CoreUtilities.isGivenSet(typeEnvironment, type.getName())){
+				display.createProblemMarker(element, attrType,TheoryGraphProblem.NonTypeParOccurError, type.getName());
+				ok = false;
+			}
+		}
+		return ok;
+	}
+	
 	/**
 	 * Makes a free identifier from the given name.
 	 * <p>
@@ -171,6 +215,12 @@ public class CoreUtilities {
 		return set;
 	}
 
+	public static Set<IFormulaExtension> singletonCondExtension(IFormulaExtension element){
+		Set<IFormulaExtension> set = new HashSet<IFormulaExtension>();
+		set.add(element);
+		return set;
+	}
+	
 	public static Type parseTypeExpression(ITypeElement typingElmnt,
 			FormulaFactory factory, IMarkerDisplay display) 
 	throws CoreException{
@@ -527,7 +577,11 @@ public class CoreUtilities {
 	}
 	
 	public static boolean isGivenSet(ITypeEnvironment typeEnvironment, String name) {
-		final Type baseType = typeEnvironment.getType(name).getBaseType();
+		Type type = typeEnvironment.getType(name);
+		if(type == null){
+			return false;
+		}
+		final Type baseType = type.getBaseType();
 		if (baseType instanceof GivenType) {
 			GivenType givenType = (GivenType) baseType;
 			return givenType.getName().equals(name);

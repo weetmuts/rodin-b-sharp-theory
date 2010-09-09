@@ -6,13 +6,10 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
-import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.modules.LabeledElementModule;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
-import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
@@ -20,10 +17,7 @@ import org.eventb.theory.internal.core.sc.states.FilteredLHSs;
 import org.eventb.theory.internal.core.sc.states.ParsedLHSFormula;
 import org.eventb.theory.internal.core.sc.states.RewriteRuleLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -32,19 +26,15 @@ import org.rodinp.core.IRodinElement;
  *
  */
 @SuppressWarnings("restriction")
-public class TheoryRewriteRuleModule extends LabeledElementModule{
+public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCRewriteRule>{
 
 	public static final IModuleType<TheoryRewriteRuleModule> MODULE_TYPE = SCCore
 		.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryRewriteRuleModule");
 	
-	private final static int LABEL_SYMTAB_SIZE = 2047;
 	private static String REWRITE_RULE_NAME_PREFIX = "rule";
 	
-	private TheoryAccuracyInfo accuracyInfo;
 	private FilteredLHSs filteredLHSs;
-	private IRewriteRule[] rules;
 	
-
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -54,34 +44,13 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		rules = getRuleElements(element);
-		accuracyInfo = (TheoryAccuracyInfo) repository
-				.getState(TheoryAccuracyInfo.STATE_TYPE);
 		filteredLHSs = new FilteredLHSs();
-
-	}
-	
-
-	public void process(IRodinElement element, IInternalElement target,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
-		IProofRulesBlock block = (IProofRulesBlock) element;
-		monitor.subTask(Messages.bind(Messages.progress_TheoryRewriteRules));
-		ILabelSymbolInfo[] symbolInfos = fetchRules(
-				block.getParent().getElementName(), repository,
-				monitor);
-		ISCRewriteRule[] scRules = new ISCRewriteRule[rules.length];
-		commitRules((ISCProofRulesBlock) target, scRules, symbolInfos,
-				monitor);
-		processRules(scRules, repository, symbolInfos, monitor);
 
 	}
 	
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		accuracyInfo = null;
-		rules = null;
 		filteredLHSs = null;
 		super.endModule(element, repository, monitor);
 	}
@@ -92,23 +61,16 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 		return TheorySymbolFactory.getInstance().makeLocalRewriteRule(symbol,
 				true, element, component);
 	}
-
-	@Override
-	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository
-				.getState(TheoryLabelSymbolTable.STATE_TYPE);
-	}
 	
 	// Utilities
 	
-	private IRewriteRule[] getRuleElements(IRodinElement element)
+	protected IRewriteRule[] getRuleElements(IRodinElement element)
 			throws CoreException {
 		IProofRulesBlock rulesBlock = (IProofRulesBlock) element;
 		return rulesBlock.getRewriteRules();
 	}
 	
-	private ILabelSymbolInfo[] fetchRules(String theoryName,
+	protected ILabelSymbolInfo[] fetchRules(String theoryName,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		ILabelSymbolInfo[] symbolInfos = new ILabelSymbolInfo[rules.length];
@@ -127,28 +89,10 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 		return symbolInfos;
 	}
 	
-	private void commitRules(ISCProofRulesBlock target,
-			ISCRewriteRule[] scRules, ILabelSymbolInfo[] symbolInfos,
-			IProgressMonitor monitor) throws CoreException {
-		int index = TheoryPlugin.SC_STARTING_INDEX;
-		for (int i = 0; i < rules.length; i++) {
-			if (symbolInfos[i] != null && !symbolInfos[i].hasError()) {
-				scRules[i] = createSCRule(target, index++, symbolInfos[i],
-						 monitor);
-			}
-		}
-	}
 	
-	// create an empty sc element
-	private ISCRewriteRule createSCRule(ISCProofRulesBlock target, int index,
-			ILabelSymbolInfo symbolInfo, 
-			IProgressMonitor monitor) throws CoreException {
-		ILabeledElement scRule = symbolInfo.createSCElement(target,
-				REWRITE_RULE_NAME_PREFIX + index, monitor);
-		return (ISCRewriteRule) scRule;
-	}
 	
-	private void processRules(ISCRewriteRule[] scRules,
+	
+	protected void processRules(ISCRewriteRule[] scRules,
 			ISCStateRepository repository, ILabelSymbolInfo[] infos,
 			IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < rules.length; i++) {
@@ -157,7 +101,7 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 				Formula<?> lhs = filteredLHSs.getRulesLHSs().get(rule.getLabel());
 				boolean ok = (lhs != null);
 				if (ok) {
-					if(!infos[i].hasError())
+					if(scRules[i] != null)
 						scRules[i].setSCFormula(lhs, monitor);
 					// upload the states to repository
 					// the label table
@@ -179,9 +123,7 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 						scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(), monitor);
 				}
 				if (!ok) {
-					if (infos[i] != null)
-						infos[i].setError();
-					lhs = null;
+					infos[i].setError();
 					if(scRules[i] != null)
 						scRules[i].setAccuracy(false, monitor);
 					if (accuracyInfo != null) {
@@ -191,6 +133,37 @@ public class TheoryRewriteRuleModule extends LabeledElementModule{
 			}
 		}
 		monitor.worked(1);
+	}
+
+	@Override
+	protected String getMessage() {
+		// TODO Auto-generated method stub
+		return Messages.progress_TheoryRewriteRules;
+	}
+
+	@Override
+	protected ISCRewriteRule[] createSCRulesArray() {
+		// TODO Auto-generated method stub
+		return new ISCRewriteRule[rules.length];
+	}
+
+	@Override
+	protected String getPrefix() {
+		// TODO Auto-generated method stub
+		return REWRITE_RULE_NAME_PREFIX;
+	}
+
+	@Override
+	protected ISCRewriteRule cast(ILabeledElement scRule) {
+		// TODO Auto-generated method stub
+		return (ISCRewriteRule) scRule;
+	}
+
+	@Override
+	protected ILabelSymbolInfo makeLocalRule(String symbol,
+			ILabeledElement element, String component) throws CoreException {
+		// TODO Auto-generated method stub
+		return TheorySymbolFactory.getInstance().makeLocalRewriteRule(symbol, true, element, component);
 	}
 	
 }

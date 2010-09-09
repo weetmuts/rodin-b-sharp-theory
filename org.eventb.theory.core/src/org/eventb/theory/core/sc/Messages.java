@@ -107,17 +107,20 @@ public final class Messages {
 	public static String scuser_TheoryMetaVarNameConflict;
 	public static String scuser_TheoremLabelProblemError;
 	public static String scuser_TheoremLabelProblemWarning;
-	public static String scuser_TheoremNonTypeParOccurError;
+	public static String scuser_NonTypeParOccurError;
 	public static String scuser_OperatorPredOnlyPrefix;
 	public static String scuser_OperatorPredNeedOneOrMoreArgs;
 	public static String scuser_OperatorExpInfixNeedsAtLeastTwoArgs;
 	public static String scuser_OperatorExpPrefixCannotBeAssos;
 	public static String scuser_OperatorPredCannotBeAssos;
 	public static String scuser_OperatorExpCannotBePostfix;
+	public static String scuser_InferenceRuleLabelConflict;
+	public static String scuser_InferenceRuleIdentsError;
+	public static String scuser_RuleWithNoInfers;
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class); 
 	}
 
 	private Messages() {

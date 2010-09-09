@@ -209,6 +209,12 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			TheoryLabelConflictWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_RewriteRuleLabelConflict),
+			InferenceRuleLabelConflictError(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_InferenceRuleLabelConflict), 
+			InferenceRuleLabelConflictWarning(
+			IMarker.SEVERITY_WARNING, 
+			Messages.scuser_InferenceRuleLabelConflict),
 			OperatorExpPrefixCannotBeAssos(IMarker.SEVERITY_ERROR,
 			Messages.scuser_OperatorExpPrefixCannotBeAssos),
 			OperatorPredOnlyPrefix(
@@ -241,6 +247,9 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			RuleNoRhsError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_RuleWithNoRHSs), 
+			RuleNoInfersError(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_RuleWithNoInfers), 
 			NoToolTipWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_NoToolTipWarning), 
@@ -253,10 +262,12 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			RHSPredVarsNOTSubsetOFLHS(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_RHSPredVarsNOTSubsetOFLHS), 
-			TheoremNonTypeParOccurError(
+			NonTypeParOccurError(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_TheoremNonTypeParOccurError),
-
+			Messages.scuser_NonTypeParOccurError),
+			InferenceRuleIdentsError(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_InferenceRuleIdentsError)
 	;
 
 	private int arity;

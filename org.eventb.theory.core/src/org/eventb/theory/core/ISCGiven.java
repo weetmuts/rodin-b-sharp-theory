@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -17,7 +15,7 @@ import org.rodinp.core.RodinCore;
  * @author maamria
  *
  */
-public interface ISCGiven extends ISCPredicateElement, ITraceableElement{
+public interface ISCGiven extends ISCInferenceClause{
 
 	IInternalElementType<ISCGiven> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scGiven");
