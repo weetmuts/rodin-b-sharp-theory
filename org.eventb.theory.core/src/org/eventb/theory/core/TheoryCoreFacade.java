@@ -12,6 +12,8 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author maamria
@@ -39,6 +41,18 @@ public class TheoryCoreFacade {
 	public static final String BACKWARD_AND_FORWARD_REASONING_TYPE = "both";
 	
 	public static final String[] POSSIBLE_REASONING_TYPES = new String[]{BACKWARD_REASONING_TYPE, FORWARD_REASONING_TYPE, BACKWARD_AND_FORWARD_REASONING_TYPE};
+	
+	public static final IRodinProblem getInformationMessageFor(ReasoningType type){
+		switch (type) {
+		case BACKWARD:
+			return TheoryGraphProblem.InferenceRuleBackward;
+		case FORWARD:
+			return TheoryGraphProblem.InferenceRuleForward;
+		case BACKWARD_AND_FORWARD:
+			return TheoryGraphProblem.InferenceRuleBoth;
+		}
+		return null;
+	}
 	
 	public static final ReasoningType getReasoningTypeFor(String type){
 		if(type.equals(BACKWARD_REASONING_TYPE))

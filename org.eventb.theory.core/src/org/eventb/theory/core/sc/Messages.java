@@ -119,6 +119,11 @@ public final class Messages {
 	public static String scuser_RuleWithNoInfers;
 	public static String scuser_InferenceGivenBTRUEPredWarn;
 	public static String scuser_InferenceInferBTRUEPredErr;
+	
+	public static String scuser_InferenceRuleBackward;
+	public static String scuser_InferenceRuleForward;
+	public static String scuser_InferenceRuleBoth;
+	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
 	static {

@@ -17,6 +17,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IProofRulesBlock;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -53,6 +54,7 @@ public class TheoryInferenceRuleModule extends
 		for (int i = 0; i < rules.length; i++) {
 			if (infos[i] != null && !infos[i].hasError()) {
 				IInferenceRule rule = rules[i];
+				String label = rule.getLabel();
 				// 1- rule accuracy
 				RuleAccuracyInfo ruleAccuracyInfo = new RuleAccuracyInfo();
 				repository.setState(ruleAccuracyInfo);
@@ -69,7 +71,7 @@ public class TheoryInferenceRuleModule extends
 					createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.InferenceRuleNotApplicableError);
 					ruleAccuracyInfo.setNotAccurate();
 				}
-				else {
+				else if (ruleAccuracyInfo.isAccurate()){
 					ReasoningType reasoningType = null;
 					if(inferenceIdentifiers.isRuleApplicableInBothDirections()){
 						reasoningType = ReasoningType.BACKWARD_AND_FORWARD;
@@ -82,6 +84,8 @@ public class TheoryInferenceRuleModule extends
 					}
 					if(reasoningType != null){
 						scRules[i].setReasoningType(reasoningType, monitor);
+						createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, 
+								TheoryCoreFacade.getInformationMessageFor(reasoningType), label);
 					}
 				}
 				// if rule not accurate

@@ -273,7 +273,16 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_NonTypeParOccurError),
 			InferenceRuleNotApplicableError(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_InferenceRuleNotApplicableError)
+			Messages.scuser_InferenceRuleNotApplicableError),
+			InferenceRuleBackward(
+			IMarker.SEVERITY_INFO, 
+			Messages.scuser_InferenceRuleBackward),
+			InferenceRuleForward(
+			IMarker.SEVERITY_INFO, 
+			Messages.scuser_InferenceRuleForward),
+			InferenceRuleBoth(
+			IMarker.SEVERITY_INFO, 
+			Messages.scuser_InferenceRuleBoth)
 	;
 
 	private int arity;
