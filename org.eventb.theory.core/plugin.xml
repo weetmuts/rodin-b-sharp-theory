@@ -95,6 +95,11 @@
             kind="boolean"
             name="%hasErrorAttr">
       </attributeType>
+      <attributeType
+            id="reasoningType"
+            kind="string"
+            name="%reasoningTypeAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">

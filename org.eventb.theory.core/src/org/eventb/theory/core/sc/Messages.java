@@ -115,8 +115,10 @@ public final class Messages {
 	public static String scuser_OperatorPredCannotBeAssos;
 	public static String scuser_OperatorExpCannotBePostfix;
 	public static String scuser_InferenceRuleLabelConflict;
-	public static String scuser_InferenceRuleIdentsError;
+	public static String scuser_InferenceRuleNotApplicableError;
 	public static String scuser_RuleWithNoInfers;
+	public static String scuser_InferenceGivenBTRUEPredWarn;
+	public static String scuser_InferenceInferBTRUEPredErr;
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
 	static {

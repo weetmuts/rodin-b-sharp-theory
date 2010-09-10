@@ -61,4 +61,8 @@ public class TheoryAttributes {
 	
 	public static IAttributeType.Boolean HAS_ERROR_ATTRIBUTE = RodinCore
 	 	.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".hasError");
+	
+	public static IAttributeType.String REASONING_TYPE_ATTRIBUTE = RodinCore
+		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".reasoningType");
+	
 }

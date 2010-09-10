@@ -170,6 +170,12 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			AutoUndefWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_AutoUndefWarning), 
+			InferenceGivenBTRUEPredWarn(
+			IMarker.SEVERITY_WARNING, 
+			Messages.scuser_InferenceGivenBTRUEPredWarn),
+			InferenceInferBTRUEPredErr(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_InferenceInferBTRUEPredErr),
 			UntypedMetavariableError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_UntypedMetavariableError), 
@@ -265,9 +271,9 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			NonTypeParOccurError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_NonTypeParOccurError),
-			InferenceRuleIdentsError(
+			InferenceRuleNotApplicableError(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_InferenceRuleIdentsError)
+			Messages.scuser_InferenceRuleNotApplicableError)
 	;
 
 	private int arity;

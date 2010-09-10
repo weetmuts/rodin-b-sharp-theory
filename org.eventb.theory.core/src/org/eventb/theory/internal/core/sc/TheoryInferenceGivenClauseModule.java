@@ -8,6 +8,7 @@
 package org.eventb.theory.internal.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IModuleType;
@@ -16,6 +17,8 @@ import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
  * @author maamria
@@ -58,6 +61,15 @@ protected static final String GIV_NAME_PREFIX = "givc";
 	protected String getPrefix() {
 		// TODO Auto-generated method stub
 		return GIV_NAME_PREFIX;
+	}
+
+	@Override
+	protected boolean checkPredicate(Predicate predicate, IGiven clause) 
+	throws CoreException{
+		if(predicate.equals(CoreUtilities.BTRUE)){
+			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,TheoryGraphProblem.InferenceGivenBTRUEPredWarn);
+		}
+		return true;
 	}
 
 }

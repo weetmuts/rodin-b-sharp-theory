@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +29,8 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.theory.core.maths.OperatorArgument;
 
@@ -69,6 +68,15 @@ public class MathExtensionsUtilities {
 	public static final String BOOL_EXPR = "Bool";
 	public static final String INFIX_SUBST = "Infix Substitution";
 
+	/**
+	 * Returns an appropriate group for the operator with the supplied properties.
+	 * <p>
+	 * TODO this is only stop gap.
+	 * @param formulaType
+	 * @param notation
+	 * @param arity
+	 * @return
+	 */
 	public static String getGroupFor(FormulaType formulaType,
 			Notation notation, int arity) {
 		String group = DUMMY_OPERATOR_GROUP;
@@ -79,10 +87,9 @@ public class MathExtensionsUtilities {
 				break;
 			}
 			case PREFIX: {
-				if(arity > 0){
+				if (arity > 0) {
 					group = BOUND_UNARY;
-				}
-				else {
+				} else {
 					group = ATOMIC_EXPR;
 				}
 				break;
@@ -96,20 +103,19 @@ public class MathExtensionsUtilities {
 		case PREDICATE: {
 			switch (notation) {
 			case INFIX: {
-				if(arity == 0){
+				if (arity == 0) {
 					group = ATOMIC_PRED;
 				}
 				// infix makes sense for ops with more than two args
-				if(arity > 1){
+				if (arity > 1) {
 					group = INFIX_PRED;
 				}
 				break;
 			}
 			case PREFIX: {
-				if(arity > 0){
+				if (arity > 0) {
 					group = BOUND_UNARY;
-				}
-				else {
+				} else {
 					group = ATOMIC_PRED;
 				}
 				break;
@@ -260,6 +266,17 @@ public class MathExtensionsUtilities {
 		return types;
 	}
 
+	/**
+	 * Constructs the type variable-based reprsentation of the type <code>theoryType</code>. This representation is computed
+	 * by replacing the given types in <code>theoryType</code> by their corresponding type variables in the map
+	 * <code>parToTypeVarMap</code>. 
+	 * 
+	 * <p>For example, POW(A**B) gets translated to POW('0**'1) where '0 and '1 are the type variables corresponding to A and B respectively.</p>
+	 * @param theoryType the type used to define the extension
+	 * @param parToTypeVarMap the map between given types (type parameters in theories) to type variables
+	 * @param mediator the mediator
+	 * @return the constructed type
+	 */
 	public static Type constructPatternTypeFor(Type theoryType,
 			Map<Type, Type> parToTypeVarMap, ITypeMediator mediator) {
 

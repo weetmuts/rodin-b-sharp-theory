@@ -51,9 +51,22 @@ public class InferenceIdentifiers extends State implements ISCState{
 		}
 	}
 	
-	public boolean infersAndGivensHaveSameIdentifiers(){
-		return givenIdents.containsAll(inferIdents) &&
+	public boolean isRuleApplicable(){
+		return givenIdents.containsAll(inferIdents) ||
 			inferIdents.containsAll(givenIdents);
+	}
+	
+	public boolean isRuleBackwardApplicable(){
+		return inferIdents.containsAll(givenIdents);
+	}
+	
+	public boolean isRuleForwardApplicable(){
+		return givenIdents.containsAll(inferIdents);
+	}
+	
+	public boolean isRuleApplicableInBothDirections(){
+		return isRuleBackwardApplicable() &&
+			isRuleForwardApplicable();
 	}
 	
 	@Override

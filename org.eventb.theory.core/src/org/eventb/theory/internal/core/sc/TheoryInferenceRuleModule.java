@@ -17,6 +17,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IProofRulesBlock;
+import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
@@ -64,9 +65,24 @@ public class TheoryInferenceRuleModule extends
 				if (scRules[i] != null)
 					scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(),
 							monitor);
-				if(!inferenceIdentifiers.infersAndGivensHaveSameIdentifiers()){
-					createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.InferenceRuleIdentsError);
+				if(!inferenceIdentifiers.isRuleApplicable()){
+					createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.InferenceRuleNotApplicableError);
 					ruleAccuracyInfo.setNotAccurate();
+				}
+				else {
+					ReasoningType reasoningType = null;
+					if(inferenceIdentifiers.isRuleApplicableInBothDirections()){
+						reasoningType = ReasoningType.BACKWARD_AND_FORWARD;
+					}
+					else if(inferenceIdentifiers.isRuleBackwardApplicable()){
+						reasoningType = ReasoningType.BACKWARD;
+					}
+					else if(inferenceIdentifiers.isRuleForwardApplicable()){
+						reasoningType = ReasoningType.FORWARD;
+					}
+					if(reasoningType != null){
+						scRules[i].setReasoningType(reasoningType, monitor);
+					}
 				}
 				// if rule not accurate
 				boolean ruleAccurate = ruleAccuracyInfo.isAccurate();

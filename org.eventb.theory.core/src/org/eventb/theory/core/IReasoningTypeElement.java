@@ -7,26 +7,26 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria
  *
  */
-public interface ISCInferenceRule extends
-ISCRule, IReasoningTypeElement{
+public interface IReasoningTypeElement extends IInternalElement{
 
-	IInternalElementType<ISCInferenceRule> ELEMENT_TYPE = 
-		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scInferenceRule");
+	public static enum ReasoningType {BACKWARD, FORWARD, BACKWARD_AND_FORWARD}
 	
-	ISCGiven getGiven(String name);
+	boolean hasReasoningAttribute() throws RodinDBException;
 	
-	ISCGiven[] getGivens() throws RodinDBException;
+	boolean isSuitableForBackwardReasoning() throws RodinDBException;
 	
-	ISCInfer getInfer(String name);
+	boolean isSuitableForForwardReasoning() throws RodinDBException;
 	
-	ISCInfer[] getInfers() throws RodinDBException;
+	boolean isSuitableForAllReasoning() throws RodinDBException;
+	
+	void setReasoningType(ReasoningType type, IProgressMonitor monitor) throws RodinDBException;
+	
 }

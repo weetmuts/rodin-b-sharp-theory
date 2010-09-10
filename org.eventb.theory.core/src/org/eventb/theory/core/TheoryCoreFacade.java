@@ -10,6 +10,7 @@ package org.eventb.theory.core;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
@@ -31,6 +32,34 @@ public class TheoryCoreFacade {
 	
 	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] {PREFIX, INFIX, POSTFIX};
 	
+	public static final String BACKWARD_REASONING_TYPE = "backward";
+	
+	public static final String FORWARD_REASONING_TYPE = "forward";
+	
+	public static final String BACKWARD_AND_FORWARD_REASONING_TYPE = "both";
+	
+	public static final String[] POSSIBLE_REASONING_TYPES = new String[]{BACKWARD_REASONING_TYPE, FORWARD_REASONING_TYPE, BACKWARD_AND_FORWARD_REASONING_TYPE};
+	
+	public static final ReasoningType getReasoningTypeFor(String type){
+		if(type.equals(BACKWARD_REASONING_TYPE))
+			return ReasoningType.BACKWARD;
+		else if (type.equals(FORWARD_REASONING_TYPE))
+			return ReasoningType.FORWARD;
+		else if(type.equals(BACKWARD_AND_FORWARD_REASONING_TYPE))
+			return ReasoningType.BACKWARD_AND_FORWARD;
+		throw new IllegalArgumentException("unknown reasoning type "+ type);
+	}
+	
+	public static final String getStringReasoningType(ReasoningType type){
+		switch (type) {
+		case BACKWARD:
+			return BACKWARD_REASONING_TYPE;
+		case FORWARD:
+			return FORWARD_REASONING_TYPE;
+		default:
+			return BACKWARD_AND_FORWARD_REASONING_TYPE;
+		}
+	}
 	
 	/**
 	 * Converts a string (eg. "postfix") to the corresponding notation.

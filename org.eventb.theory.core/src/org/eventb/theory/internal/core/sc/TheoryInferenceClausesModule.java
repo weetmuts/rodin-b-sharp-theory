@@ -62,7 +62,7 @@ extends SCProcessorModule{
 				continue;
 			}
 			Predicate predicate = CoreUtilities.parseAndCheckPredicate(clause, factory, typeEnvironment, this);
-			if(predicate != null){
+			if(predicate != null && checkPredicate(predicate, clause)){
 				S scClause = createSCClause(predicate, clause, scRule, repository, monitor);
 				if(scClause != null){
 					scClause.setPredicate(predicate, monitor);
@@ -72,6 +72,10 @@ extends SCProcessorModule{
 		}
 		
 	}
+
+	protected abstract boolean checkPredicate(Predicate predicate, C clause) throws CoreException;
+
+
 
 	private S createSCClause(Predicate predicate, C clause,
 			ISCInferenceRule scRule, ISCStateRepository repository,

@@ -19,6 +19,7 @@ import static org.eventb.theory.core.TheoryAttributes.FORMULA_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GIVEN_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.INTERACTIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TOOL_TIP_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
@@ -44,6 +45,7 @@ import org.eventb.theory.core.IFormulaTypeElement;
 import org.eventb.theory.core.IGivenTypeElement;
 import org.eventb.theory.core.IInteractiveElement;
 import org.eventb.theory.core.INotationTypeElement;
+import org.eventb.theory.core.IReasoningTypeElement;
 import org.eventb.theory.core.ISCFormulaElement;
 import org.eventb.theory.core.ISCGivenTypeElement;
 import org.eventb.theory.core.ISyntaxSymbolElement;
@@ -64,7 +66,7 @@ public abstract class TheoryElement extends EventBElement implements
 	IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
 	ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
 	IInteractiveElement, IToolTipElement, IDefinitionalElement, IGivenTypeElement,
-	ISCGivenTypeElement, ISCFormulaElement
+	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement
 {
 
 	public TheoryElement(String name, IRodinElement parent) {
@@ -333,5 +335,35 @@ public abstract class TheoryElement extends EventBElement implements
 		setFormula(formula.toString(), monitor);
 	}
 
+
+	@Override
+	public boolean hasReasoningAttribute() throws RodinDBException {
+		return hasAttribute(REASONING_TYPE_ATTRIBUTE);
+	}
+
+	@Override
+	public boolean isSuitableForBackwardReasoning() throws RodinDBException {
+		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
+		return TheoryCoreFacade.getReasoningTypeFor(type).equals(ReasoningType.BACKWARD);
+	}
+
+	@Override
+	public boolean isSuitableForForwardReasoning() throws RodinDBException {
+		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
+		return TheoryCoreFacade.getReasoningTypeFor(type).equals(ReasoningType.FORWARD);
+	}
+
+	@Override
+	public boolean isSuitableForAllReasoning() throws RodinDBException {
+		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
+		return TheoryCoreFacade.getReasoningTypeFor(type).equals(ReasoningType.BACKWARD_AND_FORWARD);
+	}
+
+	@Override
+	public void setReasoningType(ReasoningType type, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(REASONING_TYPE_ATTRIBUTE, TheoryCoreFacade.getStringReasoningType(type), monitor);
+		
+	}
 	
 }
