@@ -123,10 +123,10 @@ public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 			if (!(actualType instanceof ProductType)) {
 				return false;
 			}
-			return unifyTypes(argumentType.getSource(), actualType.getSource(),
+			return unifyTypes(((ProductType)argumentType).getLeft(), ((ProductType)actualType).getLeft(),
 					calculatedInstantiations)
-					&& unifyTypes(argumentType.getTarget(),
-							actualType.getTarget(), calculatedInstantiations);
+					&& unifyTypes(((ProductType)argumentType).getRight(),
+							((ProductType)actualType).getRight(), calculatedInstantiations);
 		} else if (argumentType instanceof ParametricType) {
 			if (!(actualType instanceof ParametricType)) {
 				return false;
