@@ -38,6 +38,8 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 
 	IModuleType<TheoremModule> MODULE_TYPE = 
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoremModule");
+	
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 
 	private static String THM_NAME_PREFIX = "THM";
 	
@@ -63,6 +65,9 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 			if (labelSymbolInfos[i] != null && !labelSymbolInfos[i].hasError()) {
 				scTheorems[i] = createSCTheorem(targetRoot, index++, labelSymbolInfos[i],
 						formulaElements[i], monitor);
+			}
+			else {
+				theoryAccuracyInfo.setNotAccurate();
 			}
 		}
 		
@@ -108,6 +113,22 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	}
 
 	@Override
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
+		
+	}
+
+	@Override
+	public void endModule(IRodinElement element, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		theoryAccuracyInfo = null;
+		super.endModule(element, repository, monitor);
+	}
+	
+	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
 		// TODO Auto-generated method stub
@@ -141,23 +162,6 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 		// TODO Auto-generated method stub
 		return TheorySymbolFactory.getInstance().
 							makeLocalTheorem(symbol, true, element, component);
-	}
-	
-	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
-		super.initModule(element, repository, monitor);
-	}
-	
-	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
-		identifierSymbolTable = null;
-		formulaElements = null;
-		formulas = null;
-		symbolInfos = null;
-		super.endModule(element, repository, monitor);
 	}
 
 }

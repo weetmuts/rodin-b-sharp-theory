@@ -1,15 +1,14 @@
 package org.eventb.theory.mathextensions;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
-import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.theory.mathextensions.plugin.MathExtensionsPlugin;
 
-@SuppressWarnings("restriction")
 public class TheoryFormulaExtensionProvider implements
 		IFormulaExtensionProvider {
 
@@ -26,8 +25,12 @@ public class TheoryFormulaExtensionProvider implements
 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBProject project) {
-		Set<IFormulaExtension> ext = new HashSet<IFormulaExtension>();
-		ext.add(Cond.getCond());
+		Set<IFormulaExtension> ext = new LinkedHashSet<IFormulaExtension>();
+		try {
+			ext.addAll(new FormulaExtensionsLoader(project).getFormulaExtensions());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 		return ext;
 	}
 

@@ -17,6 +17,8 @@ import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
+ * An implementation of a state holding information about which types (i.e., theory type parameters) a specific datatype is polymorphic on.
+ * 
  * @author maamria
  *
  */
@@ -32,10 +34,19 @@ public class ReferencedTypes extends State implements ISCState{
 		referencedTypes = new ArrayList<String>();
 	}
 	
+	/**
+	 * Returns the referenced types of the datatype.
+	 * 
+	 * @return referenced type paramters
+	 */
 	public List<String> getReferencedTypes(){
 		return referencedTypes;
 	}
 	
+	/**
+	 * Adds a referenced type.
+	 * @param type
+	 */
 	public void addReferencedType(String type){
 		referencedTypes.add(type);
 	}

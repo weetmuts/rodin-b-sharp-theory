@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.SCFilterModule;
+import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IDatatypeDefinition;
@@ -19,58 +19,62 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.AddedTypeExpression;
 import org.eventb.theory.internal.core.sc.states.DatatypeTable;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
  *
  */
-public class DatatypeDefinitionFilterModule extends SCFilterModule{
+public class DatatypeDefinitionCheckerModule extends SCProcessorModule{
 
-	IModuleType<DatatypeDefinitionFilterModule> MODULE_TYPE = 
-		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinitionFilterModule");
+	IModuleType<DatatypeDefinitionCheckerModule> MODULE_TYPE = 
+		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinitionCheckerModule");
 	
 	private DatatypeTable datatypeTable;
 	private AddedTypeExpression addedTypeExpression;
 	
 	@Override
-	public boolean accept(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	public void process(IRodinElement element, IInternalElement target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		IDatatypeDefinition dtd = (IDatatypeDefinition) element;
 		if(dtd.getDatatypeConstructors().length < 1){
 			createProblemMarker(dtd, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
 					TheoryGraphProblem.DatatypeHasNoConsError, dtd.getIdentifierString());
-			return false;
+			datatypeTable.setErrorProne();
 		}
 		if(!datatypeTable.datatypeHasBaseConstructor(addedTypeExpression.getType())){
 			createProblemMarker(dtd, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
 					TheoryGraphProblem.DatatypeHasNoBaseConsError, dtd.getIdentifierString());
-			return false;
+			datatypeTable.setErrorProne();
 		}
-		return true;
+		
 	}
 
 	@Override
 	public IModuleType<?> getModuleType() {
+		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 	
 	@Override
-	public void initModule(
+	public void initModule(IRodinElement element,
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(repository, monitor);
+		super.initModule(element, repository, monitor);
 		datatypeTable = (DatatypeTable) repository.getState(DatatypeTable.STATE_TYPE);
 		addedTypeExpression = (AddedTypeExpression) repository.getState(AddedTypeExpression.STATE_TYPE);
 	}
 	
 	@Override
-	public void endModule(
+	public void endModule(IRodinElement element,
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		datatypeTable = null;
 		addedTypeExpression = null;
-		super.endModule(repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
+
 
 }

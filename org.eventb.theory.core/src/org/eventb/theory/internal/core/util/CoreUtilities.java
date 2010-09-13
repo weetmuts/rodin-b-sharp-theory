@@ -44,6 +44,7 @@ import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.rodinp.core.IAttributeType;
@@ -53,6 +54,8 @@ import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Utilities used by this plug-in.
+ * 
  * @author maamria
  *
  */
@@ -60,8 +63,6 @@ public class CoreUtilities {
 
 	private static final Object[] NO_OBJECT = new Object[0];
 	
-	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
-
 	/**
 	 * <p>A utility to check if an object is present in an array of objects. This method uses <code>Object.equals(Object)</code></p>
 	 * @param objs the container array of objects
@@ -90,9 +91,18 @@ public class CoreUtilities {
 		return true;
 	}
 	
+	/**
+	 * Returns a predicate resulting from conjuncting the given predicates.
+	 * @param preds the list of predicates
+	 * @param ff the formula factor
+	 * @return the predicate
+	 */
 	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff){
+		while(preds.contains(MathExtensionsFacilitator.BTRUE)){
+			preds.remove(MathExtensionsFacilitator.BTRUE);
+		}
 		if(preds.size() == 0){
-			return BTRUE;
+			return MathExtensionsFacilitator.BTRUE;
 		}
 		if(preds.size() == 1){
 			return preds.get(0);
@@ -100,10 +110,33 @@ public class CoreUtilities {
 		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
 	}
 	
+	/**
+	 * Returns a predicate resulting from conjuncting the given predicates.
+	 * @param preds the array of predicates
+	 * @param ff the formula factor
+	 * @return the predicate
+	 */
+	public static Predicate conjunctPredicates(Predicate[] preds, FormulaFactory ff){
+		List<Predicate> pList = new ArrayList<Predicate>();
+		for(Predicate p: preds){
+			if(!p.equals(MathExtensionsFacilitator.BTRUE)){
+				pList.add(p);
+			}
+		}
+		if(pList.size() == 0){
+			return MathExtensionsFacilitator.BTRUE;
+		}
+		if(pList.size() == 1){
+			return pList.get(0);
+		}
+		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
+	}
+	
 	
 	/**
-	 * @param bareName
-	 * @return
+	 * Return the SC theory name with file extension.
+	 * @param bareName the bare name
+	 * @return the full name
 	 */
 	public static String getSCTheoryFileName(String bareName) {
 		// TODO Auto-generated method stub
@@ -112,12 +145,12 @@ public class CoreUtilities {
 	
 
 	/**
-	 * 
-	 * @param element
-	 * @param pred
-	 * @param typeEnvironment
-	 * @param display
-	 * @return
+	 * Checks whether the given predicate refers only to the given types in <code>typeEnvironment</code>.
+	 * @param element the predicate element
+	 * @param pred the predicate
+	 * @param typeEnvironment the type environment
+	 * @param display the marker display
+	 * @return whether given predicates does not reference illegal identifiers
 	 * @throws CoreException
 	 */
 	public static boolean checkAgainstTypeParameters(IPredicateElement element, Predicate pred, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
@@ -126,12 +159,12 @@ public class CoreUtilities {
 	}
 
 	/**
-	 * 
-	 * @param element
-	 * @param formula
-	 * @param typeEnvironment
-	 * @param display
-	 * @return
+	 * Checks whether the given formula refers only to the given types in <code>typeEnvironment</code>.
+	 * @param element the formula element
+	 * @param formula the formula
+	 * @param typeEnvironment the type environment
+	 * @param display the marker display
+	 * @return whether given formula does not reference illegal identifiers
 	 * @throws CoreException
 	 */
 	public static boolean checkAgainstTypeParameters(IFormulaElement element, Formula<?> formula, 
@@ -209,13 +242,24 @@ public class CoreUtilities {
 		return identifier;
 	}
 
+	/**
+	 * Returns a singleton set containing the given element.
+	 * @param <E> the type of the element
+	 * @param element 
+	 * @return a singleton set
+	 */
 	public static <E> Set<E> singletonSet(E element){
 		Set<E> set = new HashSet<E>();
 		set.add(element);
 		return set;
 	}
 
-	public static Set<IFormulaExtension> singletonCondExtension(IFormulaExtension element){
+	/**
+	 * Returns a singleton set containing one mathematical extension.
+	 * @param element the mathematical extension
+	 * @return a singleton set
+	 */
+	public static Set<IFormulaExtension> singletonExtension(IFormulaExtension element){
 		Set<IFormulaExtension> set = new HashSet<IFormulaExtension>();
 		set.add(element);
 		return set;
@@ -486,6 +530,11 @@ public class CoreUtilities {
 		return errorIssued;
 	}
 	
+	/**
+	 * Returns appropriate rodin problem for <code>code</code>
+	 * @param code the error code
+	 * @return  the rodin problem
+	 */
 	public static IRodinProblem getAppropriateProblemForCode(ERROR_CODE code){
 		switch(code){
 		case NAME_IS_A_CONSTRUCTOR: return TheoryGraphProblem.IdenIsAConsNameError;
@@ -598,15 +647,6 @@ public class CoreUtilities {
 			}
 		}
 		return result;
-	}
-	
-	public static ITypeEnvironment getTypeEnvironmentForFactory(
-			ITypeEnvironment typeEnvironment, FormulaFactory factory){
-		ITypeEnvironment newTypeEnvironment = factory.makeTypeEnvironment();
-		for (String name : typeEnvironment.getNames()){
-			newTypeEnvironment.addName(name, typeEnvironment.getType(name));
-		}
-		return newTypeEnvironment;
 	}
 	
 	public static GivenType[] getTypesOccurringIn(Type type, FormulaFactory factory){

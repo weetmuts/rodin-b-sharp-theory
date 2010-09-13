@@ -3,30 +3,42 @@
  */
 package org.eventb.theory.internal.ui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.theory.core.IDatatypeDefinition;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.ITypeParameter;
 import org.eventb.theory.ui.editor.TheoryEditor;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
+import org.osgi.framework.Bundle;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -35,6 +47,94 @@ import org.rodinp.core.RodinDBException;
  */
 public class TheoryUIUtils {
 
+	/**
+	 * Returns an {@link Image} based on a {@link Bundle} and resource entry path.
+	 * 
+	 * @param symbolicName
+	 *            the symbolic name of the {@link Bundle}.
+	 * @param path
+	 *            the path of the resource entry.
+	 * @return the {@link Image} stored in the file at the specified path.
+	 */
+	public static Image getPluginImage(String symbolicName, String path) {
+		try {
+			URL url = getPluginImageURL(symbolicName, path);
+			if (url != null) {
+				return getPluginImageFromUrl(url);
+			}
+		} catch (Throwable e) {
+			// Ignore any exceptions
+		}
+		return null;
+	}
+	
+	/**
+	 * Maps URL to images.
+	 */
+	private static Map<URL,Image> m_URLImageMap = new HashMap<URL, Image>();
+	
+	/**
+	 * Returns an {@link Image} based on given {@link URL}.
+	 */
+	private static Image getPluginImageFromUrl(URL url) {
+		try {
+			try {
+				if (m_URLImageMap.containsKey(url)) {
+					return (Image) m_URLImageMap.get(url);
+				}
+				InputStream stream = url.openStream();
+				Image image;
+				try {
+					image = getImage(stream);
+					m_URLImageMap.put(url, image);
+				} finally {
+					stream.close();
+				}
+				return image;
+			} catch (Throwable e) {
+				// Ignore any exceptions
+			}
+		} catch (Throwable e) {
+			// Ignore any exceptions
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns an {@link Image} encoded by the specified {@link InputStream}.
+	 * 
+	 * @param stream
+	 *            the {@link InputStream} encoding the image data
+	 * @return the {@link Image} encoded by the specified input stream
+	 */
+	protected static Image getImage(InputStream stream) throws IOException {
+		try {
+			Display display = Display.getCurrent();
+			ImageData data = new ImageData(stream);
+			if (data.transparentPixel > 0) {
+				return new Image(display, data, data.getTransparencyMask());
+			}
+			return new Image(display, data);
+		} finally {
+			stream.close();
+		}
+	}
+	
+	/**
+	 * Returns an {@link URL} based on a {@link Bundle} and resource entry path.
+	 */
+	private static URL getPluginImageURL(String symbolicName, String path) {
+		// try runtime plugins
+		{
+			Bundle bundle = Platform.getBundle(symbolicName);
+			if (bundle != null) {
+				return bundle.getEntry(path);
+			}
+		}
+		// no such resource
+		return null;
+	}
+	
 	/**
 	 * @param node
 	 */
@@ -221,6 +321,83 @@ public class TheoryUIUtils {
 		}
 		
 		public abstract T get(S s) throws CoreException;
+	}
+	
+	/**
+	 * Returns an array of the names of non-empty SC theories.
+	 * <p>
+	 * BUG FIX DONE TODO FIXME fixed bug: returning a list of theories some of which can be empty, which 
+	 * causes the deploy wizard from the top-menu to behave unexpectedly.
+	 * @param project
+	 * @return
+	 */
+	public static String[] getNonEmptySCTheoryNames(String project) {
+		IRodinProject proj = TheoryUIPlugIn.getRodinDatabase().getRodinProject(project);
+		if (proj == null) {
+			return null;
+		}
+		ISCTheoryRoot[] roots = null;
+		try {
+			roots = proj.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		if (roots == null) {
+			return null;
+		}
+		List<String> thyNames =  new ArrayList<String>();
+		for (ISCTheoryRoot root : roots) {
+			if(!isTheoryEmpty(root)){
+				thyNames.add(root.getElementName());
+			}
+		}
+		if(thyNames.size() == 0)
+			return null;
+		return thyNames.toArray(new String[thyNames.size()]);
+	}
+	
+	/**
+	 * Get an EXISTING SC theory rather than the temp SC file bct_tmp.
+	 * Returns the 1st encountered file.
+	 * @param theoryName
+	 * @param projectName
+	 * @return
+	 */
+	public static IRodinFile getSCTheoryInProject(
+			String theoryName, String projectName) {
+		IRodinFile file = null;
+		try {
+			ISCTheoryRoot[] roots = RodinCore.getRodinDB().getRodinProject(projectName)
+					.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
+			for (ISCTheoryRoot root : roots) {
+				if (root.getElementName().equals(theoryName)) {
+					if(root.exists()){
+						file = root.getRodinFile();
+						break;
+					}
+				}
+			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return file;
+	}
+	
+	/**
+	 * Returns whether the theory contains no definitions.
+	 * @param root
+	 * @return
+	 */
+	public static boolean isTheoryEmpty(ISCTheoryRoot root){
+		int l = 0;
+		try {
+			if(root.exists())
+				l=root.getSCDatatypeDefinitions().length;
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return  l == 0;
 	}
 	
 }

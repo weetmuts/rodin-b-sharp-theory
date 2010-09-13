@@ -15,6 +15,11 @@ import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
+ * An implementation of a repository state holding information about an added type expression.
+ * 
+ * <p> This is useful for static checking a datatype extension that has inductive constructors.
+ * <p> This state enables checking of datatype definitions without having the complete definition.
+ * 
  * @author maamria
  *
  */
@@ -30,10 +35,20 @@ public class AddedTypeExpression extends State implements ISCState{
 		this.type = type;
 	}
 
+	/**
+	 * Returns the added type.
+	 * 
+	 * @return the added type
+	 */
 	public Type getType(){
 		return type;
 	}
 	
+	/**
+	 * Sets the added type expression.
+	 * 
+	 * @param type
+	 */
 	public void setType(Type type){
 		this.type = type;
 	}

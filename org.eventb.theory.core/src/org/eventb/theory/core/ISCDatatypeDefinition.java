@@ -18,7 +18,8 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface ISCDatatypeDefinition extends IIdentifierElement, ITraceableElement, IHasErrorElement{
+public interface ISCDatatypeDefinition extends IIdentifierElement, 
+ITraceableElement, IHasErrorElement, IExtensionElement, IValidatedElement{
 
 	IInternalElementType<ISCDatatypeDefinition> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scDatatypeDefinition");

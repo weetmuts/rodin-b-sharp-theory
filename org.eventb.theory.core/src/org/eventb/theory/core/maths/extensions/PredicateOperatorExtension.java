@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.ExtendedPredicate;
@@ -22,8 +22,9 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
-import org.eventb.theory.core.maths.OperatorArgument;
+import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.core.maths.PredicateOperatorTypingRule;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
@@ -37,14 +38,13 @@ public class PredicateOperatorExtension extends AbstractOperatorExtension<IPredi
 			String operatorID, String syntax, FormulaType formulaType,
 			Notation notation, boolean isCommutative,
 			Predicate directDefinition, Predicate wdCondition,
-			HashMap<String, OperatorArgument> opArguments, List<GivenType> typeParameters) {
+			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, IRodinElement source) {
 		super(operatorID, syntax, formulaType, notation, isCommutative,
-				directDefinition, wdCondition, opArguments);
+				directDefinition, wdCondition, opArguments, source);
 		
 		this.operatorTypeRule = new PredicateOperatorTypingRule(this);
-		List<OperatorArgument> sortedOperatorArguments = 
-			MathExtensionsUtilities.getSortedList(opArguments.values());
-		for(OperatorArgument arg : sortedOperatorArguments){
+		Collections.sort(opArguments);
+		for(IOperatorArgument arg : opArguments){
 			this.operatorTypeRule.addOperatorArgument(arg);
 		}
 		this.operatorTypeRule.addTypeParameters(typeParameters);
@@ -78,6 +78,17 @@ public class PredicateOperatorExtension extends AbstractOperatorExtension<IPredi
 	public void typeCheck(ExtendedPredicate predicate,
 			ITypeCheckMediator tcMediator) {
 		
+	}
+	
+
+	public boolean equals(Object o){
+		if(!(o instanceof PredicateOperatorExtension)){
+			return false;
+		}
+		PredicateOperatorExtension operatorExtension = (PredicateOperatorExtension) o;
+		boolean equals =
+			this.operatorID.equals(operatorExtension.operatorID);
+		return equals;
 	}
 	
 	protected PredicateOperatorTypingRule getTypingRule(){

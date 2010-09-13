@@ -21,7 +21,7 @@ import org.eventb.core.ast.extension.IWDMediator;
  */
 public interface IOperatorTypingRule<E extends IFormulaExtension> {
 	
-	public void addOperatorArgument(OperatorArgument arg);
+	public void addOperatorArgument(IOperatorArgument arg);
 	
 	public int getArity();
 	

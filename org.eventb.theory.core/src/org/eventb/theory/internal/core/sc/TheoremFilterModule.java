@@ -51,12 +51,12 @@ public class TheoremFilterModule extends SCFilterModule{
 		}
 		
 		Predicate thmPredicate = CoreUtilities.parseAndCheckPredicate(thm, factory, typeEnvironment, this);
-		if(thmPredicate != null && CoreUtilities.checkAgainstTypeParameters(thm, thmPredicate, typeEnvironment, this)){
-			ILabelSymbolInfo info = labelSymbolTable.getSymbolInfo(label);
-			info.setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, thmPredicate.toString());
-			return true;
+		if(thmPredicate == null || !CoreUtilities.checkAgainstTypeParameters(thm, thmPredicate, typeEnvironment, this)){
+			return false;
 		}
-		return false;
+		ILabelSymbolInfo info = labelSymbolTable.getSymbolInfo(label);
+		info.setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, thmPredicate.toString());
+		return true;
 	}
 	
 	@Override

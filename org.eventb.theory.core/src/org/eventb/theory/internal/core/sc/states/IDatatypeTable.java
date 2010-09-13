@@ -30,15 +30,6 @@ public interface IDatatypeTable extends ISCState{
 	 */
 	public static enum ERROR_CODE{NAME_IS_A_DATATYPE, NAME_IS_A_CONSTRUCTOR, NAME_IS_A_DESTRUCTOR};
 	
-	/**
-	 * ID used to name the datatype.
-	 */
-	public final static String DATATYPE_ID = " Datatype";
-	/**
-	 * ID used by constructors.
-	 */
-	public final static String CONS_ID = " Constructor";
-	
 	public final static IStateType<IDatatypeTable> STATE_TYPE = SCCore.getToolStateType(
 			TheoryPlugin.PLUGIN_ID + ".datatypeTable");
 	

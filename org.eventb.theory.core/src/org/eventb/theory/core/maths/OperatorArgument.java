@@ -7,13 +7,21 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
 /**
  * @author maamria
  *
  */
-public class OperatorArgument implements Comparable<OperatorArgument>{
+public class OperatorArgument implements IOperatorArgument{
 
 	private String argumentName;
 	private Type argumentType;
@@ -26,35 +34,45 @@ public class OperatorArgument implements Comparable<OperatorArgument>{
 	}
 
 	@Override
-	public int compareTo(OperatorArgument o) {
-		if(index > o.index){
+	public int compareTo(IOperatorArgument o) {
+		if(index > o.getIndex()){
 			return 1;
 		}
-		else if (index == o.index){
+		else if (index == o.getIndex()){
 			return 0;
 		}
 		else
 			return -1;
 	}
 	
-	/**
-	 * @return the index
-	 */
 	public int getIndex() {
 		return index;
 	}
 
-	/**
-	 * @return the argumentName
-	 */
 	public String getArgumentName() {
 		return argumentName;
 	}
 
-	/**
-	 * @return the argumentType
-	 */
 	public Type getArgumentType() {
 		return argumentType;
+	}
+	
+	public FreeIdentifier toFreeIdentifier(FormulaFactory factory){
+		return factory.makeFreeIdentifier(argumentName, null, argumentType);
+	}
+
+	public FreeIdentifier makeSubstituter(String newName, FormulaFactory factory){
+		return factory.makeFreeIdentifier(newName, null, argumentType);
+	}
+
+	@Override
+	public List<GivenType> getGivenTypes(FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		List<GivenType> result = new ArrayList<GivenType>();
+		Set<GivenType> types = argumentType.toExpression(factory).getGivenTypes();
+		for (GivenType type : types){
+			result.add(type);
+		}
+		return result;
 	}
 }

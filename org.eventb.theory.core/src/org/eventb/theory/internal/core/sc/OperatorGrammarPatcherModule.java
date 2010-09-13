@@ -15,8 +15,10 @@ import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
+import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
@@ -41,29 +43,42 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
+		INewOperatorDefinition newOperatorDefinition = (INewOperatorDefinition) element;
+		boolean opHasError = false;
 		if(!operatorInformation.hasError()){
 			String syntax = operatorInformation.getSyntax();
-			if(MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
+			if(MathExtensionsFacilitator.checkOperatorSyntaxSymbol(syntax, factory)){
 				FormulaFactory newFactory = factory.withExtensions(
 						CoreUtilities.singletonSet(operatorInformation.getExtension(factory)));
 				repository.setFormulaFactory(newFactory);
 				factory = repository.getFormulaFactory();
+				scNewOperatorDefinition.setHasError(false, monitor);
+				if(newOperatorDefinition.hasValidatedAttribute()){
+					scNewOperatorDefinition.setValidated(
+							newOperatorDefinition.isValidated(), monitor);
+				}
+				operatorInformation.generateDefinitionalRule(newFactory, target.getAncestor(ISCTheoryRoot.ELEMENT_TYPE));
 			}
 			else {
 				createProblemMarker((INewOperatorDefinition) element,TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, 
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAdded, syntax);
 				operatorInformation.setHasError();
+				opHasError = true;
+				
 			}
-			
 		}
-		
+		else {
+			opHasError = true;
+		}
+		scNewOperatorDefinition.setHasError(opHasError, monitor);
 	}
 
 	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
-
+	
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)

@@ -69,9 +69,7 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 						scNewOpDef, repository, monitor);
 				String label = newOpDef.getLabel();
 				if (defFormula != null) {
-					if (TheoryCoreFacade
-							.isExpressionOperator(operatorInformation
-									.getFormulaType())) {
+					if (TheoryCoreFacade.isExpressionOperator(operatorInformation.getFormulaType())) {
 						if (defFormula instanceof Expression) {
 							createSCDirectDefinition(defFormula, scNewOpDef,
 									definition, repository, monitor);
@@ -93,6 +91,7 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 						if (defFormula instanceof Predicate) {
 							createSCDirectDefinition(defFormula, scNewOpDef,
 									definition, repository, monitor);
+							operatorInformation.setDirectDefinition(defFormula);
 							if (operatorInformation.getWdCondition() == null) {
 								Predicate wdPredicate = defFormula
 										.getWDPredicate(factory);

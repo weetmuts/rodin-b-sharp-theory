@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.eventb.core.ast.Expression;
@@ -26,7 +25,8 @@ import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 import org.eventb.theory.core.maths.ExpressionOperatorTypingRule;
-import org.eventb.theory.core.maths.OperatorArgument;
+import org.eventb.theory.core.maths.IOperatorArgument;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
@@ -36,21 +36,19 @@ import org.eventb.theory.core.maths.OperatorArgument;
 public class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpressionExtension>
 		implements IExpressionExtension {
 
-	private boolean isAssociative = false;
-
 	public ExpressionOperatorExtension(
 			String operatorID, String syntax, FormulaType formulaType,
 			Notation notation, boolean isAssociative, boolean isCommutative,
 			Expression directDefinition, Predicate wdCondition,
-			HashMap<String, OperatorArgument> opArguments, List<GivenType> typeParameters) {
+			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, IRodinElement source) {
 		super(operatorID, syntax, formulaType, notation, isCommutative,
-				directDefinition, wdCondition, opArguments);
+				directDefinition, wdCondition, opArguments, source);
 
 		this.isAssociative = isAssociative;
 		this.operatorTypeRule = new ExpressionOperatorTypingRule(this, directDefinition.getType());
-		List<OperatorArgument> sortedOperatorArguments = 
-			MathExtensionsUtilities.getSortedList(opArguments.values());
-		for(OperatorArgument arg : sortedOperatorArguments){
+		List<IOperatorArgument> sortedOperatorArguments = 
+			MathExtensionsFacilitator.getSortedList(opArguments);
+		for(IOperatorArgument arg : sortedOperatorArguments){
 			this.operatorTypeRule.addOperatorArgument(arg);
 		}
 		this.operatorTypeRule.addTypeParameters(typeParameters);
@@ -102,6 +100,16 @@ public class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpr
 	@Override
 	public boolean isATypeConstructor() {
 		return false;
+	}
+	
+	public boolean equals(Object o){
+		if(!(o instanceof ExpressionOperatorExtension)){
+			return false;
+		}
+		ExpressionOperatorExtension operatorExtension = (ExpressionOperatorExtension) o;
+		boolean equals =
+			this.operatorID.equals(operatorExtension.operatorID);
+		return equals;
 	}
 
 	protected ExpressionOperatorTypingRule getTypingRule(){

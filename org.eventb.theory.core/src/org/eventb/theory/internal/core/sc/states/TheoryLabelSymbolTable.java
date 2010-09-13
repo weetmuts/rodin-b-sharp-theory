@@ -4,6 +4,12 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IStateType;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
+/**
+ * A theory label symbol table.
+ * 
+ * @author maamria
+ *
+ */
 public class TheoryLabelSymbolTable
 	extends AbstractTheoryLabelSymbolTable{
 	

@@ -15,7 +15,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
-import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 
 /**
  * @author maamria
@@ -42,7 +42,7 @@ implements IPredicateTypeChecker{
 					mediator.newTypeVariable());
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
-			argumentTypesAsVars[i] = MathExtensionsUtilities
+			argumentTypesAsVars[i] = MathExtensionsFacilitator
 					.constructPatternTypeFor(argumentsTypes.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}

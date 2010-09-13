@@ -7,11 +7,12 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -29,20 +31,25 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
-import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.theory.core.maths.OperatorArgument;
+import org.eventb.theory.core.maths.IOperatorArgument;
+import org.rodinp.core.IRodinElement;
 
 /**
- * Utilities class for obtaining information related to grammars and operators
+ * Facilities class for obtaining information related to grammars and operators
  * plus other utilities.
  * 
  * @author maamria
  * 
  */
-public class MathExtensionsUtilities {
+public class MathExtensionsFacilitator {
 
+	/**
+	 * Literal predicate true.
+	 */
+	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
+	
 	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
 
 	/**
@@ -205,8 +212,6 @@ public class MathExtensionsUtilities {
 	/**
 	 * Returns the formula extension corresponding to the supplied details.
 	 * 
-	 * @param isExpression
-	 *            whether this an expression extension
 	 * @param operatorID
 	 *            the operator ID
 	 * @param syntax
@@ -227,23 +232,32 @@ public class MathExtensionsUtilities {
 	 *            the arguments of the new operator
 	 * @return the new formula extension
 	 */
-	public static IFormulaExtension getFormulaExtension(boolean isExpression,
+	public static IFormulaExtension getFormulaExtension(
 			String operatorID, String syntax, FormulaType formulaType,
 			Notation notation, boolean isAssociative, boolean isCommutative,
 			Formula<?> directDefinition, Predicate wdCondition,
-			HashMap<String, OperatorArgument> opArguments,
-			List<GivenType> typeParameters) {
-		if (isExpression) {
+			List<IOperatorArgument> opArguments,
+			List<GivenType> typeParameters, IRodinElement source) {
+		if (formulaType.equals(FormulaType.EXPRESSION)) {
 			return new ExpressionOperatorExtension(operatorID, syntax,
 					formulaType, notation, isAssociative, isCommutative,
 					(Expression) directDefinition, wdCondition, opArguments,
-					typeParameters);
+					typeParameters, source);
 		} else {
 			return new PredicateOperatorExtension(operatorID, syntax,
 					formulaType, notation, isCommutative,
 					(Predicate) directDefinition, wdCondition, opArguments,
-					typeParameters);
+					typeParameters, source);
 		}
+	}
+	
+	public static Set<IFormulaExtension> getSimpleDatatypeExtensions(String identifier, String[] typeArguments, FormulaFactory factory){
+		return factory.makeDatatype(new SimpleDatatypeExtension(identifier, typeArguments)).getExtensions();
+	}
+	
+	public static Set<IFormulaExtension> getCompleteDatatypeExtensions(String identifier, String[] typeArguments, Map<String, Map<String, Type>> constructors, FormulaFactory factory){
+		return factory.makeDatatype(new CompleteDatatypeExtension(
+				identifier, typeArguments, constructors)).getExtensions();
 	}
 
 	/**
@@ -342,4 +356,15 @@ public class MathExtensionsUtilities {
 		Collections.sort(list);
 		return list;
 	}
+
+	public static ITypeEnvironment getTypeEnvironmentForFactory(
+			ITypeEnvironment typeEnvironment, FormulaFactory factory){
+		ITypeEnvironment newTypeEnvironment = factory.makeTypeEnvironment();
+		for (String name : typeEnvironment.getNames()){
+			newTypeEnvironment.addName(name, typeEnvironment.getType(name));
+		}
+		return newTypeEnvironment;
+	}
+
+	
 }

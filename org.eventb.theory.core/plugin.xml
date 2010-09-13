@@ -100,6 +100,11 @@
             kind="string"
             name="%reasoningTypeAttr">
       </attributeType>
+      <attributeType
+            id="validated"
+            kind="boolean"
+            name="%validatedAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -307,6 +312,18 @@
             </inputType>
          </extractor>
       </tool>
+      <tool
+            class="org.eventb.theory.core.pog.TheoryProofObligationGenerator"
+            id="theoryPOG"
+            name="%theoryPOGTool">
+         <extractor
+               class="org.eventb.theory.core.pog.TheoryProofObligationGenerator"
+               name="%theoryPOGExtractor">
+            <inputType
+                  id="org.eventb.theory.core.scTheoryRoot">
+            </inputType>
+         </extractor>
+      </tool>
    </extension>
    <extension
          point="org.eventb.core.scStateTypes">
@@ -399,12 +416,6 @@
                 id="org.eventb.theory.core.typeParameterModule">
           </prereq>
        </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.DatatypeDefinitionFilterModule"
-             id="datatypeDefinitionFilterModule"
-             name="%datatypeDefinitionFilterModule"
-             parent="org.eventb.theory.core.datatypeDefinitionModule">
-       </filterType>
        <processorType
              class="org.eventb.theory.internal.core.sc.DatatypeConstructorModule"
              id="datatypeConstructorModule"
@@ -423,6 +434,15 @@
              name="%datatypeDestructorIdentsModule"
              parent="org.eventb.theory.core.datatypeDestructorModule">
        </filterType>
+       <processorType
+             class="org.eventb.theory.internal.core.sc.DatatypeDefinitionCheckerModule"
+             id="datatypeDefinitionCheckerModule"
+             name="%datatypeDefinitionCheckerModule"
+             parent="org.eventb.theory.core.datatypeDefinitionModule">
+          <prereq
+                id="org.eventb.theory.core.datatypeConstructorModule">
+          </prereq>
+       </processorType>
        <processorType
              class="org.eventb.theory.internal.core.sc.NewOperatorDefinitionModule"
              id="newOperatorDefinitionModule"
@@ -513,12 +533,6 @@
              name="%metavariableFilterModule"
              parent="org.eventb.theory.core.metavariableModule">
        </filterType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSPredVarsModule"
-             id="theoryRewriteRuleRHSFormulasPredVarsModule"
-             name="%theoryRewriteRuleRHSFormulasPredVarsModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleRHSModule">
-       </filterType>
        <processorType
              class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleModule"
              id="theoryRewriteRuleModule"
@@ -570,6 +584,12 @@
              name="%theoryRewriteRuleRHSFormulasIdentModule"
              parent="org.eventb.theory.core.theoryRewriteRuleRHSModule">
        </filterType>
+       <filterType
+             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSPredVarsModule"
+             id="theoryRewriteRuleRHSFormulasPredVarsModule"
+             name="%theoryRewriteRuleRHSFormulasPredVarsModule"
+             parent="org.eventb.theory.core.theoryRewriteRuleRHSModule">
+       </filterType>
        <processorType
              class="org.eventb.theory.internal.core.sc.TheoryInferenceRuleModule"
              id="theoryInferenceRuleModule"
@@ -617,6 +637,39 @@
        </filterType>
    </extension>
    <extension
+         point="org.eventb.core.pogModuleTypes">
+      <rootType
+            class="org.eventb.theory.internal.core.pog.TheoryPOGModule"
+            id="theoryModule"
+            input="org.eventb.theory.core.scTheoryRoot"
+            name="%pogTheoryModule">
+      </rootType>
+      <processorType
+            class="org.eventb.theory.internal.core.pog.TheoryTypeParametersPOGModule"
+            id="theoryTypeParametersModule"
+            name="%pogTheoryTypeParametersModule"
+            parent="org.eventb.theory.core.theoryModule">
+      </processorType>
+      <processorType
+            class="org.eventb.theory.internal.core.pog.TheoryDatatypePOGModule"
+            id="theoryDatatypeModule"
+            name="%pogTheoryDatatypeModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.theoryTypeParametersModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.internal.core.pog.TheoryOperatorDefinitionPOGModule"
+            id="theoryOperatorDefinitionModule"
+            name="%pogTheoryOperatorDefinitionModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.theoryDatatypeModule">
+         </prereq>
+      </processorType>
+   </extension>
+   <extension
          point="org.eventb.core.configurations">
       <configuration
             id="thySC"
@@ -647,7 +700,7 @@
                id="org.eventb.theory.core.datatypeDestructorIdentsModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.datatypeDefinitionFilterModule">
+               id="org.eventb.theory.core.datatypeDefinitionCheckerModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.newOperatorDefinitionModule">
@@ -732,10 +785,37 @@
          </scModule>
       </configuration>
       <configuration
+            id="thyPOG"
+            name="%thyPOG">
+         <pogModule
+               id="org.eventb.theory.core.theoryModule">
+         </pogModule>
+      </configuration>
+      <configuration
+            id="thyBasePOG"
+            name="%thyBasePOG">
+         <config
+               id="org.eventb.theory.core.thyPOG">
+         </config>
+         <pogModule
+               id="org.eventb.theory.core.theoryTypeParametersModule">
+         </pogModule>
+         <pogModule
+               id="org.eventb.theory.core.theoryDatatypeModule">
+         </pogModule>
+         <pogModule
+               id="org.eventb.theory.core.theoryOperatorDefinitionModule">
+         </pogModule>
+        
+      </configuration>
+      <configuration
             id="thy"
             name="%thy">
          <config
                id="org.eventb.theory.core.thyBaseSC">
+         </config>
+         <config
+               id="org.eventb.theory.core.thyBasePOG">
          </config>
       </configuration>
    </extension>

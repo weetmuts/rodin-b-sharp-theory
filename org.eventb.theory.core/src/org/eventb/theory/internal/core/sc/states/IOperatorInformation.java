@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc.states;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -18,9 +19,15 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
+ * An implementation of a repository state holding information about a new operator.
+ * 
+ * <p> Objects of this type can be readily "converted" into an operator extension, if and only if they provide
+ * all information needed to create such an extension as per AST requirements.
+ * 
  * @author maamria
  *
  */
@@ -37,6 +44,14 @@ public interface IOperatorInformation extends ISCState{
 	
 	public void addOperatorArgument(String ident, Type type);
 
+	/**
+	 * Generates a definitional rewrite rule for this operator.
+	 * @param newFactory that already knows about this extension
+	 * @param theoryRoot the SC theory root
+	 * @throws CoreException
+	 */
+	public void generateDefinitionalRule(FormulaFactory newFactory, ISCTheoryRoot theoryRoot) throws CoreException;
+	
 	/**
 	 * @return the syntax
 	 */

@@ -13,6 +13,9 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages {
 	
+	public static String element_isValidated;
+	public static String element_isNotValidated;
+	
 	public static String rule_isAutomatic;
 	public static String rewriteRule_isComplete;
 	public static String rewriteRule_isConditional;

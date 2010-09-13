@@ -12,6 +12,8 @@ import org.eventb.core.tool.IStateType;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
+ * An implementation of an operator label (ID) symbol table.
+ * 
  * @author maamria
  * 
  */

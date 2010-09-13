@@ -35,6 +35,10 @@ public interface ISCTheoryRoot extends IEventBRoot, IAccuracyElement, IConfigura
 	
 	ISCDatatypeDefinition[] getSCDatatypeDefinitions() throws RodinDBException;
 	
+	ISCNewOperatorDefinition getSCNewOperatorDefinition(String name);
+	
+	ISCNewOperatorDefinition[] getSCNewOperatorDefinitions() throws RodinDBException;
+	
 	public ISCProofRulesBlock getProofRulesBlock(String name);
 	
 	public ISCProofRulesBlock[] getProofRulesBlocks() throws RodinDBException;

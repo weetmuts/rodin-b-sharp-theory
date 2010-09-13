@@ -6,6 +6,12 @@ import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
+/**
+ * An implementation of a repository state that can hold accuracy information of 
+ * the static checking process of inference and rewrite rules.
+ * @author maamria
+ *
+ */
 @SuppressWarnings("restriction")
 public class RuleAccuracyInfo extends State implements
 	ISCState{

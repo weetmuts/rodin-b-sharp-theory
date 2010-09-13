@@ -18,6 +18,11 @@ import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
+ * An implementation of a repository state that keeps track of free identifiers (including given types) occurring in both 
+ * infer and given clauses of an inference rule.
+ * 
+ * <p> This enables to identify the type of reasoning (backward/forward) which the currently processed inference rule is suitable for.
+ * 
  * @author maamria
  *
  */

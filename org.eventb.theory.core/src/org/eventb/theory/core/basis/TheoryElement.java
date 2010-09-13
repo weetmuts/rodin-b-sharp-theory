@@ -8,6 +8,7 @@
 package org.eventb.theory.core.basis;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.AUTOMATIC_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMMUTATIVE_ATTRIBUTE;
@@ -28,6 +29,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
@@ -51,6 +54,7 @@ import org.eventb.theory.core.ISCGivenTypeElement;
 import org.eventb.theory.core.ISyntaxSymbolElement;
 import org.eventb.theory.core.IToolTipElement;
 import org.eventb.theory.core.ITypeElement;
+import org.eventb.theory.core.IValidatedElement;
 import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
@@ -66,7 +70,7 @@ public abstract class TheoryElement extends EventBElement implements
 	IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
 	ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
 	IInteractiveElement, IToolTipElement, IDefinitionalElement, IGivenTypeElement,
-	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement
+	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement, IValidatedElement
 {
 
 	public TheoryElement(String name, IRodinElement parent) {
@@ -323,9 +327,13 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 
 	@Override
-	public Formula<?> getSCFormula(FormulaFactory ff) throws RodinDBException {
+	public Formula<?> getSCFormula(FormulaFactory ff, ITypeEnvironment typeEnvironment) throws RodinDBException {
 		String form = getFormula();
 		Formula<?> formula = CoreUtilities.parseFormula(form, ff, false);
+		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
+		if(result.hasProblem()){
+			return null;
+		}
 		return formula;
 	}
 
@@ -364,6 +372,21 @@ public abstract class TheoryElement extends EventBElement implements
 			throws RodinDBException {
 		setAttributeValue(REASONING_TYPE_ATTRIBUTE, TheoryCoreFacade.getStringReasoningType(type), monitor);
 		
+	}
+	
+	@Override
+	public boolean hasValidatedAttribute() throws RodinDBException{
+		return hasAttribute(VALIDATED_ATTRIBUTE);
+	}
+	
+	@Override
+	public boolean isValidated() throws RodinDBException{
+		return getAttributeValue(VALIDATED_ATTRIBUTE);
+	}
+	
+	@Override
+	public void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException{
+		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
 	}
 	
 }

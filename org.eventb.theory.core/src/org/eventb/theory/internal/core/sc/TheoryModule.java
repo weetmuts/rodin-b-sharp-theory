@@ -51,7 +51,8 @@ public class TheoryModule extends SCProcessorModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		// add cond extension
-		repository.setFormulaFactory(FormulaFactory.getInstance(CoreUtilities.singletonCondExtension(FormulaFactory.getCond())));
+		// TODO process imports when they are added
+		repository.setFormulaFactory(FormulaFactory.getInstance(CoreUtilities.singletonExtension(FormulaFactory.getCond())));
 		accuracyInfo = new TheoryAccuracyInfo();
 		final TheoryLabelSymbolTable labelSymbolTable = 
 			new TheoryLabelSymbolTable(

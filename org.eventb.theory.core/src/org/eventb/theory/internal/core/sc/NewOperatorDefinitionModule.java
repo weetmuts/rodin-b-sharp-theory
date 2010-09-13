@@ -23,6 +23,7 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
@@ -31,7 +32,6 @@ import org.eventb.theory.internal.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -84,36 +84,35 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 		for (int i = 0; i < newOpDefs.length; i++) {
 
 			if (operators[i] != null && !operators[i].hasError()) {
+				// get latest factory and environment
 				factory = repository.getFormulaFactory();
-				repository.setState(new StackedIdentifierSymbolTable(
-						identifierSymbolTable, OP_IDENT_SYMTAB_SIZE,
-						factory));
-
 				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
+				// needed states
+				repository.setState(new StackedIdentifierSymbolTable(
+						identifierSymbolTable, OP_IDENT_SYMTAB_SIZE,
+						factory));
 				IOperatorInformation operatorInformation = new OperatorInformation(operators[i].getSymbol(), factory);
 				repository.setState(operatorInformation);
+				// copying of information
 				populateOperatorInformation(operatorInformation, operators[i], newOpDefs[i]);
+				// children processors
 				initProcessorModules(newOpDefs[i], repository, null);
-
 				processModules(newOpDefs[i], scNewOpDefs[i], repository, monitor);
-
 				endProcessorModules(newOpDefs[i], repository, null);
-
 				// update the factory
-				factory = repository.getFormulaFactory();
-				globalTypeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
-				repository.setTypeEnvironment(globalTypeEnvironment);
-			}
-			else {
-				theoryAccuracyInfo.setNotAccurate();
+				if(!operatorInformation.hasError()){
+					factory = repository.getFormulaFactory();
+					globalTypeEnvironment = MathExtensionsFacilitator.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+					repository.setTypeEnvironment(globalTypeEnvironment);
+				}
 			}
 			monitor.worked(1);
 		}
 		// get the new type environment corresponding to the factory
-		factory = repository.getFormulaFactory();
-		globalTypeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+		// TODO test if another update of variable factory is needed
+		globalTypeEnvironment = MathExtensionsFacilitator.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 		repository.setTypeEnvironment(globalTypeEnvironment);
 	}
 
@@ -152,6 +151,9 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 				scNewOpDefs[i] = createSCNewOpDef(targetRoot, index++, labelSymbolInfos[i],
 						newOpDefs[i], monitor);
 			}
+			else {
+				theoryAccuracyInfo.setNotAccurate();
+			}
 		}
 		
 	}
@@ -189,13 +191,12 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 				continue;
 			}
 			if (!filterModules(opDef, repository, null)) {
-
 				labelSymbolInfos[i].setError();
 
 			}
 		}
 		endFilterModules(repository, null);
-
+			
 		return labelSymbolInfos;
 	}
 	

@@ -123,6 +123,10 @@ public final class Messages {
 	public static String scuser_InferenceRuleBackward;
 	public static String scuser_InferenceRuleForward;
 	public static String scuser_InferenceRuleBoth;
+
+	public static String scuser_CondIdentsNotSubsetOfLHSIdents;
+	public static String scuser_CondGivensNotSubsetOfLHSGivens;
+	public static String scuser_RHSGivensNotSubsetOfLHSGivens;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

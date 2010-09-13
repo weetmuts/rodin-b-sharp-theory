@@ -6,6 +6,12 @@ import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
+/**
+ * Overall theory accuracy information state holder.
+ * 
+ * @author maamria
+ *
+ */
 @SuppressWarnings("restriction")
 public class TheoryAccuracyInfo extends State implements IAccuracyInfo{
 

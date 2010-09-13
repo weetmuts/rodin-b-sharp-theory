@@ -126,10 +126,10 @@ public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCR
 					infos[i].setError();
 					if(scRules[i] != null)
 						scRules[i].setAccuracy(false, monitor);
-					if (accuracyInfo != null) {
-						accuracyInfo.setNotAccurate();
-					}
+					accuracyInfo.setNotAccurate();
 				}	
+			} else{
+				accuracyInfo.setNotAccurate();
 			}
 		}
 		monitor.worked(1);

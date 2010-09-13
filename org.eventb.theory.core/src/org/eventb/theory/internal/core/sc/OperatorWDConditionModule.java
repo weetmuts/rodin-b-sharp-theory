@@ -22,6 +22,7 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IOperatorWDCondition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -50,8 +51,10 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 		
 		if(wdConds != null && wdConds.length > 0){
 			Predicate wdPred  = processWdConditions(wdConds, repository, monitor);
-			if(wdPred != null && !wdPred.equals(CoreUtilities.BTRUE)){
+			if(wdPred != null && !wdPred.equals(MathExtensionsFacilitator.BTRUE)){
 				if(target != null){
+					Predicate wdPredWD = wdPred.getWDPredicate(factory);
+					wdPred = CoreUtilities.conjunctPredicates(new Predicate[]{wdPredWD, wdPred}, factory);
 					scNewOpDef.setPredicate(wdPred, monitor);
 					operatorInformation.setWdCondition(wdPred);
 				}
@@ -73,7 +76,7 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 			}
 			else {
 				Predicate pred = CoreUtilities.parseAndCheckPredicate(wd, factory, typeEnvironment, this);
-				if(!pred.equals(CoreUtilities.BTRUE))
+				if(!pred.equals(MathExtensionsFacilitator.BTRUE))
 					wdPredicates.add(pred);
 			}
 		}

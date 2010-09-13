@@ -8,6 +8,7 @@
 package org.eventb.theory.internal.core.sc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +28,7 @@ import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -42,25 +44,24 @@ import org.rodinp.core.IRodinFile;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class DatatypeDefinitionModule extends SCProcessorModule{
+public class DatatypeDefinitionModule extends SCProcessorModule {
 
-	IModuleType<DatatypeDefinitionModule> MODULE_TYPE = 
-		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinitionModule");
-	
+	IModuleType<DatatypeDefinitionModule> MODULE_TYPE = SCCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinitionModule");
+
 	private IDatatypeTable datatypeTable;
-	
+
 	private ITypeEnvironment typeEnvironment;
 	private FormulaFactory factory;
-	private Type typeExpression;
 	private TheoryAccuracyInfo theoryAccuracyInfo;
 
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		
+
 		IRodinFile file = (IRodinFile) element;
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		ISCTheoryRoot targetRoot = (ISCTheoryRoot) target;
@@ -75,93 +76,124 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 	 * Checks that:<br>
 	 * -ident is not missing <br>
 	 * -ident is not already used as a name for datatype related constructs<br>
-	 * -ident is a valid identifier
-	 * -ident is not a name of a declared type parameter.
-	 * @param dtdef datatype definitions
+	 * -ident is a valid identifier -ident is not a name of a declared type
+	 * parameter.
+	 * 
+	 * @param dtdef
+	 *            datatype definitions
 	 * @param targetRoot
-	 * @param repository 
+	 * @param repository
 	 * @param monitor
 	 */
 	private void processDatatypes(IDatatypeDefinition[] dtdef,
-			ISCTheoryRoot targetRoot,
-			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException{
-		boolean hasError = false;
-		if(dtdef != null && dtdef.length > 0){
-			for (IDatatypeDefinition dtd : dtdef){
+			ISCTheoryRoot targetRoot, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		boolean theoryAccurate = true;
+		if (dtdef != null && dtdef.length > 0) {
+			for (IDatatypeDefinition dtd : dtdef) {
 				factory = repository.getFormulaFactory();
 				typeEnvironment = repository.getTypeEnvironment();
-				if(!dtd.hasIdentifierString()){
-					createProblemMarker(dtd, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+
+				if (!dtd.hasIdentifierString()) {
+					createProblemMarker(dtd,
+							EventBAttributes.IDENTIFIER_ATTRIBUTE,
 							TheoryGraphProblem.MissingDatatypeNameError);
+					theoryAccurate = false;
 					continue;
 				}
 				String name = dtd.getIdentifierString();
 				ERROR_CODE error = datatypeTable.isNameOk(name);
-				if(error != null){
-					createProblemMarker(dtd, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-							CoreUtilities.getAppropriateProblemForCode(error), name);
+				if (error != null) {
+					createProblemMarker(dtd,
+							EventBAttributes.IDENTIFIER_ATTRIBUTE,
+							CoreUtilities.getAppropriateProblemForCode(error),
+							name);
+					theoryAccurate = false;
 					continue;
 				}
-				FreeIdentifier ident = CoreUtilities.parseIdentifier(name, 
-						dtd, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-						factory, this);
-				if(ident != null){
-					if(typeEnvironment.contains(ident.getName())){
-						createProblemMarker(dtd, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-								TheoryGraphProblem.DatatypeNameAlreadyATypeParError, 
+				FreeIdentifier ident = CoreUtilities.parseIdentifier(name, dtd,
+						EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, this);
+				if (ident != null) {
+					if (typeEnvironment.contains(ident.getName())) {
+						createProblemMarker(
+								dtd,
+								EventBAttributes.IDENTIFIER_ATTRIBUTE,
+								TheoryGraphProblem.DatatypeNameAlreadyATypeParError,
 								ident.getName());
+						theoryAccurate = false;
 						continue;
 					}
-					ISCDatatypeDefinition scDtd = CoreUtilities.createSCIdentifierElement(ISCDatatypeDefinition.ELEMENT_TYPE, dtd, targetRoot, monitor);
+					ISCDatatypeDefinition scDtd = CoreUtilities
+							.createSCIdentifierElement(
+									ISCDatatypeDefinition.ELEMENT_TYPE, dtd,
+									targetRoot, monitor);
 					scDtd.setSource(dtd, monitor);
 					ITypeArgument typeArgs[] = dtd.getTypeArguments();
-					
+					// referenced types state
 					ReferencedTypes referencedTypes = new ReferencedTypes();
-					FormulaFactory decoy = processTypeArguments(typeArgs, scDtd, referencedTypes, monitor);
-					// three lines go hand in hadn 
-					// TODO refactor
+					// add type arguments
+					List<String> typeArgumentsStrings = processDatatypeTypeParameters(
+							typeArgs, scDtd, referencedTypes, monitor);
+					// set the state
+					repository.setState(referencedTypes);
+					// add the entry
+					datatypeTable.addDatatype(name, typeArgumentsStrings
+							.toArray(new String[typeArgumentsStrings.size()]));
+					// create the decoy factory
+					FormulaFactory decoy = datatypeTable
+							.augmentDecoyFormulaFactory();
+					// set the new factory and create an associated type
+					// environment
 					repository.setFormulaFactory(decoy);
 					factory = decoy;
-					typeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+					typeEnvironment = MathExtensionsFacilitator
+							.getTypeEnvironmentForFactory(typeEnvironment,
+									factory);
 					repository.setTypeEnvironment(typeEnvironment);
-					
-					repository.setState(new AddedTypeExpression(typeExpression));
-					repository.setState(referencedTypes);
-					
+					// the added type expression eg. List(A)
+					Type typeExpression = CoreUtilities.createTypeExpression(
+							name, typeArgumentsStrings, decoy);
+					repository
+							.setState(new AddedTypeExpression(typeExpression));
+
 					initProcessorModules(dtd, repository, monitor);
 					processModules(dtd, scDtd, repository, monitor);
 					endProcessorModules(dtd, repository, monitor);
-					
-					initFilterModules(repository, monitor);
-					if(!filterModules(dtd, repository, monitor)){
+
+					boolean hasError = datatypeTable.isErrorProne();
+					if (hasError) {
 						repository.setFormulaFactory(datatypeTable.reset());
 						factory = repository.getFormulaFactory();
-						theoryAccuracyInfo.setNotAccurate();
+						typeEnvironment = MathExtensionsFacilitator
+								.getTypeEnvironmentForFactory(typeEnvironment,
+										factory);
+						repository.setTypeEnvironment(typeEnvironment);
 						scDtd.setHasError(true, monitor);
 						continue;
 					}
-					endFilterModules(repository, monitor);
-					hasError = datatypeTable.isErrorProne();
-					
-					scDtd.setHasError(hasError, monitor);
-					
-					repository.setFormulaFactory(datatypeTable.augmentFormulaFactory());
-					// three lines go hand in hand
-					// TODO refactor
+					scDtd.setHasError(false, monitor);
+					// add the final details
+					if (dtd.hasValidatedAttribute()) {
+						scDtd.setValidated(dtd.isValidated(), monitor);
+					}
+					repository.setFormulaFactory(datatypeTable
+							.augmentFormulaFactory());
 					factory = repository.getFormulaFactory();
-					typeEnvironment = CoreUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+					typeEnvironment = MathExtensionsFacilitator
+							.getTypeEnvironmentForFactory(typeEnvironment,
+									factory);
 					repository.setTypeEnvironment(typeEnvironment);
-					
+					// remove states
 					repository.removeState(AddedTypeExpression.STATE_TYPE);
 					repository.removeState(ReferencedTypes.STATE_TYPE);
-				}
-				else {
-					theoryAccuracyInfo.setNotAccurate();
+				} else {
+					theoryAccurate = false;
 				}
 			}
-			
+			if (!theoryAccurate)
+				theoryAccuracyInfo.setNotAccurate();
 		}
-		
+
 	}
 
 	/**
@@ -169,58 +201,62 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 	 * -given type attribute is not missing<br>
 	 * -given type is indeed defined in the type parameters<br>
 	 * -given type is not redundant i.e., already refered to
+	 * 
 	 * @param typeArgs
 	 * @param scDtd
-	 * @param referencedTypes 
+	 * @param referencedTypes
 	 * @param monitor
 	 */
-	private FormulaFactory processTypeArguments(ITypeArgument[] typeArgs,
-			ISCDatatypeDefinition scDtd, ReferencedTypes referencedTypes, IProgressMonitor monitor) throws CoreException{
+	protected List<String> processDatatypeTypeParameters(
+			ITypeArgument[] typeArgs, ISCDatatypeDefinition target,
+			ReferencedTypes referencedTypes, IProgressMonitor monitor)
+			throws CoreException {
 		ArrayList<String> argsList = new ArrayList<String>();
 		boolean hasError = false;
-		if(typeArgs != null && typeArgs.length > 0){
-			for (ITypeArgument typeArg : typeArgs){
-				if (!typeArg.hasGivenType()){
-					createProblemMarker(typeArg, TheoryAttributes.GIVEN_TYPE_ATTRIBUTE, 
-							TheoryGraphProblem.TypeArgMissingError, scDtd.getElementName());
-					continue;
-				}
-				String type = typeArg.getGivenType();
-				if(!typeEnvironment.contains(type)){
-					createProblemMarker(typeArg, TheoryAttributes.GIVEN_TYPE_ATTRIBUTE, 
-							TheoryGraphProblem.TypeArgNotDefinedError, typeArg.getGivenType());
+		if (typeArgs != null && typeArgs.length > 0) {
+			for (ITypeArgument typeArg : typeArgs) {
+				if (!typeArg.hasGivenType()) {
+					createProblemMarker(typeArg,
+							TheoryAttributes.GIVEN_TYPE_ATTRIBUTE,
+							TheoryGraphProblem.TypeArgMissingError,
+							target.getElementName());
 					hasError = true;
 					continue;
 				}
-				if(argsList.contains(type)){
-					createProblemMarker(typeArg, TheoryAttributes.GIVEN_TYPE_ATTRIBUTE, 
+				String type = typeArg.getGivenType();
+				if (!typeEnvironment.contains(type)) {
+					createProblemMarker(typeArg,
+							TheoryAttributes.GIVEN_TYPE_ATTRIBUTE,
+							TheoryGraphProblem.TypeArgNotDefinedError,
+							typeArg.getGivenType());
+					hasError = true;
+					continue;
+				}
+				if (argsList.contains(type)) {
+					createProblemMarker(typeArg,
+							TheoryAttributes.GIVEN_TYPE_ATTRIBUTE,
 							TheoryGraphProblem.TypeArgRedundWarn, type);
 					hasError = true;
 					continue;
 				}
-				ISCTypeArgument scArg = scDtd.getTypeArgument(type);
+				ISCTypeArgument scArg = target.getTypeArgument(type);
 				scArg.create(null, monitor);
 				scArg.setSCGivenType(factory.makeGivenType(type), monitor);
 				argsList.add(type);
 				referencedTypes.addReferencedType(type);
-				
 			}
-
+			if (hasError) {
+				datatypeTable.setErrorProne();
+			}
 		}
-		String name = scDtd.getIdentifierString();
-		datatypeTable.addDatatype(name, argsList.toArray(new String[argsList.size()]));
-		if(hasError)
-			datatypeTable.setErrorProne();
-		FormulaFactory ff = datatypeTable.augmentDecoyFormulaFactory();
-		typeExpression =CoreUtilities.createTypeExpression(name, argsList, ff);
-		return ff;
+		return argsList;
 	}
 
 	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
-	
+
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -228,9 +264,11 @@ public class DatatypeDefinitionModule extends SCProcessorModule{
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
-		datatypeTable = (IDatatypeTable) repository.getState(IDatatypeTable.STATE_TYPE);
-		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
-		
+		datatypeTable = (IDatatypeTable) repository
+				.getState(IDatatypeTable.STATE_TYPE);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository
+				.getState(TheoryAccuracyInfo.STATE_TYPE);
+
 	}
 
 	@Override

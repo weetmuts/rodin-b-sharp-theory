@@ -29,7 +29,8 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
  * @author maamria
@@ -38,19 +39,19 @@ import org.eventb.theory.core.maths.extensions.MathExtensionsUtilities;
 public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 		implements IOperatorTypingRule<E> {
 
-	protected List<OperatorArgument> argumentsTypes;
+	protected List<IOperatorArgument> argumentsTypes;
 	protected int arity = 0;
 	protected List<GivenType> typeParameters;
 	protected Predicate wdPredicate;
 	protected E extension;
 
 	public AbstractOperatorTypingRule(IFormulaExtension extension) {
-		this.argumentsTypes = new ArrayList<OperatorArgument>();
+		this.argumentsTypes = new ArrayList<IOperatorArgument>();
 		this.extension = getExtension(extension);
 		this.typeParameters = new ArrayList<GivenType>();
 	}
 
-	public void addOperatorArgument(OperatorArgument arg) {
+	public void addOperatorArgument(IOperatorArgument arg) {
 		argumentsTypes.add(arg);
 		Collections.sort(argumentsTypes);
 		arity++;
@@ -86,7 +87,8 @@ public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 		ITypeEnvironment typeEnvironment = generateOverallTypeEnvironment(allSubs, factory);
 		pred.typeCheck(typeEnvironment);
 		Predicate actWDPred = pred.substituteFreeIdents(allSubs, factory);
-		return actWDPred;
+		Predicate actWDPredWD = actWDPred.getWDPredicate(factory);
+		return CoreUtilities.conjunctPredicates(new Predicate[]{actWDPredWD,actWDPred}, factory);
 	}
 
 	protected abstract E getExtension(IFormulaExtension extension);
@@ -152,10 +154,10 @@ public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 	
 	protected Map<FreeIdentifier, Expression> getOverallSubstitutions(
 			Expression[] childrenExpressions, FormulaFactory factory){
-		Type[] childrenTypes = MathExtensionsUtilities.getTypes(childrenExpressions);
+		Type[] childrenTypes = MathExtensionsFacilitator.getTypes(childrenExpressions);
 		Map<FreeIdentifier, Expression> initial = getTypeSubstitutions(childrenTypes, factory);
 		if(initial != null){
-			for(OperatorArgument arg : argumentsTypes){
+			for(IOperatorArgument arg : argumentsTypes){
 				initial.put(factory.makeFreeIdentifier(arg.getArgumentName(), null, childrenTypes[arg.getIndex()]), 
 						childrenExpressions[arg.getIndex()]);
 			}

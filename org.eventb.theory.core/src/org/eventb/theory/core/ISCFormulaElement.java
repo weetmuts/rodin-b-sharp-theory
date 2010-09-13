@@ -10,6 +10,7 @@ package org.eventb.theory.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -21,7 +22,7 @@ public interface ISCFormulaElement extends IInternalElement{
 	
 	boolean hasSCFormula() throws RodinDBException;
 	
-	Formula<?> getSCFormula(FormulaFactory ff) throws RodinDBException;
+	Formula<?> getSCFormula(FormulaFactory ff, ITypeEnvironment typeEnvironment) throws RodinDBException;
 	
 	void setSCFormula(Formula<?> formula, IProgressMonitor monitor) throws RodinDBException;
 

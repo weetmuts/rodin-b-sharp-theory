@@ -16,9 +16,9 @@ import org.eventb.theory.core.IInfer;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
  * @author maamria
@@ -66,7 +66,7 @@ public class TheoryInferenceInferClauseModule extends TheoryInferenceClausesModu
 	@Override
 	protected boolean checkPredicate(Predicate predicate, IInfer clause)
 			throws CoreException {
-		if(predicate.equals(CoreUtilities.BTRUE)){
+		if(predicate.equals(MathExtensionsFacilitator.BTRUE)){
 			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.InferenceInferBTRUEPredErr);
 			return false;
 		}

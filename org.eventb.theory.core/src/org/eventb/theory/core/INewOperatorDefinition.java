@@ -20,7 +20,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface INewOperatorDefinition extends ICommentedElement, ILabeledElement,
 	ISyntaxSymbolElement, IFormulaTypeElement, INotationTypeElement,
-	IAssociativeElement, ICommutativeElement{
+	IAssociativeElement, ICommutativeElement, IValidatedElement{
 
 	IInternalElementType<INewOperatorDefinition> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".newOperatorDefinition");

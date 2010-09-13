@@ -18,7 +18,8 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface IDatatypeDefinition extends IIdentifierElement, ICommentedElement{
+public interface IDatatypeDefinition extends IIdentifierElement, 
+ICommentedElement, IValidatedElement{
 
 	IInternalElementType<IDatatypeDefinition> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinition");

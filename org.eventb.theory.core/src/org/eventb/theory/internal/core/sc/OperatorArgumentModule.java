@@ -50,21 +50,28 @@ public class OperatorArgumentModule extends IdentifierModule {
 		fetchSymbols(arguments, scNewOpDef, repository, monitor);
 		for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable
 				.getSymbolInfosFromTop()) {
-			if (symbolInfo.getSymbolType() == ISCOperatorArgument.ELEMENT_TYPE && 
+			if(symbolInfo == null){
+				operatorInformation.setHasError();
+			}
+			else if (symbolInfo.getSymbolType() == ISCOperatorArgument.ELEMENT_TYPE && 
 					symbolInfo.isPersistent()) {
 				Type type = symbolInfo.getType();
 				if (type == null) { // identifier could not be typed
 					symbolInfo.createUntypedErrorMarker(this);
 					symbolInfo.setError();
 					operatorInformation.setHasError();
-				} else if (!symbolInfo.hasError()) {
-					operatorInformation.addOperatorArgument(symbolInfo.getSymbol(), type);
-					if(target != null){
-						symbolInfo.createSCElement(target, null);
+				} 
+				if (!symbolInfo.hasError()) {
+					if(scNewOpDef != null){
+						operatorInformation.addOperatorArgument(symbolInfo.getSymbol(), type);
+						symbolInfo.createSCElement(scNewOpDef, null);
 					}
 					else{
 						operatorInformation.setHasError();
 					}
+				}
+				else {
+					operatorInformation.setHasError();
 				}
 				symbolInfo.makeImmutable();
 			}

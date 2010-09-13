@@ -7,21 +7,19 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc.states;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
+import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
 
 /**
  * @author maamria
@@ -53,19 +51,17 @@ public class DatatypeTable extends State implements IDatatypeTable{
 	
 	
 	public FormulaFactory augmentDecoyFormulaFactory(){
-		IDatatypeExtension extension  = datatypes.get(currentDatatype).generateTypeExpression();
-		if(extension != null){
-			IDatatype datatype = decoyFactory.makeDatatype(extension);
-			decoyFactory = decoyFactory.withExtensions(datatype.getExtensions());
+		Set<IFormulaExtension> extensions  = datatypes.get(currentDatatype).generateTypeExpression();
+		if(extensions != null){
+			decoyFactory = decoyFactory.withExtensions(extensions);
 		}
 		return decoyFactory;
 	}
 	
 	public FormulaFactory augmentFormulaFactory(){
-		IDatatypeExtension extension  = datatypes.get(currentDatatype).generateDatatypeExtension();
-		if(extension != null){
-			IDatatype datatype = initialFactory.makeDatatype(extension);
-			initialFactory = initialFactory.withExtensions(datatype.getExtensions());
+		Set<IFormulaExtension> extensions  = datatypes.get(currentDatatype).generateDatatypeExtensions();
+		if(extensions != null){
+			initialFactory = initialFactory.withExtensions(extensions);
 		}
 		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		return initialFactory;
@@ -178,76 +174,23 @@ public class DatatypeTable extends State implements IDatatypeTable{
 			constructors.get(constructor).addDestructor(destructor, type);
 		}
 		
-		public IDatatypeExtension generateTypeExpression(){
-			return new IDatatypeExtension() {
-				
-				@Override
-				public String getTypeName() {
-					return identifier;
-				}
-				
-				@Override
-				public String getId() {
-					return identifier + DATATYPE_ID;
-				}
-				
-				@Override
-				public void addTypeParameters(ITypeConstructorMediator mediator) {
-					for (String arg : typeArguments){
-						mediator.addTypeParam(arg);
-					}
-					
-				}
-				
-				@Override
-				public void addConstructors(IConstructorMediator mediator) {
-					// initially no constructors
-					
-				}
-			};
+		public Set<IFormulaExtension> generateTypeExpression(){
+			return MathExtensionsFacilitator.getSimpleDatatypeExtensions(identifier, typeArguments, decoyFactory);
 		}
 		
-		public IDatatypeExtension generateDatatypeExtension(){
+		public Set<IFormulaExtension> generateDatatypeExtensions(){
 			if(isErrorProne)
 				return null;
-			return new IDatatypeExtension() {
-				
-				@Override
-				public String getTypeName() {
-					return identifier;
+			Map<String, Map<String, Type>> consMap = new HashMap<String, Map<String,Type>>();
+			for(String entry : constructors.keySet()){
+				Map<String, Type> destMap = new HashMap<String, Type>();
+				ConstructorEntry consEntry = constructors.get(entry);
+				for(String destEntry : consEntry.destructors.keySet()){
+					destMap.put(destEntry, consEntry.destructors.get(destEntry));
 				}
-				
-				@Override
-				public String getId() {
-					return identifier + DATATYPE_ID;
-				}
-				
-				@Override
-				public void addTypeParameters(ITypeConstructorMediator mediator) {
-					for(String arg : typeArguments){
-						mediator.addTypeParam(arg);
-					}
-					
-				}
-				
-				@Override
-				public void addConstructors(IConstructorMediator mediator) {
-					for (String cons : constructors.keySet()){
-						ConstructorEntry entry = constructors.get(cons);
-						if(!entry.hasDestructors()){
-							mediator.addConstructor(cons, cons + CONS_ID);
-						}
-						else{
-							ArrayList<IArgument> arguments = new ArrayList<IArgument>();
-							for (String dest : entry.destructors.keySet()){
-								arguments.add(mediator.newArgument(dest,mediator.newArgumentType(entry.destructors.get(dest))));
-							}
-							mediator.addConstructor(cons, cons + CONS_ID, arguments );
-						}
-					}
-					
-				}
-			};
+				consMap.put(entry, destMap);
+			}
+			return MathExtensionsFacilitator.getCompleteDatatypeExtensions(identifier, typeArguments, consMap, initialFactory);
 		}
 		
 		public class ConstructorEntry{
@@ -278,10 +221,6 @@ public class DatatypeTable extends State implements IDatatypeTable{
 			
 			public void addDestructor(String name, Type type){
 				destructors.put(name, type);
-			}
-			
-			public boolean hasDestructors(){
-				return destructors.size() > 0 ;
 			}
 		}
 		

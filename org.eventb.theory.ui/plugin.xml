@@ -117,6 +117,11 @@
             required="true"
             typeId="org.eventb.theory.core.associative">
       </choiceAttribute>
+      <toggleAttribute
+            class="org.eventb.theory.internal.ui.attr.ValidatedAttributeManipulation"
+            id="org.eventb.theory.ui.validated"
+            typeId="org.eventb.theory.core.validated">
+      </toggleAttribute>
       <choiceAttribute
             class="org.eventb.theory.internal.ui.attr.CommutativeAttributeManipulation"
             expandsHorizontally="false"
@@ -371,6 +376,10 @@
                descriptionId="org.eventb.ui.identifier">
          </attributeReference>
          <attributeReference
+               column="1"
+               descriptionId="org.eventb.theory.ui.validated">
+         </attributeReference>
+         <attributeReference
                descriptionId="org.eventb.ui.comment">
          </attributeReference>
       </attributeRelation>
@@ -423,6 +432,10 @@
          <attributeReference
                column="5"
                descriptionId="org.eventb.theory.ui.commutative">
+         </attributeReference>
+         <attributeReference
+               column="6"
+               descriptionId="org.eventb.theory.ui.validated">
          </attributeReference>
          <attributeReference
                descriptionId="org.eventb.ui.comment">
@@ -1039,5 +1052,31 @@
             </actionExtension>
          </includes>
       </viewerActionBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="%theoryActionSet.desc"
+            id="org.eventb.theory.ui.theoryActionSet"
+            label="%theoryActionSet.label"
+            visible="true">
+         <menu
+               id="org.eventb.theory.ui.theoryMenu"
+               label="%theoryActionSet.label">
+            <groupMarker
+                  name="deploy">
+            </groupMarker>
+         </menu>
+         <action
+               class="org.eventb.theory.ui.deploy.DeployActionDelegate"
+               icon="icons/deploy.gif"
+               id="org.eventb.theory.ui.deployTheory"
+               label="%deployTheoryAction"
+               menubarPath="org.eventb.theory.ui.theoryMenu/deploy"
+               style="push"
+               tooltip="%deployTheoryToolTip">
+         </action>
+       
+      </actionSet>
    </extension>
 </plugin>

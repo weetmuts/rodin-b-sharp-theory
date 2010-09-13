@@ -196,7 +196,16 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_LhsAndRhsNotSynClassMatching), 
 			LHSUndefError(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_LHSUndef), 
+			Messages.scuser_LHSUndef),
+			RHSGivensNotSubsetOfLHSGivens(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_RHSGivensNotSubsetOfLHSGivens),
+			CondGivensNotSubsetOfLHSGivens(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_CondGivensNotSubsetOfLHSGivens),
+			CondIdentsNotSubsetOfLHSIdents(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_CondIdentsNotSubsetOfLHSIdents), 
 			RHSIdentsNotSubsetOfLHSIdents(
 			IMarker.SEVERITY_ERROR,
 			Messages.scuser_RHSIdentsNotSubsetOfLHSIdents), 

@@ -4,6 +4,12 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IStateType;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
+/**
+ * An implementation of a rewrite rule label symbol table to be a placeholder for right hand side labels.
+ * 
+ * @author maamria
+ *
+ */
 public class RewriteRuleLabelSymbolTable
 		extends AbstractTheoryLabelSymbolTable{
 
