@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths.extensions;
+package org.eventb.theory.core.maths;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -15,6 +15,13 @@ import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 
 /**
+ * An implementation of a datatype definition extension.
+ * 
+ * <p> A complete datatype definition has at least one constructor, and it has to have at
+ * least one base constructor.
+ * <p> A constructor is base if and only if all its destructors' types do not refer to the
+ * datatype being defined.
+ * 
  * @author maamria
  *
  */

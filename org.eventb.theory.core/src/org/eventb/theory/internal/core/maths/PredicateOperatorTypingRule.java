@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
+package org.eventb.theory.internal.core.maths;
 
 import java.util.HashMap;
 
@@ -15,7 +15,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 
 /**
  * @author maamria
@@ -43,7 +43,7 @@ implements IPredicateTypeChecker{
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
 			argumentTypesAsVars[i] = MathExtensionsFacilitator
-					.constructPatternTypeFor(argumentsTypes.get(i).getArgumentType(),
+					.constructPatternType(argumentsTypes.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}
 		for (int i = 0; i < childExpressions.length; i++) {

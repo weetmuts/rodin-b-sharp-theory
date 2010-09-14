@@ -61,8 +61,10 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common implementation for Event-B Theory elements.
+ * 
  * @author maamria
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public abstract class TheoryElement extends EventBElement implements
@@ -352,25 +354,25 @@ public abstract class TheoryElement extends EventBElement implements
 	@Override
 	public boolean isSuitableForBackwardReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
-		return TheoryCoreFacade.getReasoningTypeFor(type).equals(ReasoningType.BACKWARD);
+		return CoreUtilities.getReasoningTypeFor(type).equals(ReasoningType.BACKWARD);
 	}
 
 	@Override
 	public boolean isSuitableForForwardReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
-		return TheoryCoreFacade.getReasoningTypeFor(type).equals(ReasoningType.FORWARD);
+		return CoreUtilities.getReasoningTypeFor(type).equals(ReasoningType.FORWARD);
 	}
 
 	@Override
 	public boolean isSuitableForAllReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
-		return TheoryCoreFacade.getReasoningTypeFor(type).equals(ReasoningType.BACKWARD_AND_FORWARD);
+		return CoreUtilities.getReasoningTypeFor(type).equals(ReasoningType.BACKWARD_AND_FORWARD);
 	}
 
 	@Override
 	public void setReasoningType(ReasoningType type, IProgressMonitor monitor)
 			throws RodinDBException {
-		setAttributeValue(REASONING_TYPE_ATTRIBUTE, TheoryCoreFacade.getStringReasoningType(type), monitor);
+		setAttributeValue(REASONING_TYPE_ATTRIBUTE, CoreUtilities.getStringReasoningType(type), monitor);
 		
 	}
 	

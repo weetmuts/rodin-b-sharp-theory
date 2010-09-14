@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
+package org.eventb.theory.internal.core.maths;
 
 import java.util.List;
 
@@ -63,5 +63,12 @@ public interface IOperatorArgument extends Comparable<IOperatorArgument>{
 	 */
 	public FreeIdentifier makeSubstituter(String newName, FormulaFactory factory);
 	
+	/**
+	 * Returns the list of given types occurring in the type of this argument.
+	 * 
+	 * @param factory
+	 * @param typeEnvironment
+	 * @return the list of given types
+	 */
 	public List<GivenType> getGivenTypes(FormulaFactory factory, ITypeEnvironment typeEnvironment);
 }

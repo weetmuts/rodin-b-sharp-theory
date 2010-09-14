@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths.extensions;
+package org.eventb.theory.core.maths;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,8 +22,8 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.core.maths.PredicateOperatorTypingRule;
+import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
 import org.rodinp.core.IRodinElement;
 
 /**

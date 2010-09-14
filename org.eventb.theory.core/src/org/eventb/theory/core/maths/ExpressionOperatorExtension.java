@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths.extensions;
+package org.eventb.theory.core.maths;
 
 import java.util.List;
 
@@ -24,8 +24,9 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
-import org.eventb.theory.core.maths.ExpressionOperatorTypingRule;
-import org.eventb.theory.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.ExpressionOperatorTypingRule;
+import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -41,13 +42,14 @@ public class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpr
 			Notation notation, boolean isAssociative, boolean isCommutative,
 			Expression directDefinition, Predicate wdCondition,
 			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, IRodinElement source) {
+		
 		super(operatorID, syntax, formulaType, notation, isCommutative,
 				directDefinition, wdCondition, opArguments, source);
 
 		this.isAssociative = isAssociative;
 		this.operatorTypeRule = new ExpressionOperatorTypingRule(this, directDefinition.getType());
 		List<IOperatorArgument> sortedOperatorArguments = 
-			MathExtensionsFacilitator.getSortedList(opArguments);
+			CoreUtilities.getSortedList(opArguments);
 		for(IOperatorArgument arg : sortedOperatorArguments){
 			this.operatorTypeRule.addOperatorArgument(arg);
 		}

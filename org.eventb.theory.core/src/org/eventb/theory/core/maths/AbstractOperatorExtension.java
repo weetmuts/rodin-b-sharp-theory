@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths.extensions;
+package org.eventb.theory.core.maths;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +26,16 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.core.maths.IOperatorTypingRule;
+import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
 import org.rodinp.core.IRodinElement;
 
 /**
+ * Basic implementation for an operator extension.
+ * 
  * @author maamria
+ * 
+ * @param F the type of the extension
  *
  */
 public abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements IFormulaExtension{
@@ -56,6 +60,7 @@ public abstract class AbstractOperatorExtension<F extends IFormulaExtension> imp
 			Notation notation, boolean isCommutative,
 			Formula<?> directDefinition, Predicate wdCondition, 
 			List<IOperatorArgument> opArguments, IRodinElement source){
+		
 		this.operatorID = operatorID;
 		this.syntax =syntax;
 		this.formulaType = formulaType;
@@ -128,6 +133,12 @@ public abstract class AbstractOperatorExtension<F extends IFormulaExtension> imp
 		return isCommutative;
 	}
 	
+	/**
+	 * Returns the predicate condition that checks the associativity (if any) of this operator.
+	 * @param factory the formula factory
+	 * @param typeEnvironment the type environment
+	 * @return the verification condition
+	 */
 	public Predicate getAssociativityChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
 		if(!isAssociative){
 			return null;
@@ -190,11 +201,24 @@ public abstract class AbstractOperatorExtension<F extends IFormulaExtension> imp
 		
 	}
 	
+	/**
+	 * Returns the predicate condition that checks that the supplied well-definednes condition is indeed
+	 * sufficient.
+	 * @param factory the formula factory
+	 * @param typeEnvironment the type environment
+	 * @return the verification condition
+	 */
 	public Predicate getWellDefinednessChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
 		return getCorePredicate(
 				directDefinition.getWDPredicate(factory), factory, typeEnvironment);
 	}
 	
+	/**
+	 * Returns the predicate condition that checks the commutativity (if any) of this operator.
+	 * @param factory the formula factory
+	 * @param typeEnvironment the type environment
+	 * @return the verification condition
+	 */
 	public Predicate getCommutativityChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
 		if(!isCommutative){
 			return null;

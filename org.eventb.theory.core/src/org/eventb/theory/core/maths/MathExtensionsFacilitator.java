@@ -5,14 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths.extensions;
+package org.eventb.theory.core.maths;
 
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +32,7 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.theory.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -178,6 +177,13 @@ public class MathExtensionsFacilitator {
 		return !populateOperatorGroupIDs(ff).contains(id);
 	}
 
+	/**
+	 * Populates all syntax symbols of all operators recognised by the given formula
+	 * factory.
+	 * 
+	 * @param ff the formula factory
+	 * @return the list of all syntax symbols
+	 */
 	static List<String> populateOpSyntaxSymbols(FormulaFactory ff) {
 		List<String> result = new ArrayList<String>();
 		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
@@ -188,7 +194,13 @@ public class MathExtensionsFacilitator {
 		}
 		return result;
 	}
-
+	/**
+	 * Populates all IDs of all operators recognised by the given formula
+	 * factory.
+	 * 
+	 * @param ff the formula factory
+	 * @return the list of all existing IDs
+	 */
 	static List<String> populateOpIDs(FormulaFactory ff) {
 		List<String> result = new ArrayList<String>();
 		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
@@ -199,7 +211,13 @@ public class MathExtensionsFacilitator {
 		}
 		return result;
 	}
-
+	/**
+	 * Populates all groups of all operators recognised by the given formula
+	 * factory.
+	 * 
+	 * @param ff the formula factory
+	 * @return the list of all existing group IDs
+	 */
 	static List<String> populateOperatorGroupIDs(FormulaFactory ff) {
 		List<String> result = new ArrayList<String>();
 		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
@@ -250,11 +268,24 @@ public class MathExtensionsFacilitator {
 					typeParameters, source);
 		}
 	}
-	
+	/**
+	 * Returns a simple datatype extension with the given details.
+	 * @param identifier the name of the datatype
+	 * @param typeArguments the type arguments of this datatype
+	 * @param factory the formula factory 
+	 * @return the set of resulting extensions
+	 */
 	public static Set<IFormulaExtension> getSimpleDatatypeExtensions(String identifier, String[] typeArguments, FormulaFactory factory){
 		return factory.makeDatatype(new SimpleDatatypeExtension(identifier, typeArguments)).getExtensions();
 	}
-	
+	/**
+	 * Returns a complete datatype extension with the given details.
+	 * @param identifier the name of the datatype
+	 * @param typeArguments the type arguments of this datatype
+	 * @param constructors the constructors of this datatype
+	 * @param factory the formula factory 
+	 * @return the set of resulting extensions
+	 */
 	public static Set<IFormulaExtension> getCompleteDatatypeExtensions(String identifier, String[] typeArguments, Map<String, Map<String, Type>> constructors, FormulaFactory factory){
 		return factory.makeDatatype(new CompleteDatatypeExtension(
 				identifier, typeArguments, constructors)).getExtensions();
@@ -287,34 +318,34 @@ public class MathExtensionsFacilitator {
 	 * 
 	 * <p>For example, POW(A**B) gets translated to POW('0**'1) where '0 and '1 are the type variables corresponding to A and B respectively.</p>
 	 * @param theoryType the type used to define the extension
-	 * @param parToTypeVarMap the map between given types (type parameters in theories) to type variables
+	 * @param typeParameterToTypeVariablesMap the map between given types (type parameters in theories) to type variables
 	 * @param mediator the mediator
 	 * @return the constructed type
 	 */
-	public static Type constructPatternTypeFor(Type theoryType,
-			Map<Type, Type> parToTypeVarMap, ITypeMediator mediator) {
+	public static Type constructPatternType(Type theoryType,
+			Map<Type, Type> typeParameterToTypeVariablesMap, ITypeMediator mediator) {
 
-		if (parToTypeVarMap.containsKey(theoryType)) {
-			return parToTypeVarMap.get(theoryType);
+		if (typeParameterToTypeVariablesMap.containsKey(theoryType)) {
+			return typeParameterToTypeVariablesMap.get(theoryType);
 		} else {
 			if (theoryType instanceof PowerSetType) {
-				return mediator.makePowerSetType(constructPatternTypeFor(
-						theoryType.getBaseType(), parToTypeVarMap, mediator));
+				return mediator.makePowerSetType(constructPatternType(
+						theoryType.getBaseType(), typeParameterToTypeVariablesMap, mediator));
 			} else if (theoryType instanceof ProductType) {
 				return mediator.makeProductType(
-						constructPatternTypeFor(
+						constructPatternType(
 								((ProductType) theoryType).getLeft(),
-								parToTypeVarMap, mediator),
-						constructPatternTypeFor(
+								typeParameterToTypeVariablesMap, mediator),
+						constructPatternType(
 								((ProductType) theoryType).getRight(),
-								parToTypeVarMap, mediator));
+								typeParameterToTypeVariablesMap, mediator));
 			} else if (theoryType instanceof ParametricType) {
 				Type[] typePars = ((ParametricType) theoryType)
 						.getTypeParameters();
 				Type[] newTypePars = new Type[typePars.length];
 				for (int i = 0; i < typePars.length; i++) {
-					newTypePars[i] = constructPatternTypeFor(typePars[i],
-							parToTypeVarMap, mediator);
+					newTypePars[i] = constructPatternType(typePars[i],
+							typeParameterToTypeVariablesMap, mediator);
 				}
 				return mediator.makeParametricType(Arrays.asList(newTypePars),
 						((ParametricType) theoryType).getExprExtension());
@@ -339,24 +370,13 @@ public class MathExtensionsFacilitator {
 	}
 
 	/**
-	 * Creates a sorted list of the given element type.
+	 * Creates a type environment using the given factory with all the names occurring
+	 * in the given type environment.
 	 * 
-	 * @param <E>
-	 *            the type of the elements
-	 * @param collection
-	 *            the original collection
-	 * @return the sorted list
+	 * @param typeEnvironment the old type environment
+	 * @param factory the formula factory
+	 * @return the new type environment
 	 */
-	public static <E extends Comparable<E>> List<E> getSortedList(
-			Collection<E> collection) {
-		List<E> list = new ArrayList<E>();
-		for (E item : collection) {
-			list.add(item);
-		}
-		Collections.sort(list);
-		return list;
-	}
-
 	public static ITypeEnvironment getTypeEnvironmentForFactory(
 			ITypeEnvironment typeEnvironment, FormulaFactory factory){
 		ITypeEnvironment newTypeEnvironment = factory.makeTypeEnvironment();
@@ -364,6 +384,17 @@ public class MathExtensionsFacilitator {
 			newTypeEnvironment.addName(name, typeEnvironment.getType(name));
 		}
 		return newTypeEnvironment;
+	}
+
+	/**
+	 * Returns a singleton set containing one mathematical extension.
+	 * @param element the mathematical extension
+	 * @return a singleton set
+	 */
+	public static Set<IFormulaExtension> singletonExtension(IFormulaExtension element){
+		Set<IFormulaExtension> set = new HashSet<IFormulaExtension>();
+		set.add(element);
+		return set;
 	}
 
 	

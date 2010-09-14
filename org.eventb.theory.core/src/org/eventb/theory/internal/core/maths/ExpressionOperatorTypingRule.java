@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
+package org.eventb.theory.internal.core.maths;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 
 /**
  * @author maamria
@@ -72,7 +72,7 @@ implements IExpressionTypeChecker{
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
 			argumentTypesAsVars[i] = MathExtensionsFacilitator
-					.constructPatternTypeFor(argumentsTypes.get(i).getArgumentType(),
+					.constructPatternType(argumentsTypes.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}
 
@@ -80,7 +80,7 @@ implements IExpressionTypeChecker{
 			Type currentType = childExpressions[i].getType();
 			mediator.sameType(argumentTypesAsVars[i], currentType);
 		}
-		return MathExtensionsFacilitator.constructPatternTypeFor(resultantType,
+		return MathExtensionsFacilitator.constructPatternType(resultantType,
 				parameterToTypeVarMap, mediator);
 	}
 

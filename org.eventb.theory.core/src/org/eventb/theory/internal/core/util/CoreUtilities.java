@@ -11,6 +11,8 @@ import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,15 +38,16 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
 import org.eventb.theory.core.IFormulaElement;
+import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.rodinp.core.IAttributeType;
@@ -62,6 +65,37 @@ import org.rodinp.core.RodinDBException;
 public class CoreUtilities {
 
 	private static final Object[] NO_OBJECT = new Object[0];
+	
+	public static final int SC_STARTING_INDEX = 1;
+	
+	public static final String BACKWARD_REASONING_TYPE = "backward";
+	public static final String FORWARD_REASONING_TYPE = "forward";
+	public static final String BACKWARD_AND_FORWARD_REASONING_TYPE = "both";
+	public static final String[] POSSIBLE_REASONING_TYPES = new String[]{BACKWARD_REASONING_TYPE, FORWARD_REASONING_TYPE, BACKWARD_AND_FORWARD_REASONING_TYPE};
+
+	
+	/////////////////////////
+	/// 	GENERAL
+	/////////////////////////
+	
+	/**
+	 * Creates a sorted list of the given element type.
+	 * 
+	 * @param <E>
+	 *            the type of the elements
+	 * @param collection
+	 *            the original collection
+	 * @return the sorted list
+	 */
+	public static <E extends Comparable<E>> List<E> getSortedList(
+			Collection<E> collection) {
+		List<E> list = new ArrayList<E>();
+		for (E item : collection) {
+			list.add(item);
+		}
+		Collections.sort(list);
+		return list;
+	}
 	
 	/**
 	 * <p>A utility to check if an object is present in an array of objects. This method uses <code>Object.equals(Object)</code></p>
@@ -89,6 +123,102 @@ public class CoreUtilities {
 				return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns a singleton set containing the given element.
+	 * @param <E> the type of the element
+	 * @param element 
+	 * @return a singleton set
+	 */
+	public static <E> Set<E> singletonSet(E element){
+		Set<E> set = new HashSet<E>();
+		set.add(element);
+		return set;
+	}
+
+	/////////////////////////
+	/// AST
+	/////////////////////////
+	
+	/**
+	 * Returns the string type expression with the given name and type 
+	 * parameters e.g., List(A).
+	 * 
+	 * @param identifierString the name of the type
+	 * @param argsList the list of type arguments
+	 * @param  the formula factory tha knows about this datatype
+	 * @return the type expression
+	 */
+	public static Type createTypeExpression(String identifierString,
+			List<String> argsList, FormulaFactory ff) {
+		String result = identifierString;
+		if(argsList.size()!=0){
+			result += "(";
+			for (int i = 0; i < argsList.size(); i++){
+				result += argsList.get(i);
+				if(i < argsList.size()-1){
+					result += ",";
+				}
+			}
+			result += ")";
+			
+		}
+		// TODO this should be guaranteed to parse
+		return ff.parseType(result, LanguageVersion.V2).getParsedType() ;
+		
+	}
+	
+	/**
+	 * Returns the string type expression with the given name and type 
+	 * parameters e.g., List(A).
+	 * 
+	 * @param identifierString the name of the type
+	 * @param argsArray the array of type arguments
+	 * @param  the formula factory tha knows about this datatype
+	 * @return the type expression
+	 */
+	public static Type createTypeExpression(String identifier, 
+			String[] argsArray, FormulaFactory ff){
+		return createTypeExpression(identifier, Arrays.asList(argsArray), ff);
+	}
+	
+	/**
+	 * Parses the formula string provided using the given formula factory. The formula
+	 * string may contain predicate variables.
+	 * @param formStr the formula string
+	 * @param ff the formula factory
+	 * @param isPattern whether the formula is expected to have predicate variables
+	 * @return the parsed formula
+	 */
+	public static Formula<?> parseFormula(String formStr, FormulaFactory ff, boolean isPattern){
+		Formula<?> formula = null;
+		if(isPattern){
+			IParseResult res = ff.parseExpressionPattern(formStr, V2, null);
+			if(!res.hasProblem()){
+				formula = res.getParsedExpression();
+			}
+			else {
+				res = ff.parsePredicatePattern(formStr, V2, null);
+				if(!res.hasProblem()){
+					formula = res.getParsedPredicate();
+				}
+			}
+		}
+		else {
+			IParseResult res = ff.parseExpression(formStr, V2, null);
+			if(!res.hasProblem()){
+				formula = res.getParsedExpression();
+			}
+			else {
+				res = ff.parsePredicate(formStr, V2, null);
+				if(!res.hasProblem()){
+					formula = res.getParsedPredicate();
+				}
+			}
+		}
+		
+		return formula;
 	}
 	
 	/**
@@ -132,7 +262,9 @@ public class CoreUtilities {
 		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
 	}
 	
-	
+	/////////////////////////////
+	//// Theory CORE
+	/////////////////////////////
 	/**
 	 * Return the SC theory name with file extension.
 	 * @param bareName the bare name
@@ -242,29 +374,15 @@ public class CoreUtilities {
 		return identifier;
 	}
 
-	/**
-	 * Returns a singleton set containing the given element.
-	 * @param <E> the type of the element
-	 * @param element 
-	 * @return a singleton set
-	 */
-	public static <E> Set<E> singletonSet(E element){
-		Set<E> set = new HashSet<E>();
-		set.add(element);
-		return set;
-	}
-
-	/**
-	 * Returns a singleton set containing one mathematical extension.
-	 * @param element the mathematical extension
-	 * @return a singleton set
-	 */
-	public static Set<IFormulaExtension> singletonExtension(IFormulaExtension element){
-		Set<IFormulaExtension> set = new HashSet<IFormulaExtension>();
-		set.add(element);
-		return set;
-	}
 	
+	/**
+	 * Parses the typing string that is an attribute of the given internal element.
+	 * @param typingElmnt the rodin element
+	 * @param factory the formula factory
+	 * @param display the marker display for error reporting
+	 * @return the type 
+	 * @throws CoreException
+	 */
 	public static Type parseTypeExpression(ITypeElement typingElmnt,
 			FormulaFactory factory, IMarkerDisplay display) 
 	throws CoreException{
@@ -281,6 +399,16 @@ public class CoreUtilities {
 		return type;
 	}
 	
+	/**
+	 * Parses and type checks the formula occurring as an attribute to the given
+	 * element.
+	 * @param element the rodin element
+	 * @param ff the formula factory
+	 * @param typeEnvironment the type environment
+	 * @param display the marker display for error reporting
+	 * @return the parsed formula
+	 * @throws CoreException
+	 */
 	public static Formula<?> parseAndCheckFormula(IFormulaElement element,
 			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
 			throws CoreException{
@@ -314,7 +442,16 @@ public class CoreUtilities {
 		}
 		return formula;
 	}
-	
+	/**
+	 * Parses and type checks the formula occurring as an attribute to the given 
+	 * element. The formula may contain predicate variables.
+	 * @param element the rodin element
+	 * @param ff the formula factor
+	 * @param typeEnvironment the type environment
+	 * @param display the marker display for error reporting
+	 * @return the parsed formula
+	 * @throws CoreException
+	 */
 	public static Formula<?> parseAndCheckPatternFormula(IFormulaElement element,
 			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
 			throws CoreException{
@@ -349,6 +486,16 @@ public class CoreUtilities {
 		return formula;
 	}
 	
+	/**
+	 * Parses and type checks the predicate occuring as an attribute to the
+	 * given element
+	 * @param element the rodin element
+	 * @param ff the formula factory
+	 * @param typeEnvironment the type environment
+	 * @param display the marker display for error reporting
+	 * @return the parsed predicate
+	 * @throws CoreException
+	 */
 	public static Predicate parseAndCheckPredicate(IPredicateElement element, 
 			FormulaFactory ff, ITypeEnvironment typeEnvironment,
 			IMarkerDisplay display) throws CoreException{
@@ -374,10 +521,12 @@ public class CoreUtilities {
 	}
 	
 	/**
-	 * Parse the identifier element
+	 * Parses the identifier occurring as an attribute to the given element.
 	 * 
 	 * @param element
 	 *            the element to be parsed
+	 * @param factory
+	 * 			  the formula factory
 	 * @return a <code>FreeIdentifier</code> in case of success,
 	 *         <code>null</code> otherwise
 	 * @throws RodinDBException
@@ -398,7 +547,16 @@ public class CoreUtilities {
 		}
 	}
 
-	
+	/**
+	 * Creates a statically checked identifier element of the type <code>T</code>.
+	 * @param <T> the type of the element
+	 * @param type intenal element type 
+	 * @param source the source element
+	 * @param parent the parent rodin element
+	 * @param monitor the progress monitor
+	 * @return the statically checked identifier element
+	 * @throws CoreException
+	 */
 	public static <T extends IIdentifierElement> T createSCIdentifierElement(
 			IInternalElementType<T> type, 
 			IIdentifierElement source, 
@@ -409,7 +567,15 @@ public class CoreUtilities {
 		return scElement;
 	}
 	
-	// Returns whether an error was issued
+	/**
+	 * Returns whether <code>result</code> has any problems. Issues AST related problems.
+	 * @param element the rodin element
+	 * @param attributeType the attribute
+	 * @param result the parse result
+	 * @param display the marker display
+	 * @return whether an error is encountered
+	 * @throws RodinDBException
+	 */
 	public static boolean issueASTProblemMarkers(IInternalElement element,
 			IAttributeType.String attributeType, IResult result, IMarkerDisplay display)
 			throws RodinDBException {
@@ -531,7 +697,8 @@ public class CoreUtilities {
 	}
 	
 	/**
-	 * Returns appropriate rodin problem for <code>code</code>
+	 * Returns appropriate rodin problem for <code>code</code>. The error codes
+	 * correspond to problems of name clashes of datatype related identifiers.
 	 * @param code the error code
 	 * @return  the rodin problem
 	 */
@@ -544,70 +711,14 @@ public class CoreUtilities {
 		return null;
 	}
 	
+	
+	
 	/**
-	 * @param identifierString
-	 * @param argsList
-	 * @return
+	 * Returns the argument of an operator. This method assumes that all given sets are
+	 * theory type parameters, and all other names must be operator arguments.
+	 * @param typeEnvironment the type environment
+	 * @return list of operator arguments
 	 */
-	public static Type createTypeExpression(String identifierString,
-			List<String> argsList, FormulaFactory ff) {
-		String result = identifierString;
-		if(argsList.size()!=0){
-			result += "(";
-			for (int i = 0; i < argsList.size(); i++){
-				result += argsList.get(i);
-				if(i < argsList.size()-1){
-					result += ",";
-				}
-			}
-			result += ")";
-			
-		}
-		// TODO this should be guaranteed to parse
-		return ff.parseType(result, LanguageVersion.V2).getParsedType() ;
-		
-	}
-	
-	public static Type createTypeExpression(String identifier, 
-			String[] argsArray, FormulaFactory ff){
-		return createTypeExpression(identifier, Arrays.asList(argsArray), ff);
-	}
-	
-	public static Type parseType(String typeStr, FormulaFactory ff){
-		return ff.parseType(typeStr, V2).getParsedType();
-		
-	}
-	
-	public static Formula<?> parseFormula(String formStr, FormulaFactory ff, boolean isPattern){
-		Formula<?> formula = null;
-		if(isPattern){
-			IParseResult res = ff.parseExpressionPattern(formStr, V2, null);
-			if(!res.hasProblem()){
-				formula = res.getParsedExpression();
-			}
-			else {
-				res = ff.parsePredicatePattern(formStr, V2, null);
-				if(!res.hasProblem()){
-					formula = res.getParsedPredicate();
-				}
-			}
-		}
-		else {
-			IParseResult res = ff.parseExpression(formStr, V2, null);
-			if(!res.hasProblem()){
-				formula = res.getParsedExpression();
-			}
-			else {
-				res = ff.parsePredicate(formStr, V2, null);
-				if(!res.hasProblem()){
-					formula = res.getParsedPredicate();
-				}
-			}
-		}
-		
-		return formula;
-	}
-	
 	public static List<String> getOperatorArguments(ITypeEnvironment typeEnvironment){
 		Set<String> all = typeEnvironment.clone().getNames();
 		all.removeAll(getGivenSetsNames(typeEnvironment));
@@ -615,6 +726,11 @@ public class CoreUtilities {
 		return new ArrayList<String>(all);
 	}
 	
+	/**
+	 * Returns the given types in <code>typeEnvironment</code>.
+	 * @param typeEnvironment the type environment
+	 * @return all given types
+	 */
 	public static List<String> getGivenSetsNames(ITypeEnvironment typeEnvironment){
 		List<String> result = new ArrayList<String>();
 		for (String name : typeEnvironment.getNames()){
@@ -625,6 +741,12 @@ public class CoreUtilities {
 		return result;
 	}
 	
+	/**
+	 * Checks whether the name <code>name</code> is a given set in the given type environment.
+	 * @param typeEnvironment the type environment
+	 * @param name the name
+	 * @return whether <code>name</code> is a given set
+	 */
 	public static boolean isGivenSet(ITypeEnvironment typeEnvironment, String name) {
 		Type type = typeEnvironment.getType(name);
 		if(type == null){
@@ -638,6 +760,12 @@ public class CoreUtilities {
 		return false;
 	}
 	
+	/**
+	 * Returns a string representation of the given list of strings e.g.,
+	 * ["a","b"] is represented as "(a,b)".
+	 * @param list the list of strings
+	 * @return the representing string
+	 */
 	public static String toString(List<String> list){
 		String result = "";
 		for(int i =0 ; i < list.size() ; i++){
@@ -649,6 +777,12 @@ public class CoreUtilities {
 		return result;
 	}
 	
+	/**
+	 * Returns the given types occurring in <code>type</code>.
+	 * @param type the type
+	 * @param factory the formula factory
+	 * @return the given types
+	 */
 	public static GivenType[] getTypesOccurringIn(Type type, FormulaFactory factory){
 		List<GivenType> types = new ArrayList<GivenType>();
 		FreeIdentifier[] idents = type.toExpression(factory).getFreeIdentifiers();
@@ -656,5 +790,62 @@ public class CoreUtilities {
 			types.add(factory.makeGivenType(ident.getName()));
 		}
 		return types.toArray(new GivenType[types.size()]);
+	}
+
+	/**
+	 * Returns the information message appropriate for the given reasoning type.
+	 * @param type the reasoning type
+	 * @return the rodin problem
+	 */
+	public static final IRodinProblem getInformationMessageFor(ReasoningType type){
+		switch (type) {
+		case BACKWARD:
+			return TheoryGraphProblem.InferenceRuleBackward;
+		case FORWARD:
+			return TheoryGraphProblem.InferenceRuleForward;
+		case BACKWARD_AND_FORWARD:
+			return TheoryGraphProblem.InferenceRuleBoth;
+		}
+		return null;
+	}
+	/**
+	 * Returns whether the formula type is an expression type.
+	 * @param type the formula type
+	 * @return whether the type is an expression
+	 */
+	public static final boolean isExpressionOperator(FormulaType type){
+		return type.equals(FormulaType.EXPRESSION);
+	}
+	
+	/**
+	 * Gets the string representation of the given reasoning type.
+	 * @param type the reasoning type
+	 * @return the string representation
+	 */
+	public static final String getStringReasoningType(ReasoningType type){
+		switch (type) {
+		case BACKWARD:
+			return CoreUtilities.BACKWARD_REASONING_TYPE;
+		case FORWARD:
+			return CoreUtilities.FORWARD_REASONING_TYPE;
+		default:
+			return CoreUtilities.BACKWARD_AND_FORWARD_REASONING_TYPE;
+		}
+	}
+	
+	/**
+	 * Returns the reasoning type corresponding to the type string.
+	 * 
+	 * @param type in string format
+	 * @return the reasoning type
+	 */
+	public static final ReasoningType getReasoningTypeFor(String type){
+		if(type.equals(CoreUtilities.BACKWARD_REASONING_TYPE))
+			return ReasoningType.BACKWARD;
+		else if (type.equals(CoreUtilities.FORWARD_REASONING_TYPE))
+			return ReasoningType.FORWARD;
+		else if(type.equals(CoreUtilities.BACKWARD_AND_FORWARD_REASONING_TYPE))
+			return ReasoningType.BACKWARD_AND_FORWARD;
+		throw new IllegalArgumentException("unknown reasoning type "+ type);
 	}
 }

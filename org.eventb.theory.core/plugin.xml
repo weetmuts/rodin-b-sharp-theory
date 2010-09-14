@@ -819,5 +819,11 @@
          </config>
       </configuration>
    </extension>
-
+	 <extension
+         point="org.eventb.core.formulaExtensionProviders">
+      <formulaExtensionProvider
+            class="org.eventb.theory.core.maths.extensions.TheoryFormulaExtensionProvider"
+            id="org.eventb.theory.core.theoryExtensionsProvider">
+      </formulaExtensionProvider>
+   </extension>
 </plugin>

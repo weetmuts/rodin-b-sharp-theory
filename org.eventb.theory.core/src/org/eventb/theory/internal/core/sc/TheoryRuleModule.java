@@ -18,10 +18,10 @@ import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRule;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRule;
-import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -100,7 +100,7 @@ public abstract class TheoryRuleModule<R extends IRule, S extends ISCRule>
 	protected void commitRules(ISCProofRulesBlock target,
 			S[] scRules, ILabelSymbolInfo[] symbolInfos,
 			IProgressMonitor monitor) throws CoreException {
-		int index = TheoryPlugin.SC_STARTING_INDEX;
+		int index = CoreUtilities.SC_STARTING_INDEX;
 		for (int i = 0; i < rules.length; i++) {
 			if (symbolInfos[i] != null && !symbolInfos[i].hasError()) {
 				scRules[i] = createSCRule(target, index++, symbolInfos[i],

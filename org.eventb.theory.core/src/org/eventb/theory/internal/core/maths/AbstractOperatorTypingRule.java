@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
+package org.eventb.theory.internal.core.maths;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,15 +26,23 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
- * @author maamria
  * 
+ * A basic implementation of a typing rule for operators.
+ * 
+ * @author maamria
+ *
+ * @param <E> the type of the formula extension
+ * @see IPredicateExtension
+ * @see IExpressionExtension
  */
 public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 		implements IOperatorTypingRule<E> {
@@ -91,8 +99,22 @@ public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 		return CoreUtilities.conjunctPredicates(new Predicate[]{actWDPredWD,actWDPred}, factory);
 	}
 
+	/**
+	 *	Returns the formula extension corresponding to the operator associated with this typing rule.
+	 * @param extension the extension
+	 * @return the formula exrtension
+	 */
 	protected abstract E getExtension(IFormulaExtension extension);
 
+	/**
+	 * Unifies the argument type with the type of the actual type (i.e., after extended expression is created from this extension).
+	 * The unification stops at the level where the ergument type is a given type. It also terminates at the level where the argument type
+	 * is an instance of a pre-defined Event-B type.
+	 * @param argumentType the type of the argument
+	 * @param actualType the type of a potential instance of this argument
+	 * @param calculatedInstantiations the gathered instantiations
+	 * @return whether the type unification has succeeded
+	 */
 	protected boolean unifyTypes(Type argumentType, Type actualType,
 			Map<GivenType, Type> calculatedInstantiations) {
 		if (argumentType instanceof PowerSetType) {

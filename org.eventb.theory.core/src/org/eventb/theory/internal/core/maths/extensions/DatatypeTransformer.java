@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths.extensions;
+package org.eventb.theory.internal.core.maths.extensions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,20 +16,21 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCConstructorArgument;
 import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCTypeArgument;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author maamria
  *
  */
-public class DatatypeTransformer implements IDefinitionTransformer<ISCDatatypeDefinition>{
+public class DatatypeTransformer implements IElementTransformer<ISCDatatypeDefinition, Set<IFormulaExtension>>{
 
-	public DatatypeTransformer(){
-		// nothing to do
-	}
+	
 	
 	@Override
 	public Set<IFormulaExtension> transform(final ISCDatatypeDefinition definition, 
@@ -64,6 +65,13 @@ public class DatatypeTransformer implements IDefinitionTransformer<ISCDatatypeDe
 			}
 		}
 		return MathExtensionsFacilitator.getCompleteDatatypeExtensions(typeName, typeArguments, datatypeCons, factory);
+	}
+
+	@Override
+	public IInternalElementType<ISCDatatypeDefinition> getElementType()
+			throws CoreException {
+		// TODO Auto-generated method stub
+		return ISCDatatypeDefinition.ELEMENT_TYPE;
 	}
 
 }

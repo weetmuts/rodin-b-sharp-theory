@@ -18,7 +18,7 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;

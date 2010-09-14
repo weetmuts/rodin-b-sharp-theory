@@ -17,7 +17,6 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IProofRulesBlock;
-import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -26,6 +25,7 @@ import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.InferenceIdentifiers;
 import org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -85,7 +85,7 @@ public class TheoryInferenceRuleModule extends
 					if(reasoningType != null){
 						scRules[i].setReasoningType(reasoningType, monitor);
 						createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, 
-								TheoryCoreFacade.getInformationMessageFor(reasoningType), label);
+								CoreUtilities.getInformationMessageFor(reasoningType), label);
 					}
 				}
 				// if rule not accurate

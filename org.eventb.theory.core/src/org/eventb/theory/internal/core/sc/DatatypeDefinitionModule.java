@@ -28,7 +28,7 @@ import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;

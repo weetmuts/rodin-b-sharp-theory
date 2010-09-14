@@ -28,7 +28,6 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
@@ -69,7 +68,7 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 						scNewOpDef, repository, monitor);
 				String label = newOpDef.getLabel();
 				if (defFormula != null) {
-					if (TheoryCoreFacade.isExpressionOperator(operatorInformation.getFormulaType())) {
+					if (CoreUtilities.isExpressionOperator(operatorInformation.getFormulaType())) {
 						if (defFormula instanceof Expression) {
 							createSCDirectDefinition(defFormula, scNewOpDef,
 									definition, repository, monitor);

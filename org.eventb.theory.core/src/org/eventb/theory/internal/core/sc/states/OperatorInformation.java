@@ -33,9 +33,9 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.core.maths.OperatorArgument;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
@@ -263,7 +263,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			formulaExtension = MathExtensionsFacilitator.getFormulaExtension( 
 					operatorID, syntax, formulaType,
 					notation, isAssociative, isCommutative, directDefinition,
-					wdCondition, MathExtensionsFacilitator.getSortedList(opArguments.values()), 
+					wdCondition, CoreUtilities.getSortedList(opArguments.values()), 
 					typeParameters, null);
 			
 			return formulaExtension;

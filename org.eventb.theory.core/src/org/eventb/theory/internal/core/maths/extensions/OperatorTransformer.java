@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths.extensions;
+package org.eventb.theory.internal.core.maths.extensions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,22 +21,20 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.core.maths.OperatorArgument;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.OperatorArgument;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author maamria
  *
  */
-public class OperatorTransformer implements IDefinitionTransformer<ISCNewOperatorDefinition> {
-
-	public OperatorTransformer(){
-		// nothing to do
-	}
+public class OperatorTransformer implements IElementTransformer<ISCNewOperatorDefinition, Set<IFormulaExtension>> {
 	
 	@Override
 	public Set<IFormulaExtension> transform(
@@ -78,7 +76,14 @@ public class OperatorTransformer implements IDefinitionTransformer<ISCNewOperato
 				getFormulaExtension(operatorID, syntax, 
 						formulaType, notation, isAssociative, isCommutative, 
 						directDefinition, wdCondition, operatorArguments, typeParameters, definition);
-		return CoreUtilities.singletonExtension(extension);
+		return MathExtensionsFacilitator.singletonExtension(extension);
+	}
+
+	@Override
+	public IInternalElementType<ISCNewOperatorDefinition> getElementType()
+			throws CoreException {
+		// TODO Auto-generated method stub
+		return ISCNewOperatorDefinition.ELEMENT_TYPE;
 	}
 
 }

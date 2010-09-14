@@ -8,13 +8,9 @@ public class TheoryPlugin extends Plugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eventb.theory.core";
 
-	// The theory configuration for the SC and POG
-	public static final String THEORY_CONFIGURATION = PLUGIN_ID + ".thy";
-	
 	// The shared instance
 	private static TheoryPlugin plugin;
 	
-	public static final int SC_STARTING_INDEX = 1;
 	/**
 	 * The constructor
 	 */

@@ -10,12 +10,12 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.sc.states.DatatypeTable;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -52,7 +52,7 @@ public class TheoryModule extends SCProcessorModule {
 			throws CoreException {
 		// add cond extension
 		// TODO process imports when they are added
-		repository.setFormulaFactory(FormulaFactory.getInstance(CoreUtilities.singletonExtension(FormulaFactory.getCond())));
+		repository.setFormulaFactory(FormulaFactory.getInstance(MathExtensionsFacilitator.singletonExtension(FormulaFactory.getCond())));
 		accuracyInfo = new TheoryAccuracyInfo();
 		final TheoryLabelSymbolTable labelSymbolTable = 
 			new TheoryLabelSymbolTable(

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.pog;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,12 +17,10 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.theory.core.IExtensionElement;
+import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.extensions.AbstractOperatorExtension;
-import org.eventb.theory.core.maths.extensions.IDefinitionTransformer;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
-import org.eventb.theory.core.maths.extensions.SimpleDatatypeExtension;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
@@ -31,7 +28,7 @@ import org.rodinp.core.IRodinFile;
  * @author maamria
  * 
  */
-public abstract class TheoryAbstractExtensionModule<E extends IExtensionElement> extends POGProcessorModule {
+public abstract class TheoryAbstractExtensionModule<E extends IInternalElement> extends POGProcessorModule {
 
 	protected FormulaFactory factory;
 	protected ITypeEnvironment typeEnvironment;
@@ -50,47 +47,30 @@ public abstract class TheoryAbstractExtensionModule<E extends IExtensionElement>
 		ISCTheoryRoot scTheoryRoot = (ISCTheoryRoot) scTheoryFile.getRoot();
 		E[] scDefinitions = getExtensionElements(scTheoryRoot);
 		for (E definition : scDefinitions) {
-			IDefinitionTransformer<E> transformer = getTransformer();
+			IElementTransformer<E, Set<IFormulaExtension>> transformer = getTransformer();
 			Set<IFormulaExtension> extensions = transformer.transform(
 					definition, factory, typeEnvironment);
 			if (extensions == null || extensions.isEmpty()) {
 				continue;
 			}
-			Set<IFormulaExtension> existingExts = factory.getExtensions();
-			Set<IFormulaExtension> toRemove = new LinkedHashSet<IFormulaExtension>();
-			for(IFormulaExtension existingExt: existingExts){
-				for(IFormulaExtension newExt : extensions){
-					if(newExt instanceof AbstractOperatorExtension<?>){
-						if(newExt.equals(existingExt)){
-							toRemove.add(newExt);
-						}
-					}
-					else if(newExt.getOrigin() != null){
-						if(newExt.getOrigin() instanceof SimpleDatatypeExtension){
-							if(newExt.getOrigin().equals(existingExt.getOrigin())){
-								toRemove.add(newExt);
-							}
-						}
-					}
-				}
-			}
-			extensions.removeAll(toRemove);
+			
 			factory = factory.withExtensions(extensions);
 			repository.setFormulaFactory(factory);
 			typeEnvironment = MathExtensionsFacilitator.getTypeEnvironmentForFactory(
 					typeEnvironment, factory);
 			repository.setTypeEnvironment(typeEnvironment);
 			// redefined extensions
-			for(IFormulaExtension extension: toRemove){
+			for(IFormulaExtension extension: extensions){
 				generateCorrespondingPOs(extension, monitor);
 			}
+			
 		}
 	}
 
 	protected abstract void generateCorrespondingPOs(IFormulaExtension extension, IProgressMonitor monitor)
 	throws CoreException;
 	
-	protected abstract IDefinitionTransformer<E> getTransformer();
+	protected abstract IElementTransformer<E, Set<IFormulaExtension>> getTransformer();
 	
 	protected abstract E[] getExtensionElements(ISCTheoryRoot parent) throws CoreException;
 

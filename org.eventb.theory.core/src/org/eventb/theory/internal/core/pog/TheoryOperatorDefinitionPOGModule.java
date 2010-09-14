@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.pog;
 
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
@@ -18,12 +20,12 @@ import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.extensions.AbstractOperatorExtension;
-import org.eventb.theory.core.maths.extensions.IDefinitionTransformer;
-import org.eventb.theory.core.maths.extensions.OperatorTransformer;
+import org.eventb.theory.core.maths.AbstractOperatorExtension;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.internal.core.maths.extensions.OperatorTransformer;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -61,7 +63,7 @@ public class TheoryOperatorDefinitionPOGModule extends
 	}
 
 	@Override
-	protected IDefinitionTransformer<ISCNewOperatorDefinition> getTransformer() {
+	protected IElementTransformer<ISCNewOperatorDefinition, Set<IFormulaExtension>> getTransformer() {
 		// TODO Auto-generated method stub
 		return new OperatorTransformer();
 	}

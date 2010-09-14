@@ -20,7 +20,6 @@ import org.eventb.theory.core.IInferenceClause;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.ISCInferenceClause;
 import org.eventb.theory.core.ISCInferenceRule;
-import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.sc.states.InferenceIdentifiers;
 import org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -36,7 +35,7 @@ extends SCProcessorModule{
 
 	private ITypeEnvironment typeEnvironment;
 	private FormulaFactory factory;
-	private int index = TheoryPlugin.SC_STARTING_INDEX;
+	private int index = CoreUtilities.SC_STARTING_INDEX;
 	protected InferenceIdentifiers inferenceIdentifiers;
 	protected RuleAccuracyInfo ruleAccuracyInfo;
 	

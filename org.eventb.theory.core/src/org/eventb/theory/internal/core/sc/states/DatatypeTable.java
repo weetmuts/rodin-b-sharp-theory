@@ -19,7 +19,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
-import org.eventb.theory.core.maths.extensions.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 
 /**
  * @author maamria
