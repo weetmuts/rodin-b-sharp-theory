@@ -15,6 +15,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -62,9 +63,6 @@ public class TheoryFormulaExtensionProvider implements
 				return extensionsCache.get(projectName);
 			}
 		}
-		if (!changedProjects.containsKey(projectName)) {
-			changedProjects.put(projectName, newBoolean(true));
-		}
 
 		Set<IFormulaExtension> ext = new LinkedHashSet<IFormulaExtension>();
 		FormulaExtensionsLoader loader = new FormulaExtensionsLoader(project);
@@ -81,20 +79,20 @@ public class TheoryFormulaExtensionProvider implements
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		// Rodin DB
-		IRodinElementDelta[] affected = event.getDelta().getAffectedChildren();
-		for (IRodinElementDelta delta : affected) {
-			// rodin project
-			if (delta.getElement() instanceof IRodinProject) {
-				String projectName = ((IRodinProject) delta.getElement()).getElementName();
-				IRodinElementDelta[] affectedChildren = delta
+		IRodinElementDelta[] affectedDeltas = event.getDelta().getAffectedChildren();
+		for (IRodinElementDelta delta : affectedDeltas) {
+			IRodinElement element =  delta.getElement();
+			if (element instanceof IRodinProject) {
+				String projectName = ((IRodinProject) element).getElementName();
+				IRodinElementDelta[] affectedChildrenDeltas = delta
 						.getAffectedChildren();
-				for (IRodinElementDelta thyDelta : affectedChildren) {
-					if (thyDelta.getElement() instanceof IRodinFile) {
-						IInternalElement root = ((IRodinFile) thyDelta
-								.getElement()).getRoot();
+				for (IRodinElementDelta thyDelta : affectedChildrenDeltas) {
+					IRodinElement fileElement = thyDelta.getElement();
+					if ( fileElement instanceof IRodinFile) {
+						IInternalElement root = ((IRodinFile) fileElement).getRoot();
 						if (root instanceof IDeployedTheoryRoot) {
 							changedProjects.put(projectName, newBoolean(true));
-							// one change is enough to trigger re-requesting of deployed theories
+							// one change is enough to trigger re-requesting of deployed extensions
 							break;
 						}
 					}
