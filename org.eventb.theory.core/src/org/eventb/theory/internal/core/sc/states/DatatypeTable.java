@@ -19,7 +19,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFactory;
 
 /**
  * @author maamria
@@ -35,12 +35,15 @@ public class DatatypeTable extends State implements IDatatypeTable{
 	
 	private FormulaFactory initialFactory;
 	private FormulaFactory decoyFactory;
+	
+	private final MathExtensionsFactory extensionsFactory;
 
 	
 	public DatatypeTable(FormulaFactory initialFactory){
 		this.initialFactory = initialFactory;
 		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		datatypes = new HashMap<String, DatatypeTable.DatatypeEntry>();
+		extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
 	}
 	
 	@Override
@@ -175,7 +178,7 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		}
 		
 		public Set<IFormulaExtension> generateTypeExpression(){
-			return MathExtensionsFacilitator.getSimpleDatatypeExtensions(identifier, typeArguments, decoyFactory);
+			return extensionsFactory.getSimpleDatatypeExtensions(identifier, typeArguments, decoyFactory);
 		}
 		
 		public Set<IFormulaExtension> generateDatatypeExtensions(){
@@ -190,7 +193,7 @@ public class DatatypeTable extends State implements IDatatypeTable{
 				}
 				consMap.put(entry, destMap);
 			}
-			return MathExtensionsFacilitator.getCompleteDatatypeExtensions(identifier, typeArguments, consMap, initialFactory);
+			return extensionsFactory.getCompleteDatatypeExtensions(identifier, typeArguments, consMap, initialFactory);
 		}
 		
 		public class ConstructorEntry{

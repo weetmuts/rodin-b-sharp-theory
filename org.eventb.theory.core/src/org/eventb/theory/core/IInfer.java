@@ -12,6 +12,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for an infer clause of an inference rule.
+ * 
  * @author maamria
  *
  */

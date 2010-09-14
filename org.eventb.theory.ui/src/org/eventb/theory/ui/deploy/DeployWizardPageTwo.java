@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
@@ -15,6 +18,7 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
+import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -28,6 +32,8 @@ public class DeployWizardPageTwo extends WizardPage {
 	private String dTitle;
 
 	private String projectName;
+	private boolean force = false;
+
 	private ArrayList<String> rPOs;
 	private String rTitle;
 	
@@ -42,12 +48,11 @@ public class DeployWizardPageTwo extends WizardPage {
 	private ArrayList<String> uPOs;
 	private String uTitle;
 	private Label theoryLabel;
-	private Label theoryDirLabel;
 	
 	protected DeployWizardPageTwo() {
 		super("deployWizard");
 		setTitle("Deploy theory ");
-		setDescription("Deploy theory file to deployment directory.");
+		setDescription("Deploy theory file.");
 	}
 
 	public void createControl(Composite parent) {
@@ -69,17 +74,6 @@ public class DeployWizardPageTwo extends WizardPage {
 		}
 		
 		new Label(container, SWT.NULL);
-		{
-			Label label = new Label(container, SWT.NULL);
-			label.setText("Deployment Directory:");
-		}
-		theoryDirLabel = new Label(container, SWT.BORDER | SWT.SINGLE);
-		{
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			theoryDirLabel.setLayoutData(gd);
-			theoryDirLabel.setText("Home Directory");
-		}
-		new Label(container, SWT.NULL);
 		new Label(container, SWT.NULL);
 		new Label(container, SWT.NULL);
 		new Label(container, SWT.NULL);
@@ -94,23 +88,46 @@ public class DeployWizardPageTwo extends WizardPage {
 		tree = new Tree(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
 		{
 			trtmDischargedPos = new TreeItem(tree, SWT.NONE);
-			trtmDischargedPos.setImage(TheoryUIUtils.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/discharged.gif"));
+			trtmDischargedPos.setImage(TheoryUIUtils.getPluginImage(TheoryUIPlugIn.PLUGIN_ID, "icons/discharged.gif"));
 			
 		}
 		{
 			trtmReviewedPos = new TreeItem(tree, SWT.NONE);
-			trtmReviewedPos.setImage(TheoryUIUtils.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/reviewed.gif"));
+			trtmReviewedPos.setImage(TheoryUIUtils.getPluginImage(TheoryUIPlugIn.PLUGIN_ID, "icons/reviewed.gif"));
 			
 		}
 		{
 			trtmUndischargedPos = new TreeItem(tree, SWT.NONE);
-			trtmUndischargedPos.setImage(TheoryUIUtils.getPluginImage("ac.soton.eventb.ruleBase.theory.ui", "icons/pending.gif"));
+			trtmUndischargedPos.setImage(TheoryUIUtils.getPluginImage(TheoryUIPlugIn.PLUGIN_ID, "icons/pending.gif"));
 			
 		}
 		{
 			GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
 			gridData.verticalSpan = 3;
 			tree.setLayoutData(gridData);
+		}
+		new Label(container, SWT.NULL);
+		new Label(container, SWT.NULL);
+		new Label(container, SWT.NULL);
+		{
+			final Button forceButton = new Button(container, SWT.CHECK);
+			forceButton.setText("Force theory deployment.");
+			forceButton.setSelection(false);
+			forceButton.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if(forceButton.getSelection()){
+						force = true;
+					}
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 		}
 		setControl(container);
 
@@ -159,6 +176,13 @@ public class DeployWizardPageTwo extends WizardPage {
 				item.setImage(parent.getImage());
 			}
 		}
+	}
+	
+	/**
+	 * @return the force
+	 */
+	public boolean forceDeployment() {
+		return force;
 	}
 	
 	/**

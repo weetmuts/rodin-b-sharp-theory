@@ -7,10 +7,12 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.theory.core.deploy.basis.TheoryDeployer;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
  * Accessibility class for some fields and methods for other plug-ins.
@@ -24,6 +26,9 @@ public class TheoryCoreFacade {
 	public static final String THEORY_FILE_EXTENSION = "tuf";
 	// As in "theory checked file" 
 	public static final String SC_THEORY_FILE_EXTENSION = "tcf";
+	
+	// As in "deployed theory file" 
+	public static final String DEPLOYED_THEORY_FILE_EXTENSION = "dtf";
 	// The theory configuration for the SC and POG
 	public static final String THEORY_CONFIGURATION = TheoryPlugin.PLUGIN_ID + ".thy";
 	
@@ -77,4 +82,13 @@ public class TheoryCoreFacade {
 		else return FormulaType.PREDICATE;
 	}
 	
+	public static final ITheoryDeployer getTheoryDeployer(String theoryRootName, String project ,boolean force)
+	throws CoreException{
+		String fullName = theoryRootName + "."+ SC_THEORY_FILE_EXTENSION;
+		ISCTheoryRoot theoryRoot = CoreUtilities.getTheoryRoot(fullName, project);
+		if(theoryRoot == null){
+			return null;
+		}
+		return new TheoryDeployer(theoryRoot, force);
+	}
 }

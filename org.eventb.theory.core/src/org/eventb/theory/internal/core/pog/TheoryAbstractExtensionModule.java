@@ -17,9 +17,10 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -28,6 +29,7 @@ import org.rodinp.core.IRodinFile;
  * @author maamria
  * 
  */
+@SuppressWarnings("restriction")
 public abstract class TheoryAbstractExtensionModule<E extends IInternalElement> extends POGProcessorModule {
 
 	protected FormulaFactory factory;
@@ -39,7 +41,7 @@ public abstract class TheoryAbstractExtensionModule<E extends IInternalElement> 
 			IPOGStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getInstance(MathExtensionsUtilities.singletonExtension(Cond.getCond()));
 		typeEnvironment = repository.getTypeEnvironment();
 		target = repository.getTarget();
 		
@@ -56,7 +58,7 @@ public abstract class TheoryAbstractExtensionModule<E extends IInternalElement> 
 			
 			factory = factory.withExtensions(extensions);
 			repository.setFormulaFactory(factory);
-			typeEnvironment = MathExtensionsFacilitator.getTypeEnvironmentForFactory(
+			typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(
 					typeEnvironment, factory);
 			repository.setTypeEnvironment(typeEnvironment);
 			// redefined extensions

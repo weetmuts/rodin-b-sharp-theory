@@ -44,16 +44,20 @@ import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
 import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -228,11 +232,11 @@ public class CoreUtilities {
 	 * @return the predicate
 	 */
 	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff){
-		while(preds.contains(MathExtensionsFacilitator.BTRUE)){
-			preds.remove(MathExtensionsFacilitator.BTRUE);
+		while(preds.contains(MathExtensionsUtilities.BTRUE)){
+			preds.remove(MathExtensionsUtilities.BTRUE);
 		}
 		if(preds.size() == 0){
-			return MathExtensionsFacilitator.BTRUE;
+			return MathExtensionsUtilities.BTRUE;
 		}
 		if(preds.size() == 1){
 			return preds.get(0);
@@ -249,12 +253,12 @@ public class CoreUtilities {
 	public static Predicate conjunctPredicates(Predicate[] preds, FormulaFactory ff){
 		List<Predicate> pList = new ArrayList<Predicate>();
 		for(Predicate p: preds){
-			if(!p.equals(MathExtensionsFacilitator.BTRUE)){
+			if(!p.equals(MathExtensionsUtilities.BTRUE)){
 				pList.add(p);
 			}
 		}
 		if(pList.size() == 0){
-			return MathExtensionsFacilitator.BTRUE;
+			return MathExtensionsUtilities.BTRUE;
 		}
 		if(pList.size() == 1){
 			return pList.get(0);
@@ -275,7 +279,16 @@ public class CoreUtilities {
 		return bareName + "." + TheoryCoreFacade.SC_THEORY_FILE_EXTENSION;
 	}
 	
-
+	/**
+	 * Return the deployed theory name with file extension.
+	 * @param bareName the bare name
+	 * @return the full name
+	 */
+	public static String getDeployedTheoryFileName(String bareName) {
+		// TODO Auto-generated method stub
+		return bareName + "." + TheoryCoreFacade.DEPLOYED_THEORY_FILE_EXTENSION;
+	}
+	
 	/**
 	 * Checks whether the given predicate refers only to the given types in <code>typeEnvironment</code>.
 	 * @param element the predicate element
@@ -847,5 +860,52 @@ public class CoreUtilities {
 		else if(type.equals(CoreUtilities.BACKWARD_AND_FORWARD_REASONING_TYPE))
 			return ReasoningType.BACKWARD_AND_FORWARD;
 		throw new IllegalArgumentException("unknown reasoning type "+ type);
+	}
+	
+	public static ISCTheoryRoot getTheoryRoot(String fullName, String project)
+	throws CoreException{
+		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(project);
+		if(rodinProject.exists()){
+			IRodinFile file = rodinProject.getRodinFile(fullName);
+			if(file.exists()){
+				ISCTheoryRoot theoryRoot = (ISCTheoryRoot) file.getRoot();
+				if(theoryRoot.exists()){
+					return theoryRoot;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param <E>
+	 * @param source
+	 * @param type
+	 * @param newParent
+	 * @param monitor
+	 * @param toIgnore
+	 * @return
+	 * @throws CoreException
+	 */
+	public static final <E extends IInternalElement> E duplicate(E source, IInternalElementType<E> type, 
+			IInternalElement newParent ,IProgressMonitor monitor, IAttributeType... toIgnore)
+	throws CoreException
+	{
+		assert source.exists();
+		assert newParent.exists();
+		List<IAttributeType> toIgnoreList = Arrays.asList(toIgnore);
+		IAttributeType[] attrTypes = source.getAttributeTypes();
+		E newElement = newParent.getInternalElement(type, source.getElementName());
+		newElement.create(null, monitor);
+		for(IAttributeType attr : attrTypes){
+			if(toIgnoreList.contains(attr)){
+				continue;
+			}
+			IAttributeValue value = source.getAttributeValue(attr);
+			newElement.setAttributeValue(value, monitor);
+		}
+		
+		return newElement;
 	}
 }

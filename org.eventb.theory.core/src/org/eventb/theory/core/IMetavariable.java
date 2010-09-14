@@ -14,6 +14,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for a metavaribale used in a proof rules block. Each metavariable has a name and a type.
+ * 
  * @author maamria
  *
  */

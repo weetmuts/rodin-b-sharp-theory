@@ -33,10 +33,11 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.eventb.theory.core.maths.MathExtensionsFactory;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -64,6 +65,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	private Type expressionType;
 	private List<GivenType> typeParameters;
 	private FormulaFactory factory;
+	
+	private final MathExtensionsFactory extensionsFactory;
 
 	private IFormulaExtension formulaExtension = null;
 	
@@ -80,6 +83,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		this.typeParameters = new ArrayList<GivenType>();
 		this.factory = factory;
 		this.typeEnvironment = this.factory.makeTypeEnvironment();
+		this.extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
 	}
 
 	public boolean isAllowedIdentifier(FreeIdentifier ident) {
@@ -260,7 +264,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	public IFormulaExtension getExtension(final FormulaFactory formulaFactory) {
 		if (!hasError){
-			formulaExtension = MathExtensionsFacilitator.getFormulaExtension( 
+			formulaExtension = extensionsFactory.getFormulaExtension( 
 					operatorID, syntax, formulaType,
 					notation, isAssociative, isCommutative, directDefinition,
 					wdCondition, CoreUtilities.getSortedList(opArguments.values()), 
@@ -309,7 +313,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		// one rhs
 		ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS( operatorID + RHS_LABEL);
 		rhs.create(null, null);
-		rhs.setPredicate(MathExtensionsFacilitator.BTRUE, null);
+		rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
 		rhs.setSCFormula(directDefinition.substituteFreeIdents(possibleSubstitution, newFactory), null);
 	}
 	

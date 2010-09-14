@@ -18,11 +18,11 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -44,20 +44,15 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
-		INewOperatorDefinition newOperatorDefinition = (INewOperatorDefinition) element;
 		boolean opHasError = false;
 		if(!operatorInformation.hasError()){
 			String syntax = operatorInformation.getSyntax();
-			if(MathExtensionsFacilitator.checkOperatorSyntaxSymbol(syntax, factory)){
+			if(MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
 				FormulaFactory newFactory = factory.withExtensions(
 						CoreUtilities.singletonSet(operatorInformation.getExtension(factory)));
 				repository.setFormulaFactory(newFactory);
 				factory = repository.getFormulaFactory();
 				scNewOperatorDefinition.setHasError(false, monitor);
-				if(newOperatorDefinition.hasValidatedAttribute()){
-					scNewOperatorDefinition.setValidated(
-							newOperatorDefinition.isValidated(), monitor);
-				}
 				operatorInformation.generateDefinitionalRule(newFactory, target.getAncestor(ISCTheoryRoot.ELEMENT_TYPE));
 			}
 			else {

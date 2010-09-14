@@ -16,26 +16,25 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCConstructorArgument;
 import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCTypeArgument;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.rodinp.core.IInternalElementType;
 
 /**
  * @author maamria
  *
  */
-public class DatatypeTransformer implements IElementTransformer<ISCDatatypeDefinition, Set<IFormulaExtension>>{
+public class DatatypeTransformer extends DefinitionTransformer<ISCDatatypeDefinition>{
 
 	
 	
 	@Override
 	public Set<IFormulaExtension> transform(final ISCDatatypeDefinition definition, 
 			final FormulaFactory factory, ITypeEnvironment typeEnvironment) throws CoreException {
-		if(definition.hasError()){
+		if(definition.hasHasErrorAttribute() && 
+				definition.hasError()){
 			return null;
 		}
 		
@@ -46,7 +45,7 @@ public class DatatypeTransformer implements IElementTransformer<ISCDatatypeDefin
 			typeArguments[i] = scTypeArguments[i].getSCGivenType(factory).toString();
 		}
 		FormulaFactory tempFactory = factory.withExtensions( 
-				MathExtensionsFacilitator.getSimpleDatatypeExtensions(typeName, typeArguments, factory));
+				extensionsFactory.getSimpleDatatypeExtensions(typeName, typeArguments, factory));
 						
 		ISCDatatypeConstructor[] constructors = definition.getConstructors();
 		final Map<String, Map<String, Type>> datatypeCons = new HashMap<String, Map<String,Type>>();
@@ -64,7 +63,7 @@ public class DatatypeTransformer implements IElementTransformer<ISCDatatypeDefin
 				datatypeCons.put(consIdent, datatypeDes);
 			}
 		}
-		return MathExtensionsFacilitator.getCompleteDatatypeExtensions(typeName, typeArguments, datatypeCons, factory);
+		return extensionsFactory.getCompleteDatatypeExtensions(typeName, typeArguments, datatypeCons, factory);
 	}
 
 	@Override

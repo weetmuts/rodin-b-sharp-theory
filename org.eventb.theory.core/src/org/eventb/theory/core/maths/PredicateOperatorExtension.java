@@ -24,21 +24,20 @@ import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
-import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
  * 
  */
 @SuppressWarnings("restriction")
-public class PredicateOperatorExtension extends AbstractOperatorExtension<IPredicateExtension>
+class PredicateOperatorExtension extends AbstractOperatorExtension<IPredicateExtension>
 		implements IPredicateExtension {
 
 	public PredicateOperatorExtension(
 			String operatorID, String syntax, FormulaType formulaType,
 			Notation notation, boolean isCommutative,
 			Predicate directDefinition, Predicate wdCondition,
-			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, IRodinElement source) {
+			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, Object source) {
 		super(operatorID, syntax, formulaType, notation, isCommutative,
 				directDefinition, wdCondition, opArguments, source);
 		

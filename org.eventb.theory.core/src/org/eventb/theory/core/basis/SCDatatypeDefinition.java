@@ -8,7 +8,6 @@
 package org.eventb.theory.core.basis;
 
 import static org.eventb.theory.core.TheoryAttributes.HAS_ERROR_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.basis.SCIdentifierElement;
@@ -72,21 +71,6 @@ public class SCDatatypeDefinition extends SCIdentifierElement implements ISCData
 	@Override
 	public void setHasError(boolean hasError, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(HAS_ERROR_ATTRIBUTE, hasError, monitor);
-	}
-	
-	@Override
-	public boolean hasValidatedAttribute() throws RodinDBException{
-		return hasAttribute(VALIDATED_ATTRIBUTE);
-	}
-	
-	@Override
-	public boolean isValidated() throws RodinDBException{
-		return getAttributeValue(VALIDATED_ATTRIBUTE);
-	}
-	
-	@Override
-	public void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException{
-		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
 	}
 
 

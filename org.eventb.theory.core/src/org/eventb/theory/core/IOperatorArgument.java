@@ -14,6 +14,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for operator arguments. Each argument must have a name and a type.
+ * 
  * @author maamria
  *
  */

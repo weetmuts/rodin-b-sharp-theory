@@ -14,6 +14,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for an operator well-definedness condition internal element. Each WD condition must have a predicate.
+ * 
  * @author maamria
  *
  */

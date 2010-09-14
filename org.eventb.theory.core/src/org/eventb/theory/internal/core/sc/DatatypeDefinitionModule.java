@@ -28,7 +28,6 @@ import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -38,6 +37,7 @@ import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.eventb.theory.internal.core.sc.states.ReferencedTypes;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -146,7 +146,7 @@ public class DatatypeDefinitionModule extends SCProcessorModule {
 					// environment
 					repository.setFormulaFactory(decoy);
 					factory = decoy;
-					typeEnvironment = MathExtensionsFacilitator
+					typeEnvironment = MathExtensionsUtilities
 							.getTypeEnvironmentForFactory(typeEnvironment,
 									factory);
 					repository.setTypeEnvironment(typeEnvironment);
@@ -164,7 +164,7 @@ public class DatatypeDefinitionModule extends SCProcessorModule {
 					if (hasError) {
 						repository.setFormulaFactory(datatypeTable.reset());
 						factory = repository.getFormulaFactory();
-						typeEnvironment = MathExtensionsFacilitator
+						typeEnvironment = MathExtensionsUtilities
 								.getTypeEnvironmentForFactory(typeEnvironment,
 										factory);
 						repository.setTypeEnvironment(typeEnvironment);
@@ -172,14 +172,10 @@ public class DatatypeDefinitionModule extends SCProcessorModule {
 						continue;
 					}
 					scDtd.setHasError(false, monitor);
-					// add the final details
-					if (dtd.hasValidatedAttribute()) {
-						scDtd.setValidated(dtd.isValidated(), monitor);
-					}
 					repository.setFormulaFactory(datatypeTable
 							.augmentFormulaFactory());
 					factory = repository.getFormulaFactory();
-					typeEnvironment = MathExtensionsFacilitator
+					typeEnvironment = MathExtensionsUtilities
 							.getTypeEnvironmentForFactory(typeEnvironment,
 									factory);
 					repository.setTypeEnvironment(typeEnvironment);

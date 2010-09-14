@@ -31,8 +31,8 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * 
@@ -176,7 +176,7 @@ public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 	
 	protected Map<FreeIdentifier, Expression> getOverallSubstitutions(
 			Expression[] childrenExpressions, FormulaFactory factory){
-		Type[] childrenTypes = MathExtensionsFacilitator.getTypes(childrenExpressions);
+		Type[] childrenTypes = MathExtensionsUtilities.getTypes(childrenExpressions);
 		Map<FreeIdentifier, Expression> initial = getTypeSubstitutions(childrenTypes, factory);
 		if(initial != null){
 			for(IOperatorArgument arg : argumentsTypes){

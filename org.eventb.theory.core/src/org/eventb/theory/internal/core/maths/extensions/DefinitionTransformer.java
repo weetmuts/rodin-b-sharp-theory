@@ -5,24 +5,25 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core;
+package org.eventb.theory.internal.core.maths.extensions;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import java.util.Set;
+
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.theory.core.IElementTransformer;
+import org.eventb.theory.core.maths.MathExtensionsFactory;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for a formula element.
- * 
  * @author maamria
  *
  */
-public interface IFormulaElement extends IInternalElement{
+public abstract class DefinitionTransformer<E extends IInternalElement> implements IElementTransformer<E, Set<IFormulaExtension>>{
+	
+	protected MathExtensionsFactory extensionsFactory;
+	
+	protected DefinitionTransformer(){
+		extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
+	}
 
-	boolean hasFormula() throws RodinDBException;
-	
-	String getFormula() throws RodinDBException;
-	
-	void setFormula(String formula, IProgressMonitor monitor) throws RodinDBException;
-	
 }

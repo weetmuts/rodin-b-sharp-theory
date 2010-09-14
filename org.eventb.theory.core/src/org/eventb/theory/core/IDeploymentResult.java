@@ -7,20 +7,25 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.ICommentedElement;
-import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
-
 /**
- * Common protocol for a direct operator definition. A direct definition must supply an Event-B formula.
+ * Common protocol for a result of a deployment operation.
  * 
  * @author maamria
  *
  */
-public interface IDirectOperatorDefinition extends IFormulaElement, ICommentedElement{
-
-	IInternalElementType<IDirectOperatorDefinition> ELEMENT_TYPE = 
-		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID+".directOperatorDefinition");
+public interface IDeploymentResult {
 	
+	/**
+	 * Returns whether the deployment operation has succeeded.
+	 * @return whether the deployment operation has succeeded
+	 */
+	public boolean succeeded();
+	
+	/**
+	 * Returns the error message if the deployment has not succeeded. This method is
+	 * required to return a <code>null</code> value if deployment indeed succeeded.
+	 * @return the error message
+	 */
+	public String getErrorMessage();
+
 }

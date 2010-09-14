@@ -23,7 +23,7 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.AbstractOperatorExtension;
+import org.eventb.theory.core.maths.IOperatorExtension;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.maths.extensions.OperatorTransformer;
 import org.rodinp.core.IRodinElement;
@@ -78,8 +78,8 @@ public class TheoryOperatorDefinitionPOGModule extends
 	@Override
 	protected void generateCorrespondingPOs(IFormulaExtension extension,
 			IProgressMonitor monitor) throws CoreException {
-		if (extension instanceof AbstractOperatorExtension<?>) {
-			AbstractOperatorExtension<?> operatorExtension = (AbstractOperatorExtension<?>) extension;
+		if (extension instanceof IOperatorExtension) {
+			IOperatorExtension operatorExtension = (IOperatorExtension) extension;
 
 			// generate WD-PO
 			Predicate wdPOPredicate = operatorExtension

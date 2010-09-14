@@ -12,6 +12,10 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for an element that has a reference to a given type i.e., type paramter in a theory.
+ * 
+ * @see ITypeParameter
+ * 
  * @author maamria
  *
  */

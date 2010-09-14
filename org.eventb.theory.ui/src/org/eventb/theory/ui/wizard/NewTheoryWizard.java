@@ -126,7 +126,7 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 				rodinFile.create(false, pMonitor);
 				final IInternalElement rodinRoot = rodinFile.getRoot();
 				((IConfigurationElement) rodinRoot).setConfiguration(
-						TheoryCoreFacade.getTheoryConfiguration(), pMonitor);
+						TheoryCoreFacade.THEORY_CONFIGURATION, pMonitor);
 				rodinFile.save(null, true);
 			}
 

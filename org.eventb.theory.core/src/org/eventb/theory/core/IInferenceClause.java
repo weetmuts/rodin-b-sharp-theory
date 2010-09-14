@@ -11,6 +11,8 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IPredicateElement;
 
 /**
+ * Common protocol for an inference rule clause (either infer or given). Each clause must have a predicate.
+ * 
  * @author maamria
  *
  */

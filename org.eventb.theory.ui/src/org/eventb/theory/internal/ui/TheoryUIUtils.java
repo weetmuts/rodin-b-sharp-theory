@@ -5,6 +5,7 @@ package org.eventb.theory.internal.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,15 +13,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
@@ -392,12 +398,56 @@ public class TheoryUIUtils {
 		int l = 0;
 		try {
 			if(root.exists())
-				l=root.getSCDatatypeDefinitions().length;
+				l=root.getSCDatatypeDefinitions().length
+					+ root.getSCNewOperatorDefinitions().length
+					+ root.getProofRulesBlocks().length
+					+ root.getTheorems().length;
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return  l == 0;
+	}
+	
+	/**
+	 * Runs the given operation in a progress dialog.
+	 * 
+	 * @param op
+	 *            a runnable operation
+	 * @since 1.3
+	 */
+	public static void runWithProgress(final IWorkspaceRunnable op) {
+		final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell) {
+			@Override
+			protected boolean isResizable() {
+				return true;
+			}
+		};
+
+		final IRunnableWithProgress wrap = new IRunnableWithProgress() {
+
+			@Override
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+				try {
+					op.run(monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
+		try {
+			dialog.run(true, true, wrap);
+		} catch (InterruptedException exception) {
+			return;
+		} catch (InvocationTargetException exception) {
+			final Throwable realException = exception.getTargetException();
+			realException.printStackTrace();
+			final String message = realException.getMessage();
+			MessageDialog.openError(shell, "Unexpected Error", message);
+			return;
+		}
 	}
 	
 }

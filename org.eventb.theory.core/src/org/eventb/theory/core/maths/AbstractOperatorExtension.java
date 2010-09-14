@@ -28,7 +28,7 @@ import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
-import org.rodinp.core.IRodinElement;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * Basic implementation for an operator extension.
@@ -38,7 +38,7 @@ import org.rodinp.core.IRodinElement;
  * @param F the type of the extension
  *
  */
-public abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements IFormulaExtension{
+abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements IOperatorExtension{
 	
 	private static String VAR_TEMP_NAME = "_z_";
 	
@@ -59,7 +59,7 @@ public abstract class AbstractOperatorExtension<F extends IFormulaExtension> imp
 			FormulaType formulaType,
 			Notation notation, boolean isCommutative,
 			Formula<?> directDefinition, Predicate wdCondition, 
-			List<IOperatorArgument> opArguments, IRodinElement source){
+			List<IOperatorArgument> opArguments, Object source){
 		
 		this.operatorID = operatorID;
 		this.syntax =syntax;
@@ -84,7 +84,7 @@ public abstract class AbstractOperatorExtension<F extends IFormulaExtension> imp
 
 	@Override
 	public String getGroupId() {
-		return MathExtensionsFacilitator.getGroupFor(formulaType, notation, opArguments.size());
+		return MathExtensionsUtilities.getGroupFor(formulaType, notation, opArguments.size());
 	}
 
 	@Override
@@ -96,41 +96,6 @@ public abstract class AbstractOperatorExtension<F extends IFormulaExtension> imp
 	@Override
 	public Object getOrigin() {
 		return source;
-	}
-
-	/**
-	 * @return the formulaType
-	 */
-	public FormulaType getFormulaType() {
-		return formulaType;
-	}
-
-	/**
-	 * @return the wdCondition
-	 */
-	public Predicate getWdCondition() {
-		return wdCondition;
-	}
-
-	/**
-	 * @return the directDefinition
-	 */
-	public Formula<?> getDirectDefinition() {
-		return directDefinition;
-	}
-
-	/**
-	 * @return the opArguments
-	 */
-	public List<IOperatorArgument> getOpArguments() {
-		return opArguments;
-	}
-
-	/**
-	 * @return the isCommutative
-	 */
-	public boolean isCommutative() {
-		return isCommutative;
 	}
 	
 	/**

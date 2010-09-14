@@ -12,6 +12,10 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for a reasoning type element.
+ * 
+ * @see IReasoningTypeElement.ReasoningType
+ * 
  * @author maamria
  *
  */

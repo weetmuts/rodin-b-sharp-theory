@@ -23,12 +23,12 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -55,7 +55,7 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 			return false;
 		}
 		// check ID is unique
-		if(!MathExtensionsFacilitator.checkOperatorID(opDef.getLabel(), factory)){
+		if(!MathExtensionsUtilities.checkOperatorID(opDef.getLabel(), factory)){
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorIDExistsError, opID);
 			return false;
 		}
@@ -69,7 +69,7 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorSynIsATypeParError, syntax);
 			return false;
 		}
-		if(!MathExtensionsFacilitator.checkOperatorSyntaxSymbol(syntax, factory)){
+		if(!MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
 			createProblemMarker(opDef, TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, TheoryGraphProblem.OperatorSynExistsError, syntax);
 			return false;
 		}

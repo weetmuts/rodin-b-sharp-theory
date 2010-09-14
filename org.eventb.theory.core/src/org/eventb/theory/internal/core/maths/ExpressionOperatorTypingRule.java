@@ -24,7 +24,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -71,7 +71,7 @@ implements IExpressionTypeChecker{
 					mediator.newTypeVariable());
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
-			argumentTypesAsVars[i] = MathExtensionsFacilitator
+			argumentTypesAsVars[i] = MathExtensionsUtilities
 					.constructPatternType(argumentsTypes.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}
@@ -80,14 +80,14 @@ implements IExpressionTypeChecker{
 			Type currentType = childExpressions[i].getType();
 			mediator.sameType(argumentTypesAsVars[i], currentType);
 		}
-		return MathExtensionsFacilitator.constructPatternType(resultantType,
+		return MathExtensionsUtilities.constructPatternType(resultantType,
 				parameterToTypeVarMap, mediator);
 	}
 
 	@Override
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator) {
-		Type[] types = MathExtensionsFacilitator.getTypes(childExprs);
+		Type[] types = MathExtensionsUtilities.getTypes(childExprs);
 		return synthesizeType(types, mediator.getFactory());
 	}
 	

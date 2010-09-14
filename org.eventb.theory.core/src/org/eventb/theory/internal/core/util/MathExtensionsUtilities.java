@@ -5,9 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
-
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+package org.eventb.theory.internal.core.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +18,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
@@ -30,10 +27,9 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.theory.internal.core.maths.IOperatorArgument;
-import org.rodinp.core.IRodinElement;
 
 /**
  * Facilities class for obtaining information related to grammars and operators
@@ -42,7 +38,7 @@ import org.rodinp.core.IRodinElement;
  * @author maamria
  * 
  */
-public class MathExtensionsFacilitator {
+public class MathExtensionsUtilities {
 
 	/**
 	 * Literal predicate true.
@@ -227,70 +223,7 @@ public class MathExtensionsFacilitator {
 		return result;
 	}
 
-	/**
-	 * Returns the formula extension corresponding to the supplied details.
-	 * 
-	 * @param operatorID
-	 *            the operator ID
-	 * @param syntax
-	 *            the syntax symbol
-	 * @param formulaType
-	 *            the formula type
-	 * @param notation
-	 *            the notation
-	 * @param isAssociative
-	 *            whether the operator is associative
-	 * @param isCommutative
-	 *            whether the operator is commutative
-	 * @param directDefinition
-	 *            the direct definition of the operator
-	 * @param wdCondition
-	 *            the pattern well-definedness condition
-	 * @param opArguments
-	 *            the arguments of the new operator
-	 * @return the new formula extension
-	 */
-	public static IFormulaExtension getFormulaExtension(
-			String operatorID, String syntax, FormulaType formulaType,
-			Notation notation, boolean isAssociative, boolean isCommutative,
-			Formula<?> directDefinition, Predicate wdCondition,
-			List<IOperatorArgument> opArguments,
-			List<GivenType> typeParameters, IRodinElement source) {
-		if (formulaType.equals(FormulaType.EXPRESSION)) {
-			return new ExpressionOperatorExtension(operatorID, syntax,
-					formulaType, notation, isAssociative, isCommutative,
-					(Expression) directDefinition, wdCondition, opArguments,
-					typeParameters, source);
-		} else {
-			return new PredicateOperatorExtension(operatorID, syntax,
-					formulaType, notation, isCommutative,
-					(Predicate) directDefinition, wdCondition, opArguments,
-					typeParameters, source);
-		}
-	}
-	/**
-	 * Returns a simple datatype extension with the given details.
-	 * @param identifier the name of the datatype
-	 * @param typeArguments the type arguments of this datatype
-	 * @param factory the formula factory 
-	 * @return the set of resulting extensions
-	 */
-	public static Set<IFormulaExtension> getSimpleDatatypeExtensions(String identifier, String[] typeArguments, FormulaFactory factory){
-		return factory.makeDatatype(new SimpleDatatypeExtension(identifier, typeArguments)).getExtensions();
-	}
-	/**
-	 * Returns a complete datatype extension with the given details.
-	 * @param identifier the name of the datatype
-	 * @param typeArguments the type arguments of this datatype
-	 * @param constructors the constructors of this datatype
-	 * @param factory the formula factory 
-	 * @return the set of resulting extensions
-	 */
-	public static Set<IFormulaExtension> getCompleteDatatypeExtensions(String identifier, String[] typeArguments, Map<String, Map<String, Type>> constructors, FormulaFactory factory){
-		return factory.makeDatatype(new CompleteDatatypeExtension(
-				identifier, typeArguments, constructors)).getExtensions();
-	}
-
+	
 	/**
 	 * Returns the type parameters occurring in the given type.
 	 * 

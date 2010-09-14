@@ -25,7 +25,7 @@ import org.eventb.core.ast.extension.datatype.IConstructorMediator;
  * @author maamria
  *
  */
-public class CompleteDatatypeExtension extends SimpleDatatypeExtension{
+class CompleteDatatypeExtension extends SimpleDatatypeExtension{
 
 	private Map<String, Map<String, Type>> constructors;
 	

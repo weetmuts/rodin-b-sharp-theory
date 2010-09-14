@@ -15,6 +15,8 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for a datatype constructor. Each have an identifier.
+ * 
  * @author maamria
  *
  */
@@ -23,9 +25,19 @@ public interface IDatatypeConstructor extends IIdentifierElement, ICommentedElem
 	IInternalElementType<IDatatypeConstructor> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".datatypeConstructor");
 	
-	
+	/**
+	 * Returns the constructor argument of the given name.
+	 * <p> This is handle-only method.
+	 * @param name the argument name
+	 * @return the constructor argument
+	 */
 	IConstructorArgument getConstructorArgument(String name);
 	
+	/**
+	 * Returns the constructor arguments of this constructor.
+	 * @return all constrcutor arguments
+	 * @throws RodinDBException
+	 */
 	IConstructorArgument[] getConstructorArguments() throws RodinDBException;
 	
 	

@@ -12,6 +12,11 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for an internal element that can be said to have an error. 
+ * <p>
+ * This is useful for the Proof Obligation Generator to know about such elements so that it ignores any
+ * ill-defined elements.
+ * 
  * @author maamria
  *
  */

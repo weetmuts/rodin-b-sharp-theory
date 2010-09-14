@@ -27,21 +27,20 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
 import org.eventb.theory.internal.core.maths.ExpressionOperatorTypingRule;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
  * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpressionExtension>
+class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpressionExtension>
 		implements IExpressionExtension {
 
 	public ExpressionOperatorExtension(
 			String operatorID, String syntax, FormulaType formulaType,
 			Notation notation, boolean isAssociative, boolean isCommutative,
 			Expression directDefinition, Predicate wdCondition,
-			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, IRodinElement source) {
+			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, Object source) {
 		
 		super(operatorID, syntax, formulaType, notation, isCommutative,
 				directDefinition, wdCondition, opArguments, source);

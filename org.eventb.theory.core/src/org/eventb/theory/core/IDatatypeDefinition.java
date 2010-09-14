@@ -15,21 +15,45 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for datatype definition internal element. Each have a name, some type arguments and a set of constructors.
+ * 
  * @author maamria
  *
  */
 public interface IDatatypeDefinition extends IIdentifierElement, 
-ICommentedElement, IValidatedElement{
+ICommentedElement{
 
 	IInternalElementType<IDatatypeDefinition> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinition");
 	
+	/**
+	 * Returns the type argument of the given name.
+	 * <p> This is handle-only method
+	 * @param name the name of the argument
+	 * @return the type argument
+	 */
 	ITypeArgument getTypeArgument(String name);
 	
+	/**
+	 * Returns all type arguments of this datatype.
+	 * @return all type arguments
+	 * @throws RodinDBException
+	 */
 	ITypeArgument[] getTypeArguments() throws RodinDBException;
 	
+	/**
+	 * Returns the datatype constructor of the given name.
+	 * <p> This is handle-only method
+	 * @param name the name of the constructor
+	 * @return the constructor
+	 */
 	IDatatypeConstructor getDatatypeConstructor(String name);
 	
+	/**
+	 * Returns all datatype constructors of this datatype.
+	 * @return all datatype constructors
+	 * @throws RodinDBException
+	 */
 	IDatatypeConstructor[] getDatatypeConstructors() throws RodinDBException;
 	
 }

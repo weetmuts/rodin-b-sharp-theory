@@ -13,6 +13,10 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for an inference rule.
+ * 
+ * @see IRewriteRule
+ * 
  * @author maamria
  *
  */
@@ -22,12 +26,32 @@ public interface IInferenceRule extends
 	IInternalElementType<IInferenceRule> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".inferenceRule");
 	
+	/**
+	 * Returns a handle the given clause of the supplied name.
+	 * @param name of the clause
+	 * @return the given clause
+	 */
 	IGiven getGiven(String name);
 	
+	/**
+	 * Returns the given clauses of this inference rule.
+	 * @return all given clauses
+	 * @throws RodinDBException
+	 */
 	IGiven[] getGivens() throws RodinDBException;
 	
+	/**
+	 * Returns a handle the infer clause of the supplied name.
+	 * @param name of the clause
+	 * @return the infer clause
+	 */
 	IInfer getInfer(String name);
 	
+	/**
+	 * Returns the infer clauses of this inference rule.
+	 * @return all infer clauses
+	 * @throws RodinDBException
+	 */
 	IInfer[] getInfers() throws RodinDBException;
 	
 }

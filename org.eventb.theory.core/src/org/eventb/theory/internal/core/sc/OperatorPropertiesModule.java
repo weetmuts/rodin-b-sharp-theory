@@ -59,6 +59,9 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 			if(!checkOperatorProperties(opDef,formType, notation, arity, isAssos, isCommutative, args)){
 				operatorInformation.setHasError();
 			}
+			if(operatorInformation.getWdCondition() == null){
+				operatorInformation.setHasError();
+			}
 		}
 
 	}

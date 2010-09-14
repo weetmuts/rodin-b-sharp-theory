@@ -15,12 +15,16 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for a new operator definition.
+ * 
+ * @see IDatatypeDefinition
+ * 
  * @author maamria
  *
  */
 public interface INewOperatorDefinition extends ICommentedElement, ILabeledElement,
 	ISyntaxSymbolElement, IFormulaTypeElement, INotationTypeElement,
-	IAssociativeElement, ICommutativeElement, IValidatedElement{
+	IAssociativeElement, ICommutativeElement{
 
 	IInternalElementType<INewOperatorDefinition> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".newOperatorDefinition");

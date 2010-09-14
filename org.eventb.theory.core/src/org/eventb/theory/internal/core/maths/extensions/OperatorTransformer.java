@@ -21,28 +21,29 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElementType;
 
 /**
  * @author maamria
  *
  */
-public class OperatorTransformer implements IElementTransformer<ISCNewOperatorDefinition, Set<IFormulaExtension>> {
+public class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition> {
 	
 	@Override
 	public Set<IFormulaExtension> transform(
 			ISCNewOperatorDefinition definition, FormulaFactory factory, ITypeEnvironment typeEnvironment)
 			throws CoreException {
-		if(definition.hasError()){
+		if(definition.hasHasErrorAttribute() && 
+				definition.hasError()){
 			return null;
 		}
+		
 		String operatorID = definition.getLabel();
 		String syntax = definition.getSyntaxSymbol();
 		FormulaType formulaType = definition.getFormulaType();
@@ -64,7 +65,7 @@ public class OperatorTransformer implements IElementTransformer<ISCNewOperatorDe
 			}
 		}
 		Collections.sort(operatorArguments);
-		ITypeEnvironment tempTypeEnvironment = MathExtensionsFacilitator.getTypeEnvironmentForFactory(typeEnvironment, factory);
+		ITypeEnvironment tempTypeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 		for(IOperatorArgument arg : operatorArguments){
 			tempTypeEnvironment.addName(arg.getArgumentName(), arg.getArgumentType());
 		}
@@ -72,11 +73,11 @@ public class OperatorTransformer implements IElementTransformer<ISCNewOperatorDe
 		ISCDirectOperatorDefinition scDirecDefinition = definition.getDirectOperatorDefinitions()[0];
 		Formula<?> directDefinition = scDirecDefinition.getSCFormula(factory, tempTypeEnvironment);
 		
-		IFormulaExtension extension = MathExtensionsFacilitator.
+		IFormulaExtension extension = extensionsFactory.
 				getFormulaExtension(operatorID, syntax, 
 						formulaType, notation, isAssociative, isCommutative, 
 						directDefinition, wdCondition, operatorArguments, typeParameters, definition);
-		return MathExtensionsFacilitator.singletonExtension(extension);
+		return MathExtensionsUtilities.singletonExtension(extension);
 	}
 
 	@Override

@@ -7,20 +7,20 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.ICommentedElement;
-import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Common protocol for a direct operator definition. A direct definition must supply an Event-B formula.
- * 
  * @author maamria
  *
  */
-public interface IDirectOperatorDefinition extends IFormulaElement, ICommentedElement{
+public interface ITheoryDeployer extends IWorkspaceRunnable{
 
-	IInternalElementType<IDirectOperatorDefinition> ELEMENT_TYPE = 
-		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID+".directOperatorDefinition");
+	public void analyse() throws CoreException;
+	
+	public boolean deploy(IProgressMonitor monitor) throws CoreException;
+	
+	public IDeploymentResult getDeploymentResult();
 	
 }

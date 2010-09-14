@@ -16,9 +16,9 @@ import org.eventb.theory.core.IGiven;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInferenceRule;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -66,7 +66,7 @@ protected static final String GIV_NAME_PREFIX = "givc";
 	@Override
 	protected boolean checkPredicate(Predicate predicate, IGiven clause) 
 	throws CoreException{
-		if(predicate.equals(MathExtensionsFacilitator.BTRUE)){
+		if(predicate.equals(MathExtensionsUtilities.BTRUE)){
 			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,TheoryGraphProblem.InferenceGivenBTRUEPredWarn);
 		}
 		return true;

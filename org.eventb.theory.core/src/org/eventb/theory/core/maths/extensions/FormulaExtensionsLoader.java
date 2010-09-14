@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,9 +15,12 @@ import org.eventb.core.IEventBProject;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.extension.Cond;
-import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.deploy.IDeployedTheoryRoot;
+import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
 
 /**
+ * An implementation of a formula extensions loader tailored to a specific project.
+ * 
  * @author maamria
  *
  */
@@ -27,25 +29,33 @@ public class FormulaExtensionsLoader {
 	
 	private IEventBProject project;
 	
+	/**
+	 * Create a formula extension loader for the given project.
+	 * @param project the project for which to load extensions
+	 */
 	public FormulaExtensionsLoader(IEventBProject project){
 		this.project = project;
 	}
 	
+	/**
+	 * Returns all deployed formula extensions for the Event-B project <code>project</code>.
+	 * @return deployed formula extensions
+	 * @throws CoreException
+	 */
 	public Set<IFormulaExtension> getFormulaExtensions() throws CoreException{
-		ISCTheoryRoot[] theoryRoots = project.getRodinProject().
-			getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
+		IDeployedTheoryRoot[] theoryRoots = project.getRodinProject().
+			getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		IFormulaExtension cond = Cond.getCond();
 		extensions.add(cond);
 		FormulaFactory factory = FormulaFactory.getInstance(extensions);
-		for(ISCTheoryRoot root : theoryRoots){
-			TheoryProcessor processor = new TheoryProcessor(root, factory);
-			processor.initialise();
-			processor.processExtensions();
-			extensions.addAll(processor.getExtensions());
+		for(IDeployedTheoryRoot root : theoryRoots){
+			TheoryTransformer transformer = new TheoryTransformer();
+			Set<IFormulaExtension> theoryExtns = transformer.transform(root, factory, factory.makeTypeEnvironment());
+			extensions.addAll(theoryExtns);
 		}
 		extensions.remove(cond);
-		return new HashSet<IFormulaExtension>();
+		return extensions;
 	}
 
 }

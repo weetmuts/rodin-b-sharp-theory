@@ -23,7 +23,6 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.maths.MathExtensionsFacilitator;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
@@ -32,6 +31,7 @@ import org.eventb.theory.internal.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -104,7 +104,7 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 				// update the factory
 				if(!operatorInformation.hasError()){
 					factory = repository.getFormulaFactory();
-					globalTypeEnvironment = MathExtensionsFacilitator.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+					globalTypeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 					repository.setTypeEnvironment(globalTypeEnvironment);
 				}
 			}
@@ -112,7 +112,7 @@ public class NewOperatorDefinitionModule extends LabeledElementModule{
 		}
 		// get the new type environment corresponding to the factory
 		// TODO test if another update of variable factory is needed
-		globalTypeEnvironment = MathExtensionsFacilitator.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+		globalTypeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 		repository.setTypeEnvironment(globalTypeEnvironment);
 	}
 

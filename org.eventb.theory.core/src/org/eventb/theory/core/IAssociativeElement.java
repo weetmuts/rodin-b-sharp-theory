@@ -12,14 +12,34 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for an element describing an operator that can be associative.
+ * <p> An operator <code>op</code> is said to be associative if and only if <p>
+ * <code>(x op y) op z = x op (y op z)</code>.
+ * 
  * @author maamria
  *
  */
 public interface IAssociativeElement extends IInternalElement{
 
+	/**
+	 * Returns whether this element has the associative attribute.
+	 * @return whether this element has the associative attribute
+	 * @throws RodinDBException
+	 */
 	boolean hasAssociativeAttribute() throws RodinDBException;
 	
+	/**
+	 * Returns whether this element is set to be associative.
+	 * @return whether this element is set to be associative
+	 * @throws RodinDBException
+	 */
 	boolean isAssociative() throws RodinDBException;
 	
+	/**
+	 * Sets this element associativity to the given value.
+	 * @param isAssociative whether the element is associative
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setAssociative(boolean isAssociative, IProgressMonitor monitor) throws RodinDBException;
 }

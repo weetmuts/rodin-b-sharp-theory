@@ -15,6 +15,13 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for an internal element that can be used to group together a collection of proof rules.
+ * <p> A proof block may defined metavariables, rewrite rules and inference rules.
+ * 
+ * @see IMetavariable
+ * @see IRewriteRule
+ * @see IInferenceRule
+ * 
  * @author maamria
  *
  */

@@ -18,7 +18,7 @@ import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
  * @author maamria
  *
  */
-public class SimpleDatatypeExtension implements IDatatypeExtension{
+class SimpleDatatypeExtension implements IDatatypeExtension{
 
 	/**
 	 * ID used to name the datatype.
