@@ -1,6 +1,8 @@
 package org.eventb.theory.core.maths.extensions;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -18,14 +20,33 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
+/**
+ * A project scope formula provider. 
+ * <p>
+ * This provider listens on any changes that relate to deployed theories, so that
+ * for a given project, it would know if reloading of extensions is necessary.
+ * 
+ * @author maamria
+ *
+ */
 public class TheoryFormulaExtensionProvider implements
 		IFormulaExtensionProvider, IElementChangedListener {
 
 	protected final String PROVIDER_ID = TheoryPlugin.PLUGIN_ID
 			+ ".theoryExtensionsProvider";
 
+	/**
+	 * Cache for project information.
+	 */
+	protected final Map<String, Set<IFormulaExtension>> extensionsCache;
+	protected final Map<String, Boolean> changedProjects;
+
 	public TheoryFormulaExtensionProvider() {
+		
 		RodinCore.addElementChangedListener(this, IResourceChangeEvent.POST_CHANGE);
+		
+		extensionsCache = new LinkedHashMap<String, Set<IFormulaExtension>>();
+		changedProjects = new LinkedHashMap<String, Boolean>();
 	}
 
 	@Override
@@ -35,6 +56,16 @@ public class TheoryFormulaExtensionProvider implements
 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBProject project) {
+		String projectName = project.getRodinProject().getElementName();
+		if (extensionsCache.containsKey(projectName)) {
+			if(!changedProjects.get(projectName).booleanValue()){
+				return extensionsCache.get(projectName);
+			}
+		}
+		if (!changedProjects.containsKey(projectName)) {
+			changedProjects.put(projectName, newBoolean(true));
+		}
+
 		Set<IFormulaExtension> ext = new LinkedHashSet<IFormulaExtension>();
 		FormulaExtensionsLoader loader = new FormulaExtensionsLoader(project);
 		try {
@@ -42,6 +73,8 @@ public class TheoryFormulaExtensionProvider implements
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+		extensionsCache.put(projectName, ext);
+		changedProjects.put(projectName, newBoolean(false));
 		return ext;
 	}
 
@@ -52,6 +85,7 @@ public class TheoryFormulaExtensionProvider implements
 		for (IRodinElementDelta delta : affected) {
 			// rodin project
 			if (delta.getElement() instanceof IRodinProject) {
+				String projectName = ((IRodinProject) delta.getElement()).getElementName();
 				IRodinElementDelta[] affectedChildren = delta
 						.getAffectedChildren();
 				for (IRodinElementDelta thyDelta : affectedChildren) {
@@ -59,7 +93,9 @@ public class TheoryFormulaExtensionProvider implements
 						IInternalElement root = ((IRodinFile) thyDelta
 								.getElement()).getRoot();
 						if (root instanceof IDeployedTheoryRoot) {
-							System.out.print(true);
+							changedProjects.put(projectName, newBoolean(true));
+							// one change is enough to trigger re-requesting of deployed theories
+							break;
 						}
 					}
 				}
@@ -67,6 +103,10 @@ public class TheoryFormulaExtensionProvider implements
 			}
 
 		}
+	}
+	
+	protected Boolean newBoolean(boolean bool){
+		return new Boolean(bool);
 	}
 
 }
