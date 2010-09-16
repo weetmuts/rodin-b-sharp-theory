@@ -16,6 +16,7 @@ public class TheoryPOGModule extends BaseModule {
 	public static final IModuleType<TheoryPOGModule> MODULE_TYPE = 
 		POGCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryModule"); 
 	
+	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

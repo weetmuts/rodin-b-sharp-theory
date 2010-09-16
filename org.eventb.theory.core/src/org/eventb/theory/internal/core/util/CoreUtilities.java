@@ -739,6 +739,18 @@ public class CoreUtilities {
 		return new ArrayList<String>(all);
 	}
 	
+	public static List<FreeIdentifier> getMetavariables(ITypeEnvironment typeEnvironment){
+		FormulaFactory factory = typeEnvironment.getFormulaFactory();
+		Set<String> all = typeEnvironment.clone().getNames();
+		all.removeAll(getGivenSetsNames(typeEnvironment));
+		List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
+		for (String name : all){
+			vars.add(
+					factory.makeFreeIdentifier(name, null, typeEnvironment.getType(name)));
+		}
+		return vars;
+	}
+	
 	/**
 	 * Returns the given types in <code>typeEnvironment</code>.
 	 * @param typeEnvironment the type environment
