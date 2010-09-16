@@ -50,25 +50,26 @@ public class MathExtensionsUtilities {
 	/**
 	 * Operator groups used in <link>BMath</link>.
 	 */
-	public static final String RELOP_PRED = "Relational Operator Predicate";
-	public static final String QUANTIFICATION = "Quantification";
-	public static final String PAIR = "Pair";
-	public static final String RELATION = "Set of Relations";
-	public static final String BINOP = "Binary Operator";
-	public static final String INTERVAL = "Interval";
-	public static final String ARITHMETIC = "Arithmetic";
-	public static final String UNARY_RELATION = "Unary Relation";
-	public static final String FUNCTIONAL = "Functional";
-	public static final String BRACE_SETS = "Brace Sets";
-	public static final String QUANTIFIED_PRED = "Quantified";
-	public static final String LOGIC_PRED = "Logic Predicate";
-	public static final String INFIX_PRED = "Infix Predicate";
-	public static final String NOT_PRED = "Not Predicate";
-	public static final String ATOMIC_PRED = "Atomic Predicate";
-	public static final String ATOMIC_EXPR = "Atomic Expression";
-	public static final String BOUND_UNARY = "Bound Unary";
-	public static final String BOOL_EXPR = "Bool";
-	public static final String INFIX_SUBST = "Infix Substitution";
+	private static final String AST_PREFIX = "org.eventb.core.ast."; //$NON-NLS-1$
+	public static final String RELOP_PRED = AST_PREFIX + "relOp";
+	public static final String QUANTIFICATION = AST_PREFIX + "quantification";
+	public static final String PAIR = AST_PREFIX + "pair";
+	public static final String RELATION = AST_PREFIX + "relation";
+	public static final String BINOP = AST_PREFIX + "binOp";
+	public static final String INTERVAL = AST_PREFIX + "interval";
+	public static final String ARITHMETIC = AST_PREFIX + "arithmetic";
+	public static final String UNARY_RELATION = AST_PREFIX + "unaryRelation";
+	public static final String FUNCTIONAL = AST_PREFIX + "functional";
+	public static final String BRACE_SETS = AST_PREFIX + "braceSets";
+	public static final String QUANTIFIED_PRED = AST_PREFIX + "quantifiedPred";
+	public static final String LOGIC_PRED = AST_PREFIX + "logicPred";
+	public static final String INFIX_PRED = AST_PREFIX + "infixPred";
+	public static final String NOT_PRED = AST_PREFIX + "notPred";
+	public static final String ATOMIC_PRED = AST_PREFIX + "atomicPred";
+	public static final String ATOMIC_EXPR = AST_PREFIX + "atomicExpr";
+	public static final String CLOSED = AST_PREFIX + "closed";
+	public static final String BOOL_EXPR = AST_PREFIX + "boolExpr";
+	public static final String INFIX_SUBST = AST_PREFIX + "infixSubst";
 
 	/**
 	 * Returns an appropriate group for the operator with the supplied properties.
@@ -90,7 +91,7 @@ public class MathExtensionsUtilities {
 			}
 			case PREFIX: {
 				if (arity > 0) {
-					group = BOUND_UNARY;
+					group = CLOSED;
 				} else {
 					group = ATOMIC_EXPR;
 				}
@@ -116,7 +117,7 @@ public class MathExtensionsUtilities {
 			}
 			case PREFIX: {
 				if (arity > 0) {
-					group = BOUND_UNARY;
+					group = CLOSED;
 				} else {
 					group = ATOMIC_PRED;
 				}
