@@ -7,22 +7,20 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
-import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
 import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
 
 /**
@@ -30,32 +28,23 @@ import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
  * 
  */
 @SuppressWarnings("restriction")
-class PredicateOperatorExtension extends AbstractOperatorExtension<IPredicateExtension>
+class PredicateOperatorExtension extends AbstractOperatorExtension
 		implements IPredicateExtension {
-
-	public PredicateOperatorExtension(
-			String operatorID, String syntax, FormulaType formulaType,
-			Notation notation, boolean isCommutative,
-			Predicate directDefinition, Predicate wdCondition,
-			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, Object source) {
-		super(operatorID, syntax, formulaType, notation, isCommutative,
-				directDefinition, wdCondition, opArguments, source);
+	
+	public PredicateOperatorExtension(String operatorID, String syntax,
+			FormulaType formulaType, Notation notation,
+			boolean isAssociative, IOperatorTypingRule typingRule,
+			Predicate directDefinition, Object source){
 		
-		this.operatorTypeRule = new PredicateOperatorTypingRule(this);
-		Collections.sort(opArguments);
-		for(IOperatorArgument arg : opArguments){
-			this.operatorTypeRule.addOperatorArgument(arg);
-		}
-		this.operatorTypeRule.addTypeParameters(typeParameters);
-		this.operatorTypeRule.setWDPredicate(wdCondition);
-
+		super(operatorID, syntax, formulaType, notation, isAssociative, isAssociative, 
+				typingRule, directDefinition, source);
 	}
 
 	@Override
 	public IExtensionKind getKind() {
 		return new ExtensionKind(notation, formulaType,
 				ExtensionFactory.makeAllExpr(ExtensionFactory.makeArity(
-						opArguments.size(), opArguments.size())), false);
+						operatorTypingRule.getArity(), operatorTypingRule.getArity())), false);
 	}
 
 	@Override
@@ -76,22 +65,35 @@ class PredicateOperatorExtension extends AbstractOperatorExtension<IPredicateExt
 	@Override
 	public void typeCheck(ExtendedPredicate predicate,
 			ITypeCheckMediator tcMediator) {
-		
+		((PredicateOperatorTypingRule)operatorTypingRule).typeCheck(predicate, tcMediator);
 	}
 	
+	public IOperatorTypingRule getTypingRule(){
+		return  operatorTypingRule;
+	}
 
-	public boolean equals(Object o){
-		if(!(o instanceof PredicateOperatorExtension)){
-			return false;
-		}
-		PredicateOperatorExtension operatorExtension = (PredicateOperatorExtension) o;
-		boolean equals =
-			this.operatorID.equals(operatorExtension.operatorID);
-		return equals;
+	@Override
+	public boolean isAssociative() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
-	protected PredicateOperatorTypingRule getTypingRule(){
-		return (PredicateOperatorTypingRule) operatorTypeRule;
+	@Override
+	public FormulaType getFormulaType() {
+		// TODO Auto-generated method stub
+		return formulaType;
+	}
+
+	@Override
+	public Notation getNotation() {
+		// TODO Auto-generated method stub
+		return notation;
+	}
+
+	@Override
+	public Predicate getWDPredicate(IExtendedFormula formula,
+			IWDMediator wdMediator) {
+		return operatorTypingRule.getWDPredicate(formula, wdMediator);
 	}
 
 }

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.ui.explorer.model;
 
+import java.util.HashMap;
+
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
@@ -27,6 +29,9 @@ public class ModelRulesBlock implements IModelElement{
 	
 	private IProofRulesBlock block;
 	private IModelElement parent;
+	
+	public HashMap<IRewriteRule, ModelRewriteRule> rewRules = new HashMap<IRewriteRule, ModelRewriteRule>();
+	public HashMap<IInferenceRule, ModelInferenceRule> infRules = new HashMap<IInferenceRule, ModelInferenceRule>();
 	
 	public ModelRulesBlock(IProofRulesBlock block, IModelElement parent){
 		this.block = block;
@@ -72,6 +77,44 @@ public class ModelRulesBlock implements IModelElement{
 			}
 		}
 		return new Object[0];
+	}
+
+	/**
+	 * 
+	 */
+	public void processChildren() {
+		rewRules.clear();
+		infRules.clear();
+		try {
+			for(IRewriteRule rule : block.getRewriteRules()){
+				addRewriteRule(rule);
+			}
+			for (IInferenceRule rule: block.getInferenceRules()){
+				addInferenceRule(rule);
+			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	/**
+	 * @param rule
+	 */
+	private void addRewriteRule(IRewriteRule rule) {
+			rewRules.put(rule, new ModelRewriteRule(rule, this));
+		
+		
+	}
+	
+	/**
+	 * @param rule
+	 */
+	private void addInferenceRule(IInferenceRule rule) {
+			infRules.put(rule, new ModelInferenceRule(rule, this));
+		
+		
 	}
 
 }

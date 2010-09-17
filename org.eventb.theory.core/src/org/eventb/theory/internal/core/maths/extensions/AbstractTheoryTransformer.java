@@ -17,64 +17,73 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.deploy.IDeployedTheoryRoot;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
-import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author maamria
- * 
+ *
  */
-public class TheoryTransformer extends
-		DefinitionTransformer<IDeployedTheoryRoot> {
+public abstract class AbstractTheoryTransformer<E extends IInternalElement> 
+extends DefinitionTransformer<E>{
 
-	private IDeployedTheoryRoot root;
 	private ITypeEnvironment typeEnvironment;
-
-	@Override
-	public IInternalElementType<IDeployedTheoryRoot> getElementType()
-			throws CoreException {
-		// TODO Auto-generated method stub
-		return IDeployedTheoryRoot.ELEMENT_TYPE;
-	}
+	private E source;
 
 	protected void initialise() throws CoreException {
-		ISCTypeParameter[] typeParameters = root.getSCTypeParameters();
+		ISCTypeParameter[] typeParameters = getTypeParameters(source);
 		for (ISCTypeParameter typeParameter : typeParameters) {
 			typeEnvironment.addGivenSet(typeParameter.getIdentifierString());
 		}
 	}
+
+	protected abstract ISCNewOperatorDefinition[] getOperators(E source)
+		throws CoreException;
 	
+	protected abstract ISCDatatypeDefinition[] getDatatypes(E source)
+		throws CoreException;
+
+	protected abstract ISCTypeParameter[] getTypeParameters(E source) 
+		throws CoreException;
+
 	@Override
-	public Set<IFormulaExtension> transform(IDeployedTheoryRoot root,
+	public Set<IFormulaExtension> transform(E source,
 			FormulaFactory factory, ITypeEnvironment typeEnvironment)
 			throws CoreException {
-		
+
 		this.typeEnvironment = typeEnvironment;
-		this.root = root;
-		
+		this.source = source;
+
 		initialise();
-		
-		Set<IFormulaExtension> extensions =  new LinkedHashSet<IFormulaExtension>();
-		
-		ISCDatatypeDefinition datatypeDefinitions[] = root.getSCDatatypeDefinitions();
-		
+
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
+
+		ISCDatatypeDefinition datatypeDefinitions[] = getDatatypes(source);
+
 		for (ISCDatatypeDefinition definition : datatypeDefinitions) {
 			DatatypeTransformer transformer = new DatatypeTransformer();
-			extensions.addAll(transformer.transform(definition, factory, typeEnvironment));
+			Set<IFormulaExtension> addedExtensions = transformer.transform(
+					definition, factory, typeEnvironment);
+			if (addedExtensions != null) {
+				extensions.addAll(addedExtensions);
+			}
 			factory = factory.withExtensions(extensions);
-			typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			typeEnvironment = MathExtensionsUtilities
+					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 		}
-		ISCNewOperatorDefinition operatorDefinitions[] = root
-				.getSCNewOperatorDefinitions();
+		ISCNewOperatorDefinition operatorDefinitions[] = getOperators(source);
 		for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 			OperatorTransformer transformer = new OperatorTransformer();
-			extensions.addAll(transformer.transform(definition, factory,typeEnvironment));
+			Set<IFormulaExtension> addedExtensions = transformer.transform(
+					definition, factory, typeEnvironment);
+			if (addedExtensions != null) {
+				extensions.addAll(addedExtensions);
+			}
 			factory = factory.withExtensions(extensions);
-			typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			typeEnvironment = MathExtensionsUtilities
+					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 
 		}
 		return extensions;
 	}
-
 }

@@ -929,10 +929,22 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="fr.systerel.explorer.IElementNode">
+                     value="org.eventb.theory.core.IRewriteRule">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.theory.core.IInferenceRule">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.theory.core.INewOperatorDefinition">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.theory.core.ITheorem">
                </instanceof>
                <instanceof
                      value="org.eventb.theory.core.ITheoryRoot">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>

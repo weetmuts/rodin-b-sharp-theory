@@ -20,10 +20,26 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IDefinitionalElement extends IInternalElement{
 	
+	/**
+	 * Returns whether the definitional attribute is set or not.
+	 * @return whether the attribute is present
+	 * @throws RodinDBException
+	 */
 	boolean hasDefinitionalAttribute() throws RodinDBException;
 	
+	/**
+	 * Returns whether this element is definitional.
+	 * @return whether this element is definitional
+	 * @throws RodinDBException
+	 */
 	boolean isDefinitional() throws RodinDBException;
 	
+	/**
+	 * Sets this element definitional attribute to the given value.
+	 * @param isDefinitional whether the element is definitional
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setDefinitional(boolean isDefinitional, IProgressMonitor monitor) throws RodinDBException; 
 
 }

@@ -874,9 +874,14 @@
   <extension
         point="org.rodinp.core.internalElementTypes">
      <internalElementType
-           class="org.eventb.theory.core.deploy.basis.DeployedTheoryRoot"
+           class="org.eventb.theory.core.basis.DeployedTheoryRoot"
            id="deployedTheoryRoot"
            name="%deployedTheoryRoot">
+     </internalElementType>
+     <internalElementType
+           class="org.eventb.theory.core.basis.InternalTheory"
+           id="internalTheory"
+           name="%internalTheory">
      </internalElementType>
   </extension>
   <extension

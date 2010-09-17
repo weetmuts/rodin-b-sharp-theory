@@ -38,6 +38,7 @@ public class TheoryModule extends SCProcessorModule {
 
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
+		theoryRoot.setFormulaFactory(null);
 		endProcessorModules(element, repository, monitor);
 		removeStates(repository);
 	}
@@ -52,7 +53,12 @@ public class TheoryModule extends SCProcessorModule {
 			throws CoreException {
 		// add cond extension
 		// TODO process imports when they are added
-		repository.setFormulaFactory(FormulaFactory.getInstance(MathExtensionsUtilities.singletonExtension(FormulaFactory.getCond())));
+		// add COND
+		repository.setFormulaFactory(
+				repository.getFormulaFactory().withExtensions(
+						(MathExtensionsUtilities.singletonExtension(FormulaFactory.getCond()))
+						)
+				);
 		accuracyInfo = new TheoryAccuracyInfo();
 		final TheoryLabelSymbolTable labelSymbolTable = 
 			new TheoryLabelSymbolTable(

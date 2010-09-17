@@ -20,8 +20,6 @@ import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
@@ -30,13 +28,13 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * @author maamria
  *
  */
-public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule<IExpressionExtension>
+public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule
 implements IExpressionTypeChecker{
 	
 	protected Type resultantType;
 	
-	public ExpressionOperatorTypingRule(IExpressionExtension extension, Type resultantType) {
-		super(extension);
+	public ExpressionOperatorTypingRule(Type resultantType, Predicate wdPredicate) {
+		super(wdPredicate);
 		this.resultantType = resultantType;
 	}
 
@@ -110,11 +108,17 @@ implements IExpressionTypeChecker{
 		return null;
 	}
 	
-	
 
 	@Override
-	protected IExpressionExtension getExtension(IFormulaExtension extension) {
-		return (IExpressionExtension) extension;
+	public Type getResultantType() {
+		// TODO Auto-generated method stub
+		return resultantType;
+	}
+
+	@Override
+	public Predicate getWDPredicate() {
+		// TODO Auto-generated method stub
+		return wdPredicate;
 	}
 	
 }

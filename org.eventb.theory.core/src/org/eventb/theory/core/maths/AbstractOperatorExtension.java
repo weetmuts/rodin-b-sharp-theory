@@ -20,11 +20,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
@@ -34,41 +31,72 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * Basic implementation for an operator extension.
  * 
  * @author maamria
- * 
- * @param F the type of the extension
  *
  */
-abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements IOperatorExtension{
+abstract class AbstractOperatorExtension implements IOperatorExtension{
 	
 	private static String VAR_TEMP_NAME = "_z_";
-	
+	/**
+	 * Operator ID
+	 */
 	protected String operatorID;
+	/**
+	 * Syntax symbol
+	 */
 	protected String syntax;
+	/**
+	 * Formula type
+	 */
 	protected FormulaType formulaType;
+	/**
+	 * Notation
+	 */
 	protected Notation notation;
-	protected Predicate wdCondition;
+	/**
+	 * Well-definedness condition
+	 */
+	protected IOperatorTypingRule operatorTypingRule;
+	/**
+	 * Direct definition if any
+	 */
 	protected Formula<?> directDefinition;
-	protected List<IOperatorArgument> opArguments;
-	protected IOperatorTypingRule<F> operatorTypeRule;
+	/**
+	 * Operator properties
+	 */
 	protected boolean isCommutative = false;
 	protected boolean isAssociative = false;
+	/**
+	 * Source could be <code>IRodinElement</code>
+	 */
 	protected Object source;
 	
+	/**
+	 * Constructs an operator extension using the supplied details.
+	 * @param operatorID the operator ID
+	 * @param syntax the syntax symbol
+	 * @param formulaType formula type
+	 * @param notation the notaion
+	 * @param isCommutative whether operator is commutative
+	 * @param isAssocaitive whether operator is associative
+	 * @param operatorTypingRule the typing rule
+	 * @param directDefinition the definition if any
+	 * @param source the origin
+	 */
 	protected AbstractOperatorExtension(
 			String operatorID, String syntax,
 			FormulaType formulaType,
 			Notation notation, boolean isCommutative,
-			Formula<?> directDefinition, Predicate wdCondition, 
-			List<IOperatorArgument> opArguments, Object source){
+			boolean isAssociative, IOperatorTypingRule operatorTypingRule,
+			Formula<?> directDefinition, Object source){
 		
 		this.operatorID = operatorID;
 		this.syntax =syntax;
 		this.formulaType = formulaType;
 		this.notation = notation;
 		this.directDefinition =directDefinition;
-		this.wdCondition = wdCondition;
-		this.opArguments = opArguments;
 		this.isCommutative = isCommutative;
+		this.isAssociative = isAssociative;
+		this.operatorTypingRule = operatorTypingRule;
 		this.source = source;
 	}
 	
@@ -84,14 +112,9 @@ abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements
 
 	@Override
 	public String getGroupId() {
-		return MathExtensionsUtilities.getGroupFor(formulaType, notation, opArguments.size());
+		return MathExtensionsUtilities.getGroupFor(formulaType, notation, operatorTypingRule.getArity());
 	}
 
-	@Override
-	public Predicate getWDPredicate(IExtendedFormula formula,
-			IWDMediator wdMediator) {
-		return operatorTypeRule.getWDPredicate(formula, wdMediator);
-	}
 	
 	@Override
 	public Object getOrigin() {
@@ -105,14 +128,17 @@ abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements
 	 * @return the verification condition
 	 */
 	public Predicate getAssociativityChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
+		if(directDefinition == null){
+			return MathExtensionsUtilities.BTRUE;
+		}
 		if(!isAssociative){
 			return null;
 		}
 		DLib library = DLib.mDLib(factory);
-		assert (opArguments.size() == 2);
+		assert (operatorTypingRule.getArity() == 2);
 		IOperatorArgument[] opArgs = new IOperatorArgument[2];
 		int i = 0;
-		for (IOperatorArgument operatorArgument : opArguments) {
+		for (IOperatorArgument operatorArgument : operatorTypingRule.getOperatorArguments()) {
 			opArgs[i] = operatorArgument;
 			i++;
 		}
@@ -174,6 +200,9 @@ abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements
 	 * @return the verification condition
 	 */
 	public Predicate getWellDefinednessChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
+		if(directDefinition == null){
+			return MathExtensionsUtilities.BTRUE;
+		}
 		return getCorePredicate(
 				directDefinition.getWDPredicate(factory), factory, typeEnvironment);
 	}
@@ -185,14 +214,17 @@ abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements
 	 * @return the verification condition
 	 */
 	public Predicate getCommutativityChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
+		if(directDefinition == null){
+			return MathExtensionsUtilities.BTRUE;
+		}
 		if(!isCommutative){
 			return null;
 		}
 		DLib library = DLib.mDLib(factory);
-		assert (opArguments.size() == 2);
+		assert (operatorTypingRule.getArity() == 2);
 		IOperatorArgument[] opArgs = new IOperatorArgument[2];
 		int i = 0;
-		for (IOperatorArgument operatorArgument : opArguments) {
+		for (IOperatorArgument operatorArgument : operatorTypingRule.getOperatorArguments()) {
 			opArgs[i] = operatorArgument;
 			i++;
 		}
@@ -213,12 +245,15 @@ abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements
 	protected Predicate getCorePredicate(Predicate condition, 
 			FormulaFactory factory, ITypeEnvironment typeEnvironment){
 		DLib library = DLib.mDLib(factory);
-		Predicate boundPred = library.makeImp(wdCondition, 
+		if(operatorTypingRule.getWDPredicate().equals(condition)){
+			return library.True();
+		}
+		Predicate boundPred = library.makeImp(operatorTypingRule.getWDPredicate(), 
 				condition);
 		List<Predicate> typingPreds = new ArrayList<Predicate>();
 		List<FreeIdentifier> identifiers = new ArrayList<FreeIdentifier>();
 		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();
-		for(IOperatorArgument arg : opArguments){
+		for(IOperatorArgument arg : operatorTypingRule.getOperatorArguments()){
 			typingPreds.add(
 					factory.makeRelationalPredicate(
 							Formula.IN, 
@@ -241,11 +276,6 @@ abstract class AbstractOperatorExtension<F extends IFormulaExtension> implements
 		ITypeCheckResult result = pred.typeCheck(typeEnvironment);
 		assert !result.hasProblem();
 		return pred;
-	}
-	
-	protected Predicate getUnquantifiedPredicate(Predicate pred , 
-			FormulaFactory factory, ITypeEnvironment typeEnvironment){
-		return null;
 	}
 	
 	protected Formula<?> swap(FreeIdentifier ident1, FreeIdentifier ident2, 

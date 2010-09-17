@@ -64,15 +64,5 @@ class SimpleDatatypeExtension implements IDatatypeExtension{
 		// no constrcutors
 		
 	}
-	
-	public boolean equals(Object o){
-		if(!(o instanceof SimpleDatatypeExtension)){
-			return false;
-		}
-		SimpleDatatypeExtension datatypeExtension = (SimpleDatatypeExtension) o;
-		boolean equals =
-			this.identifier.equals(datatypeExtension.identifier);
-		return equals;
-	}
 
 }

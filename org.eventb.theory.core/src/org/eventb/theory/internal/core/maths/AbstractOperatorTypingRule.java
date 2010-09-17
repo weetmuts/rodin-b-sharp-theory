@@ -28,7 +28,6 @@ import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -39,24 +38,22 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * A basic implementation of a typing rule for operators.
  * 
  * @author maamria
- *
- * @param <E> the type of the formula extension
+ * 
  * @see IPredicateExtension
  * @see IExpressionExtension
  */
-public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
-		implements IOperatorTypingRule<E> {
+public abstract class AbstractOperatorTypingRule
+		implements IOperatorTypingRule {
 
 	protected List<IOperatorArgument> argumentsTypes;
 	protected int arity = 0;
 	protected List<GivenType> typeParameters;
 	protected Predicate wdPredicate;
-	protected E extension;
 
-	public AbstractOperatorTypingRule(IFormulaExtension extension) {
+	public AbstractOperatorTypingRule(Predicate wdPredicate) {
 		this.argumentsTypes = new ArrayList<IOperatorArgument>();
-		this.extension = getExtension(extension);
 		this.typeParameters = new ArrayList<GivenType>();
+		this.wdPredicate = wdPredicate;
 	}
 
 	public void addOperatorArgument(IOperatorArgument arg) {
@@ -99,12 +96,17 @@ public abstract class AbstractOperatorTypingRule<E extends IFormulaExtension>
 		return CoreUtilities.conjunctPredicates(new Predicate[]{actWDPredWD,actWDPred}, factory);
 	}
 
-	/**
-	 *	Returns the formula extension corresponding to the operator associated with this typing rule.
-	 * @param extension the extension
-	 * @return the formula exrtension
-	 */
-	protected abstract E getExtension(IFormulaExtension extension);
+	@Override
+	public List<GivenType> getTypeParameters() {
+		// TODO Auto-generated method stub
+		return typeParameters;
+	}
+
+	@Override
+	public List<IOperatorArgument> getOperatorArguments() {
+		// TODO Auto-generated method stub
+		return argumentsTypes;
+	}
 
 	/**
 	 * Unifies the argument type with the type of the actual type (i.e., after extended expression is created from this extension).

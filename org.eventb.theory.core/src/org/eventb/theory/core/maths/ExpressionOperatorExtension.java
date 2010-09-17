@@ -7,63 +7,57 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
-import java.util.List;
-
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 import org.eventb.theory.internal.core.maths.ExpressionOperatorTypingRule;
-import org.eventb.theory.internal.core.maths.IOperatorArgument;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
 
 /**
  * @author maamria
  * 
  */
 @SuppressWarnings("restriction")
-class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpressionExtension>
+class ExpressionOperatorExtension extends AbstractOperatorExtension
 		implements IExpressionExtension {
-
-	public ExpressionOperatorExtension(
-			String operatorID, String syntax, FormulaType formulaType,
-			Notation notation, boolean isAssociative, boolean isCommutative,
-			Expression directDefinition, Predicate wdCondition,
-			List<IOperatorArgument> opArguments, List<GivenType> typeParameters, Object source) {
+	
+	public ExpressionOperatorExtension(String operatorID, String syntax,
+			FormulaType formulaType, Notation notation, boolean isCommutative,
+			boolean isAssociative, IOperatorTypingRule typingRule,
+			Expression directDefinition, Object source){
 		
-		super(operatorID, syntax, formulaType, notation, isCommutative,
-				directDefinition, wdCondition, opArguments, source);
-
-		this.isAssociative = isAssociative;
-		this.operatorTypeRule = new ExpressionOperatorTypingRule(this, directDefinition.getType());
-		List<IOperatorArgument> sortedOperatorArguments = 
-			CoreUtilities.getSortedList(opArguments);
-		for(IOperatorArgument arg : sortedOperatorArguments){
-			this.operatorTypeRule.addOperatorArgument(arg);
-		}
-		this.operatorTypeRule.addTypeParameters(typeParameters);
-		this.operatorTypeRule.setWDPredicate(wdCondition);
+		super(operatorID, syntax, formulaType, notation, isCommutative, isAssociative, 
+				typingRule, directDefinition, source);
 	}
-
+	
 	@Override
 	public IExtensionKind getKind() {
 		return new ExtensionKind(notation, formulaType,
 				ExtensionFactory.makeAllExpr(ExtensionFactory.makeArity(
-						opArguments.size(), opArguments.size())), isAssociative);
+						operatorTypingRule.getArity(), operatorTypingRule.getArity())), 
+						isAssociative);
 
 	}
 
+	@Override
+	public Predicate getWDPredicate(IExtendedFormula formula,
+			IWDMediator wdMediator) {
+		return operatorTypingRule.getWDPredicate(formula, wdMediator);
+	}
+	
 	@Override
 	public boolean conjoinChildrenWD() {
 		return true;
@@ -83,19 +77,19 @@ class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpressionE
 	@Override
 	public boolean verifyType(Type proposedType, Expression[] childExprs,
 			Predicate[] childPreds) {
-		return getTypingRule().verifyType(proposedType, childExprs, childPreds);
+		return ((ExpressionOperatorTypingRule)operatorTypingRule).verifyType(proposedType, childExprs, childPreds);
 	}
 
 	@Override
 	public Type typeCheck(ExtendedExpression expression,
 			ITypeCheckMediator tcMediator) {
-		return getTypingRule().typeCheck(expression, tcMediator);
+		return ((ExpressionOperatorTypingRule)operatorTypingRule).typeCheck(expression, tcMediator);
 	}
 
 	@Override
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator) {
-		return getTypingRule().synthesizeType(childExprs, childPreds, mediator);
+		return ((ExpressionOperatorTypingRule)operatorTypingRule).synthesizeType(childExprs, childPreds, mediator);
 	}
 
 	@Override
@@ -103,17 +97,27 @@ class ExpressionOperatorExtension extends AbstractOperatorExtension<IExpressionE
 		return false;
 	}
 	
-	public boolean equals(Object o){
-		if(!(o instanceof ExpressionOperatorExtension)){
-			return false;
-		}
-		ExpressionOperatorExtension operatorExtension = (ExpressionOperatorExtension) o;
-		boolean equals =
-			this.operatorID.equals(operatorExtension.operatorID);
-		return equals;
+	@Override
+	public boolean isAssociative() {
+		// TODO Auto-generated method stub
+		return isAssociative;
 	}
 
-	protected ExpressionOperatorTypingRule getTypingRule(){
-		return (ExpressionOperatorTypingRule) operatorTypeRule;
+	@Override
+	public FormulaType getFormulaType() {
+		// TODO Auto-generated method stub
+		return formulaType;
+	}
+
+	@Override
+	public Notation getNotation() {
+		// TODO Auto-generated method stub
+		return notation;
+	}
+
+	@Override
+	public IOperatorTypingRule getTypingRule() {
+		// TODO Auto-generated method stub
+		return operatorTypingRule;
 	}
 }

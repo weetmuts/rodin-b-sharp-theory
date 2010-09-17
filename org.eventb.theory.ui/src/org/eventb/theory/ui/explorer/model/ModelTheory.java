@@ -10,8 +10,10 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IDatatypeDefinition;
+import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IProofRulesBlock;
+import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.ITheorem;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeParameter;
@@ -22,10 +24,7 @@ import org.rodinp.core.RodinDBException;
 import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 
-/**
- * This class represents a Context in the model
- *
- */
+
 @SuppressWarnings("restriction")
 public class ModelTheory extends ModelPOContainer{
 	
@@ -41,9 +40,11 @@ public class ModelTheory extends ModelPOContainer{
 	public final TheoryModelElementNode thm_node;
 	
 	private HashMap<IDatatypeDefinition, ModelDatatype> datatypes = new HashMap<IDatatypeDefinition, ModelDatatype>();
-	private HashMap<IProofRulesBlock, ModelRulesBlock> blocks = new HashMap<IProofRulesBlock, ModelRulesBlock>();
-
-	private ITheoryRoot root;
+	public HashMap<IProofRulesBlock, ModelRulesBlock> blocks = new HashMap<IProofRulesBlock, ModelRulesBlock>();
+	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
+	private HashMap<INewOperatorDefinition, ModelOperator> operators = new HashMap<INewOperatorDefinition, ModelOperator>();
+	
+	private ITheoryRoot theoryRoot;
 
 	//indicate whether the poRoot or the psRoot should be processed freshly
 	public boolean psNeedsProcessing = true;
@@ -55,7 +56,7 @@ public class ModelTheory extends ModelPOContainer{
 	 * @param root	The ContextRoot that this ModelContext is based on.
 	 */
 	public ModelTheory(ITheoryRoot root){
-		this.root = root;
+		this.theoryRoot = root;
 		typepar_node = new TheoryModelElementNode(ITypeParameter.ELEMENT_TYPE, this);
 		datatype_node = new TheoryModelElementNode(IDatatypeDefinition.ELEMENT_TYPE, this);
 		po_node = new TheoryModelElementNode(IPSStatus.ELEMENT_TYPE, this);
@@ -75,25 +76,59 @@ public class ModelTheory extends ModelPOContainer{
 		// TODO children which have proof obligations needs to be processed
 		datatypes.clear();
 		blocks.clear();
+		theorems.clear();
+		operators.clear();
 		try {
-			for (IDatatypeDefinition dtd : root.getDatatypeDefinitions()) {
+			for (IDatatypeDefinition dtd : theoryRoot.getDatatypeDefinitions()) {
 				addDatatype(dtd);
 			}
-			for (IProofRulesBlock block : root.getProofRulesBlocks()){
+			for (IProofRulesBlock block : theoryRoot.getProofRulesBlocks()){
 				addBlock(block);
+				processBlock(block);
+			}
+			for(ITheorem thm : theoryRoot.getTheorems()){
+				addThm(thm);
+			}
+			for(INewOperatorDefinition def: theoryRoot.getNewOperatorDefinitions()){
+				addOp(def);
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when accessing datatypes of "+root);
+			UIUtils.log(e, "when accessing datatypes of "+theoryRoot);
 		}
 	}
 	
 	
+	/**
+	 * @param block
+	 */
+	public void processBlock(IProofRulesBlock block) {
+		ModelRulesBlock blockModel;
+		if (!blocks.containsKey(block)) {
+			blockModel = new ModelRulesBlock(block, this);
+			blocks.put(block, blockModel);
+		} else {
+			blockModel = blocks.get(block);
+		}
+		blockModel.processChildren();
+		
+	}
+
+
+
 	public void addDatatype(IDatatypeDefinition def) {
 		datatypes.put(def, new ModelDatatype(def, this));
 	}
 	
 	public void addBlock(IProofRulesBlock block) {
 		blocks.put(block, new ModelRulesBlock(block, this));
+	}
+	
+	public void addThm(ITheorem thm) {
+		theorems.put(thm, new ModelTheorem(thm, this));
+	}
+	
+	public void addOp(INewOperatorDefinition op) {
+		operators.put(op, new ModelOperator(op, this));
 	}
 	
 	/**
@@ -107,7 +142,7 @@ public class ModelTheory extends ModelPOContainer{
 			try {
 				//clear old POs
 				proofObligations.clear();
-				IPORoot root = this.root.getPORoot();
+				IPORoot root = this.theoryRoot.getPORoot();
 				if (root.exists()) {
 					IPOSequent[] sequents = root.getSequents();
 					int pos = 1;
@@ -121,14 +156,14 @@ public class ModelTheory extends ModelPOContainer{
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this context.
-							if (root.isAncestorOf(source)) {
+							if (theoryRoot.isAncestorOf(source)) {
 								processSource(source, po);
 							}
 						}
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof obligations of " +root);
+				UIUtils.log(e, "when processing proof obligations of " +theoryRoot);
 			}
 			poNeedsProcessing = false;
 		}
@@ -142,7 +177,7 @@ public class ModelTheory extends ModelPOContainer{
 	public void processPSRoot(){
 		if (psNeedsProcessing) {
 			try {
-				IPSRoot root = this.root.getPSRoot();
+				IPSRoot root = this.theoryRoot.getPSRoot();
 				if (root.exists()) {
 					IPSStatus[] stats = root.getStatuses();
 					for (IPSStatus status : stats) {
@@ -154,7 +189,7 @@ public class ModelTheory extends ModelPOContainer{
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof statuses of " +root);
+				UIUtils.log(e, "when processing proof statuses of " +theoryRoot);
 			}
 			psNeedsProcessing = false;
 		}
@@ -166,7 +201,7 @@ public class ModelTheory extends ModelPOContainer{
 	 */
 	@Override
 	public IModelElement getModelParent() {
-		return TheoryModelController.getProject(root.getRodinProject());
+		return TheoryModelController.getProject(theoryRoot.getRodinProject());
 	}
 	
 	
@@ -208,7 +243,7 @@ public class ModelTheory extends ModelPOContainer{
 
 	@Override
 	public IRodinElement getInternalElement() {
-		return root;
+		return theoryRoot;
 	}
 	
 	/**
@@ -220,7 +255,46 @@ public class ModelTheory extends ModelPOContainer{
 	 *            The proof obligation the source belongs to
 	 */
 	protected void processSource (IRodinElement source, ModelProofObligation po) {
-		// TODO concerns elements with associated POs
+		if (source instanceof ITheorem) {
+			if (theorems.containsKey(source)) {
+				ModelTheorem thm = theorems.get(source);
+				po.addTheorem(thm);
+				thm.addProofObligation(po);
+			}
+			
+		}
+		if(source instanceof INewOperatorDefinition){
+			if(operators.containsKey(source)){
+				ModelOperator op = operators.get(source);
+				po.addOperator(op);
+				op.addProofObligation(po);
+			}
+		}
+		if(source instanceof IRewriteRule){
+			IProofRulesBlock parent = (IProofRulesBlock) source.getParent();
+			if(blocks.containsKey(parent)){
+				ModelRulesBlock modelBlock = blocks.get(parent);
+				if(modelBlock.rewRules.containsKey(source)){
+					ModelRewriteRule modelRule = modelBlock.rewRules.get(source);
+					po.addRewRule(modelRule);
+					modelRule.addProofObligation(po);
+					
+				}
+			}
+		}
+		
+		if(source instanceof IInferenceRule){
+			IProofRulesBlock parent = (IProofRulesBlock) source.getParent();
+			if(blocks.containsKey(parent)){
+				ModelRulesBlock modelBlock = blocks.get(parent);
+				if(modelBlock.infRules.containsKey(source)){
+					ModelInferenceRule modelRule = modelBlock.infRules.get(source);
+					po.addInfRule(modelRule);
+					modelRule.addProofObligation(po);
+					
+				}
+			}
+		}
 		
 	}
 	
@@ -229,6 +303,21 @@ public class ModelTheory extends ModelPOContainer{
 			return datatypes.get(element);
 		else if (element instanceof IProofRulesBlock)
 			return blocks.get(element);
+		else if(element instanceof ITheorem)
+			return theorems.get(element);
+		else if(element instanceof INewOperatorDefinition){
+			return operators.get(element);
+		}
+		else if(element instanceof IRewriteRule){
+			IProofRulesBlock parent = (IProofRulesBlock) element.getParent();
+			ModelRulesBlock model = blocks.get(parent);
+			return model.rewRules.get(element);
+		}
+		else if(element instanceof IInferenceRule){
+			IProofRulesBlock parent = (IProofRulesBlock) element.getParent();
+			ModelRulesBlock model = blocks.get(parent);
+			return model.infRules.get(element);
+		}
 		return null;
 	}
 
@@ -239,7 +328,7 @@ public class ModelTheory extends ModelPOContainer{
 	 */
 	@Override
 	public Object getParent(boolean complex) {
-		return root.getRodinProject();
+		return theoryRoot.getRodinProject();
 	}
 
 
@@ -280,7 +369,7 @@ public class ModelTheory extends ModelPOContainer{
 	 */
 	public IEventBRoot getTheoryRoot() {
 		// TODO Auto-generated method stub
-		return root;
+		return theoryRoot;
 	}
 	
 

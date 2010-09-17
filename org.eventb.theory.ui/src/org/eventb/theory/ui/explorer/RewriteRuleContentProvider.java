@@ -25,5 +25,6 @@ public class RewriteRuleContentProvider extends AbstractContentProvider {
 		}
 		return null;
 	}
+	
 
 }

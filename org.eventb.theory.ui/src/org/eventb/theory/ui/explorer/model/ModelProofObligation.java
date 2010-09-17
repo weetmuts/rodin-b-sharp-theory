@@ -1,5 +1,8 @@
 package org.eventb.theory.ui.explorer.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
@@ -23,6 +26,12 @@ public class ModelProofObligation extends fr.systerel.internal.explorer.model.Mo
 	private int position;
 	private boolean reviewed = false;
 	private ModelTheory theory;
+	
+	private List<ModelTheorem> theorems = new LinkedList<ModelTheorem>();
+	private List<ModelOperator> operators = new LinkedList<ModelOperator>();
+	private List<ModelRewriteRule> rewRules = new LinkedList<ModelRewriteRule>();
+	private List<ModelInferenceRule> infRules = new LinkedList<ModelInferenceRule>();
+	
 	public ModelProofObligation(IPOSequent sequent, int position) {
 		super(sequent, position);
 		this.internal_sequent = sequent;
@@ -113,4 +122,52 @@ public class ModelProofObligation extends fr.systerel.internal.explorer.model.Mo
 		theory = thy;
 	}
 
+	public ModelTheorem[] getTheorems() {
+		return theorems.toArray(new ModelTheorem[theorems.size()]);
+	}
+
+	public void addTheorem(ModelTheorem thm) {
+		theorems.add(thm);
+	}
+
+	public void removeTheorems(ModelTheorem thm) {
+		theorems.remove(thm);
+	}
+	
+	public ModelOperator[] getOperators() {
+		return operators.toArray(new ModelOperator[operators.size()]);
+	}
+
+	public void addOperator(ModelOperator op) {
+		operators.add(op);
+	}
+
+	public void removeOperators(ModelOperator op) {
+		operators.remove(op);
+	}
+	
+	public ModelRewriteRule[] getRewRules() {
+		return rewRules.toArray(new ModelRewriteRule[rewRules.size()]);
+	}
+
+	public void addRewRule(ModelRewriteRule rew) {
+		rewRules.add(rew);
+	}
+
+	public void removeRewRules(ModelRewriteRule rule) {
+		rewRules.remove(rule);
+	}
+	
+	public ModelInferenceRule[] getInfRules() {
+		return infRules.toArray(new ModelInferenceRule[infRules.size()]);
+	}
+
+	public void addInfRule(ModelInferenceRule rule) {
+		infRules.add(rule);
+	}
+
+	public void removeInfRules(ModelInferenceRule rule) {
+		infRules.remove(rule);
+	}
+	
 }

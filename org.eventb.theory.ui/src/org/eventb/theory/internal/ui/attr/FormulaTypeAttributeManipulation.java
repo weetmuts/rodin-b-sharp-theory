@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation;
 import org.eventb.theory.core.IFormulaTypeElement;
-import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.internal.ui.Messages;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -58,10 +58,10 @@ public class FormulaTypeAttributeManipulation extends AbstractBooleanManipulatio
 	public void setValue(IRodinElement element, String value,
 			IProgressMonitor monitor) throws RodinDBException {
 		if(value.equals(TRUE)){
-			asFormulaTypeElement(element).setFormulaType(TheoryCoreFacade.getFormulaType(true), monitor);
+			asFormulaTypeElement(element).setFormulaType(TheoryUIUtils.getFormulaType(true), monitor);
 		}
 		else if(value.equals(FALSE)){
-			asFormulaTypeElement(element).setFormulaType(TheoryCoreFacade.getFormulaType(false), monitor);
+			asFormulaTypeElement(element).setFormulaType(TheoryUIUtils.getFormulaType(false), monitor);
 		}
 		else {
 			logNotPossibleValues(FORMULA_TYPE_ATTRIBUTE, value);

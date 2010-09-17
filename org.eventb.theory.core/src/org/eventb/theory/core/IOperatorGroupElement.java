@@ -7,16 +7,20 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.IAccuracyElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.ITraceableElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria
  *
  */
-public interface ISCRule extends ILabeledElement, IAutomaticElement, IInteractiveElement, 
-IToolTipElement, IDescriptionElement, ITraceableElement, IAccuracyElement, IDefinitionalElement,
-IValidatedElement{
+public interface IOperatorGroupElement extends IInternalElement{
 
+	boolean hasOperatorGroup() throws RodinDBException;
+	
+	String getOperatorGroup() throws RodinDBException;
+	
+	void setOperatorGroup(String newGroup, IProgressMonitor monitor)throws RodinDBException;
+	
 }

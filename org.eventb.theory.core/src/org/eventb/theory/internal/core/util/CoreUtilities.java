@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.ASTProblem;
@@ -44,7 +45,17 @@ import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
 import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.IFormulaExtensionsSource;
+import org.eventb.theory.core.IInternalTheory;
+import org.eventb.theory.core.ISCConstructorArgument;
+import org.eventb.theory.core.ISCDatatypeConstructor;
+import org.eventb.theory.core.ISCDatatypeDefinition;
+import org.eventb.theory.core.ISCDirectOperatorDefinition;
+import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ISCTypeArgument;
+import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
@@ -919,5 +930,119 @@ public class CoreUtilities {
 		}
 		
 		return newElement;
+	}
+	
+	/**
+	 * Copies the mathematical extensions in the source to the Event-B root
+	 * specified.
+	 * @param target the root target
+	 * @param source the source of mathematical extensions
+	 * @param addAsInternalTheory whether to copy extensions straight to the root or to an internal theory in the root
+	 * @throws CoreException
+	 */
+	public static void copyMathematicalExtensions(IEventBRoot target,
+			IFormulaExtensionsSource source, boolean addAsInternalTheory) throws CoreException {
+		IInternalElement actualCopyTarget = null;
+		if(addAsInternalTheory){
+			actualCopyTarget = target.getInternalElement(
+					IInternalTheory.ELEMENT_TYPE, source.getElementName());
+			actualCopyTarget.create(null, null);
+		}
+		else {
+			actualCopyTarget = target;
+		}
+		// copy carrier sets
+		// //////////////////////////////
+		ISCTypeParameter[] typeParameters = source.getSCTypeParameters();
+		for (ISCTypeParameter typeParameter : typeParameters) {
+			duplicate(typeParameter, ISCTypeParameter.ELEMENT_TYPE,
+					actualCopyTarget, null);
+		}
+		// copy datatypes
+		// //////////////////////////////
+		ISCDatatypeDefinition[] datatypeDefinitions = source
+				.getSCDatatypeDefinitions();
+		for (ISCDatatypeDefinition definition : datatypeDefinitions) {
+			if(definition.hasHasErrorAttribute() &&
+					definition.hasError()){
+				continue;
+			}
+			ISCDatatypeDefinition newDefinition = duplicate(definition,
+					ISCDatatypeDefinition.ELEMENT_TYPE, actualCopyTarget, null,
+					TheoryAttributes.HAS_ERROR_ATTRIBUTE);
+			ISCTypeArgument[] typeArguments = definition.getTypeArguments();
+			for (ISCTypeArgument typeArgument : typeArguments) {
+				duplicate(typeArgument, ISCTypeArgument.ELEMENT_TYPE,
+						newDefinition, null);
+			}
+
+			ISCDatatypeConstructor[] datatypeConstructors = definition
+					.getConstructors();
+			for (ISCDatatypeConstructor constructor : datatypeConstructors) {
+				ISCDatatypeConstructor newConstructor = duplicate(constructor,
+						ISCDatatypeConstructor.ELEMENT_TYPE, newDefinition,
+						null);
+				ISCConstructorArgument arguments[] = constructor
+						.getConstructorArguments();
+				for (ISCConstructorArgument argument : arguments) {
+					duplicate(argument, ISCConstructorArgument.ELEMENT_TYPE,
+							newConstructor, null);
+				}
+			}
+
+		}
+		// copy operators
+		// //////////////////////////////
+		ISCNewOperatorDefinition[] operatorDefinitions = source
+				.getSCNewOperatorDefinitions();
+		for (ISCNewOperatorDefinition operatorDefinition : operatorDefinitions) {
+			if(operatorDefinition.hasHasErrorAttribute() &&
+					operatorDefinition.hasError()){
+				continue;
+			}
+			ISCNewOperatorDefinition newDefinition = duplicate(
+					operatorDefinition, ISCNewOperatorDefinition.ELEMENT_TYPE,
+					actualCopyTarget, null, TheoryAttributes.HAS_ERROR_ATTRIBUTE);
+			ISCOperatorArgument[] operatorArguments = operatorDefinition
+					.getOperatorArguments();
+			for (ISCOperatorArgument operatorArgument : operatorArguments) {
+				duplicate(operatorArgument, ISCOperatorArgument.ELEMENT_TYPE,
+						newDefinition, null);
+			}
+			ISCDirectOperatorDefinition[] directDefinitions = operatorDefinition
+					.getDirectOperatorDefinitions();
+			for (ISCDirectOperatorDefinition directDefinition : directDefinitions) {
+				duplicate(directDefinition,
+						ISCDirectOperatorDefinition.ELEMENT_TYPE,
+						newDefinition, null);
+			}
+
+		}
+	}
+	
+	/**
+	 * Returns whether the given root was generated from a theory file, that is indeed true if
+	 * the returned theory is not <code>null</code>.
+	 * @param root the Event-B root
+	 * @return the corresponding SC theory or <code>null</code>
+	 */
+	public static ISCTheoryRoot correspondsToSCTheory(IEventBRoot root)
+	throws CoreException{
+		if(root instanceof ISCTheoryRoot){
+			return (ISCTheoryRoot)root;
+		}
+		String name = root.getElementName();
+		IRodinProject project = root.getRodinProject();
+		IRodinFile[] files = project.getRodinFiles();
+		for (IRodinFile file : files){
+			if(file.getRoot() instanceof ISCTheoryRoot)
+			{
+				ISCTheoryRoot thisRoot = (ISCTheoryRoot) file.getRoot();
+				if (thisRoot.getElementName().equals(name)){
+					return (ISCTheoryRoot) file.getRoot();
+				}
+			}
+		}
+		return null;
 	}
 }

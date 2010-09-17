@@ -8,6 +8,7 @@
 package org.eventb.theory.core.maths.extensions;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -15,8 +16,8 @@ import org.eventb.core.IEventBProject;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.extension.Cond;
-import org.eventb.theory.core.deploy.IDeployedTheoryRoot;
-import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
+import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.internal.core.maths.extensions.DeployedTheoryTransformer;
 
 /**
  * An implementation of a formula extensions loader tailored to a specific project.
@@ -28,13 +29,18 @@ import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
 public class FormulaExtensionsLoader {
 	
 	private IEventBProject project;
+	private List<String> execluded;
+	private Set<IFormulaExtension> execludedExtensions;
 	
 	/**
 	 * Create a formula extension loader for the given project.
 	 * @param project the project for which to load extensions
+	 * @param execluded any execluded theories
 	 */
-	public FormulaExtensionsLoader(IEventBProject project){
+	public FormulaExtensionsLoader(IEventBProject project, List<String> execluded){
 		this.project = project;
+		this.execluded = execluded;
+		this.execludedExtensions = new LinkedHashSet<IFormulaExtension>();
 	}
 	
 	/**
@@ -50,12 +56,19 @@ public class FormulaExtensionsLoader {
 		extensions.add(cond);
 		FormulaFactory factory = FormulaFactory.getInstance(extensions);
 		for(IDeployedTheoryRoot root : theoryRoots){
-			TheoryTransformer transformer = new TheoryTransformer();
+			DeployedTheoryTransformer transformer = new DeployedTheoryTransformer();
 			Set<IFormulaExtension> theoryExtns = transformer.transform(root, factory, factory.makeTypeEnvironment());
+			if(execluded.contains(root.getElementName())){
+				execludedExtensions.addAll(theoryExtns);
+			}
 			extensions.addAll(theoryExtns);
 		}
 		extensions.remove(cond);
 		return extensions;
+	}
+	
+	public Set<IFormulaExtension> getExecludedExtensions(){
+		return execludedExtensions;
 	}
 
 }

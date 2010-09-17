@@ -35,7 +35,7 @@ public interface IElementTransformer<E extends IInternalElement, R> {
 	 * @param element the internal element
 	 * @param factory the formula factory
 	 * @param typeEnvironment the type environment
-	 * @return reasult of transformation
+	 * @return reasult of transformation or <code>null</code>
 	 * @throws CoreException
 	 */
 	public R transform(E element, final FormulaFactory factory, ITypeEnvironment typeEnvironment) throws CoreException;

@@ -13,11 +13,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
@@ -72,11 +74,15 @@ public class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDef
 		Predicate wdCondition = definition.getPredicate(factory, tempTypeEnvironment);
 		ISCDirectOperatorDefinition scDirecDefinition = definition.getDirectOperatorDefinitions()[0];
 		Formula<?> directDefinition = scDirecDefinition.getSCFormula(factory, tempTypeEnvironment);
-		
+		Type resultantType = (directDefinition instanceof Expression) ?
+										((Expression)directDefinition).getType():
+											null;
 		IFormulaExtension extension = extensionsFactory.
 				getFormulaExtension(operatorID, syntax, 
-						formulaType, notation, isAssociative, isCommutative, 
-						directDefinition, wdCondition, operatorArguments, typeParameters, definition);
+						formulaType, notation, isAssociative, isCommutative,  directDefinition,
+						extensionsFactory.getTypingRule(
+								typeParameters, operatorArguments, resultantType, wdCondition),
+						definition);
 		return MathExtensionsUtilities.singletonExtension(extension);
 	}
 

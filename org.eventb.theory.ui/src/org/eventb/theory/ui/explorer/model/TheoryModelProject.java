@@ -139,9 +139,10 @@ public class TheoryModelProject extends ModelProject {
 		} else {
 			thy = theories.get(theory);
 		}
-		thy.processChildren();
 		thy.poNeedsProcessing = true;
 		thy.psNeedsProcessing = true;
+		thy.processChildren();
+		
 	}
 	
 	public void removeTheory(ITheoryRoot theoryRoot) {

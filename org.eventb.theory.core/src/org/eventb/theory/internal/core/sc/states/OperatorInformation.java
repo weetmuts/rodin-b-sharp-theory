@@ -35,6 +35,7 @@ import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.maths.MathExtensionsFactory;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
@@ -264,11 +265,14 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	public IFormulaExtension getExtension(final FormulaFactory formulaFactory) {
 		if (!hasError){
+			Type resultantType = (directDefinition instanceof Expression) ?
+					((Expression)directDefinition).getType(): null;
+			IOperatorTypingRule typingRule = extensionsFactory.getTypingRule(typeParameters,
+					CoreUtilities.getSortedList(opArguments.values()), resultantType, wdCondition);
 			formulaExtension = extensionsFactory.getFormulaExtension( 
 					operatorID, syntax, formulaType,
-					notation, isAssociative, isCommutative, directDefinition,
-					wdCondition, CoreUtilities.getSortedList(opArguments.values()), 
-					typeParameters, null);
+					notation, isCommutative, isAssociative, directDefinition,
+					typingRule, null);
 			
 			return formulaExtension;
 		}

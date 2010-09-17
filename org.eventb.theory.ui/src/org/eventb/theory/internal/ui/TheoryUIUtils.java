@@ -32,6 +32,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
@@ -448,6 +449,17 @@ public class TheoryUIUtils {
 			MessageDialog.openError(shell, "Unexpected Error", message);
 			return;
 		}
+	}
+	
+	/**
+	 * TRUE -> expression
+	 * FALSE -> predicate
+	 * @param isExpression
+	 * @return
+	 */
+	public static final FormulaType getFormulaType(boolean isExpression){
+		if(isExpression) return FormulaType.EXPRESSION;
+		else return FormulaType.PREDICATE;
 	}
 	
 }

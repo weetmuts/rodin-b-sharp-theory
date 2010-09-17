@@ -58,7 +58,7 @@ public class DeployWizard extends Wizard {
 
 		ITheoryDeployer deployer = null;
 		try {
-			deployer = TheoryCoreFacade.getTheoryDeployer(chosenName,
+			deployer = TheoryCoreFacade.getTheoryDeployer(originalTheoryName,chosenName,
 					projectName, force);
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -68,15 +68,7 @@ public class DeployWizard extends Wizard {
 		}
 
 		TheoryUIUtils.runWithProgress(deployer);
-		IDeploymentResult deploymentResult = null;
-		while ((deploymentResult = deployer.getDeploymentResult()) == null) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-		}
+		IDeploymentResult deploymentResult = deployer.getDeploymentResult();
 		if(!deploymentResult.succeeded()){
 			MessageDialog.openError(shell, "Error", 
 					Messages.bind(deploy_deployFailure+"\n"+deploymentResult.getErrorMessage(), 

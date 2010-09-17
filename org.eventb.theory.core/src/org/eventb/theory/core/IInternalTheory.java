@@ -7,16 +7,23 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.IAccuracyElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.ITraceableElement;
+import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for an internal theory that can be embedded in an EventB root.
+ * 
+ * @see IDeployedTheoryRoot
+ * @see ISCTheoryRoot
+ * 
  * @author maamria
- *
+ * 
  */
-public interface ISCRule extends ILabeledElement, IAutomaticElement, IInteractiveElement, 
-IToolTipElement, IDescriptionElement, ITraceableElement, IAccuracyElement, IDefinitionalElement,
-IValidatedElement{
+public interface IInternalTheory extends IFormulaExtensionsSource {
+
+	IInternalElementType<IInternalTheory> ELEMENT_TYPE = RodinCore
+			.getInternalElementType(TheoryPlugin.PLUGIN_ID
+					+ ".internalTheory");
 
 }

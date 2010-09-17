@@ -8,9 +8,8 @@
 package org.eventb.theory.core;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.theory.core.deploy.basis.TheoryDeployer;
+import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
@@ -72,23 +71,21 @@ public class TheoryCoreFacade {
 	}
 	
 	/**
-	 * TRUE -> expression
-	 * FALSE -> predicate
-	 * @param isExpression
+	 * 
+	 * @param originalName
+	 * @param targetName
+	 * @param project
+	 * @param force
 	 * @return
+	 * @throws CoreException
 	 */
-	public static final FormulaType getFormulaType(boolean isExpression){
-		if(isExpression) return FormulaType.EXPRESSION;
-		else return FormulaType.PREDICATE;
-	}
-	
-	public static final ITheoryDeployer getTheoryDeployer(String theoryRootName, String project ,boolean force)
+	public static final ITheoryDeployer getTheoryDeployer(String originalName, String targetName, String project ,boolean force)
 	throws CoreException{
-		String fullName = theoryRootName + "."+ SC_THEORY_FILE_EXTENSION;
+		String fullName = targetName + "."+ SC_THEORY_FILE_EXTENSION;
 		ISCTheoryRoot theoryRoot = CoreUtilities.getTheoryRoot(fullName, project);
 		if(theoryRoot == null){
 			return null;
 		}
-		return new TheoryDeployer(theoryRoot, force);
+		return new TheoryDeployer(theoryRoot, targetName,force);
 	}
 }

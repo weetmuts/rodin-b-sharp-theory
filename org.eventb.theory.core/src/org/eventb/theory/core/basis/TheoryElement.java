@@ -8,6 +8,7 @@
 package org.eventb.theory.core.basis;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.theory.core.TheoryAttributes.GROUP_ID_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.AUTOMATIC_ATTRIBUTE;
@@ -48,6 +49,7 @@ import org.eventb.theory.core.IFormulaTypeElement;
 import org.eventb.theory.core.IGivenTypeElement;
 import org.eventb.theory.core.IInteractiveElement;
 import org.eventb.theory.core.INotationTypeElement;
+import org.eventb.theory.core.IOperatorGroupElement;
 import org.eventb.theory.core.IReasoningTypeElement;
 import org.eventb.theory.core.ISCFormulaElement;
 import org.eventb.theory.core.ISCGivenTypeElement;
@@ -72,13 +74,33 @@ public abstract class TheoryElement extends EventBElement implements
 	IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
 	ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
 	IInteractiveElement, IToolTipElement, IDefinitionalElement, IGivenTypeElement,
-	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement, IValidatedElement
+	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement, IValidatedElement,
+	IOperatorGroupElement
 {
 
 	public TheoryElement(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
+	@Override
+	public boolean hasOperatorGroup() throws RodinDBException {
+		// TODO Auto-generated method stub
+		return hasAttribute(GROUP_ID_ATTRIBUTE);
+	}
+
+	@Override
+	public String getOperatorGroup() throws RodinDBException {
+		// TODO Auto-generated method stub
+		return getAttributeValue(GROUP_ID_ATTRIBUTE);
+	}
+
+	@Override
+	public void setOperatorGroup(String newGroup, IProgressMonitor monitor) 
+	throws RodinDBException{
+		// TODO Auto-generated method stub
+		setAttributeValue(GROUP_ID_ATTRIBUTE, newGroup, monitor);
+	}
+	
 	@Override
 	public boolean hasAssociativeAttribute() throws RodinDBException {
 		return hasAttribute(ASSOCIATIVE_ATTRIBUTE);

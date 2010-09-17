@@ -11,9 +11,8 @@ import java.util.HashMap;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
@@ -21,14 +20,14 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * @author maamria
  *
  */
-public class PredicateOperatorTypingRule extends AbstractOperatorTypingRule<IPredicateExtension>
+public class PredicateOperatorTypingRule extends AbstractOperatorTypingRule
 implements IPredicateTypeChecker{
 
 	/**
 	 * @param extension
 	 */
-	public PredicateOperatorTypingRule(IFormulaExtension extension) {
-		super(extension);
+	public PredicateOperatorTypingRule(Predicate wdPredicate) {
+		super(wdPredicate);
 	}
 
 	@Override
@@ -54,8 +53,16 @@ implements IPredicateTypeChecker{
 	}
 
 	@Override
-	protected IPredicateExtension getExtension(IFormulaExtension extension) {
-		return (IPredicateExtension) extension;
+	public Type getResultantType() {
+		// TODO Auto-generated method stub
+		// no type
+		return null;
+	}
+	
+	@Override
+	public Predicate getWDPredicate() {
+		// TODO Auto-generated method stub
+		return wdPredicate;
 	}
 
 	

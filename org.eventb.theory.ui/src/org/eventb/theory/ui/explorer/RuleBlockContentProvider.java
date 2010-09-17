@@ -25,7 +25,7 @@ public class RuleBlockContentProvider extends AbstractContentProvider {
 			ITheoryRoot root = (ITheoryRoot) carr.getRoot();
 			ModelTheory thy = TheoryModelController.getTheory(root);
 			if (thy != null) {
-				return thy.op_node;
+				return thy.pb_node;
 			}
 		}
 		if (element instanceof IElementNode) {

@@ -20,24 +20,28 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.theory.internal.core.maths.ExpressionOperatorTypingRule;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
+import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
 
 /**
- * Factory class for the different mathematical extensions provided by the Theory Core plug-in.
+ * Factory class for the different mathematical extensions provided by the
+ * Theory Core plug-in.
  * 
  * @author maamria
- *
+ * 
  */
 public final class MathExtensionsFactory {
 	/**
 	 * The singleton instance
 	 */
 	protected static MathExtensionsFactory factory;
-	
-	private MathExtensionsFactory(){
+
+	private MathExtensionsFactory() {
 		// do nothing
 	}
-	
+
 	/**
 	 * Returns the formula extension corresponding to the supplied details.
 	 * 
@@ -49,69 +53,106 @@ public final class MathExtensionsFactory {
 	 *            the formula type
 	 * @param notation
 	 *            the notation
-	 * @param isAssociative
-	 *            whether the operator is associative
 	 * @param isCommutative
 	 *            whether the operator is commutative
-	 * @param directDefinition
-	 *            the direct definition of the operator
-	 * @param wdCondition
-	 *            the pattern well-definedness condition
-	 * @param opArguments
-	 *            the arguments of the new operator
+	 * @param isAssociative
+	 *            whether the operator is associative
+	 * @param operatorTypingRule
+	 *            the typing rule
+	 * @param source
+	 * 			  the source
 	 * @return the new formula extension
 	 */
-	public IFormulaExtension getFormulaExtension(
-			String operatorID, String syntax, FormulaType formulaType,
-			Notation notation, boolean isAssociative, boolean isCommutative,
-			Formula<?> directDefinition, Predicate wdCondition,
-			List<IOperatorArgument> opArguments,
-			List<GivenType> typeParameters, Object source) {
-		
-		if (formulaType.equals(FormulaType.EXPRESSION)) {
+	public IFormulaExtension getFormulaExtension(String operatorID,
+			String syntax, FormulaType formulaType, Notation notation,
+			boolean isCommutative, boolean isAssociative,
+			Formula<?> directDefinition,  IOperatorTypingRule operatorTypingRule,
+			Object source) {
+
+		if(formulaType.equals(FormulaType.EXPRESSION)){
 			return new ExpressionOperatorExtension(operatorID, syntax,
-					formulaType, notation, isAssociative, isCommutative,
-					(Expression) directDefinition, wdCondition, opArguments,
-					typeParameters, source);
-		} else {
-			return new PredicateOperatorExtension(operatorID, syntax,
-					formulaType, notation, isCommutative,
-					(Predicate) directDefinition, wdCondition, opArguments,
-					typeParameters, source);
+					formulaType, notation, isCommutative, isAssociative, 
+					operatorTypingRule, (Expression)directDefinition, source);
+		}
+		else {
+			return new PredicateOperatorExtension(operatorID, syntax, formulaType,
+					notation, isAssociative, operatorTypingRule, 
+					(Predicate)directDefinition, source);
 		}
 	}
 	
 	/**
 	 * Returns a simple datatype extension with the given details.
-	 * @param identifier the name of the datatype
-	 * @param typeArguments the type arguments of this datatype
-	 * @param factory the formula factory 
+	 * 
+	 * @param identifier
+	 *            the name of the datatype
+	 * @param typeArguments
+	 *            the type arguments of this datatype
+	 * @param factory
+	 *            the formula factory
 	 * @return the set of resulting extensions
 	 */
-	public Set<IFormulaExtension> getSimpleDatatypeExtensions(String identifier, String[] typeArguments, FormulaFactory factory){
-		return factory.makeDatatype(new SimpleDatatypeExtension(identifier, typeArguments)).getExtensions();
+	public Set<IFormulaExtension> getSimpleDatatypeExtensions(
+			String identifier, String[] typeArguments, FormulaFactory factory) {
+		return factory.makeDatatype(
+				new SimpleDatatypeExtension(identifier, typeArguments))
+				.getExtensions();
 	}
-	
+
 	/**
 	 * Returns a complete datatype extension with the given details.
-	 * @param identifier the name of the datatype
-	 * @param typeArguments the type arguments of this datatype
-	 * @param constructors the constructors of this datatype
-	 * @param factory the formula factory 
+	 * 
+	 * @param identifier
+	 *            the name of the datatype
+	 * @param typeArguments
+	 *            the type arguments of this datatype
+	 * @param constructors
+	 *            the constructors of this datatype
+	 * @param factory
+	 *            the formula factory
 	 * @return the set of resulting extensions
 	 */
-	public Set<IFormulaExtension> getCompleteDatatypeExtensions(String identifier, String[] typeArguments, Map<String, Map<String, Type>> constructors, FormulaFactory factory){
-		return factory.makeDatatype(new CompleteDatatypeExtension(
-				identifier, typeArguments, constructors)).getExtensions();
+	public Set<IFormulaExtension> getCompleteDatatypeExtensions(
+			String identifier, String[] typeArguments,
+			Map<String, Map<String, Type>> constructors, FormulaFactory factory) {
+		return factory.makeDatatype(
+				new CompleteDatatypeExtension(identifier, typeArguments,
+						constructors)).getExtensions();
 	}
 	
 	/**
+	 * Returns a typing rule with the operator that has the specified arguments. The operator
+	 * is deemed a predicate operator if <code>resultantType</code> is <code>null</code>.
+	 * @param typeParameters the type parameters
+	 * @param operatorArguments the operator arguments
+	 * @param resultantType the type of the operator if it is an expression, or <code>null</code>
+	 * @param wdPredicate the WD condition
+	 * @return the appopriate typing rule
+	 */
+	public IOperatorTypingRule getTypingRule(List<GivenType> typeParameters,
+			List<IOperatorArgument> operatorArguments, Type resultantType, Predicate wdPredicate){
+		IOperatorTypingRule typingRule = null;
+		if(resultantType == null){
+			typingRule = new PredicateOperatorTypingRule(wdPredicate);
+		}
+		else {
+			typingRule = new ExpressionOperatorTypingRule(resultantType, wdPredicate);
+		}
+		typingRule.addTypeParameters(typeParameters);
+		for (IOperatorArgument arg : operatorArguments) {
+			typingRule.addOperatorArgument(arg);
+		}
+		return typingRule;
+	}
+
+	/**
 	 * Returns the singleton instance of this factory.
+	 * 
 	 * @return the extensions factory
 	 */
-	public static MathExtensionsFactory getExtensionsFactory(){
-		if(factory == null){
-			factory =  new MathExtensionsFactory();
+	public static MathExtensionsFactory getExtensionsFactory() {
+		if (factory == null) {
+			factory = new MathExtensionsFactory();
 		}
 		return factory;
 	}

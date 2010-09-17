@@ -11,8 +11,8 @@ import java.util.List;
 
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IWDMediator;
 
 /**
@@ -21,7 +21,7 @@ import org.eventb.core.ast.extension.IWDMediator;
  * @author maamria
  *
  */
-public interface IOperatorTypingRule<E extends IFormulaExtension> {
+public interface IOperatorTypingRule {
 	
 	/**
 	 * Adds the given operator argument as an argument of operator corresponding to this typing rule.
@@ -56,5 +56,13 @@ public interface IOperatorTypingRule<E extends IFormulaExtension> {
 	 * @return the instantiated well-definedness condition
 	 */
 	public Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator);
+	
+	public List<GivenType> getTypeParameters();
+	
+	public List<IOperatorArgument> getOperatorArguments();
+	
+	public Type getResultantType();
+	
+	public Predicate getWDPredicate();
 
 }

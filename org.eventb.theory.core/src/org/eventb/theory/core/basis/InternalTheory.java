@@ -5,17 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.deploy.basis;
+package org.eventb.theory.core.basis;
 
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.basis.EventBRoot;
+import org.eventb.theory.core.IInternalTheory;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCProofRulesBlock;
-import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.deploy.IDeployedTheoryRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -23,23 +18,18 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoot{
+public class InternalTheory extends TheoryElement implements IInternalTheory {
 
 	/**
 	 * @param name
 	 * @param parent
 	 */
-	public DeployedTheoryRoot(String name, IRodinElement parent) {
+	public InternalTheory(String name, IRodinElement parent) {
 		super(name, parent);
 	}
-	
-	@Override
-	public IInternalElementType<? extends IInternalElement> getElementType() {
-		return ELEMENT_TYPE;
-	}
-	
+
 	@Override
 	public ISCTypeParameter getSCTypeParameter(String name) {
 		return getInternalElement(ISCTypeParameter.ELEMENT_TYPE, name);
@@ -61,45 +51,6 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 		return getChildrenOfType(ISCDatatypeDefinition.ELEMENT_TYPE);
 	}
 
-	
-	@Override
-	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
-			throws RodinDBException {
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		
-		for (ISCTypeParameter par : getSCTypeParameters()){
-			typeEnvironment.addGivenSet(par.getIdentifierString());
-		}
-	
-		return typeEnvironment;
-	}
-
-	
-
-	@Override
-	public ISCProofRulesBlock getProofRulesBlock(String name) {
-		// TODO Auto-generated method stub
-		return getInternalElement(ISCProofRulesBlock.ELEMENT_TYPE, name);
-	}
-
-	@Override
-	public ISCProofRulesBlock[] getProofRulesBlocks() throws RodinDBException {
-		// TODO Auto-generated method stub
-		return getChildrenOfType(ISCProofRulesBlock.ELEMENT_TYPE);
-	}
-
-	@Override
-	public ISCTheorem getTheorem(String name) {
-		// TODO Auto-generated method stub
-		return getInternalElement(ISCTheorem.ELEMENT_TYPE, name);
-	}
-
-	@Override
-	public ISCTheorem[] getTheorems() throws RodinDBException {
-		// TODO Auto-generated method stub
-		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
-	}
-
 	@Override
 	public ISCNewOperatorDefinition getSCNewOperatorDefinition(String name) {
 		return getInternalElement(ISCNewOperatorDefinition.ELEMENT_TYPE, name);
@@ -110,6 +61,12 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 			throws RodinDBException {
 		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCNewOperatorDefinition.ELEMENT_TYPE);
+	}
+
+	@Override
+	public IInternalElementType<? extends IInternalElement> getElementType() {
+		// TODO Auto-generated method stub
+		return ELEMENT_TYPE;
 	}
 
 }

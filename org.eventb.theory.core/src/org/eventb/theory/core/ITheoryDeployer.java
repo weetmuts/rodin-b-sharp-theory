@@ -12,15 +12,28 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
+ * Common protocol for a theory deployer.
+ * 
+ * <p> A theory deployer can deploy a SC theory file to the current project.
+ * <p> Information about the success of the deployment msut be provided.
+ * 
  * @author maamria
  *
  */
 public interface ITheoryDeployer extends IWorkspaceRunnable{
-
-	public void analyse() throws CoreException;
 	
+	/**
+	 * Deploys a given SC theory to the current project.
+	 * @param monitor the progress monitor
+	 * @return whether deployment has been attempted
+	 * @throws CoreException
+	 */
 	public boolean deploy(IProgressMonitor monitor) throws CoreException;
 	
+	/**
+	 * Returns the deployment result of this operation.
+	 * @return the deployment result
+	 */
 	public IDeploymentResult getDeploymentResult();
 	
 }

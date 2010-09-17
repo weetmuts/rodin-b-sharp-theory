@@ -22,30 +22,11 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface ISCTheoryRoot extends IEventBRoot, IAccuracyElement, IConfigurationElement, ITraceableElement{
+public interface ISCTheoryRoot extends IEventBRoot, IAccuracyElement, IConfigurationElement, 
+ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
 
 	IInternalElementType<ISCTheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheoryRoot");
-	
-	ISCTypeParameter getSCTypeParameter(String name);
-	
-	ISCTypeParameter[] getSCTypeParameters() throws RodinDBException;
-	
-	ISCDatatypeDefinition getSCDatatypeDefinition(String name);
-	
-	ISCDatatypeDefinition[] getSCDatatypeDefinitions() throws RodinDBException;
-	
-	ISCNewOperatorDefinition getSCNewOperatorDefinition(String name);
-	
-	ISCNewOperatorDefinition[] getSCNewOperatorDefinitions() throws RodinDBException;
-	
-	public ISCProofRulesBlock getProofRulesBlock(String name);
-	
-	public ISCProofRulesBlock[] getProofRulesBlocks() throws RodinDBException;
-	
-	public ISCTheorem getTheorem(String name);
-	
-	public ISCTheorem[] getTheorems() throws RodinDBException;
 	
 	/**
 	 * <p>Returns the global type environment of this SC theory.</p>

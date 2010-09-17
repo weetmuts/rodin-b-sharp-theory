@@ -19,10 +19,26 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IFormulaElement extends IInternalElement{
 
+	/**
+	 * Returns whether the formula attribute is set or not.
+	 * @return whether the attribute is present
+	 * @throws RodinDBException
+	 */
 	boolean hasFormula() throws RodinDBException;
 	
+	/**
+	 * Returns the formula associated with this element is definitional.
+	 * @return the set formula
+	 * @throws RodinDBException
+	 */
 	String getFormula() throws RodinDBException;
 	
+	/**
+	 * Sets this element formula attribute to the given value.
+	 * @param formula the new formula
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setFormula(String formula, IProgressMonitor monitor) throws RodinDBException;
 	
 }
