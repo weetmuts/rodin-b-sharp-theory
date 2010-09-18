@@ -14,9 +14,6 @@ import org.rodinp.core.RodinCore;
 public class TheoryUIPlugIn extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eventb.theory.ui";
-	
-	public static final String THEORY_FILE_EXT = ".tuf";
-	public static final String THEORY_FILE_SC_EXT = ".tcf";
 	// The shared instance
 	private static TheoryUIPlugIn plugin;
 	

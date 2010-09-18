@@ -1,5 +1,6 @@
 package org.eventb.theory.ui.deploy;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -13,21 +14,23 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.internal.ui.RodinProjectSelectionDialog;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
+import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
+import org.rodinp.core.IRodinProject;
 
 /**
  * @author maamria
  *
  */
+@SuppressWarnings("restriction")
 public class DeployWizardPageOne extends WizardPage {
 	
-	private Combo projectCombo;
-	private Button btnKeepNameCbox;
-	private Text newNameText;
+	private Text projectText;
 	private Combo theoryCombo;
 	
 	private String projectName;
-	private boolean useDiffName;
 	private String theoryName;
 	
 	public DeployWizardPageOne() {
@@ -44,34 +47,33 @@ public class DeployWizardPageOne extends WizardPage {
 		layout.verticalSpacing = 10;
 		Label label = new Label(container, SWT.NULL);
 		label.setText("Project:");
-
-		projectCombo = new Combo(container, SWT.READ_ONLY | SWT.BORDER | SWT.SINGLE);
+		
+		projectText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		projectCombo.setLayoutData(gd);
-		projectCombo.addSelectionListener(new SelectionAdapter() {
-			
-			public void widgetSelected(SelectionEvent e) {
-				String value = projectCombo.getItem(projectCombo.getSelectionIndex());
-				if(projectName != null && projectName.equals(value) ){
+		projectText.setLayoutData(gd);
+		projectText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if(projectText.getText().equals(projectName)){
 					return;
 				}
-				// invalid selection... may not be necessary
-				if(value==null & value.length()<= 0){
-					return;
-				}
-				projectName = value ;
-				String names[]= TheoryUIUtils.getNonEmptySCTheoryNames(projectName);
-				// BUG FIX DONE FIXME when there are no non-empty theories.
-				if(names != null)
+				projectName = projectText.getText();
+				theoryName = null;
+				theoryCombo.removeAll();
+				String[] names =TheoryUIUtils.getNonEmptySCTheoryNames(projectName);
+				if(names!=null)
 					theoryCombo.setItems(names);
-				initialise();
 				dialogChanged();
-				
 			}
 		});
-		projectCombo.setItems(TheoryUIUtils.getProjectsNames());
-		projectCombo.setFocus();
-		new Label(container, SWT.NULL);
+
+		Button button = new Button(container, SWT.PUSH);
+		button.setText("Browse...");
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleBrowse();
+			}
+		});
 		
 		label = new Label(container, SWT.NULL);
 		label.setText("Theory:");
@@ -87,16 +89,7 @@ public class DeployWizardPageOne extends WizardPage {
 				if(theoryName != null && theoryName.equals(value)){
 					return;
 				}
-				// invalid selection... may not be necessary
-				if(value==null & value.length()<= 0){
-					return;
-				}
 				theoryName = value;
-				btnKeepNameCbox.setSelection(false);
-				btnKeepNameCbox.setEnabled(true);
-				newNameText.setText("");
-				newNameText.setEnabled(false);
-				useDiffName = false;
 				dialogChanged();
 				
 			}
@@ -108,43 +101,37 @@ public class DeployWizardPageOne extends WizardPage {
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
 		
-		btnKeepNameCbox = new Button(container, SWT.CHECK);
-		btnKeepNameCbox.addSelectionListener(new SelectionAdapter() {
-			
-			public void widgetSelected(SelectionEvent e) {
-				useDiffName = btnKeepNameCbox.getSelection();
-				if(useDiffName){
-					newNameText.setEnabled(true);
-					dialogChanged();
-				}
-				else {
-					newNameText.setEnabled(false);
-					dialogChanged();
-				}
-			}
-		});
-		btnKeepNameCbox.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
-		btnKeepNameCbox.setText("Use a different name for the deployed theory.");
-		btnKeepNameCbox.setGrayed(true);
-		
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		
-		newNameText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		newNameText.setLayoutData(gd);
-		newNameText.addModifyListener(new ModifyListener() {
-			
-				public void modifyText(ModifyEvent e) {
-					dialogChanged();
-				}
-			}
-		);
 		initialise();
 		dialogChanged();
 		setControl(container);
 	}
 
+	/**
+	 * Uses the RODIN project selection dialog to choose the new value for the
+	 * project field.
+	 */
+	void handleBrowse() {
+		final String projectName = getProjectName();
+		IRodinProject rodinProject;
+		if (projectName.equals(""))
+			rodinProject = null;
+		else
+			rodinProject = TheoryUIPlugIn.getRodinDatabase().getRodinProject(
+					projectName);
+
+		RodinProjectSelectionDialog dialog = new RodinProjectSelectionDialog(
+				getShell(), rodinProject, false, "Project Selection",
+				"Select a RODIN project");
+		if (dialog.open() == Window.OK) {
+			Object[] result = dialog.getResult();
+			if (result.length == 1) {
+				projectText.setText(((IRodinProject) result[0])
+						.getElementName());
+				dialogChanged();
+			}
+		}
+	}
+	
 	/**
 	 * Ensures that both text fields are set correctly.
 	 */
@@ -153,25 +140,21 @@ public class DeployWizardPageOne extends WizardPage {
 			updateStatus("Project must be specified");
 			return;
 		}
+		else if (TheoryCoreFacade.getRodinProject(projectName)== null){
+			updateStatus("Specified project does not exist");
+			theoryCombo.removeAll();
+			return;
+		}
 		if(theoryName == null){
 			updateStatus("Theory must be specified");
 			return;
 		}
-		if(useDiffName){
-			if (newNameText.getText().length() == 0) {
-				updateStatus("New theory name must be specified");
-				return;
-			}
-		}
+		
 		updateStatus(null);
 	}
 	
 	private void initialise(){
 		theoryName = null;
-		useDiffName = false;
-		newNameText.setEnabled(false);
-		newNameText.setText("");
-		btnKeepNameCbox.setEnabled(false);
 	}
 	
 	private void updateStatus(String message) {
@@ -187,21 +170,13 @@ public class DeployWizardPageOne extends WizardPage {
 	 * @return The name of the project
 	 */
 	public String getProjectName() {
-		return projectCombo.getText();
+		return projectText.getText();
 	}
 	
-	public String getNewName(){
-		if(useDiffName){
-			return newNameText.getText();
-		}
-		return null;
-	}
+	
 	
 	public String getTheoryName() {
 		return theoryName;
 	}
-	
-	public boolean isUseDiffName() {
-		return useDiffName;
-	}
+
 }

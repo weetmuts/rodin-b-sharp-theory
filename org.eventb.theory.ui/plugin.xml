@@ -110,6 +110,13 @@
             typeId="org.eventb.theory.core.syntaxSymbol">
       </textAttribute>
       <choiceAttribute
+            class="org.eventb.theory.internal.ui.attr.ImportAttributeManipulation"
+            expandsHorizontally="false"
+            id="org.eventb.theory.ui.importTheory"
+            required="true"
+            typeId="org.eventb.core.target">
+      </choiceAttribute>
+      <choiceAttribute
             class="org.eventb.theory.internal.ui.attr.AssociativeAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.theory.ui.associative"
@@ -138,6 +145,13 @@
             prefix="THEORY"
             prettyPrinter="org.eventb.theory.ui.editor.html.ComponentPrettyPrinter"
             typeId="org.eventb.theory.core.theoryRoot">
+      </element>
+      <element
+            defaultColumn="0"
+            imagePath="icons/thy.gif"
+            prefix="IMPORTS"
+            prettyPrinter="org.eventb.theory.ui.editor.html.DependenciesPrettyPrinter"
+            typeId="org.eventb.theory.core.importTheory">
       </element>
       <element
             defaultColumn="0"
@@ -259,6 +273,10 @@
       <childRelation
             parentTypeId="org.eventb.theory.core.theoryRoot">
          <childType
+               priority="1"
+               typeId="org.eventb.theory.core.importTheory">
+         </childType>
+         <childType
                priority="10"
                typeId="org.eventb.theory.core.typeParameter">
          </childType>
@@ -354,6 +372,17 @@
                descriptionId="org.eventb.ui.comment">
          </attributeReference>
       </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.theory.core.importTheory">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.theory.ui.importTheory">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      
       <attributeRelation
             elementTypeId="org.eventb.theory.core.typeParameter">
          <attributeReference

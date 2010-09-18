@@ -63,7 +63,7 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		final String projectName = page.getProjectName();
-		final String fileName = page.getTheoryName() + TheoryUIPlugIn.THEORY_FILE_EXT;
+		final String fileName = TheoryCoreFacade.getTheoryFullName(page.getTheoryName());
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {

@@ -67,7 +67,6 @@ public class TheoryModelElementNode extends ModelElementNode{
 		return null;
 	}
 	
-	
 	private static String DATATYPE_TYPE = "Datatypes";
 	private static String OPERATOR_TYPE = "Operators";
 	private static String PRULES_TYPE = "Proof Rules";

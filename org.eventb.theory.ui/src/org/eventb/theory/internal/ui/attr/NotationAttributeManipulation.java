@@ -32,7 +32,7 @@ public class NotationAttributeManipulation extends AbstractAttributeManipulation
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		INotationTypeElement cat = asNotationTypeElement(element);
-		return TheoryCoreFacade.convertTypeToStr(cat.getNotationType());
+		return cat.getNotationType().toString();
 	}
 
 	
@@ -51,14 +51,14 @@ public class NotationAttributeManipulation extends AbstractAttributeManipulation
 	
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		asNotationTypeElement(element).setNotationType(Notation.PREFIX, monitor);
+		asNotationTypeElement(element).setNotationType(Notation.PREFIX.toString(), monitor);
 
 	}
 
 	
 	public void setValue(IRodinElement element, String value,
 			IProgressMonitor monitor) throws RodinDBException {
-		asNotationTypeElement(element).setNotationType(TheoryCoreFacade.convertToType(value), monitor);
+		asNotationTypeElement(element).setNotationType(value, monitor);
 
 	}
 

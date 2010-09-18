@@ -23,7 +23,6 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.OverlayIcon;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IProofRulesBlock;
@@ -32,6 +31,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeParameter;
 import org.eventb.theory.internal.ui.ITheoryImages;
 import org.eventb.theory.internal.ui.TheoryImage;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.explorer.model.ModelPOContainer;
 import org.eventb.theory.ui.explorer.model.TheoryModelController;
 import org.eventb.theory.ui.explorer.model.TheoryModelElementNode;
@@ -132,15 +132,18 @@ public class RodinLabelProvider implements ILabelProvider {
 			try {
 				return ((ILabeledElement) obj).getLabel();
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when getting label for " +obj);
+				TheoryUIUtils.log(e, "when getting label for " +obj);
 			}
 		} else if (obj instanceof IIdentifierElement) {
 			try {
 				return ((IIdentifierElement) obj).getIdentifierString();
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when getting identifier for " +obj);
+				TheoryUIUtils.log(e, "when getting identifier for " +obj);
 			}
-		} else if (obj instanceof IRodinElement) {
+			
+		} 
+		
+		else if (obj instanceof IRodinElement) {
 			return ((IRodinElement) obj).getElementName();
 
 		} else if (obj instanceof ModelPOContainer) {

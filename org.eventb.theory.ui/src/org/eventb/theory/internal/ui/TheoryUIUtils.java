@@ -204,18 +204,6 @@ public class TheoryUIUtils {
 		return names.toArray(new String[names.size()]);
 	}
 
-	
-	/**
-	 * <p>Returns the full name of the given theory bare name.</p>
-	 * @param bareName
-	 * @return full name (with extension)
-	 */
-	public static String getTheoryFileName(String bareName) {
-		return bareName + TheoryUIPlugIn.THEORY_FILE_EXT;
-	}
-
-	
-	
 	/**
 	 * <p>Facility to log the given exception alongside the given message.</p>
 	 * @param exc
@@ -340,7 +328,7 @@ public class TheoryUIUtils {
 	 */
 	public static String[] getNonEmptySCTheoryNames(String project) {
 		IRodinProject proj = TheoryUIPlugIn.getRodinDatabase().getRodinProject(project);
-		if (proj == null) {
+		if (proj == null || !proj.exists()) {
 			return null;
 		}
 		ISCTheoryRoot[] roots = null;

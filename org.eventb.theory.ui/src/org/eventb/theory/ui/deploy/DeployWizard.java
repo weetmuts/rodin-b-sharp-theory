@@ -51,14 +51,12 @@ public class DeployWizard extends Wizard {
 	public boolean performFinish() {
 
 		final String projectName = wizardPageOne.getProjectName();
-		final String originalTheoryName = wizardPageOne.getTheoryName();
-		final String chosenName = (wizardPageOne.isUseDiffName() ? wizardPageOne
-				.getNewName() : originalTheoryName);
+		final String theoryName = wizardPageOne.getTheoryName();
 		final boolean force = wizardPageTwo.forceDeployment();
 
 		ITheoryDeployer deployer = null;
 		try {
-			deployer = TheoryCoreFacade.getTheoryDeployer(originalTheoryName,chosenName,
+			deployer = TheoryCoreFacade.getTheoryDeployer(theoryName,
 					projectName, force);
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -72,12 +70,12 @@ public class DeployWizard extends Wizard {
 		if(!deploymentResult.succeeded()){
 			MessageDialog.openError(shell, "Error", 
 					Messages.bind(deploy_deployFailure+"\n"+deploymentResult.getErrorMessage(), 
-							originalTheoryName));
+							theoryName));
 			return false;
 		}
 		else {
 			MessageDialog.openInformation(shell, "Success", 
-					Messages.bind(deploy_deploySuccess, originalTheoryName));
+					Messages.bind(deploy_deploySuccess, theoryName));
 		}
 		return true;
 	}
