@@ -11,6 +11,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.ISCDatatypeDefinition;
+import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
@@ -35,6 +36,18 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 		super(name, parent);
 	}
 
+	@Override
+	public ISCImportTheory getImportTheory(String name) {
+		// TODO Auto-generated method stub
+		return getInternalElement(ISCImportTheory.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public ISCImportTheory[] getImportTheories() throws RodinDBException {
+		// TODO Auto-generated method stub
+		return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
+	}
+	
 	@Override
 	public ISCTypeParameter getSCTypeParameter(String name) {
 		return getInternalElement(ISCTypeParameter.ELEMENT_TYPE, name);
@@ -110,6 +123,4 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 		return getChildrenOfType(ISCNewOperatorDefinition.ELEMENT_TYPE);
 	}
 
-	
-	
 }

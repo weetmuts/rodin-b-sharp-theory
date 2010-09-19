@@ -7,23 +7,18 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
- * Common protocol for an internal theory that can be embedded in an EventB root.
- * 
- * @see IDeployedTheoryRoot
- * @see ISCTheoryRoot
- * 
  * @author maamria
- * 
+ *
  */
-public interface IInternalTheory extends IFormulaExtensionsSource {
+public interface IDeployedTheoryEntry extends ITraceableElement, IModifiedElement{
 
-	IInternalElementType<IInternalTheory> ELEMENT_TYPE = RodinCore
-			.getInternalElementType(TheoryPlugin.PLUGIN_ID
-					+ ".internalTheory");
-
+	public IInternalElementType<IDeployedTheoryEntry> ELEMENT_TYPE = 
+		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".deployedTheoryEntry");
+	
 }

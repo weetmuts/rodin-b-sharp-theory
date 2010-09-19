@@ -10,6 +10,7 @@ package org.eventb.theory.core.basis;
 
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDatatypeDefinition;
+import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -36,6 +37,18 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 	@Override
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return ELEMENT_TYPE;
+	}
+	
+	@Override
+	public IImportTheory getImportTheory(String name) {
+		// TODO Auto-generated method stub
+		return getInternalElement(IImportTheory.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public IImportTheory[] getImportTheories() throws RodinDBException {
+		// TODO Auto-generated method stub
+		return getChildrenOfType(IImportTheory.ELEMENT_TYPE);
 	}
 
 	@Override

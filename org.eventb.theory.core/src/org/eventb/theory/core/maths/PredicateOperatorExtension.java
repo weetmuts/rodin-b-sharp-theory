@@ -32,11 +32,11 @@ class PredicateOperatorExtension extends AbstractOperatorExtension
 		implements IPredicateExtension {
 	
 	public PredicateOperatorExtension(String operatorID, String syntax,
-			FormulaType formulaType, Notation notation,
-			boolean isAssociative, IOperatorTypingRule typingRule,
+			FormulaType formulaType, Notation notation, String groupID,
+			boolean isCommutative, IOperatorTypingRule typingRule,
 			Predicate directDefinition, Object source){
 		
-		super(operatorID, syntax, formulaType, notation, isAssociative, isAssociative, 
+		super(operatorID, syntax, formulaType, notation, groupID, isCommutative, false, 
 				typingRule, directDefinition, source);
 	}
 

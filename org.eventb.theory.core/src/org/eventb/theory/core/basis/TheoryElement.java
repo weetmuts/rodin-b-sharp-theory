@@ -8,8 +8,6 @@
 package org.eventb.theory.core.basis;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
-import static org.eventb.theory.core.TheoryAttributes.GROUP_ID_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.AUTOMATIC_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMMUTATIVE_ATTRIBUTE;
@@ -19,12 +17,15 @@ import static org.eventb.theory.core.TheoryAttributes.DESC_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.FORMULA_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GIVEN_TYPE_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.GROUP_ID_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.INTERACTIVE_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.MODIFIED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TOOL_TIP_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -48,6 +49,7 @@ import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IFormulaTypeElement;
 import org.eventb.theory.core.IGivenTypeElement;
 import org.eventb.theory.core.IInteractiveElement;
+import org.eventb.theory.core.IModifiedElement;
 import org.eventb.theory.core.INotationTypeElement;
 import org.eventb.theory.core.IOperatorGroupElement;
 import org.eventb.theory.core.IReasoningTypeElement;
@@ -75,7 +77,7 @@ public abstract class TheoryElement extends EventBElement implements
 	ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
 	IInteractiveElement, IToolTipElement, IDefinitionalElement, IGivenTypeElement,
 	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement, IValidatedElement,
-	IOperatorGroupElement
+	IOperatorGroupElement, IModifiedElement
 {
 
 	public TheoryElement(String name, IRodinElement parent) {
@@ -166,7 +168,7 @@ public abstract class TheoryElement extends EventBElement implements
 
 	@Override
 	public Notation getNotationType() throws RodinDBException {
-		return TheoryCoreFacade.convertToType(getAttributeValue(NOTATION_TYPE_ATTRIBUTE));
+		return TheoryCoreFacade.getNotation(getAttributeValue(NOTATION_TYPE_ATTRIBUTE));
 	}
 
 	
@@ -177,10 +179,10 @@ public abstract class TheoryElement extends EventBElement implements
 
 	
 	@Override
-	public void setNotationType(Notation notation, IProgressMonitor monitor)
+	public void setNotationType(String notation, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(NOTATION_TYPE_ATTRIBUTE, 
-				TheoryCoreFacade.convertTypeToStr(notation), monitor);
+				notation, monitor);
 	}
 
 	
@@ -412,5 +414,24 @@ public abstract class TheoryElement extends EventBElement implements
 	public void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException{
 		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
 	}
+	
+	@Override
+	public boolean isModified() throws RodinDBException {
+		return getAttributeValue(MODIFIED_ATTRIBUTE);
+	}
+
+	@Override
+	public boolean hasModifiedAttribute() throws RodinDBException {
+		// TODO Auto-generated method stub
+		return hasAttribute(MODIFIED_ATTRIBUTE);
+	}
+	
+	@Override
+	public void setModified(boolean isModified, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(MODIFIED_ATTRIBUTE, isModified, monitor);
+
+	}
+
 	
 }

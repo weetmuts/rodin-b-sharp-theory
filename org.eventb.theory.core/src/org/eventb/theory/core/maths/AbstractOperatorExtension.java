@@ -60,6 +60,11 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 	 * Direct definition if any
 	 */
 	protected Formula<?> directDefinition;
+	
+	/**
+	 * Operator group
+	 */
+	protected String operatorGroup;
 	/**
 	 * Operator properties
 	 */
@@ -71,11 +76,12 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 	protected Object source;
 	
 	/**
-	 * Constructs an operator extension using the supplied details.
+	 * Constructs an operator extension within the specified operator group using the supplied details.
 	 * @param operatorID the operator ID
 	 * @param syntax the syntax symbol
 	 * @param formulaType formula type
 	 * @param notation the notaion
+	 * @param groupID
 	 * @param isCommutative whether operator is commutative
 	 * @param isAssocaitive whether operator is associative
 	 * @param operatorTypingRule the typing rule
@@ -84,11 +90,10 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 	 */
 	protected AbstractOperatorExtension(
 			String operatorID, String syntax,
-			FormulaType formulaType,
-			Notation notation, boolean isCommutative,
+			FormulaType formulaType, Notation notation, 
+			String groupID, boolean isCommutative,
 			boolean isAssociative, IOperatorTypingRule operatorTypingRule,
 			Formula<?> directDefinition, Object source){
-		
 		this.operatorID = operatorID;
 		this.syntax =syntax;
 		this.formulaType = formulaType;
@@ -98,6 +103,12 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 		this.isAssociative = isAssociative;
 		this.operatorTypingRule = operatorTypingRule;
 		this.source = source;
+		this.operatorGroup = groupID==null ? 
+				MathExtensionsUtilities.getGroupFor(
+						this.formulaType, 
+						this.notation, 
+						this.operatorTypingRule.getArity()):
+				groupID;
 	}
 	
 	@Override
@@ -112,7 +123,7 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 
 	@Override
 	public String getGroupId() {
-		return MathExtensionsUtilities.getGroupFor(formulaType, notation, operatorTypingRule.getArity());
+		return operatorGroup;
 	}
 
 	

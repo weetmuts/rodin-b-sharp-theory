@@ -17,7 +17,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.theory.core.IDeployedTheoryRoot;
-import org.eventb.theory.internal.core.maths.extensions.DeployedTheoryTransformer;
+import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
 
 /**
  * An implementation of a formula extensions loader tailored to a specific project.
@@ -56,7 +56,7 @@ public class FormulaExtensionsLoader {
 		extensions.add(cond);
 		FormulaFactory factory = FormulaFactory.getInstance(extensions);
 		for(IDeployedTheoryRoot root : theoryRoots){
-			DeployedTheoryTransformer transformer = new DeployedTheoryTransformer();
+			TheoryTransformer transformer = new TheoryTransformer();
 			Set<IFormulaExtension> theoryExtns = transformer.transform(root, factory, factory.makeTypeEnvironment());
 			if(execluded.contains(root.getElementName())){
 				execludedExtensions.addAll(theoryExtns);

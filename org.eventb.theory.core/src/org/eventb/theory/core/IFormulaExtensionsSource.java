@@ -27,6 +27,10 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IFormulaExtensionsSource extends IInternalElement{
 
+	ISCImportTheory getImportTheory(String name);
+	
+	ISCImportTheory[] getImportTheories() throws RodinDBException;
+	
 	/**
 	 * Returns a handle to the type parameter with the given name.
 	 * @param name the parameter name

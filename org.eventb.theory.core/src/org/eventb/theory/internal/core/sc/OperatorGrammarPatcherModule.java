@@ -10,6 +10,7 @@ package org.eventb.theory.internal.core.sc;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -48,11 +49,13 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 		if(!operatorInformation.hasError()){
 			String syntax = operatorInformation.getSyntax();
 			if(MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
+				IFormulaExtension formulaExtension = operatorInformation.getExtension(scNewOperatorDefinition, factory);
 				FormulaFactory newFactory = factory.withExtensions(
-						CoreUtilities.singletonSet(operatorInformation.getExtension(factory)));
+						CoreUtilities.singletonSet(formulaExtension));
 				repository.setFormulaFactory(newFactory);
 				factory = repository.getFormulaFactory();
 				scNewOperatorDefinition.setHasError(false, monitor);
+				scNewOperatorDefinition.setOperatorGroup(formulaExtension.getGroupId(), monitor);
 				operatorInformation.generateDefinitionalRule(newFactory, target.getAncestor(ISCTheoryRoot.ELEMENT_TYPE));
 			}
 			else {

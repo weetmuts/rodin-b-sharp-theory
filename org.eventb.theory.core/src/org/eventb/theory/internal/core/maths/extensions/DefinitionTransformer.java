@@ -7,23 +7,43 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.maths.extensions;
 
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.theory.core.IElementTransformer;
 import org.eventb.theory.core.maths.MathExtensionsFactory;
 import org.rodinp.core.IInternalElement;
 
 /**
+ * Common protocol for a definition element transformer.
+ * 
  * @author maamria
  *
  */
-public abstract class DefinitionTransformer<E extends IInternalElement> implements IElementTransformer<E, Set<IFormulaExtension>>{
+public abstract class DefinitionTransformer<E extends IInternalElement> {
 	
 	protected MathExtensionsFactory extensionsFactory;
+	protected List<String> processedDependencies;
 	
 	protected DefinitionTransformer(){
 		extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
 	}
-
+	
+	/**
+	 * Returns the set of mathematical extensions contained in the definition element.
+	 * @param definition the defintional element
+	 * @param factory the formula factory
+	 * @param typeEnvironment the type environment
+	 * @return the formula extensions
+	 * @throws CoreException
+	 */
+	public abstract Set<IFormulaExtension> transform(E definition,
+			final FormulaFactory factory, ITypeEnvironment typeEnvironment) throws CoreException;
+	
+	public List<String> getProcessedDependencies(){
+		return processedDependencies;
+	}
 }

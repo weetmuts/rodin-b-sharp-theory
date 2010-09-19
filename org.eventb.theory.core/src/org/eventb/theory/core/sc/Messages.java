@@ -127,6 +127,10 @@ public final class Messages {
 	public static String scuser_CondIdentsNotSubsetOfLHSIdents;
 	public static String scuser_CondGivensNotSubsetOfLHSGivens;
 	public static String scuser_RHSGivensNotSubsetOfLHSGivens;
+
+	public static String scuser_TheoryInImportMissing;
+
+	public static String scuser_ImportTheoryNotExist;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

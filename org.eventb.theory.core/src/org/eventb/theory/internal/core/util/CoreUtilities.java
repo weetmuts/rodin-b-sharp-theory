@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
@@ -23,6 +24,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
+import org.eventb.core.IPSRoot;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Expression;
@@ -43,10 +47,11 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
+import org.eventb.core.seqprover.IConfidence;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.IFormulaExtensionsSource;
-import org.eventb.theory.core.IInternalTheory;
 import org.eventb.theory.core.ISCConstructorArgument;
 import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
@@ -75,24 +80,26 @@ import org.rodinp.core.RodinDBException;
  * Utilities used by this plug-in.
  * 
  * @author maamria
- *
+ * 
  */
 public class CoreUtilities {
 
 	private static final Object[] NO_OBJECT = new Object[0];
-	
+
 	public static final int SC_STARTING_INDEX = 1;
-	
+
 	public static final String BACKWARD_REASONING_TYPE = "backward";
 	public static final String FORWARD_REASONING_TYPE = "forward";
 	public static final String BACKWARD_AND_FORWARD_REASONING_TYPE = "both";
-	public static final String[] POSSIBLE_REASONING_TYPES = new String[]{BACKWARD_REASONING_TYPE, FORWARD_REASONING_TYPE, BACKWARD_AND_FORWARD_REASONING_TYPE};
+	
+	public static final String[] POSSIBLE_REASONING_TYPES = new String[] {
+			BACKWARD_REASONING_TYPE, FORWARD_REASONING_TYPE,
+			BACKWARD_AND_FORWARD_REASONING_TYPE };
 
-	
-	/////////////////////////
-	/// 	GENERAL
-	/////////////////////////
-	
+	// ///////////////////////
+	// / GENERAL
+	// ///////////////////////
+
 	/**
 	 * Creates a sorted list of the given element type.
 	 * 
@@ -111,11 +118,17 @@ public class CoreUtilities {
 		Collections.sort(list);
 		return list;
 	}
-	
+
 	/**
-	 * <p>A utility to check if an object is present in an array of objects. This method uses <code>Object.equals(Object)</code></p>
-	 * @param objs the container array of objects
-	 * @param o the object to check
+	 * <p>
+	 * A utility to check if an object is present in an array of objects. This
+	 * method uses <code>Object.equals(Object)</code>
+	 * </p>
+	 * 
+	 * @param objs
+	 *            the container array of objects
+	 * @param o
+	 *            the object to check
 	 * @return whether <code>o</code> is in <code>objs</code>
 	 */
 	public static boolean contains(Object[] objs, Object o) {
@@ -125,11 +138,17 @@ public class CoreUtilities {
 		}
 		return false;
 	}
+
 	/**
-	 * <p> Utility to check whether <code>objs</code> contains all of <code>os</code>.
+	 * <p>
+	 * Utility to check whether <code>objs</code> contains all of
+	 * <code>os</code>.
 	 * </p>
-	 * @param objs the container array of objects
-	 * @param os the array of objects
+	 * 
+	 * @param objs
+	 *            the container array of objects
+	 * @param os
+	 *            the array of objects
 	 * @return whether <code>objs</code> contains all of <code>os</code>.
 	 */
 	public static boolean subset(Object[] objs, Object[] os) {
@@ -139,209 +158,249 @@ public class CoreUtilities {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns a singleton set containing the given element.
-	 * @param <E> the type of the element
-	 * @param element 
+	 * 
+	 * @param <E>
+	 *            the type of the element
+	 * @param element
 	 * @return a singleton set
 	 */
-	public static <E> Set<E> singletonSet(E element){
+	public static <E> Set<E> singletonSet(E element) {
 		Set<E> set = new HashSet<E>();
 		set.add(element);
 		return set;
 	}
 
-	/////////////////////////
-	/// AST
-	/////////////////////////
-	
+	// ///////////////////////
+	// / AST
+	// ///////////////////////
+
 	/**
-	 * Returns the string type expression with the given name and type 
+	 * Returns the string type expression with the given name and type
 	 * parameters e.g., List(A).
 	 * 
-	 * @param identifierString the name of the type
-	 * @param argsList the list of type arguments
-	 * @param  the formula factory tha knows about this datatype
+	 * @param identifierString
+	 *            the name of the type
+	 * @param argsList
+	 *            the list of type arguments
+	 * @param the
+	 *            formula factory tha knows about this datatype
 	 * @return the type expression
 	 */
 	public static Type createTypeExpression(String identifierString,
 			List<String> argsList, FormulaFactory ff) {
 		String result = identifierString;
-		if(argsList.size()!=0){
+		if (argsList.size() != 0) {
 			result += "(";
-			for (int i = 0; i < argsList.size(); i++){
+			for (int i = 0; i < argsList.size(); i++) {
 				result += argsList.get(i);
-				if(i < argsList.size()-1){
+				if (i < argsList.size() - 1) {
 					result += ",";
 				}
 			}
 			result += ")";
-			
+
 		}
 		// TODO this should be guaranteed to parse
-		return ff.parseType(result, LanguageVersion.V2).getParsedType() ;
-		
+		return ff.parseType(result, LanguageVersion.V2).getParsedType();
+
 	}
-	
+
 	/**
-	 * Returns the string type expression with the given name and type 
+	 * Returns the string type expression with the given name and type
 	 * parameters e.g., List(A).
 	 * 
-	 * @param identifierString the name of the type
-	 * @param argsArray the array of type arguments
-	 * @param  the formula factory tha knows about this datatype
+	 * @param identifierString
+	 *            the name of the type
+	 * @param argsArray
+	 *            the array of type arguments
+	 * @param the
+	 *            formula factory tha knows about this datatype
 	 * @return the type expression
 	 */
-	public static Type createTypeExpression(String identifier, 
-			String[] argsArray, FormulaFactory ff){
+	public static Type createTypeExpression(String identifier,
+			String[] argsArray, FormulaFactory ff) {
 		return createTypeExpression(identifier, Arrays.asList(argsArray), ff);
 	}
-	
+
 	/**
-	 * Parses the formula string provided using the given formula factory. The formula
-	 * string may contain predicate variables.
-	 * @param formStr the formula string
-	 * @param ff the formula factory
-	 * @param isPattern whether the formula is expected to have predicate variables
+	 * Parses the formula string provided using the given formula factory. The
+	 * formula string may contain predicate variables.
+	 * 
+	 * @param formStr
+	 *            the formula string
+	 * @param ff
+	 *            the formula factory
+	 * @param isPattern
+	 *            whether the formula is expected to have predicate variables
 	 * @return the parsed formula
 	 */
-	public static Formula<?> parseFormula(String formStr, FormulaFactory ff, boolean isPattern){
+	public static Formula<?> parseFormula(String formStr, FormulaFactory ff,
+			boolean isPattern) {
 		Formula<?> formula = null;
-		if(isPattern){
+		if (isPattern) {
 			IParseResult res = ff.parseExpressionPattern(formStr, V2, null);
-			if(!res.hasProblem()){
+			if (!res.hasProblem()) {
 				formula = res.getParsedExpression();
-			}
-			else {
+			} else {
 				res = ff.parsePredicatePattern(formStr, V2, null);
-				if(!res.hasProblem()){
+				if (!res.hasProblem()) {
 					formula = res.getParsedPredicate();
 				}
 			}
-		}
-		else {
+		} else {
 			IParseResult res = ff.parseExpression(formStr, V2, null);
-			if(!res.hasProblem()){
+			if (!res.hasProblem()) {
 				formula = res.getParsedExpression();
-			}
-			else {
+			} else {
 				res = ff.parsePredicate(formStr, V2, null);
-				if(!res.hasProblem()){
+				if (!res.hasProblem()) {
 					formula = res.getParsedPredicate();
 				}
 			}
 		}
-		
+
 		return formula;
 	}
-	
+
 	/**
 	 * Returns a predicate resulting from conjuncting the given predicates.
-	 * @param preds the list of predicates
-	 * @param ff the formula factor
+	 * 
+	 * @param preds
+	 *            the list of predicates
+	 * @param ff
+	 *            the formula factor
 	 * @return the predicate
 	 */
-	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff){
-		while(preds.contains(MathExtensionsUtilities.BTRUE)){
+	public static Predicate conjunctPredicates(List<Predicate> preds,
+			FormulaFactory ff) {
+		while (preds.contains(MathExtensionsUtilities.BTRUE)) {
 			preds.remove(MathExtensionsUtilities.BTRUE);
 		}
-		if(preds.size() == 0){
+		if (preds.size() == 0) {
 			return MathExtensionsUtilities.BTRUE;
 		}
-		if(preds.size() == 1){
+		if (preds.size() == 1) {
 			return preds.get(0);
 		}
 		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
 	}
-	
+
 	/**
 	 * Returns a predicate resulting from conjuncting the given predicates.
-	 * @param preds the array of predicates
-	 * @param ff the formula factor
+	 * 
+	 * @param preds
+	 *            the array of predicates
+	 * @param ff
+	 *            the formula factor
 	 * @return the predicate
 	 */
-	public static Predicate conjunctPredicates(Predicate[] preds, FormulaFactory ff){
+	public static Predicate conjunctPredicates(Predicate[] preds,
+			FormulaFactory ff) {
 		List<Predicate> pList = new ArrayList<Predicate>();
-		for(Predicate p: preds){
-			if(!p.equals(MathExtensionsUtilities.BTRUE)){
+		for (Predicate p : preds) {
+			if (!p.equals(MathExtensionsUtilities.BTRUE)) {
 				pList.add(p);
 			}
 		}
-		if(pList.size() == 0){
+		if (pList.size() == 0) {
 			return MathExtensionsUtilities.BTRUE;
 		}
-		if(pList.size() == 1){
+		if (pList.size() == 1) {
 			return pList.get(0);
 		}
 		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
 	}
-	
-	/////////////////////////////
-	//// Theory CORE
-	/////////////////////////////
+
+	// ///////////////////////////
+	// // Theory CORE
+	// ///////////////////////////
 	/**
 	 * Return the SC theory name with file extension.
-	 * @param bareName the bare name
+	 * 
+	 * @param bareName
+	 *            the bare name
 	 * @return the full name
 	 */
 	public static String getSCTheoryFileName(String bareName) {
 		// TODO Auto-generated method stub
 		return bareName + "." + TheoryCoreFacade.SC_THEORY_FILE_EXTENSION;
 	}
-	
+
 	/**
 	 * Return the deployed theory name with file extension.
-	 * @param bareName the bare name
+	 * 
+	 * @param bareName
+	 *            the bare name
 	 * @return the full name
 	 */
 	public static String getDeployedTheoryFileName(String bareName) {
 		// TODO Auto-generated method stub
 		return bareName + "." + TheoryCoreFacade.DEPLOYED_THEORY_FILE_EXTENSION;
 	}
-	
+
 	/**
-	 * Checks whether the given predicate refers only to the given types in <code>typeEnvironment</code>.
-	 * @param element the predicate element
-	 * @param pred the predicate
-	 * @param typeEnvironment the type environment
-	 * @param display the marker display
+	 * Checks whether the given predicate refers only to the given types in
+	 * <code>typeEnvironment</code>.
+	 * 
+	 * @param element
+	 *            the predicate element
+	 * @param pred
+	 *            the predicate
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display
 	 * @return whether given predicates does not reference illegal identifiers
 	 * @throws CoreException
 	 */
-	public static boolean checkAgainstTypeParameters(IPredicateElement element, Predicate pred, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
-	throws CoreException{
-		return checkAgainstTypeParameters(element, pred, EventBAttributes.PREDICATE_ATTRIBUTE, typeEnvironment, display);
+	public static boolean checkAgainstTypeParameters(IPredicateElement element,
+			Predicate pred, ITypeEnvironment typeEnvironment,
+			IMarkerDisplay display) throws CoreException {
+		return checkAgainstTypeParameters(element, pred,
+				EventBAttributes.PREDICATE_ATTRIBUTE, typeEnvironment, display);
 	}
 
 	/**
-	 * Checks whether the given formula refers only to the given types in <code>typeEnvironment</code>.
-	 * @param element the formula element
-	 * @param formula the formula
-	 * @param typeEnvironment the type environment
-	 * @param display the marker display
+	 * Checks whether the given formula refers only to the given types in
+	 * <code>typeEnvironment</code>.
+	 * 
+	 * @param element
+	 *            the formula element
+	 * @param formula
+	 *            the formula
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display
 	 * @return whether given formula does not reference illegal identifiers
 	 * @throws CoreException
 	 */
-	public static boolean checkAgainstTypeParameters(IFormulaElement element, Formula<?> formula, 
-			ITypeEnvironment typeEnvironment, IMarkerDisplay display)
-	throws CoreException{
-		return checkAgainstTypeParameters(element, formula, TheoryAttributes.FORMULA_ATTRIBUTE, typeEnvironment, display);
+	public static boolean checkAgainstTypeParameters(IFormulaElement element,
+			Formula<?> formula, ITypeEnvironment typeEnvironment,
+			IMarkerDisplay display) throws CoreException {
+		return checkAgainstTypeParameters(element, formula,
+				TheoryAttributes.FORMULA_ATTRIBUTE, typeEnvironment, display);
 	}
-	
-	protected static boolean checkAgainstTypeParameters(IInternalElement element, Formula<?> formula, IAttributeType attrType,
-			ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws RodinDBException{
+
+	protected static boolean checkAgainstTypeParameters(
+			IInternalElement element, Formula<?> formula,
+			IAttributeType attrType, ITypeEnvironment typeEnvironment,
+			IMarkerDisplay display) throws RodinDBException {
 		Set<GivenType> types = formula.getGivenTypes();
 		boolean ok = true;
-		for(GivenType type : types){
-			if(!CoreUtilities.isGivenSet(typeEnvironment, type.getName())){
-				display.createProblemMarker(element, attrType,TheoryGraphProblem.NonTypeParOccurError, type.getName());
+		for (GivenType type : types) {
+			if (!CoreUtilities.isGivenSet(typeEnvironment, type.getName())) {
+				display.createProblemMarker(element, attrType,
+						TheoryGraphProblem.NonTypeParOccurError, type.getName());
 				ok = false;
 			}
 		}
 		return ok;
 	}
-	
+
 	/**
 	 * Makes a free identifier from the given name.
 	 * <p>
@@ -385,7 +444,7 @@ public class CoreUtilities {
 			return null;
 		}
 		FreeIdentifier identifier = (FreeIdentifier) expr;
-		if (identifier.isPrimed()){
+		if (identifier.isPrimed()) {
 			display.createProblemMarker(element, attrType,
 					GraphProblem.InvalidIdentifierError, name);
 			return null;
@@ -398,166 +457,190 @@ public class CoreUtilities {
 		return identifier;
 	}
 
-	
 	/**
-	 * Parses the typing string that is an attribute of the given internal element.
-	 * @param typingElmnt the rodin element
-	 * @param factory the formula factory
-	 * @param display the marker display for error reporting
-	 * @return the type 
+	 * Parses the typing string that is an attribute of the given internal
+	 * element.
+	 * 
+	 * @param typingElmnt
+	 *            the rodin element
+	 * @param factory
+	 *            the formula factory
+	 * @param display
+	 *            the marker display for error reporting
+	 * @return the type
 	 * @throws CoreException
 	 */
 	public static Type parseTypeExpression(ITypeElement typingElmnt,
-			FormulaFactory factory, IMarkerDisplay display) 
-	throws CoreException{
+			FormulaFactory factory, IMarkerDisplay display)
+			throws CoreException {
 		IAttributeType.String attributeType = TheoryAttributes.TYPE_ATTRIBUTE;
 		String expString = typingElmnt.getType();
 
 		IParseResult parseResult = factory.parseType(expString, V2);
 
-		if (issueASTProblemMarkers(typingElmnt, attributeType,
-				parseResult, display)) {
+		if (issueASTProblemMarkers(typingElmnt, attributeType, parseResult,
+				display)) {
 			return null;
 		}
 		Type type = parseResult.getParsedType();
 		return type;
 	}
-	
+
 	/**
 	 * Parses and type checks the formula occurring as an attribute to the given
 	 * element.
-	 * @param element the rodin element
-	 * @param ff the formula factory
-	 * @param typeEnvironment the type environment
-	 * @param display the marker display for error reporting
+	 * 
+	 * @param element
+	 *            the rodin element
+	 * @param ff
+	 *            the formula factory
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
 	 * @return the parsed formula
 	 * @throws CoreException
 	 */
 	public static Formula<?> parseAndCheckFormula(IFormulaElement element,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
-			throws CoreException{
+			FormulaFactory ff, ITypeEnvironment typeEnvironment,
+			IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
 		String form = element.getFormula();
 		Formula<?> formula = null;
 		IParseResult result = ff.parsePredicate(form, V2, null);
-		if(result.hasProblem()){
+		if (result.hasProblem()) {
 			result = ff.parseExpression(form, V2, null);
-			if(issueASTProblemMarkers(element, attributeType, result, display)){
+			if (issueASTProblemMarkers(element, attributeType, result, display)) {
 				return null;
-			}
-			else{
+			} else {
 				formula = result.getParsedExpression();
 			}
-		}
-		else{
+		} else {
 			formula = result.getParsedPredicate();
 		}
-		
+
 		FreeIdentifier[] idents = formula.getFreeIdentifiers();
-		for(FreeIdentifier ident : idents){
-			if(!typeEnvironment.contains(ident.getName())){
-				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+		for (FreeIdentifier ident : idents) {
+			if (!typeEnvironment.contains(ident.getName())) {
+				display.createProblemMarker(element, attributeType,
+						GraphProblem.UndeclaredFreeIdentifierError,
+						ident.getName());
 				return null;
 			}
 		}
 		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
-		if(issueASTProblemMarkers(element, attributeType, tcResult, display)){
+		if (issueASTProblemMarkers(element, attributeType, tcResult, display)) {
 			return null;
 		}
 		return formula;
 	}
+
 	/**
-	 * Parses and type checks the formula occurring as an attribute to the given 
+	 * Parses and type checks the formula occurring as an attribute to the given
 	 * element. The formula may contain predicate variables.
-	 * @param element the rodin element
-	 * @param ff the formula factor
-	 * @param typeEnvironment the type environment
-	 * @param display the marker display for error reporting
+	 * 
+	 * @param element
+	 *            the rodin element
+	 * @param ff
+	 *            the formula factor
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
 	 * @return the parsed formula
 	 * @throws CoreException
 	 */
-	public static Formula<?> parseAndCheckPatternFormula(IFormulaElement element,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display)
-			throws CoreException{
+	public static Formula<?> parseAndCheckPatternFormula(
+			IFormulaElement element, FormulaFactory ff,
+			ITypeEnvironment typeEnvironment, IMarkerDisplay display)
+			throws CoreException {
 		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
 		String form = element.getFormula();
 		Formula<?> formula = null;
 		IParseResult result = ff.parsePredicatePattern(form, V2, null);
-		if(result.hasProblem()){
+		if (result.hasProblem()) {
 			result = ff.parseExpressionPattern(form, V2, null);
-			if(issueASTProblemMarkers(element, attributeType, result, display)){
+			if (issueASTProblemMarkers(element, attributeType, result, display)) {
 				return null;
-			}
-			else{
+			} else {
 				formula = result.getParsedExpression();
 			}
-		}
-		else{
+		} else {
 			formula = result.getParsedPredicate();
 		}
-		
+
 		FreeIdentifier[] idents = formula.getFreeIdentifiers();
-		for(FreeIdentifier ident : idents){
-			if(!typeEnvironment.contains(ident.getName())){
-				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+		for (FreeIdentifier ident : idents) {
+			if (!typeEnvironment.contains(ident.getName())) {
+				display.createProblemMarker(element, attributeType,
+						GraphProblem.UndeclaredFreeIdentifierError,
+						ident.getName());
 				return null;
 			}
 		}
 		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
-		if(issueASTProblemMarkers(element, attributeType, tcResult, display)){
+		if (issueASTProblemMarkers(element, attributeType, tcResult, display)) {
 			return null;
 		}
 		return formula;
 	}
-	
+
 	/**
 	 * Parses and type checks the predicate occuring as an attribute to the
 	 * given element
-	 * @param element the rodin element
-	 * @param ff the formula factory
-	 * @param typeEnvironment the type environment
-	 * @param display the marker display for error reporting
+	 * 
+	 * @param element
+	 *            the rodin element
+	 * @param ff
+	 *            the formula factory
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
 	 * @return the parsed predicate
 	 * @throws CoreException
 	 */
-	public static Predicate parseAndCheckPredicate(IPredicateElement element, 
+	public static Predicate parseAndCheckPredicate(IPredicateElement element,
 			FormulaFactory ff, ITypeEnvironment typeEnvironment,
-			IMarkerDisplay display) throws CoreException{
+			IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
 		String pred = element.getPredicateString();
 		IParseResult result = ff.parsePredicate(pred, V2, null);
-		if(issueASTProblemMarkers(element, attributeType, result, display)){
+		if (issueASTProblemMarkers(element, attributeType, result, display)) {
 			return null;
 		}
 		Predicate predicate = result.getParsedPredicate();
 		FreeIdentifier[] idents = predicate.getFreeIdentifiers();
-		for(FreeIdentifier ident : idents){
-			if(!typeEnvironment.contains(ident.getName())){
-				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+		for (FreeIdentifier ident : idents) {
+			if (!typeEnvironment.contains(ident.getName())) {
+				display.createProblemMarker(element, attributeType,
+						GraphProblem.UndeclaredFreeIdentifierError,
+						ident.getName());
 				return null;
 			}
 		}
 		ITypeCheckResult tcResult = predicate.typeCheck(typeEnvironment);
-		if(issueASTProblemMarkers(element, attributeType, tcResult, display)){
+		if (issueASTProblemMarkers(element, attributeType, tcResult, display)) {
 			return null;
 		}
 		return predicate;
 	}
-	
+
 	/**
 	 * Parses the identifier occurring as an attribute to the given element.
 	 * 
 	 * @param element
 	 *            the element to be parsed
 	 * @param factory
-	 * 			  the formula factory
+	 *            the formula factory
 	 * @return a <code>FreeIdentifier</code> in case of success,
 	 *         <code>null</code> otherwise
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	public static FreeIdentifier parseIdentifier(IIdentifierElement element, FormulaFactory factory,
-			IMarkerDisplay display, IProgressMonitor monitor) throws RodinDBException {
+	public static FreeIdentifier parseIdentifier(IIdentifierElement element,
+			FormulaFactory factory, IMarkerDisplay display,
+			IProgressMonitor monitor) throws RodinDBException {
 
 		if (element.hasIdentifierString()) {
 
@@ -565,44 +648,58 @@ public class CoreUtilities {
 					EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, display);
 		} else {
 
-			display.createProblemMarker(element, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+			display.createProblemMarker(element,
+					EventBAttributes.IDENTIFIER_ATTRIBUTE,
 					GraphProblem.IdentifierUndefError);
 			return null;
 		}
 	}
 
 	/**
-	 * Creates a statically checked identifier element of the type <code>T</code>.
-	 * @param <T> the type of the element
-	 * @param type intenal element type 
-	 * @param source the source element
-	 * @param parent the parent rodin element
-	 * @param monitor the progress monitor
+	 * Creates a statically checked identifier element of the type
+	 * <code>T</code>.
+	 * 
+	 * @param <T>
+	 *            the type of the element
+	 * @param type
+	 *            intenal element type
+	 * @param source
+	 *            the source element
+	 * @param parent
+	 *            the parent rodin element
+	 * @param monitor
+	 *            the progress monitor
 	 * @return the statically checked identifier element
 	 * @throws CoreException
 	 */
 	public static <T extends IIdentifierElement> T createSCIdentifierElement(
-			IInternalElementType<T> type, 
-			IIdentifierElement source, 
-			IInternalElement parent, 
-			IProgressMonitor monitor) throws CoreException{
-		T scElement = parent.getInternalElement(type, source.getIdentifierString());
+			IInternalElementType<T> type, IIdentifierElement source,
+			IInternalElement parent, IProgressMonitor monitor)
+			throws CoreException {
+		T scElement = parent.getInternalElement(type,
+				source.getIdentifierString());
 		scElement.create(null, monitor);
 		return scElement;
 	}
-	
+
 	/**
-	 * Returns whether <code>result</code> has any problems. Issues AST related problems.
-	 * @param element the rodin element
-	 * @param attributeType the attribute
-	 * @param result the parse result
-	 * @param display the marker display
+	 * Returns whether <code>result</code> has any problems. Issues AST related
+	 * problems.
+	 * 
+	 * @param element
+	 *            the rodin element
+	 * @param attributeType
+	 *            the attribute
+	 * @param result
+	 *            the parse result
+	 * @param display
+	 *            the marker display
 	 * @return whether an error is encountered
 	 * @throws RodinDBException
 	 */
 	public static boolean issueASTProblemMarkers(IInternalElement element,
-			IAttributeType.String attributeType, IResult result, IMarkerDisplay display)
-			throws RodinDBException {
+			IAttributeType.String attributeType, IResult result,
+			IMarkerDisplay display) throws RodinDBException {
 
 		boolean errorIssued = false;
 		for (ASTProblem parserProblem : result.getProblems()) {
@@ -695,7 +792,7 @@ public class CoreUtilities {
 			case VariousPossibleErrors:
 
 				problem = ParseProblem.SyntaxError;
-				
+
 				objects = new Object[] { parserProblem.toString() };
 				break;
 			default:
@@ -707,85 +804,102 @@ public class CoreUtilities {
 			}
 
 			if (location == null) {
-				display.createProblemMarker(element, attributeType, problem, objects);
+				display.createProblemMarker(element, attributeType, problem,
+						objects);
 			} else {
 				display.createProblemMarker(element, attributeType,
 						location.getStart(), location.getEnd(), problem,
 						objects);
 			}
 
-			errorIssued |= problem.getSeverity() == IMarker.SEVERITY_ERROR; 
+			errorIssued |= problem.getSeverity() == IMarker.SEVERITY_ERROR;
 		}
 
 		return errorIssued;
 	}
-	
+
 	/**
 	 * Returns appropriate rodin problem for <code>code</code>. The error codes
 	 * correspond to problems of name clashes of datatype related identifiers.
-	 * @param code the error code
-	 * @return  the rodin problem
+	 * 
+	 * @param code
+	 *            the error code
+	 * @return the rodin problem
 	 */
-	public static IRodinProblem getAppropriateProblemForCode(ERROR_CODE code){
-		switch(code){
-		case NAME_IS_A_CONSTRUCTOR: return TheoryGraphProblem.IdenIsAConsNameError;
-		case NAME_IS_A_DATATYPE: return TheoryGraphProblem.IdenIsADatatypeNameError;
-		case NAME_IS_A_DESTRUCTOR: return TheoryGraphProblem.IdenIsADesNameError;
+	public static IRodinProblem getAppropriateProblemForCode(ERROR_CODE code) {
+		switch (code) {
+		case NAME_IS_A_CONSTRUCTOR:
+			return TheoryGraphProblem.IdenIsAConsNameError;
+		case NAME_IS_A_DATATYPE:
+			return TheoryGraphProblem.IdenIsADatatypeNameError;
+		case NAME_IS_A_DESTRUCTOR:
+			return TheoryGraphProblem.IdenIsADesNameError;
 		}
 		return null;
 	}
-	
-	
-	
+
 	/**
-	 * Returns the argument of an operator. This method assumes that all given sets are
-	 * theory type parameters, and all other names must be operator arguments.
-	 * @param typeEnvironment the type environment
+	 * Returns the argument of an operator. This method assumes that all given
+	 * sets are theory type parameters, and all other names must be operator
+	 * arguments.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
 	 * @return list of operator arguments
 	 */
-	public static List<String> getOperatorArguments(ITypeEnvironment typeEnvironment){
+	public static List<String> getOperatorArguments(
+			ITypeEnvironment typeEnvironment) {
 		Set<String> all = typeEnvironment.clone().getNames();
 		all.removeAll(getGivenSetsNames(typeEnvironment));
-		
+
 		return new ArrayList<String>(all);
 	}
-	
-	public static List<FreeIdentifier> getMetavariables(ITypeEnvironment typeEnvironment){
+
+	public static List<FreeIdentifier> getMetavariables(
+			ITypeEnvironment typeEnvironment) {
 		FormulaFactory factory = typeEnvironment.getFormulaFactory();
 		Set<String> all = typeEnvironment.clone().getNames();
 		all.removeAll(getGivenSetsNames(typeEnvironment));
 		List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
-		for (String name : all){
-			vars.add(
-					factory.makeFreeIdentifier(name, null, typeEnvironment.getType(name)));
+		for (String name : all) {
+			vars.add(factory.makeFreeIdentifier(name, null,
+					typeEnvironment.getType(name)));
 		}
 		return vars;
 	}
-	
+
 	/**
 	 * Returns the given types in <code>typeEnvironment</code>.
-	 * @param typeEnvironment the type environment
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
 	 * @return all given types
 	 */
-	public static List<String> getGivenSetsNames(ITypeEnvironment typeEnvironment){
+	public static List<String> getGivenSetsNames(
+			ITypeEnvironment typeEnvironment) {
 		List<String> result = new ArrayList<String>();
-		for (String name : typeEnvironment.getNames()){
-			if(isGivenSet(typeEnvironment, name)){
-				result .add(name);
+		for (String name : typeEnvironment.getNames()) {
+			if (isGivenSet(typeEnvironment, name)) {
+				result.add(name);
 			}
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Checks whether the name <code>name</code> is a given set in the given type environment.
-	 * @param typeEnvironment the type environment
-	 * @param name the name
+	 * Checks whether the name <code>name</code> is a given set in the given
+	 * type environment.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param name
+	 *            the name
 	 * @return whether <code>name</code> is a given set
 	 */
-	public static boolean isGivenSet(ITypeEnvironment typeEnvironment, String name) {
+	public static boolean isGivenSet(ITypeEnvironment typeEnvironment,
+			String name) {
 		Type type = typeEnvironment.getType(name);
-		if(type == null){
+		if (type == null) {
 			return false;
 		}
 		final Type baseType = type.getBaseType();
@@ -795,34 +909,41 @@ public class CoreUtilities {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns a string representation of the given list of strings e.g.,
 	 * ["a","b"] is represented as "(a,b)".
-	 * @param list the list of strings
+	 * 
+	 * @param list
+	 *            the list of strings
 	 * @return the representing string
 	 */
-	public static String toString(List<String> list){
+	public static String toString(List<String> list) {
 		String result = "";
-		for(int i =0 ; i < list.size() ; i++){
-			result+=list.get(i);
-			if(i < list.size()-1){
+		for (int i = 0; i < list.size(); i++) {
+			result += list.get(i);
+			if (i < list.size() - 1) {
 				result += ", ";
 			}
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the given types occurring in <code>type</code>.
-	 * @param type the type
-	 * @param factory the formula factory
+	 * 
+	 * @param type
+	 *            the type
+	 * @param factory
+	 *            the formula factory
 	 * @return the given types
 	 */
-	public static GivenType[] getTypesOccurringIn(Type type, FormulaFactory factory){
+	public static GivenType[] getTypesOccurringIn(Type type,
+			FormulaFactory factory) {
 		List<GivenType> types = new ArrayList<GivenType>();
-		FreeIdentifier[] idents = type.toExpression(factory).getFreeIdentifiers();
-		for(FreeIdentifier ident : idents){
+		FreeIdentifier[] idents = type.toExpression(factory)
+				.getFreeIdentifiers();
+		for (FreeIdentifier ident : idents) {
 			types.add(factory.makeGivenType(ident.getName()));
 		}
 		return types.toArray(new GivenType[types.size()]);
@@ -830,10 +951,13 @@ public class CoreUtilities {
 
 	/**
 	 * Returns the information message appropriate for the given reasoning type.
-	 * @param type the reasoning type
+	 * 
+	 * @param type
+	 *            the reasoning type
 	 * @return the rodin problem
 	 */
-	public static final IRodinProblem getInformationMessageFor(ReasoningType type){
+	public static final IRodinProblem getInformationMessageFor(
+			ReasoningType type) {
 		switch (type) {
 		case BACKWARD:
 			return TheoryGraphProblem.InferenceRuleBackward;
@@ -844,21 +968,26 @@ public class CoreUtilities {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns whether the formula type is an expression type.
-	 * @param type the formula type
+	 * 
+	 * @param type
+	 *            the formula type
 	 * @return whether the type is an expression
 	 */
-	public static final boolean isExpressionOperator(FormulaType type){
+	public static final boolean isExpressionOperator(FormulaType type) {
 		return type.equals(FormulaType.EXPRESSION);
 	}
-	
+
 	/**
 	 * Gets the string representation of the given reasoning type.
-	 * @param type the reasoning type
+	 * 
+	 * @param type
+	 *            the reasoning type
 	 * @return the string representation
 	 */
-	public static final String getStringReasoningType(ReasoningType type){
+	public static final String getStringReasoningType(ReasoningType type) {
 		switch (type) {
 		case BACKWARD:
 			return CoreUtilities.BACKWARD_REASONING_TYPE;
@@ -868,107 +997,115 @@ public class CoreUtilities {
 			return CoreUtilities.BACKWARD_AND_FORWARD_REASONING_TYPE;
 		}
 	}
-	
+
 	/**
 	 * Returns the reasoning type corresponding to the type string.
 	 * 
-	 * @param type in string format
+	 * @param type
+	 *            in string format
 	 * @return the reasoning type
 	 */
-	public static final ReasoningType getReasoningTypeFor(String type){
-		if(type.equals(CoreUtilities.BACKWARD_REASONING_TYPE))
+	public static final ReasoningType getReasoningTypeFor(String type) {
+		if (type.equals(CoreUtilities.BACKWARD_REASONING_TYPE))
 			return ReasoningType.BACKWARD;
 		else if (type.equals(CoreUtilities.FORWARD_REASONING_TYPE))
 			return ReasoningType.FORWARD;
-		else if(type.equals(CoreUtilities.BACKWARD_AND_FORWARD_REASONING_TYPE))
+		else if (type.equals(CoreUtilities.BACKWARD_AND_FORWARD_REASONING_TYPE))
 			return ReasoningType.BACKWARD_AND_FORWARD;
-		throw new IllegalArgumentException("unknown reasoning type "+ type);
+		throw new IllegalArgumentException("unknown reasoning type " + type);
 	}
-	
+
 	public static ISCTheoryRoot getTheoryRoot(String fullName, String project)
-	throws CoreException{
-		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(project);
-		if(rodinProject.exists()){
+			throws CoreException {
+		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(
+				project);
+		if (rodinProject.exists()) {
 			IRodinFile file = rodinProject.getRodinFile(fullName);
-			if(file.exists()){
+			if (file.exists()) {
 				ISCTheoryRoot theoryRoot = (ISCTheoryRoot) file.getRoot();
-				if(theoryRoot.exists()){
+				if (theoryRoot.exists()) {
 					return theoryRoot;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
+	 * Duplicates the source element as a child of the new parent element. It
+	 * copies all of the source details ignoring the given attributes.
 	 * 
 	 * @param <E>
+	 *            the type of the source
 	 * @param source
+	 *            the source element
 	 * @param type
+	 *            the type
 	 * @param newParent
+	 *            the new parent element
 	 * @param monitor
+	 *            the progress monitor
 	 * @param toIgnore
-	 * @return
+	 *            the attribute types to ignore when copying
+	 * @return the new element that is a copy of the source and has the new
+	 *         parent
 	 * @throws CoreException
 	 */
-	public static final <E extends IInternalElement> E duplicate(E source, IInternalElementType<E> type, 
-			IInternalElement newParent ,IProgressMonitor monitor, IAttributeType... toIgnore)
-	throws CoreException
-	{
+	public static final <E extends IInternalElement> E duplicate(E source,
+			IInternalElementType<E> type, IInternalElement newParent,
+			IProgressMonitor monitor, IAttributeType... toIgnore)
+			throws CoreException {
 		assert source.exists();
 		assert newParent.exists();
 		List<IAttributeType> toIgnoreList = Arrays.asList(toIgnore);
 		IAttributeType[] attrTypes = source.getAttributeTypes();
-		E newElement = newParent.getInternalElement(type, source.getElementName());
+		E newElement = newParent.getInternalElement(type,
+				source.getElementName());
 		newElement.create(null, monitor);
-		for(IAttributeType attr : attrTypes){
-			if(toIgnoreList.contains(attr)){
+		for (IAttributeType attr : attrTypes) {
+			if (toIgnoreList.contains(attr)) {
 				continue;
 			}
 			IAttributeValue value = source.getAttributeValue(attr);
 			newElement.setAttributeValue(value, monitor);
 		}
-		
+
 		return newElement;
 	}
-	
+
 	/**
 	 * Copies the mathematical extensions in the source to the Event-B root
 	 * specified.
-	 * @param target the root target
-	 * @param source the source of mathematical extensions
-	 * @param addAsInternalTheory whether to copy extensions straight to the root or to an internal theory in the root
+	 * 
+	 * @param target
+	 *            the root target
+	 * @param source
+	 *            the source of mathematical extensions
+	 * @param addAsInternalTheory
+	 *            whether to copy extensions straight to the root or to an
+	 *            internal theory in the root
 	 * @throws CoreException
 	 */
-	public static void copyMathematicalExtensions(IEventBRoot target,
-			IFormulaExtensionsSource source, boolean addAsInternalTheory) throws CoreException {
-		IInternalElement actualCopyTarget = null;
-		if(addAsInternalTheory){
-			actualCopyTarget = target.getInternalElement(
-					IInternalTheory.ELEMENT_TYPE, source.getElementName());
-			actualCopyTarget.create(null, null);
-		}
-		else {
-			actualCopyTarget = target;
-		}
+	public static void copyMathematicalExtensions(IDeployedTheoryRoot target,
+			IFormulaExtensionsSource source)
+			throws CoreException {
 		// copy carrier sets
 		// //////////////////////////////
 		ISCTypeParameter[] typeParameters = source.getSCTypeParameters();
 		for (ISCTypeParameter typeParameter : typeParameters) {
 			duplicate(typeParameter, ISCTypeParameter.ELEMENT_TYPE,
-					actualCopyTarget, null);
+					target, null);
 		}
 		// copy datatypes
 		// //////////////////////////////
 		ISCDatatypeDefinition[] datatypeDefinitions = source
 				.getSCDatatypeDefinitions();
 		for (ISCDatatypeDefinition definition : datatypeDefinitions) {
-			if(definition.hasHasErrorAttribute() &&
-					definition.hasError()){
+			if (definition.hasHasErrorAttribute() && definition.hasError()) {
 				continue;
 			}
 			ISCDatatypeDefinition newDefinition = duplicate(definition,
-					ISCDatatypeDefinition.ELEMENT_TYPE, actualCopyTarget, null,
+					ISCDatatypeDefinition.ELEMENT_TYPE, target, null,
 					TheoryAttributes.HAS_ERROR_ATTRIBUTE);
 			ISCTypeArgument[] typeArguments = definition.getTypeArguments();
 			for (ISCTypeArgument typeArgument : typeArguments) {
@@ -996,13 +1133,14 @@ public class CoreUtilities {
 		ISCNewOperatorDefinition[] operatorDefinitions = source
 				.getSCNewOperatorDefinitions();
 		for (ISCNewOperatorDefinition operatorDefinition : operatorDefinitions) {
-			if(operatorDefinition.hasHasErrorAttribute() &&
-					operatorDefinition.hasError()){
+			if (operatorDefinition.hasHasErrorAttribute()
+					&& operatorDefinition.hasError()) {
 				continue;
 			}
 			ISCNewOperatorDefinition newDefinition = duplicate(
 					operatorDefinition, ISCNewOperatorDefinition.ELEMENT_TYPE,
-					actualCopyTarget, null, TheoryAttributes.HAS_ERROR_ATTRIBUTE);
+					target, null,
+					TheoryAttributes.HAS_ERROR_ATTRIBUTE);
 			ISCOperatorArgument[] operatorArguments = operatorDefinition
 					.getOperatorArguments();
 			for (ISCOperatorArgument operatorArgument : operatorArguments) {
@@ -1019,30 +1157,80 @@ public class CoreUtilities {
 
 		}
 	}
-	
+
 	/**
-	 * Returns whether the given root was generated from a theory file, that is indeed true if
-	 * the returned theory is not <code>null</code>.
-	 * @param root the Event-B root
+	 * Returns whether the given root was generated from a theory file, that is
+	 * indeed true if the returned theory is not <code>null</code>.
+	 * 
+	 * @param root
+	 *            the Event-B root
 	 * @return the corresponding SC theory or <code>null</code>
 	 */
 	public static ISCTheoryRoot correspondsToSCTheory(IEventBRoot root)
-	throws CoreException{
-		if(root instanceof ISCTheoryRoot){
-			return (ISCTheoryRoot)root;
+			throws CoreException {
+		if (root instanceof ISCTheoryRoot) {
+			return (ISCTheoryRoot) root;
 		}
 		String name = root.getElementName();
 		IRodinProject project = root.getRodinProject();
 		IRodinFile[] files = project.getRodinFiles();
-		for (IRodinFile file : files){
-			if(file.getRoot() instanceof ISCTheoryRoot)
-			{
+		for (IRodinFile file : files) {
+			if (file.getRoot() instanceof ISCTheoryRoot) {
 				ISCTheoryRoot thisRoot = (ISCTheoryRoot) file.getRoot();
-				if (thisRoot.getElementName().equals(name)){
+				if (thisRoot.getElementName().equals(name)) {
 					return (ISCTheoryRoot) file.getRoot();
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Calculates the soundness of the given labelled elements and stores them in the given map.
+	 * @param root the parent SC theory
+	 * @param elements the labelled elements
+	 * @param soundness the map
+	 * @throws RodinDBException
+	 */
+	public static void calculateSoundness(ISCTheoryRoot root, ILabeledElement[] elements, Map<String, Boolean> soundness)
+			throws RodinDBException {
+		soundness.clear();
+		IPSRoot psRoot = root.getPSRoot();
+		IPSStatus[] sts = psRoot.getStatuses();
+		for (ILabeledElement element : elements) {
+			boolean isSound = true;
+			for (IPSStatus s : sts) {
+				if (s.getElementName().startsWith(element.getLabel())) {
+					if (!isDischarged(s.getConfidence())
+							&& !isReviewed(s.getConfidence())) {
+						isSound = false;
+					}
+				}
+			}
+			soundness.put(element.getLabel(), isSound);
+		}
+
+	}
+	
+	/**
+	 * Returns whether the given confidence is a reviewed-level confidence.
+	 * @param confidence the confidence to check
+	 * @return whether the concerned PO is reviewed
+	 */
+	public static boolean isReviewed(int confidence){
+		return 
+		(confidence > IConfidence.PENDING) && 
+		(confidence <= IConfidence.REVIEWED_MAX);		
+	}
+
+	/**
+	 * Returns whether the given confidence is a discharged-level confidence.
+	 * @param confidence the confidence to check
+	 * @return whether the concerned PO is discharged
+	 */
+	public static boolean isDischarged(int confidence){
+		return 
+		(confidence > IConfidence.REVIEWED_MAX) && 
+		(confidence <= IConfidence.DISCHARGED_MAX);		
 	}
 }

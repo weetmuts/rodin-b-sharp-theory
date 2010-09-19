@@ -64,19 +64,19 @@ public final class MathExtensionsFactory {
 	 * @return the new formula extension
 	 */
 	public IFormulaExtension getFormulaExtension(String operatorID,
-			String syntax, FormulaType formulaType, Notation notation,
+			String syntax, FormulaType formulaType, Notation notation,String groupID,
 			boolean isCommutative, boolean isAssociative,
 			Formula<?> directDefinition,  IOperatorTypingRule operatorTypingRule,
 			Object source) {
 
 		if(formulaType.equals(FormulaType.EXPRESSION)){
 			return new ExpressionOperatorExtension(operatorID, syntax,
-					formulaType, notation, isCommutative, isAssociative, 
+					formulaType, notation, groupID, isCommutative, isAssociative, 
 					operatorTypingRule, (Expression)directDefinition, source);
 		}
 		else {
 			return new PredicateOperatorExtension(operatorID, syntax, formulaType,
-					notation, isAssociative, operatorTypingRule, 
+					notation,groupID, isCommutative, operatorTypingRule, 
 					(Predicate)directDefinition, source);
 		}
 	}

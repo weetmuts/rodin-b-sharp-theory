@@ -71,8 +71,8 @@ public class TheoryOperatorExtensionPOGModule extends POGProcessorModule {
 		for (IFormulaExtension extension : allExtensions){
 			if(extension instanceof IOperatorExtension){
 				IOperatorExtension opExtension = (IOperatorExtension) extension;
-				if(opExtension.getOrigin()!=null && opExtension.getOrigin() instanceof IRodinElement){
-					IRodinElement origin = (IRodinElement) opExtension.getOrigin();
+				if(opExtension.getOrigin()!=null && opExtension.getOrigin() instanceof ISCNewOperatorDefinition){
+					ISCNewOperatorDefinition origin = (ISCNewOperatorDefinition) opExtension.getOrigin();
 					String elementName = origin.getElementName();
 					IRodinElement parent = origin.getParent();
 					if(parent == null){

@@ -35,11 +35,11 @@ class ExpressionOperatorExtension extends AbstractOperatorExtension
 		implements IExpressionExtension {
 	
 	public ExpressionOperatorExtension(String operatorID, String syntax,
-			FormulaType formulaType, Notation notation, boolean isCommutative,
-			boolean isAssociative, IOperatorTypingRule typingRule,
+			FormulaType formulaType, Notation notation, String groupID,
+			boolean isCommutative, boolean isAssociative, IOperatorTypingRule typingRule,
 			Expression directDefinition, Object source){
 		
-		super(operatorID, syntax, formulaType, notation, isCommutative, isAssociative, 
+		super(operatorID, syntax, formulaType, notation, groupID, isCommutative, isAssociative, 
 				typingRule, directDefinition, source);
 	}
 	

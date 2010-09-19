@@ -22,7 +22,6 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
@@ -89,7 +88,7 @@ public class OperatorDefinitionFilterModule extends SCFilterModule{
 			return false;
 		}
 		Notation notation = opDef.getNotationType();
-		symbolInfo.setAttributeValue(TheoryAttributes.NOTATION_TYPE_ATTRIBUTE, TheoryCoreFacade.convertTypeToStr(notation));
+		symbolInfo.setAttributeValue(TheoryAttributes.NOTATION_TYPE_ATTRIBUTE, notation.toString());
 		
 		if (!opDef.hasAssociativeAttribute()) {
 			createProblemMarker(opDef,

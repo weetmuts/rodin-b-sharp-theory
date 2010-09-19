@@ -112,7 +112,7 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 			}
 			// Postfix not supported yet
 			case POSTFIX:{
-				createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredOnlyPrefix);
+				createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorExpCannotBePostfix);
 				return false;
 			}
 			}

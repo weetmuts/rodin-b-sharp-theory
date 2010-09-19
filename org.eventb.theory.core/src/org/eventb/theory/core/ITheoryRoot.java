@@ -28,6 +28,10 @@ public interface ITheoryRoot extends
 	IInternalElementType<ITheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".theoryRoot");
 	
+	public IImportTheory getImportTheory(String name);
+	
+	public IImportTheory[] getImportTheories() throws RodinDBException;
+	
 	public ITypeParameter getTypeParameter(String name);
 	
 	public ITypeParameter[] getTypeParameters() throws RodinDBException;

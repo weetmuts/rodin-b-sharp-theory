@@ -36,12 +36,33 @@ public interface IOperatorInformation extends ISCState{
 	public final static IStateType<IOperatorInformation> STATE_TYPE = SCCore
 		.getToolStateType(TheoryPlugin.PLUGIN_ID + ".operatorInformation");
 	
+	/**
+	 * Returns whether this operator is an expression operator.
+	 * @return whether this operator is an expression
+	 */
 	public boolean isExpressionOperator() ;
 	
+	/**
+	 * Returns whether the given identifier is allowed to occur in the definition or the condition of
+	 * this operator.
+	 * @param ident the identifier
+	 * @return whether the identifier is allowed to be used
+	 */
 	public boolean isAllowedIdentifier(FreeIdentifier ident) ;
 	
+	/**
+	 * Adds an operator argument with the given identifier and type.
+	 * @param ident the idenrifer of the argument
+	 * @param type the type of the argument
+	 */
 	public void addOperatorArgument(FreeIdentifier ident, Type type);
 	
+	
+	/**
+	 * Adds an operator argument with the given name and type.
+	 * @param ident the name of the argument
+	 * @param type the type of the argument
+	 */
 	public void addOperatorArgument(String ident, Type type);
 
 	/**
@@ -129,6 +150,10 @@ public interface IOperatorInformation extends ISCState{
 	 */
 	public void setDirectDefinition(Formula<?> directDefinition) ;
 
+	/**
+	 * Returns the resultant type of this operator if it produces expressions.
+	 * @return the resultant type if any, or <code>null</code>
+	 */
 	public Type getResultantType() ;
 
 	/**
@@ -148,9 +173,11 @@ public interface IOperatorInformation extends ISCState{
 	public boolean hasError() ;
 
 	/**
-	 * 
+	 * Returns the mathematical extension corresponding to this operator information.
+	 * @param sourceOfExtension the source of the extension
+	 * @param factory the formula factory to use
 	 * @return the formula extension
 	 */
-	public IFormulaExtension getExtension(FormulaFactory factory) ;
+	public IFormulaExtension getExtension(Object sourceOfExtension, FormulaFactory factory) ;
 	
 }

@@ -20,7 +20,6 @@ import org.eventb.theory.core.ISCConstructorArgument;
 import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCTypeArgument;
-import org.rodinp.core.IInternalElementType;
 
 /**
  * @author maamria
@@ -28,8 +27,6 @@ import org.rodinp.core.IInternalElementType;
  */
 public class DatatypeTransformer extends DefinitionTransformer<ISCDatatypeDefinition>{
 
-	
-	
 	@Override
 	public Set<IFormulaExtension> transform(final ISCDatatypeDefinition definition, 
 			final FormulaFactory factory, ITypeEnvironment typeEnvironment) throws CoreException {
@@ -64,13 +61,6 @@ public class DatatypeTransformer extends DefinitionTransformer<ISCDatatypeDefini
 			}
 		}
 		return extensionsFactory.getCompleteDatatypeExtensions(typeName, typeArguments, datatypeCons, factory);
-	}
-
-	@Override
-	public IInternalElementType<ISCDatatypeDefinition> getElementType()
-			throws CoreException {
-		// TODO Auto-generated method stub
-		return ISCDatatypeDefinition.ELEMENT_TYPE;
 	}
 
 }

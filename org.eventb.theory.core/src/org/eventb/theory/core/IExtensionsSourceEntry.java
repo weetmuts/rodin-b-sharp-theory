@@ -7,27 +7,24 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.extension.IOperatorProperties;
-import org.rodinp.core.IInternalElement;
+import org.eventb.core.ITraceableElement;
+import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for elements that can have a notation type attribute.
- * 
- * @see IOperatorProperties.Notation
- * 
  * @author maamria
  *
  */
-public interface INotationTypeElement extends IInternalElement{
+public interface IExtensionsSourceEntry extends ITraceableElement {
 
-	boolean hasNotationType() throws RodinDBException;
+	public IInternalElementType<IExtensionsSourceEntry> ELEMENT_TYPE = 
+		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".extensionsSourceEntry");
 	
-	Notation getNotationType() throws RodinDBException;
+	public IFormulaExtensionsSource getExtensionsSource() throws RodinDBException;
 	
-	void setNotationType(String notation, IProgressMonitor monitor) throws RodinDBException;
+	public void setExtensionsSource(IFormulaExtensionsSource source, IProgressMonitor monitor ) throws RodinDBException;
 	
 }

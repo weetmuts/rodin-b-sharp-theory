@@ -170,6 +170,12 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			AutoUndefWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_AutoUndefWarning), 
+			ImportTheoryAttrMissing( 
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_TheoryInImportMissing),
+			ImportTheoryNotExist( 
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_ImportTheoryNotExist), 
 			InferenceGivenBTRUEPredWarn(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_InferenceGivenBTRUEPredWarn),

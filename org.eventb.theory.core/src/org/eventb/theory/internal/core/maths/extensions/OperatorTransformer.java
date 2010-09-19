@@ -29,7 +29,6 @@ import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.internal.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
-import org.rodinp.core.IInternalElementType;
 
 /**
  * @author maamria
@@ -50,6 +49,7 @@ public class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDef
 		String syntax = definition.getSyntaxSymbol();
 		FormulaType formulaType = definition.getFormulaType();
 		Notation notation = definition.getNotationType();
+		String groupID = definition.getOperatorGroup();
 		boolean isAssociative = definition.isAssociative();
 		boolean isCommutative =definition.isCommutative();
 		
@@ -79,18 +79,12 @@ public class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDef
 											null;
 		IFormulaExtension extension = extensionsFactory.
 				getFormulaExtension(operatorID, syntax, 
-						formulaType, notation, isAssociative, isCommutative,  directDefinition,
+						formulaType, notation,groupID, isAssociative, isCommutative,  directDefinition,
 						extensionsFactory.getTypingRule(
 								typeParameters, operatorArguments, resultantType, wdCondition),
 						definition);
 		return MathExtensionsUtilities.singletonExtension(extension);
 	}
 
-	@Override
-	public IInternalElementType<ISCNewOperatorDefinition> getElementType()
-			throws CoreException {
-		// TODO Auto-generated method stub
-		return ISCNewOperatorDefinition.ELEMENT_TYPE;
-	}
 
 }

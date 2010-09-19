@@ -263,7 +263,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		return hasError;
 	}
 
-	public IFormulaExtension getExtension(final FormulaFactory formulaFactory) {
+	public IFormulaExtension getExtension(Object sourceOfExtension, final FormulaFactory formulaFactory) {
 		if (!hasError){
 			Type resultantType = (directDefinition instanceof Expression) ?
 					((Expression)directDefinition).getType(): null;
@@ -271,8 +271,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 					CoreUtilities.getSortedList(opArguments.values()), resultantType, wdCondition);
 			formulaExtension = extensionsFactory.getFormulaExtension( 
 					operatorID, syntax, formulaType,
-					notation, isCommutative, isAssociative, directDefinition,
-					typingRule, null);
+					notation, null, isCommutative, isAssociative, directDefinition,
+					typingRule, sourceOfExtension);
 			
 			return formulaExtension;
 		}

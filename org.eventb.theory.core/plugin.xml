@@ -110,6 +110,11 @@
             kind="string"
             name="%groupIDAttr">
       </attributeType>
+      <attributeType
+            id="modified"
+            kind="boolean"
+            name="%modifiedAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -117,6 +122,11 @@
             class="org.eventb.theory.core.basis.TheoryRoot"
             id="theoryRoot"
             name="%theoryRoot">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.ImportTheory"
+            id="importTheory"
+            name="%importTheory">
       </internalElementType>
       <internalElementType
             class="org.eventb.theory.core.basis.TypeParameter"
@@ -210,6 +220,11 @@
             class="org.eventb.theory.core.basis.SCTheoryRoot"
             id="scTheoryRoot"
             name="%scTheoryRoot">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCImportTheory"
+            id="scImportTheory"
+            name="%scImportTheory">
       </internalElementType>
       <internalElementType
             class="org.eventb.theory.core.basis.SCTypeParameter"
@@ -407,10 +422,19 @@
             name="%scTheoryModule">
       </rootType>
        <processorType
+             class="org.eventb.theory.internal.core.sc.ImportTheoryModule"
+             id="importTheoryModule"
+             name="%importTheoryModule"
+             parent="org.eventb.theory.core.theoryModule">
+       </processorType>
+       <processorType
              class="org.eventb.theory.internal.core.sc.TypeParameterModule"
              id="typeParameterModule"
              name="%scTypeParameterModule"
              parent="org.eventb.theory.core.theoryModule">
+          <prereq
+                id="org.eventb.theory.core.importTheoryModule">
+          </prereq>
        </processorType>
        <processorType
              class="org.eventb.theory.internal.core.sc.DatatypeDefinitionModule"
@@ -711,6 +735,9 @@
                id="org.eventb.theory.core.thySC">
          </config>
          <scModule
+               id="org.eventb.theory.core.importTheoryModule">
+         </scModule>
+         <scModule
                id="org.eventb.theory.core.typeParameterModule">
          </scModule>
          <scModule
@@ -870,6 +897,13 @@
             name="%deployedTheoryFile"
             priority="normal">
       </content-type>
+         <content-type
+               base-type="org.rodinp.core.rodin"
+               file-extensions="bpdf"
+               id="metaDependenciesFile"
+               name="%metaDependenciesFile"
+               priority="normal">
+         </content-type>
   </extension>
   <extension
         point="org.rodinp.core.internalElementTypes">
@@ -879,9 +913,29 @@
            name="%deployedTheoryRoot">
      </internalElementType>
      <internalElementType
-           class="org.eventb.theory.core.basis.InternalTheory"
-           id="internalTheory"
-           name="%internalTheory">
+           class="org.eventb.theory.core.basis.ProjectMetaDependencies"
+           id="metaDependencies"
+           name="%metaDependencies">
+     </internalElementType>
+     <internalElementType
+           class="org.eventb.theory.core.basis.DeployedTheoryEntry"
+           id="deployedTheoryEntry"
+           name="%deployedTheoryEntry">
+     </internalElementType>
+     <internalElementType
+           class="org.eventb.theory.core.basis.SCTheoryEntry"
+           id="scTheoryEntry"
+           name="%scTheoryEntry">
+     </internalElementType>
+     <internalElementType
+           class="org.eventb.theory.core.basis.GeneratedRootEntry"
+           id="generatedRootEntry"
+           name="%generatedRootEntry">
+     </internalElementType>
+     <internalElementType
+           class="org.eventb.theory.core.basis.ExtensionsSourceEntry"
+           id="extensionsSourceEntry"
+           name="%extensionsSourceEntry">
      </internalElementType>
   </extension>
   <extension
@@ -889,6 +943,10 @@
      <fileAssociation
            content-type-id="org.eventb.theory.core.deployedTheoryFile"
            root-element-type="org.eventb.theory.core.deployedTheoryRoot">
+     </fileAssociation>
+     <fileAssociation
+           content-type-id="org.eventb.theory.core.metaDependenciesFile"
+           root-element-type="org.eventb.theory.core.metaDependencies">
      </fileAssociation>
   </extension>
 </plugin>

@@ -7,27 +7,20 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.extension.IOperatorProperties;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for elements that can have a notation type attribute.
- * 
- * @see IOperatorProperties.Notation
- * 
  * @author maamria
  *
  */
-public interface INotationTypeElement extends IInternalElement{
+public interface IModifiedElement extends IInternalElement{
+	
+	public boolean hasModifiedAttribute() throws RodinDBException;
+	
+	public boolean isModified() throws RodinDBException;
+	
+	public void setModified(boolean isModified, IProgressMonitor monitor) throws RodinDBException;
 
-	boolean hasNotationType() throws RodinDBException;
-	
-	Notation getNotationType() throws RodinDBException;
-	
-	void setNotationType(String notation, IProgressMonitor monitor) throws RodinDBException;
-	
 }
