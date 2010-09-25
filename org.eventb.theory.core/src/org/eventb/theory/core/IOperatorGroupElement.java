@@ -12,15 +12,33 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ *	Common protocol for an operator that belongs to an operator group. 
+ * 
  * @author maamria
  *
  */
 public interface IOperatorGroupElement extends IInternalElement{
 
+	/**
+	 * Returns whether the operator group attribute is set.
+	 * @return whether the attribute is present
+	 * @throws RodinDBException
+	 */
 	boolean hasOperatorGroup() throws RodinDBException;
 	
+	/**
+	 * Returns the operator group to which this operator belongs.
+	 * @return the operator group
+	 * @throws RodinDBException
+	 */
 	String getOperatorGroup() throws RodinDBException;
 	
+	/**
+	 * Sets the operator group of this operator to the given group.
+	 * @param newGroup the operator group
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setOperatorGroup(String newGroup, IProgressMonitor monitor)throws RodinDBException;
 	
 }

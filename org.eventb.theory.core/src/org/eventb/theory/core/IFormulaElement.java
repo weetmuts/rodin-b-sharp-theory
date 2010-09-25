@@ -14,6 +14,8 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for a formula element.
  * 
+ * <p> The element may contain an Event-B expression or predicate, but not an assignment.
+ * 
  * @author maamria
  *
  */

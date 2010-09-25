@@ -14,13 +14,27 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ *	Common protocol for a SC given type element.
+ * 
  * @author maamria
  *
  */
 public interface ISCGivenTypeElement extends IInternalElement{
 	
+	/**
+	 * Returns the given type associated with this element.
+	 * @param factory the formula factory
+	 * @return the given type
+	 * @throws RodinDBException
+	 */
 	Type getSCGivenType(FormulaFactory factory) throws RodinDBException;
 	
+	/**
+	 * Sets the given type attribute to the given type.
+	 * @param type the given type
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setSCGivenType(Type type, IProgressMonitor monitor) throws RodinDBException;
 
 }

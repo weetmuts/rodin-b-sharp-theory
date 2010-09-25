@@ -30,17 +30,46 @@ public interface IProofRulesBlock extends ILabeledElement, ICommentedElement{
 	public IInternalElementType<IProofRulesBlock> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".proofRulesBlock");
 
-	
+	/**
+	 * Returns a handle to the metavariable with the given name.
+	 * @param name of the metavariable
+	 * @return the metavariable
+	 */
 	IMetavariable getMetavariable(String name);
 	
+	/**
+	 * Returns all metavariables of this block.
+	 * @return all metavariables
+	 * @throws RodinDBException
+	 */
 	IMetavariable[] getMetavariables() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the rewrite rule with the given name.
+	 * @param name of the rule
+	 * @return the rule
+	 */
 	IRewriteRule getRewriteRule(String name);
 	
+	/**
+	 * Returns all rewrites of this block.
+	 * @return all rewrites
+	 * @throws RodinDBException
+	 */
 	IRewriteRule[] getRewriteRules() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the inference rule with the given name.
+	 * @param name of the rule
+	 * @return the rule
+	 */
 	IInferenceRule getInferenceRule(String name);
 	
+	/**
+	 * Returns all inferences of this block.
+	 * @return all inferences
+	 * @throws RodinDBException
+	 */
 	IInferenceRule[] getInferenceRules() throws RodinDBException;
 	
 }

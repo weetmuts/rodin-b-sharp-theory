@@ -13,7 +13,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common interface internal elements that can be a source of mathematical extensions.
  * 
- * <p> A mathematical extensions source must have a set of type parameters. These parameters
+ * <p> A mathematical extensions source may have a set of type parameters. These parameters
  * are the types on which its extensions are parameterised.
  * <p> A mathematical extensions source may have any number of datatype definitions.
  * <p> A mathematical extensions source may have any number of new operator definitions.
@@ -27,10 +27,6 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IFormulaExtensionsSource extends IInternalElement{
 
-	ISCImportTheory getImportTheory(String name);
-	
-	ISCImportTheory[] getImportTheories() throws RodinDBException;
-	
 	/**
 	 * Returns a handle to the type parameter with the given name.
 	 * @param name the parameter name

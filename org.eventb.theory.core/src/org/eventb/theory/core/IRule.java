@@ -11,6 +11,8 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.ILabeledElement;
 
 /**
+ * Common protocol for proof rules: rewrite and inference rules.
+ * 
  * @author maamria
  *
  */

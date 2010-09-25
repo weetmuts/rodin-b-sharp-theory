@@ -15,15 +15,35 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for an element that may have a SC formula.
+ * 
  * @author maamria
  *
  */
 public interface ISCFormulaElement extends IInternalElement{
 	
+	/**
+	 * Returns whether the formula attribute is set.
+	 * @return whether the formula attribute is set
+	 * @throws RodinDBException
+	 */
 	boolean hasSCFormula() throws RodinDBException;
 	
+	/**
+	 * Returns the SC formula associated with this element.
+	 * @param ff the formula factory
+	 * @param typeEnvironment the type environment
+	 * @return the SC formula
+	 * @throws RodinDBException
+	 */
 	Formula<?> getSCFormula(FormulaFactory ff, ITypeEnvironment typeEnvironment) throws RodinDBException;
 	
+	/**
+	 * Sets the formula attribute of this element to the given formula.
+	 * @param formula the SC formula
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setSCFormula(Formula<?> formula, IProgressMonitor monitor) throws RodinDBException;
 
 }

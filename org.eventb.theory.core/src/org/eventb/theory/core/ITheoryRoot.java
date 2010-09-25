@@ -18,6 +18,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for a theory root.
  * 
  * @author maamria
  *
@@ -28,28 +29,83 @@ public interface ITheoryRoot extends
 	IInternalElementType<ITheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".theoryRoot");
 	
+	/**
+	 * Returns a handle to the import directive with the given element.
+	 * @param name the name of the import
+	 * @return the theory import
+	 */
 	public IImportTheory getImportTheory(String name);
 	
+	/**
+	 * Returns all import theory directives.
+	 * @return all import theories
+	 * @throws RodinDBException
+	 */
 	public IImportTheory[] getImportTheories() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the type parameter with the given element.
+	 * @param name the name of the type parameter
+	 * @return the type parameter
+	 */
 	public ITypeParameter getTypeParameter(String name);
 	
+	/**
+	 * Returns all type parametres.
+	 * @return all type parametres
+	 * @throws RodinDBException
+	 */
 	public ITypeParameter[] getTypeParameters() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the datatype with the given element.
+	 * @param name the name of the datatype
+	 * @return the datatype
+	 */
 	public IDatatypeDefinition getDatatypeDefinition(String name);
 	
+	/**
+	 * Returns all datatype definitions.
+	 * @return all datatype definitions
+	 * @throws RodinDBException
+	 */
 	public IDatatypeDefinition[] getDatatypeDefinitions() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the operator with the given element.
+	 * @param name the name of the operator
+	 * @return the operator
+	 */
 	public INewOperatorDefinition getNewOperatorDefinition(String name);
 	
+	/**
+	 * Returns all operator definitions.
+	 * @return all operator definitions
+	 * @throws RodinDBException
+	 */
 	public INewOperatorDefinition[] getNewOperatorDefinitions() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the proof block with the given element.
+	 * @param name the name of the proof block
+	 * @return the proof block
+	 */
 	public IProofRulesBlock getProofRulesBlock(String name);
 	
 	public IProofRulesBlock[] getProofRulesBlocks() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the theorem with the given element.
+	 * @param name the name of the theorem
+	 * @return the theorem
+	 */
 	public ITheorem getTheorem(String name);
 	
+	/**
+	 * Returns all theorems.
+	 * @return all theorems
+	 * @throws RodinDBException
+	 */
 	public ITheorem[] getTheorems() throws RodinDBException;
 	
 	/**
@@ -72,11 +128,5 @@ public interface ITheoryRoot extends
 	 * @return the SC theory root
 	 */
 	ISCTheoryRoot getSCTheoryRoot(String bareName);
-	/**
-	 * <p>Returns the set corresponding to the given name.</p>
-	 * <p>This is handle-only method.</p>
-	 * @param name of the set
-	 * @return
-	 */
-
+	
 }

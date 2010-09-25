@@ -7,7 +7,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common interface for a complete rewrite rule.
  * 
- * <p> A rewrite rule is complete if the disjunction of its rhs's conditions evaluates to true.</p>
+ * <p> A rewrite rule is complete if the disjunction of its rhs's conditions is provable.</p>
  * 
  * <p>This interface is not intended to be implemented by clients.</p>
  * @author maamria

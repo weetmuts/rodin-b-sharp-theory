@@ -21,10 +21,26 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IGivenTypeElement extends IInternalElement{
 	
+	/**
+	 * Returns whether this element has a given type set.
+	 * @return whether given type is set
+	 * @throws RodinDBException
+	 */
 	boolean hasGivenType() throws RodinDBException;
 	
+	/**
+	 * Returns the given type set on this element.
+	 * @return the given type
+	 * @throws RodinDBException
+	 */
 	String getGivenType() throws RodinDBException;
 	
+	/**
+	 * Sets the given type of this element to <code>type</code>.
+	 * @param type the given type
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setGivenType(String type, IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -24,10 +24,26 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IFormulaTypeElement extends IInternalElement{
 
+	/**
+	 * Returns whether the formula type attribute is set.
+	 * @return whether formula type is set
+	 * @throws RodinDBException
+	 */
 	boolean hasFormulaType() throws RodinDBException;
 	
+	/**
+	 * Returns the formula type of this element
+	 * @return the formula type
+	 * @throws RodinDBException
+	 */
 	FormulaType getFormulaType() throws RodinDBException;
 	
+	/**
+	 * Sets the formula type of this element to the given type.
+	 * @param type the formula type
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setFormulaType(FormulaType type, IProgressMonitor monitor) throws RodinDBException;
 	
 }

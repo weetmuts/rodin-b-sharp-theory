@@ -21,16 +21,47 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IReasoningTypeElement extends IInternalElement{
 
+	/**
+	 * Reasoning type enumeration.
+	 * @author maamria
+	 *
+	 */
 	public static enum ReasoningType {BACKWARD, FORWARD, BACKWARD_AND_FORWARD}
 	
+	/**
+	 * Returns whether the attribute is present.
+	 * @return whether the attribute is present
+	 * @throws RodinDBException
+	 */
 	boolean hasReasoningAttribute() throws RodinDBException;
 	
+	/**
+	 * Return whether this inference rule is suitable for backward reasoning.
+	 * @return whether this inference rule is suitable for backward reasoning
+	 * @throws RodinDBException
+	 */
 	boolean isSuitableForBackwardReasoning() throws RodinDBException;
 	
+	/**
+	 * Return whether this inference rule is suitable for forward reasoning.
+	 * @return whether this inference rule is suitable for forward reasoning
+	 * @throws RodinDBException
+	 */
 	boolean isSuitableForForwardReasoning() throws RodinDBException;
 	
+	/**
+	 * Return whether this inference rule is suitable for backward and forward reasoning.
+	 * @return whether this inference rule is suitable for backward and forward reasoning
+	 * @throws RodinDBException
+	 */
 	boolean isSuitableForAllReasoning() throws RodinDBException;
 	
+	/**
+	 * Sets the reasoning type of this inference rule to the given value.
+	 * @param type the reasoning type
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setReasoningType(ReasoningType type, IProgressMonitor monitor) throws RodinDBException;
 	
 }

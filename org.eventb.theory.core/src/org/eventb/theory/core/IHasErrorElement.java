@@ -22,10 +22,26 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IHasErrorElement extends IInternalElement{
 	
+	/**
+	 * Returns whether the error attribute is present.
+	 * @return whether the error attribute is set
+	 * @throws RodinDBException
+	 */
 	boolean hasHasErrorAttribute() throws RodinDBException;
 	
+	/**
+	 * Returns whether this element has an error.
+	 * @return whether an error exists
+	 * @throws RodinDBException
+	 */
 	boolean hasError() throws RodinDBException;
 	
+	/**
+	 * Sets the error attribute of this element to the given value.
+	 * @param hasError whether the element has an error
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setHasError(boolean hasError, IProgressMonitor monitor) throws RodinDBException;
 
 }

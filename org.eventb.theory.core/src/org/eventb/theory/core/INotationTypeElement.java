@@ -24,10 +24,26 @@ import org.rodinp.core.RodinDBException;
  */
 public interface INotationTypeElement extends IInternalElement{
 
+	/**
+	 * Returns whether the notation type attribute is set.
+	 * @return whether notation type is set
+	 * @throws RodinDBException
+	 */
 	boolean hasNotationType() throws RodinDBException;
 	
+	/**
+	 * Returns the notation type of this element
+	 * @return the notation type
+	 * @throws RodinDBException
+	 */
 	Notation getNotationType() throws RodinDBException;
 	
+	/**
+	 * Sets the notation type of this element to the given type.
+	 * @param type the notation type
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setNotationType(String notation, IProgressMonitor monitor) throws RodinDBException;
 	
 }

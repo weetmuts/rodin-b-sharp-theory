@@ -23,10 +23,38 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface ISCTheoryRoot extends IEventBRoot, IAccuracyElement, IConfigurationElement, 
-ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
+ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource, Comparable<ISCTheoryRoot>{
 
 	IInternalElementType<ISCTheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheoryRoot");
+	
+	/**
+	 * Returns a handle to an used theory element with the given name.
+	 * @param name of used theory
+	 * @return the import theory
+	 */
+	IUseTheory getUsedTheory(String name);
+	
+	/**
+	 * Returns the used theory children elements of this element.
+	 * @return all used theories
+	 * @throws RodinDBException
+	 */
+	IUseTheory[] getUsedTheories() throws RodinDBException;
+	
+	/**
+	 * Returns a handle to an import theory element with the given name.
+	 * @param name of import theory
+	 * @return the import theory
+	 */
+	ISCImportTheory getImportTheory(String name);
+	
+	/**
+	 * Returns the import theory children elements of this element.
+	 * @return all import theories
+	 * @throws RodinDBException
+	 */
+	ISCImportTheory[] getImportTheories() throws RodinDBException;
 	
 	/**
 	 * <p>Returns the global type environment of this SC theory.</p>

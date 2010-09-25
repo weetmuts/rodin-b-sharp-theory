@@ -20,10 +20,26 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IValidatedElement extends IInternalElement{
 
+	/**
+	 * Returns whether this element has the validated attribute set.
+	 * @return whether this element has the validated attribute set
+	 * @throws RodinDBException
+	 */
 	boolean hasValidatedAttribute() throws RodinDBException;
 	
+	/**
+	 * Returns whether this element has been validated.
+	 * @return whether this element has been validated
+	 * @throws RodinDBException
+	 */
 	boolean isValidated() throws RodinDBException;
 	
+	/**
+	 * Sets the validated attribute of this element to the given value.
+	 * @param isValidated whether the element is validated
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
 	void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException;
 	
 }

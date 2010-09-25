@@ -12,6 +12,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for a deployed theory.
@@ -23,9 +24,26 @@ import org.rodinp.core.RodinCore;
  * 
  */
 public interface IDeployedTheoryRoot extends IEventBRoot, IAccuracyElement ,
-IFormulaExtensionsSource, IExtensionRulesSource{
+IFormulaExtensionsSource, IExtensionRulesSource, Comparable<IDeployedTheoryRoot>{
 
 	IInternalElementType<IDeployedTheoryRoot> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".deployedTheoryRoot");
+	
+	
+	/**
+	 * Returns a handle to an used theory element with the given name.
+	 * @param name of used theory
+	 * @return the import theory
+	 */
+	IUseTheory getUsedTheory(String name);
+	
+	/**
+	 * Returns the used theory children elements of this element.
+	 * @return all used theories
+	 * @throws RodinDBException
+	 */
+	IUseTheory[] getUsedTheories() throws RodinDBException;
+	
+	public int compareTo(IDeployedTheoryRoot root);
 
 }
