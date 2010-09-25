@@ -16,6 +16,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.theory.core.maths.IOperatorArgument;
 
 /**
  * @author maamria
