@@ -23,8 +23,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
-import org.eventb.theory.internal.core.maths.IOperatorArgument;
-import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
@@ -33,7 +31,7 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * @author maamria
  *
  */
-abstract class AbstractOperatorExtension implements IOperatorExtension{
+public abstract class AbstractOperatorExtension implements IOperatorExtension{
 	
 	private static String VAR_TEMP_NAME = "_z_";
 	/**
@@ -132,12 +130,6 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 		return source;
 	}
 	
-	/**
-	 * Returns the predicate condition that checks the associativity (if any) of this operator.
-	 * @param factory the formula factory
-	 * @param typeEnvironment the type environment
-	 * @return the verification condition
-	 */
 	public Predicate getAssociativityChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
 		if(directDefinition == null){
 			return MathExtensionsUtilities.BTRUE;
@@ -203,13 +195,6 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 		
 	}
 	
-	/**
-	 * Returns the predicate condition that checks that the supplied well-definednes condition is indeed
-	 * sufficient.
-	 * @param factory the formula factory
-	 * @param typeEnvironment the type environment
-	 * @return the verification condition
-	 */
 	public Predicate getWellDefinednessChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
 		if(directDefinition == null){
 			return MathExtensionsUtilities.BTRUE;
@@ -218,12 +203,6 @@ abstract class AbstractOperatorExtension implements IOperatorExtension{
 				directDefinition.getWDPredicate(factory), factory, typeEnvironment);
 	}
 	
-	/**
-	 * Returns the predicate condition that checks the commutativity (if any) of this operator.
-	 * @param factory the formula factory
-	 * @param typeEnvironment the type environment
-	 * @return the verification condition
-	 */
 	public Predicate getCommutativityChecker(FormulaFactory factory, ITypeEnvironment typeEnvironment){
 		if(directDefinition == null){
 			return MathExtensionsUtilities.BTRUE;

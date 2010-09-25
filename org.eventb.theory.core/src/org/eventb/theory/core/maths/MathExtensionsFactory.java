@@ -20,10 +20,12 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.theory.internal.core.maths.CompleteDatatypeExtension;
+import org.eventb.theory.internal.core.maths.ExpressionOperatorExtension;
 import org.eventb.theory.internal.core.maths.ExpressionOperatorTypingRule;
-import org.eventb.theory.internal.core.maths.IOperatorArgument;
-import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
+import org.eventb.theory.internal.core.maths.PredicateOperatorExtension;
 import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
+import org.eventb.theory.internal.core.maths.SimpleDatatypeExtension;
 
 /**
  * Factory class for the different mathematical extensions provided by the

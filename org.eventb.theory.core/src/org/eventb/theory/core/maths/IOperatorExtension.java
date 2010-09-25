@@ -13,7 +13,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
 
 /**
  * Common protocol for an operator extension. Additional methods are added for convenience when
