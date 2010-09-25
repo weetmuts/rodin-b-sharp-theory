@@ -33,9 +33,9 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.maths.IOperatorArgument;
+import org.eventb.theory.core.maths.IOperatorTypingRule;
 import org.eventb.theory.core.maths.MathExtensionsFactory;
-import org.eventb.theory.internal.core.maths.IOperatorArgument;
-import org.eventb.theory.internal.core.maths.IOperatorTypingRule;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
@@ -314,6 +314,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		rewRule.setToolTip(REWRITE_RULE_TIP + syntax, null);
 		Formula<?> lhs = makeLhs(newFactory).substituteFreeIdents(possibleSubstitution, newFactory);
 		rewRule.setSCFormula(lhs, null);
+		rewRule.setAccuracy(true, null);
+		rewRule.setValidated(true, null);
 		// one rhs
 		ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS( operatorID + RHS_LABEL);
 		rhs.create(null, null);
