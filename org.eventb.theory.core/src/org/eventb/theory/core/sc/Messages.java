@@ -24,10 +24,8 @@ public final class Messages {
 
 	// build
 	public static String build_cleaning;
-
 	public static String build_extracting;
 	public static String build_runningSC;
-
 	public static String progress_TheoryTypeParameters;
 	public static String progress_TheoryOperators;
 	public static String progress_TheoryDatatypes;
@@ -35,7 +33,6 @@ public final class Messages {
 	public static String progress_TheoryInferenceRules;
 	public static String progress_TheoryRewriteRules;
 	public static String progress_TheoryTheorems;
-
 	public static String scuser_AutoUndefWarning;
 	public static String scuser_LhsAndRhsNotSynClassMatching;
 	public static String scuser_LHSUndef;
@@ -119,19 +116,16 @@ public final class Messages {
 	public static String scuser_RuleWithNoInfers;
 	public static String scuser_InferenceGivenBTRUEPredWarn;
 	public static String scuser_InferenceInferBTRUEPredErr;
-	
 	public static String scuser_InferenceRuleBackward;
 	public static String scuser_InferenceRuleForward;
 	public static String scuser_InferenceRuleBoth;
-
 	public static String scuser_CondIdentsNotSubsetOfLHSIdents;
 	public static String scuser_CondGivensNotSubsetOfLHSGivens;
 	public static String scuser_RHSGivensNotSubsetOfLHSGivens;
-
 	public static String scuser_TheoryInImportMissing;
-
 	public static String scuser_ImportTheoryNotExist;
-	
+	public static String scuser_RedundantImportWarn;
+
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
 	static {
