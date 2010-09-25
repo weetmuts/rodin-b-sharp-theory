@@ -17,7 +17,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheorem;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeParameter;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -105,7 +105,7 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 	}
 	
 	public IRodinFile getSCTheoryFile(String bareName) {
-		String fileName = CoreUtilities.getSCTheoryFileName(bareName);
+		String fileName = TheoryCoreFacade.getSCTheoryFullName(bareName);
 		IRodinFile file = getRodinProject().getRodinFile(fileName);
 		return file;
 	}

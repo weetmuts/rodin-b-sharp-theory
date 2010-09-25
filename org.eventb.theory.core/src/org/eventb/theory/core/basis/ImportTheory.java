@@ -17,7 +17,6 @@ import org.eventb.theory.core.TheoryCoreFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -51,16 +50,14 @@ public class ImportTheory extends TheoryElement implements IImportTheory {
 	public ISCTheoryRoot getImportedTheory() throws RodinDBException {
 		// TODO Auto-generated method stub
 		String theoryName = getImportedTheoryName();
-		IRodinFile file = getRodinProject().getRodinFile(theoryName + "."+TheoryCoreFacade.SC_THEORY_FILE_EXTENSION);
-		return (ISCTheoryRoot) file.getRoot();
+		return TheoryCoreFacade.getSCTheory(theoryName, getRodinProject());
 	}
 
 	@Override
 	public ITheoryRoot getUncheckedImportedTheory() throws RodinDBException {
 		// TODO Auto-generated method stub
 		String theoryName = getImportedTheoryName();
-		IRodinFile file = getRodinProject().getRodinFile(theoryName + "."+TheoryCoreFacade.THEORY_FILE_EXTENSION);
-		return (ITheoryRoot) file.getRoot();
+		return TheoryCoreFacade.getTheory(theoryName, getRodinProject());
 	}
 
 	@Override

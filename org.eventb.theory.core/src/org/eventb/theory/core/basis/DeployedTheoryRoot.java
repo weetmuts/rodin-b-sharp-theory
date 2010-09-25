@@ -7,14 +7,16 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCDatatypeDefinition;
-import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
+import org.eventb.theory.core.IUseTheory;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -26,10 +28,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoot{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public DeployedTheoryRoot(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -40,15 +38,15 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 	}
 	
 	@Override
-	public ISCImportTheory getImportTheory(String name) {
+	public IUseTheory getUsedTheory(String name) {
 		// TODO Auto-generated method stub
-		return getInternalElement(ISCImportTheory.ELEMENT_TYPE, name);
+		return getInternalElement(IUseTheory.ELEMENT_TYPE, name);
 	}
 
 	@Override
-	public ISCImportTheory[] getImportTheories() throws RodinDBException {
+	public IUseTheory[] getUsedTheories() throws RodinDBException {
 		// TODO Auto-generated method stub
-		return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
+		return getChildrenOfType(IUseTheory.ELEMENT_TYPE);
 	}
 	
 	@Override
@@ -71,8 +69,6 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 			throws RodinDBException {
 		return getChildrenOfType(ISCDatatypeDefinition.ELEMENT_TYPE);
 	}
-
-	
 
 	@Override
 	public ISCProofRulesBlock getProofRulesBlock(String name) {
@@ -110,4 +106,19 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 		return getChildrenOfType(ISCNewOperatorDefinition.ELEMENT_TYPE);
 	}
 
+	@Override
+	public int compareTo(IDeployedTheoryRoot root) {
+		try {
+			if(TheoryCoreFacade.doesTheoryUseTheory(root, this)){
+				return 1;
+			}
+			if(TheoryCoreFacade.doesTheoryUseTheory(this, root)){
+				return -1;
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	
+		return 0;
+	}
 }

@@ -7,26 +7,19 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import static org.eventb.theory.internal.core.util.CoreUtilities.duplicate;
+import static org.eventb.theory.internal.core.util.DeployUtilities.copyMathematicalExtensions;
+import static org.eventb.theory.internal.core.util.DeployUtilities.copyProverExtensions;
+import static org.eventb.theory.internal.core.util.DeployUtilities.duplicate;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDeploymentResult;
-import org.eventb.theory.core.ISCGiven;
-import org.eventb.theory.core.ISCInfer;
-import org.eventb.theory.core.ISCInferenceRule;
-import org.eventb.theory.core.ISCMetavariable;
-import org.eventb.theory.core.ISCProofRulesBlock;
-import org.eventb.theory.core.ISCRewriteRule;
-import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
-import org.eventb.theory.core.ISCTheorem;
+import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
-import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.rodinp.core.IAttributeType;
+import org.eventb.theory.core.IUseTheory;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -37,6 +30,7 @@ import org.rodinp.core.IRodinProject;
 public class TheoryDeployer implements ITheoryDeployer{
 
 	protected ISCTheoryRoot theoryRoot;
+	protected IRodinFile targetFile;
 	protected boolean force; 
 	protected IDeploymentResult deploymentResult;
 
@@ -54,6 +48,11 @@ public class TheoryDeployer implements ITheoryDeployer{
 		}catch(CoreException exception){
 			deploymentResult =  new DeploymentResult(false, exception.getMessage());
 		}
+		if(!deploymentResult.succeeded()){
+			if(targetFile != null && targetFile.exists()){
+				targetFile.delete(true, monitor);
+			}
+		}
 		
 	}
 
@@ -61,8 +60,7 @@ public class TheoryDeployer implements ITheoryDeployer{
 	public synchronized boolean deploy(IProgressMonitor monitor) throws CoreException {
 		IRodinProject project = theoryRoot.getRodinProject();
 		String theoryName = theoryRoot.getComponentName();
-		boolean accurate = true;
-		IRodinFile targetFile = project.getRodinFile(CoreUtilities.getDeployedTheoryFileName(theoryName));
+		targetFile = project.getRodinFile(TheoryCoreFacade.getDeployedTheoryFullName(theoryName));
 		// if force not requested
 		if(targetFile.exists() && !force){
 			deploymentResult = new DeploymentResult(false, 
@@ -78,50 +76,12 @@ public class TheoryDeployer implements ITheoryDeployer{
 		if(!deployedTheoryRoot.exists()){
 			deployedTheoryRoot.create(null, monitor);
 		}
-		// copy to root
-		CoreUtilities.copyMathematicalExtensions(deployedTheoryRoot, theoryRoot);
-		
-		// copy proof blocks
-		//////////////////////////////////
-		IAttributeType[] toIgnore = new IAttributeType[]{EventBAttributes.SOURCE_ATTRIBUTE, TheoryAttributes.HAS_ERROR_ATTRIBUTE};
-		ISCProofRulesBlock[] rulesBlocks = theoryRoot.getProofRulesBlocks();
-		for(ISCProofRulesBlock rulesBlock: rulesBlocks){
-			ISCProofRulesBlock newRulesBlock = CoreUtilities.duplicate(
-					rulesBlock, ISCProofRulesBlock.ELEMENT_TYPE, deployedTheoryRoot, monitor, toIgnore);
-			ISCMetavariable[] vars = rulesBlock.getMetavariables();
-			for(ISCMetavariable var : vars){
-				CoreUtilities.duplicate(var, ISCMetavariable.ELEMENT_TYPE, newRulesBlock, monitor, toIgnore);
-			}
-			ISCRewriteRule[] rewRules = rulesBlock.getRewriteRules();
-			for (ISCRewriteRule rewRule : rewRules){
-				ISCRewriteRule newRewRule = duplicate(rewRule, 
-						ISCRewriteRule.ELEMENT_TYPE, newRulesBlock, monitor, toIgnore);
-				ISCRewriteRuleRightHandSide[] ruleRHSs = rewRule.getRuleRHSs();
-				for(ISCRewriteRuleRightHandSide rhs : ruleRHSs){
-					duplicate(rhs, ISCRewriteRuleRightHandSide.ELEMENT_TYPE, newRewRule, monitor, toIgnore);
-				}
-			}
-			ISCInferenceRule[] infRules = rulesBlock.getInferenceRules();
-			for(ISCInferenceRule infRule : infRules){
-				ISCInferenceRule newInfRule = duplicate(infRule, ISCInferenceRule.ELEMENT_TYPE, newRulesBlock, monitor, toIgnore);
-				ISCInfer[] infers = infRule.getInfers();
-				for(ISCInfer infer : infers){
-					duplicate(infer, ISCInfer.ELEMENT_TYPE, newInfRule, monitor, toIgnore);
-				}
-				ISCGiven[] givens = infRule.getGivens();
-				for(ISCGiven given : givens){
-					duplicate(given, ISCGiven.ELEMENT_TYPE, newInfRule, monitor, toIgnore);
-				}
-			}
+		if(!setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot)){
+			return false;
 		}
-		// copy theorems
-		//////////////////////////////////
-		ISCTheorem[] theorems = theoryRoot.getTheorems();
-		for(ISCTheorem theorem: theorems ){
-				duplicate(theorem, ISCTheorem.ELEMENT_TYPE, 
-						deployedTheoryRoot, monitor);
-		}
-		
+		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot, theoryRoot) &&
+							copyProverExtensions(deployedTheoryRoot, theoryRoot);
+
 		deployedTheoryRoot.setAccuracy(accurate, monitor);
 		targetFile.save(monitor, true);
 		deploymentResult = new DeploymentResult(true, null);
@@ -138,6 +98,33 @@ public class TheoryDeployer implements ITheoryDeployer{
 			
 		}
 	}
-
 	
+	protected boolean setDeployedTheoryDependencies(ISCTheoryRoot source,
+			IDeployedTheoryRoot target)
+	throws CoreException{
+		for(IUseTheory use : source.getUsedTheories()){
+			if(!use.getUsedTheory().exists()){
+				deploymentResult = new DeploymentResult(false, 
+						"Deployed theory " + use.getUsedTheory().getComponentName()+" does not exist in the project "+ 
+						use.getRodinProject().getElementName()+".");
+				return false;
+			}
+			duplicate(use, IUseTheory.ELEMENT_TYPE, target, null);
+		}
+		for (ISCImportTheory impor : source.getImportTheories()){
+			IDeployedTheoryRoot deployedRoot = TheoryCoreFacade.getDeployedTheory(
+					impor.getImportedTheory().getComponentName(),
+					target.getRodinProject());
+			if(!deployedRoot.exists()){
+				deploymentResult = new DeploymentResult(false, 
+						"Deployed theory " + deployedRoot.getComponentName()+" does not exist in the project "+ 
+						deployedRoot.getRodinProject().getElementName()+".");
+				return false;
+			}
+			IUseTheory use = target.getUsedTheory(impor.getElementName());
+			use.create(null, null);
+			use.setUsedTheory(deployedRoot, null);
+		}
+		return true;
+	}
 }

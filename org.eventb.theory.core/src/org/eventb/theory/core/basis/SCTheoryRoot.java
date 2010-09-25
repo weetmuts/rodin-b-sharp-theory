@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
@@ -17,6 +18,8 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
+import org.eventb.theory.core.IUseTheory;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -36,6 +39,18 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 		super(name, parent);
 	}
 
+	@Override
+	public IUseTheory getUsedTheory(String name) {
+		// TODO Auto-generated method stub
+		return getInternalElement(IUseTheory.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public IUseTheory[] getUsedTheories() throws RodinDBException {
+		// TODO Auto-generated method stub
+		return getChildrenOfType(IUseTheory.ELEMENT_TYPE);
+	}
+	
 	@Override
 	public ISCImportTheory getImportTheory(String name) {
 		// TODO Auto-generated method stub
@@ -123,4 +138,19 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 		return getChildrenOfType(ISCNewOperatorDefinition.ELEMENT_TYPE);
 	}
 
+	@Override
+	public int compareTo(ISCTheoryRoot root) {
+		try {
+			if(TheoryCoreFacade.doesSCTheoryImportSCTheory(root, this)){
+				return 1;
+			}
+			if(TheoryCoreFacade.doesSCTheoryImportSCTheory(this, root)){
+				return -1;
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	
+		return 0;
+	}
 }

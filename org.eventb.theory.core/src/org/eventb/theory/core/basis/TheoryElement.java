@@ -19,7 +19,6 @@ import static org.eventb.theory.core.TheoryAttributes.FORMULA_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GIVEN_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GROUP_ID_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.INTERACTIVE_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.MODIFIED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE;
@@ -49,7 +48,6 @@ import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IFormulaTypeElement;
 import org.eventb.theory.core.IGivenTypeElement;
 import org.eventb.theory.core.IInteractiveElement;
-import org.eventb.theory.core.IModifiedElement;
 import org.eventb.theory.core.INotationTypeElement;
 import org.eventb.theory.core.IOperatorGroupElement;
 import org.eventb.theory.core.IReasoningTypeElement;
@@ -77,7 +75,7 @@ public abstract class TheoryElement extends EventBElement implements
 	ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
 	IInteractiveElement, IToolTipElement, IDefinitionalElement, IGivenTypeElement,
 	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement, IValidatedElement,
-	IOperatorGroupElement, IModifiedElement
+	IOperatorGroupElement
 {
 
 	public TheoryElement(String name, IRodinElement parent) {
@@ -414,24 +412,5 @@ public abstract class TheoryElement extends EventBElement implements
 	public void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException{
 		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
 	}
-	
-	@Override
-	public boolean isModified() throws RodinDBException {
-		return getAttributeValue(MODIFIED_ATTRIBUTE);
-	}
-
-	@Override
-	public boolean hasModifiedAttribute() throws RodinDBException {
-		// TODO Auto-generated method stub
-		return hasAttribute(MODIFIED_ATTRIBUTE);
-	}
-	
-	@Override
-	public void setModified(boolean isModified, IProgressMonitor monitor)
-			throws RodinDBException {
-		setAttributeValue(MODIFIED_ATTRIBUTE, isModified, monitor);
-
-	}
-
 	
 }
