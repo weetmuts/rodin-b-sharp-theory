@@ -45,6 +45,8 @@ public class MathExtensionsUtilities {
 	 */
 	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
 	
+	public static final IFormulaExtension COND = FormulaFactory.getCond();
+	
 	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
 
 	/**

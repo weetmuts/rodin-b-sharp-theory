@@ -10,12 +10,10 @@ package org.eventb.theory.internal.core.util;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
@@ -24,9 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.IPSRoot;
-import org.eventb.core.IPSStatus;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Expression;
@@ -47,33 +42,21 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
-import org.eventb.core.seqprover.IConfidence;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.core.IFormulaExtensionsSource;
-import org.eventb.theory.core.ISCConstructorArgument;
-import org.eventb.theory.core.ISCDatatypeConstructor;
-import org.eventb.theory.core.ISCDatatypeDefinition;
-import org.eventb.theory.core.ISCDirectOperatorDefinition;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.ISCTypeArgument;
-import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -91,10 +74,6 @@ public class CoreUtilities {
 	public static final String BACKWARD_REASONING_TYPE = "backward";
 	public static final String FORWARD_REASONING_TYPE = "forward";
 	public static final String BACKWARD_AND_FORWARD_REASONING_TYPE = "both";
-	
-	public static final String[] POSSIBLE_REASONING_TYPES = new String[] {
-			BACKWARD_REASONING_TYPE, FORWARD_REASONING_TYPE,
-			BACKWARD_AND_FORWARD_REASONING_TYPE };
 
 	// ///////////////////////
 	// / GENERAL
@@ -209,23 +188,6 @@ public class CoreUtilities {
 	}
 
 	/**
-	 * Returns the string type expression with the given name and type
-	 * parameters e.g., List(A).
-	 * 
-	 * @param identifierString
-	 *            the name of the type
-	 * @param argsArray
-	 *            the array of type arguments
-	 * @param the
-	 *            formula factory tha knows about this datatype
-	 * @return the type expression
-	 */
-	public static Type createTypeExpression(String identifier,
-			String[] argsArray, FormulaFactory ff) {
-		return createTypeExpression(identifier, Arrays.asList(argsArray), ff);
-	}
-
-	/**
 	 * Parses the formula string provided using the given formula factory. The
 	 * formula string may contain predicate variables.
 	 * 
@@ -317,29 +279,6 @@ public class CoreUtilities {
 	// ///////////////////////////
 	// // Theory CORE
 	// ///////////////////////////
-	/**
-	 * Return the SC theory name with file extension.
-	 * 
-	 * @param bareName
-	 *            the bare name
-	 * @return the full name
-	 */
-	public static String getSCTheoryFileName(String bareName) {
-		// TODO Auto-generated method stub
-		return bareName + "." + TheoryCoreFacade.SC_THEORY_FILE_EXTENSION;
-	}
-
-	/**
-	 * Return the deployed theory name with file extension.
-	 * 
-	 * @param bareName
-	 *            the bare name
-	 * @return the full name
-	 */
-	public static String getDeployedTheoryFileName(String bareName) {
-		// TODO Auto-generated method stub
-		return bareName + "." + TheoryCoreFacade.DEPLOYED_THEORY_FILE_EXTENSION;
-	}
 
 	/**
 	 * Checks whether the given predicate refers only to the given types in
@@ -624,35 +563,6 @@ public class CoreUtilities {
 			return null;
 		}
 		return predicate;
-	}
-
-	/**
-	 * Parses the identifier occurring as an attribute to the given element.
-	 * 
-	 * @param element
-	 *            the element to be parsed
-	 * @param factory
-	 *            the formula factory
-	 * @return a <code>FreeIdentifier</code> in case of success,
-	 *         <code>null</code> otherwise
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	public static FreeIdentifier parseIdentifier(IIdentifierElement element,
-			FormulaFactory factory, IMarkerDisplay display,
-			IProgressMonitor monitor) throws RodinDBException {
-
-		if (element.hasIdentifierString()) {
-
-			return parseIdentifier(element.getIdentifierString(), element,
-					EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, display);
-		} else {
-
-			display.createProblemMarker(element,
-					EventBAttributes.IDENTIFIER_ATTRIBUTE,
-					GraphProblem.IdentifierUndefError);
-			return null;
-		}
 	}
 
 	/**
@@ -1015,149 +925,6 @@ public class CoreUtilities {
 		throw new IllegalArgumentException("unknown reasoning type " + type);
 	}
 
-	public static ISCTheoryRoot getTheoryRoot(String fullName, String project)
-			throws CoreException {
-		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(
-				project);
-		if (rodinProject.exists()) {
-			IRodinFile file = rodinProject.getRodinFile(fullName);
-			if (file.exists()) {
-				ISCTheoryRoot theoryRoot = (ISCTheoryRoot) file.getRoot();
-				if (theoryRoot.exists()) {
-					return theoryRoot;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Duplicates the source element as a child of the new parent element. It
-	 * copies all of the source details ignoring the given attributes.
-	 * 
-	 * @param <E>
-	 *            the type of the source
-	 * @param source
-	 *            the source element
-	 * @param type
-	 *            the type
-	 * @param newParent
-	 *            the new parent element
-	 * @param monitor
-	 *            the progress monitor
-	 * @param toIgnore
-	 *            the attribute types to ignore when copying
-	 * @return the new element that is a copy of the source and has the new
-	 *         parent
-	 * @throws CoreException
-	 */
-	public static final <E extends IInternalElement> E duplicate(E source,
-			IInternalElementType<E> type, IInternalElement newParent,
-			IProgressMonitor monitor, IAttributeType... toIgnore)
-			throws CoreException {
-		assert source.exists();
-		assert newParent.exists();
-		List<IAttributeType> toIgnoreList = Arrays.asList(toIgnore);
-		IAttributeType[] attrTypes = source.getAttributeTypes();
-		E newElement = newParent.getInternalElement(type,
-				source.getElementName());
-		newElement.create(null, monitor);
-		for (IAttributeType attr : attrTypes) {
-			if (toIgnoreList.contains(attr)) {
-				continue;
-			}
-			IAttributeValue value = source.getAttributeValue(attr);
-			newElement.setAttributeValue(value, monitor);
-		}
-
-		return newElement;
-	}
-
-	/**
-	 * Copies the mathematical extensions in the source to the Event-B root
-	 * specified.
-	 * 
-	 * @param target
-	 *            the root target
-	 * @param source
-	 *            the source of mathematical extensions
-	 * @param addAsInternalTheory
-	 *            whether to copy extensions straight to the root or to an
-	 *            internal theory in the root
-	 * @throws CoreException
-	 */
-	public static void copyMathematicalExtensions(IDeployedTheoryRoot target,
-			IFormulaExtensionsSource source)
-			throws CoreException {
-		// copy carrier sets
-		// //////////////////////////////
-		ISCTypeParameter[] typeParameters = source.getSCTypeParameters();
-		for (ISCTypeParameter typeParameter : typeParameters) {
-			duplicate(typeParameter, ISCTypeParameter.ELEMENT_TYPE,
-					target, null);
-		}
-		// copy datatypes
-		// //////////////////////////////
-		ISCDatatypeDefinition[] datatypeDefinitions = source
-				.getSCDatatypeDefinitions();
-		for (ISCDatatypeDefinition definition : datatypeDefinitions) {
-			if (definition.hasHasErrorAttribute() && definition.hasError()) {
-				continue;
-			}
-			ISCDatatypeDefinition newDefinition = duplicate(definition,
-					ISCDatatypeDefinition.ELEMENT_TYPE, target, null,
-					TheoryAttributes.HAS_ERROR_ATTRIBUTE);
-			ISCTypeArgument[] typeArguments = definition.getTypeArguments();
-			for (ISCTypeArgument typeArgument : typeArguments) {
-				duplicate(typeArgument, ISCTypeArgument.ELEMENT_TYPE,
-						newDefinition, null);
-			}
-
-			ISCDatatypeConstructor[] datatypeConstructors = definition
-					.getConstructors();
-			for (ISCDatatypeConstructor constructor : datatypeConstructors) {
-				ISCDatatypeConstructor newConstructor = duplicate(constructor,
-						ISCDatatypeConstructor.ELEMENT_TYPE, newDefinition,
-						null);
-				ISCConstructorArgument arguments[] = constructor
-						.getConstructorArguments();
-				for (ISCConstructorArgument argument : arguments) {
-					duplicate(argument, ISCConstructorArgument.ELEMENT_TYPE,
-							newConstructor, null);
-				}
-			}
-
-		}
-		// copy operators
-		// //////////////////////////////
-		ISCNewOperatorDefinition[] operatorDefinitions = source
-				.getSCNewOperatorDefinitions();
-		for (ISCNewOperatorDefinition operatorDefinition : operatorDefinitions) {
-			if (operatorDefinition.hasHasErrorAttribute()
-					&& operatorDefinition.hasError()) {
-				continue;
-			}
-			ISCNewOperatorDefinition newDefinition = duplicate(
-					operatorDefinition, ISCNewOperatorDefinition.ELEMENT_TYPE,
-					target, null,
-					TheoryAttributes.HAS_ERROR_ATTRIBUTE);
-			ISCOperatorArgument[] operatorArguments = operatorDefinition
-					.getOperatorArguments();
-			for (ISCOperatorArgument operatorArgument : operatorArguments) {
-				duplicate(operatorArgument, ISCOperatorArgument.ELEMENT_TYPE,
-						newDefinition, null);
-			}
-			ISCDirectOperatorDefinition[] directDefinitions = operatorDefinition
-					.getDirectOperatorDefinitions();
-			for (ISCDirectOperatorDefinition directDefinition : directDefinitions) {
-				duplicate(directDefinition,
-						ISCDirectOperatorDefinition.ELEMENT_TYPE,
-						newDefinition, null);
-			}
-
-		}
-	}
-
 	/**
 	 * Returns whether the given root was generated from a theory file, that is
 	 * indeed true if the returned theory is not <code>null</code>.
@@ -1184,53 +951,42 @@ public class CoreUtilities {
 		}
 		return null;
 	}
-
-	/**
-	 * Calculates the soundness of the given labelled elements and stores them in the given map.
-	 * @param root the parent SC theory
-	 * @param elements the labelled elements
-	 * @param soundness the map
-	 * @throws RodinDBException
-	 */
-	public static void calculateSoundness(ISCTheoryRoot root, ILabeledElement[] elements, Map<String, Boolean> soundness)
-			throws RodinDBException {
-		soundness.clear();
-		IPSRoot psRoot = root.getPSRoot();
-		IPSStatus[] sts = psRoot.getStatuses();
-		for (ILabeledElement element : elements) {
-			boolean isSound = true;
-			for (IPSStatus s : sts) {
-				if (s.getElementName().startsWith(element.getLabel())) {
-					if (!isDischarged(s.getConfidence())
-							&& !isReviewed(s.getConfidence())) {
-						isSound = false;
-					}
+	
+	public static List<IDeployedTheoryRoot> normaliseDeployedTheories(List<IDeployedTheoryRoot> rawList)
+	throws CoreException{
+		List<IDeployedTheoryRoot> normalised = new ArrayList<IDeployedTheoryRoot>();
+		for (IDeployedTheoryRoot root: rawList){
+			List<IDeployedTheoryRoot> rawClone = new ArrayList<IDeployedTheoryRoot>(rawList);
+			rawClone.remove(root);
+			boolean toInclude = true;
+			for (IDeployedTheoryRoot rawRoot : rawClone){
+				if (TheoryCoreFacade.doesTheoryUseTheory(rawRoot, root)){
+					toInclude = false;
 				}
 			}
-			soundness.put(element.getLabel(), isSound);
+			if(toInclude){
+				normalised.add(root);
+			}
 		}
-
+		return normalised;
 	}
 	
-	/**
-	 * Returns whether the given confidence is a reviewed-level confidence.
-	 * @param confidence the confidence to check
-	 * @return whether the concerned PO is reviewed
-	 */
-	public static boolean isReviewed(int confidence){
-		return 
-		(confidence > IConfidence.PENDING) && 
-		(confidence <= IConfidence.REVIEWED_MAX);		
-	}
-
-	/**
-	 * Returns whether the given confidence is a discharged-level confidence.
-	 * @param confidence the confidence to check
-	 * @return whether the concerned PO is discharged
-	 */
-	public static boolean isDischarged(int confidence){
-		return 
-		(confidence > IConfidence.REVIEWED_MAX) && 
-		(confidence <= IConfidence.DISCHARGED_MAX);		
+	public static List<ISCTheoryRoot> normaliseSCTheories(List<ISCTheoryRoot> rawList)
+	throws CoreException{
+		List<ISCTheoryRoot> normalised = new ArrayList<ISCTheoryRoot>();
+		for (ISCTheoryRoot root: rawList){
+			List<ISCTheoryRoot> rawClone = new ArrayList<ISCTheoryRoot>(rawList);
+			rawClone.remove(root);
+			boolean toInclude = true;
+			for (ISCTheoryRoot rawRoot : rawClone){
+				if (TheoryCoreFacade.doesSCTheoryImportSCTheory(rawRoot, root)){
+					toInclude = false;
+				}
+			}
+			if(toInclude){
+				normalised.add(root);
+			}
+		}
+		return normalised;
 	}
 }
