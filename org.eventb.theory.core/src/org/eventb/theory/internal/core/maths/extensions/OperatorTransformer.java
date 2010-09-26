@@ -79,7 +79,7 @@ public class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDef
 											null;
 		IFormulaExtension extension = extensionsFactory.
 				getFormulaExtension(operatorID, syntax, 
-						formulaType, notation,groupID, isAssociative, isCommutative,  directDefinition,
+						formulaType, notation,groupID, isCommutative, isAssociative,  directDefinition,
 						extensionsFactory.getTypingRule(
 								typeParameters, operatorArguments, resultantType, wdCondition),
 						definition);

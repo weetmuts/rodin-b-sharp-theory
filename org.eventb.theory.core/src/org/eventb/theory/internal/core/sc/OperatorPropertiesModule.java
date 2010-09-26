@@ -59,6 +59,10 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 			if(!checkOperatorProperties(opDef,formType, notation, arity, isAssos, isCommutative, args)){
 				operatorInformation.setHasError();
 			}
+			else {
+				operatorInformation.setAssociative(isAssos);
+				operatorInformation.setCommutative(isCommutative);
+			}
 			if(operatorInformation.getWdCondition() == null){
 				operatorInformation.setHasError();
 			}
@@ -160,7 +164,7 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 	 * @return whether this operator can be commutative
 	 */
 	protected boolean checkCommutativity(List<String> args) {
-		if(args.size() == 2){
+		if(args.size() != 2){
 			return false;
 		}
 		Type type = null;

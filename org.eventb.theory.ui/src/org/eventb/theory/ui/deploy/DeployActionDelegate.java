@@ -8,7 +8,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 
 /**
- * @see DeployTheoryActionDelegate
+ * 
  * @author maamria
  *
  */
