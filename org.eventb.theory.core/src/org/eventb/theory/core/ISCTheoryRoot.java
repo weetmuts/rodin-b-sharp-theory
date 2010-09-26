@@ -15,6 +15,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -23,7 +24,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface ISCTheoryRoot extends IEventBRoot, IAccuracyElement, IConfigurationElement, 
-ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource, Comparable<ISCTheoryRoot>{
+ITraceableElement, IFormulaExtensionsSource<ISCTheoryRoot>, IExtensionRulesSource{
 
 	IInternalElementType<ISCTheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheoryRoot");
@@ -64,5 +65,26 @@ ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource, Comparable<I
 	 */
 	ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException;
+	
+	/**
+	 * <p>Returns the deployed theory file corresponding to the given <code>bareName</code>.</p>
+	 * <p>This is handle-only method.</p>
+	 * @param bareName
+	 * @return the rodin file
+	 */
+	IRodinFile getDeployedTheoryFile(String bareName);
+	/**
+	 * <p>Returns the deployed theory root corresponding to this element.</p>
+	 * <p>This is handle-only method.</p>
+	 * @return the deployed theory root
+	 */
+	IDeployedTheoryRoot getDeployedTheoryRoot();
+	/**
+	 * <p>Returns the deployed theory root corresponding to the given <code>bareName</code>.</p>
+	 * <p>This is handle-only method.</p>
+	 * @param bareName
+	 * @return the deployed theory root
+	 */
+	IDeployedTheoryRoot getDeployedTheoryRoot(String bareName);
 	
 }

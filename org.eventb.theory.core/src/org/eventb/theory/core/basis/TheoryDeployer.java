@@ -60,6 +60,17 @@ public class TheoryDeployer implements ITheoryDeployer{
 	public synchronized boolean deploy(IProgressMonitor monitor) throws CoreException {
 		IRodinProject project = theoryRoot.getRodinProject();
 		String theoryName = theoryRoot.getComponentName();
+		// check dependencies
+		ISCImportTheory importedTheories[] = theoryRoot.getImportTheories();
+		for(ISCImportTheory impor : importedTheories){
+			IDeployedTheoryRoot deployed = impor.getImportedTheory().getDeployedTheoryRoot();
+			if(!deployed.exists()){
+				deploymentResult = new DeploymentResult(false, 
+						"Theory " + theoryName+" depends on non-deployed theory "+ deployed.getComponentName()+".");
+				return false;
+			}
+		}
+		
 		targetFile = project.getRodinFile(TheoryCoreFacade.getDeployedTheoryFullName(theoryName));
 		// if force not requested
 		if(targetFile.exists() && !force){

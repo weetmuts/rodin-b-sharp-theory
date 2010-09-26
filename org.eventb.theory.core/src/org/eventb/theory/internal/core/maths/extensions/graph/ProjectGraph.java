@@ -5,20 +5,27 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core;
+package org.eventb.theory.internal.core.maths.extensions.graph;
 
-import org.eventb.core.ITraceableElement;
-import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
+import org.eclipse.core.runtime.CoreException;
+import org.eventb.theory.core.IFormulaExtensionsSource;
 
 /**
  * @author maamria
  *
  */
-public interface IDeployedTheoryEntry extends ITraceableElement, IModifiedElement{
-
-	public IInternalElementType<IDeployedTheoryEntry> ELEMENT_TYPE = 
-		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".deployedTheoryEntry");
+public class ProjectGraph<E extends IFormulaExtensionsSource<E>> {
 	
+	E[] sources;
+	ITheoryGraph<E> graph;
+	
+	public ProjectGraph(E[] sources) throws CoreException{
+		this.sources = sources;
+		this.graph = GraphFactory.getFactory().getGraph(sources);
+	}
+	
+	public ITheoryGraph<E> getGraph(){
+		return graph;
+	}
+
 }

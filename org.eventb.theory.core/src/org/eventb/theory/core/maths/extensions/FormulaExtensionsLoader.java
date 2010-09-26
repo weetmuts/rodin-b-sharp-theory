@@ -7,17 +7,22 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IEventBProject;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.TheoryCoreFacade;
 import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
+import org.eventb.theory.internal.core.maths.extensions.graph.ITheoryGraph;
+import org.eventb.theory.internal.core.maths.extensions.graph.ProjectGraph;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
+import org.rodinp.core.IRodinProject;
 
 /**
  * An implementation of a formula extensions loader tailored to a specific project.
@@ -25,22 +30,20 @@ import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
  * @author maamria
  *
  */
-@SuppressWarnings("restriction")
 public class FormulaExtensionsLoader {
 	
-	private IEventBProject project;
+	private IRodinProject project;
 	private List<String> execluded;
-	private Set<IFormulaExtension> execludedExtensions;
+	private FormulaFactory factory;
 	
 	/**
 	 * Create a formula extension loader for the given project.
 	 * @param project the project for which to load extensions
 	 * @param execluded any execluded theories
 	 */
-	public FormulaExtensionsLoader(IEventBProject project, List<String> execluded){
+	public FormulaExtensionsLoader(IRodinProject project, List<String> execluded){
 		this.project = project;
 		this.execluded = execluded;
-		this.execludedExtensions = new LinkedHashSet<IFormulaExtension>();
 	}
 	
 	/**
@@ -49,26 +52,50 @@ public class FormulaExtensionsLoader {
 	 * @throws CoreException
 	 */
 	public Set<IFormulaExtension> getFormulaExtensions() throws CoreException{
-		IDeployedTheoryRoot[] theoryRoots = project.getRodinProject().
-			getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
+		IDeployedTheoryRoot[] theoryRoots = TheoryCoreFacade.getDeployedTheories(project);
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
-		IFormulaExtension cond = Cond.getCond();
-		extensions.add(cond);
-		FormulaFactory factory = FormulaFactory.getInstance(extensions);
+		extensions.add(MathExtensionsUtilities.COND);
+		factory = FormulaFactory.getInstance(extensions);
+		// the project graph for deployed theories
+		ITheoryGraph<IDeployedTheoryRoot> graph = 
+			new ProjectGraph<IDeployedTheoryRoot>(theoryRoots).getGraph();
+		List<IDeployedTheoryRoot> execludedRoots = getDeployedRoots();
+		graph.remove(execludedRoots);
+		Set<IDeployedTheoryRoot> newSetDepl = graph.getElements();
+		theoryRoots = newSetDepl.toArray(new IDeployedTheoryRoot[newSetDepl.size()]);
 		for(IDeployedTheoryRoot root : theoryRoots){
 			TheoryTransformer transformer = new TheoryTransformer();
 			Set<IFormulaExtension> theoryExtns = transformer.transform(root, factory, factory.makeTypeEnvironment());
-			if(execluded.contains(root.getElementName())){
-				execludedExtensions.addAll(theoryExtns);
-			}
 			extensions.addAll(theoryExtns);
+			factory = factory.withExtensions(extensions);
 		}
-		extensions.remove(cond);
+		extensions.remove(MathExtensionsUtilities.COND);
 		return extensions;
 	}
 	
-	public Set<IFormulaExtension> getExecludedExtensions(){
-		return execludedExtensions;
+	
+	protected List<IDeployedTheoryRoot> getDeployedRoots() {
+		List<IDeployedTheoryRoot> list = new ArrayList<IDeployedTheoryRoot>();
+		for(String execlu : execluded){
+			IDeployedTheoryRoot dep = TheoryCoreFacade.getDeployedTheory(execlu, project);
+			if(dep.exists())
+				list.add(dep);
+		}
+		return list;
+	}
+
+	public Set<IFormulaExtension> getAdditionalExtensions(ISCTheoryRoot[] roots)
+	throws CoreException{
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
+		extensions.add(MathExtensionsUtilities.COND);
+		factory = factory.withExtensions(extensions);
+		for (ISCTheoryRoot scTheoryRoot : roots){
+			TheoryTransformer transformer = new TheoryTransformer();
+			extensions.addAll(transformer.transform(scTheoryRoot, factory, factory.makeTypeEnvironment()));
+			factory = factory.withExtensions(extensions);
+		}
+		extensions.remove(MathExtensionsUtilities.COND);
+		return extensions;
 	}
 
 }

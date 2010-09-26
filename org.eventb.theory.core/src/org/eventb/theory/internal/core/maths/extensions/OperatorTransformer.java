@@ -26,7 +26,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
-import org.eventb.theory.internal.core.maths.IOperatorArgument;
+import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 

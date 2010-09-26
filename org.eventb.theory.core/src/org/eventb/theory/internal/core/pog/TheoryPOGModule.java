@@ -2,7 +2,6 @@ package org.eventb.theory.internal.core.pog;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPORoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -42,8 +41,6 @@ public class TheoryPOGModule extends BaseModule {
 			IRodinElement element, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		IPORoot target = repository.getTarget();
-		target.setFormulaFactory(null);
 		super.endModule(element, repository, monitor);
 	}
 	

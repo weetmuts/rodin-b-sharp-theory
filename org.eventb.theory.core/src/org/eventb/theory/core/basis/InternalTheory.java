@@ -1,5 +1,6 @@
 package org.eventb.theory.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.theory.core.IInternalTheory;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
@@ -60,6 +61,12 @@ public class InternalTheory extends TheoryElement implements IInternalTheory {
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		// TODO Auto-generated method stub
 		return ELEMENT_TYPE;
+	}
+
+	@Override
+	public IInternalTheory[] getRelatedSources() throws CoreException {
+		// TODO Auto-generated method stub
+		return new IInternalTheory[0];
 	}
 
 }

@@ -19,6 +19,8 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
@@ -42,13 +44,12 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
-import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.TheoryCoreFacade;
+import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.rodinp.core.IAttributeType;
@@ -80,6 +81,26 @@ public class CoreUtilities {
 	// ///////////////////////
 
 	/**
+	 * <p>Facility to log the given exception alongside the given message.</p>
+	 * @param exc
+	 * @param message
+	 */
+	public static void log(Throwable exc, String message) {
+		if (exc instanceof RodinDBException) {
+			final Throwable nestedExc = ((RodinDBException) exc).getException();
+			if (nestedExc != null) {
+				exc = nestedExc;
+			}
+		}
+		if (message == null) {
+			message = "Unknown context"; //$NON-NLS-1$
+		}
+		IStatus status = new Status(IStatus.ERROR, TheoryPlugin.PLUGIN_ID,
+				IStatus.ERROR, message, exc);
+		TheoryPlugin.getDefault().getLog().log(status);
+	}
+	
+	/**
 	 * Creates a sorted list of the given element type.
 	 * 
 	 * @param <E>
@@ -96,6 +117,22 @@ public class CoreUtilities {
 		}
 		Collections.sort(list);
 		return list;
+	}
+	
+	/**
+	 * Remove the duplicates from the supplied list.
+	 * @param <E> the type of elements
+	 * @param list the original list
+	 * @return the list without duplicates
+	 */
+	public static <E> List<E> removeDuplicates(List<E> list){
+		List<E> newList = new ArrayList<E>();
+		for (E e : list){
+			if(!newList.contains(e)){
+				newList.add(e);
+			}
+		}
+		return newList;
 	}
 
 	/**
@@ -952,41 +989,4 @@ public class CoreUtilities {
 		return null;
 	}
 	
-	public static List<IDeployedTheoryRoot> normaliseDeployedTheories(List<IDeployedTheoryRoot> rawList)
-	throws CoreException{
-		List<IDeployedTheoryRoot> normalised = new ArrayList<IDeployedTheoryRoot>();
-		for (IDeployedTheoryRoot root: rawList){
-			List<IDeployedTheoryRoot> rawClone = new ArrayList<IDeployedTheoryRoot>(rawList);
-			rawClone.remove(root);
-			boolean toInclude = true;
-			for (IDeployedTheoryRoot rawRoot : rawClone){
-				if (TheoryCoreFacade.doesTheoryUseTheory(rawRoot, root)){
-					toInclude = false;
-				}
-			}
-			if(toInclude){
-				normalised.add(root);
-			}
-		}
-		return normalised;
-	}
-	
-	public static List<ISCTheoryRoot> normaliseSCTheories(List<ISCTheoryRoot> rawList)
-	throws CoreException{
-		List<ISCTheoryRoot> normalised = new ArrayList<ISCTheoryRoot>();
-		for (ISCTheoryRoot root: rawList){
-			List<ISCTheoryRoot> rawClone = new ArrayList<ISCTheoryRoot>(rawList);
-			rawClone.remove(root);
-			boolean toInclude = true;
-			for (ISCTheoryRoot rawRoot : rawClone){
-				if (TheoryCoreFacade.doesSCTheoryImportSCTheory(rawRoot, root)){
-					toInclude = false;
-				}
-			}
-			if(toInclude){
-				normalised.add(root);
-			}
-		}
-		return normalised;
-	}
 }

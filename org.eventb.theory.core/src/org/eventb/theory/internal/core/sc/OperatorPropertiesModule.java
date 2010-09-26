@@ -160,15 +160,18 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 	 * @return whether this operator can be commutative
 	 */
 	protected boolean checkCommutativity(List<String> args) {
-		boolean ok = (args.size() == 2);
+		if(args.size() == 2){
+			return false;
+		}
 		Type type = null;
 		for(String arg : args){
 			if(type == null){
 				type = typeEnvironment.getType(arg);
 			}
-			ok &= (type.equals(typeEnvironment.getType(arg)));
+			if(!(type.equals(typeEnvironment.getType(arg))))
+				return false;
 		}
-		return ok;
+		return true;
 	}
 	
 	/**
@@ -178,18 +181,23 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 	 * @return whether this operator can be associative
 	 */
 	protected boolean checkAssociativity(List<String> args) {
-		boolean ok = operatorInformation.isExpressionOperator();
-		ok &= (args.size() >= 2);
+		if(!operatorInformation.isExpressionOperator() ||
+				(args.size() != 2)){
+			return false;
+		}
 		Type type = null;
 		for(String arg : args){
 			if(type == null){
 				type = typeEnvironment.getType(arg);
 			}
-			ok &= (type.equals(typeEnvironment.getType(arg)));
+			if (!type.equals(typeEnvironment.getType(arg))){
+				return false;
+			}
 		}
-		ok &= (type.equals(operatorInformation.getResultantType()));
-		
-		return ok;
+		if (!type.equals(operatorInformation.getResultantType())){
+			return false;
+		}
+		return true;
 	}
 	
 	@Override

@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
@@ -16,7 +19,6 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.IUseTheory;
-import org.eventb.theory.core.TheoryCoreFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -107,18 +109,15 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 	}
 
 	@Override
-	public int compareTo(IDeployedTheoryRoot root) {
-		try {
-			if(TheoryCoreFacade.doesTheoryUseTheory(root, this)){
-				return 1;
+	public IDeployedTheoryRoot[] getRelatedSources() throws CoreException {
+		// TODO Auto-generated method stub
+		Set<IDeployedTheoryRoot> sources = new LinkedHashSet<IDeployedTheoryRoot>();
+		IUseTheory[] used = getUsedTheories();
+		for (IUseTheory use : used){
+			if(use.hasUseTheory()){
+				sources.add(use.getUsedTheory());
 			}
-			if(TheoryCoreFacade.doesTheoryUseTheory(this, root)){
-				return -1;
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
 		}
-	
-		return 0;
+		return sources.toArray(new IDeployedTheoryRoot[sources.size()]);
 	}
 }

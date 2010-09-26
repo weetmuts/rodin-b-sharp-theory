@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.maths.extensions;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +25,6 @@ import org.rodinp.core.IInternalElement;
 public abstract class DefinitionTransformer<E extends IInternalElement> {
 	
 	protected MathExtensionsFactory extensionsFactory;
-	protected List<String> processedDependencies;
 	
 	protected DefinitionTransformer(){
 		extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
@@ -43,7 +41,4 @@ public abstract class DefinitionTransformer<E extends IInternalElement> {
 	public abstract Set<IFormulaExtension> transform(E definition,
 			final FormulaFactory factory, ITypeEnvironment typeEnvironment) throws CoreException;
 	
-	public List<String> getProcessedDependencies(){
-		return processedDependencies;
-	}
 }

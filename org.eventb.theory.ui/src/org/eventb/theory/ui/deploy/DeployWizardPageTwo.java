@@ -111,7 +111,7 @@ public class DeployWizardPageTwo extends WizardPage {
 		new Label(container, SWT.NULL);
 		{
 			final Button forceButton = new Button(container, SWT.CHECK);
-			forceButton.setText("Force theory deployment.");
+			forceButton.setText("Override deployed theory if necessary.");
 			forceButton.setSelection(false);
 			forceButton.addSelectionListener(new SelectionListener() {
 				

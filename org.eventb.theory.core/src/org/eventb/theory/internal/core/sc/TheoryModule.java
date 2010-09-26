@@ -38,7 +38,6 @@ public class TheoryModule extends SCProcessorModule {
 
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
-		theoryRoot.setFormulaFactory(null);
 		endProcessorModules(element, repository, monitor);
 		removeStates(repository);
 	}
@@ -51,8 +50,9 @@ public class TheoryModule extends SCProcessorModule {
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		// a fresh factory...do not use the extension provider
 		FormulaFactory factory = repository.getFormulaFactory().withExtensions(
-				(MathExtensionsUtilities.singletonExtension(FormulaFactory.getCond())));
+				(MathExtensionsUtilities.singletonExtension(MathExtensionsUtilities.COND)));
 		repository.setFormulaFactory(factory);
 		repository.setTypeEnvironment(MathExtensionsUtilities.getTypeEnvironmentForFactory(repository.getTypeEnvironment(), factory));
 		accuracyInfo = new TheoryAccuracyInfo();

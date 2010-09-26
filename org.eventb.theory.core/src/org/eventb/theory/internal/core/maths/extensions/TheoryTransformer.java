@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.maths.extensions;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -17,9 +16,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCDatatypeDefinition;
-import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
@@ -28,36 +25,35 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  *
  */
 public class TheoryTransformer 
-extends DefinitionTransformer<IFormulaExtensionsSource>{
+extends DefinitionTransformer<IFormulaExtensionsSource<?>>{
 
 	private ITypeEnvironment typeEnvironment;
-	private IFormulaExtensionsSource source;
+	private IFormulaExtensionsSource<?> source;
 
 	protected void initialise() throws CoreException {
 		ISCTypeParameter[] typeParameters = getTypeParameters(source);
 		for (ISCTypeParameter typeParameter : typeParameters) {
 			typeEnvironment.addGivenSet(typeParameter.getIdentifierString());
 		}
-		processedDependencies =  new ArrayList<String>();
 	}
 
-	protected ISCNewOperatorDefinition[] getOperators(IFormulaExtensionsSource source)
+	protected ISCNewOperatorDefinition[] getOperators(IFormulaExtensionsSource<?> source)
 		throws CoreException{
 		return source.getSCNewOperatorDefinitions();
 	}
 	
-	protected ISCDatatypeDefinition[] getDatatypes(IFormulaExtensionsSource source)
+	protected ISCDatatypeDefinition[] getDatatypes(IFormulaExtensionsSource<?> source)
 		throws CoreException{
 		return source.getSCDatatypeDefinitions();
 	}
 
-	protected ISCTypeParameter[] getTypeParameters(IFormulaExtensionsSource source) 
+	protected ISCTypeParameter[] getTypeParameters(IFormulaExtensionsSource<?> source) 
 		throws CoreException{
 		return source.getSCTypeParameters();
 	}
 
 	@Override
-	public Set<IFormulaExtension> transform(IFormulaExtensionsSource source,
+	public Set<IFormulaExtension> transform(IFormulaExtensionsSource<?> source,
 			FormulaFactory factory, ITypeEnvironment typeEnvironment)
 			throws CoreException {
 
@@ -65,21 +61,6 @@ extends DefinitionTransformer<IFormulaExtensionsSource>{
 		this.source = source;
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		
-		ISCImportTheory[] importTheories = source.getImportTheories();
-		for(ISCImportTheory theory : importTheories){
-			if(theory.hasImportedTheory()){
-				ISCTheoryRoot scRoot = theory.getImportedTheory();
-				if(!scRoot.exists()){
-					// TODO log
-					continue;
-				}
-				DefinitionTransformer<IFormulaExtensionsSource> nestedTrans = new TheoryTransformer();
-				extensions.addAll(nestedTrans.transform(scRoot, factory, typeEnvironment));
-				factory = factory.withExtensions(extensions);
-				typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
-			}
-		}
-
 		initialise();
 
 		ISCDatatypeDefinition datatypeDefinitions[] = getDatatypes(source);

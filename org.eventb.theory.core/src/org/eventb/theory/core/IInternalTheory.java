@@ -20,7 +20,7 @@ import org.rodinp.core.RodinCore;
  * @author maamria
  * 
  */
-public interface IInternalTheory extends IFormulaExtensionsSource {
+public interface IInternalTheory extends IFormulaExtensionsSource<IInternalTheory> {
 
 	IInternalElementType<IInternalTheory> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID

@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,16 +21,19 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.IFormulaExtensionsSource;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.IUseTheory;
 import org.eventb.theory.core.TheoryCoreFacade;
+import org.eventb.theory.core.TheoryCoreFacade.TheoriesFilter;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.maths.extensions.DefinitionTransformer;
 import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
+import org.eventb.theory.internal.core.maths.extensions.graph.ITheoryGraph;
+import org.eventb.theory.internal.core.maths.extensions.graph.ProjectGraph;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -38,17 +41,19 @@ import org.rodinp.core.IRodinFile;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class ImportTheoryModule extends SCProcessorModule{
+public class ImportTheoryModule extends SCProcessorModule {
 
-	IModuleType<ImportTheoryModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
-						+ ".importTheoryModule");
-	
+	IModuleType<ImportTheoryModule> MODULE_TYPE = SCCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".importTheoryModule");
+
 	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
-	private List<String> checkedImports;
-	
+
+	private Set<IDeployedTheoryRoot> checkedDeployedRoots;
+	private Set<ISCTheoryRoot> checkedSCTheoryRoots;
+
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -57,25 +62,69 @@ public class ImportTheoryModule extends SCProcessorModule{
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
 		IRodinFile file = (IRodinFile) element;
-		ITheoryRoot root = (ITheoryRoot) file.getRoot();
+		final ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		IImportTheory[] importTheories = root.getImportTheories();
-		checkedImports = new ArrayList<String>();
-		for(IImportTheory importTheory: importTheories){
-			if(!importTheory.hasImportedTheory()){
-				createProblemMarker(importTheory, EventBAttributes.TARGET_ATTRIBUTE, TheoryGraphProblem.ImportTheoryAttrMissing);
+		checkedSCTheoryRoots = new LinkedHashSet<ISCTheoryRoot>();
+		checkedDeployedRoots = new LinkedHashSet<IDeployedTheoryRoot>();
+		for (IImportTheory importTheory : importTheories) {
+			if (!importTheory.hasImportedTheory()) {
+				createProblemMarker(importTheory,
+						EventBAttributes.TARGET_ATTRIBUTE,
+						TheoryGraphProblem.ImportTheoryAttrMissing);
 				continue;
 			}
 			ISCTheoryRoot target = importTheory.getImportedTheory();
-			if(!target.exists()){
-				createProblemMarker(importTheory, EventBAttributes.TARGET_ATTRIBUTE, 
-						TheoryGraphProblem.ImportTheoryNotExist, target.getComponentName());
+			if (!target.exists()) {
+				createProblemMarker(importTheory,
+						EventBAttributes.TARGET_ATTRIBUTE,
+						TheoryGraphProblem.ImportTheoryNotExist,
+						target.getComponentName());
 				continue;
 			}
-			DefinitionTransformer<IFormulaExtensionsSource> transformer = new TheoryTransformer();
-			Set<IFormulaExtension> extensions = transformer.transform(target, factory, typeEnvironment);
+			checkedSCTheoryRoots.add(target);
+		}
+		ITheoryGraph<ISCTheoryRoot> scGraph = new ProjectGraph<ISCTheoryRoot>(
+				checkedSCTheoryRoots
+						.toArray(new ISCTheoryRoot[checkedSCTheoryRoots.size()]))
+				.getGraph();
+		final Set<String> usedTheories = scGraph.getNames();
+		IDeployedTheoryRoot[] deployedTheoryRoots = TheoryCoreFacade
+				.getDeployedTheories(root.getRodinProject());
+		final IDeployedTheoryRoot[] disregardedRoots = TheoryCoreFacade.getDeployedTheories(root.getRodinProject(),
+				new TheoriesFilter<IDeployedTheoryRoot>() {
+
+					@Override
+					public boolean filter(IDeployedTheoryRoot theory) {
+						String theoryName = theory.getComponentName();
+						String currentRootName = root.getComponentName();
+						if (theoryName.equals(currentRootName)
+								|| usedTheories.contains(theoryName)) {
+							return true;
+						}
+						return false;
+					}
+				});
+		ITheoryGraph<IDeployedTheoryRoot> deplGraph = new ProjectGraph<IDeployedTheoryRoot>(
+				deployedTheoryRoots).getGraph();
+		deplGraph.remove(Arrays.asList(disregardedRoots));
+		checkedDeployedRoots = deplGraph.getElements();
+		checkedSCTheoryRoots = scGraph.getElements();
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
+		for (IDeployedTheoryRoot deployedTheoryRoot : checkedDeployedRoots) {
+			TheoryTransformer transformer = new TheoryTransformer();
+			extensions.addAll(transformer.transform(deployedTheoryRoot,
+					factory, typeEnvironment));
 			factory = factory.withExtensions(extensions);
-			typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
-			checkedImports.add(target.getComponentName());
+			typeEnvironment = MathExtensionsUtilities
+					.getTypeEnvironmentForFactory(typeEnvironment, factory);
+		}
+		for (ISCTheoryRoot scTheoryRoot : checkedSCTheoryRoots) {
+			TheoryTransformer transformer = new TheoryTransformer();
+			extensions.addAll(transformer.transform(scTheoryRoot, factory,
+					typeEnvironment));
+			factory = factory.withExtensions(extensions);
+			typeEnvironment = MathExtensionsUtilities
+					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 		}
 		repository.setFormulaFactory(factory);
 		repository.setTypeEnvironment(typeEnvironment);
@@ -85,24 +134,28 @@ public class ImportTheoryModule extends SCProcessorModule{
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		ISCTheoryRoot root = (ISCTheoryRoot) target;
-		for (String impo: checkedImports){
-			ISCImportTheory importTheory = root.getImportTheory(impo);
+		final ISCTheoryRoot root = (ISCTheoryRoot) target;
+		for (IDeployedTheoryRoot deployedRoot : checkedDeployedRoots) {
+			String componentName = deployedRoot.getComponentName();
+			IUseTheory useTheory = root.getUsedTheory(componentName);
+			useTheory.create(null, monitor);
+			useTheory.setUsedTheory(deployedRoot, monitor);
+		}
+		for (ISCTheoryRoot scRoot : checkedSCTheoryRoots) {
+			String componentName = scRoot.getComponentName();
+			ISCImportTheory importTheory = root.getImportTheory(componentName);
 			importTheory.create(null, monitor);
-			importTheory.setImportedTheory(TheoryCoreFacade.getSCTheory(impo, root.getRodinProject()), monitor);
+			importTheory.setImportedTheory(scRoot, monitor);
 		}
 	}
-	
+
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		typeEnvironment = null;
-		checkedImports = null;
 		super.endModule(element, repository, monitor);
 	}
-	
-	
 
 	@Override
 	public IModuleType<?> getModuleType() {

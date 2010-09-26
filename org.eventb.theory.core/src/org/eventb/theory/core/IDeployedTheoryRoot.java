@@ -24,7 +24,7 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public interface IDeployedTheoryRoot extends IEventBRoot, IAccuracyElement ,
-IFormulaExtensionsSource, IExtensionRulesSource, Comparable<IDeployedTheoryRoot>{
+IFormulaExtensionsSource<IDeployedTheoryRoot>, IExtensionRulesSource{
 
 	IInternalElementType<IDeployedTheoryRoot> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".deployedTheoryRoot");
@@ -43,7 +43,5 @@ IFormulaExtensionsSource, IExtensionRulesSource, Comparable<IDeployedTheoryRoot>
 	 * @throws RodinDBException
 	 */
 	IUseTheory[] getUsedTheories() throws RodinDBException;
-	
-	public int compareTo(IDeployedTheoryRoot root);
 
 }

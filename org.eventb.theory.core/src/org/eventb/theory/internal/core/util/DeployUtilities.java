@@ -133,7 +133,7 @@ public class DeployUtilities {
 	 * @throws CoreException
 	 */
 	public static boolean copyMathematicalExtensions(
-			IFormulaExtensionsSource target, IFormulaExtensionsSource source)
+			IFormulaExtensionsSource<?> target, IFormulaExtensionsSource<?> source)
 			throws CoreException {
 		boolean isFaithful = true;
 		// copy type parameters
@@ -306,7 +306,7 @@ public class DeployUtilities {
 
 	private static void copyOperatorDefinition(
 			ISCNewOperatorDefinition operatorDefinition,
-			IFormulaExtensionsSource target) throws CoreException {
+			IFormulaExtensionsSource<?> target) throws CoreException {
 		ISCNewOperatorDefinition newDefinition = duplicate(operatorDefinition,
 				ISCNewOperatorDefinition.ELEMENT_TYPE, target, null,
 				HAS_ERROR_ATTRIBUTE);
@@ -348,13 +348,13 @@ public class DeployUtilities {
 	}
 
 	private static void copyTypeParameter(ISCTypeParameter typeParameter,
-			IFormulaExtensionsSource target) throws CoreException {
+			IFormulaExtensionsSource<?> target) throws CoreException {
 		duplicate(typeParameter, ISCTypeParameter.ELEMENT_TYPE, target, null);
 
 	}
 
 	private static void copyDatatype(ISCDatatypeDefinition definition,
-			IFormulaExtensionsSource target) throws CoreException {
+			IFormulaExtensionsSource<?> target) throws CoreException {
 		ISCDatatypeDefinition newDefinition = duplicate(definition,
 				ISCDatatypeDefinition.ELEMENT_TYPE, target, null,
 				HAS_ERROR_ATTRIBUTE);

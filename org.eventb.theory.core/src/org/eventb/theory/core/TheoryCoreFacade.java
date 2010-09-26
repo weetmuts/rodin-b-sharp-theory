@@ -9,7 +9,6 @@ package org.eventb.theory.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -221,6 +220,8 @@ public class TheoryCoreFacade {
 	 * 
 	 * @param project
 	 *            the rodin project
+	 * @param filter
+	 * 			  theories filter
 	 * @return deployed theories
 	 * @throws CoreException
 	 */
@@ -236,6 +237,28 @@ public class TheoryCoreFacade {
 			}
 		}
 		return okRoots.toArray(new IDeployedTheoryRoot[okRoots.size()]);
+	}
+	
+	/**
+	 * Returns the deployed theories that are the children of the given project.
+	 * 
+	 * @param project
+	 *            the rodin project
+	 * @return deployed theories
+	 * @throws CoreException
+	 */
+	public static IDeployedTheoryRoot[] getDeployedTheories(
+			IRodinProject project)
+			throws CoreException {
+		
+		return getDeployedTheories(project, new TheoriesFilter<IDeployedTheoryRoot>() {
+
+			@Override
+			public boolean filter(IDeployedTheoryRoot theory) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+		});
 	}
 
 	/**
@@ -495,28 +518,6 @@ public class TheoryCoreFacade {
 		}
 		return false;
 	}
-
-	/**
-	 * Returns an ordered list of theories. The order is determined by the "USE" relationship between the given
-	 * deployed theories.
-	 * @param deployedTheories the theories
-	 * @return the sorted theories
-	 */
-	public static List<IDeployedTheoryRoot> sortDeployedTheories(List<IDeployedTheoryRoot> deployedTheories){
-		Collections.sort(deployedTheories);
-		return deployedTheories;
-	}
-	
-	/**
-	 * Returns an ordered list of theories. The order is determined by the "IMPORT" relationship between the given
-	 * SC theories.
-	 * @param theories the theories
-	 * @return the sorted theories
-	 */
-	public static List<ISCTheoryRoot> sortSCTheories(List<ISCTheoryRoot> theories){
-		Collections.sort(theories);
-		return theories;
-	}
 	
 	/**
 	 * 
@@ -525,7 +526,7 @@ public class TheoryCoreFacade {
 	 * @param <T>
 	 *            the type of the source
 	 */
-	public static interface TheoriesFilter<T extends IFormulaExtensionsSource> {
+	public static interface TheoriesFilter<T extends IFormulaExtensionsSource<T>> {
 
 		public boolean filter(T theory);
 

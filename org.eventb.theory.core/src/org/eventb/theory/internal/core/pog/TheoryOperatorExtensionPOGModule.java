@@ -73,7 +73,7 @@ public class TheoryOperatorExtensionPOGModule extends POGProcessorModule {
 				IOperatorExtension opExtension = (IOperatorExtension) extension;
 				if(opExtension.getOrigin()!=null && opExtension.getOrigin() instanceof ISCNewOperatorDefinition){
 					ISCNewOperatorDefinition origin = (ISCNewOperatorDefinition) opExtension.getOrigin();
-					String elementName = origin.getElementName();
+					String elementName = origin.getLabel();
 					IRodinElement parent = origin.getParent();
 					if(parent == null){
 						continue;
@@ -85,7 +85,7 @@ public class TheoryOperatorExtensionPOGModule extends POGProcessorModule {
 			}
 		}
 		for (ISCNewOperatorDefinition definition : scDefinitions) {
-			String elementName = definition.getElementName();
+			String elementName = definition.getLabel();
 			String parentName = scTheoryRoot.getElementName();
 			String key = parentName+"."+elementName;
 			if(map.containsKey(key)){
