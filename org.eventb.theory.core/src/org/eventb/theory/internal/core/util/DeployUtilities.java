@@ -133,14 +133,15 @@ public class DeployUtilities {
 	 * @throws CoreException
 	 */
 	public static boolean copyMathematicalExtensions(
-			IFormulaExtensionsSource<?> target, IFormulaExtensionsSource<?> source)
+			IFormulaExtensionsSource<?> target, IFormulaExtensionsSource<?> source,
+			IProgressMonitor monitor)
 			throws CoreException {
 		boolean isFaithful = true;
 		// copy type parameters
 		// //////////////////////////////
 		ISCTypeParameter[] typeParameters = source.getSCTypeParameters();
 		for (ISCTypeParameter typeParameter : typeParameters) {
-			copyTypeParameter(typeParameter, target);
+			copyTypeParameter(typeParameter, target, monitor);
 		}
 		// copy datatypes
 		// //////////////////////////////
@@ -163,7 +164,7 @@ public class DeployUtilities {
 				isFaithful = false;
 				continue;
 			}
-			copyOperatorDefinition(operatorDefinition, target);
+			copyOperatorDefinition(operatorDefinition, target, monitor);
 		}
 		return isFaithful;
 	}
@@ -179,7 +180,7 @@ public class DeployUtilities {
 	 * @throws CoreException
 	 */
 	public static boolean copyProverExtensions(IExtensionRulesSource target,
-			IExtensionRulesSource source) throws CoreException {
+			IExtensionRulesSource source,IProgressMonitor monitor) throws CoreException {
 		boolean isFaithful = true;
 		// copy proof blocks
 		// ////////////////////////////////
@@ -189,14 +190,14 @@ public class DeployUtilities {
 					ISCProofRulesBlock.ELEMENT_TYPE, target, null, SOURCE_ATTRIBUTE);
 			ISCMetavariable[] vars = rulesBlock.getMetavariables();
 			for (ISCMetavariable var : vars) {
-				copyMetavariables(var, newRulesBlock);
+				copyMetavariables(var, newRulesBlock, monitor);
 			}
 			ISCRewriteRule[] rewRules = rulesBlock.getRewriteRules();
 			for (ISCRewriteRule rewRule : rewRules) {
 				if (!rewRule.isAccurate()) {
 					isFaithful = false;
 				}
-				copyRewriteRule(rewRule, newRulesBlock);
+				copyRewriteRule(rewRule, newRulesBlock, monitor);
 				
 			}
 			ISCInferenceRule[] infRules = rulesBlock.getInferenceRules();
@@ -204,7 +205,7 @@ public class DeployUtilities {
 				if (!infRule.isAccurate()) {
 					isFaithful = false;
 				}
-				copyInferenceRule(infRule, newRulesBlock);
+				copyInferenceRule(infRule, newRulesBlock, monitor);
 				
 			}
 		}
@@ -212,12 +213,12 @@ public class DeployUtilities {
 		// ////////////////////////////////
 		ISCTheorem[] theorems = source.getTheorems();
 		for (ISCTheorem theorem : theorems) {
-			ISCTheorem newTheorem = duplicate(theorem, ISCTheorem.ELEMENT_TYPE, target, null);
+			ISCTheorem newTheorem = duplicate(theorem, ISCTheorem.ELEMENT_TYPE, target, monitor);
 			if (!theorem.hasValidatedAttribute()) {
 				boolean isSound = DeployUtilities.calculateSoundness(
 						TheoryCoreFacade.getSCTheoryParent(theorem),
 						theorem);
-				newTheorem.setValidated(isSound, null);
+				newTheorem.setValidated(isSound, monitor);
 
 			}
 		}
@@ -249,55 +250,55 @@ public class DeployUtilities {
 	}
 	
 	private static void copyInferenceRule(ISCInferenceRule infRule,
-			ISCProofRulesBlock newRulesBlock) 
+			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor) 
 	throws CoreException{
 		ISCInferenceRule newInfRule = duplicate(infRule,
-				ISCInferenceRule.ELEMENT_TYPE, newRulesBlock, null,
+				ISCInferenceRule.ELEMENT_TYPE, newRulesBlock, monitor,
 				SOURCE_ATTRIBUTE);
 		ISCInfer[] infers = infRule.getInfers();
 		for (ISCInfer infer : infers) {
-			duplicate(infer, ISCInfer.ELEMENT_TYPE, newInfRule, null,
+			duplicate(infer, ISCInfer.ELEMENT_TYPE, newInfRule, monitor,
 					SOURCE_ATTRIBUTE);
 		}
 		ISCGiven[] givens = infRule.getGivens();
 		for (ISCGiven given : givens) {
-			duplicate(given, ISCGiven.ELEMENT_TYPE, newInfRule, null,
+			duplicate(given, ISCGiven.ELEMENT_TYPE, newInfRule, monitor,
 					SOURCE_ATTRIBUTE);
 		}
 		if (!infRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
 					TheoryCoreFacade.getSCTheoryParent(infRule),
 					infRule);
-			newInfRule.setValidated(isSound, null);
+			newInfRule.setValidated(isSound, monitor);
 
 		}
 		
 	}
 
 	private static void copyRewriteRule(ISCRewriteRule rewRule,
-			ISCProofRulesBlock newRulesBlock) 
+			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor) 
 	throws CoreException{
 		ISCRewriteRule newRewRule = duplicate(rewRule,
-				ISCRewriteRule.ELEMENT_TYPE, newRulesBlock, null,
+				ISCRewriteRule.ELEMENT_TYPE, newRulesBlock, monitor,
 				SOURCE_ATTRIBUTE);
 		ISCRewriteRuleRightHandSide[] ruleRHSs = rewRule.getRuleRHSs();
 		for (ISCRewriteRuleRightHandSide rhs : ruleRHSs) {
 			duplicate(rhs, ISCRewriteRuleRightHandSide.ELEMENT_TYPE,
-					newRewRule, null, SOURCE_ATTRIBUTE);
+					newRewRule, monitor, SOURCE_ATTRIBUTE);
 		}
 		if (!rewRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
 					TheoryCoreFacade.getSCTheoryParent(rewRule),
 					rewRule);
-			newRewRule.setValidated(isSound, null);
+			newRewRule.setValidated(isSound, monitor);
 
 		}
 		
 	}
 
 	private static void copyMetavariables(ISCMetavariable var,
-			ISCProofRulesBlock newRulesBlock) throws CoreException {
-		duplicate(var, ISCMetavariable.ELEMENT_TYPE, newRulesBlock, null,
+			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor) throws CoreException {
+		duplicate(var, ISCMetavariable.ELEMENT_TYPE, newRulesBlock, monitor,
 				SOURCE_ATTRIBUTE);
 
 	}
@@ -306,27 +307,27 @@ public class DeployUtilities {
 
 	private static void copyOperatorDefinition(
 			ISCNewOperatorDefinition operatorDefinition,
-			IFormulaExtensionsSource<?> target) throws CoreException {
+			IFormulaExtensionsSource<?> target, IProgressMonitor monitor) throws CoreException {
 		ISCNewOperatorDefinition newDefinition = duplicate(operatorDefinition,
 				ISCNewOperatorDefinition.ELEMENT_TYPE, target, null,
 				HAS_ERROR_ATTRIBUTE);
 		ISCOperatorArgument[] operatorArguments = operatorDefinition
 				.getOperatorArguments();
 		for (ISCOperatorArgument operatorArgument : operatorArguments) {
-			copyOperatorArgument(operatorArgument, newDefinition);
+			copyOperatorArgument(operatorArgument, newDefinition, monitor);
 
 		}
 		ISCDirectOperatorDefinition[] directDefinitions = operatorDefinition
 				.getDirectOperatorDefinitions();
 		for (ISCDirectOperatorDefinition directDefinition : directDefinitions) {
-			copyDirectDefinition(directDefinition, newDefinition);
+			copyDirectDefinition(directDefinition, newDefinition, monitor);
 
 		}
 		if (!newDefinition.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
 					TheoryCoreFacade.getSCTheoryParent(operatorDefinition),
 					operatorDefinition);
-			newDefinition.setValidated(isSound, null);
+			newDefinition.setValidated(isSound, monitor);
 
 		}
 
@@ -334,22 +335,22 @@ public class DeployUtilities {
 
 	private static void copyDirectDefinition(
 			ISCDirectOperatorDefinition directDefinition,
-			ISCNewOperatorDefinition newDefinition) throws CoreException {
+			ISCNewOperatorDefinition newDefinition, IProgressMonitor monitor) throws CoreException {
 		duplicate(directDefinition, ISCDirectOperatorDefinition.ELEMENT_TYPE,
-				newDefinition, null);
+				newDefinition, monitor);
 	}
 
 	private static void copyOperatorArgument(
 			ISCOperatorArgument operatorArgument,
-			ISCNewOperatorDefinition newDefinition) throws CoreException {
+			ISCNewOperatorDefinition newDefinition, IProgressMonitor monitor) throws CoreException {
 		duplicate(operatorArgument, ISCOperatorArgument.ELEMENT_TYPE,
-				newDefinition, null);
+				newDefinition, monitor);
 
 	}
 
 	private static void copyTypeParameter(ISCTypeParameter typeParameter,
-			IFormulaExtensionsSource<?> target) throws CoreException {
-		duplicate(typeParameter, ISCTypeParameter.ELEMENT_TYPE, target, null);
+			IFormulaExtensionsSource<?> target, IProgressMonitor monitor) throws CoreException {
+		duplicate(typeParameter, ISCTypeParameter.ELEMENT_TYPE, target, monitor);
 
 	}
 

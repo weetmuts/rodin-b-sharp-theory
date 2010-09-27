@@ -90,8 +90,8 @@ public class TheoryDeployer implements ITheoryDeployer{
 		if(!setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot)){
 			return false;
 		}
-		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot, theoryRoot) &&
-							copyProverExtensions(deployedTheoryRoot, theoryRoot);
+		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot, theoryRoot, monitor) &&
+							copyProverExtensions(deployedTheoryRoot, theoryRoot, monitor);
 
 		deployedTheoryRoot.setAccuracy(accurate, monitor);
 		targetFile.save(monitor, true);

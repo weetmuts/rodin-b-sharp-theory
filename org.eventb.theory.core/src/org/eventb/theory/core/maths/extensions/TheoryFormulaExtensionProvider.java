@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.IPRRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
@@ -48,6 +49,7 @@ public class TheoryFormulaExtensionProvider implements
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		try {
 			FormulaExtensionsLoader loader = null;
+			// in case of theory related request
 			if(TheoryCoreFacade.originatedFromTheory(root.getRodinFile())){
 				ISCTheoryRoot scRoot = TheoryCoreFacade.getSCTheory(rootName, project);
 				ITheoryGraph<ISCTheoryRoot> graph = new 
@@ -61,6 +63,7 @@ public class TheoryFormulaExtensionProvider implements
 				ISCTheoryRoot[] scRoots = scRootsSet.toArray(new ISCTheoryRoot[scRootsSet.size()]);
 				extensions.addAll(loader.getAdditionalExtensions(scRoots));
 			}
+			// in case of a model request
 			else {
 				loader = new FormulaExtensionsLoader(project, new ArrayList<String>());
 				extensions.addAll(loader.getFormulaExtensions());
@@ -74,8 +77,10 @@ public class TheoryFormulaExtensionProvider implements
 
 	@Override
 	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
-		// TODO Auto-generated method stub
-		
+		// consider proof files
+		if(root instanceof IPRRoot){
+			
+		}
 	}
 
 	@Override

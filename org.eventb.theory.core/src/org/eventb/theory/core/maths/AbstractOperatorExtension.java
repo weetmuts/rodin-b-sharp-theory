@@ -282,4 +282,22 @@ public abstract class AbstractOperatorExtension implements IOperatorExtension{
 		Formula<?> form3 = form2.substituteFreeIdents(subs, factory);
 		return form3;
 	}
+	
+	public boolean equals(Object o){
+		if(o instanceof AbstractOperatorExtension){
+			AbstractOperatorExtension abs = (AbstractOperatorExtension) o;
+			if (abs.operatorID.equals(operatorID) &&
+					abs.operatorGroup.equals(operatorGroup) &&
+					abs.syntax.equals(syntax) &&
+					abs.formulaType.equals(formulaType) &&
+					abs.notation.equals(notation)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public int hashCode(){
+		return 84 + operatorID.hashCode() + operatorGroup.hashCode()*syntax.hashCode() - notation.hashCode();
+	}
 }
