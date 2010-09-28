@@ -73,6 +73,10 @@ public class MathExtensionsUtilities {
 	public static final String BOOL_EXPR = AST_PREFIX + "boolExpr";
 	public static final String INFIX_SUBST = AST_PREFIX + "infixSubst";
 
+	public static FormulaFactory getFactoryWithCond(){
+		return FormulaFactory.getInstance(singletonExtension(COND));
+	}
+	
 	/**
 	 * Returns an appropriate group for the operator with the supplied properties.
 	 * <p>

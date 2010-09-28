@@ -1107,4 +1107,21 @@
        
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="org.eventb.theory.ui.theoryContribution"
+            targetID="org.eventb.theory.ui.theoryEditor">
+         <action
+               class="org.eventb.theory.ui.deploy.DeployTheoryActionDelegate"
+               disabledIcon="icons/thyDis.gif"
+               icon="icons/deploy.gif"
+               id="org.eventb.theory.ui.exportTheory"
+               label="%deployTheoryAction"
+               style="push"
+               toolbarPath="org.eventb.ui.eventBEditor"
+               tooltip="%deployTheoryToolTip">
+         </action>
+      </editorContribution>
+   </extension>
 </plugin>

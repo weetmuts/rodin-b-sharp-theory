@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -28,12 +28,10 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.IUseTheory;
 import org.eventb.theory.core.TheoryCoreFacade;
-import org.eventb.theory.core.TheoryCoreFacade.TheoriesFilter;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
-import org.eventb.theory.internal.core.maths.extensions.graph.ITheoryGraph;
-import org.eventb.theory.internal.core.maths.extensions.graph.ProjectGraph;
+import org.eventb.theory.internal.core.maths.extensions.graph.ProjectDependenciesGraph;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -65,7 +63,6 @@ public class ImportTheoryModule extends SCProcessorModule {
 		final ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		IImportTheory[] importTheories = root.getImportTheories();
 		checkedSCTheoryRoots = new LinkedHashSet<ISCTheoryRoot>();
-		checkedDeployedRoots = new LinkedHashSet<IDeployedTheoryRoot>();
 		for (IImportTheory importTheory : importTheories) {
 			if (!importTheory.hasImportedTheory()) {
 				createProblemMarker(importTheory,
@@ -83,34 +80,17 @@ public class ImportTheoryModule extends SCProcessorModule {
 			}
 			checkedSCTheoryRoots.add(target);
 		}
-		ITheoryGraph<ISCTheoryRoot> scGraph = new ProjectGraph<ISCTheoryRoot>(
-				checkedSCTheoryRoots
-						.toArray(new ISCTheoryRoot[checkedSCTheoryRoots.size()]))
-				.getGraph();
-		final Set<String> usedTheories = scGraph.getNames();
-		IDeployedTheoryRoot[] deployedTheoryRoots = TheoryCoreFacade
-				.getDeployedTheories(root.getRodinProject());
-		final IDeployedTheoryRoot[] disregardedRoots = TheoryCoreFacade.getDeployedTheories(root.getRodinProject(),
-				new TheoriesFilter<IDeployedTheoryRoot>() {
-
-					@Override
-					public boolean filter(IDeployedTheoryRoot theory) {
-						String theoryName = theory.getComponentName();
-						String currentRootName = root.getComponentName();
-						if (theoryName.equals(currentRootName)
-								|| usedTheories.contains(theoryName)) {
-							return true;
-						}
-						return false;
-					}
-				});
-		ITheoryGraph<IDeployedTheoryRoot> deplGraph = new ProjectGraph<IDeployedTheoryRoot>(
-				deployedTheoryRoots).getGraph();
-		deplGraph.remove(Arrays.asList(disregardedRoots));
-		checkedDeployedRoots = deplGraph.getElements();
-		checkedSCTheoryRoots = scGraph.getElements();
+		ProjectDependenciesGraph graph = new ProjectDependenciesGraph();
+		graph.setSCTheoryRoots(new ArrayList<ISCTheoryRoot>(checkedSCTheoryRoots));
+		IDeployedTheoryRoot[] deployedRoots = TheoryCoreFacade.getDeployedTheories(root.getRodinProject());
+		graph.setDeployedRoots(deployedRoots);
+		checkedSCTheoryRoots = graph.getSCTheoryRoots();
+		checkedDeployedRoots = graph.getIncludedTheories(checkedSCTheoryRoots);
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		for (IDeployedTheoryRoot deployedTheoryRoot : checkedDeployedRoots) {
+			if(deployedTheoryRoot.getComponentName().equals(root.getComponentName())){
+				continue;
+			}
 			TheoryTransformer transformer = new TheoryTransformer();
 			extensions.addAll(transformer.transform(deployedTheoryRoot,
 					factory, typeEnvironment));
@@ -136,6 +116,9 @@ public class ImportTheoryModule extends SCProcessorModule {
 			throws CoreException {
 		final ISCTheoryRoot root = (ISCTheoryRoot) target;
 		for (IDeployedTheoryRoot deployedRoot : checkedDeployedRoots) {
+			if(deployedRoot.getComponentName().equals(root.getComponentName())){
+				continue;
+			}
 			String componentName = deployedRoot.getComponentName();
 			IUseTheory useTheory = root.getUsedTheory(componentName);
 			useTheory.create(null, monitor);

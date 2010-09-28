@@ -144,6 +144,18 @@ public class TheoryCoreFacade {
 		}
 		return okRoots.toArray(new ISCTheoryRoot[okRoots.size()]);
 	}
+	
+	public static ISCTheoryRoot[] getExistingSCTheoryRoots(IRodinProject project)
+	throws CoreException{
+		return getSCTheoryRoots(project, new TheoriesFilter<ISCTheoryRoot>() {
+
+			@Override
+			public boolean filter(ISCTheoryRoot theory) {
+				// TODO Auto-generated method stub
+				return theory.exists();
+			}
+		});
+	}
 
 	/**
 	 * Returns the theories that are the children of the given project.
