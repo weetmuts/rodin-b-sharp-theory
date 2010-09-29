@@ -54,7 +54,8 @@ public abstract class DependenciesGraph<E> implements IDependenciesGraph<E>{
 	protected abstract String getElementName(E element);
 	
 	@Override
-	public DependencyNode<E> addVertex(E vertex) {
+	public DependencyNode<E> addVertex(E vertex) 
+	throws CycleException{
 		Set<E> out = getEdgesOut(vertex);
 		SortedSet<DependencyNode<E>> connected = new TreeSet<DependencyNode<E>>();
 		for (E e : out){
@@ -64,13 +65,21 @@ public abstract class DependenciesGraph<E> implements IDependenciesGraph<E>{
 		DependencyNode<E> currentNode = getNode(vertex, connected);
 		vertices.add(currentNode);
 		map.put(vertex, currentNode);
+		if(detectCycle()){
+			throw new CycleException();
+		}
 		return currentNode;
 	}
 
 	@Override
 	public Set<E> getUpperSet(E element) {
 		LinkedHashSet<E> set = new LinkedHashSet<E>();
-		for (DependencyNode<E> node : getUpperSet(map.get(element))){
+		DependencyNode<E> correspNode = map.get(element);
+		if(correspNode == null){
+			throw new IllegalArgumentException("Method should only be invoked on an element that is included in the graph.");
+		}
+		Set<DependencyNode<E>> upperSet = getUpperSet(correspNode);
+		for (DependencyNode<E> node : upperSet){
 			set.add(node.element);
 		}
 		return set;
@@ -98,7 +107,11 @@ public abstract class DependenciesGraph<E> implements IDependenciesGraph<E>{
 	@Override
 	public Set<E> getLowerSet(E element) {
 		LinkedHashSet<E> set = new LinkedHashSet<E>();
-		for (DependencyNode<E> node : getLowerSet(map.get(element))){
+		DependencyNode<E> correspNode = map.get(element);
+		if(correspNode == null){
+			throw new IllegalArgumentException("Method should only be invoked on an element that is included in the graph.");
+		}
+		for (DependencyNode<E> node : getLowerSet(correspNode)){
 			set.add(node.element);
 		}
 		return set;
@@ -152,9 +165,11 @@ public abstract class DependenciesGraph<E> implements IDependenciesGraph<E>{
 		}
 		return null;
 	}
-
-	@Override
-	public boolean detectCycle() {
+	/**
+	 * Detects whether a cycle exists in this graph.
+	 * @return whether a cycle exists
+	 */
+	protected boolean detectCycle() {
 		for (DependencyNode<E> n1 : vertices){
 			for(DependencyNode<E> n2 : vertices){
 				if(n1 != n2 && getUpperSet(n1).contains(n2) && getUpperSet(n2).contains(n1)){

@@ -11,6 +11,8 @@ import java.util.Set;
 
 
 /**
+ * Common protocol for a dependency graph specified as a Directed Acyclic Graph.
+ * 
  * @author maamria
  *
  */
@@ -21,8 +23,9 @@ public interface IDependenciesGraph<E> {
 	 * are also added as vertices.
 	 * @param vertex the vertex
 	 * @return the node corresponding to the vertex
+	 * @throws CycleException
 	 */
-	public DependencyNode<E> addVertex(E vertex);
+	public DependencyNode<E> addVertex(E vertex) throws CycleException;
 	
 	/**
 	 * Returns the elements that are reachable from this element.
@@ -72,11 +75,5 @@ public interface IDependenciesGraph<E> {
 	 * @return the element
 	 */
 	public E getElement(String name);
-	
-	/**
-	 * Detects whether a cycle exists in this graph.
-	 * @return whether a cycle exists
-	 */
-	public boolean detectCycle();
 	
 }

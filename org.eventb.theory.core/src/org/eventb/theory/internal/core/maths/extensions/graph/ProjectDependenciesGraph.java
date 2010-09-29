@@ -69,18 +69,14 @@ public class ProjectDependenciesGraph {
 	public Set<IDeployedTheoryRoot> getExecludedTheories(ISCTheoryRoot root) 
 	throws CoreException{
 		Set<String> execludedNames = scGraph.getUpperSetNames(root);
-		Set<IDeployedTheoryRoot> allowedRoots = new LinkedHashSet<IDeployedTheoryRoot>();
 		Set<IDeployedTheoryRoot> notAllowedRoots = new LinkedHashSet<IDeployedTheoryRoot>();
 		for (IDeployedTheoryRoot deployed : depGraph.getElements()){
-			if(!execludedNames.contains(deployed.getComponentName())){
-				allowedRoots.add(deployed);
-			}
-			else {
+			if(execludedNames.contains(deployed.getComponentName())){
+				notAllowedRoots.add(deployed);
 				notAllowedRoots.addAll(depGraph.getLowerSet(deployed));
 			}
 		}
-		allowedRoots.removeAll(notAllowedRoots);
-		return allowedRoots;
+		return notAllowedRoots;
 	}
 	
 	public Set<IDeployedTheoryRoot> getExecludedTheories(Set<ISCTheoryRoot> roots)
