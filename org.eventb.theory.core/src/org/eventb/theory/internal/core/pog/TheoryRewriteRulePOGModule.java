@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -75,6 +76,8 @@ public class TheoryRewriteRulePOGModule extends UtilityModule {
 		IPORoot target = repository.getTarget();
 		ISCProofRulesBlock rulesBlock = (ISCProofRulesBlock) element;
 		ISCRewriteRule[] scRules = rulesBlock.getRewriteRules();
+		IPOPredicateSet hyp = target
+			.getPredicateSet(TheoryTypeParametersPOGModule.ABS_HYP_NAME);
 		for (ISCRewriteRule rule : scRules) {
 			if(rule.hasDefinitionalAttribute() &&
 					rule.isDefinitional()){
@@ -132,7 +135,7 @@ public class TheoryRewriteRulePOGModule extends UtilityModule {
 					String poName = ruleName + RULE_C_WD_SUFFIX + rhsLabel;
 					createPO(target, poName,
 							natureFactory.getNature(RULE_C_WD_DESC),
-							null, null,
+							hyp, null,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()),
 							sources, new IPOGHint[0],
 							true, monitor);
@@ -155,7 +158,7 @@ public class TheoryRewriteRulePOGModule extends UtilityModule {
 					String poName = ruleName + RULE_RHS_WD_SUFFIX + rhsLabel;
 					createPO(target, poName,
 							natureFactory.getNature(RULE_RHS_WD_DESC),
-							null, null,
+							hyp, null,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()), sources,
 							new IPOGHint[0],
 							true, monitor);
@@ -181,7 +184,7 @@ public class TheoryRewriteRulePOGModule extends UtilityModule {
 							target,
 							poName,
 							POGNatureFactory.getInstance().getNature(RULE_SOUNDNESS_DESC),
-							null,
+							hyp,
 							null,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()),
 							sources, new IPOGHint[0],
@@ -207,7 +210,7 @@ public class TheoryRewriteRulePOGModule extends UtilityModule {
 					Predicate poPredicate = library.makeImp(hyps, goal);
 					createPO(target, poName,
 							natureFactory.getNature(RULE_COMPLETENESS_DESC),
-							null, null,
+							hyp, null,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()), sources,
 							new IPOGHint[0],
 							true, monitor);

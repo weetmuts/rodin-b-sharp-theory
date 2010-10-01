@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.seqprover.IConfidence;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCConstructorArgument;
@@ -105,15 +104,15 @@ public class DeployUtilities {
 	public static boolean calculateSoundness(ISCTheoryRoot root,
 			ILabeledElement element) throws RodinDBException {
 		IPSRoot psRoot = root.getPSRoot();
-		if(psRoot == null || !psRoot.exists()){
+		if (psRoot == null || !psRoot.exists()) {
 			return false;
 		}
 		IPSStatus[] sts = psRoot.getStatuses();
 		boolean isSound = true;
 		for (IPSStatus s : sts) {
 			if (s.getElementName().startsWith(element.getLabel())) {
-				if (!isDischarged(s.getConfidence())
-						&& !isReviewed(s.getConfidence())) {
+				if (!TheoryCoreFacade.isDischarged(s)
+						&& !TheoryCoreFacade.isReviewed(s)) {
 					isSound = false;
 				}
 			}
@@ -133,8 +132,8 @@ public class DeployUtilities {
 	 * @throws CoreException
 	 */
 	public static boolean copyMathematicalExtensions(
-			IFormulaExtensionsSource<?> target, IFormulaExtensionsSource<?> source,
-			IProgressMonitor monitor)
+			IFormulaExtensionsSource<?> target,
+			IFormulaExtensionsSource<?> source, IProgressMonitor monitor)
 			throws CoreException {
 		boolean isFaithful = true;
 		// copy type parameters
@@ -168,10 +167,9 @@ public class DeployUtilities {
 		}
 		return isFaithful;
 	}
-	
+
 	/**
-	 * Copies the prover extensions in the source to the target Event-B
-	 * element.
+	 * Copies the prover extensions in the source to the target Event-B element.
 	 * 
 	 * @param target
 	 *            the target
@@ -180,14 +178,16 @@ public class DeployUtilities {
 	 * @throws CoreException
 	 */
 	public static boolean copyProverExtensions(IExtensionRulesSource target,
-			IExtensionRulesSource source,IProgressMonitor monitor) throws CoreException {
+			IExtensionRulesSource source, IProgressMonitor monitor)
+			throws CoreException {
 		boolean isFaithful = true;
 		// copy proof blocks
 		// ////////////////////////////////
 		ISCProofRulesBlock[] rulesBlocks = source.getProofRulesBlocks();
 		for (ISCProofRulesBlock rulesBlock : rulesBlocks) {
 			ISCProofRulesBlock newRulesBlock = duplicate(rulesBlock,
-					ISCProofRulesBlock.ELEMENT_TYPE, target, null, SOURCE_ATTRIBUTE);
+					ISCProofRulesBlock.ELEMENT_TYPE, target, null,
+					SOURCE_ATTRIBUTE);
 			ISCMetavariable[] vars = rulesBlock.getMetavariables();
 			for (ISCMetavariable var : vars) {
 				copyMetavariables(var, newRulesBlock, monitor);
@@ -198,7 +198,7 @@ public class DeployUtilities {
 					isFaithful = false;
 				}
 				copyRewriteRule(rewRule, newRulesBlock, monitor);
-				
+
 			}
 			ISCInferenceRule[] infRules = rulesBlock.getInferenceRules();
 			for (ISCInferenceRule infRule : infRules) {
@@ -206,18 +206,18 @@ public class DeployUtilities {
 					isFaithful = false;
 				}
 				copyInferenceRule(infRule, newRulesBlock, monitor);
-				
+
 			}
 		}
 		// copy theorems
 		// ////////////////////////////////
 		ISCTheorem[] theorems = source.getTheorems();
 		for (ISCTheorem theorem : theorems) {
-			ISCTheorem newTheorem = duplicate(theorem, ISCTheorem.ELEMENT_TYPE, target, monitor);
+			ISCTheorem newTheorem = duplicate(theorem, ISCTheorem.ELEMENT_TYPE,
+					target, monitor);
 			if (!theorem.hasValidatedAttribute()) {
 				boolean isSound = DeployUtilities.calculateSoundness(
-						TheoryCoreFacade.getSCTheoryParent(theorem),
-						theorem);
+						TheoryCoreFacade.getSCTheoryParent(theorem), theorem);
 				newTheorem.setValidated(isSound, monitor);
 
 			}
@@ -225,33 +225,9 @@ public class DeployUtilities {
 		return isFaithful;
 	}
 
-	/**
-	 * Returns whether the given confidence is a reviewed-level confidence.
-	 * 
-	 * @param confidence
-	 *            the confidence to check
-	 * @return whether the concerned PO is reviewed
-	 */
-	public static boolean isReviewed(int confidence) {
-		return (confidence > IConfidence.PENDING)
-				&& (confidence <= IConfidence.REVIEWED_MAX);
-	}
-
-	/**
-	 * Returns whether the given confidence is a discharged-level confidence.
-	 * 
-	 * @param confidence
-	 *            the confidence to check
-	 * @return whether the concerned PO is discharged
-	 */
-	public static boolean isDischarged(int confidence) {
-		return (confidence > IConfidence.REVIEWED_MAX)
-				&& (confidence <= IConfidence.DISCHARGED_MAX);
-	}
-	
 	private static void copyInferenceRule(ISCInferenceRule infRule,
-			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor) 
-	throws CoreException{
+			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor)
+			throws CoreException {
 		ISCInferenceRule newInfRule = duplicate(infRule,
 				ISCInferenceRule.ELEMENT_TYPE, newRulesBlock, monitor,
 				SOURCE_ATTRIBUTE);
@@ -267,17 +243,16 @@ public class DeployUtilities {
 		}
 		if (!infRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					TheoryCoreFacade.getSCTheoryParent(infRule),
-					infRule);
+					TheoryCoreFacade.getSCTheoryParent(infRule), infRule);
 			newInfRule.setValidated(isSound, monitor);
 
 		}
-		
+
 	}
 
 	private static void copyRewriteRule(ISCRewriteRule rewRule,
-			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor) 
-	throws CoreException{
+			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor)
+			throws CoreException {
 		ISCRewriteRule newRewRule = duplicate(rewRule,
 				ISCRewriteRule.ELEMENT_TYPE, newRulesBlock, monitor,
 				SOURCE_ATTRIBUTE);
@@ -288,26 +263,25 @@ public class DeployUtilities {
 		}
 		if (!rewRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					TheoryCoreFacade.getSCTheoryParent(rewRule),
-					rewRule);
+					TheoryCoreFacade.getSCTheoryParent(rewRule), rewRule);
 			newRewRule.setValidated(isSound, monitor);
 
 		}
-		
+
 	}
 
 	private static void copyMetavariables(ISCMetavariable var,
-			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor) throws CoreException {
+			ISCProofRulesBlock newRulesBlock, IProgressMonitor monitor)
+			throws CoreException {
 		duplicate(var, ISCMetavariable.ELEMENT_TYPE, newRulesBlock, monitor,
 				SOURCE_ATTRIBUTE);
 
 	}
 
-	
-
 	private static void copyOperatorDefinition(
 			ISCNewOperatorDefinition operatorDefinition,
-			IFormulaExtensionsSource<?> target, IProgressMonitor monitor) throws CoreException {
+			IFormulaExtensionsSource<?> target, IProgressMonitor monitor)
+			throws CoreException {
 		ISCNewOperatorDefinition newDefinition = duplicate(operatorDefinition,
 				ISCNewOperatorDefinition.ELEMENT_TYPE, target, null,
 				HAS_ERROR_ATTRIBUTE);
@@ -335,21 +309,24 @@ public class DeployUtilities {
 
 	private static void copyDirectDefinition(
 			ISCDirectOperatorDefinition directDefinition,
-			ISCNewOperatorDefinition newDefinition, IProgressMonitor monitor) throws CoreException {
+			ISCNewOperatorDefinition newDefinition, IProgressMonitor monitor)
+			throws CoreException {
 		duplicate(directDefinition, ISCDirectOperatorDefinition.ELEMENT_TYPE,
 				newDefinition, monitor);
 	}
 
 	private static void copyOperatorArgument(
 			ISCOperatorArgument operatorArgument,
-			ISCNewOperatorDefinition newDefinition, IProgressMonitor monitor) throws CoreException {
+			ISCNewOperatorDefinition newDefinition, IProgressMonitor monitor)
+			throws CoreException {
 		duplicate(operatorArgument, ISCOperatorArgument.ELEMENT_TYPE,
 				newDefinition, monitor);
 
 	}
 
 	private static void copyTypeParameter(ISCTypeParameter typeParameter,
-			IFormulaExtensionsSource<?> target, IProgressMonitor monitor) throws CoreException {
+			IFormulaExtensionsSource<?> target, IProgressMonitor monitor)
+			throws CoreException {
 		duplicate(typeParameter, ISCTypeParameter.ELEMENT_TYPE, target, monitor);
 
 	}

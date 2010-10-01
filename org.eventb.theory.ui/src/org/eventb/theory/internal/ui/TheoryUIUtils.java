@@ -398,6 +398,16 @@ public class TheoryUIUtils {
 		return  l == 0;
 	}
 	
+	public static boolean createDeployEmptyTheoryDialog(Shell shell, ITheoryRoot root){
+		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
+		if(!scRoot.exists()
+				|| isTheoryEmpty(scRoot)){
+			MessageDialog.openError(shell, "Error", "Cannot deploy empty theory "+root.getComponentName() + ".");
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Runs the given operation in a progress dialog.
 	 * 

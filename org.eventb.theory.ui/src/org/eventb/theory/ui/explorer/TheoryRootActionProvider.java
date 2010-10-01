@@ -12,6 +12,7 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.ui.ITheoryImages;
 import org.eventb.theory.internal.ui.TheoryImage;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.deploy.SimpleDeployWizard;
 import org.eventb.theory.ui.internal.explorer.ActionProvider;
 import org.eventb.theory.ui.internal.explorer.NavigatorActionProvider;
@@ -49,12 +50,15 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 						.getStructuredViewer().getSelection();
 				if (!(sel.isEmpty())) {
 					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						SimpleDeployWizard wizard = new SimpleDeployWizard(
-								null, (ITheoryRoot) sel.getFirstElement());
-						WizardDialog wd = new WizardDialog(null,
-								wizard);
-						wd.setTitle(wizard.getWindowTitle());
-						wd.open();
+						if (TheoryUIUtils.createDeployEmptyTheoryDialog(site.getViewSite().getShell(),
+								(ITheoryRoot)sel.getFirstElement())) {
+
+							SimpleDeployWizard wizard = new SimpleDeployWizard(
+									null, (ITheoryRoot) sel.getFirstElement());
+							WizardDialog wd = new WizardDialog(null, wizard);
+							wd.setTitle(wizard.getWindowTitle());
+							wd.open();
+						}
 
 					}
 				}

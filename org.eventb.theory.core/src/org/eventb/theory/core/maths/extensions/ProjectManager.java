@@ -9,7 +9,9 @@ package org.eventb.theory.core.maths.extensions;
 
 import static org.eventb.theory.internal.core.util.MathExtensionsUtilities.COND;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -60,12 +62,24 @@ public class ProjectManager extends FormulaExtensionsProjectManager {
 
 	protected void populateAllDeployedExtensions() {
 		synchronized (deployedExtensionsMap) {
+			updateExtensionsMap();
+			allDeployedExtensions.clear();
 			for (Set<IFormulaExtension> exts : deployedExtensionsMap.values()) {
 				allDeployedExtensions.addAll(exts);
 			}
 		}
 	}
 
+	protected void updateExtensionsMap(){
+		Iterator<Entry<DeployedEntry, Set<IFormulaExtension>>> iter = deployedExtensionsMap.entrySet().iterator();
+		while (iter.hasNext()){
+			if(!deployedEntries.contains(iter.next().getKey())){
+				iter.remove();
+			}
+		}
+		
+	}
+	
 	protected void reloadDeployedEntry(IDeployedTheoryRoot deployedRoot)
 			throws CoreException {
 		DeployedEntry entry = new DeployedEntry(deployedRoot);
@@ -116,8 +130,17 @@ public class ProjectManager extends FormulaExtensionsProjectManager {
 			}
 		}
 		if(element instanceof IRodinFile){
+			IRodinFile file = (IRodinFile) element;
+			if(file.getRoot() instanceof IDeployedTheoryRoot &&
+					delta.getKind() == IRodinElementDelta.REMOVED){
+				IDeployedTheoryRoot root = (IDeployedTheoryRoot) file.getRoot();
+				DeployedEntry key = new DeployedEntry(root ); 
+				changedEntries.add(key);
+				populateDeployedEntries();
+				return;
+			}
 			for (IRodinElementDelta d : affected) {
-				if(((IRodinFile) element).getRoot() instanceof IDeployedTheoryRoot)
+				if(file.getRoot() instanceof IDeployedTheoryRoot)
 					processDelta(d);
 			}
 		}

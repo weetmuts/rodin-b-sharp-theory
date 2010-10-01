@@ -75,6 +75,7 @@ public abstract class FormulaExtensionsProjectManager implements
 		for (DeployedEntry entry : deployedEntries){
 			reloadIfNecessary(entry);
 		}
+		populateAllDeployedExtensions();
 		return allDeployedExtensions;
 	}
 
@@ -95,10 +96,10 @@ public abstract class FormulaExtensionsProjectManager implements
 		}
 		synchronized (deployedExtensionsMap) {
 			for (DeployedEntry entry : deployedExtensionsMap.keySet()) {
-				reloadIfNecessary(entry);
 				if (execluded.contains(entry.name)) {
 					continue;
 				}
+				reloadIfNecessary(entry);
 				set.addAll(deployedExtensionsMap.get(entry));
 			}
 		}
@@ -208,7 +209,6 @@ public abstract class FormulaExtensionsProjectManager implements
 	protected void reloadIfNecessary(DeployedEntry entry) throws CoreException{
 		if(changedEntries.contains(entry)){
 			reloadDeployedEntry(entry.deployedRoot);
-			populateAllDeployedExtensions();
 			changedEntries.remove(entry);
 		}
 		

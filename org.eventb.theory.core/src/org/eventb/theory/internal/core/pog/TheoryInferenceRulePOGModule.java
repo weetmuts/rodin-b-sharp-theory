@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -70,6 +71,8 @@ public class TheoryInferenceRulePOGModule extends UtilityModule {
 		IPORoot target = repository.getTarget();
 		ISCProofRulesBlock rulesBlock = (ISCProofRulesBlock) element;
 		ISCInferenceRule[] inferenceRules = rulesBlock.getInferenceRules();
+		IPOPredicateSet hyp = target
+			.getPredicateSet(TheoryTypeParametersPOGModule.ABS_HYP_NAME);
 		for(ISCInferenceRule inferenceRule : inferenceRules){
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
 					IPOSource.DEFAULT_ROLE, inferenceRule.getSource()) };
@@ -95,7 +98,7 @@ public class TheoryInferenceRulePOGModule extends UtilityModule {
 			if(!isTrivial(poPredicate)){
 				createPO(target, inferenceRule.getLabel()+ RULE_S_SUFFIX,
 						natureFactory.getNature(RULE_SOUNDNESS_DESC),
-						null, null,
+						hyp, null,
 						makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), inferenceRule.getSource()),
 						sources, new IPOGHint[0],
 						true, monitor);
@@ -103,7 +106,7 @@ public class TheoryInferenceRulePOGModule extends UtilityModule {
 				if(!isTrivial(wdPredicate)){
 					createPO(target, inferenceRule.getLabel()+ RULE_WD_SUFFIX,
 							natureFactory.getNature(RULE_WD_DESC),
-							null, null,
+							hyp, null,
 							makePredicate(makeClosedPredicate(wdPredicate, typeEnvironment), inferenceRule.getSource()),
 							sources, new IPOGHint[0],
 							true, monitor);

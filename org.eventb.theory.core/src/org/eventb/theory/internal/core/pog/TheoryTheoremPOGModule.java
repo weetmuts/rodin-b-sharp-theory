@@ -9,6 +9,7 @@ package org.eventb.theory.internal.core.pog;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -28,23 +29,23 @@ import org.rodinp.core.IRodinFile;
 
 /**
  * @author maamria
- *
+ * 
  */
 @SuppressWarnings("restriction")
-public class TheoryTheoremPOGModule extends UtilityModule{
+public class TheoryTheoremPOGModule extends UtilityModule {
 
 	public static final IModuleType<TheoryTheoremPOGModule> MODULE_TYPE = POGCore
-		.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryTheoremModule"); //$NON-NLS-1
-	
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryTheoremModule"); //$NON-NLS-1
+
 	private final static String THEOREM_WD_SUFFIX = "/WD-THM";
 	private final static String THEOREM_S_SUFFIX = "/S-THM";
 
 	private final static String THEOREM_WD_DESC = "Well-Definedness of Theorem";
 	private final static String THEOREM_SOUNDNESS_DESC = "Therorem Soundness";
-	
+
 	private ITypeEnvironment typeEnvironment;
 	private POGNatureFactory natureFactory;
-	
+
 	@Override
 	public void initModule(IRodinElement element,
 			IPOGStateRepository repository, IProgressMonitor monitor)
@@ -53,7 +54,7 @@ public class TheoryTheoremPOGModule extends UtilityModule{
 		typeEnvironment = repository.getTypeEnvironment();
 		natureFactory = POGNatureFactory.getInstance();
 	}
-	
+
 	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -61,33 +62,33 @@ public class TheoryTheoremPOGModule extends UtilityModule{
 		IRodinFile rodinFile = (IRodinFile) element;
 		ISCTheoryRoot root = (ISCTheoryRoot) rodinFile.getRoot();
 		ISCTheorem[] theorems = root.getTheorems();
-		for(ISCTheorem theorem : theorems){
+		IPOPredicateSet hyp = target
+				.getPredicateSet(TheoryTypeParametersPOGModule.ABS_HYP_NAME);
+		for (ISCTheorem theorem : theorems) {
 			String name = theorem.getLabel();
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
 					IPOSource.DEFAULT_ROLE, theorem.getSource()) };
-			Predicate poPredicate = theorem.getPredicate(factory, typeEnvironment); 
-			if(!isTrivial(poPredicate)){
-				createPO(target, name+ THEOREM_S_SUFFIX,
-						natureFactory.getNature(THEOREM_SOUNDNESS_DESC),
-						null, null,
-						makePredicate(poPredicate, theorem.getSource()),
-						sources, new IPOGHint[0],
-						true, monitor);
+			Predicate poPredicate = theorem.getPredicate(factory,
+					typeEnvironment);
+			if (!isTrivial(poPredicate)) {
+				createPO(target, name + THEOREM_S_SUFFIX,
+						natureFactory.getNature(THEOREM_SOUNDNESS_DESC), hyp,
+						null, makePredicate(poPredicate, theorem.getSource()),
+						sources, new IPOGHint[0], true, monitor);
 				Predicate wdPredicate = poPredicate.getWDPredicate(factory);
-				if(!isTrivial(wdPredicate)){
-					createPO(target, name+ THEOREM_WD_SUFFIX,
-							natureFactory.getNature(THEOREM_WD_DESC),
-							null, null,
+				if (!isTrivial(wdPredicate)) {
+					createPO(target, name + THEOREM_WD_SUFFIX,
+							natureFactory.getNature(THEOREM_WD_DESC), hyp,
+							null,
 							makePredicate(wdPredicate, theorem.getSource()),
-							sources, new IPOGHint[0],
-							true, monitor);
+							sources, new IPOGHint[0], true, monitor);
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
 	public void endModule(IRodinElement element,
 			IPOGStateRepository repository, IProgressMonitor monitor)

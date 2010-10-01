@@ -6,26 +6,27 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
 public class DeployTheoryActionDelegate implements IEditorActionDelegate {
 
 	IEventBEditor<ITheoryRoot> editor;
 
-	
 	public void run(IAction action) {
-		SimpleDeployWizard wizard = new SimpleDeployWizard(
-				null, (ITheoryRoot) editor.getRodinInput());
-		WizardDialog wd = new WizardDialog(null,
-				wizard);
-		wd.setTitle(wizard.getWindowTitle());
-		wd.open();
+		if (TheoryUIUtils.createDeployEmptyTheoryDialog(editor.getEditorSite()
+				.getShell(), (ITheoryRoot) editor.getRodinInput())) {
+			SimpleDeployWizard wizard = new SimpleDeployWizard(null,
+					(ITheoryRoot) editor.getRodinInput());
+			WizardDialog wd = new WizardDialog(null, wizard);
+			wd.setTitle(wizard.getWindowTitle());
+			wd.open();
+		}
 	}
 
-	
-	public void selectionChanged(IAction action, ISelection selection) {}
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
 
-	
 	@SuppressWarnings("unchecked")
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor) {

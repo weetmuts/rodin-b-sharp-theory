@@ -1096,6 +1096,15 @@
             </groupMarker>
          </menu>
          <action
+               class="org.eventb.theory.ui.deploy.RepairActionDelegate"
+               icon="icons/reload.gif"
+               id="org.eventb.theory.ui.repairProof"
+               label="%repairProofFile"
+               menubarPath="org.eventb.theory.ui.theoryMenu/deploy"
+               style="push"
+               tooltip="%repairProofFileTip">
+         </action>
+         <action
                class="org.eventb.theory.ui.deploy.DeployActionDelegate"
                icon="icons/deploy.gif"
                id="org.eventb.theory.ui.deployTheory"

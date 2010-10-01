@@ -87,7 +87,10 @@ public class TheoryFormulaExtensionProvider implements
 				managers.put(project, manager);
 
 			}
-			manager.setProofFileExtensions((IPRRoot) root);
+			
+			IPRRoot proofRoot = (IPRRoot) root;
+			TheoryCoreFacade.removeInternalTheories(proofRoot);
+			manager.setProofFileExtensions(proofRoot);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

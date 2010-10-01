@@ -16,7 +16,10 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElement;
@@ -128,12 +131,12 @@ public class TheoryCoreFacade {
 	 * @param project
 	 *            the rodin project
 	 * @param filter
-	 * 			  theories filter
+	 *            theories filter
 	 * @return SC theories
 	 * @throws CoreException
 	 */
-	public static ISCTheoryRoot[] getSCTheoryRoots(IRodinProject project, TheoriesFilter<ISCTheoryRoot> filter)
-			throws CoreException {
+	public static ISCTheoryRoot[] getSCTheoryRoots(IRodinProject project,
+			TheoriesFilter<ISCTheoryRoot> filter) throws CoreException {
 		ISCTheoryRoot[] roots = project
 				.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
 		List<ISCTheoryRoot> okRoots = new ArrayList<ISCTheoryRoot>();
@@ -144,9 +147,9 @@ public class TheoryCoreFacade {
 		}
 		return okRoots.toArray(new ISCTheoryRoot[okRoots.size()]);
 	}
-	
+
 	public static ISCTheoryRoot[] getExistingSCTheoryRoots(IRodinProject project)
-	throws CoreException{
+			throws CoreException {
 		return getSCTheoryRoots(project, new TheoriesFilter<ISCTheoryRoot>() {
 
 			@Override
@@ -233,7 +236,7 @@ public class TheoryCoreFacade {
 	 * @param project
 	 *            the rodin project
 	 * @param filter
-	 * 			  theories filter
+	 *            theories filter
 	 * @return deployed theories
 	 * @throws CoreException
 	 */
@@ -250,7 +253,7 @@ public class TheoryCoreFacade {
 		}
 		return okRoots.toArray(new IDeployedTheoryRoot[okRoots.size()]);
 	}
-	
+
 	/**
 	 * Returns the deployed theories that are the children of the given project.
 	 * 
@@ -260,17 +263,17 @@ public class TheoryCoreFacade {
 	 * @throws CoreException
 	 */
 	public static IDeployedTheoryRoot[] getDeployedTheories(
-			IRodinProject project)
-			throws CoreException {
-		
-		return getDeployedTheories(project, new TheoriesFilter<IDeployedTheoryRoot>() {
+			IRodinProject project) throws CoreException {
 
-			@Override
-			public boolean filter(IDeployedTheoryRoot theory) {
-				// TODO Auto-generated method stub
-				return true;
-			}
-		});
+		return getDeployedTheories(project,
+				new TheoriesFilter<IDeployedTheoryRoot>() {
+
+					@Override
+					public boolean filter(IDeployedTheoryRoot theory) {
+						// TODO Auto-generated method stub
+						return true;
+					}
+				});
 	}
 
 	/**
@@ -385,7 +388,7 @@ public class TheoryCoreFacade {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the list of imported theories by this SC theory.
 	 * 
@@ -430,7 +433,7 @@ public class TheoryCoreFacade {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether deployed theory <code>importer</code> uses theory
 	 * <code>importee</code>.
@@ -446,8 +449,8 @@ public class TheoryCoreFacade {
 		String importeeName = used.getComponentName();
 		List<String> theories = getUsedTheories(user);
 		for (String theory : theories) {
-			IDeployedTheoryRoot importedTheory = TheoryCoreFacade.getDeployedTheory(theory,
-					project);
+			IDeployedTheoryRoot importedTheory = TheoryCoreFacade
+					.getDeployedTheory(theory, project);
 			if (theory.equals(importeeName)
 					|| doesTheoryUseTheory(importedTheory, used)) {
 				return true;
@@ -455,18 +458,20 @@ public class TheoryCoreFacade {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the deployed theories used by the given theory.
-	 * @param user the deployed theory
+	 * 
+	 * @param user
+	 *            the deployed theory
 	 * @return the list of used theories
 	 * @throws CoreException
 	 */
-	public static List<String> getUsedTheories(IDeployedTheoryRoot user) 
-	throws CoreException{
+	public static List<String> getUsedTheories(IDeployedTheoryRoot user)
+			throws CoreException {
 		IUseTheory[] usedTheories = user.getUsedTheories();
 		List<String> result = new ArrayList<String>();
-		for (IUseTheory use : usedTheories){
+		for (IUseTheory use : usedTheories) {
 			result.add(use.getUsedTheory().getComponentName());
 		}
 		return result;
@@ -496,7 +501,7 @@ public class TheoryCoreFacade {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the project with the given name if it exists.
 	 * 
@@ -530,7 +535,78 @@ public class TheoryCoreFacade {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Returns the proof file corresponding to the SC theory.
+	 * 
+	 * @param root
+	 *            the SC theory root
+	 * @return the proof file root or <code>null</code> if no such file exists
+	 * @throws CoreException
+	 */
+	public static IPRRoot getProofFile(ISCTheoryRoot root) throws CoreException {
+		IRodinProject project = root.getRodinProject();
+		IRodinFile file = project
+				.getRodinFile(root.getComponentName() + ".bpr");
+		if (!file.exists()) {
+			return null;
+		}
+		return (IPRRoot) file.getRoot();
+	}
+
+	/**
+	 * Returns the proof file corresponding to the theory.
+	 * 
+	 * @param root
+	 *            the theory root
+	 * @return the proof file root or <code>null</code> if no such file exists
+	 * @throws CoreException
+	 */
+	public static IPRRoot getProofFile(ITheoryRoot root) throws CoreException {
+		IRodinProject project = root.getRodinProject();
+		IRodinFile file = project
+				.getRodinFile(root.getComponentName() + ".bpr");
+		if (!file.exists()) {
+			return null;
+		}
+		return (IPRRoot) file.getRoot();
+	}
+
+	/**
+	 * Removes the internal theories stored in the given proof file.
+	 * 
+	 * @param root
+	 *            the proof file root
+	 * @throws CoreException
+	 */
+	public static void removeInternalTheories(IPRRoot root)
+			throws CoreException {
+		IInternalTheory theories[] = root
+				.getChildrenOfType(IInternalTheory.ELEMENT_TYPE);
+		for (IInternalTheory thy : theories) {
+			thy.delete(true, null);
+		}
+	}
+
+	public static IPRRoot[] getProofFiles(IRodinProject project)
+			throws CoreException {
+		return project.getRootElementsOfType(IPRRoot.ELEMENT_TYPE);
+	}
+
+	public static ArrayList<String> getProofFileNames(IRodinProject project) {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			for (IPRRoot root : getProofFiles(project)) {
+				if (root.exists()) {
+					list.add(root.getComponentName());
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 	/**
 	 * 
 	 * @author maamria
@@ -542,5 +618,16 @@ public class TheoryCoreFacade {
 
 		public boolean filter(T theory);
 
+	}
+
+	public static boolean isDischarged(IPSStatus status)
+			throws RodinDBException {
+		return (status.getConfidence() > IConfidence.REVIEWED_MAX)
+				&& (!status.isBroken());
+	}
+
+	public static boolean isReviewed(IPSStatus status) throws RodinDBException {
+		return (status.getConfidence() > IConfidence.PENDING)
+				&& (status.getConfidence() <= IConfidence.REVIEWED_MAX);
 	}
 }
