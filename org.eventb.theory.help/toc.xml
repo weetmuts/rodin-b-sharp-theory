@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Theory Table of Contents">
+	<topic label="Using the Theory plug-in"  href="html/maintopic.html">
+    <topic href="html/install.html" label="Installing Theory plug-in">
+    </topic> 
+	</topic>
+</toc>
