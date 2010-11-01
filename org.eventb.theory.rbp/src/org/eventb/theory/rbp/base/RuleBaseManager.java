@@ -130,8 +130,7 @@ public class RuleBaseManager implements IRuleBaseManager{
 		if (element instanceof IRodinProject) {
 			IRodinProject proj = (IRodinProject) element;
 			if (proj.getElementName().equals(
-					TheoryCoreFacadeDB.getDeploymentProject(null)
-							.getElementName())) {
+					TheoryCoreFacadeDB.THEORIES_PROJECT)) {
 				for (IRodinElementDelta d : affected) {
 					processDelta(d);
 				}
