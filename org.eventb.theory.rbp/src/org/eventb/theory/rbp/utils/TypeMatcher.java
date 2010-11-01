@@ -30,7 +30,7 @@ public class TypeMatcher {
 			return expressionType instanceof BooleanType;
 		} else if (patternType instanceof GivenType) {
 			binding.putTypeMapping(factory.makeFreeIdentifier(
-					((GivenType) patternType).getName(), null, expressionType
+					((GivenType) patternType).getName(), null, patternType
 							.toExpression(factory).getType()), expressionType);
 			return true;
 		} else if (patternType instanceof PowerSetType) {
@@ -69,7 +69,7 @@ public class TypeMatcher {
 						return false;
 					}
 				}
-				return ok;
+				return true;
 			}
 		}
 		// unification not possible
