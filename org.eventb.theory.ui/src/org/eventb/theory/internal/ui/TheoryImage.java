@@ -231,8 +231,6 @@ public class TheoryImage {
 	public static void initializeRegistry(ImageRegistry registry) {
 		registerImage(registry, ITheoryImages.IMG_UDEPLOY,
 				ITheoryImages.IMG_UDEPLOY_PATH);
-		registerImage(registry, ITheoryImages.IMG_THYOUT,
-				ITheoryImages.IMG_THYOUT_PATH);
 		registerImage(registry, ITheoryImages.IMG_TTHEOREM,
 				ITheoryImages.IMG_TTHEOREM_PATH);
 		registerImage(registry, ITheoryImages.IMG_RULES_BLOCK,
@@ -253,8 +251,6 @@ public class TheoryImage {
 				ITheoryImages.IMG_DTHEORY_PATH);
 		registerImage(registry, ITheoryImages.IMG_DEPLOY,
 				ITheoryImages.IMG_DEPLOY_PATH);
-		registerImage(registry, ITheoryImages.IMG_RELOAD,
-				ITheoryImages.IMG_RELOAD_PATH);
 		// Other images
 		registerImage(registry, ITheoryImages.IMG_PENDING,
 				"icons/pending.gif");

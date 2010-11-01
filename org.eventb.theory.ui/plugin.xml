@@ -141,115 +141,115 @@
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/full/obj16/cst_obj.gif"
+            imagePath="icons/cst_obj.gif"
             prefix="TYPE PARAMETERS"
             prettyPrinter="org.eventb.theory.ui.editor.html.TypeParameterPrettyPrinter"
             typeId="org.eventb.theory.core.typeParameter">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/full/obj16/grd_obj.gif"
+            imagePath="icons/grd_obj.gif"
             prefix="DATATYPES"
             prettyPrinter="org.eventb.theory.ui.editor.html.DatatypeDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.datatypeDefinition">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/act_obj.gif"
+            imagePath="icons/act_obj.gif"
             prefix="Type Arguments"
             typeId="org.eventb.theory.core.typeArgument">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/thm_obj.gif"
+            imagePath="icons/thm_obj.gif"
             prefix="Constructors"
             prettyPrinter="org.eventb.theory.ui.editor.html.DatatypeConstructorPrettyPrinter"
             typeId="org.eventb.theory.core.datatypeConstructor">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/full/obj16/act_obj.gif"
+            imagePath="icons/act_obj.gif"
             prefix="Destructors"
             typeId="org.eventb.theory.core.constructorArgument">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/full/obj16/var_obj.gif"
+            imagePath="icons/var_obj.gif"
             prefix="OPERATORS"
             prettyPrinter="org.eventb.theory.ui.editor.html.NewOperatorDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.newOperatorDefinition">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/act_obj.gif"
+            imagePath="icons/act_obj.gif"
             prefix="arguments"
             typeId="org.eventb.theory.core.operatorArgument">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/axm_obj.gif"
+            imagePath="icons/axm_obj.gif"
             prefix="condition"
             prettyPrinter="org.eventb.theory.ui.editor.html.OperatorWDconditionPrettyPrinter"
             typeId="org.eventb.theory.core.operatorWDcondition">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/inv_obj.gif"
+            imagePath="icons/inv_obj.gif"
             prefix="direct definition"
             typeId="org.eventb.theory.core.directOperatorDefinition">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/full/obj16/axms_obj.gif"
+            imagePath="icons/axms_obj.gif"
             prefix="PROOF RULES"
             prettyPrinter="org.eventb.theory.ui.editor.html.ProofRulesBlockPrettyPrinter"
             typeId="org.eventb.theory.core.proofRulesBlock">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/var_obj.gif"
+            imagePath="icons/var_obj.gif"
             prefix="Metavariables"
             prettyPrinter="org.eventb.theory.ui.editor.html.MetavariablesPrettyPrinter"
             typeId="org.eventb.theory.core.metaVariable">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/inv_obj.gif"
+            imagePath="icons/inv_obj.gif"
             prefix="Rewrite Rules"
             prettyPrinter="org.eventb.theory.ui.editor.html.RewriteRulePrettyPrinter"
             typeId="org.eventb.theory.core.rewriteRule">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/full/obj16/grd_obj.gif"
+            imagePath="icons/grd_obj.gif"
             prefix="rewrites"
             prettyPrinter="org.eventb.theory.ui.editor.html.RewriteRuleRHSPrettyPrinter"
             typeId="org.eventb.theory.core.rewriteRuleRHS">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/evt_obj.gif"
+            imagePath="icons/evt_obj.gif"
             prefix="Inference Rules"
             prettyPrinter="org.eventb.theory.ui.editor.html.InferenceRulePrettyPrinter"
             typeId="org.eventb.theory.core.inferenceRule">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/full/obj16/act_obj.gif"
+            imagePath="icons/act_obj.gif"
             prefix="Given"
             prettyPrinter="org.eventb.theory.ui.editor.html.GivenPrettyPrinter"
             typeId="org.eventb.theory.core.given">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/full/obj16/grd_obj.gif"
+            imagePath="icons/grd_obj.gif"
             prefix="Infer"
             prettyPrinter="org.eventb.theory.ui.editor.html.InferPrettyPrinter"
             typeId="org.eventb.theory.core.infer">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/full/obj16/thm_obj.gif"
+            imagePath="icons/thm_obj.gif"
             prefix="THEOREMS"
             prettyPrinter="org.eventb.theory.ui.editor.html.TheoremPrettyPrinter"
             typeId="org.eventb.theory.core.theorem">
@@ -1084,7 +1084,7 @@
             targetID="org.eventb.theory.ui.theoryEditor">
          <action
                class="org.eventb.theory.ui.deploy.SimpleDeployActionDelegate"
-               disabledIcon="icons/thyDis.gif"
+               disabledIcon="icons/deploy.gif"
                icon="icons/deploy.gif"
                id="org.eventb.theory.ui.exportTheory"
                label="%deployTheoryAction"
