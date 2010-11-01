@@ -6,6 +6,11 @@ import org.eventb.core.ast.Expression;
 import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class BoundIdentifierMatcher extends ExpressionMatcher<BoundIdentifier> {
 
 	public BoundIdentifierMatcher() {
@@ -18,7 +23,7 @@ public class BoundIdentifierMatcher extends ExpressionMatcher<BoundIdentifier> {
 		if(biForm.getBoundIndex() != biPattern.getBoundIndex()){
 			return false;
 		}
-		return true;
+		return existingBinding.canUnifyTypes(biForm.getType(), biPattern.getType());
 	}
 	
 	@Override

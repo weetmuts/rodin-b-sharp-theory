@@ -8,11 +8,15 @@ import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.PredicateMatcher;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 
 	public BinaryPredicateMatcher() {
 		super(BinaryPredicate.class);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -24,7 +28,7 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 		Predicate fLeft = bpForm.getLeft();
 		Predicate pLeft = bpPattern.getLeft();
 		if(pLeft instanceof PredicateVariable){
-			existingBinding.putPredicateMapping(
+			return existingBinding.putPredicateMapping(
 					(PredicateVariable)pLeft, fLeft);
 		}
 		else if(!MatchingFactory.match(fLeft, pLeft, existingBinding)){
@@ -34,13 +38,10 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 		Predicate fRight = bpForm.getRight();
 		Predicate pRight = bpPattern.getRight();
 		if(pRight instanceof PredicateVariable){
-			existingBinding.putPredicateMapping(
+			return existingBinding.putPredicateMapping(
 					(PredicateVariable)pRight, fRight);
 		}
-		else if(!MatchingFactory.match(fRight, pRight, existingBinding)){
-			return false;
-		}
-		return true;
+		return MatchingFactory.match(fRight, pRight, existingBinding);
 	}
 
 	@Override

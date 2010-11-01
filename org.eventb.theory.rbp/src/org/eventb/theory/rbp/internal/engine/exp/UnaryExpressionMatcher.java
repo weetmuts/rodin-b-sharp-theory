@@ -7,6 +7,11 @@ import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class UnaryExpressionMatcher extends ExpressionMatcher<UnaryExpression> {
 
 	public UnaryExpressionMatcher(){
@@ -19,21 +24,13 @@ public class UnaryExpressionMatcher extends ExpressionMatcher<UnaryExpression> {
 		if(ueForm.getTag() != uePattern.getTag()){
 			return false;
 		}
-		
 		Expression formExp = ueForm.getChild();
 		Expression patternExp = uePattern.getChild();
 		
 		if(patternExp instanceof FreeIdentifier){
-			if(!existingBinding.putMapping((FreeIdentifier)patternExp, formExp)){
-				return false;
-			}
+			return existingBinding.putMapping((FreeIdentifier)patternExp, formExp);
 		}
-		else {
-			if(!MatchingFactory.match(formExp, patternExp, existingBinding)){
-				return false;
-			}
-		}
-		return true;
+		return MatchingFactory.match(formExp, patternExp, existingBinding);
 	}
 
 	@Override

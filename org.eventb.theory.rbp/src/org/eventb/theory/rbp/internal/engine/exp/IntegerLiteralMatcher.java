@@ -6,6 +6,11 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class IntegerLiteralMatcher extends ExpressionMatcher<IntegerLiteral> {
 
 	public IntegerLiteralMatcher(){

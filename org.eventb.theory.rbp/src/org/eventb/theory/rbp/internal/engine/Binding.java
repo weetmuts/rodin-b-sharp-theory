@@ -281,13 +281,16 @@ final class Binding implements IBinding {
 	 * @return whether the mapping has been inserted
 	 */
 	protected boolean putTypeMapping(FreeIdentifier ident, Type type) {
-		if (!isMappingInsertable(ident, type.toExpression(factory))) {
+		// if there is a binding for ident that is different from the type expression
+		if(binding.get(ident) != null && !binding.get(ident).equals(type.toExpression(factory))){
 			return false;
 		}
+		// if there is a type instant. for ident that is different from type
 		if (typeParametersInstantiations.get(ident) != null
 				&& !typeParametersInstantiations.get(ident).equals(type)) {
 			return false;
 		}
+		// all OK
 		typeParametersInstantiations.put(ident, type);
 		return true;
 	}

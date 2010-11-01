@@ -16,6 +16,7 @@ import org.eventb.theory.rbp.engine.PredicateMatcher;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
 /**
+ * @since 1.0
  * @author maamria
  *
  */
@@ -35,7 +36,7 @@ public class ExtendedPredicateMatcher extends PredicateMatcher<ExtendedPredicate
 		Expression[] formChildren = form.getChildExpressions();
 		Expression[] patChildren = pattern.getChildExpressions();
 		for (int i = 0 ; i < formChildren.length; i++){
-			Expression patChild = patChildren[0];
+			Expression patChild = patChildren[i];
 			if(patChild instanceof FreeIdentifier){
 				if(!existingBinding.putMapping((FreeIdentifier)patChild, formChildren[i])){
 					return false;

@@ -7,6 +7,13 @@ import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.PredicateMatcher;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * TODO better matching
+ * 
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class AssociativePredicateMatcher extends PredicateMatcher<AssociativePredicate> {
 
 

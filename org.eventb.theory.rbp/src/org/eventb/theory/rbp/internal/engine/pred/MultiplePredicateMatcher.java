@@ -5,6 +5,11 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.PredicateMatcher;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class MultiplePredicateMatcher extends
 		PredicateMatcher<MultiplePredicate> {
 

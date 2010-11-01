@@ -3,9 +3,7 @@ package org.eventb.theory.rbp.internal.engine;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.PredicateVariable;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.IExpressionMatcher;
 import org.eventb.theory.rbp.engine.IPredicateMatcher;
@@ -47,12 +45,8 @@ public final class MatchingFactory {
 	 * @return whether the matching succeeded
 	 */
 	public final static boolean match(Formula<?> form, Formula<?> pattern, IBinding initialBinding){
-		assert initialBinding != null;
-		if(pattern instanceof FreeIdentifier && form instanceof Expression){
-			return initialBinding.putMapping((FreeIdentifier) pattern, (Expression) form);
-		}
-		if(pattern instanceof PredicateVariable && form instanceof Predicate){
-			return initialBinding.putPredicateMapping((PredicateVariable) pattern, (Predicate) form);
+		if(initialBinding == null){
+			throw new IllegalArgumentException("Matching started without a binding object.");
 		}
 		if(!ProverUtilities.sameClass(form, pattern)){
 			return false;
@@ -68,6 +62,14 @@ public final class MatchingFactory {
 		}
 	}
 	
+	/**
+	 * Returns an empty binding to start a matching process.
+	 * @param formula the formula
+	 * @param pattern the pattern against which to match the formula
+	 * @param isPartialMatchAcceptable whether a partial match is acceptable
+	 * @param factory the formula factory
+	 * @return an empty binding
+	 */
 	public final static IBinding createBinding(Formula<?> formula, Formula<?> pattern, 
 			boolean isPartialMatchAcceptable, FormulaFactory factory){
 		return new Binding(formula, pattern, isPartialMatchAcceptable, factory);

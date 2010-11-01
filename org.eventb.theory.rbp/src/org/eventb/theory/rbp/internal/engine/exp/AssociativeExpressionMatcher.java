@@ -6,6 +6,12 @@ import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
+/**
+ * TODO better matching
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeExpression> {
 
 	public AssociativeExpressionMatcher() {

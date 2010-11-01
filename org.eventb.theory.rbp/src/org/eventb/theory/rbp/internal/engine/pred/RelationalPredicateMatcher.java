@@ -9,6 +9,11 @@ import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.PredicateMatcher;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class RelationalPredicateMatcher extends PredicateMatcher<RelationalPredicate>{
 
 	public RelationalPredicateMatcher() {
@@ -39,16 +44,9 @@ public class RelationalPredicateMatcher extends PredicateMatcher<RelationalPredi
 		Expression pRight = rpPattern.getRight();
 		Expression fRight = rpForm.getRight();
 		if(pRight instanceof FreeIdentifier){
-			if(!existingBinding.putMapping((FreeIdentifier) pRight, fRight)){
-				return false;
-			}
+			return existingBinding.putMapping((FreeIdentifier) pRight, fRight);
 		}
-		else {
-			if(!MatchingFactory.match(fRight, pRight, existingBinding)){
-				return false;
-			}
-		}
-		return true;
+		return MatchingFactory.match(fRight, pRight, existingBinding);
 	}
 
 	@Override

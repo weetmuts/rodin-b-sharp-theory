@@ -1,12 +1,18 @@
 package org.eventb.theory.rbp.internal.engine.pred;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.UnaryPredicate;
 
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.PredicateMatcher;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class UnaryPredicateMatcher extends PredicateMatcher<UnaryPredicate> {
 
 	public UnaryPredicateMatcher() {
@@ -20,13 +26,12 @@ public class UnaryPredicateMatcher extends PredicateMatcher<UnaryPredicate> {
 		if(upPattern.getTag() != upForm.getTag()){
 			return false;
 		}
-		
 		Predicate fChild = upForm.getChild();
 		Predicate pChild = upPattern.getChild();
-		if(!MatchingFactory.match(fChild, pChild, existingBinding)){
-			return false;
+		if(pChild instanceof PredicateVariable){
+			return existingBinding.putPredicateMapping((PredicateVariable) pChild, fChild);
 		}
-		return true;
+		return MatchingFactory.match(fChild, pChild, existingBinding);
 	}
 
 

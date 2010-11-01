@@ -8,6 +8,11 @@ import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class BinaryExpressionMatcher extends  ExpressionMatcher<BinaryExpression>{
 
 	public BinaryExpressionMatcher(){
@@ -37,16 +42,10 @@ public class BinaryExpressionMatcher extends  ExpressionMatcher<BinaryExpression
 		Expression fRight = beForm.getRight();
 		Expression pRight = bePattern.getRight();
 		if(pRight instanceof FreeIdentifier){
-			if(!existingBinding.putMapping((FreeIdentifier) pRight, fRight)){
-				return false;
-			}
+			return existingBinding.putMapping((FreeIdentifier) pRight, fRight);
 		}
-		else{
-			if(!MatchingFactory.match(fRight, pRight, existingBinding)){
-				return false;
-			}
-		}
-		return true;
+		return MatchingFactory.match(fRight, pRight, existingBinding);
+		
 	}
 
 	@Override

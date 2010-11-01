@@ -5,12 +5,18 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 
 import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedExpression>{
 
 	public QuantifiedExpressionMatcher(){
@@ -49,10 +55,11 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 		
 		Predicate fPred = qeForm.getPredicate();
 		Predicate pPred = qePattern.getPredicate();
-		if(!MatchingFactory.match(fPred, pPred, existingBinding)){
-			return false;
+		if(pPred instanceof PredicateVariable){
+			return existingBinding.putPredicateMapping((PredicateVariable) pPred, fPred);
+			
 		}
-		return true;
+		return MatchingFactory.match(fPred, pPred, existingBinding);
 	}
 
 	@Override

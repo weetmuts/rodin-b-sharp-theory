@@ -7,6 +7,12 @@ import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
 
+/**
+ * TODO emulate associative matching
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
 
 	public SetExtensionMatcher(){
