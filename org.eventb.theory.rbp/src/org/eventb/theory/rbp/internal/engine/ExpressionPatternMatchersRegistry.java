@@ -69,7 +69,7 @@ class ExpressionPatternMatchersRegistry {
 		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
 			try {
 				final int priority = 
-					ProverUtilities.parsePositiveInteger(element.getAttribute("priority"));
+					ProverUtilities.parseInteger(element.getAttribute("priority"));
 				final ExpressionMatcher<? extends Expression> matcher = 
 					(ExpressionMatcher<?>) element.createExecutableExtension("class");
 				if(matcher != null){

@@ -69,7 +69,7 @@ class PredicatePatternMatchersRegistry {
 		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
 			try {
 				final int priority = 
-					ProverUtilities.parsePositiveInteger(element.getAttribute("priority"));
+					ProverUtilities.parseInteger(element.getAttribute("priority"));
 				final PredicateMatcher<? extends Predicate> matcher = 
 					(PredicateMatcher<?>) element.createExecutableExtension("class");
 				if(matcher != null){

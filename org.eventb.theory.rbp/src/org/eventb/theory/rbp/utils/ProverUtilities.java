@@ -17,6 +17,13 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.TheoryCoreFacadeDB;
 import org.eventb.theory.rbp.internal.base.IDeployedRule;
 
+/**
+ * Some utilities used by RbP.
+ * 
+ * @since 1.0
+ * @author maamria
+ *
+ */
 public class ProverUtilities {
 
 	public static boolean DEBUG = true;
@@ -172,6 +179,13 @@ public class ProverUtilities {
 		return o1.getClass().equals(o2.getClass());
 	}
 
+	/**
+	 * Returns the associative expression that fit the given details.
+	 * @param tag
+	 * @param exps
+	 * @param factory
+	 * @return the expression
+	 */
 	public static Expression makeAssociativeExpression(int tag,
 			Expression[] exps, FormulaFactory factory) {
 		List<Expression> es = new ArrayList<Expression>();
@@ -192,6 +206,13 @@ public class ProverUtilities {
 		}
 	}
 
+	/**
+	 * Returns the associative predicate that fit the given details.
+	 * @param tag
+	 * @param preds
+	 * @param factory
+	 * @return the predicate
+	 */
 	public static Predicate makeAssociativePredicate(int tag,
 			Predicate[] preds, FormulaFactory factory) {
 		List<Predicate> es = new ArrayList<Predicate>();
@@ -212,20 +233,36 @@ public class ProverUtilities {
 		}
 	}
 
+	/**
+	 * Returns the formula factory with the currently deployed extensions.
+	 * 
+	 * @return the current formula factory
+	 */
 	public static FormulaFactory getCurrentFormulaFactory() {
 		return TheoryCoreFacadeDB.getCurrentFormulaFactory();
 	}
 
+	/**
+	 * Combines the hashcodes of the given objects.
+	 * @param os the objects
+	 * @return the combined hashcodes
+	 */
 	public static int combineHashCode(Object... os) {
 		int result = 0;
 		int i = 1;
 		for (Object o : os) {
-			result += o.hashCode() * i;
+			result += o.hashCode() * i * 7;
 			i++;
 		}
 		return result;
 	}
 
+	/**
+	 * Returns the given list if it is not <code>null</code>, and en empty list otherwise.
+	 * @param <E> the type of elements
+	 * @param list the list
+	 * @return a safe list
+	 */
 	public static <E> List<E> safeList(List<E> list) {
 		if (list == null) {
 			return new ArrayList<E>();
@@ -233,13 +270,24 @@ public class ProverUtilities {
 		return list;
 	}
 
+	/**
+	 * Returns the given collection if it is not <code>null</code>, and en empty collection otherwise.
+	 * @param <E> the type of elements
+	 * @param col the collection
+	 * @return a safe collection
+	 */
 	public static <E> Collection<E> safeCollection(Collection<E> col) {
 		if (col == null)
 			return new LinkedHashSet<E>();
 		return col;
 	}
 
-	public static int parsePositiveInteger(String str) {
+	/**
+	 * Returns the integer that is represented in <code>str</code>.
+	 * @param str the string representation
+	 * @return the integer
+	 */
+	public static int parseInteger(String str) {
 		try {
 			int num = Integer.parseInt(str);
 			return num;

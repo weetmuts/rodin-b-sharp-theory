@@ -5,24 +5,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.theory.rbp.engine.AssociativeExpressionComplement;
 import org.eventb.theory.rbp.engine.AssociativePredicateComplement;
 import org.eventb.theory.rbp.engine.IBinding;
-import org.eventb.theory.rbp.utils.TypeMatcher;
 
 /**
  * <p>An implementation of a binding.</p>
  * 
- * <p>In order to create a new binding object, call {@link MatcherEngine.createBinding()}.</p>
+ * <p>In order to create a new binding object, call {@link MatchingFactory.createBinding()}.</p>
  * @see IBinding
  * @author maamria
  *
@@ -92,8 +96,8 @@ final class Binding implements IBinding{
 		if(isImmutable)
 			throw new UnsupportedOperationException(
 					"Trying to add a mapping after the matching process finished.");
-		if(!c1_CanUnifyTypes(e.getType(),ident.getType()) || 
-				!c2_IdentifierIsGivenType(ident, e) ||
+		if(!condition1_CanUnifyTypes(e.getType(),ident.getType()) || 
+				!condition2_IdentifierIsGivenType(e, ident) ||
 				(binding.get(ident) !=null && !e.equals(binding.get(ident)))){
 			return false;
 		}
@@ -175,30 +179,38 @@ final class Binding implements IBinding{
 		return expComplement;
 	}
 	
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+	////// Conditions for inserting a new expression mapping
 	/**
 	 * Returns whether the types of the expression and the identifier are compatible. 
-	 * @param expressionType
-	 * @param identifierType
-	 * @return the two types are compatible
+	 * @param expressionType the type of the expression
+	 * @param identifierType the type of the identifier pattern
+	 * @return whether the two types are compatible
 	 */
-	protected boolean c1_CanUnifyTypes(Type expressionType, Type identifierType){
-		return TypeMatcher.canUnifyTypes(expressionType, identifierType, this);
+	protected boolean condition1_CanUnifyTypes(Type expressionType, Type identifierType){
+		return canUnifyTypes(expressionType, identifierType);
 	}
 	
 	/**
 	 * Checks the condition when the identifier is a given type in which case the 
 	 * expression has to be a type expression.
-	 * @param ident
-	 * @param exp
+	 * @param expression
+	 * @param identifier the 
 	 * @return whether the condition is met
 	 */
-	protected boolean c2_IdentifierIsGivenType(FreeIdentifier ident, Expression exp){
-		Set<GivenType> allPGivenTypes = ident.getGivenTypes();
-		if(isIdentAGivenType(ident, allPGivenTypes)){
-			return exp.isATypeExpression();
+	protected boolean condition2_IdentifierIsGivenType(Expression expression, FreeIdentifier identifier){
+		Set<GivenType> allPGivenTypes = identifier.getGivenTypes();
+		if(isIdentAGivenType(identifier, allPGivenTypes)){
+			return expression.isATypeExpression();
 		}
 		return true;
 	}
+	
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Checks whether the identifier is a given type.
@@ -223,8 +235,8 @@ final class Binding implements IBinding{
 	 */
 	protected boolean isMappingInsertable(FreeIdentifier ident, Expression e) {
 		if(isImmutable||
-				!c1_CanUnifyTypes(e.getType(),ident.getType()) || 
-				!c2_IdentifierIsGivenType(ident, e)||
+				!condition1_CanUnifyTypes(e.getType(),ident.getType()) || 
+				!condition2_IdentifierIsGivenType(e, ident)||
 				(binding.get(ident) != null && !e.equals(binding.get(ident)))){
 			return false;
 		}
@@ -288,5 +300,60 @@ final class Binding implements IBinding{
 		}
 		typeParametersInstantiations.put(ident, type);
 		return true;
+	}
+	
+	public boolean canUnifyTypes(Type expressionType, Type patternType) {
+		if(isImmutable){
+			return false;
+		}
+		if (patternType instanceof IntegerType) {
+			return expressionType instanceof IntegerType;
+		} else if (patternType instanceof BooleanType) {
+			return expressionType instanceof BooleanType;
+		} else if (patternType instanceof GivenType) {
+			putTypeMapping(factory.makeFreeIdentifier(
+					((GivenType) patternType).getName(), null, patternType
+							.toExpression(factory).getType()), expressionType);
+			return true;
+		} else if (patternType instanceof PowerSetType) {
+			if (expressionType instanceof PowerSetType) {
+				Type pBase = patternType.getBaseType();
+				Type fBase = expressionType.getBaseType();
+				return canUnifyTypes(fBase, pBase);
+			}
+		} else if (patternType instanceof ProductType) {
+			if (expressionType instanceof ProductType) {
+				Type pLeft = ((ProductType) patternType).getLeft();
+				Type fLeft = ((ProductType) expressionType).getLeft();
+
+				Type pRight = ((ProductType) patternType).getRight();
+				Type fRight = ((ProductType) expressionType).getRight();
+
+				return canUnifyTypes(fLeft, pLeft)
+						&& canUnifyTypes(fRight, pRight);
+			}
+		} else if (patternType instanceof ParametricType) {
+			if (expressionType instanceof ParametricType) {
+
+				ParametricType patParametricType = (ParametricType) patternType;
+				ParametricType expParametricType = (ParametricType) expressionType;
+				if (!patParametricType.getExprExtension().equals(
+						expParametricType)) {
+					return false;
+				}
+				Type[] patTypes = patParametricType.getTypeParameters();
+				Type[] expTypes = expParametricType.getTypeParameters();
+				boolean ok = true;
+				for (int i = 0; i < patTypes.length; i++) {
+					ok &= canUnifyTypes(expTypes[i], patTypes[i]);
+					if (!ok) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		// unification not possible
+		return false;
 	}
 }

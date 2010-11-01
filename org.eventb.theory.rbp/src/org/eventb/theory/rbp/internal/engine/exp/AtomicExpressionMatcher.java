@@ -5,7 +5,6 @@ import org.eventb.core.ast.Expression;
 
 import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
-import org.eventb.theory.rbp.utils.TypeMatcher;
 
 public class AtomicExpressionMatcher extends ExpressionMatcher<AtomicExpression> {
 
@@ -22,7 +21,7 @@ public class AtomicExpressionMatcher extends ExpressionMatcher<AtomicExpression>
 		}
 		// tags equal, unify types
 		else {
-			if(!TypeMatcher.canUnifyTypes(form.getType(), pattern.getType(), existingBinding)){
+			if(!existingBinding.canUnifyTypes(form.getType(), pattern.getType())){
 				return false;
 			}
 		}

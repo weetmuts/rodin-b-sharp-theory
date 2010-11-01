@@ -6,7 +6,6 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.PredicateMatcher;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
-import org.eventb.theory.rbp.utils.TypeMatcher;
 
 
 public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredicate> {
@@ -53,7 +52,7 @@ public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredi
 			int index = 0;
 			for(BoundIdentDecl pDec: patternDecs){
 				BoundIdentDecl fDec = formulaDecs[index];
-				if(!TypeMatcher.canUnifyTypes(fDec.getType(), pDec.getType(), existingBinding)){
+				if(!existingBinding.canUnifyTypes(fDec.getType(), pDec.getType())){
 					return false;
 				}
 				index++;

@@ -156,6 +156,16 @@ public interface IBinding {
 	public AssociativePredicateComplement getAssociativePredicateComplement();
 	
 	/**
+	 * Checks whether two types (a pattern and an instance) can be considered as matchable.
+	 * <p>
+	 * If the two types are matchable, the binding will be augmented with any infered information.
+	 * @param expressionType the type of the instance
+	 * @param patternType the type of the pattern
+	 * @return whether the two types are unifyable
+	 */
+	public boolean canUnifyTypes(Type expressionType, Type patternType);
+	
+	/**
 	 * Returns the formula factory used by this binding.
 	 * @return the formula factory
 	 */

@@ -10,7 +10,6 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
-import org.eventb.theory.rbp.utils.TypeMatcher;
 
 public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedExpression>{
 
@@ -76,7 +75,7 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 			int index = 0;
 			for(BoundIdentDecl pDec: patternDecs){
 				BoundIdentDecl fDec = formulaDecs[index];
-				if(!TypeMatcher.canUnifyTypes(fDec.getType(), pDec.getType(), existingBinding)){
+				if(!existingBinding.canUnifyTypes(fDec.getType(), pDec.getType())){
 					return false;
 				}
 				index++;
