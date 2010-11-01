@@ -3,7 +3,6 @@ package org.eventb.theory.rbp.engine;
 import java.util.Map;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -56,14 +55,6 @@ public interface IBinding {
 	public boolean putMapping(FreeIdentifier ident, Expression e);
 	
 	/**
-	 * Adds the mapping of the type specified by the given free identifier and the supplied type.
-	 * @param ident the type identifier
-	 * @param type the type
-	 * @return whether the mapping has been inserted
-	 */
-	public boolean putTypeMapping(FreeIdentifier ident, Type type);
-	
-	/**
 	 * Adds the mapping between <code>var</code> and <code>p</code> to the binding if conditions to do so are met.
 	 * <p>Returns whether the mapping has been successfully added.</p>
 	 * @param var the predicate variable
@@ -113,20 +104,7 @@ public interface IBinding {
 	public ITypeEnvironment getTypeEnvironment();	
 	
 	/**
-	 * Returns the formula to be matched against a pattern.
-	 * @return the formula to be matched
-	 */
-	public Formula<?> getFormula();
-	
-	/**
-	 * Returns the pattern formula against which matching is carried out.
-	 * @return the pattern formula
-	 */
-	public Formula<?> getPattern();
-	
-	/**
 	 * Returns whether a partial match is acceptable.
-	 * <p>This only applies to associative (including associative commutative) expressions and predicates.</p>
 	 * @return whether a partial match is acceptable
 	 */
 	public boolean isPartialMatchAcceptable();
