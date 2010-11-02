@@ -14,7 +14,7 @@ import java.util.SortedSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.theory.core.IDeployedTheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
@@ -44,9 +44,9 @@ public class TheoryDependenciesGraph extends DependenciesGraph<IDeployedTheoryRo
 			protected int compare(IDeployedTheoryRoot e1, IDeployedTheoryRoot e2) {
 
 				try {
-					if (TheoryCoreFacadeDB.doesTheoryUseTheory(e1, e2)) {
+					if (DB_TCFacade.doesTheoryUseTheory(e1, e2)) {
 						return 1;
-					} else if (TheoryCoreFacadeDB.doesTheoryUseTheory(e2, e1)) {
+					} else if (DB_TCFacade.doesTheoryUseTheory(e2, e1)) {
 						return -1;
 					}
 				} catch (CoreException e) {

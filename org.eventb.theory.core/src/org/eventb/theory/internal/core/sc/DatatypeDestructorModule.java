@@ -15,7 +15,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IConstructorArgument;
@@ -35,7 +34,7 @@ import org.rodinp.core.IRodinElement;
  * @author maamria
  * 
  */
-public class DatatypeDestructorModule extends SCProcessorModule {
+public class DatatypeDestructorModule extends DatatypeModule {
 
 	IModuleType<DatatypeDestructorModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeDestructorModule");
@@ -79,14 +78,14 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 				if (error != null) {
 					createProblemMarker(consArg,
 							EventBAttributes.IDENTIFIER_ATTRIBUTE,
-							CoreUtilities.getAppropriateProblemForCode(error),
+							getAppropriateProblemForCode(error),
 							name);
 					datatypeTable.setErrorProne();
 					continue;
 				}
-				FreeIdentifier ident = CoreUtilities.parseIdentifier(name,
+				FreeIdentifier ident = parseIdentifier(name,
 						consArg, EventBAttributes.IDENTIFIER_ATTRIBUTE,
-						factory, this);
+						factory);
 
 				if (ident != null) {
 					if (typeEnvironment.contains(name)) {

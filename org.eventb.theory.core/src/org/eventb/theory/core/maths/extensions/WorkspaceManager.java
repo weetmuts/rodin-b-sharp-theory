@@ -19,7 +19,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IUseTheory;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
@@ -66,12 +66,12 @@ public class WorkspaceManager extends FormulaExtensionsWorkspaceManager {
 
 	protected void populateDeployedEntries() throws CoreException {
 		deployedEntries.clear();
-		IRodinProject deployProject = TheoryCoreFacadeDB
+		IRodinProject deployProject = DB_TCFacade
 					.getDeploymentProject(null);
 		if(deployProject == null || !deployProject.exists()){
 			return;
 		}
-		IDeployedTheoryRoot[] roots = TheoryCoreFacadeDB
+		IDeployedTheoryRoot[] roots = DB_TCFacade
 				.getDeployedTheories(deployProject);
 		if (roots != null) {
 			List<IDeployedTheoryRoot> okTheories = new ArrayList<IDeployedTheoryRoot>();
@@ -158,7 +158,7 @@ public class WorkspaceManager extends FormulaExtensionsWorkspaceManager {
 		if (element instanceof IRodinProject) {
 			IRodinProject proj = (IRodinProject) element;
 			if (proj.getElementName().equals(
-					TheoryCoreFacadeDB.THEORIES_PROJECT)) {
+					DB_TCFacade.THEORIES_PROJECT)) {
 				for (IRodinElementDelta d : affected) {
 					processDelta(d);
 				}

@@ -9,7 +9,10 @@ package org.eventb.theory.internal.core.sc;
 
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +28,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -48,7 +51,7 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 			throws CoreException {
 		if (target != null) {
 			INewOperatorDefinition opDef = (INewOperatorDefinition) element;
-			List<String> args = CoreUtilities.getOperatorArguments(typeEnvironment);
+			List<String> args = OperatorPropertiesModule.getOperatorArguments(typeEnvironment);
 			// by this point the operator definition has all the attributes 
 			// need to check for allowable extension kinds 
 			boolean isCommutative = opDef.isCommutative();
@@ -226,6 +229,24 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 		typeEnvironment = null;
 		operatorInformation = null;
 		super.endModule(element, repository, monitor);
+	}
+
+	/**
+	 * Returns the argument of an operator. This method assumes that all given
+	 * sets are theory type parameters, and all other names must be operator
+	 * arguments.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @return list of operator arguments
+	 */
+	public static List<String> getOperatorArguments(
+			ITypeEnvironment typeEnvironment) {
+		// do not modify the env.
+		Set<String> all = typeEnvironment.clone().getNames();
+		all.removeAll(MathExtensionsUtilities.getGivenSetsNames(typeEnvironment));
+	
+		return new ArrayList<String>(all);
 	}
 
 }

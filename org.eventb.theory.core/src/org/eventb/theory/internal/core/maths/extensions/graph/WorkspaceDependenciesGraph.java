@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
@@ -65,10 +65,10 @@ public class WorkspaceDependenciesGraph {
 				public int compare(IDeployedTheoryRoot o1,
 						IDeployedTheoryRoot o2) {
 					try {
-						if(TheoryCoreFacadeDB.doesTheoryUseTheory(o1, o2)){
+						if(DB_TCFacade.doesTheoryUseTheory(o1, o2)){
 							return 1;
 						}
-						if(TheoryCoreFacadeDB.doesTheoryUseTheory(o2, o1)){
+						if(DB_TCFacade.doesTheoryUseTheory(o2, o1)){
 							return -1;
 						}
 					} catch (CoreException e) {

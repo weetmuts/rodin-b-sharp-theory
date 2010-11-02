@@ -32,7 +32,7 @@ import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -105,13 +105,13 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 					infersPredicatesWDs.add(pred.getWDPredicate(factory));
 				}
 			}
-			Predicate conj1 = CoreUtilities.conjunctPredicates(
+			Predicate conj1 = MathExtensionsUtilities.conjunctPredicates(
 					givensPredicates, factory);
-			Predicate conj1WD = CoreUtilities.conjunctPredicates(
+			Predicate conj1WD = MathExtensionsUtilities.conjunctPredicates(
 					givensPredicatesWDs, factory);
-			Predicate conj2 = CoreUtilities.conjunctPredicates(
+			Predicate conj2 = MathExtensionsUtilities.conjunctPredicates(
 					infersPredicates, factory);
-			Predicate conj2WD = CoreUtilities.conjunctPredicates(
+			Predicate conj2WD = MathExtensionsUtilities.conjunctPredicates(
 					infersPredicatesWDs, factory);
 			Predicate poPredicate = library.makeImp(conj1, conj2);
 			if (!isTrivial(poPredicate)) {
@@ -212,8 +212,7 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 
 	protected Predicate makeClosedPredicate(Predicate predicate,
 			ITypeEnvironment typeEnvironment) {
-		List<FreeIdentifier> metavars = CoreUtilities
-				.getMetavariables(typeEnvironment);
+		List<FreeIdentifier> metavars = getMetavariables(typeEnvironment);
 		FreeIdentifier[] predicateIdents = predicate.getFreeIdentifiers();
 		List<FreeIdentifier> nonSetsIdents = new ArrayList<FreeIdentifier>();
 		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();

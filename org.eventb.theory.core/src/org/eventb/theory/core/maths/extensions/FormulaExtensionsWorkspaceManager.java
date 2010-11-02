@@ -22,7 +22,7 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
 import org.eventb.theory.internal.core.maths.extensions.graph.WorkspaceDependenciesGraph;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -77,7 +77,7 @@ public abstract class FormulaExtensionsWorkspaceManager implements
 	@Override
 	public Set<IFormulaExtension> getDirtyExtensions(IEventBRoot root,
 			FormulaFactory factory) throws CoreException {
-		ISCTheoryRoot scRoot = TheoryCoreFacadeDB.getSCTheory(
+		ISCTheoryRoot scRoot = DB_TCFacade.getSCTheory(
 				root.getComponentName(), root.getRodinProject());
 		if (!scRoot.exists()) {
 			return EMPTY_EXT;

@@ -38,7 +38,6 @@ import org.eventb.theory.core.maths.MathExtensionsFactory;
 import org.eventb.theory.internal.core.maths.ExpressionOperatorTypingRule;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
@@ -190,8 +189,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	@Override
 	public void addOperatorArgument(String ident, Type type) {
 		if (!opArguments.containsKey(ident)) {
-			for (GivenType gtype : CoreUtilities.getTypesOccurringIn(type,
-					factory)) {
+			for (GivenType gtype : getTypesOccurringIn(type)) {
 				if (!typeParameters.contains(gtype)) {
 					typeParameters.add(gtype);
 					typeEnvironment.addGivenSet(gtype.getName());
@@ -348,5 +346,22 @@ public class OperatorInformation extends State implements IOperatorInformation {
 					null, opArgsArray[i].getArgumentType());
 		}
 		return exps;
+	}
+
+	/**
+	 * Returns the given types occurring in <code>type</code>.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return the given types
+	 */
+	protected GivenType[] getTypesOccurringIn(Type type) {
+		List<GivenType> types = new ArrayList<GivenType>();
+		FreeIdentifier[] idents = type.toExpression(factory)
+				.getFreeIdentifiers();
+		for (FreeIdentifier ident : idents) {
+			types.add(factory.makeGivenType(ident.getName()));
+		}
+		return types.toArray(new GivenType[types.size()]);
 	}
 }

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc;
 
+import static org.eventb.core.ast.LanguageVersion.V2;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,22 +19,28 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IDirectOperatorDefinition;
+import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.TheoryCoreFacadeGeneral;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.GeneralUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -69,7 +77,7 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 						scNewOpDef, repository, monitor);
 				String label = newOpDef.getLabel();
 				if (defFormula != null) {
-					if (CoreUtilities.isExpressionOperator(operatorInformation.getFormulaType())) {
+					if (MathExtensionsUtilities.isExpressionOperator(operatorInformation.getFormulaType())) {
 						if (defFormula instanceof Expression) {
 							createSCDirectDefinition(defFormula, scNewOpDef,
 									definition, repository, monitor);
@@ -160,8 +168,8 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 			ISCNewOperatorDefinition scNewOpDef, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		if (definition.hasFormula()) {
-			Formula<?> formula = CoreUtilities.parseAndCheckFormula(definition,
-					factory, typeEnvironment, this);
+			Formula<?> formula = parseAndCheckFormula(definition,
+					factory, typeEnvironment);
 			if (formula != null
 					&& checkAgainstReferencedIdentifiers(definition, formula)) {
 				return formula;
@@ -186,7 +194,7 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 		if (notAllowed.size() != 0) {
 			createProblemMarker(def, TheoryAttributes.FORMULA_ATTRIBUTE,
 					TheoryGraphProblem.OpCannotReferToTheseTypes,
-					TheoryCoreFacadeGeneral.toString(notAllowed));
+					GeneralUtilities.toString(notAllowed));
 			return false;
 		}
 		return true;
@@ -215,6 +223,54 @@ public class DirectOperatorDefinitionModule extends SCProcessorModule {
 		typeEnvironment = null;
 		operatorInformation = null;
 		super.endModule(element, repository, monitor);
+	}
+
+	/**
+	 * Parses and type checks the formula occurring as an attribute to the given
+	 * element.
+	 * 
+	 * @param element
+	 *            the rodin element
+	 * @param ff
+	 *            the formula factory
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
+	 * @return the parsed formula
+	 * @throws CoreException
+	 */
+	protected Formula<?> parseAndCheckFormula(IFormulaElement element,
+			FormulaFactory ff, ITypeEnvironment typeEnvironment) throws CoreException {
+		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
+		String form = element.getFormula();
+		Formula<?> formula = null;
+		IParseResult result = ff.parsePredicate(form, V2, null);
+		if (result.hasProblem()) {
+			result = ff.parseExpression(form, V2, null);
+			if (CoreUtilities.issueASTProblemMarkers(element, attributeType, result, this)) {
+				return null;
+			} else {
+				formula = result.getParsedExpression();
+			}
+		} else {
+			formula = result.getParsedPredicate();
+		}
+	
+		FreeIdentifier[] idents = formula.getFreeIdentifiers();
+		for (FreeIdentifier ident : idents) {
+			if (!typeEnvironment.contains(ident.getName())) {
+				createProblemMarker(element, attributeType,
+						GraphProblem.UndeclaredFreeIdentifierError,
+						ident.getName());
+				return null;
+			}
+		}
+		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
+		if (CoreUtilities.issueASTProblemMarkers(element, attributeType, tcResult, this)) {
+			return null;
+		}
+		return formula;
 	}
 
 }

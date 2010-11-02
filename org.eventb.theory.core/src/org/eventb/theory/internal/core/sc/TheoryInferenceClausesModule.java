@@ -35,7 +35,7 @@ extends SCProcessorModule{
 
 	private ITypeEnvironment typeEnvironment;
 	private FormulaFactory factory;
-	private int index = CoreUtilities.SC_STARTING_INDEX;
+	private int index = 1;
 	protected InferenceIdentifiers inferenceIdentifiers;
 	protected RuleAccuracyInfo ruleAccuracyInfo;
 	

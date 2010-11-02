@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +20,10 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -37,7 +39,9 @@ import org.eventb.theory.core.maths.IOperatorArgument;
 
 /**
  * Facilities class for obtaining information related to grammars and operators
- * plus other utilities.
+ * plus other utilities to do with AST and mathematical extensions.
+ * 
+ * @since 1.0
  * 
  * @author maamria
  * 
@@ -48,9 +52,13 @@ public class MathExtensionsUtilities {
 	 * Literal predicate true.
 	 */
 	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
-	
+	/**
+	 * Cond extension
+	 */
 	public static final IFormulaExtension COND = FormulaFactory.getCond();
-	
+	/**
+	 * Dummy theory group
+	 */
 	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
 
 	/**
@@ -77,6 +85,139 @@ public class MathExtensionsUtilities {
 	public static final String BOOL_EXPR = AST_PREFIX + "boolExpr";
 	public static final String INFIX_SUBST = AST_PREFIX + "infixSubst";
 
+	/**
+	 * Returns whether the formula type is an expression type.
+	 * 
+	 * @param type
+	 *            the formula type
+	 * @return whether the type is an expression
+	 */
+	public static final boolean isExpressionOperator(FormulaType type) {
+		return type.equals(FormulaType.EXPRESSION);
+	}
+
+	/**
+	 * Returns the given types in <code>typeEnvironment</code>.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @return all given types
+	 */
+	public static List<String> getGivenSetsNames(
+			ITypeEnvironment typeEnvironment) {
+		List<String> result = new ArrayList<String>();
+		for (String name : typeEnvironment.getNames()) {
+			if (isGivenSet(typeEnvironment, name)) {
+				result.add(name);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Checks whether the name <code>name</code> is a given set in the given
+	 * type environment.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param name
+	 *            the name
+	 * @return whether <code>name</code> is a given set
+	 */
+	public static boolean isGivenSet(ITypeEnvironment typeEnvironment,
+			String name) {
+		Type type = typeEnvironment.getType(name);
+		if (type == null) {
+			return false;
+		}
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a predicate resulting from conjuncting the given predicates.
+	 * 
+	 * @param preds
+	 *            the array of predicates
+	 * @param ff
+	 *            the formula factor
+	 * @return the predicate
+	 */
+	public static Predicate conjunctPredicates(Predicate[] preds,
+			FormulaFactory ff) {
+		List<Predicate> pList = new ArrayList<Predicate>();
+		for (Predicate p : preds) {
+			if (!p.equals(BTRUE)) {
+				pList.add(p);
+			}
+		}
+		return conjunctPredicates(pList, ff);
+	}
+
+	/**
+	 * Returns a predicate resulting from conjuncting the given predicates.
+	 * 
+	 * @param preds
+	 *            the list of predicates
+	 * @param ff
+	 *            the formula factor
+	 * @return the predicate
+	 */
+	public static Predicate conjunctPredicates(List<Predicate> preds,
+			FormulaFactory ff) {
+		while (preds.contains(BTRUE)) {
+			preds.remove(BTRUE);
+		}
+		if (preds.size() == 0) {
+			return BTRUE;
+		}
+		if (preds.size() == 1) {
+			return preds.get(0);
+		}
+		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
+	}
+
+	/**
+	 * Returns the string type expression with the given name and type
+	 * parameters e.g., List(A), Tree(A).
+	 * 
+	 * @param identifierString
+	 *            the name of the type
+	 * @param typeArguments
+	 *            the list of type arguments
+	 * @param the
+	 *            formula factory tha knows about this datatype
+	 * @return the type expression
+	 */
+	public static Type createTypeExpression(String identifierString,
+			List<String> typeArguments, FormulaFactory ff) {
+		String result = identifierString;
+		if (typeArguments.size() != 0) {
+			result += "(";
+			for (int i = 0; i < typeArguments.size(); i++) {
+				result += typeArguments.get(i);
+				if (i < typeArguments.size() - 1) {
+					result += ",";
+				}
+			}
+			result += ")";
+	
+		}
+		IParseResult parseResult = ff.parseType(result, LanguageVersion.V2);
+		if(parseResult.hasProblem())
+			return null;
+		return parseResult.getParsedType();
+	
+	}
+
+	/**
+	 * Returns a formula factory with only one extension; the COND extension.
+	 * @return the formula factory with COND
+	 */
 	public static FormulaFactory getFactoryWithCond(){
 		return FormulaFactory.getInstance(singletonExtension(COND));
 	}
@@ -84,11 +225,10 @@ public class MathExtensionsUtilities {
 	/**
 	 * Returns an appropriate group for the operator with the supplied properties.
 	 * <p>
-	 * TODO this is only stop gap.
-	 * @param formulaType
-	 * @param notation
-	 * @param arity
-	 * @return
+	 * @param formulaType the formula type of the operator
+	 * @param notation the notation of the operator
+	 * @param arity the airty of the operator
+	 * @return the appropriate group
 	 */
 	public static String getGroupFor(FormulaType formulaType,
 			Notation notation, int arity) {
@@ -336,13 +476,16 @@ public class MathExtensionsUtilities {
 	 * @return a singleton set
 	 */
 	public static Set<IFormulaExtension> singletonExtension(IFormulaExtension element){
-		Set<IFormulaExtension> set = new HashSet<IFormulaExtension>();
-		set.add(element);
-		return set;
+		return GeneralUtilities.singletonSet(element);
 	}
 
-	public static List<IOperatorArgument> 
-			sort(Collection<IOperatorArgument> args){
+	/**
+	 * Returns a sorted list of the given operator arguments. Operator arguments are sorted
+	 * in ascending order by their index.
+	 * @param args the operator arguments
+	 * @return the sorted list of operator arguments
+	 */
+	public static List<IOperatorArgument> sort(Collection<IOperatorArgument> args){
 		List<IOperatorArgument> list = new ArrayList<IOperatorArgument>(args);
 		Collections.sort(list, new Comparator<IOperatorArgument>() {
 

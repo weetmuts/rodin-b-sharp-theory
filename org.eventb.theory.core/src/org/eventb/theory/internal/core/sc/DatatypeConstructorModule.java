@@ -14,7 +14,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IDatatypeConstructor;
@@ -25,7 +24,6 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -33,7 +31,7 @@ import org.rodinp.core.IRodinElement;
  * @author maamria
  *
  */
-public class DatatypeConstructorModule extends SCProcessorModule{
+public class DatatypeConstructorModule extends DatatypeModule{
 
 	IModuleType<DatatypeConstructorModule> MODULE_TYPE = 
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeConstructorModule");
@@ -77,13 +75,13 @@ public class DatatypeConstructorModule extends SCProcessorModule{
 			ERROR_CODE error = datatypeTable.isNameOk(name);
 			if(error != null){
 				createProblemMarker(cons, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-						CoreUtilities.getAppropriateProblemForCode(error), name);
+						getAppropriateProblemForCode(error), name);
 				datatypeTable.setErrorProne();
 				continue;
 			}
-			FreeIdentifier ident = CoreUtilities.parseIdentifier(cons.getIdentifierString(), 
+			FreeIdentifier ident = parseIdentifier(cons.getIdentifierString(), 
 					cons, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-					factory, this);
+					factory);
 			if(ident != null){
 				if(typeEnvironment.contains(ident.getName())){
 					createProblemMarker(cons, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
@@ -93,7 +91,7 @@ public class DatatypeConstructorModule extends SCProcessorModule{
 					continue;
 				}
 				ISCDatatypeConstructor scCons = 
-					CoreUtilities.createSCIdentifierElement(ISCDatatypeConstructor.ELEMENT_TYPE, cons, target, monitor);
+					createSCIdentifierElement(ISCDatatypeConstructor.ELEMENT_TYPE, cons, target, monitor);
 				scCons.setSource(cons, monitor);
 				datatypeTable.addConstructor(name);
 				

@@ -18,7 +18,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IDatatypeDefinition;
@@ -36,7 +35,6 @@ import org.eventb.theory.internal.core.sc.states.IDatatypeTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
 import org.eventb.theory.internal.core.sc.states.ReferencedTypes;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -46,7 +44,7 @@ import org.rodinp.core.IRodinFile;
  * @author maamria
  * 
  */
-public class DatatypeDefinitionModule extends SCProcessorModule {
+public class DatatypeDefinitionModule extends DatatypeModule {
 
 	IModuleType<DatatypeDefinitionModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".datatypeDefinitionModule");
@@ -106,13 +104,13 @@ public class DatatypeDefinitionModule extends SCProcessorModule {
 				if (error != null) {
 					createProblemMarker(dtd,
 							EventBAttributes.IDENTIFIER_ATTRIBUTE,
-							CoreUtilities.getAppropriateProblemForCode(error),
+							getAppropriateProblemForCode(error),
 							name);
 					theoryAccurate = false;
 					continue;
 				}
-				FreeIdentifier ident = CoreUtilities.parseIdentifier(name, dtd,
-						EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, this);
+				FreeIdentifier ident = parseIdentifier(name, dtd,
+						EventBAttributes.IDENTIFIER_ATTRIBUTE, factory);
 				if (ident != null) {
 					if (typeEnvironment.contains(ident.getName())) {
 						createProblemMarker(
@@ -123,8 +121,7 @@ public class DatatypeDefinitionModule extends SCProcessorModule {
 						theoryAccurate = false;
 						continue;
 					}
-					ISCDatatypeDefinition scDtd = CoreUtilities
-							.createSCIdentifierElement(
+					ISCDatatypeDefinition scDtd = createSCIdentifierElement(
 									ISCDatatypeDefinition.ELEMENT_TYPE, dtd,
 									targetRoot, monitor);
 					scDtd.setSource(dtd, monitor);
@@ -151,7 +148,7 @@ public class DatatypeDefinitionModule extends SCProcessorModule {
 									factory);
 					repository.setTypeEnvironment(typeEnvironment);
 					// the added type expression eg. List(A)
-					Type typeExpression = CoreUtilities.createTypeExpression(
+					Type typeExpression = MathExtensionsUtilities.createTypeExpression(
 							name, typeArgumentsStrings, decoy);
 					repository
 							.setState(new AddedTypeExpression(typeExpression));

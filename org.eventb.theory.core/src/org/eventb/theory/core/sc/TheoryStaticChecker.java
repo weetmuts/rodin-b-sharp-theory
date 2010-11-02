@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.StaticChecker;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
@@ -30,7 +30,7 @@ public class TheoryStaticChecker extends StaticChecker {
 			monitor.beginTask(Messages.bind(Messages.build_extracting, file
 					.getName()), 1);
 			IRodinFile source = RodinCore.valueOf(file);
-			if (TheoryCoreFacadeDB.doesDeployedTheoryExist(source.getRoot().getElementName(), source.getRodinProject())){
+			if (DB_TCFacade.doesDeployedTheoryExist(source.getRoot().getElementName(), source.getRodinProject())){
 				return;
 			}
 			ITheoryRoot root = (ITheoryRoot) source.getRoot();
@@ -49,8 +49,8 @@ public class TheoryStaticChecker extends StaticChecker {
 	public void clean(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		IRodinFile rodinFile = RodinCore.valueOf(file);
-		if(rodinFile != null && TheoryCoreFacadeDB.originatedFromTheory(rodinFile)){
-			if (TheoryCoreFacadeDB.doesDeployedTheoryExist(rodinFile.getRoot().getElementName(), rodinFile.getRodinProject())){
+		if(rodinFile != null && DB_TCFacade.originatedFromTheory(rodinFile)){
+			if (DB_TCFacade.doesDeployedTheoryExist(rodinFile.getRoot().getElementName(), rodinFile.getRodinProject())){
 				return;
 			}
 		}

@@ -28,7 +28,7 @@ import org.eventb.theory.core.maths.IOperatorExtension;
  * @author maamria
  *
  */
-public class TheoryCoreFacadeAST {
+public class AST_TCFacade {
 
 	public static final String POSTFIX = Notation.POSTFIX.toString();
 

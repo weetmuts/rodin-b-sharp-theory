@@ -11,7 +11,7 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinFile;
@@ -43,13 +43,13 @@ public class TheoryFormulaExtensionProvider implements
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
 		IRodinProject project = root.getRodinProject();
 		try {
-			if (TheoryCoreFacadeDB.originatedFromTheory(root.getRodinFile())) {
+			if (DB_TCFacade.originatedFromTheory(root.getRodinFile())) {
 				if (root instanceof ITheoryRoot) {
 					Set<IFormulaExtension> ext = wsManager
 							.getNeededExtensions((ITheoryRoot) root);
 					return ext;
 				} else {
-					ISCTheoryRoot scRoot = TheoryCoreFacadeDB.getSCTheory(
+					ISCTheoryRoot scRoot = DB_TCFacade.getSCTheory(
 							root.getComponentName(), project);
 					if(scRoot.getDeployedTheoryRoot().exists()){
 						return EMPTY_SET;

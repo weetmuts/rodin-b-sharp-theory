@@ -103,7 +103,7 @@ public class TheoryRewriteRuleRHSModule extends LabeledElementModule {
 		createStates(repository);
 		checkAndType(element.getParent().getElementName(), repository, monitor);
 		createSCRuleRhs(target, REWRITE_RULE_RHS_NAME_PREFIX,
-				CoreUtilities.SC_STARTING_INDEX, monitor);
+				1, monitor);
 		removeStates(repository);
 	}
 

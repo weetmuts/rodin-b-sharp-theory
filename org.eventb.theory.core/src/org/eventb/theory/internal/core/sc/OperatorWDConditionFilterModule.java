@@ -22,11 +22,11 @@ import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IOperatorWDCondition;
-import org.eventb.theory.core.TheoryCoreFacadeGeneral;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -68,7 +68,7 @@ public class OperatorWDConditionFilterModule extends SCFilterModule{
 		}
 		if(notAllowed.size() != 0){
 			createProblemMarker(wdCond, EventBAttributes.PREDICATE_ATTRIBUTE, 
-					TheoryGraphProblem.OpCannotReferToTheseTypes, TheoryCoreFacadeGeneral.toString(notAllowed));
+					TheoryGraphProblem.OpCannotReferToTheseTypes, GeneralUtilities.toString(notAllowed));
 			return false;
 		}
 		return true;

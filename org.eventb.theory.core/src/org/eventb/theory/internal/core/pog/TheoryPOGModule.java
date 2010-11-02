@@ -1,6 +1,6 @@
 package org.eventb.theory.internal.core.pog;
 
-import static org.eventb.theory.core.TheoryCoreFacadeDB.hasDeployedVersion;
+import static org.eventb.theory.core.DB_TCFacade.hasDeployedVersion;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

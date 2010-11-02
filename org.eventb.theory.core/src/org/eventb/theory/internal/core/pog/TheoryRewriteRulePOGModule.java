@@ -34,7 +34,7 @@ import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -149,7 +149,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 				// -------------------------------------------------------
 				// lhsWD & conditionWD & condition => rhsWD
 				if (!isTrivial(rhsWD)) {
-					Predicate poPredicate = CoreUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition}, factory);
+					Predicate poPredicate = MathExtensionsUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition}, factory);
 					if(poPredicate.equals(library.True())){
 						poPredicate = rhsWD;
 					}
@@ -172,7 +172,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 				// -------------------------------------------------------
 				// lhsWD & conditionWD & condition & rhsWD => lhs = rhs
 				if (!isTrivial(soundnessPredicate)) {
-					Predicate poPredicate = CoreUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition, rhsWD}, factory);
+					Predicate poPredicate = MathExtensionsUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition, rhsWD}, factory);
 					if(poPredicate.equals(library.True())){
 						poPredicate = soundnessPredicate;
 					}
@@ -207,7 +207,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 						allConditions, null);
 			
 				if(!isTrivial(goal)){
-					Predicate hyps = CoreUtilities.conjunctPredicates(wdAllConditions, factory);
+					Predicate hyps = MathExtensionsUtilities.conjunctPredicates(wdAllConditions, factory);
 					Predicate poPredicate = library.makeImp(hyps, goal);
 					createPO(target, poName,
 							natureFactory.getNature(RULE_COMPLETENESS_DESC),
@@ -240,7 +240,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 	protected Predicate makeClosedPredicate(
 			Predicate predicate, 
 			ITypeEnvironment typeEnvironment){
-		List<FreeIdentifier> metavars = CoreUtilities.getMetavariables(typeEnvironment);
+		List<FreeIdentifier> metavars = getMetavariables(typeEnvironment);
 		FreeIdentifier[] predicateIdents = predicate.getFreeIdentifiers();
 		List<FreeIdentifier> nonSetsIdents = new ArrayList<FreeIdentifier>();
 		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();

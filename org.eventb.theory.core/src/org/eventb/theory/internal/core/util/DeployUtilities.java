@@ -37,8 +37,7 @@ import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
-import org.eventb.theory.core.TheoryCoreFacadeGeneral;
+import org.eventb.theory.core.DB_TCFacade;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
@@ -46,6 +45,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * @since 1.0
  * @author maamria
  * 
  */
@@ -112,8 +112,8 @@ public class DeployUtilities {
 		boolean isSound = true;
 		for (IPSStatus s : sts) {
 			if (s.getElementName().startsWith(element.getLabel())) {
-				if (!TheoryCoreFacadeGeneral.isDischarged(s)
-						&& !TheoryCoreFacadeGeneral.isReviewed(s)) {
+				if (!DB_TCFacade.isDischarged(s)
+						&& !DB_TCFacade.isReviewed(s)) {
 					isSound = false;
 				}
 			}
@@ -218,7 +218,7 @@ public class DeployUtilities {
 					target, monitor);
 			if (!theorem.hasValidatedAttribute()) {
 				boolean isSound = DeployUtilities.calculateSoundness(
-						TheoryCoreFacadeDB.getSCTheoryParent(theorem), theorem);
+						DB_TCFacade.getSCTheoryParent(theorem), theorem);
 				newTheorem.setValidated(isSound, monitor);
 
 			}
@@ -244,7 +244,7 @@ public class DeployUtilities {
 		}
 		if (!infRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					TheoryCoreFacadeDB.getSCTheoryParent(infRule), infRule);
+					DB_TCFacade.getSCTheoryParent(infRule), infRule);
 			newInfRule.setValidated(isSound, monitor);
 
 		}
@@ -264,7 +264,7 @@ public class DeployUtilities {
 		}
 		if (!rewRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					TheoryCoreFacadeDB.getSCTheoryParent(rewRule), rewRule);
+					DB_TCFacade.getSCTheoryParent(rewRule), rewRule);
 			newRewRule.setValidated(isSound, monitor);
 
 		}
@@ -300,7 +300,7 @@ public class DeployUtilities {
 		}
 		if (!newDefinition.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					TheoryCoreFacadeDB.getSCTheoryParent(operatorDefinition),
+					DB_TCFacade.getSCTheoryParent(operatorDefinition),
 					operatorDefinition);
 			newDefinition.setValidated(isSound, monitor);
 

@@ -13,7 +13,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.ParsedLHSFormula;
 import org.eventb.theory.internal.core.sc.states.ParsedRHSFormula;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IRodinElement;
 
 @SuppressWarnings("restriction")
@@ -47,8 +47,8 @@ public class TheoryRewriteRuleRHSPredVarsModule extends SCFilterModule {
 		PredicateVariable[] predsCond = parsedCond.getFormula().getPredicateVariables();
 		PredicateVariable[] predsRHS = parsedRHS.getRHSFormula().getPredicateVariables();
 		
-		if(!CoreUtilities.subset(predsLHS, predsCond) ||
-				!CoreUtilities.subset(predsLHS, predsRHS)){
+		if(!GeneralUtilities.subset(predsLHS, predsCond) ||
+				!GeneralUtilities.subset(predsLHS, predsRHS)){
 			createProblemMarker(element,
 					TheoryGraphProblem.RHSPredVarsNOTSubsetOFLHS,
 					new Object[0]);

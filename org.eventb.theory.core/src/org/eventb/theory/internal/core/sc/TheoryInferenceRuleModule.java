@@ -25,8 +25,8 @@ import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.InferenceIdentifiers;
 import org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author maamria
@@ -85,7 +85,7 @@ public class TheoryInferenceRuleModule extends
 					if(reasoningType != null){
 						scRules[i].setReasoningType(reasoningType, monitor);
 						createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, 
-								CoreUtilities.getInformationMessageFor(reasoningType), label);
+								getInformationMessageFor(reasoningType), label);
 					}
 				}
 				// if rule not accurate
@@ -165,6 +165,26 @@ public class TheoryInferenceRuleModule extends
 		// TODO Auto-generated method stub
 		return TheorySymbolFactory.getInstance().makeLocalInferenceRule(symbol,
 				true, element, component);
+	}
+
+	/**
+	 * Returns the information message appropriate for the given reasoning type.
+	 * 
+	 * @param type
+	 *            the reasoning type
+	 * @return the rodin problem
+	 */
+	protected final IRodinProblem getInformationMessageFor(
+			ReasoningType type) {
+		switch (type) {
+		case BACKWARD:
+			return TheoryGraphProblem.InferenceRuleBackward;
+		case FORWARD:
+			return TheoryGraphProblem.InferenceRuleForward;
+		case BACKWARD_AND_FORWARD:
+			return TheoryGraphProblem.InferenceRuleBoth;
+		}
+		return null;
 	}
 
 }

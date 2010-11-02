@@ -23,7 +23,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.core.maths.extensions.TheoryFormulaExtensionProvider;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -44,7 +46,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  * 
  */
-public class TheoryCoreFacadeDB {
+public class DB_TCFacade {
 
 	// Gloabl constants
 	public static final String THEORIES_PROJECT = "MathExtensions";
@@ -475,7 +477,7 @@ public class TheoryCoreFacadeDB {
 		String importeeName = used.getComponentName();
 		List<String> theories = getUsedTheories(user);
 		for (String theory : theories) {
-			IDeployedTheoryRoot importedTheory = TheoryCoreFacadeDB
+			IDeployedTheoryRoot importedTheory = DB_TCFacade
 					.getDeployedTheory(theory, project);
 			if (theory.equals(importeeName)
 					|| doesTheoryUseTheory(importedTheory, used)) {
@@ -654,5 +656,32 @@ public class TheoryCoreFacadeDB {
 		 */
 		public boolean filter(T theory);
 
+	}
+	
+	/**
+	 * Returns whether the given proof status is of discharged status.
+	 * 
+	 * @param status
+	 *            proof status
+	 * @return whether status PO has been discharged
+	 * @throws RodinDBException
+	 */
+	public static boolean isDischarged(IPSStatus status)
+			throws RodinDBException {
+		return (status.getConfidence() > IConfidence.REVIEWED_MAX)
+				&& (!status.isBroken());
+	}
+
+	/**
+	 * Returns whether the given proof status is of reviewed status.
+	 * 
+	 * @param status
+	 *            proof status
+	 * @return whether status PO has been reviewed
+	 * @throws RodinDBException
+	 */
+	public static boolean isReviewed(IPSStatus status) throws RodinDBException {
+		return (status.getConfidence() > IConfidence.PENDING)
+				&& (status.getConfidence() <= IConfidence.REVIEWED_MAX);
 	}
 }

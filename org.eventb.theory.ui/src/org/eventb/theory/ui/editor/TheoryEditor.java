@@ -7,7 +7,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
@@ -54,7 +54,7 @@ public class TheoryEditor extends EventBEditor<ITheoryRoot> {
 			htmlPage.initialize(this);
 			addPage(htmlPage);
 			// only create the edit page if deployed counterpart does not exist
-			if(!TheoryCoreFacadeDB.hasDeployedVersion(getRodinInput().getSCTheoryRoot())){
+			if(!DB_TCFacade.hasDeployedVersion(getRodinInput().getSCTheoryRoot())){
 				EventBEditorPage editPage = new EditPage();
 				editPage.initialize(this);
 				addPage(editPage);

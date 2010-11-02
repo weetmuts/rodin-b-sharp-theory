@@ -22,7 +22,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -51,7 +51,7 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 			if(MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
 				IFormulaExtension formulaExtension = operatorInformation.getExtension(scNewOperatorDefinition, factory);
 				FormulaFactory newFactory = factory.withExtensions(
-						CoreUtilities.singletonSet(formulaExtension));
+						GeneralUtilities.singletonSet(formulaExtension));
 				repository.setFormulaFactory(newFactory);
 				factory = repository.getFormulaFactory();
 				scNewOperatorDefinition.setHasError(false, monitor);

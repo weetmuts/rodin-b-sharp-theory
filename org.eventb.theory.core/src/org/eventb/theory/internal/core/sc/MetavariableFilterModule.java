@@ -27,6 +27,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -80,7 +81,7 @@ public class MetavariableFilterModule extends SCFilterModule {
 			throws RodinDBException {
 		FreeIdentifier[] idents = type.toExpression(factory)
 				.getSyntacticallyFreeIdentifiers();
-		List<String> givenSets = CoreUtilities
+		List<String> givenSets = MathExtensionsUtilities
 				.getGivenSetsNames(typeEnvironment);
 		for (FreeIdentifier ident : idents) {
 

@@ -54,7 +54,7 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 			if(wdPred != null && !wdPred.equals(MathExtensionsUtilities.BTRUE)){
 				if(target != null){
 					Predicate wdPredWD = wdPred.getWDPredicate(factory);
-					wdPred = CoreUtilities.conjunctPredicates(new Predicate[]{wdPredWD, wdPred}, factory);
+					wdPred = MathExtensionsUtilities.conjunctPredicates(new Predicate[]{wdPredWD, wdPred}, factory);
 					scNewOpDef.setPredicate(wdPred, monitor);
 					operatorInformation.setWdCondition(wdPred);
 				}
@@ -81,7 +81,7 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 			}
 		}
 		endFilterModules(repository, monitor);
-		return CoreUtilities.conjunctPredicates(wdPredicates, factory);
+		return MathExtensionsUtilities.conjunctPredicates(wdPredicates, factory);
 	}
 	
 	@Override

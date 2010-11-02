@@ -13,8 +13,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
-import org.eventb.theory.core.TheoryCoreFacadeGeneral;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IRodinFile;
@@ -149,9 +148,9 @@ public class DeployWizardPageTwo extends WizardPage {
 		try {
 			IPSStatus statuses[] = root.getStatuses();
 			for (IPSStatus s : statuses) {
-				if (TheoryCoreFacadeGeneral.isDischarged(s)) {
+				if (DB_TCFacade.isDischarged(s)) {
 					dPOs.add(s.getElementName());
-				} else if (TheoryCoreFacadeGeneral.isReviewed(s)) {
+				} else if (DB_TCFacade.isReviewed(s)) {
 					rPOs.add(s.getElementName());
 				} else {
 					uPOs.add(s.getElementName());
@@ -166,10 +165,10 @@ public class DeployWizardPageTwo extends WizardPage {
 
 	public void setVisible(boolean visible) {
 		if (visible) {
-			projectName = TheoryCoreFacadeDB.THEORIES_PROJECT;
+			projectName = DB_TCFacade.THEORIES_PROJECT;
 			theoryName = ((AbstractDeployWizardPageOne) getPreviousPage())
 					.getTheoryName();
-			targetProjectName = TheoryCoreFacadeDB.THEORIES_PROJECT;
+			targetProjectName = DB_TCFacade.THEORIES_PROJECT;
 			theoryLabel.setText(projectName + "\\" + theoryName);
 			projectLabel.setText(targetProjectName);
 			IRodinFile file = TheoryUIUtils.getSCTheoryInProject(theoryName,

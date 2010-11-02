@@ -10,7 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 
 /**
  * @author maamria
@@ -78,7 +78,7 @@ public class DeployWizardPageOne extends AbstractDeployWizardPageOne {
 	
 	private String[] getSCTheories(){
 		try {
-			Collection<String> col = TheoryCoreFacadeDB.getNames(TheoryCoreFacadeDB.getDeployableSCTheories());
+			Collection<String> col = DB_TCFacade.getNames(DB_TCFacade.getDeployableSCTheories());
 			return col.toArray(new String[col.size()]);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

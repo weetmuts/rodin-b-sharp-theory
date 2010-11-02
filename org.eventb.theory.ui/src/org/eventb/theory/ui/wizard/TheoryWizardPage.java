@@ -9,7 +9,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -79,9 +79,9 @@ public class TheoryWizardPage extends WizardPage {
 			return;
 		}
 		
-		IRodinFile theoryFile = TheoryCoreFacadeDB.getTheory(
+		IRodinFile theoryFile = DB_TCFacade.getTheory(
 				theoryName, 
-				TheoryCoreFacadeDB.getDeploymentProject(null)).getRodinFile();
+				DB_TCFacade.getDeploymentProject(null)).getRodinFile();
 		
 		if (theoryFile.exists()) {
 			updateStatus("There is already a theory with this name");

@@ -33,9 +33,8 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.TheoryCoreFacadeAST;
-import org.eventb.theory.core.TheoryCoreFacadeGeneral;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
@@ -96,7 +95,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>> implement
 	}
 
 	public String toString() {
-		return TheoryCoreFacadeGeneral.toString(argumentsTypes);
+		return GeneralUtilities.toString(argumentsTypes);
 	}
 
 	public void addTypeParameters(List<GivenType> types) {
@@ -120,7 +119,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>> implement
 				.getExtension();
 		Formula<?> flattened = (Formula<?>) formula;
 		if (operatorExtension.isAssociative()) {
-			flattened = TheoryCoreFacadeAST.unflatten(operatorExtension, childrenExprs, factory);
+			flattened = AST_TCFacade.unflatten(operatorExtension, childrenExprs, factory);
 		}
 
 		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(
@@ -137,7 +136,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>> implement
 		pred.typeCheck(typeEnvironment);
 		Predicate actWDPred = pred.substituteFreeIdents(allSubs, factory);
 		Predicate actWDPredWD = actWDPred.getWDPredicate(factory);
-		return CoreUtilities.conjunctPredicates(new Predicate[] { actWDPredWD,
+		return MathExtensionsUtilities.conjunctPredicates(new Predicate[] { actWDPredWD,
 				actWDPred }, factory);
 	}
 

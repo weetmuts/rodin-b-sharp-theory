@@ -11,12 +11,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
@@ -25,6 +28,7 @@ import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.internal.core.pog.states.TheoremsAccumulator;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -116,5 +120,24 @@ public abstract class TheoryPOGBaseModule extends POGProcessorModule {
 			throws RodinDBException {
 		return makeIntervalSelectionHint(upperLimit,
 				getSequentHypothesis(target, sequentName));
+	}
+
+	/**
+	 * Returns the list of metavariables in the given type environment. This method assumes
+	 * that all names that are not given sets are metavariables.
+	 * @param typeEnvironment the type environment
+	 * @return the list of metavariables
+	 */
+	protected List<FreeIdentifier> getMetavariables(
+			ITypeEnvironment typeEnvironment) {
+		FormulaFactory factory = typeEnvironment.getFormulaFactory();
+		Set<String> all = typeEnvironment.clone().getNames();
+		all.removeAll(MathExtensionsUtilities.getGivenSetsNames(typeEnvironment));
+		List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
+		for (String name : all) {
+			vars.add(factory.makeFreeIdentifier(name, null,
+					typeEnvironment.getType(name)));
+		}
+		return vars;
 	}
 }

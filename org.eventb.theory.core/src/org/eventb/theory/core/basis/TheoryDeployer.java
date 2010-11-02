@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import static org.eventb.theory.core.TheoryCoreFacadeDB.getDeploymentProject;
+import static org.eventb.theory.core.DB_TCFacade.getDeploymentProject;
 import static org.eventb.theory.internal.core.util.DeployUtilities.copyMathematicalExtensions;
 import static org.eventb.theory.internal.core.util.DeployUtilities.copyProverExtensions;
 
@@ -19,7 +19,7 @@ import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
 import org.eventb.theory.core.IUseTheory;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -70,7 +70,7 @@ public class TheoryDeployer implements ITheoryDeployer {
 			deploymentResult = new DeploymentResult(false, "Deployment project does not exist.");
 			return false;
 		}
-		targetFile = targetProject.getRodinFile(TheoryCoreFacadeDB
+		targetFile = targetProject.getRodinFile(DB_TCFacade
 				.getDeployedTheoryFullName(theoryName));
 		IDeployedTheoryRoot deployedTheoryRoot = (IDeployedTheoryRoot) targetFile
 			.getRoot();
@@ -102,9 +102,9 @@ public class TheoryDeployer implements ITheoryDeployer {
 		targetFile.save(monitor, true);
 		deploymentResult = new DeploymentResult(true, null);
 		if(rebuildProjects)
-			TheoryCoreFacadeDB.rebuild(monitor);
+			DB_TCFacade.rebuild(monitor);
 		else {
-			TheoryCoreFacadeDB.rebuild(targetProject, monitor);
+			DB_TCFacade.rebuild(targetProject, monitor);
 		}
 		return true;
 	}
@@ -122,7 +122,7 @@ public class TheoryDeployer implements ITheoryDeployer {
 
 	protected boolean setDeployedTheoryDependencies(ISCTheoryRoot source,
 			IDeployedTheoryRoot target) throws CoreException {
-		for (IDeployedTheoryRoot root : TheoryCoreFacadeDB.getDeployedTheories(source.getRodinProject())) {
+		for (IDeployedTheoryRoot root : DB_TCFacade.getDeployedTheories(source.getRodinProject())) {
 			if(root.getComponentName().equals(target.getComponentName())){
 				continue;
 			}
@@ -131,7 +131,7 @@ public class TheoryDeployer implements ITheoryDeployer {
 						"Failed dependencies : deployed theory "
 								+ root.getComponentName()
 								+ " does not exist in the project "
-								+ TheoryCoreFacadeDB.THEORIES_PROJECT+ ".");
+								+ DB_TCFacade.THEORIES_PROJECT+ ".");
 				return false;
 			}
 			IUseTheory use = target.getUsedTheory(root.getComponentName());
