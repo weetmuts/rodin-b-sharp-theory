@@ -246,7 +246,7 @@ public class RulesCache {
 					}
 					autoRewritesMap.get(clazz).add(rule);
 				}
-				else{
+				if(rule.isInteracive()){
 					Class<? extends Formula> clazz = rule.getLeftHandSide().getClass();
 					if(!interRewriteMap.containsKey(clazz)){
 						interRewriteMap.put(clazz, new ArrayList<IDeployedRewriteRule>());
@@ -265,7 +265,7 @@ public class RulesCache {
 					}
 					autoTypedInferenceMap.get(type).add(rule);
 				}
-				else {
+				if(rule.isInteracive()) {
 					ReasoningType type = rule.getReasoningType();
 					if(type.equals(ReasoningType.BACKWARD_AND_FORWARD)){
 						handleDualInfRule(rule, interTypedInferenceMap);
