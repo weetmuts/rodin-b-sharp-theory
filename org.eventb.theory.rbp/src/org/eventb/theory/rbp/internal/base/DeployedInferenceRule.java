@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.core.TheoryCoreFacadeGeneral;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
@@ -101,7 +100,7 @@ public final class DeployedInferenceRule extends AbstractDeployedRule implements
 	}
 	
 	public String toString(){
-		return TheoryCoreFacadeGeneral.toString(givens) + " |=> " + infer.toString() +" :: " +getReasoningType()+"\n";
+		return ProverUtilities.toString(givens) + " |=> " + infer.toString() +" :: " +getReasoningType()+"\n";
 	}
 
 }

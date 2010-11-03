@@ -7,7 +7,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.rbp.internal.base.IDeployedInferenceRule;
 import org.eventb.theory.rbp.internal.base.IDeployedRewriteRule;
 import org.eventb.theory.rbp.utils.ProverUtilities;
@@ -130,7 +130,7 @@ public class RuleBaseManager implements IRuleBaseManager{
 		if (element instanceof IRodinProject) {
 			IRodinProject proj = (IRodinProject) element;
 			if (proj.getElementName().equals(
-					TheoryCoreFacadeDB.THEORIES_PROJECT)) {
+					DB_TCFacade.THEORIES_PROJECT)) {
 				for (IRodinElementDelta d : affected) {
 					processDelta(d);
 				}

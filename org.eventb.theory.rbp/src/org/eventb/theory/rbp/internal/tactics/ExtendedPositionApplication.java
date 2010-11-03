@@ -14,8 +14,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.theory.core.TheoryCoreFacadeAST;
-import org.eventb.theory.core.TheoryCoreFacadeAST.PositionPoint;
+import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.core.AST_TCFacade.PositionPoint;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 
 /**
@@ -33,16 +33,16 @@ public abstract class ExtendedPositionApplication extends DefaultPositionApplica
 		if (subFormula instanceof ExtendedExpression) {
 			ExtendedExpression exp = (ExtendedExpression) subFormula;
 			IFormulaExtension extension = exp.getExtension();
-			if(TheoryCoreFacadeAST.isATheoryExtension(extension)){
-				PositionPoint point = TheoryCoreFacadeAST.getPositionOfOperator(exp, predStr);
+			if(AST_TCFacade.isATheoryExtension(extension)){
+				PositionPoint point = AST_TCFacade.getPositionOfOperator(exp, predStr);
 				return new Point(point.getX(), point.getY());
 			}
 		}
 		if (subFormula instanceof ExtendedPredicate) {
 			ExtendedPredicate pred = (ExtendedPredicate) subFormula;
 			IFormulaExtension extension = pred.getExtension();
-			if(TheoryCoreFacadeAST.isATheoryExtension(extension)){
-				PositionPoint point = TheoryCoreFacadeAST.getPositionOfOperator(pred, predStr);
+			if(AST_TCFacade.isATheoryExtension(extension)){
+				PositionPoint point = AST_TCFacade.getPositionOfOperator(pred, predStr);
 				return new Point(point.getX(), point.getY());
 			}
 		}

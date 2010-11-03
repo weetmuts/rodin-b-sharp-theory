@@ -8,12 +8,10 @@
 package org.eventb.theory.internal.core.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
@@ -24,17 +22,13 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
-import org.eventb.core.ast.ParametricType;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.theory.core.maths.IOperatorArgument;
 
 /**
@@ -393,49 +387,6 @@ public class MathExtensionsUtilities {
 			types.add(factory.makeGivenType(ident.getName()));
 		}
 		return types;
-	}
-
-	/**
-	 * Constructs the type variable-based reprsentation of the type <code>theoryType</code>. This representation is computed
-	 * by replacing the given types in <code>theoryType</code> by their corresponding type variables in the map
-	 * <code>parToTypeVarMap</code>. 
-	 * 
-	 * <p>For example, POW(A**B) gets translated to POW('0**'1) where '0 and '1 are the type variables corresponding to A and B respectively.</p>
-	 * @param theoryType the type used to define the extension
-	 * @param typeParameterToTypeVariablesMap the map between given types (type parameters in theories) to type variables
-	 * @param mediator the mediator
-	 * @return the constructed type
-	 */
-	public static Type constructPatternType(Type theoryType,
-			Map<Type, Type> typeParameterToTypeVariablesMap, ITypeMediator mediator) {
-
-		if (typeParameterToTypeVariablesMap.containsKey(theoryType)) {
-			return typeParameterToTypeVariablesMap.get(theoryType);
-		} else {
-			if (theoryType instanceof PowerSetType) {
-				return mediator.makePowerSetType(constructPatternType(
-						theoryType.getBaseType(), typeParameterToTypeVariablesMap, mediator));
-			} else if (theoryType instanceof ProductType) {
-				return mediator.makeProductType(
-						constructPatternType(
-								((ProductType) theoryType).getLeft(),
-								typeParameterToTypeVariablesMap, mediator),
-						constructPatternType(
-								((ProductType) theoryType).getRight(),
-								typeParameterToTypeVariablesMap, mediator));
-			} else if (theoryType instanceof ParametricType) {
-				Type[] typePars = ((ParametricType) theoryType)
-						.getTypeParameters();
-				Type[] newTypePars = new Type[typePars.length];
-				for (int i = 0; i < typePars.length; i++) {
-					newTypePars[i] = constructPatternType(typePars[i],
-							typeParameterToTypeVariablesMap, mediator);
-				}
-				return mediator.makeParametricType(Arrays.asList(newTypePars),
-						((ParametricType) theoryType).getExprExtension());
-			}
-		}
-		return theoryType;
 	}
 
 	/**

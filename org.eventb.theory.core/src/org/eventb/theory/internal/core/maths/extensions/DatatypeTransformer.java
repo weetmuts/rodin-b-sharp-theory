@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.maths.extensions;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,15 +54,15 @@ public class DatatypeTransformer extends
 
 			ISCDatatypeConstructor[] constructors = definition
 					.getConstructors();
-			final Map<String, Map<String, Type>> datatypeCons = new HashMap<String, Map<String, Type>>();
+			final Map<String, Map<String, Type>> datatypeCons = new LinkedHashMap<String, Map<String, Type>>();
 			for (ISCDatatypeConstructor cons : constructors) {
 				String consIdent = cons.getIdentifierString();
 				ISCConstructorArgument[] destructors = cons
 						.getConstructorArguments();
 				if (destructors.length == 0) {
-					datatypeCons.put(consIdent, new HashMap<String, Type>());
+					datatypeCons.put(consIdent, new LinkedHashMap<String, Type>());
 				} else {
-					Map<String, Type> datatypeDes = new HashMap<String, Type>();
+					Map<String, Type> datatypeDes = new LinkedHashMap<String, Type>();
 					for (ISCConstructorArgument dest : destructors) {
 						datatypeDes.put(dest.getIdentifierString(),
 								dest.getType(tempFactory));

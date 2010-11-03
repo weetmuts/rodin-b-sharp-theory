@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -28,7 +28,7 @@ public class DeployedTheoriesManager implements IDeployedTheoriesManager{
 		List<IDeployedTheoryFile> list = new ArrayList<IDeployedTheoryFile>();
 		IDeployedTheoryRoot[] roots;
 		try {
-			roots = TheoryCoreFacadeDB.getDeploymentProject(null).getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
+			roots = DB_TCFacade.getDeploymentProject(null).getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
 			for (IDeployedTheoryRoot root : roots){
 				if(root.exists())
 					list.add(new DeployedTheoryFile(root.getComponentName(), factory));

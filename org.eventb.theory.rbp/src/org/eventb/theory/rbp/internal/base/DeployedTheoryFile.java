@@ -8,8 +8,8 @@
 package org.eventb.theory.rbp.internal.base;
 
 import static java.util.Collections.unmodifiableList;
-import static org.eventb.theory.core.TheoryCoreFacadeDB.getDeployedTheory;
-import static org.eventb.theory.core.TheoryCoreFacadeDB.getDeploymentProject;
+import static org.eventb.theory.core.DB_TCFacade.getDeployedTheory;
+import static org.eventb.theory.core.DB_TCFacade.getDeploymentProject;
 
 import java.util.ArrayList;
 import java.util.List;

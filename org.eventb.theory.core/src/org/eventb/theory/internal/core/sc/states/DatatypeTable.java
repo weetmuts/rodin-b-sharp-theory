@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc.states;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +28,7 @@ import org.eventb.theory.core.maths.MathExtensionsFactory;
 @SuppressWarnings("restriction")
 public class DatatypeTable extends State implements IDatatypeTable{
 	
-	private HashMap<String, DatatypeEntry> datatypes;
+	private Map<String, DatatypeEntry> datatypes;
 	
 	private String currentDatatype = null;
 	private String currentConstructor = null;
@@ -42,7 +42,7 @@ public class DatatypeTable extends State implements IDatatypeTable{
 	public DatatypeTable(FormulaFactory initialFactory){
 		this.initialFactory = initialFactory;
 		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
-		datatypes = new HashMap<String, DatatypeTable.DatatypeEntry>();
+		datatypes = new LinkedHashMap<String, DatatypeTable.DatatypeEntry>();
 		extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
 	}
 	
@@ -126,13 +126,13 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		
 		String identifier;
 		String[] typeArguments;
-		HashMap<String, ConstructorEntry> constructors;
+		LinkedHashMap<String, ConstructorEntry> constructors;
 		boolean isErrorProne = false;
 		
 		public DatatypeEntry(String identifier, String[] typeArguments){
 			this.identifier = identifier;
 			this.typeArguments = typeArguments;
-			this.constructors = new HashMap<String, DatatypeTable.DatatypeEntry.ConstructorEntry>();
+			this.constructors = new LinkedHashMap<String, DatatypeTable.DatatypeEntry.ConstructorEntry>();
 		}
 		
 		public void setErrorProne(){
@@ -184,9 +184,9 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		public Set<IFormulaExtension> generateDatatypeExtensions(){
 			if(isErrorProne)
 				return null;
-			Map<String, Map<String, Type>> consMap = new HashMap<String, Map<String,Type>>();
+			Map<String, Map<String, Type>> consMap = new LinkedHashMap<String, Map<String,Type>>();
 			for(String entry : constructors.keySet()){
-				Map<String, Type> destMap = new HashMap<String, Type>();
+				Map<String, Type> destMap = new LinkedHashMap<String, Type>();
 				ConstructorEntry consEntry = constructors.get(entry);
 				for(String destEntry : consEntry.destructors.keySet()){
 					destMap.put(destEntry, consEntry.destructors.get(destEntry));
@@ -198,10 +198,10 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		
 		public class ConstructorEntry{
 			
-			HashMap<String, Type> destructors;
+			Map<String, Type> destructors;
 			
 			public ConstructorEntry(){
-				destructors = new HashMap<String, Type>();
+				destructors = new LinkedHashMap<String, Type>();
 			}
 			
 			public ERROR_CODE isNameOk(String name){

@@ -14,7 +14,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.theory.core.TheoryCoreFacadeDB;
+import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.rbp.internal.base.IDeployedRule;
 
 /**
@@ -239,7 +239,7 @@ public class ProverUtilities {
 	 * @return the current formula factory
 	 */
 	public static FormulaFactory getCurrentFormulaFactory() {
-		return TheoryCoreFacadeDB.getCurrentFormulaFactory();
+		return DB_TCFacade.getCurrentFormulaFactory();
 	}
 
 	/**
@@ -295,6 +295,24 @@ public class ProverUtilities {
 			return -1;
 		}
 
+	}
+	
+	/**
+	 * Returns a string representation of the given list of objects.
+	 * 
+	 * @param list
+	 *            the list of strings
+	 * @return the representing string
+	 */
+	public static <E> String toString(List<E> list) {
+		String result = "";
+		for (int i = 0; i < list.size(); i++) {
+			result += list.get(i).toString();
+			if (i < list.size() - 1) {
+				result += ", ";
+			}
+		}
+		return result;
 	}
 
 }

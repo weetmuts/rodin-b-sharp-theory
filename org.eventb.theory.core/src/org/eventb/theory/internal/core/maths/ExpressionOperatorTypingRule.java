@@ -93,8 +93,7 @@ implements IExpressionTypeChecker{
 					mediator.newTypeVariable());
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
-			argumentTypesAsVars[i] = MathExtensionsUtilities
-					.constructPatternType(argumentsTypes.get(i).getArgumentType(),
+			argumentTypesAsVars[i] = constructPatternType(argumentsTypes.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}
 
@@ -102,7 +101,7 @@ implements IExpressionTypeChecker{
 			Type currentType = childExpressions[i].getType();
 			mediator.sameType(argumentTypesAsVars[i], currentType);
 		}
-		return MathExtensionsUtilities.constructPatternType(resultantType,
+		return constructPatternType(resultantType,
 				parameterToTypeVarMap, mediator);
 	}
 

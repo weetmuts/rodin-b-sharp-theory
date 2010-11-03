@@ -19,7 +19,6 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.theory.core.maths.AbstractOperatorTypingRule;
 import org.eventb.theory.core.maths.IPredicateTypeChecker;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -46,8 +45,8 @@ implements IPredicateTypeChecker{
 					mediator.newTypeVariable());
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
-			argumentTypesAsVars[i] = MathExtensionsUtilities
-					.constructPatternType(argumentsTypes.get(i).getArgumentType(),
+			argumentTypesAsVars[i] = 
+					constructPatternType(argumentsTypes.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}
 		for (int i = 0; i < childExpressions.length; i++) {
