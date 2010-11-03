@@ -38,8 +38,8 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Accessibility class for some fields and methods for other plug-ins.
- * Includes mostly Rodin database related facilities.
+ * Accessibility class for some fields and methods for other plug-ins. Includes
+ * mostly Rodin database related facilities.
  * 
  * @since 1.0
  * 
@@ -60,7 +60,6 @@ public class DB_TCFacade {
 	// The theory configuration for the SC and POG
 	public static final String THEORY_CONFIGURATION = TheoryPlugin.PLUGIN_ID
 			+ ".thy";
-
 
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// //////////////////////////////// DB
@@ -178,20 +177,26 @@ public class DB_TCFacade {
 	}
 
 	/**
-	 * Returns whether the theory contains no definitions or rules.
+	 * Returns whether the theory contains no definitions or rules, or whether
+	 * the theory is not accurate.
 	 * 
 	 * @param root
 	 *            the SC theory root
-	 * @return whether the theory is empty
+	 * @return whether the theory is empty or not accurate
 	 */
-	public static boolean isTheoryEmpty(ISCTheoryRoot root) {
+	public static boolean isTheoryEmptyOrNotAccurate(ISCTheoryRoot root) {
 		int l = 0;
 		try {
-			if (root.exists())
+			if (root.exists()) {
+				if (!root.isAccurate()) {
+					return false;
+				}
 				l = root.getSCDatatypeDefinitions().length
 						+ root.getSCNewOperatorDefinitions().length
 						+ root.getProofRulesBlocks().length
 						+ root.getTheorems().length;
+
+			}
 		} catch (RodinDBException e) {
 			CoreUtilities.log(e, "Failed to retrieve details from theory.");
 		}
@@ -391,7 +396,7 @@ public class DB_TCFacade {
 		List<ISCTheoryRoot> list = new ArrayList<ISCTheoryRoot>();
 		for (ISCTheoryRoot scRoot : roots) {
 			if (!getDeployedTheory(scRoot.getComponentName(), project).exists()
-					&& !isTheoryEmpty(scRoot)) {
+					&& !isTheoryEmptyOrNotAccurate(scRoot)) {
 				list.add(scRoot);
 			}
 		}
@@ -477,8 +482,8 @@ public class DB_TCFacade {
 		String importeeName = used.getComponentName();
 		List<String> theories = getUsedTheories(user);
 		for (String theory : theories) {
-			IDeployedTheoryRoot importedTheory = DB_TCFacade
-					.getDeployedTheory(theory, project);
+			IDeployedTheoryRoot importedTheory = DB_TCFacade.getDeployedTheory(
+					theory, project);
 			if (theory.equals(importeeName)
 					|| doesTheoryUseTheory(importedTheory, used)) {
 				return true;
@@ -633,7 +638,7 @@ public class DB_TCFacade {
 		}
 		return project;
 	}
-	
+
 	/**
 	 * 
 	 * A simple protocol for formula extensions sources filter.
@@ -657,7 +662,7 @@ public class DB_TCFacade {
 		public boolean filter(T theory);
 
 	}
-	
+
 	/**
 	 * Returns whether the given proof status is of discharged status.
 	 * 

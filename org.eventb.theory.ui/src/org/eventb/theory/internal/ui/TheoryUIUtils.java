@@ -378,9 +378,9 @@ public class TheoryUIUtils {
 	public static boolean createDeployEmptyTheoryDialog(Shell shell,
 			ITheoryRoot root) {
 		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
-		if (!scRoot.exists() || DB_TCFacade.isTheoryEmpty(scRoot)) {
+		if (!scRoot.exists() || DB_TCFacade.isTheoryEmptyOrNotAccurate(scRoot)) {
 			MessageDialog.openError(shell, "Error",
-					"Cannot deploy empty theory " + root.getComponentName()
+					"Cannot deploy inaccurate or empty theory " + root.getComponentName()
 							+ ".");
 			return false;
 		}
