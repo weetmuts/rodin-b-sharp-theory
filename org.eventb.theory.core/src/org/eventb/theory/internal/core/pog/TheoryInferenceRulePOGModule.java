@@ -116,7 +116,7 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 			Predicate poPredicate = library.makeImp(conj1, conj2);
 			if (!isTrivial(poPredicate)) {
 				if (inferenceRule.isSuitableForBackwardReasoning()) {
-					String poName = inferenceRule.getLabel() + RULE_SB_SUFFIX;
+					String poName = inferenceRule.getElementName() + RULE_SB_SUFFIX;
 					Predicate finalPO = library.makeImp(conj2WD, poPredicate);
 					createPO(
 							target,
@@ -132,7 +132,7 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 							new IPOGHint[] { getLocalHypothesisSelectionHint(
 									target, poName, hyp) }, true, monitor);
 					if (!isTrivial(conj1WD)) {
-						String poWDName = inferenceRule.getLabel()
+						String poWDName = inferenceRule.getElementName()
 								+ RULE_WDB_SUFFIX;
 						Predicate finalWDPO = library.makeImp(conj2WD, conj1WD);
 						createPO(
@@ -152,7 +152,7 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 
 				}
 				if (inferenceRule.isSuitableForForwardReasoning()) {
-					String poName = inferenceRule.getLabel() + RULE_SF_SUFFIX;
+					String poName = inferenceRule.getElementName() + RULE_SF_SUFFIX;
 					Predicate finalPO = library.makeImp(conj1WD, poPredicate);
 					createPO(
 							target,
@@ -168,7 +168,7 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 							new IPOGHint[] { getLocalHypothesisSelectionHint(
 									target, poName, hyp) }, true, monitor);
 					if (!isTrivial(conj2WD)) {
-						String poWDName = inferenceRule.getLabel()
+						String poWDName = inferenceRule.getElementName()
 								+ RULE_WDF_SUFFIX;
 						Predicate finalWDPO = library.makeImp(library.makeConj(conj1WD, conj1),
 								conj2WD);

@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.theory.core.IExtensionRulesSource;
@@ -103,7 +102,7 @@ public class DeployUtilities {
 	 * @throws RodinDBException
 	 */
 	public static boolean calculateSoundness(ISCTheoryRoot root,
-			ILabeledElement element) throws RodinDBException {
+			IInternalElement element) throws RodinDBException {
 		IPSRoot psRoot = root.getPSRoot();
 		if (psRoot == null || !psRoot.exists()) {
 			return false;
@@ -111,7 +110,7 @@ public class DeployUtilities {
 		IPSStatus[] sts = psRoot.getStatuses();
 		boolean isSound = true;
 		for (IPSStatus s : sts) {
-			if (s.getElementName().startsWith(element.getLabel())) {
+			if (s.getElementName().startsWith(element.getElementName())) {
 				if (!DB_TCFacade.isDischarged(s)
 						&& !DB_TCFacade.isReviewed(s)) {
 					isSound = false;

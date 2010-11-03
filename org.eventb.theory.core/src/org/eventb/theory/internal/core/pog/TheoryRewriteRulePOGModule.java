@@ -97,7 +97,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 			ArrayList<Predicate> allConditions = new ArrayList<Predicate>();
 			ArrayList<Predicate> wdAllConditions = new ArrayList<Predicate>();
 			
-			String ruleName = rule.getLabel();
+			String ruleName = rule.getElementName();
 			
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
 					IPOSource.DEFAULT_ROLE, rule.getSource()) };

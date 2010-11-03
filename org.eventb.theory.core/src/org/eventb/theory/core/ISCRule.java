@@ -12,6 +12,8 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ITraceableElement;
 
 /**
+ * Labels are not used after the SC phase.
+ * 
  * @author maamria
  *
  */
