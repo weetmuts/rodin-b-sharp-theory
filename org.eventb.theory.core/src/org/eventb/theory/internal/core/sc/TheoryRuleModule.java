@@ -113,11 +113,9 @@ public abstract class TheoryRuleModule<R extends IRule, S extends ISCRule>
 			ILabelSymbolInfo symbolInfo, IProgressMonitor monitor)
 			throws CoreException {
 		ILabeledElement scRule = symbolInfo.createSCElement(target,
-				getPrefix() + index, monitor);
+				symbolInfo.getSymbol(), monitor);
 		return cast(scRule);
 	}
-
-	protected abstract String getPrefix();
 	
 	protected abstract S cast(ILabeledElement scRule);
 	

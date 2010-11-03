@@ -39,8 +39,6 @@ public class TheoryInferenceRuleModule extends
 			.getModuleType(TheoryPlugin.PLUGIN_ID
 					+ ".theoryInferenceRuleModule");
 
-	private static String INFERENCE_RULE_NAME_PREFIX = "inf";
-
 	@Override
 	public IModuleType<?> getModuleType() {
 		// TODO Auto-generated method stub
@@ -145,12 +143,6 @@ public class TheoryInferenceRuleModule extends
 		// TODO Auto-generated method stub
 		IProofRulesBlock rulesBlock = (IProofRulesBlock) element;
 		return rulesBlock.getInferenceRules();
-	}
-
-	@Override
-	protected String getPrefix() {
-		// TODO Auto-generated method stub
-		return INFERENCE_RULE_NAME_PREFIX;
 	}
 
 	@Override

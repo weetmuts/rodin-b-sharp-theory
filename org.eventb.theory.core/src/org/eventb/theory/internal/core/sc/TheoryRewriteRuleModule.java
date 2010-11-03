@@ -30,8 +30,7 @@ public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCR
 
 	public static final IModuleType<TheoryRewriteRuleModule> MODULE_TYPE = SCCore
 		.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryRewriteRuleModule");
-	
-	private static String REWRITE_RULE_NAME_PREFIX = "rule";
+
 	
 	private FilteredLHSs filteredLHSs;
 	
@@ -145,12 +144,6 @@ public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCR
 	protected ISCRewriteRule[] createSCRulesArray() {
 		// TODO Auto-generated method stub
 		return new ISCRewriteRule[rules.length];
-	}
-
-	@Override
-	protected String getPrefix() {
-		// TODO Auto-generated method stub
-		return REWRITE_RULE_NAME_PREFIX;
 	}
 
 	@Override
