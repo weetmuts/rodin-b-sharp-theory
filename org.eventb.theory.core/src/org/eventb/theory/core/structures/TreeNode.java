@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.reasoning.tree;
+package org.eventb.theory.core.structures;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -17,12 +17,12 @@ import java.util.Set;
  * @author maamria
  *
  */
-abstract class TreeNode<E> implements ITreeNode<E>{
+public abstract class TreeNode<E> implements ITreeNode<E>{
 	
-	E value;
-	TreeNode<E> parent;
-	Map<E, TreeNode<E>> childrenMap;
-	Set<TreeNode<E>> children;
+	protected E value;
+	protected TreeNode<E> parent;
+	protected Map<E, TreeNode<E>> childrenMap;
+	protected Set<TreeNode<E>> children;
 	
 	protected TreeNode(E value, TreeNode<E> parent){
 		this.value = value;

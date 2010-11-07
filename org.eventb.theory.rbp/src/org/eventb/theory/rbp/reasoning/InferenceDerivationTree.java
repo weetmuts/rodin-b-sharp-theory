@@ -5,13 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.reasoning.tree;
+package org.eventb.theory.rbp.reasoning;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.theory.core.structures.TreeNode;
 
 
 /**

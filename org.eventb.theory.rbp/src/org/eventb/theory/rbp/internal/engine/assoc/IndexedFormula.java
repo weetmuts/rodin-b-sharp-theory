@@ -11,10 +11,11 @@ import org.eventb.core.ast.PredicateVariable;
  * @since 1.0
  * @param <F> the type of the formula
  */
-public class IndexedFormula<F extends Formula<F>> {
+public class IndexedFormula<F extends Formula<F>> implements Comparable<IndexedFormula<F>> {
 
 	private int index;
 	private F formula;
+	private int numberOfMatches = 0;
 	
 	/**
 	 * Creates an indexed formula.
@@ -43,6 +44,13 @@ public class IndexedFormula<F extends Formula<F>> {
 	}
 	
 	/**
+	 * Increments the number of matches of this indexed formula.
+	 */
+	public void matchAdded(){
+		numberOfMatches++;
+	}
+	
+	/**
 	 * Returns whether the formula contained in this indexed formula is a variable formula.
 	 * @return whether the formula is a variable formula
 	 */
@@ -57,11 +65,27 @@ public class IndexedFormula<F extends Formula<F>> {
 		if(o == null || !(o instanceof IndexedFormula)){
 			return false;
 		}
-		return index == ((IndexedFormula<?>)o).index && formula.equals(((IndexedFormula<?>)o).formula);
+		return index == ((IndexedFormula<?>)o).index 
+				&& formula.equals(((IndexedFormula<?>)o).formula) 
+				&& numberOfMatches == ((IndexedFormula<?>)o).numberOfMatches;
 	}
 	
 	public int hashcode(){
-		return index * 43 + formula.hashCode();
+		return index * 43 + formula.hashCode() + numberOfMatches;
+	}
+
+	@Override
+	public int compareTo(IndexedFormula<F> o) {
+		int res = numberOfMatches - o.numberOfMatches;
+		if(res == 0){
+			if(equals(o)){
+				return 0;
+			}
+			else {
+				return 1;
+			}
+		}
+		return res;
 	}
 	
 }

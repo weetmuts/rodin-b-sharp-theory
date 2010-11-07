@@ -20,8 +20,8 @@ public class AssociativityHandler {
 
 	public static boolean match(Expression formChild1, Expression patternChild1,
 			Expression formChild2,Expression patternChild2, boolean isAC, IBinding existingBinding){
-		IBinding b1 = MatchingFactory.createBinding(formChild1, patternChild1, false, existingBinding.getFormulaFactory());
-		IBinding b2 = MatchingFactory.createBinding(formChild2, patternChild2, false, existingBinding.getFormulaFactory());
+		IBinding b1 = MatchingFactory.createBinding(false, existingBinding.getFormulaFactory());
+		IBinding b2 = MatchingFactory.createBinding(false, existingBinding.getFormulaFactory());
 		if(isAC){
 			// mix and match
 			// first

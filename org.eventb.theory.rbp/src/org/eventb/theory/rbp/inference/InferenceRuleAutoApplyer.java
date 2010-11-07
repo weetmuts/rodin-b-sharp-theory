@@ -22,7 +22,7 @@ import org.eventb.theory.rbp.internal.base.IDeployedGiven;
 import org.eventb.theory.rbp.internal.base.IDeployedInferenceRule;
 import org.eventb.theory.rbp.reasoners.AutoInferenceReasoner;
 import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
-import org.eventb.theory.rbp.reasoning.tree.InferenceDerivationTree;
+import org.eventb.theory.rbp.reasoning.InferenceDerivationTree;
 
 /**
  * An implementation of an automatic inference rules applyer.

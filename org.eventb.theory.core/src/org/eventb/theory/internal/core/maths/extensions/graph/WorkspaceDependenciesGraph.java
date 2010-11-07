@@ -18,6 +18,7 @@ import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.structures.CycleException;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**
@@ -82,7 +83,7 @@ public class WorkspaceDependenciesGraph {
 			});
 		try {
 			for (IDeployedTheoryRoot dep :root.getRelatedSources()){
-				if(!depGraph.map.containsKey(dep)){
+				if(!depGraph.containsNodeFor(dep)){
 					continue;
 				}
 				set.addAll(getNeededTheories(dep));

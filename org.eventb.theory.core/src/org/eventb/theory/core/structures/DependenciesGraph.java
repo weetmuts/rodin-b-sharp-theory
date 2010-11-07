@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.maths.extensions.graph;
+package org.eventb.theory.core.structures;
 
 import static java.util.Collections.unmodifiableSet;
 
@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 
 /**
  * @author maamria
@@ -201,6 +202,10 @@ public abstract class DependenciesGraph<E> implements IDependenciesGraph<E>{
 		return false;
 	}
 	
+	@Override
+	public boolean containsNodeFor(E element) {
+		return map.containsKey(element);
+	}
 	
 
 }

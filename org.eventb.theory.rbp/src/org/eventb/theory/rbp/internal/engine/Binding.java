@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -52,16 +51,12 @@ final class Binding implements IBinding {
 	// type environment generated if the matching process is a success
 	final private ITypeEnvironment typeEnvironment;
 	// matching information
-	final private Formula<?> pattern;
-	final private Formula<?> formula;
 	private boolean isPartialMatchAcceptable;
 	private AssociativeExpressionComplement expComplement;
 	private AssociativePredicateComplement predComplement;
 
-	protected Binding(Formula<?> formula, Formula<?> pattern,
+	protected Binding(
 			boolean isPartialMatchAcceptable, FormulaFactory factory) {
-		this.formula = formula;
-		this.pattern = pattern;
 		this.isPartialMatchAcceptable = isPartialMatchAcceptable;
 		binding = new HashMap<FreeIdentifier, Expression>();
 		typeParametersInstantiations = new HashMap<FreeIdentifier, Type>();
@@ -75,8 +70,7 @@ final class Binding implements IBinding {
 	}
 
 	public String toString() {
-		return "Pattern: " + pattern + ", Formula: " + formula + ", Binding: "
-				+ binding;
+		return "Binding: " + binding;
 	}
 
 	public boolean isBindingInsertable(IBinding binding) {

@@ -15,6 +15,8 @@ import java.util.SortedSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.structures.DependenciesGraph;
+import org.eventb.theory.core.structures.DependencyNode;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**

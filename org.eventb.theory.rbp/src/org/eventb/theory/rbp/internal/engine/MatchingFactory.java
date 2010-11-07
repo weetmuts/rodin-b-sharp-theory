@@ -64,14 +64,12 @@ public final class MatchingFactory {
 	
 	/**
 	 * Returns an empty binding to start a matching process.
-	 * @param formula the formula
-	 * @param pattern the pattern against which to match the formula
 	 * @param isPartialMatchAcceptable whether a partial match is acceptable
 	 * @param factory the formula factory
 	 * @return an empty binding
 	 */
-	public final static IBinding createBinding(Formula<?> formula, Formula<?> pattern, 
+	public final static IBinding createBinding(
 			boolean isPartialMatchAcceptable, FormulaFactory factory){
-		return new Binding(formula, pattern, isPartialMatchAcceptable, factory);
+		return new Binding(isPartialMatchAcceptable, factory);
 	}
 }
