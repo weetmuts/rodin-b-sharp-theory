@@ -18,7 +18,6 @@ import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.DB_TCFacade;
-import org.eventb.theory.core.structures.CycleException;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 /**

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.structures;
+package org.eventb.theory.rbp.reasoning;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -14,7 +14,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * A basic implementation of a tree node.
+ * 
  * @author maamria
+ * 
+ * @param E the type of the value stored in the node
  *
  */
 public abstract class TreeNode<E> implements ITreeNode<E>{
@@ -33,44 +37,12 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 		return value;
 	}
 	
-	public TreeNode<E> getParent(){
-		return parent;
-	}
-	
-	protected void addChild(E child){
-		TreeNode<E> newNode = getNode();
-		childrenMap.put(child, newNode);
-		children.add(newNode);
-	}
-	
-	
 	public void setChildren(Collection<E> col){
 		this.childrenMap = new LinkedHashMap<E, TreeNode<E>>();
 		this.children = new LinkedHashSet<TreeNode<E>>();
 		for (E node : col){
 			addChild(node);
 		}
-	}
-	
-	public TreeNode<E> getRoot(){
-		TreeNode<E> root = this;
-		while(root.parent!=null){
-			root = root.parent;
-		}
-		return root;
-	}
-	
-	public Collection<TreeNode<E>> getLeafs(){
-		Set<TreeNode<E>> leafs = new LinkedHashSet<TreeNode<E>>();
-		if(children == null){
-			return null;
-		}
-		else {
-			for (TreeNode<E> node : children){
-				leafs.addAll(node.getLeafs());
-			}
-		}
-		return leafs;
 	}
 	
 	public Collection<E> getLeafValues(){
@@ -86,9 +58,36 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 		
 	}
 	
-	public boolean isRoot(){
-		return this.equals(getRoot());
+	/**
+	 * Add the given child to the set of the children of this tree node.
+	 * @param child the child to add
+	 */
+	protected void addChild(E child){
+		TreeNode<E> newNode = getNode();
+		childrenMap.put(child, newNode);
+		children.add(newNode);
 	}
 	
+	/**
+	 * Returns the leaf nodes of this tree node.
+	 * @return the leaf nodes
+	 */
+	public Collection<TreeNode<E>> getLeafs(){
+		Set<TreeNode<E>> leafs = new LinkedHashSet<TreeNode<E>>();
+		if(children == null){
+			return null;
+		}
+		else {
+			for (TreeNode<E> node : children){
+				leafs.addAll(node.getLeafs());
+			}
+		}
+		return leafs;
+	}
+	
+	/**
+	 * Returns a fresh tree node.
+	 * @return a tree node
+	 */
 	protected abstract TreeNode<E> getNode();
 }

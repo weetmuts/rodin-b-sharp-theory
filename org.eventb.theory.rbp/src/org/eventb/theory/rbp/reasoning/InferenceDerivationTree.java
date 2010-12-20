@@ -13,7 +13,6 @@ import java.util.Set;
 
 
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.theory.core.structures.TreeNode;
 
 
 /**
@@ -79,10 +78,6 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 		return set;
 	}
 
-	/**
-	 * Returns a fresh tree node.
-	 * @return a tree node
-	 */
 	@Override
 	protected TreeNode<IAntecedent> getNode() {
 		// TODO Auto-generated method stub

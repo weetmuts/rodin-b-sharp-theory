@@ -5,14 +5,16 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.structures;
+package org.eventb.theory.rbp.reasoning;
 
 import java.util.Collection;
 
 /**
- * Common interface for trees with no restrictions on elements.
+ * Common interface for trees holding elements of the same type.
  * 
  * @author maamria
+ * 
+ * @param E the type of the values stored in the tree nodes
  *
  */
 interface ITreeNode<E> {
@@ -24,12 +26,6 @@ interface ITreeNode<E> {
 	E getValue();
 	
 	/**
-	 * Returns the parent of this node.
-	 * @return the parent or <code>null</code> if this node is root
-	 */
-	TreeNode<E> getParent();
-	
-	/**
 	 *	Adds the given values as children of this node.
 	 *
 	 * @param col the children, must not be <code>null</code>
@@ -37,27 +33,9 @@ interface ITreeNode<E> {
 	void setChildren(Collection<E> col);
 	
 	/**
-	 * Returns the root of the tree to which this node belongs.
-	 * @return the tree root
-	 */
-	TreeNode<E> getRoot();
-	
-	/**
-	 * Returns the leafs of this tree node.
-	 * @return the leafs or <code>null</code> if this node is a leaf itself
-	 */
-	Collection<TreeNode<E>> getLeafs();
-	
-	/**
-	 * returns the leaf values of this tree node.
+	 * Returns the leaf values of this tree node.
 	 * @return the leaf values or <code>null</code> if this node is a leaf itself
 	 */
 	Collection<E> getLeafValues();
-	
-	/**
-	 * Returns whether this node is the root of the tree.
-	 * @return whether this node is the root of the tree
-	 */
-	boolean isRoot();
 
 }
