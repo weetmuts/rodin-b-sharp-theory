@@ -86,8 +86,7 @@ public class WorkspaceManager extends FormulaExtensionsWorkspaceManager {
 				if(ok)
 					okTheories.add(root);
 			}
-			graph.setDeployedRoots(okTheories);
-			if (!graph.isErroneous())
+			if (graph.setDeployedRoots(okTheories))
 				for (IDeployedTheoryRoot root : graph.getDeployedRoots()) {
 					deployedEntries.add(new DeployedEntry(root));
 				}

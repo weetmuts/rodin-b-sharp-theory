@@ -24,7 +24,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
-import org.eventb.theory.internal.core.maths.extensions.graph.WorkspaceDependenciesGraph;
+import org.eventb.theory.internal.core.maths.extensions.dependencies.WorkspaceDependenciesGraph;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
@@ -77,8 +77,8 @@ public abstract class FormulaExtensionsWorkspaceManager implements
 	@Override
 	public Set<IFormulaExtension> getDirtyExtensions(IEventBRoot root,
 			FormulaFactory factory) throws CoreException {
-		ISCTheoryRoot scRoot = DB_TCFacade.getSCTheory(
-				root.getComponentName(), root.getRodinProject());
+		ISCTheoryRoot scRoot = DB_TCFacade.getSCTheory(root.getComponentName(),
+				root.getRodinProject());
 		if (!scRoot.exists()) {
 			return EMPTY_EXT;
 		}
@@ -92,16 +92,15 @@ public abstract class FormulaExtensionsWorkspaceManager implements
 			throws CoreException {
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		FormulaFactory factory = MathExtensionsUtilities.getFactoryWithCond();
-		if (!graph.isErroneous()) {
-			for (IDeployedTheoryRoot dep : graph.getNeededTheories(root)) {
-				TheoryTransformer transformer = new TheoryTransformer();
-				Set<IFormulaExtension> exts = transformer.transform(dep,
-						factory, factory.makeTypeEnvironment());
-				factory = factory.withExtensions(exts);
-			}
-			extensions.addAll(factory.getExtensions());
-			extensions.remove(COND);
+		for (IDeployedTheoryRoot dep : graph.getNeededTheories(root)) {
+			TheoryTransformer transformer = new TheoryTransformer();
+			Set<IFormulaExtension> exts = transformer.transform(dep, factory,
+					factory.makeTypeEnvironment());
+			factory = factory.withExtensions(exts);
 		}
+		extensions.addAll(factory.getExtensions());
+		extensions.remove(COND);
+
 		return extensions;
 	}
 
@@ -110,16 +109,15 @@ public abstract class FormulaExtensionsWorkspaceManager implements
 			throws CoreException {
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		FormulaFactory factory = MathExtensionsUtilities.getFactoryWithCond();
-		if (!graph.isErroneous()) {
-			for (IDeployedTheoryRoot dep : graph.getNeededTheories(root)) {
-				TheoryTransformer transformer = new TheoryTransformer();
-				Set<IFormulaExtension> exts = transformer.transform(dep,
-						factory, factory.makeTypeEnvironment());
-				factory = factory.withExtensions(exts);
-			}
-			extensions.addAll(factory.getExtensions());
-			extensions.remove(COND);
+		for (IDeployedTheoryRoot dep : graph.getNeededTheories(root)) {
+			TheoryTransformer transformer = new TheoryTransformer();
+			Set<IFormulaExtension> exts = transformer.transform(dep, factory,
+					factory.makeTypeEnvironment());
+			factory = factory.withExtensions(exts);
 		}
+		extensions.addAll(factory.getExtensions());
+		extensions.remove(COND);
+
 		return extensions;
 	}
 
