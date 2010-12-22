@@ -92,7 +92,12 @@ public class WorkspaceDependenciesGraph extends TheoryDependenciesGraph{
 	 */
 	public Set<IDeployedTheoryRoot> getNeededTheories(ITheoryRoot root){
 		Set<IDeployedTheoryRoot> set = new LinkedHashSet<IDeployedTheoryRoot>();
-		set.addAll(exclude(root.getDeployedTheoryRoot()));
+		IDeployedTheoryRoot exclu = root.getDeployedTheoryRoot();
+		// FIXED when theory does not have a deployed counterpart just use all deployed theories
+		if(exclu.exists())
+			set.addAll(exclude(root.getDeployedTheoryRoot()));
+		else 
+			set.addAll(getDeployedRoots());
 		return set;
 	}
 	
