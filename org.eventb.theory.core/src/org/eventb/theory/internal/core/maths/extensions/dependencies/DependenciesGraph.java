@@ -76,6 +76,8 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 				}
 				vertex.addConnectedNode(verticesMap.get(e));
 			}
+			// FIXED Bug: the set of vertices was not augmented with the new vertex
+			vertices.add(vertex);
 		}
 		if(detectCycle()){
 			throw new CycleException();
