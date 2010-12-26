@@ -14,6 +14,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for statically checked metavariables.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IMetavariable
+ * 
  * @author maamria
  *
  */

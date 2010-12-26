@@ -20,10 +20,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class RewriteRule extends TheoryElement implements IRewriteRule{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public RewriteRule(String name, IRodinElement parent) {
 		super(name, parent);
 	}

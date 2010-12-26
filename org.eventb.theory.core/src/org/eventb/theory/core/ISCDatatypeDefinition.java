@@ -15,6 +15,12 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for statically checked datatype definitions.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IDatatypeDefinition
+ * 
  * @author maamria
  *
  */
@@ -24,11 +30,33 @@ ITraceableElement, IHasErrorElement{
 	IInternalElementType<ISCDatatypeDefinition> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scDatatypeDefinition");
 	
+	/**
+	 * Returns the type argument of the given name.
+	 * <p> This is handle-only method
+	 * @param name the name of the argument
+	 * @return the type argument
+	 */
 	ISCTypeArgument getTypeArgument(String name);
 	
+	/**
+	 * Returns all type arguments of this datatype.
+	 * @return all type arguments
+	 * @throws RodinDBException
+	 */
 	ISCTypeArgument[] getTypeArguments() throws RodinDBException;
 	
+	/**
+	 * Returns the datatype constructor of the given name.
+	 * <p> This is handle-only method
+	 * @param name the name of the constructor
+	 * @return the constructor
+	 */
 	ISCDatatypeConstructor getConstructor(String name);
 	
+	/**
+	 * Returns all datatype constructors of this datatype.
+	 * @return all datatype constructors
+	 * @throws RodinDBException
+	 */
 	ISCDatatypeConstructor[] getConstructors() throws RodinDBException;
 }

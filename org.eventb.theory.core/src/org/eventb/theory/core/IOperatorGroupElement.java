@@ -12,7 +12,9 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- *	Common protocol for an operator that belongs to an operator group. 
+ *	Common protocol for an internal element that belongs to an operator group. 
+ *
+ *	<p> Each newly defined operator belongs to an operator group. This is accessed via the methods of this interface.
  * 
  * @author maamria
  *

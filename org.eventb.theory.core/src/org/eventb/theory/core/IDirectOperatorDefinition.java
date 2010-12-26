@@ -13,7 +13,11 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
- * Common protocol for a direct operator definition. A direct definition must supply an Event-B formula.
+ * Common protocol for a direct operator definition. 
+ * 
+ * <p>A direct definition must supply an Event-B formula (expression or predicate).
+ * 
+ * <p> This interface is not intended to be implemented by clients.
  * 
  * @author maamria
  *

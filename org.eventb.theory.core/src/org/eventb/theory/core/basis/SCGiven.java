@@ -19,10 +19,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCGiven extends SCPredicateElement implements ISCGiven {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCGiven(String name, IRodinElement parent) {
 		super(name, parent);
 	}

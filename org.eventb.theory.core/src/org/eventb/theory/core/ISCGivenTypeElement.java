@@ -14,7 +14,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- *	Common protocol for a SC given type element.
+ *	Common protocol for a statically checked given type element.
  * 
  * @author maamria
  *

@@ -20,6 +20,11 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for a theory root.
  * 
+ * <p> A theory root may have a number of type parameters, datatype definitions, 
+ * new operator definitions and proof rules and theorems.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @author maamria
  *
  */
@@ -38,8 +43,8 @@ public interface ITheoryRoot extends
 	public ITypeParameter getTypeParameter(String name);
 	
 	/**
-	 * Returns all type parametres.
-	 * @return all type parametres
+	 * Returns all type parameters.
+	 * @return all type parameters
 	 * @throws RodinDBException
 	 */
 	public ITypeParameter[] getTypeParameters() throws RodinDBException;

@@ -12,9 +12,11 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
- * Common protocol for a type argument.
+ * Common protocol for a type argument of a datatype definition.
  * 
  * <p> Datatype definitions are typically parameterised on their type arguments.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
  * 
  * @author maamria
  *

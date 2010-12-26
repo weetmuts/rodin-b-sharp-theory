@@ -17,6 +17,14 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for a new operator definition.
  * 
+ * <p> A new operator definition provides the syntax, the notation, the formula type of the new operator being defined.
+ * Associativity and commutativity properties are also provided as part of an operator definition.
+ * 
+ * <p> Each operator definitions may have a number of operator arguments. An overriding (stronger) well-definedness condition can also
+ * be provided. Finally, a direct definition is also part of an operator definition.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @see IDatatypeDefinition
  * 
  * @author maamria
@@ -55,7 +63,7 @@ public interface INewOperatorDefinition extends ICommentedElement, ILabeledEleme
 	 * @return all WD-condition elements
 	 * @throws RodinDBException
 	 */
-	IOperatorWDCondition[] getIOperatorWDConditions() throws RodinDBException;
+	IOperatorWDCondition[] getOperatorWDConditions() throws RodinDBException;
 	
 	/**
 	 * Returns a handle to the direct definition of the given name.

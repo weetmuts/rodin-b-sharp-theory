@@ -17,6 +17,10 @@ import org.rodinp.core.RodinCore;
 /**
  * Common protocol for a theory theorem.
  * 
+ * <p> A theorem is a predicate element with a label.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @author maamria
  *
  */

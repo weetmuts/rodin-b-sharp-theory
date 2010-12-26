@@ -22,10 +22,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCProofRulesBlock extends TheoryElement implements ISCProofRulesBlock{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCProofRulesBlock(String name, IRodinElement parent) {
 		super(name, parent);
 	}

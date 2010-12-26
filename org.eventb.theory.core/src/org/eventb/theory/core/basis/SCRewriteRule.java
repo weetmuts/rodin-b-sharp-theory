@@ -20,10 +20,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCRewriteRule extends TheoryElement implements ISCRewriteRule {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCRewriteRule(String name, IRodinElement parent) {
 		super(name, parent);
 	}

@@ -14,7 +14,9 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
- * Common protocl for a constructor argument. Each have an identifier and a type.
+ * Common protocol for a constructor argument. 
+ * 
+ * <p> A constructor argument has an identifier and a type.
  * 
  * @author maamria
  *

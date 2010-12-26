@@ -8,6 +8,10 @@ import org.rodinp.core.RodinDBException;
 /**
  * <p>Common protocol for internal elements that can have a tool tip.</p>
  * <p>This interface is not intended to be implemented by clients.</p>
+ * 
+ * @see IRewriteRule
+ * @see IInferenceRule
+ * 
  * @author maamria
  *
  */

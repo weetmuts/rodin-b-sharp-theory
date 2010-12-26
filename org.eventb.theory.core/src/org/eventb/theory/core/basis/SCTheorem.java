@@ -23,10 +23,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCTheorem extends SCPredicateElement implements ISCTheorem{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCTheorem(String name, IRodinElement parent) {
 		super(name, parent);
 	}

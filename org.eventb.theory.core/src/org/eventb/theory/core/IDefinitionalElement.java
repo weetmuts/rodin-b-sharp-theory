@@ -15,6 +15,7 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for a definitional element that can be ignored by the Proof Obligation Generator.
  * <p>This is relevant for rewrite and inference rules that are generated from operator definitions. This ensures that such rules
  * are not concerned with proof obligation generation.</p>
+ * <p> This interface triggers special treatment by the proof obligation generator.
  * @author maamria
  *
  */

@@ -19,10 +19,7 @@ import org.rodinp.core.IRodinElement;
 public class ConstructorArgument extends TheoryElement implements
 		IConstructorArgument {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
+	
 	public ConstructorArgument(String name, IRodinElement parent) {
 		super(name, parent);
 	}

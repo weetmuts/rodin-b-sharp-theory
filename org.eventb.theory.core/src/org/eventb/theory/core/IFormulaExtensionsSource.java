@@ -20,7 +20,6 @@ import org.rodinp.core.RodinDBException;
  * <p> A mathematical extensions source may have any number of new operator definitions.
  * 
  * @see IDeployedTheoryRoot
- * @see IInternalTheory
  * @see ISCTheoryRoot
  * 
  * @author maamria
@@ -36,8 +35,8 @@ public interface IFormulaExtensionsSource extends IInternalElement{
 	public ISCTypeParameter getSCTypeParameter(String name);
 
 	/**
-	 * Returns all type parameters whcih are the children of this element.
-	 * @return all type paramnters
+	 * Returns all type parameters which are the children of this element.
+	 * @return all type parameters
 	 * @throws RodinDBException
 	 */
 	public ISCTypeParameter[] getSCTypeParameters() throws RodinDBException;

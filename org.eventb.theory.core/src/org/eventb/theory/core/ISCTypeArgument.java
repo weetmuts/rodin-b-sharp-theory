@@ -13,6 +13,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for statically checked type arguments.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see ITypeArgument
+ * 
  * @author maamria
  *
  */

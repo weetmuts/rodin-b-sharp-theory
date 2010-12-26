@@ -13,7 +13,6 @@ import static org.eventb.theory.internal.core.util.DeployUtilities.copyProverExt
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPRRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -27,7 +26,7 @@ import org.rodinp.core.IRodinProject;
  * @author maamria
  * 
  */
-public class TheoryDeployer implements ITheoryDeployer {
+public final class TheoryDeployer implements ITheoryDeployer {
 
 	protected ISCTheoryRoot theoryRoot;
 	protected boolean force;
@@ -139,14 +138,5 @@ public class TheoryDeployer implements ITheoryDeployer {
 			use.setUsedTheory(root, null);
 		}
 		return true;
-	}
-
-	protected void repairProofFiles(IRodinProject targetProject)
-			throws CoreException {
-		IPRRoot[] roots = targetProject
-				.getRootElementsOfType(IPRRoot.ELEMENT_TYPE);
-		for (IPRRoot root : roots) {
-			root.setFormulaFactory(null);
-		}
 	}
 }

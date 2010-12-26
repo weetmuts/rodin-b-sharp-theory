@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class Metavariable extends TheoryElement implements IMetavariable{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public Metavariable(String name, IRodinElement parent) {
 		super(name, parent);
 	}

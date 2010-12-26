@@ -1,15 +1,17 @@
 package org.eventb.theory.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
  * <p>Common protocol for internal elements that can have a description.</p>
+ * <p>This is relevant for rewrite and inference rules where a description of the rule is needed for proof display purposes.</p>
  * <p>This interface is not intended to be implemented by clients.</p>
  * @author maamria
  *
  */
-public interface IDescriptionElement {
+public interface IDescriptionElement extends IInternalElement{
 
 	/**
 	 * <p>Returns whether the description attribute is set.</p>

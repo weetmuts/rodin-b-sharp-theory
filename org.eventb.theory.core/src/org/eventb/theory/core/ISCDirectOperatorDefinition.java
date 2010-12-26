@@ -13,6 +13,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for statically checked direct operator definitions.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IDirectOperatorDefinition
+ * 
  * @author maamria
  *
  */

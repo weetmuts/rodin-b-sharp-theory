@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class Theorem extends TheoryElement implements ITheorem{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public Theorem(String name, IRodinElement parent) {
 		super(name, parent);
 	}

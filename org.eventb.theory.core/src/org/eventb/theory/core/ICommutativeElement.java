@@ -15,6 +15,7 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for an element describing an operator that can be commutative.
  * <p> An operator <code>op</code> is said to be commutative if and only if <p>
  * <code>x op y = y op x</code>.
+ * <p> This interface triggers special treatment by the proof obligation generator.
  * 
  * @author maamria
  *

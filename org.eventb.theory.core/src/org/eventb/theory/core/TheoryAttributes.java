@@ -12,7 +12,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.RodinCore;
 
 /**
- * This class provides access to the attributes defined in this plug-in.
+ * This class provides access to the database attributes defined in this plug-in.
  * 
  * @author maamria
  * 

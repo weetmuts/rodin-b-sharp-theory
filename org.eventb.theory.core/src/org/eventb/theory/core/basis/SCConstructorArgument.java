@@ -19,10 +19,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCConstructorArgument extends SCIdentifierElement implements ISCConstructorArgument{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCConstructorArgument(String name, IRodinElement parent) {
 		super(name, parent);
 	}

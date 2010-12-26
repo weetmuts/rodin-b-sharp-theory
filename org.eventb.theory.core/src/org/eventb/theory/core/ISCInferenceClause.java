@@ -11,6 +11,12 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 
 /**
+ * Common protocol for statically checked inference clauses.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IInferenceClause
+ * 
  * @author maamria
  *
  */

@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class TypeArgument extends TheoryElement implements ITypeArgument{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public TypeArgument(String name, IRodinElement parent) {
 		super(name, parent);
 	}

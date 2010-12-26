@@ -14,6 +14,12 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for a reasoning type element.
  * 
+ * <p> Inference rules can be used for forward reasoning (i.e., new hypothesis generation) and/or backward reasoning
+ * (i.e., goal-directed inference). This interface provides an abstract layer for attributing inference rules according
+ * to their applicability.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @see IReasoningTypeElement.ReasoningType
  * 
  * @author maamria

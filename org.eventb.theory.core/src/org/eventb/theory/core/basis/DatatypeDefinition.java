@@ -22,10 +22,6 @@ import org.rodinp.core.RodinDBException;
 public class DatatypeDefinition extends TheoryElement implements
 		IDatatypeDefinition {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public DatatypeDefinition(String name, IRodinElement parent) {
 		super(name, parent);
 	}

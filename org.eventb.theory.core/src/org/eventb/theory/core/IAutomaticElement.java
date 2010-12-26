@@ -5,7 +5,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for an element that can be attributed to be automatic.
+ * Common protocol for an element (proof rules) that can be attributed to be automatic.
  * <p>
  * Rewrite and inference rules can be tagged to be automatic, and therefore, 
  * available to the automatic prover.

@@ -14,6 +14,8 @@ import org.rodinp.core.RodinCore;
 /**
  * Common protocol for a given clause of an inference rule.
  * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @author maamria
  *
  */

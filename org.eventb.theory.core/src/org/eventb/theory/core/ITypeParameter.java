@@ -14,7 +14,9 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 /**
- * Common protocol for a type parametet of a theory.
+ * Common protocol for a type parameter of a theory.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
  * 
  * @author maamria
  *

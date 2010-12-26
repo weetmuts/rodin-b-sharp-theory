@@ -15,7 +15,14 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for datatype definition internal element. Each have a name, some type arguments and a set of constructors.
+ * Common protocol for datatype definition internal element. 
+ * 
+ * <p>A datatype definition has a name, some type arguments and a set of constructors.
+ * 
+ * <p> The type arguments define the types on which this particular datatype definition is parametric on.
+ * 
+ * @see IDatatypeConstructor
+ * @see ITypeArgument
  * 
  * @author maamria
  *

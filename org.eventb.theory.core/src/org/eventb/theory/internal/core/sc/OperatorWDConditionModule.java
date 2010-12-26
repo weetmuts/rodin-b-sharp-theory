@@ -47,7 +47,7 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 			throws CoreException {
 		INewOperatorDefinition newOpDef = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scNewOpDef = (ISCNewOperatorDefinition) target;
-		IOperatorWDCondition[] wdConds = newOpDef.getIOperatorWDConditions();
+		IOperatorWDCondition[] wdConds = newOpDef.getOperatorWDConditions();
 		
 		if(wdConds != null && wdConds.length > 0){
 			Predicate wdPred  = processWdConditions(wdConds, repository, monitor);

@@ -16,10 +16,17 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for a deployed theory.
+ * Common protocol for a deployed theory root.
  * 
  * <p> A deployed theory is a copy of all SC theory elements that do not have errors associated with them.
+ * 
  * <p> Validity information are added to children elements where appropriate.
+ * 
+ * <p> Relationships between deployed theories exist by means of a "use" directive.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see ISCTheoryRoot
  * 
  * @author maamria
  * 

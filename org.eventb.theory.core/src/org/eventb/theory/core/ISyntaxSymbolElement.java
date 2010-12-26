@@ -14,6 +14,8 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for an element that can have a syntax symbol.
  * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @author maamria
  *
  */

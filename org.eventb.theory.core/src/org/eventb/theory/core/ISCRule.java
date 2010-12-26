@@ -12,7 +12,11 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ITraceableElement;
 
 /**
- * Labels are not used after the SC phase.
+ * Common protocol for statically checked proof rules.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IRule
  * 
  * @author maamria
  *

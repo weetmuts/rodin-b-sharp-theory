@@ -48,7 +48,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class DB_TCFacade {
 
-	// Gloabl constants
+	// Global constants
 	public static final String THEORIES_PROJECT = "MathExtensions";
 	// As in "theory unchecked file"
 	public static final String THEORY_FILE_EXTENSION = "tuf";

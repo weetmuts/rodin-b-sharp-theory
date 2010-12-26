@@ -19,10 +19,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCOperatorArgument extends SCIdentifierElement implements ISCOperatorArgument{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCOperatorArgument(String name, IRodinElement parent) {
 		super(name, parent);
 	}

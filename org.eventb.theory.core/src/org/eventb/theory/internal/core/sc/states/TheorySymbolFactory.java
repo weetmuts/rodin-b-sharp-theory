@@ -63,7 +63,7 @@ public class TheorySymbolFactory {
 	public ILabelSymbolInfo makeLocalInferenceRule(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
-		return new LabelSymbolInfo(symbol, ISCInferenceRule.ELEMENT_TYPE,
+		return new LabelSymbolInfo( symbol, ISCInferenceRule.ELEMENT_TYPE,
 				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
 				component, inferenceRuleSymbolProblem);
 	}

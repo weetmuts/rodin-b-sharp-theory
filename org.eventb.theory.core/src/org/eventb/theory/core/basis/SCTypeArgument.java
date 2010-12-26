@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCTypeArgument extends TheoryElement implements ISCTypeArgument{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCTypeArgument(String name, IRodinElement parent) {
 		super(name, parent);
 	}

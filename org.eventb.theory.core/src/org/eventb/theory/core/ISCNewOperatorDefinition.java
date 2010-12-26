@@ -16,6 +16,12 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for statically checked new operator definition.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see INewOperatorDefinition
+ * 
  * @author maamria
  *
  */
@@ -28,12 +34,32 @@ public interface ISCNewOperatorDefinition extends ILabeledElement, ISyntaxSymbol
 	IInternalElementType<ISCNewOperatorDefinition> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scNewOperatorDefinition");
 	
+	/**
+	 * Returns a handle to the operator argument of the given name.
+	 * @param name the argument name
+	 * @return the operator argument
+	 */
 	ISCOperatorArgument getOperatorArgument(String name);
 	
+	/**
+	 * Returns all operator arguments of this operator.
+	 * @return all operator arguments
+	 * @throws RodinDBException
+	 */
 	ISCOperatorArgument[] getOperatorArguments() throws RodinDBException;
 	
+	/**
+	 * Returns a handle to the direct definition of the given name.
+	 * @param name the name of the definition
+	 * @return the direct definition
+	 */
 	ISCDirectOperatorDefinition getDirectOperatorDefinition(String name);
 	
+	/**
+	 * Returns all direct definitions that are the children of this operator definition.
+	 * @return all direct definitions
+	 * @throws RodinDBException
+	 */
 	ISCDirectOperatorDefinition[] getDirectOperatorDefinitions() throws RodinDBException;
 
 }

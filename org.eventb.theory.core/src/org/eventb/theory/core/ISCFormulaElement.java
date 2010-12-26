@@ -15,7 +15,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for an element that may have a SC formula.
+ * Common protocol for an element that may have a statically checked formula.
  * 
  * @author maamria
  *

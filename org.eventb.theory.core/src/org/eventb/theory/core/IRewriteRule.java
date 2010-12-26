@@ -9,6 +9,11 @@ import org.rodinp.core.RodinDBException;
  * <p>Common protocol for a rewrite rule.</p>
  * <p>A rewrite rule has a label, a left hand side formula, a tool tip, a description and a comment.</p>
  * <p>A rewrite rule can be automatic, interactive and/or complete.</p>
+ * 
+ * <p> A rewrite rule has at least one right hand side.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @author maamria
  *
  */

@@ -19,10 +19,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCMetavariable extends SCIdentifierElement implements ISCMetavariable{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCMetavariable(String name, IRodinElement parent) {
 		super(name, parent);
 	}

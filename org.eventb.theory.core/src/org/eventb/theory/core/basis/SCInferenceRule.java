@@ -21,10 +21,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCInferenceRule extends TheoryElement implements ISCInferenceRule{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCInferenceRule(String name, IRodinElement parent) {
 		super(name, parent);
 	}

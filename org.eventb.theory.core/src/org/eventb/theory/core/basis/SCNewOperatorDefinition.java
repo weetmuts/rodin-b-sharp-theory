@@ -34,10 +34,6 @@ import org.rodinp.core.RodinDBException;
 @SuppressWarnings("restriction")
 public class SCNewOperatorDefinition extends TheoryElement implements ISCNewOperatorDefinition{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCNewOperatorDefinition(String name, IRodinElement parent) {
 		super(name, parent);
 	}

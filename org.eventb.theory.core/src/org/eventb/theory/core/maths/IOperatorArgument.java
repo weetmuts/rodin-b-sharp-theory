@@ -17,7 +17,10 @@ import org.eventb.core.ast.Type;
 
 /**
  * Common protocol for operator arguments.
- * <p> Each argument has an index, a name and a type.
+ * <p> An operator argument has an index, a name and a type.
+ * 
+ * <p> A type of an operator argument may contain type parameters. These will be the types on which 
+ * the concerned operator definition is polymorphic.
  * 
  * @since 1.0
  * @author maamria

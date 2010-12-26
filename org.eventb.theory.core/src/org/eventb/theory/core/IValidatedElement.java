@@ -12,8 +12,15 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for a validated element. A validated element is an internal element which has all its associated proof obligations
+ * Common protocol for a validated element. 
+ * 
+ * <p>A validated element is an internal element which has all its associated proof obligations
  * discharged or reviewed.
+ * 
+ * @see ISCInferenceRule
+ * @see ISCRewriteRule
+ * @see ISCTheorem
+ * @see ISCNewOperatorDefinition
  * 
  * @author maamria
  *

@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCDirectOperatorDefinition extends TheoryElement implements ISCDirectOperatorDefinition{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCDirectOperatorDefinition(String name, IRodinElement parent) {
 		super(name, parent);
 	}

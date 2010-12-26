@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class Infer extends TheoryElement implements IInfer{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public Infer(String name, IRodinElement parent) {
 		super(name, parent);
 	}

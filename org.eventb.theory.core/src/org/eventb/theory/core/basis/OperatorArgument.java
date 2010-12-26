@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class OperatorArgument extends TheoryElement implements IOperatorArgument{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public OperatorArgument(String name, IRodinElement parent) {
 		super(name, parent);
 	}

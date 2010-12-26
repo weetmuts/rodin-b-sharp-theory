@@ -17,6 +17,8 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for elements that can have a notation type attribute.
  * 
+ * <p> A notation type is a parser information that enables the correct parsing of extended formulae.
+ * 
  * @see IOperatorProperties.Notation
  * 
  * @author maamria

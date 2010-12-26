@@ -16,6 +16,8 @@ import org.rodinp.core.RodinDBException;
  * <p> An operator <code>op</code> is said to be associative if and only if <p>
  * <code>(x op y) op z = x op (y op z)</code>.
  * 
+ * <p> This interface triggers special treatment by the proof obligation generator.
+ * 
  * @author maamria
  *
  */

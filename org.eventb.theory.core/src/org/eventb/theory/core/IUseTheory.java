@@ -17,7 +17,9 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for a use theory directive. 
  * 
- * <p> Deployed theories use other deployed theories, and SC theories can import other SC theories and use some deployed theories.
+ * <p> Deployed theories use other deployed theories, and SC theories can use some deployed theories.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
  * 
  * @author maamria
  *

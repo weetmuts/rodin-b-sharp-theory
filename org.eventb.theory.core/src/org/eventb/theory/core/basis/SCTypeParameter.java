@@ -19,10 +19,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCTypeParameter extends SCIdentifierElement implements ISCTypeParameter {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCTypeParameter(java.lang.String name, IRodinElement parent) {
 		super(name, parent);
 	}

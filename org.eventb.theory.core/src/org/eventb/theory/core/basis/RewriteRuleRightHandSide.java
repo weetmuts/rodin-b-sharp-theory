@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class RewriteRuleRightHandSide extends TheoryElement implements IRewriteRuleRightHandSide{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public RewriteRuleRightHandSide(String name, IRodinElement parent) {
 		super(name, parent);
 	}

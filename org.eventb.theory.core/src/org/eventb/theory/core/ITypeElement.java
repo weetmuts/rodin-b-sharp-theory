@@ -14,6 +14,8 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for an element that has a type.
  * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @see IMetavariable
  * 
  * @author maamria
@@ -23,7 +25,7 @@ public interface ITypeElement extends IInternalElement{
 
 	/**
 	 * Returns whether the type attribute is set.
-	 * @return whether the type attribute is se
+	 * @return whether the type attribute is set
 	 * @throws RodinDBException
 	 */
 	boolean hasType() throws RodinDBException;

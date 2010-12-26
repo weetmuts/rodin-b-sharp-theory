@@ -12,6 +12,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for statically checked givens.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IGiven
+ * 
  * @author maamria
  *
  */

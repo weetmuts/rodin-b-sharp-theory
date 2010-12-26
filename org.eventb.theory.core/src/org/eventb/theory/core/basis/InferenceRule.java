@@ -21,10 +21,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class InferenceRule extends TheoryElement implements IInferenceRule{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public InferenceRule(String name, IRodinElement parent) {
 		super(name, parent);
 	}

@@ -13,10 +13,16 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for statically checked rewrite rules.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IRewriteRule
+ * 
  * @author maamria
  * 
  */
-public interface ISCRewriteRule extends 
+public interface ISCRewriteRule extends
 	ISCFormulaElement, ICompleteElement,ISCRule{
 
 	IInternalElementType<ISCRewriteRule> ELEMENT_TYPE = RodinCore

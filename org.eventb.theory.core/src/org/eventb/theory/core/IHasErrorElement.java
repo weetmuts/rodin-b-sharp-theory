@@ -16,6 +16,7 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * This is useful for the Proof Obligation Generator to know about such elements so that it ignores any
  * ill-defined elements.
+ * <p> This interface triggers special treatment by the proof obligation generator.
  * 
  * @author maamria
  *

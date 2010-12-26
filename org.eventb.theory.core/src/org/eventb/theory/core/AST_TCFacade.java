@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010-2011 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,28 +30,23 @@ import org.eventb.theory.core.maths.IOperatorExtension;
  */
 public class AST_TCFacade {
 
-	public static final String POSTFIX = Notation.POSTFIX.toString();
-
-	public static final String INFIX = Notation.INFIX.toString();
-
-	public static final String PREFIX = Notation.PREFIX.toString();
-
 	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] {
-			PREFIX, INFIX };
+			Notation.POSTFIX.toString(), Notation.INFIX.toString() };
 	
 	/**
-	 * Converts a string (eg. "POSTFIX") to the corresponding notation.
+	 * Converts a string (e.g., "POSTFIX") to the corresponding notation.
 	 * 
 	 * @param type
 	 *            in string format
 	 * @return the corresponding notation
 	 */
 	public static Notation getNotation(String type) {
-		if (type.equalsIgnoreCase(POSTFIX)) {
+		if (type.equalsIgnoreCase(Notation.POSTFIX.toString())) {
 			return Notation.POSTFIX;
-		} else if (type.equalsIgnoreCase(INFIX)) {
+		} else if (type.equalsIgnoreCase(Notation.INFIX.toString())) {
 			return Notation.INFIX;
-		} else {
+		}// default to prefix 
+		else {
 			return Notation.PREFIX;
 		}
 	}
@@ -78,12 +73,12 @@ public class AST_TCFacade {
 	}
 	
 	/**
-	 * Returns the unflattened version of the the extended expression with the
+	 * Returns the non-flattened version of the the extended expression with the
 	 * given children.
 	 * @param extension the formula extension
 	 * @param children the extended expression children
 	 * @param factory the formula factory
-	 * @return the unflattened extended expression
+	 * @return the non-flattened extended expression
 	 * TODO the result is right-associative/ make left-associative
 	 */
 	public static ExtendedExpression unflatten(IFormulaExtension extension,
@@ -116,12 +111,12 @@ public class AST_TCFacade {
 	}
 	
 	/**
-	 * Returns the unflattened version of the the associative expression with the
+	 * Returns the non-flattened version of the the associative expression with the
 	 * given children.
 	 * @param tag the expression tag
 	 * @param children the extended expression children
 	 * @param factory the formula factory
-	 * @return the unflattened associative expression
+	 * @return the non-flattened associative expression
 	 * 
 	 * TODO the result is right-associative/ make left-associative
 	 */
@@ -140,12 +135,12 @@ public class AST_TCFacade {
 	}
 	
 	/**
-	 * Returns the unflattened version of the the associative predicate with the
+	 * Returns the non-flattened version of the the associative predicate with the
 	 * given children.
 	 * @param tag the predicate tag
 	 * @param children the predicate children
 	 * @param factory the formula factory
-	 * @return the unflattened associative predicate
+	 * @return the non-flattened associative predicate
 	 * 
 	 * TODO the result is right-associative/ make left-associative
 	 */

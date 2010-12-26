@@ -31,10 +31,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCTheoryRoot(String name, IRodinElement parent) {
 		super(name, parent);
 	}

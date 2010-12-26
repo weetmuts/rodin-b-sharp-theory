@@ -15,7 +15,9 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for a datatype constructor. Each have an identifier.
+ * Common protocol for a datatype constructor.
+ * 
+ * <p> A datatype constructor has an identifier, and a number (if any) of constructor arguments (see {@link IConstructorArgument}).
  * 
  * @author maamria
  *
@@ -35,7 +37,7 @@ public interface IDatatypeConstructor extends IIdentifierElement, ICommentedElem
 	
 	/**
 	 * Returns the constructor arguments of this constructor.
-	 * @return all constrcutor arguments
+	 * @return all constructor arguments
 	 * @throws RodinDBException
 	 */
 	IConstructorArgument[] getConstructorArguments() throws RodinDBException;

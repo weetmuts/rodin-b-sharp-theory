@@ -10,6 +10,11 @@ package org.eventb.theory.core;
 /**
  * Common protocol for a result of a deployment operation.
  * 
+ * <p> A deployment operation can end in success or failure. In the case of failure, the deployment
+ * result must provide an error message indication the encountered problem.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
  * @author maamria
  *
  */

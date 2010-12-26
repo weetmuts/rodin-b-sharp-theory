@@ -14,8 +14,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Common protocol for a theory deployer.
  * 
- * <p> A theory deployer can deploy a SC theory file to the current project.
- * <p> Information about the success of the deployment msut be provided.
+ * <p> A theory deployer can deploy a statically checked theory file to a certain project.
+ * <p> Information about the success of the deployment is also provided by the deployer.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IDeployedTheoryRoot
+ * @see IDeploymentResult
  * 
  * @author maamria
  *
@@ -23,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface ITheoryDeployer extends IWorkspaceRunnable{
 	
 	/**
-	 * Deploys a given SC theory to the current project.
+	 * Deploys a given statically checked theory to the current project.
 	 * @param monitor the progress monitor
 	 * @return whether deployment has been attempted
 	 * @throws CoreException

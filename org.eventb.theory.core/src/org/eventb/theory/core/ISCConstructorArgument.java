@@ -14,6 +14,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for a statically checked constructor argument.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IConstructorArgument
+ * 
  * @author maamria
  *
  */

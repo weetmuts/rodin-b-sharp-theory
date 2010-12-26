@@ -18,10 +18,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class Given extends TheoryElement implements IGiven {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public Given(String name, IRodinElement parent) {
 		super(name, parent);
 	}

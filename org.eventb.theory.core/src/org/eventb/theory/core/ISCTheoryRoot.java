@@ -20,6 +20,12 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for statically checked theory roots.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see ITheoryRoot
+ * 
  * @author maamria
  *
  */

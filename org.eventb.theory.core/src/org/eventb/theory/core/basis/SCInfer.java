@@ -19,10 +19,6 @@ import org.rodinp.core.IRodinElement;
  */
 public class SCInfer extends SCPredicateElement implements ISCInfer{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCInfer(String name, IRodinElement parent) {
 		super(name, parent);
 	}

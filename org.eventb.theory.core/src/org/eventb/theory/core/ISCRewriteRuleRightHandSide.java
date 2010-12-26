@@ -15,6 +15,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Common protocol for statically checked right hand side of a rule.
+ * 
+ * <p> This interface is not intended to be implemented by clients.
+ * 
+ * @see IRewriteRuleRightHandSide
+ * 
  * @author maamria
  *
  */

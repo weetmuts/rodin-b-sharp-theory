@@ -22,10 +22,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofRulesBlock extends TheoryElement implements IProofRulesBlock{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public ProofRulesBlock(String name, IRodinElement parent) {
 		super(name, parent);
 	}

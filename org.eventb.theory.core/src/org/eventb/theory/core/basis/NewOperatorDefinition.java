@@ -60,7 +60,7 @@ public class NewOperatorDefinition extends TheoryElement implements INewOperator
 	}
 
 	@Override
-	public IOperatorWDCondition[] getIOperatorWDConditions()
+	public IOperatorWDCondition[] getOperatorWDConditions()
 			throws RodinDBException {
 		// there should be just one SC
 		return getChildrenOfType(IOperatorWDCondition.ELEMENT_TYPE);

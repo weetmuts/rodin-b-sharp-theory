@@ -32,10 +32,6 @@ import org.rodinp.core.RodinDBException;
 public class SCRewriteRuleRightHandSide extends TheoryElement implements
 		ISCRewriteRuleRightHandSide {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCRewriteRuleRightHandSide(String name, IRodinElement parent) {
 		super(name, parent);
 	}

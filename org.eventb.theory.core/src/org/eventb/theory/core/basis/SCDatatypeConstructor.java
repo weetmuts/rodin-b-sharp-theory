@@ -21,10 +21,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCDatatypeConstructor extends SCIdentifierElement implements ISCDatatypeConstructor{
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public SCDatatypeConstructor(String name, IRodinElement parent) {
 		super(name, parent);
 	}
