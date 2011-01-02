@@ -44,7 +44,7 @@ public class TheoryStaticChecker extends StaticChecker {
 		}
 
 	}
-	
+	// TODO Remove this when contextual information of POs become available
 	@Override
 	public void clean(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {

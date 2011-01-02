@@ -63,7 +63,7 @@ public class SimpleDatatypeExtension implements IDatatypeExtension{
 
 	@Override
 	public void addConstructors(IConstructorMediator mediator) {
-		// no constrcutors
+		// no constructors
 		
 	}
 

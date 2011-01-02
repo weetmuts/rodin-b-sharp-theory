@@ -160,7 +160,7 @@ public final class MathExtensionsFactory {
 	 * @param directDefinition the direct definition
 	 * @param wdPredicate the WD condition
 	 * @param isAssociative
-	 * @return the appopriate typing rule
+	 * @return the appropriate typing rule
 	 */
 	public ExpressionOperatorTypingRule getTypingRule(List<GivenType> typeParameters,
 			Collection<IOperatorArgument> operatorArguments, Expression directDefinition, 
@@ -181,7 +181,7 @@ public final class MathExtensionsFactory {
 	 * @param operatorArguments the operator arguments
 	 * @param directDefinition the direct definition
 	 * @param wdPredicate the WD condition
-	 * @return the appopriate typing rule
+	 * @return the appropriate typing rule
 	 */
 	public PredicateOperatorTypingRule getTypingRule(List<GivenType> typeParameters,
 			Collection<IOperatorArgument> operatorArguments, Predicate directDefinition, 
