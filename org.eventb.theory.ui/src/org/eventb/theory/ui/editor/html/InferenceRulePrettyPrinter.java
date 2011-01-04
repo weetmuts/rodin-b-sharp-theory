@@ -33,7 +33,7 @@ public class InferenceRulePrettyPrinter extends DefaultPrettyPrinter {
 				String inter = rule.isInteractive()?
 						Messages.rule_isInteractive: Messages.rule_isUnInteractive;
 				
-				ps.appendString(wrapString(label), 
+				ps.appendString(wrapString("\u2022"+label), 
 						getHTMLBeginForCSSClass(INF_LABEL, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //

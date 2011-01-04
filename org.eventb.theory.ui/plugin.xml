@@ -196,6 +196,7 @@
             defaultColumn="1"
             imagePath="icons/inv_obj.gif"
             prefix="direct definition"
+            prettyPrinter="org.eventb.theory.ui.editor.html.OperatorDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.directOperatorDefinition">
       </element>
       <element

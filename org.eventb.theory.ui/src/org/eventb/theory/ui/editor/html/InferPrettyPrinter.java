@@ -14,7 +14,7 @@ import org.rodinp.core.RodinDBException;
 
 public class InferPrettyPrinter extends DefaultPrettyPrinter {
 
-private static final String I_PRED = "axiomPredicate"; 
+	private static final String I_PRED = "axiomPredicate"; 
 	
 	private static final String ONE_SPACES = " ";
 	
@@ -28,7 +28,7 @@ private static final String I_PRED = "axiomPredicate";
 			IInfer i = (IInfer) elt;
 			try {
 				String pred = i.getPredicateString();
-				ps.appendString(wrapString("\u22a2"+ONE_SPACES+pred), 
+				ps.appendString(wrapString("\u25aa"+ONE_SPACES+pred), 
 						getHTMLBeginForCSSClass(I_PRED, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //
@@ -48,6 +48,7 @@ private static final String I_PRED = "axiomPredicate";
 	@Override
 	public boolean appendSpecialPrefix(IInternalElement parent,
 			String defaultKeyword, IPrettyPrintStream ps, boolean empty) {
+		ps.appendKeyword("____________________");
 		return true;
 	}
 

@@ -47,7 +47,7 @@ public abstract class AbstractDeployWizardPageOne extends WizardPage{
 		
 		btnRebuildProjects = new Button(container, SWT.CHECK);
 		btnRebuildProjects.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		btnRebuildProjects.setText("Rebuild workspace projects (recommended).");
+		btnRebuildProjects.setText("Rebuild workspace projects. \n\n Rebuild is recommended to check models against the new mathematical language.");
 		btnRebuildProjects.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
