@@ -33,8 +33,8 @@ import org.rodinp.core.IRodinElement;
 public abstract class TheoryInferenceClausesModule<C extends IInferenceClause, S extends ISCInferenceClause> 
 extends SCProcessorModule{
 
-	private ITypeEnvironment typeEnvironment;
-	private FormulaFactory factory;
+	protected ITypeEnvironment typeEnvironment;
+	protected FormulaFactory factory;
 	private int index = 1;
 	protected InferenceIdentifiers inferenceIdentifiers;
 	protected RuleAccuracyInfo ruleAccuracyInfo;

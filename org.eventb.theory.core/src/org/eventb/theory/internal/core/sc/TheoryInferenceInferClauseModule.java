@@ -7,8 +7,12 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc;
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IModuleType;
@@ -46,6 +50,14 @@ public class TheoryInferenceInferClauseModule extends TheoryInferenceClausesModu
 
 	@Override
 	protected void addIdentifiers(Predicate predicate) {
+		Collection<GivenType> types = predicate.getGivenTypes();
+		FreeIdentifier iTypes[] = new FreeIdentifier[types.size()];
+		int i = 0 ;
+		for (GivenType type : types){
+			iTypes[i] = factory.makeFreeIdentifier(type.getName(), null, typeEnvironment.getType(type.getName()));
+			i++;
+		}
+		inferenceIdentifiers.addInferIdentifiers(iTypes);
 		inferenceIdentifiers.addInferIdentifiers(predicate.getFreeIdentifiers());
 		
 	}
