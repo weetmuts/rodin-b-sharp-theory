@@ -41,27 +41,21 @@
          id="org.eventb.theory.core"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="0.6.0"
          unpack="false"/>
 
    <plugin
          id="org.eventb.theory.rbp"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="0.6.0"
          unpack="false"/>
 
    <plugin
          id="org.eventb.theory.ui"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="0.6.0"
          unpack="false"/>
-
-   <plugin
-         id="org.eventb.theory.help"
-         download-size="0"
-         install-size="0"
-         version="1.0.0"/>
 
 </feature>
