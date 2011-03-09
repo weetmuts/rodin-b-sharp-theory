@@ -79,9 +79,9 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 	}
 
 	@Override
-	protected TreeNode<IAntecedent> getNode() {
+	protected TreeNode<IAntecedent> getNode(IAntecedent node) {
 		// TODO Auto-generated method stub
-		return new InferenceDerivationTree(value, parent);
+		return new InferenceDerivationTree(node, this);
 	}
 	
 	/**
@@ -91,6 +91,10 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 	 */
 	public boolean continueDeriving(){
 		return deriveFurther;
+	}
+	
+	public String toString(){
+		return value.getGoal().toString() + "\n - "+ children;
 	}
 	
 }

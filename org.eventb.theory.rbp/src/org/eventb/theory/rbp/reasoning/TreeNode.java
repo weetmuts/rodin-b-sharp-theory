@@ -63,7 +63,7 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 	 * @param child the child to add
 	 */
 	protected void addChild(E child){
-		TreeNode<E> newNode = getNode();
+		TreeNode<E> newNode = getNode(child);
 		childrenMap.put(child, newNode);
 		children.add(newNode);
 	}
@@ -79,7 +79,8 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 		}
 		else {
 			for (TreeNode<E> node : children){
-				leafs.addAll(node.getLeafs());
+				if (node.getLeafs() != null)
+					leafs.addAll(node.getLeafs());
 			}
 		}
 		return leafs;
@@ -89,5 +90,5 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 	 * Returns a fresh tree node.
 	 * @return a tree node
 	 */
-	protected abstract TreeNode<E> getNode();
+	protected abstract TreeNode<E> getNode(E node);
 }
