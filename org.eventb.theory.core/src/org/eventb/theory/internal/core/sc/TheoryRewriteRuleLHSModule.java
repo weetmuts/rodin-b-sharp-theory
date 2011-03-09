@@ -5,12 +5,16 @@ import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
@@ -74,6 +78,13 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 		if(lhsForm instanceof FreeIdentifier){
 			createProblemMarker(rule, FORMULA_ATTRIBUTE,
 					TheoryGraphProblem.LHSIsIdentErr);
+			return false;
+		}
+		WDStrictChecker checker = new WDStrictChecker();
+		lhsForm.accept(checker);
+		if (!checker.wdStrict){
+			createProblemMarker(rule, FORMULA_ATTRIBUTE, 
+					TheoryGraphProblem.LHS_IsNotWDStrict);
 			return false;
 		}
 		if(!CoreUtilities.checkAgainstTypeParameters(rule, lhsForm, typeEnvironment, this)){
@@ -146,5 +157,51 @@ public class TheoryRewriteRuleLHSModule extends SCFilterModule {
 			return null;
 		}
 		return formula;
+	}
+	
+	public static class WDStrictChecker extends DefaultVisitor{
+		
+		boolean wdStrict = true;
+		
+		public WDStrictChecker(){
+			
+		}
+		
+		@Override
+		public boolean enterEXISTS(QuantifiedPredicate pred) {
+			wdStrict = false;
+			return false;
+		}
+		
+		@Override
+		public boolean enterFORALL(QuantifiedPredicate pred) {
+			wdStrict = false;
+			return false;
+		}
+		
+		@Override
+		public boolean enterLAND(AssociativePredicate pred) {
+			wdStrict = false;
+			return false;
+		}
+		
+		@Override
+		public boolean enterLOR(AssociativePredicate pred) {
+			wdStrict = false;
+			return false;
+		}
+		
+		@Override
+		public boolean enterLIMP(BinaryPredicate pred) {
+			wdStrict = false;
+			return false;
+		}
+		
+		@Override
+		public boolean enterLEQV(BinaryPredicate pred) {
+			wdStrict = false;
+			return false;
+		}
+		
 	}
 }

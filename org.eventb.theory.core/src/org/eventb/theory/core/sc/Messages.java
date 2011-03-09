@@ -126,6 +126,7 @@ public final class Messages {
 	public static String scuser_ImportTheoryNotExist;
 	public static String scuser_RedundantImportWarn;
 	public static String scuser_RuleRequireOneInfer;
+	public static String scuser_LHS_IsNotWDStrict;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

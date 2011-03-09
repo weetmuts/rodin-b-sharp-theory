@@ -357,6 +357,9 @@ public abstract class TheoryElement extends EventBElement implements
 	public Formula<?> getSCFormula(FormulaFactory ff, ITypeEnvironment typeEnvironment) throws RodinDBException {
 		String form = getFormula();
 		Formula<?> formula = parseFormula(form, ff, false);
+		if(formula == null){
+			return null;
+		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
 		if(result.hasProblem()){
 			return null;
