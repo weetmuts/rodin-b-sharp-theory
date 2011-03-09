@@ -48,7 +48,7 @@ public class InferPrettyPrinter extends DefaultPrettyPrinter {
 	@Override
 	public boolean appendSpecialPrefix(IInternalElement parent,
 			String defaultKeyword, IPrettyPrintStream ps, boolean empty) {
-		ps.appendKeyword("&nbsp&nbsp&nbsp--------------------");
+		ps.appendKeyword("	------------------");
 		return true;
 	}
 
