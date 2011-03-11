@@ -115,14 +115,15 @@ final class Binding implements IBinding {
 		if (isImmutable)
 			throw new UnsupportedOperationException(
 					"Trying to add mappings after the matching process finished.");
-		for (FreeIdentifier ident : another.getMappings().keySet()) {
-			if (!putMapping(ident, another.getMappings().get(ident))) {
+		Binding anotherBinding = (Binding) another;
+		for (FreeIdentifier ident : anotherBinding.binding.keySet()) {
+			if (!putMapping(ident, anotherBinding.binding.get(ident))) {
 				return false;
 			}
 		}
-		for (PredicateVariable var : another.getPredicateMappings().keySet()) {
+		for (PredicateVariable var : anotherBinding.predBinding.keySet()) {
 			if (!putPredicateMapping(var,
-					another.getPredicateMappings().get(var))) {
+					anotherBinding.predBinding.get(var))) {
 				return false;
 			}
 		}
