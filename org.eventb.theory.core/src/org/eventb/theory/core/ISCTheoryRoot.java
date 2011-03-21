@@ -35,6 +35,10 @@ ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
 	IInternalElementType<ISCTheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheoryRoot");
 	
+	public ISCImportTheory getImportTheory(String name);
+	
+	public ISCImportTheory[] getImportTheories() throws RodinDBException;
+	
 	/**
 	 * <p>Returns the global type environment of this SC theory.</p>
 	 * @param factory

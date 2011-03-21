@@ -72,4 +72,7 @@ public class TheoryAttributes {
 	
 	public static IAttributeType.String GROUP_ID_ATTRIBUTE = RodinCore
 		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".groupID");
+	
+	public static IAttributeType.Handle IMPORT_THEORY_ATTRIBUTE = RodinCore
+		.getHandleAttrType(TheoryPlugin.PLUGIN_ID + ".importTheory");
 }

@@ -110,6 +110,13 @@
             typeId="org.eventb.theory.core.syntaxSymbol">
       </textAttribute>
       <choiceAttribute
+            class="org.eventb.theory.internal.ui.attr.ImportTheoryAttributeManipulation"
+            expandsHorizontally="false"
+            id="org.eventb.theory.ui.importTheory"
+            required="true"
+            typeId="org.eventb.theory.core.importTheory">
+      </choiceAttribute>
+      <choiceAttribute
             class="org.eventb.theory.internal.ui.attr.AssociativeAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.theory.ui.associative"
@@ -138,6 +145,12 @@
             prefix="THEORY"
             prettyPrinter="org.eventb.theory.ui.editor.html.ComponentPrettyPrinter"
             typeId="org.eventb.theory.core.theoryRoot">
+      </element>
+      <element
+            defaultColumn="0"
+            imagePath="icons/thy.gif"
+            prefix="IMPORTS"
+            typeId="org.eventb.theory.core.importTheory">
       </element>
       <element
             defaultColumn="0"
@@ -258,6 +271,10 @@
       <childRelation
             parentTypeId="org.eventb.theory.core.theoryRoot">
          <childType
+               priority="5"
+               typeId="org.eventb.theory.core.importTheory">
+         </childType>
+         <childType
                priority="10"
                typeId="org.eventb.theory.core.typeParameter">
          </childType>
@@ -351,6 +368,12 @@
             elementTypeId="org.eventb.theory.core.theoryRoot">
          <attributeReference
                descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.theory.core.importTheory">
+         <attributeReference
+               descriptionId="org.eventb.theory.ui.importTheory">
          </attributeReference>
       </attributeRelation>
       

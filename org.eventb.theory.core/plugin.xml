@@ -21,6 +21,11 @@
    <extension
          point="org.rodinp.core.attributeTypes">
       <attributeType
+            id="importTheory"
+            kind="handle"
+            name="%importTheoryAttr">
+      </attributeType>
+      <attributeType
             id="associative"
             kind="boolean"
             name="%associativeAttr">
@@ -119,6 +124,11 @@
             name="%theoryRoot">
       </internalElementType>
       <internalElementType
+            class="org.eventb.theory.core.basis.ImportTheory"
+            id="importTheory"
+            name="%importTheory">
+      </internalElementType>
+      <internalElementType
             class="org.eventb.theory.core.basis.TypeParameter"
             id="typeParameter"
             name="%typeParameter">
@@ -210,6 +220,11 @@
             class="org.eventb.theory.core.basis.SCTheoryRoot"
             id="scTheoryRoot"
             name="%scTheoryRoot">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCImportTheory"
+            id="scImportTheory"
+            name="%scImportTheory">
       </internalElementType>
       <internalElementType
            class="org.eventb.theory.core.basis.UseTheory"

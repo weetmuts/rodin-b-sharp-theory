@@ -25,6 +25,7 @@ import static org.eventb.theory.core.TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TOOL_TIP_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.IMPORT_THEORY_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -47,12 +48,14 @@ import org.eventb.theory.core.IDescriptionElement;
 import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IFormulaTypeElement;
 import org.eventb.theory.core.IGivenTypeElement;
+import org.eventb.theory.core.IImportTheoryElement;
 import org.eventb.theory.core.IInteractiveElement;
 import org.eventb.theory.core.INotationTypeElement;
 import org.eventb.theory.core.IOperatorGroupElement;
 import org.eventb.theory.core.IReasoningTypeElement;
 import org.eventb.theory.core.ISCFormulaElement;
 import org.eventb.theory.core.ISCGivenTypeElement;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISyntaxSymbolElement;
 import org.eventb.theory.core.IToolTipElement;
 import org.eventb.theory.core.ITypeElement;
@@ -74,7 +77,7 @@ public abstract class TheoryElement extends EventBElement implements
 	ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
 	IInteractiveElement, IToolTipElement, IDefinitionalElement, IGivenTypeElement,
 	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement, IValidatedElement,
-	IOperatorGroupElement
+	IOperatorGroupElement, IImportTheoryElement
 {
 	
 	public static final String BACKWARD_REASONING_TYPE = "backward";
@@ -419,6 +422,18 @@ public abstract class TheoryElement extends EventBElement implements
 	@Override
 	public void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException{
 		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
+	}
+	
+	public boolean hasImportTheory() throws RodinDBException{
+		return hasAttribute(IMPORT_THEORY_ATTRIBUTE);
+	}
+	
+	public ISCTheoryRoot getImportTheory() throws RodinDBException{
+		return (ISCTheoryRoot) getAttributeValue(IMPORT_THEORY_ATTRIBUTE);
+	}
+	
+	public void setImportTheory(ISCTheoryRoot root, IProgressMonitor monitor) throws RodinDBException{
+		setAttributeValue(IMPORT_THEORY_ATTRIBUTE, root, monitor);
 	}
 
 	/**

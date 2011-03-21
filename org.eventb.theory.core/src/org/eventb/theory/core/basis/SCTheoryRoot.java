@@ -13,6 +13,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCDatatypeDefinition;
+import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
@@ -131,5 +132,17 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 	@Override
 	public IDeployedTheoryRoot[] getRelatedSources() throws CoreException {
 		return DB_TCFacade.getDeployedTheories(getRodinProject());
+	}
+
+	@Override
+	public ISCImportTheory getImportTheory(String name) {
+		// TODO Auto-generated method stub
+		return getInternalElement(ISCImportTheory.ELEMENT_TYPE,name);
+	}
+
+	@Override
+	public ISCImportTheory[] getImportTheories() throws RodinDBException {
+		// TODO Auto-generated method stub
+		return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
 	}
 }
