@@ -5,10 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.maths.extensions.dependencies;
+package org.eventb.theory.core.maths.extensions.dependencies;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.IEventBRoot;
@@ -76,49 +75,4 @@ public interface IDependenciesGraph<E extends IEventBRoot> {
 	 */
 	public boolean contains(E element);
 	
-	/**
-	 * A basic implementation of a node that holds a reference to an Event-B root.
-	 * @author maamria
-	 *
-	 * @param <E> the type of the Event-B root
-	 */
-	static final class Node<E>{
-		E element;
-		Set<Node<E>> connected;
-		
-		public Node(E element){
-			this.element = element;
-			this.connected = new HashSet<Node<E>>();
-		}
-		
-		public String toString(){
-			return element.toString();
-		}
-		
-		@SuppressWarnings("unchecked")
-		public boolean equals(Object o){
-			if(o == this)
-				return true;
-			if(!(o instanceof Node))
-				return false;
-			Node<E> other = (Node<E>) o;
-			return element.equals(other.element);
-		}
-		
-		/**
-		 * Adds the given node to the set of nodes reachable from this node.
-		 * @param node the node to add
-		 */
-		public void addConnectedNode(Node<E> node){
-			connected.add(node);
-		}
-		
-		/**
-		 * Returns the element referenced by this node.
-		 * @return the node element
-		 */
-		public E getElement(){
-			return element;
-		}
-	}
 }

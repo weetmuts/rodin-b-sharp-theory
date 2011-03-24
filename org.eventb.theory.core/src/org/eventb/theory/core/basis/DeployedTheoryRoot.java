@@ -7,10 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCDatatypeDefinition;
@@ -106,19 +102,5 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 			throws RodinDBException {
 		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCNewOperatorDefinition.ELEMENT_TYPE);
-	}
-
-	@Override
-	public IDeployedTheoryRoot[] getRelatedSources() throws CoreException {
-		// TODO Auto-generated method stub
-		Set<IDeployedTheoryRoot> sources = new LinkedHashSet<IDeployedTheoryRoot>();
-		IUseTheory[] used = getUsedTheories();
-		for (IUseTheory use : used){
-			if(use.hasUseTheory()){
-				if(use.getUsedTheory().exists())
-					sources.add(use.getUsedTheory());
-			}
-		}
-		return sources.toArray(new IDeployedTheoryRoot[sources.size()]);
 	}
 }

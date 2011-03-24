@@ -49,6 +49,7 @@ public class TheoryModule extends SCProcessorModule {
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		// TODO move this to import theory module
 		FormulaFactory factory = repository.getFormulaFactory().withExtensions(
 				(MathExtensionsUtilities.singletonExtension(MathExtensionsUtilities.COND)));
 		repository.setFormulaFactory(factory);

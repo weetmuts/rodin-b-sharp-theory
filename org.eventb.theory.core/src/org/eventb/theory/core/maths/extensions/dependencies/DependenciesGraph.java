@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.maths.extensions.dependencies;
+package org.eventb.theory.core.maths.extensions.dependencies;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,19 +25,19 @@ import org.eventb.core.IEventBRoot;
  */
 public abstract class DependenciesGraph<E extends IEventBRoot> implements IDependenciesGraph<E>{
 
-	protected Map<E, Node<E>> verticesMap;
-	protected SortedSet<Node<E>> vertices;
+	protected Map<E, DependencyNode<E>> verticesMap;
+	protected SortedSet<DependencyNode<E>> vertices;
 	
 	public DependenciesGraph(){
-		verticesMap = new LinkedHashMap<E, Node<E>>();
-		vertices = new TreeSet<Node<E>>(getPartialOrder());
+		verticesMap = new LinkedHashMap<E, DependencyNode<E>>();
+		vertices = new TreeSet<DependencyNode<E>>(getPartialOrder());
 	}
 	
 	/**
 	 * Returns the relation used to order the Event-B roots stored in this graph.
 	 * @return the partial order
 	 */
-	protected abstract Comparator<Node<E>> getPartialOrder();
+	protected abstract Comparator<DependencyNode<E>> getPartialOrder();
 	
 	/**
 	 * Returns the elements which are reachable from the given elements.
@@ -64,9 +64,9 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 			return false;
 		}
 		for (E element : elements){
-			verticesMap.put(element, new Node<E>(element));
+			verticesMap.put(element, new DependencyNode<E>(element));
 		}
-		for (Node<E> vertex : verticesMap.values()){
+		for (DependencyNode<E> vertex : verticesMap.values()){
 			E element = vertex.element;
 			E[] connectedElements = getEdgesOut(element);
 			for (E e : connectedElements){
@@ -76,11 +76,8 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 				}
 				vertex.addConnectedNode(verticesMap.get(e));
 			}
-			// FIXED Bug: the set of vertices was not augmented with the new vertex
+			//  FIXED Bug: the set of vertices was not augmented with the new vertex
 			vertices.add(vertex);
-		}
-		if(detectCycle()){
-			throw new CycleException();
 		}
 		return true;
 	}
@@ -88,21 +85,21 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 	@Override
 	public Set<E> getUpperSet(E element) {
 		LinkedHashSet<E> set = new LinkedHashSet<E>();
-		Node<E> correspNode = verticesMap.get(element);
+		DependencyNode<E> correspNode = verticesMap.get(element);
 		if(correspNode == null){
 			throw new IllegalArgumentException(
 					"Method should only be invoked on an element that is included in the graph.");
 		}
-		Set<Node<E>> upperSet = getUpperSet(correspNode);
-		for (Node<E> node : upperSet){
+		Set<DependencyNode<E>> upperSet = getUpperSet(correspNode);
+		for (DependencyNode<E> node : upperSet){
 			set.add(node.element);
 		}
 		return set;
 	}
 	
-	private Set<Node<E>> getUpperSet(Node<E> node){
-		SortedSet<Node<E>> upper = new TreeSet<Node<E>>(getPartialOrder());
-		for (Node<E> n : node.connected){
+	private Set<DependencyNode<E>> getUpperSet(DependencyNode<E> node){
+		SortedSet<DependencyNode<E>> upper = new TreeSet<DependencyNode<E>>(getPartialOrder());
+		for (DependencyNode<E> n : node.connected){
 			upper.add(n);
 			upper.addAll(getUpperSet(n));
 		}
@@ -112,20 +109,20 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 	@Override
 	public Set<E> getLowerSet(E element) {
 		Set<E> set = new LinkedHashSet<E>();
-		Node<E> correspNode = verticesMap.get(element);
+		DependencyNode<E> correspNode = verticesMap.get(element);
 		if(correspNode == null){
 			throw new IllegalArgumentException(
 					"Method should only be invoked on an element that is included in the graph.");
 		}
-		for (Node<E> node : getLowerSet(correspNode)){
+		for (DependencyNode<E> node : getLowerSet(correspNode)){
 			set.add(node.element);
 		}
 		return set;
 	}
 	
-	private Set<Node<E>> getLowerSet(Node<E> node){
-		SortedSet<Node<E>> lower = new TreeSet<Node<E>>(getPartialOrder());
-		for (Node<E> n : vertices){
+	private Set<DependencyNode<E>> getLowerSet(DependencyNode<E> node){
+		SortedSet<DependencyNode<E>> lower = new TreeSet<DependencyNode<E>>(getPartialOrder());
+		for (DependencyNode<E> n : vertices){
 			if(getUpperSet(n).contains(node)){
 				lower.add(n);
 			}
@@ -136,7 +133,7 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 	@Override
 	public Set<E> getElements() {
 		Set<E> set = new LinkedHashSet<E>();
-		for (Node<E> node : vertices){
+		for (DependencyNode<E> node : vertices){
 			set.add(node.element);
 		}
 		return set;
@@ -144,19 +141,19 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 
 	@Override
 	public Set<E> exclude(E element) {
-		Node<E> node = verticesMap.get(element);
+		DependencyNode<E> node = verticesMap.get(element);
 		if(node == null)
 			throw new IllegalArgumentException(
 				"Method should only be invoked on an element that is included in the graph.");
 		Set<E> set = new LinkedHashSet<E>();
-		for (Node<E> dep : exclude(node)){
+		for (DependencyNode<E> dep : exclude(node)){
 			set.add(dep.element);
 		}
 		return set;
 	}
 	
-	private Set<Node<E>> exclude(Node<E> node){
-		SortedSet<Node<E>> set = new TreeSet<Node<E>>(getPartialOrder());
+	private Set<DependencyNode<E>> exclude(DependencyNode<E> node){
+		SortedSet<DependencyNode<E>> set = new TreeSet<DependencyNode<E>>(getPartialOrder());
 		set.addAll(vertices);
 		set.remove(node);
 		set.removeAll(getLowerSet(node));
@@ -173,18 +170,4 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 		verticesMap.clear();
 	}
 	
-	/**
-	 * Detects whether a cycle exists in this graph (O(N^2) complexity N number of nodes).
-	 * @return whether a cycle exists
-	 */
-	private boolean detectCycle() {
-		for (Node<E> n1 : vertices){
-			for(Node<E> n2 : vertices){
-				if(n1 != n2 && getUpperSet(n1).contains(n2) && getUpperSet(n2).contains(n1)){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 }

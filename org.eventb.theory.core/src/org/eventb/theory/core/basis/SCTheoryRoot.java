@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
@@ -127,11 +126,6 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 		IDeployedTheoryRoot root = (IDeployedTheoryRoot) getDeployedTheoryFile(
 				bareName).getRoot();
 		return root;
-	}
-
-	@Override
-	public IDeployedTheoryRoot[] getRelatedSources() throws CoreException {
-		return DB_TCFacade.getDeployedTheories(getRodinProject());
 	}
 
 	@Override

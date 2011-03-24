@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -68,11 +67,4 @@ public interface IFormulaExtensionsSource extends IInternalElement{
 	 * @throws RodinDBException
 	 */
 	public ISCNewOperatorDefinition[] getSCNewOperatorDefinitions() throws RodinDBException;
-	
-	/**
-	 * Returns the sources that are related (imported or used) by this source.
-	 * @return all related sources
-	 * @throws CoreException
-	 */
-	public IDeployedTheoryRoot[] getRelatedSources() throws CoreException;
 }

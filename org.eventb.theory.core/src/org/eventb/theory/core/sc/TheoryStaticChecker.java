@@ -44,17 +44,4 @@ public class TheoryStaticChecker extends StaticChecker {
 		}
 
 	}
-	// TODO Remove this when contextual information of POs become available
-	@Override
-	public void clean(IFile source, IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		IRodinFile rodinFile = RodinCore.valueOf(file);
-		if(rodinFile != null && DB_TCFacade.originatedFromTheory(rodinFile)){
-			if (DB_TCFacade.doesDeployedTheoryExist(rodinFile.getRoot().getElementName(), rodinFile.getRodinProject())){
-				return;
-			}
-		}
-		super.clean(source, file, monitor);
-	}
-
 }

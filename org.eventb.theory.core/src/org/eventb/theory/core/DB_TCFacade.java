@@ -27,7 +27,6 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.theory.core.basis.TheoryDeployer;
-import org.eventb.theory.core.maths.extensions.TheoryFormulaExtensionProvider;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
@@ -465,11 +464,11 @@ public class DB_TCFacade {
 	}
 
 	/**
-	 * Returns whether deployed theory <code>importer</code> uses theory
-	 * <code>importee</code>.
+	 * Returns whether deployed theory <code>user</code> uses theory
+	 * <code>user</code>.
 	 * 
-	 * @param importer
-	 * @param importee
+	 * @param user
+	 * @param used
 	 * @return whether use relationship exists
 	 * @throws CoreException
 	 */
@@ -478,18 +477,109 @@ public class DB_TCFacade {
 		if (user == null || !user.exists()) {
 			return false;
 		}
-		IRodinProject project = user.getRodinProject();
-		String importeeName = used.getComponentName();
-		List<String> theories = getUsedTheories(user);
-		for (String theory : theories) {
-			IDeployedTheoryRoot importedTheory = DB_TCFacade.getDeployedTheory(
-					theory, project);
-			if (theory.equals(importeeName)
-					|| doesTheoryUseTheory(importedTheory, used)) {
+		String usedName = used.getComponentName();
+		List<IDeployedTheoryRoot> theories = getUsedTheories(user);
+		for (IDeployedTheoryRoot theory : theories) {
+			if (theory.getComponentName().equals(usedName)
+					|| doesTheoryUseTheory(theory, used)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns whether theory <code>importer</code> imports SC theory
+	 * <code>importee</code>.
+	 * 
+	 * @param importer
+	 * @param importee
+	 * @return whether import relationship exists
+	 * @throws CoreException
+	 */
+	public static boolean doesTheoryImportTheory(ITheoryRoot importer,
+			ISCTheoryRoot importee) throws CoreException {
+		if (importer == null || !importer.exists()) {
+			return false;
+		}
+		String importeeName = importee.getComponentName();
+		List<ISCTheoryRoot> theories = getImportedTheories(importer);
+		for (ISCTheoryRoot theory : theories) {
+			if (theory.getComponentName().equals(importeeName)
+					|| doesTheoryImportTheory(theory, importee)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether SC theory <code>importer</code> imports SC theory
+	 * <code>importee</code>.
+	 * 
+	 * @param importer
+	 * @param importee
+	 * @return whether import relationship exists
+	 * @throws CoreException
+	 */
+	public static boolean doesTheoryImportTheory(ISCTheoryRoot importer,
+			ISCTheoryRoot importee) throws CoreException {
+		if (importer == null || !importer.exists()) {
+			return false;
+		}
+		String importeeName = importee.getComponentName();
+		List<ISCTheoryRoot> theories = getImportedTheories(importer);
+		for (ISCTheoryRoot theory : theories) {
+			if (theory.getComponentName().equals(importeeName)
+					|| doesTheoryImportTheory(theory, importee)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the SC theories imported by the given SC theory.
+	 * 
+	 * @param importer
+	 *            the SC theory
+	 * @return the list of imported SC theories
+	 * @throws CoreException
+	 */
+	public static List<ISCTheoryRoot> getImportedTheories(ISCTheoryRoot importer)
+			throws CoreException {
+		if (importer == null || !importer.exists()) {
+			return null;
+		}
+		ISCImportTheory[] importedTheories = importer.getImportTheories();
+		List<ISCTheoryRoot> result = new ArrayList<ISCTheoryRoot>();
+		for (ISCImportTheory use : importedTheories) {
+			if(use.hasImportTheory())
+				result.add(use.getImportTheory());
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the SC theories imported by the given theory.
+	 * 
+	 * @param importer
+	 *            the theory
+	 * @return the list of imported SC theories
+	 * @throws CoreException
+	 */
+	public static List<ISCTheoryRoot> getImportedTheories(ITheoryRoot importer)
+			throws CoreException {
+		if (importer == null || !importer.exists()) {
+			return null;
+		}
+		IImportTheory[] importedTheories = importer.getImportTheories();
+		List<ISCTheoryRoot> result = new ArrayList<ISCTheoryRoot>();
+		for (IImportTheory use : importedTheories) {
+			if(use.hasImportTheory())
+				result.add(use.getImportTheory());
+		}
+		return result;
 	}
 
 	/**
@@ -500,17 +590,73 @@ public class DB_TCFacade {
 	 * @return the list of used theories
 	 * @throws CoreException
 	 */
-	public static List<String> getUsedTheories(IDeployedTheoryRoot user)
+	public static List<IDeployedTheoryRoot> getUsedTheories(IDeployedTheoryRoot user)
 			throws CoreException {
 		if (user == null || !user.exists()) {
 			return null;
 		}
 		IUseTheory[] usedTheories = user.getUsedTheories();
-		List<String> result = new ArrayList<String>();
+		List<IDeployedTheoryRoot> result = new ArrayList<IDeployedTheoryRoot>();
 		for (IUseTheory use : usedTheories) {
-			result.add(use.getUsedTheory().getComponentName());
+			if(use.hasUseTheory())
+				result.add(use.getUsedTheory());
 		}
 		return result;
+	}
+	
+	/**
+	 * Returns the list of SC theories that can be imported by the given unchecked theory.
+	 * 
+	 * <p> This method essentially avoids redundancy and circularity.
+	 * @param theory the unchecked theory
+	 * @return the list of potential imports
+	 * @throws CoreException
+	 */
+	public static ISCTheoryRoot[] getPotentialTheoryImports(ITheoryRoot theory)
+	throws CoreException{
+		IRodinProject project = theory.getRodinProject();
+		ISCTheoryRoot[] allSCRoots = getSCTheoryRoots(project, new TheoriesFilter<ISCTheoryRoot>() {
+
+			@Override
+			public boolean filter(ISCTheoryRoot theory) {
+				// TODO Auto-generated method stub
+				return theory.exists();
+			}
+		});
+		List<ISCTheoryRoot> potentialImports = new ArrayList<ISCTheoryRoot>();
+		ISCTheoryRoot theorySC = theory.getSCTheoryRoot();
+		for (ISCTheoryRoot root : allSCRoots){
+			if(
+					// not import oneself
+					!root.getComponentName().equals(theory.getComponentName()) &&
+					// no redundancy
+					!doesTheoryImportTheory(theory, root) &&
+					// no circularity
+					!doesTheoryImportTheory(root, theorySC)
+					){
+				potentialImports.add(root);
+			}
+		}
+		
+		return potentialImports.toArray(new ISCTheoryRoot[potentialImports.size()]);
+	}
+	
+	/**
+	 * A utility to return the names of a collection of internal elements.
+	 * @param elements the internal elements
+	 * @return the names of the elements
+	 */
+	public static String[] getInternalElementNames(IInternalElement... elements ){
+		if (elements == null){
+			// return an empty array of names TODO check this for safety
+			return new String[0];
+		}
+		String[] names = new String[elements.length];
+		int i = 0;
+		for (IInternalElement element : elements){
+			names[i++] = element.getElementName();
+		}
+		return names;
 	}
 
 	/**
@@ -579,7 +725,8 @@ public class DB_TCFacade {
 	 * @return formula factory
 	 */
 	public static FormulaFactory getCurrentFormulaFactory() {
-		return TheoryFormulaExtensionProvider.getCurrentFormulaFactory();
+		// TODO change this
+		return FormulaFactory.getDefault();
 	}
 
 	/**
@@ -688,5 +835,18 @@ public class DB_TCFacade {
 	public static boolean isReviewed(IPSStatus status) throws RodinDBException {
 		return (status.getConfidence() > IConfidence.PENDING)
 				&& (status.getConfidence() <= IConfidence.REVIEWED_MAX);
+	}
+	
+	/**
+	 * Returns whether the given element is within a project level scoped theory/component.
+	 * @param element the internal element
+	 * @return whether the given element is project level scoped
+	 */
+	public static boolean projectLevelScoped(IInternalElement element){
+		IRodinProject project = element.getRodinProject();
+		if(project.getElementName().equals(THEORIES_PROJECT)){
+			return false;
+		}
+		return true;
 	}
 }

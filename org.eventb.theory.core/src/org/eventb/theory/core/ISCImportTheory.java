@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -16,7 +17,7 @@ import org.rodinp.core.RodinCore;
  * @author maamria
  *
  */
-public interface ISCImportTheory extends IImportTheoryElement{
+public interface ISCImportTheory extends IImportTheoryElement, ITraceableElement{
 	
 	IInternalElementType<ISCImportTheory> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scImportTheory");

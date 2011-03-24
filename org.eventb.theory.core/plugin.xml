@@ -427,10 +427,20 @@
             name="%scTheoryModule">
       </rootType>
        <processorType
+             class="org.eventb.theory.internal.core.sc.ImportTheoryModule"
+             id="importTheoryModule"
+             name="%scImportTheoryModule"
+             parent="org.eventb.theory.core.theoryModule">
+       </processorType>
+      
+       <processorType
              class="org.eventb.theory.internal.core.sc.TypeParameterModule"
              id="typeParameterModule"
              name="%scTypeParameterModule"
              parent="org.eventb.theory.core.theoryModule">
+          <prereq
+                id="org.eventb.theory.core.importTheoryModule">
+          </prereq>
        </processorType>
        <processorType
              class="org.eventb.theory.internal.core.sc.DatatypeDefinitionModule"
@@ -738,6 +748,9 @@
          <config
                id="org.eventb.theory.core.thySC">
          </config>
+         <scModule
+               id="org.eventb.theory.core.importTheoryModule">
+         </scModule>
          <scModule
                id="org.eventb.theory.core.typeParameterModule">
          </scModule>

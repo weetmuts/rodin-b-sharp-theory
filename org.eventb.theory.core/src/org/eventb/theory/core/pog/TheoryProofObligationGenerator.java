@@ -10,6 +10,11 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
+/**
+ * 
+ * @author maamria
+ *
+ */
 public class TheoryProofObligationGenerator extends ProofObligationGenerator {
 
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)

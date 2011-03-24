@@ -304,8 +304,12 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			InferenceRuleBoth(
 			IMarker.SEVERITY_INFO, 
 			Messages.scuser_InferenceRuleBoth),
-			LHS_IsNotWDStrict(IMarker.SEVERITY_ERROR,
-			Messages.scuser_LHS_IsNotWDStrict)
+			LHS_IsNotWDStrict(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_LHS_IsNotWDStrict), 
+			ImportDepCircularity(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_ImportDepCircularity)
 	;
 
 	private int arity;

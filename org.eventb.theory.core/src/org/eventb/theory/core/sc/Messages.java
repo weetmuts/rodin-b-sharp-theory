@@ -26,6 +26,7 @@ public final class Messages {
 	public static String build_cleaning;
 	public static String build_extracting;
 	public static String build_runningSC;
+	public static String progress_TheoryImportTheories;
 	public static String progress_TheoryTypeParameters;
 	public static String progress_TheoryOperators;
 	public static String progress_TheoryDatatypes;
@@ -127,6 +128,7 @@ public final class Messages {
 	public static String scuser_RedundantImportWarn;
 	public static String scuser_RuleRequireOneInfer;
 	public static String scuser_LHS_IsNotWDStrict;
+	public static String scuser_ImportDepCircularity;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
