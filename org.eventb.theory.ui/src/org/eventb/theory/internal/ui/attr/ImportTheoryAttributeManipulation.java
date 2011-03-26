@@ -7,11 +7,13 @@
  *******************************************************************************/
 package org.eventb.theory.internal.ui.attr;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
 import org.eventb.theory.core.DB_TCFacade;
 import org.eventb.theory.core.IImportTheoryElement;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -62,7 +64,16 @@ public class ImportTheoryAttributeManipulation extends
 	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
+		ITheoryRoot ancestor = DB_TCFacade.getTheoryParent(element);
+		if(ancestor == null || !ancestor.exists()){
+			return new String[0];
+		}
+		try {
+			return DB_TCFacade.getInternalElementNames(DB_TCFacade.getPotentialTheoryImports(ancestor));
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new String[0];
 	}
 

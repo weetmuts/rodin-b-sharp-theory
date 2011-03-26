@@ -849,4 +849,13 @@ public class DB_TCFacade {
 		}
 		return true;
 	}
+	
+	/**
+	 * Returns whether the given project is the <code>MathExtensions</code> project.
+	 * @param project the Rodin project, must not be <code>null</code>
+	 * @return whether <code>project</code> is the <code>MathExtensions</code> project
+	 */
+	public static boolean isMathExtensionsProject(IRodinProject project){
+		return THEORIES_PROJECT.equals(project.getElementName());
+	}
 }

@@ -7,49 +7,57 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
+import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IRodinFile;
 
-public class TheoryFormulaExtensionProvider implements
-		IFormulaExtensionProvider {
+/**
+ * 
+ * @author maamria
+ *
+ */
+public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider {
 
-	public TheoryFormulaExtensionProvider() {
-		// TODO Auto-generated constructor stub
+	private final String PROVIDER_ID = TheoryPlugin.PLUGIN_ID
+		+ ".theoryExtensionsProvider";
+	
+	private WorkspaceManager manager;
+	
+	public TheoryFormulaExtensionProvider(){
+		manager = new WorkspaceManager();
 	}
-
+	
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return PROVIDER_ID;
 	}
 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
-		// TODO Auto-generated method stub
-		return null;
+		return manager.getFormulaExtensions(root);
 	}
 
 	@Override
 	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	@Override
 	public Set<IRodinFile> getCommonFiles(IEventBRoot root) {
-		// TODO Auto-generated method stub
-		return null;
+		// nothing to supply
+		return new LinkedHashSet<IRodinFile>();
 	}
 
 	@Override
 	public Set<IRodinFile> getProjectFiles(IEventBRoot root) {
-		// TODO Auto-generated method stub
-		return null;
+		// nothing to supply
+		return new LinkedHashSet<IRodinFile>();
 	}
 
 }
