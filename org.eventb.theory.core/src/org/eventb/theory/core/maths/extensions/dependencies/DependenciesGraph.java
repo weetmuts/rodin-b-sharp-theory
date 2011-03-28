@@ -25,11 +25,11 @@ import org.eventb.core.IEventBRoot;
  */
 public abstract class DependenciesGraph<E extends IEventBRoot> implements IDependenciesGraph<E>{
 
-	protected Map<E, DependencyNode<E>> verticesMap;
+	protected Map<String, DependencyNode<E>> verticesMap;
 	protected SortedSet<DependencyNode<E>> vertices;
 	
 	public DependenciesGraph(){
-		verticesMap = new LinkedHashMap<E, DependencyNode<E>>();
+		verticesMap = new LinkedHashMap<String, DependencyNode<E>>();
 		vertices = new TreeSet<DependencyNode<E>>(getPartialOrder());
 	}
 	
@@ -64,7 +64,7 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 			return false;
 		}
 		for (E element : elements){
-			verticesMap.put(element, new DependencyNode<E>(element));
+			verticesMap.put(element.getComponentName(), new DependencyNode<E>(element));
 		}
 		for (DependencyNode<E> vertex : verticesMap.values()){
 			E element = vertex.element;
@@ -85,7 +85,7 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 	@Override
 	public Set<E> getUpperSet(E element) {
 		LinkedHashSet<E> set = new LinkedHashSet<E>();
-		DependencyNode<E> correspNode = verticesMap.get(element);
+		DependencyNode<E> correspNode = verticesMap.get(element.getComponentName());
 		if(correspNode == null){
 			throw new IllegalArgumentException(
 					"Method should only be invoked on an element that is included in the graph.");

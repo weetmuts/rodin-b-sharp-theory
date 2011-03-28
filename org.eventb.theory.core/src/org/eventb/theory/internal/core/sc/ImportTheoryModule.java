@@ -12,6 +12,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -22,9 +25,12 @@ import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -103,6 +109,18 @@ public class ImportTheoryModule extends SCProcessorModule {
 			importedTheories.add(importRoot);
 		}
 		// need to patch up formula factory
+		SCTheoriesGraph graph = new SCTheoriesGraph();
+		graph.setElements(importedTheories);
+		FormulaFactory factory = repository.getFormulaFactory();
+		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
+		TheoryTransformer transformer = new TheoryTransformer();
+		for (ISCTheoryRoot root : graph.getElements()){
+			Set<IFormulaExtension> exts = transformer.transform(root, factory, typeEnvironment);
+			factory = factory.withExtensions(exts);
+			typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+		}
+		repository.setFormulaFactory(factory);
+		repository.setTypeEnvironment(typeEnvironment);
 	}
 
 	@Override

@@ -42,6 +42,10 @@ final class DependencyNode<E extends IEventBRoot> {
 		return element.equals(other.element);
 	}
 	
+	public int hashCode(){
+		return element.hashCode();
+	}
+	
 	/**
 	 * Adds the given node to the set of nodes reachable from this node.
 	 * @param node the node to add

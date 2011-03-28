@@ -272,7 +272,7 @@ public class DB_TCFacade {
 	 * @throws CoreException
 	 */
 	public static boolean originatedFromTheory(IRodinFile file)
-			throws CoreException {
+			 {
 		IRodinProject project = file.getRodinProject();
 		IRodinFile theory = project.getRodinFile(file.getBareName() + "."
 				+ THEORY_FILE_EXTENSION);

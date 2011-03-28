@@ -27,10 +27,10 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 	private final String PROVIDER_ID = TheoryPlugin.PLUGIN_ID
 		+ ".theoryExtensionsProvider";
 	
-	private WorkspaceManager manager;
+	private WorkspaceExtensionsManager manager;
 	
 	public TheoryFormulaExtensionProvider(){
-		manager = new WorkspaceManager();
+		manager = new WorkspaceExtensionsManager();
 	}
 	
 	@Override

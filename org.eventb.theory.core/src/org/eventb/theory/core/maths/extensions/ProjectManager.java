@@ -36,7 +36,6 @@ public class ProjectManager {
 	private IRodinProject project;
 	private ProjectTheoryGraph graph;
 
-	private boolean projectClosed;
 	private boolean deployedChanged;
 	private boolean scChanged;
 
@@ -114,11 +113,6 @@ public class ProjectManager {
 		IRodinElement element = delta.getElement();
 		IRodinElementDelta[] affected = delta.getAffectedChildren();
 		if (element instanceof IRodinProject) {
-			if (delta.getKind() == IRodinElementDelta.F_CLOSED) {
-				projectClosed = true;
-			} else if (delta.getKind() == IRodinElementDelta.F_OPENED) {
-				projectClosed = false;
-			}
 			for (IRodinElementDelta d : affected) {
 				processDelta(d);
 			}
@@ -143,14 +137,6 @@ public class ProjectManager {
 	 */
 	public boolean managingMathExtensionsProject() {
 		return project.getElementName().equals(DB_TCFacade.THEORIES_PROJECT);
-	}
-
-	public boolean isProjectClosed() {
-		return projectClosed;
-	}
-
-	public void setProjectClosed(boolean projectClosed) {
-		this.projectClosed = projectClosed;
 	}
 
 	public boolean hasDeployedChanged() {
