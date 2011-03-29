@@ -64,10 +64,15 @@ public class DatatypeDefinitionModule extends DatatypeModule {
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		ISCTheoryRoot targetRoot = (ISCTheoryRoot) target;
 		IDatatypeDefinition[] dtdef = root.getDatatypeDefinitions();
-		monitor.subTask(Messages.progress_TheoryDatatypes);
-		monitor.worked(1);
-		processDatatypes(dtdef, targetRoot, repository, monitor);
-		monitor.worked(2);
+		if (dtdef.length != 0) {
+			// get the datatype table
+			datatypeTable = (IDatatypeTable) repository
+					.getState(IDatatypeTable.STATE_TYPE);
+			monitor.subTask(Messages.progress_TheoryDatatypes);
+			monitor.worked(1);
+			processDatatypes(dtdef, targetRoot, repository, monitor);
+			monitor.worked(2);
+		}
 	}
 
 	/**
@@ -104,8 +109,7 @@ public class DatatypeDefinitionModule extends DatatypeModule {
 				if (error != null) {
 					createProblemMarker(dtd,
 							EventBAttributes.IDENTIFIER_ATTRIBUTE,
-							getAppropriateProblemForCode(error),
-							name);
+							getAppropriateProblemForCode(error), name);
 					theoryAccurate = false;
 					continue;
 				}
@@ -122,8 +126,8 @@ public class DatatypeDefinitionModule extends DatatypeModule {
 						continue;
 					}
 					ISCDatatypeDefinition scDtd = createSCIdentifierElement(
-									ISCDatatypeDefinition.ELEMENT_TYPE, dtd,
-									targetRoot, monitor);
+							ISCDatatypeDefinition.ELEMENT_TYPE, dtd,
+							targetRoot, monitor);
 					scDtd.setSource(dtd, monitor);
 					ITypeArgument typeArgs[] = dtd.getTypeArguments();
 					// referenced types state
@@ -148,8 +152,9 @@ public class DatatypeDefinitionModule extends DatatypeModule {
 									factory);
 					repository.setTypeEnvironment(typeEnvironment);
 					// the added type expression eg. List(A)
-					Type typeExpression = MathExtensionsUtilities.createTypeExpression(
-							name, typeArgumentsStrings, decoy);
+					Type typeExpression = MathExtensionsUtilities
+							.createTypeExpression(name, typeArgumentsStrings,
+									decoy);
 					repository
 							.setState(new AddedTypeExpression(typeExpression));
 
@@ -257,8 +262,7 @@ public class DatatypeDefinitionModule extends DatatypeModule {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
-		datatypeTable = (IDatatypeTable) repository
-				.getState(IDatatypeTable.STATE_TYPE);
+
 		theoryAccuracyInfo = (TheoryAccuracyInfo) repository
 				.getState(TheoryAccuracyInfo.STATE_TYPE);
 
@@ -269,7 +273,6 @@ public class DatatypeDefinitionModule extends DatatypeModule {
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		typeEnvironment = null;
-		datatypeTable = null;
 		theoryAccuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}

@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.StaticChecker;
+import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.DB_TCFacade;
 import org.rodinp.core.IRodinFile;
@@ -38,6 +39,18 @@ public class TheoryStaticChecker extends StaticChecker {
 			graph.addTarget(target.getResource());
 			graph.addToolDependency(source.getResource(), target.getResource(),
 					true);
+			// FIXME added user dependencies on imports
+			IImportTheory[] importTheories = root.getImportTheories();
+			for (IImportTheory importTheory : importTheories) {
+				if (importTheory.hasImportTheory()) {
+					IRodinFile importedTheory = importTheory
+							.getImportTheory().getRodinFile();
+					graph.addUserDependency(
+							source.getResource(), 
+							importedTheory.getResource(), 
+							target.getResource(), false);
+				}
+			}
 
 		} finally {
 			monitor.done();

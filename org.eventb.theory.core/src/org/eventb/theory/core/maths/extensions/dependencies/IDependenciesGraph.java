@@ -26,17 +26,15 @@ public interface IDependenciesGraph<E extends IEventBRoot> {
 	 * Sets the elements contained in the nodes of this graph to the given elements.
 	 * @param elements the elements to reference in the nodes of the graph
 	 * @return whether the elements were set correctly
-	 * @throws CycleException if a cycle exists
 	 */
-	public boolean setElements(E[] elements) throws CycleException;
+	public boolean setElements(E[] elements);
 	
 	/**
 	 * Sets the elements contained in the nodes of this graph to the given elements.
 	 * @param elements the elements to reference in the nodes of the graph
 	 * @return whether the elements were set correctly
-	 * @throws CycleException if a cycle exists
 	 */
-	public boolean setElements(Collection<E> elements) throws CycleException;
+	public boolean setElements(Collection<E> elements);
 	
 	/**
 	 * Returns the elements that are reachable from this element.
