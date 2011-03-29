@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -30,7 +31,8 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 
 	public static final String WIZARD_ID = TheoryUIPlugIn.PLUGIN_ID
 			+ ".newTheoryWizard";
-
+	
+	private ISelection selection;
 	private TheoryWizardPage page;
 
 	public NewTheoryWizard() {
@@ -45,22 +47,23 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 	@Override
 	public void addPages() {
 		setWindowTitle("New Theory");
-		page = new TheoryWizardPage();
+		page = new TheoryWizardPage(selection);
 		addPage(page);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		
+		this.selection = selection;
 	}
 
 	@Override
 	public boolean performFinish() {
 		final String fileName = DB_TCFacade.getTheoryFullName(page.getTheoryName());
+		final String projectName = page.getProjectName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
-					doFinish(fileName, monitor);
+					doFinish(fileName, projectName, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -97,13 +100,12 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 	 * @throws RodinDBException
 	 *             a core exception throws when creating a new project
 	 */
-	void doFinish(final String fileName,
+	void doFinish(final String fileName, final String projectName,
 			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Creating " + fileName, 2);
 		// Creating a project handle
-		final IRodinProject rodinProject = DB_TCFacade.getDeploymentProject(monitor);;
+		final IRodinProject rodinProject = DB_TCFacade.getRodinProject(projectName);
 		RodinCore.run(new IWorkspaceRunnable() {
-
 			public void run(IProgressMonitor pMonitor) throws CoreException {
 				final IRodinFile rodinFile = rodinProject
 						.getRodinFile(fileName);
