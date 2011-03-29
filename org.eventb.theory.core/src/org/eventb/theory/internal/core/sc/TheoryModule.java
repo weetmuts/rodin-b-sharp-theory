@@ -11,7 +11,6 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.sc.states.DatatypeTable;
 import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
@@ -64,12 +63,10 @@ public class TheoryModule extends SCProcessorModule {
 		final IdentifierSymbolTable identSymbolTable = 
 			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, 
 					repository.getFormulaFactory());
-		final DatatypeTable datatypeTable = new DatatypeTable(repository.getFormulaFactory());
-	
+		
 		repository.setState(identSymbolTable);
 		repository.setState(labelSymbolTable);
 		repository.setState(opLabelSymbolTable);
-		repository.setState(datatypeTable);
 		
 		repository.setState(accuracyInfo);
 
@@ -91,7 +88,6 @@ public class TheoryModule extends SCProcessorModule {
 	private void removeStates(ISCStateRepository repository) throws CoreException{
 		repository.removeState(TheoryLabelSymbolTable.STATE_TYPE);
 		repository.removeState(IIdentifierSymbolTable.STATE_TYPE);
-		repository.removeState(DatatypeTable.STATE_TYPE);
 		repository.removeState(OperatorLabelSymbolTable.STATE_TYPE);
 		repository.removeState(TheoryAccuracyInfo.STATE_TYPE);
 	}
