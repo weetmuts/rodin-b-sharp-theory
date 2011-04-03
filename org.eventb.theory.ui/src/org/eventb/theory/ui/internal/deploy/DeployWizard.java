@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class DeployWizard extends AbstractDeployWizard {
 
-
 	public DeployWizard(Shell shell) {
 		super(shell);
 	}
@@ -18,9 +17,4 @@ public class DeployWizard extends AbstractDeployWizard {
 		// TODO Auto-generated method stub
 		return new DeployWizardPageOne();
 	}
-
-
-
-	
-	
 }

@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
@@ -27,10 +27,10 @@ public class SCTheoriesGraph extends DependenciesGraph<ISCTheoryRoot>{
 				ISCTheoryRoot root1 = node1.element;
 				ISCTheoryRoot root2 = node2.element;
 				try {
-					if (DB_TCFacade.doesTheoryImportTheory(root1, root2)){
+					if (DatabaseUtilities.doesTheoryImportTheory(root1, root2)){
 						return 1;
 					}
-					else if(DB_TCFacade.doesTheoryImportTheory(root2, root1)){
+					else if(DatabaseUtilities.doesTheoryImportTheory(root2, root1)){
 						return -1;
 					}
 					else if(root1.getComponentName().equals(root2.getComponentName())){
@@ -51,7 +51,7 @@ public class SCTheoriesGraph extends DependenciesGraph<ISCTheoryRoot>{
 		// TODO Auto-generated method stub
 		List<ISCTheoryRoot> imported;
 		try {
-			imported = DB_TCFacade.getImportedTheories(element);
+			imported = DatabaseUtilities.getImportedTheories(element);
 			return imported.toArray(new ISCTheoryRoot[imported.size()]);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

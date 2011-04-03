@@ -10,7 +10,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.internal.ui.ITheoryImages;
 import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
@@ -88,7 +88,7 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 								TheoryUIUtils.createConfirmUndeployTheoryDialog(site.getViewSite().getShell(),
 										theory)) {
 
-							DB_TCFacade.cleanUp(
+							DatabaseUtilities.cleanUp(
 									theory.getDeployedTheoryRoot());
 							TheoryUIUtils.closeEditorsFor(theory.getComponentName(), 
 									theory.getRodinProject().getElementName());

@@ -9,7 +9,10 @@ package org.eventb.theory.internal.core.util;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +36,15 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
+import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaElement;
+import org.eventb.theory.core.IFormulaExtensionsSource;
+import org.eventb.theory.core.ISCConstructorArgument;
+import org.eventb.theory.core.ISCDatatypeConstructor;
+import org.eventb.theory.core.ISCDatatypeDefinition;
+import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -41,6 +52,7 @@ import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -349,6 +361,68 @@ public class CoreUtilities {
 		}
 
 		return errorIssued;
+	}
+	
+	/**
+	 * Returns the set of all syntactic additions specified in the given source.
+	 * @param source the formula extensions source
+	 * @return the set of syntactic additions
+	 * @throws CoreException
+	 */
+	public static Set<String> accumulateSyntacticAdditions(IFormulaExtensionsSource source) throws CoreException{
+		Set<String> set = new TreeSet<String>();
+		// start by datatypes
+		ISCDatatypeDefinition[] datatypeDefinitions = source.getSCDatatypeDefinitions();
+		for (ISCDatatypeDefinition definition : datatypeDefinitions){
+			set.add(definition.getIdentifierString());
+			ISCDatatypeConstructor[] constructors = definition.getConstructors();
+			for (ISCDatatypeConstructor constructor : constructors){
+				set.add(constructor.getIdentifierString());
+				ISCConstructorArgument arguments[] = constructor.getConstructorArguments();
+				for (ISCConstructorArgument argument : arguments){
+					set.add(argument.getIdentifierString());
+				}
+			}
+		}
+		// next operators
+		ISCNewOperatorDefinition[] operatorDefinitions = source.getSCNewOperatorDefinitions();
+		for (ISCNewOperatorDefinition definition : operatorDefinitions){
+			set.add(definition.getSyntaxSymbol());
+		}
+		return set;
+	}
+	
+	/**
+	 * Returns the syntactic additions of the hierarchy up to the specified leaf.
+	 * @param leaf the leaf theory
+	 * @return all syntactic additions
+	 * @throws CoreException
+	 */
+	public static Set<String> getSyntacticAdditionsOfHierarchy(ISCTheoryRoot leaf) throws CoreException{
+		Set<ISCTheoryRoot> imported = DatabaseUtilities.importClosure(leaf);
+		Set<String> set = new TreeSet<String>();
+		set.addAll(accumulateSyntacticAdditions(leaf));
+		for (ISCTheoryRoot root : imported){
+			Set<String> rootSet = accumulateSyntacticAdditions(root);
+			if (rootSet != null)
+				set.addAll(rootSet);
+		}
+		return set;
+	}
+	
+	public static Map<String, Set<String>> getDeployedSyntacticAdditionsOfOtherHierarchies(ISCTheoryRoot hierarchyToIgnoreLeaf) throws CoreException{
+		Set<ISCTheoryRoot> hierarchyToIgnore = DatabaseUtilities.importClosure(hierarchyToIgnoreLeaf);
+		Set<String> names = DatabaseUtilities.getNames(hierarchyToIgnore.toArray(new ISCTheoryRoot[hierarchyToIgnore.size()]));
+		IRodinProject project = hierarchyToIgnoreLeaf.getRodinProject();
+		IDeployedTheoryRoot[] deployedRoots = project.getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
+		Map<String, Set<String>> deployedMap = new TreeMap<String, Set<String>>();
+		for (IDeployedTheoryRoot root : deployedRoots){
+			if (!names.contains(root.getComponentName())){
+				Set<String> contrib = accumulateSyntacticAdditions(root);
+				deployedMap.put(root.getComponentName(), contrib);
+			}
+		}
+		return deployedMap;
 	}
 
 }

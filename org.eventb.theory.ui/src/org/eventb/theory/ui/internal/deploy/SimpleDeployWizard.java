@@ -26,7 +26,7 @@ public class SimpleDeployWizard extends AbstractDeployWizard{
 	@Override
 	protected AbstractDeployWizardPageOne getPageOne() {
 		// TODO Auto-generated method stub
-		return new SimpleDeployWizardPageOne(root.getComponentName());
+		return new SimpleDeployWizardPageOne(root.getComponentName(), root.getRodinProject().getElementName());
 	}
 
 }

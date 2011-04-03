@@ -309,7 +309,13 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_LHS_IsNotWDStrict), 
 			ImportDepCircularity(
 			IMarker.SEVERITY_ERROR,
-			Messages.scuser_ImportDepCircularity)
+			Messages.scuser_ImportDepCircularity),
+			IndRedundantImportWarn(
+			IMarker.SEVERITY_WARNING,
+			Messages.scuser_IndRedundantImportWarn),
+			ImportConflict(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_ImportConflict)
 	;
 
 	private int arity;

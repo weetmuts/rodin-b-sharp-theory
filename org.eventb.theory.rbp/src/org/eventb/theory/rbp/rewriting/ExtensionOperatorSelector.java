@@ -13,7 +13,7 @@ import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.rbp.internal.tactics.ExpansionTacticApplication;
 import org.eventb.theory.rbp.reasoners.input.DefinitionExpansionInput;
 import org.eventb.ui.prover.ITacticApplication;
@@ -41,7 +41,7 @@ public class ExtensionOperatorSelector extends RbPAbstractApplicationInspector {
 		if (form instanceof IExtendedFormula){
 			IExtendedFormula eform = (IExtendedFormula) form;
 			IFormulaExtension extension = eform.getExtension();
-			if(AST_TCFacade.isATheoryExtension(extension)){
+			if(AstUtilities.isATheoryExtension(extension)){
 				accum.add(new ExpansionTacticApplication(new 
 						DefinitionExpansionInput(extension.getId(), 
 								extension.getSyntaxSymbol(), 

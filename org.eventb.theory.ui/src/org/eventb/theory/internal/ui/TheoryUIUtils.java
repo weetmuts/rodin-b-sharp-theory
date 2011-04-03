@@ -43,7 +43,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.ITypeParameter;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.ui.editor.TheoryEditor;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.osgi.framework.Bundle;
@@ -378,7 +378,7 @@ public class TheoryUIUtils {
 	public static boolean createDeployEmptyTheoryDialog(Shell shell,
 			ITheoryRoot root) {
 		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
-		if (!scRoot.exists() || DB_TCFacade.isTheoryEmptyOrNotAccurate(scRoot)) {
+		if (!scRoot.exists() || DatabaseUtilities.isTheoryEmptyOrNotAccurate(scRoot)) {
 			MessageDialog.openError(shell, "Error",
 					"Cannot deploy inaccurate or empty theory " + root.getComponentName()
 							+ ".");
@@ -490,9 +490,9 @@ public class TheoryUIUtils {
 		IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
 				.getActivePage();
 		IEditorReference[] parts = page.findEditors(
-				new FileEditorInput(DB_TCFacade
+				new FileEditorInput(DatabaseUtilities
 						.getTheory(theoryName,
-								DB_TCFacade.getRodinProject(projectName))
+								DatabaseUtilities.getRodinProject(projectName))
 						.getRodinFile().getResource()), null,
 				IWorkbenchPage.MATCH_INPUT);
 		for (IEditorReference ref : parts) {
@@ -508,7 +508,7 @@ public class TheoryUIUtils {
 	 * @return the image
 	 */
 	public static Image getTheoryImage(ITheoryRoot root) {
-		IDeployedTheoryRoot deplRoot = DB_TCFacade.getDeployedTheory(
+		IDeployedTheoryRoot deplRoot = DatabaseUtilities.getDeployedTheory(
 				root.getElementName(), root.getRodinProject());
 		if (deplRoot.exists()) {
 			return TheoryImage.getImage(ITheoryImages.IMG_DTHEORY);

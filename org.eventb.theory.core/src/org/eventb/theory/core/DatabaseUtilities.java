@@ -8,6 +8,7 @@
 package org.eventb.theory.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  * 
  */
-public class DB_TCFacade {
+public class DatabaseUtilities {
 
 	// Global constants
 	public static final String THEORIES_PROJECT = "MathExtensions";
@@ -387,9 +388,12 @@ public class DB_TCFacade {
 	 * @return list of deployable SC theories
 	 * @throws CoreException
 	 */
-	public static List<ISCTheoryRoot> getDeployableSCTheories()
+	public static List<ISCTheoryRoot> getDeployableSCTheories(String projectName)
 			throws CoreException {
-		IRodinProject project = getDeploymentProject(null);
+		IRodinProject project = RodinCore.getRodinDB().getRodinProject(projectName);
+		if (!project.exists()){
+			return new ArrayList<ISCTheoryRoot>();
+		}
 		ISCTheoryRoot[] roots = project
 				.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
 		List<ISCTheoryRoot> list = new ArrayList<ISCTheoryRoot>();
@@ -629,8 +633,6 @@ public class DB_TCFacade {
 			if(
 					// not import oneself
 					!root.getComponentName().equals(theory.getComponentName()) &&
-					// no redundancy
-					!doesTheoryImportTheory(theory, root) &&
 					// no circularity
 					!doesTheoryImportTheory(root, theorySC)
 					){
@@ -857,5 +859,41 @@ public class DB_TCFacade {
 	 */
 	public static boolean isMathExtensionsProject(IRodinProject project){
 		return THEORIES_PROJECT.equals(project.getElementName());
+	}
+	
+	/**
+	 * Returns all the theories imported by the given theory directly and indirectly.
+	 * @param root the SC theory root
+	 * @return all imported theories
+	 * @throws CoreException
+	 */
+	public static Set<ISCTheoryRoot> importClosure(ISCTheoryRoot root) throws CoreException{
+		Set<ISCTheoryRoot> set = new LinkedHashSet<ISCTheoryRoot>();
+		List<ISCTheoryRoot> imported = getImportedTheories(root);
+		set.addAll(imported);
+		for (ISCTheoryRoot scRoot : imported){
+			set.addAll(importClosure(scRoot));
+		}
+		return set;
+	}
+	
+	/**
+	 * Returns all theory roots that exist and are not temporary.
+	 * @param project the rodin project
+	 * @return all non-temp sc theory roots
+	 * @throws CoreException
+	 */
+	public static Set<ISCTheoryRoot> getSCTheoryRoots(IRodinProject project) throws CoreException{
+		Set<ISCTheoryRoot> set = new LinkedHashSet<ISCTheoryRoot>();
+		ISCTheoryRoot[] roots = getSCTheoryRoots(project, new TheoriesFilter<ISCTheoryRoot>() {
+
+			@Override
+			public boolean filter(ISCTheoryRoot theory) {
+				// TODO Auto-generated method stub
+				return theory.exists() && !theory.getRodinFile().getElementName().endsWith(SC_THEORY_FILE_EXTENSION+"_tmp");
+			}
+		});
+		set.addAll(Arrays.asList(roots));
+		return set;
 	}
 }

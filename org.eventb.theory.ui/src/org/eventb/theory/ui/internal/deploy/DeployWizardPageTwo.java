@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IRodinFile;
@@ -27,7 +27,6 @@ public class DeployWizardPageTwo extends WizardPage {
 
 	protected String projectName;
 	protected String theoryName;
-	protected String targetProjectName;
 
 	protected ArrayList<String> dPOs;
 	protected String dTitle;
@@ -148,9 +147,9 @@ public class DeployWizardPageTwo extends WizardPage {
 		try {
 			IPSStatus statuses[] = root.getStatuses();
 			for (IPSStatus s : statuses) {
-				if (DB_TCFacade.isDischarged(s)) {
+				if (DatabaseUtilities.isDischarged(s)) {
 					dPOs.add(s.getElementName());
-				} else if (DB_TCFacade.isReviewed(s)) {
+				} else if (DatabaseUtilities.isReviewed(s)) {
 					rPOs.add(s.getElementName());
 				} else {
 					uPOs.add(s.getElementName());
@@ -165,12 +164,10 @@ public class DeployWizardPageTwo extends WizardPage {
 
 	public void setVisible(boolean visible) {
 		if (visible) {
-			projectName = DB_TCFacade.THEORIES_PROJECT;
-			theoryName = ((AbstractDeployWizardPageOne) getPreviousPage())
-					.getTheoryName();
-			targetProjectName = DB_TCFacade.THEORIES_PROJECT;
+			projectName = ((AbstractDeployWizardPageOne) getPreviousPage()).getProjectName();
+			theoryName = ((AbstractDeployWizardPageOne) getPreviousPage()).getTheoryName();
 			theoryLabel.setText(projectName + "\\" + theoryName);
-			projectLabel.setText(targetProjectName);
+			projectLabel.setText(projectName);
 			IRodinFile file = TheoryUIUtils.getSCTheoryInProject(theoryName,
 					projectName);
 			if (file != null) {

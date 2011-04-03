@@ -60,7 +60,7 @@ import org.eventb.theory.core.ISyntaxSymbolElement;
 import org.eventb.theory.core.IToolTipElement;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.IValidatedElement;
-import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.core.AstUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -172,7 +172,7 @@ public abstract class TheoryElement extends EventBElement implements
 
 	@Override
 	public Notation getNotationType() throws RodinDBException {
-		return AST_TCFacade.getNotation(getAttributeValue(NOTATION_TYPE_ATTRIBUTE));
+		return AstUtilities.getNotation(getAttributeValue(NOTATION_TYPE_ATTRIBUTE));
 	}
 
 	

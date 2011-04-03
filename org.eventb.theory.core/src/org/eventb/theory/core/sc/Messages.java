@@ -35,6 +35,7 @@ public final class Messages {
 	public static String progress_TheoryRewriteRules;
 	public static String progress_TheoryTheorems;
 	public static String scuser_AutoUndefWarning;
+	public static String scuser_IndRedundantImportWarn;
 	public static String scuser_LhsAndRhsNotSynClassMatching;
 	public static String scuser_LHSUndef;
 	public static String scuser_RewriteRuleLabelConflict;
@@ -129,6 +130,7 @@ public final class Messages {
 	public static String scuser_RuleRequireOneInfer;
 	public static String scuser_LHS_IsNotWDStrict;
 	public static String scuser_ImportDepCircularity;
+	public static String scuser_ImportConflict;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

@@ -7,7 +7,10 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.sc;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +22,7 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -31,6 +34,8 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.DatatypeTable;
+import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -46,21 +51,21 @@ public class ImportTheoryModule extends SCProcessorModule {
 	IModuleType<ImportTheoryModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".importTheoryModule"); //$NON-NLS-1$
 
-	private static final String IMPORT_NAME_PREFIX = "import";
-
-	private Set<ISCTheoryRoot> importedTheories;
-
+	private Set<IImportTheory> importTheoriesDirectives;
+	private TheoryAccuracyInfo accuracyInfo;
+	
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		accuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		IRodinFile file = (IRodinFile) element;
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		IImportTheory[] importTheories = root.getImportTheories();
-		importedTheories = new HashSet<ISCTheoryRoot>();
 		if (importTheories.length != 0) {
 			monitor.subTask(Messages
 					.bind(Messages.progress_TheoryImportTheories));
+			importTheoriesDirectives = new HashSet<IImportTheory>();
 			ISCTheoryRoot targetRoot = root.getSCTheoryRoot();
 			processImports(importTheories, targetRoot, repository, monitor);
 		}
@@ -74,7 +79,8 @@ public class ImportTheoryModule extends SCProcessorModule {
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		commitImports((ISCTheoryRoot) target, monitor);
+		if (importTheoriesDirectives != null)
+			commitImports((ISCTheoryRoot) target, monitor);
 	}
 
 	/**
@@ -93,12 +99,16 @@ public class ImportTheoryModule extends SCProcessorModule {
 	protected void processImports(IImportTheory[] importTheories,
 			ISCTheoryRoot targetRoot, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		boolean isAccurate = true;
+		// variable used to check against direct and indirect redundancy
+		Set<ISCTheoryRoot> importedTheories = new HashSet<ISCTheoryRoot>();
 		for (IImportTheory importTheory : importTheories) {
 			// missing attribute
 			if (!importTheory.hasImportTheory()) {
 				createProblemMarker(importTheory,
 						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
 						TheoryGraphProblem.ImportTheoryAttrMissing);
+				isAccurate = false;
 				continue;
 			}
 			ISCTheoryRoot importRoot = importTheory.getImportTheory();
@@ -108,37 +118,111 @@ public class ImportTheoryModule extends SCProcessorModule {
 						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
 						TheoryGraphProblem.ImportTheoryNotExist,
 						importRoot.getComponentName());
+				isAccurate = false;
 				continue;
 			}
 			// circularity
-			if (DB_TCFacade.doesTheoryImportTheory(importRoot, targetRoot)) {
+			if (DatabaseUtilities.doesTheoryImportTheory(importRoot, targetRoot)) {
 				createProblemMarker(importTheory,
 						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
 						TheoryGraphProblem.ImportDepCircularity,
 						importRoot.getComponentName(),
 						targetRoot.getComponentName());
+				isAccurate = false;
 				continue;
 			}
-			// redundancy
+			// direct redundancy
 			if (importedTheories.contains(importRoot)) {
 				createProblemMarker(importTheory,
 						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
 						TheoryGraphProblem.RedundantImportWarn,
 						importRoot.getComponentName(),
 						targetRoot.getComponentName());
+				isAccurate = false;
 				continue;
 			}
-			// add to the set
+			// add to the sets
 			importedTheories.add(importRoot);
+			importTheoriesDirectives.add(importTheory);
+		}
+		// clear to use differently
+		importedTheories.clear();
+		// need to check for indirect redundancy
+		// map all import directives to the import closure of their target
+		Map<IImportTheory, Set<ISCTheoryRoot>> importMap = new LinkedHashMap<IImportTheory, Set<ISCTheoryRoot>>();
+		// need to check for conflicts
+		Map<IImportTheory, Set<String>> contributedSymbols = new LinkedHashMap<IImportTheory, Set<String>>();
+		for (IImportTheory importTheory : importTheoriesDirectives) {
+			ISCTheoryRoot referencedRoot = importTheory.getImportTheory();
+			Set<ISCTheoryRoot> allReferencedRoots = DatabaseUtilities
+					.importClosure(referencedRoot);
+			allReferencedRoots.add(referencedRoot);
+			importMap.put(importTheory, allReferencedRoots);
+			contributedSymbols.put(importTheory, CoreUtilities.getSyntacticAdditionsOfHierarchy(referencedRoot));
+		}
+		// check redundant imports
+		IImportTheory[] importTheoriesArray = importTheoriesDirectives
+				.toArray(new IImportTheory[importTheoriesDirectives.size()]);
+		boolean[] redundancy = new boolean[importTheoriesArray.length];
+		for (int i = 0; i < redundancy.length - 1; i++) {
+			for (int k = i+1; k < redundancy.length; k++) {
+				Set<ISCTheoryRoot> importedRoots_i = importMap
+						.get(importTheoriesArray[i]);
+				Set<ISCTheoryRoot> importedRoots_k = importMap
+						.get(importTheoriesArray[k]);
+				if (importedRoots_i.containsAll(importedRoots_k)) {
+					redundancy[k] = true;
+				} else if (importedRoots_k.containsAll(importedRoots_i)) {
+					redundancy[i] = true;
+				}
+			}
+		}
+		for (int i = 0; i < redundancy.length; i++) {
+			IImportTheory currentImportTheory = importTheoriesArray[i];
+			if (redundancy[i]) {
+				createProblemMarker(currentImportTheory,
+						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
+						TheoryGraphProblem.IndRedundantImportWarn);
+				importTheoriesDirectives.remove(currentImportTheory);
+				importMap.remove(currentImportTheory);
+				contributedSymbols.remove(currentImportTheory);
+				continue;
+			}
+			importedTheories.add(currentImportTheory.getImportTheory());
+		}
+		// check for conflicts between hierarchies
+		importTheoriesArray = importTheoriesDirectives.toArray(new IImportTheory[importTheoriesDirectives.size()]);
+		for (int i = 0 ; i < importTheoriesArray.length - 1 ; i++){
+			Set<String> symbols_i = contributedSymbols.get(importTheoriesArray[i]);
+			for (int k = i+1 ; k < importTheoriesArray.length; k++){
+				Set<String> symbols_k = contributedSymbols.get(importTheoriesArray[k]);
+				if (!Collections.disjoint(symbols_i, symbols_k)){
+					// remove the theories causing conflict
+					importTheoriesDirectives.remove(importTheoriesArray[i]);
+					importTheoriesDirectives.remove(importTheoriesArray[k]);
+					importedTheories.remove(importTheoriesArray[i].getImportTheory());
+					importedTheories.remove(importTheoriesArray[k].getImportTheory());
+					
+					createProblemMarker(importTheoriesArray[i], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, 
+							TheoryGraphProblem.ImportConflict, importTheoriesArray[i].getImportTheory().getComponentName(),
+							importTheoriesArray[k].getImportTheory().getComponentName());
+					createProblemMarker(importTheoriesArray[k], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, 
+							TheoryGraphProblem.ImportConflict, importTheoriesArray[k].getImportTheory().getComponentName(),
+							importTheoriesArray[i].getImportTheory().getComponentName());
+					// theory is not accurate in this case
+					isAccurate = false;
+				}
+			}
 		}
 		// need to patch up formula factory
 		SCTheoriesGraph graph = new SCTheoriesGraph();
 		graph.setElements(importedTheories);
 		FormulaFactory factory = repository.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
-		
+
 		for (ISCTheoryRoot root : graph.getElements()) {
-			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root, factory);
+			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root,
+					factory);
 			Set<IFormulaExtension> exts = loader.load();
 			factory = factory.withExtensions(exts);
 			typeEnvironment = MathExtensionsUtilities
@@ -146,6 +230,9 @@ public class ImportTheoryModule extends SCProcessorModule {
 		}
 		repository.setFormulaFactory(factory);
 		repository.setTypeEnvironment(factory.makeTypeEnvironment());
+		if (!isAccurate){
+			accuracyInfo.setNotAccurate();
+		}
 	}
 
 	/**
@@ -159,13 +246,22 @@ public class ImportTheoryModule extends SCProcessorModule {
 	 */
 	protected void commitImports(ISCTheoryRoot targetRoot,
 			IProgressMonitor monitor) throws CoreException {
-		int count = 0;
-		for (ISCTheoryRoot importTheory : importedTheories) {
+		
+		for (IImportTheory currentImportTheory : importTheoriesDirectives) {
 			ISCImportTheory scImport = targetRoot
-					.getImportTheory(IMPORT_NAME_PREFIX + count++);
+					.getImportTheory(currentImportTheory.getElementName());
 			scImport.create(null, monitor);
-			scImport.setImportTheory(importTheory, monitor);
+			scImport.setSource(currentImportTheory, monitor);
+			scImport.setImportTheory(currentImportTheory.getImportTheory(),
+					monitor);
 		}
+	}
+	
+	@Override
+	public void endModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		accuracyInfo = null;
 	}
 
 	@Override

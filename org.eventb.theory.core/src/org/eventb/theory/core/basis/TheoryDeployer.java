@@ -7,18 +7,23 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import static org.eventb.theory.core.DB_TCFacade.getDeploymentProject;
 import static org.eventb.theory.internal.core.util.DeployUtilities.copyMathematicalExtensions;
 import static org.eventb.theory.internal.core.util.DeployUtilities.copyProverExtensions;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDeploymentResult;
+import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
 import org.eventb.theory.core.IUseTheory;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -35,7 +40,7 @@ public final class TheoryDeployer implements ITheoryDeployer {
 	protected IRodinFile targetFile;
 	protected IDeploymentResult deploymentResult;
 
-	public TheoryDeployer(ISCTheoryRoot theoryRoot, boolean force, 
+	public TheoryDeployer(ISCTheoryRoot theoryRoot, boolean force,
 			boolean rebuildProjects) {
 		assert theoryRoot.exists();
 		this.theoryRoot = theoryRoot;
@@ -61,49 +66,85 @@ public final class TheoryDeployer implements ITheoryDeployer {
 	}
 
 	@Override
-	public boolean deploy(IProgressMonitor monitor)
-			throws CoreException {
+	public boolean deploy(IProgressMonitor monitor) throws CoreException {
 		String theoryName = theoryRoot.getComponentName();
-		IRodinProject targetProject = getDeploymentProject(monitor);
-		if(targetProject == null){
-			deploymentResult = new DeploymentResult(false, "Deployment project does not exist.");
-			return false;
+		IRodinProject targetProject = theoryRoot.getRodinProject();
+		// need to check if the target project is null
+		{
+			if (targetProject == null) {
+				deploymentResult = new DeploymentResult(false,
+						"Deployment project does not exist.");
+				return false;
+			}
 		}
-		targetFile = targetProject.getRodinFile(DB_TCFacade
+		// need to check for conflicts between the theory to be deployed and any
+		// deployed theories
+		{
+			Set<String> theorySymbols = CoreUtilities
+					.getSyntacticAdditionsOfHierarchy(theoryRoot);
+			Map<String, Set<String>> otherSymbols = CoreUtilities
+					.getDeployedSyntacticAdditionsOfOtherHierarchies(theoryRoot);
+
+			for (String deployedTheoryName : otherSymbols.keySet()) {
+				if (!Collections.disjoint(theorySymbols,
+						otherSymbols.get(deployedTheoryName))) {
+					deploymentResult = new DeploymentResult(false,
+							"Syntax symbols defined in statically checked theory " + theoryName
+									+ " clash with symbols defined in deployed theory "
+									+ deployedTheoryName + ".");
+					return false;
+				}
+			}
+
+		}
+		// create the target file
+		targetFile = targetProject.getRodinFile(DatabaseUtilities
 				.getDeployedTheoryFullName(theoryName));
 		IDeployedTheoryRoot deployedTheoryRoot = (IDeployedTheoryRoot) targetFile
-			.getRoot();
+				.getRoot();
+
 		// if force not requested
-		if (targetFile.exists() && !force) {
-			deploymentResult = new DeploymentResult(false, "Deployed theory "
-					+ theoryName + " already exists in the project "
-					+ targetProject.getElementName() + ".");
-			return false;
+		{
+			if (targetFile.exists() && !force) {
+				deploymentResult = new DeploymentResult(false,
+						"Deployed theory " + theoryName
+								+ " already exists in the project "
+								+ targetProject.getElementName() + ".");
+				return false;
+			}
 		}
 		// if force requested
 		if (targetFile.exists()) {
 			targetFile.delete(true, monitor);
 		}
 		targetFile.create(true, monitor);
-		
+
 		if (!deployedTheoryRoot.exists()) {
 			deployedTheoryRoot.create(null, monitor);
 		}
-		if (!setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot)) {
-			return false;
+		// failed dependencies
+		{
+			if (!setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot)) {
+				return false;
+			}
 		}
+		// copy the elements across
 		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot,
 				theoryRoot, monitor)
 				&& copyProverExtensions(deployedTheoryRoot, theoryRoot, monitor);
 
 		deployedTheoryRoot.setAccuracy(accurate, monitor);
-		deployedTheoryRoot.setComment("GENERATED THEORY FILE: !DO NOT CHANGE!", monitor);
+		deployedTheoryRoot.setComment("GENERATED THEORY FILE: !DO NOT CHANGE!",
+				monitor);
 		targetFile.save(monitor, true);
 		deploymentResult = new DeploymentResult(true, null);
-		if(rebuildProjects)
-			DB_TCFacade.rebuild(monitor);
-		else {
-			DB_TCFacade.rebuild(targetProject, monitor);
+		// in case rebuilding is requested by the user
+		{
+			if (rebuildProjects)
+				DatabaseUtilities.rebuild(monitor);
+			else {
+				DatabaseUtilities.rebuild(targetProject, monitor);
+			}
 		}
 		return true;
 	}
@@ -121,21 +162,26 @@ public final class TheoryDeployer implements ITheoryDeployer {
 
 	protected boolean setDeployedTheoryDependencies(ISCTheoryRoot source,
 			IDeployedTheoryRoot target) throws CoreException {
-		for (IDeployedTheoryRoot root : DB_TCFacade.getDeployedTheories(source.getRodinProject())) {
-			if(root.getComponentName().equals(target.getComponentName())){
-				continue;
+		ISCImportTheory[] imports = source.getImportTheories();
+		for (ISCImportTheory importThy : imports) {
+			if (importThy.hasImportTheory()) {
+				ISCTheoryRoot importedRoot = importThy.getImportTheory();
+				IDeployedTheoryRoot deployedCounterpart = importedRoot
+						.getDeployedTheoryRoot();
+				if (!deployedCounterpart.exists()) {
+					deploymentResult = new DeploymentResult(false,
+							"Failed dependencies : deployed theory "
+									+ deployedCounterpart.getComponentName()
+									+ " does not exist in the project "
+									+ importedRoot.getRodinProject()
+											.getElementName() + ".");
+					return false;
+				}
+				IUseTheory use = target.getUsedTheory(deployedCounterpart
+						.getComponentName());
+				use.create(null, null);
+				use.setUsedTheory(deployedCounterpart, null);
 			}
-			if (!root.exists()) {
-				deploymentResult = new DeploymentResult(false,
-						"Failed dependencies : deployed theory "
-								+ root.getComponentName()
-								+ " does not exist in the project "
-								+ DB_TCFacade.THEORIES_PROJECT+ ".");
-				return false;
-			}
-			IUseTheory use = target.getUsedTheory(root.getComponentName());
-			use.create(null, null);
-			use.setUsedTheory(root, null);
 		}
 		return true;
 	}

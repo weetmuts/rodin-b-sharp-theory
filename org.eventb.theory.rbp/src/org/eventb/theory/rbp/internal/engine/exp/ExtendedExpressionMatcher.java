@@ -10,7 +10,7 @@ package org.eventb.theory.rbp.internal.engine.exp;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.rbp.engine.ExpressionMatcher;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
@@ -39,12 +39,12 @@ public class ExtendedExpressionMatcher extends
 		Expression[] formChildren = form.getChildExpressions();
 		Expression[] patChildren = pattern.getChildExpressions();
 
-		if (AST_TCFacade.isAssociative(pattern)) {
+		if (AstUtilities.isAssociative(pattern)) {
 			if (formChildren.length != 2 || patChildren.length != 2
 					|| formChildren.length != patChildren.length) {
 				return false;
 			}
-			if (AST_TCFacade.isAC(pattern)) {
+			if (AstUtilities.isAC(pattern)) {
 				if (!AssociativityHandler.match(formChildren[0],
 						patChildren[0], formChildren[1], patChildren[1], true,
 						existingBinding)) {

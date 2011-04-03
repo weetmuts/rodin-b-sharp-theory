@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ITheoryDeployer;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 
@@ -54,7 +54,7 @@ public abstract class AbstractDeployWizard extends Wizard{
 	protected abstract AbstractDeployWizardPageOne getPageOne();
 	
 	private String getProjectName(){
-		return DB_TCFacade.THEORIES_PROJECT;
+		return wizardPageOne.getProjectName();
 	}
 	
 	private String getTheoryName(){
@@ -75,7 +75,7 @@ public abstract class AbstractDeployWizard extends Wizard{
 
 		ITheoryDeployer deployer = null;
 		try {
-			deployer = DB_TCFacade.getTheoryDeployer(theoryName,
+			deployer = DatabaseUtilities.getTheoryDeployer(theoryName,
 					projectName, force, rebuild);
 		} catch (CoreException e) {
 			e.printStackTrace();

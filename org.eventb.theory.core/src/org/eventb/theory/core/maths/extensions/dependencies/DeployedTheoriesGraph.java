@@ -8,10 +8,12 @@
 package org.eventb.theory.core.maths.extensions.dependencies;
 
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 
 public class DeployedTheoriesGraph extends DependenciesGraph<IDeployedTheoryRoot>{
 
@@ -25,10 +27,10 @@ public class DeployedTheoriesGraph extends DependenciesGraph<IDeployedTheoryRoot
 				IDeployedTheoryRoot root1 = node1.element;
 				IDeployedTheoryRoot root2 = node2.element;
 				try {
-					if (DB_TCFacade.doesTheoryUseTheory(root1, root2)){
+					if (DatabaseUtilities.doesTheoryUseTheory(root1, root2)){
 						return 1;
 					}
-					else if(DB_TCFacade.doesTheoryUseTheory(root2, root1)){
+					else if(DatabaseUtilities.doesTheoryUseTheory(root2, root1)){
 						return -1;
 					}
 					else if(root1.getComponentName().equals(root2.getComponentName())){
@@ -46,7 +48,15 @@ public class DeployedTheoriesGraph extends DependenciesGraph<IDeployedTheoryRoot
 	@Override
 	protected IDeployedTheoryRoot[] getEdgesOut(IDeployedTheoryRoot element) {
 		// TODO Auto-generated method stub
-		return null;
+		List<IDeployedTheoryRoot> imported;
+		try {
+			imported = DatabaseUtilities.getUsedTheories(element);
+			return imported.toArray(new IDeployedTheoryRoot[imported.size()]);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			CoreUtilities.log(e, "Error getting imported theories of " +element.getComponentName());
+		}
+		return new IDeployedTheoryRoot[0];
 	}
 
 }

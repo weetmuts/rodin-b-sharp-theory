@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IEventBProject;
 import org.eventb.internal.ui.RodinProjectSelectionDialog;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -193,7 +193,7 @@ public class TheoryWizardPage extends WizardPage {
 
 	private IRodinFile getTheoryFile(IRodinProject project, String theoryName) {
 		return project
-				.getRodinFile(DB_TCFacade.getTheoryFullName(theoryName));
+				.getRodinFile(DatabaseUtilities.getTheoryFullName(theoryName));
 	}
 
 	/**

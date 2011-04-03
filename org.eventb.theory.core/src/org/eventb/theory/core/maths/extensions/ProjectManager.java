@@ -15,11 +15,10 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.maths.extensions.dependencies.ProjectTheoryGraph;
-import org.eventb.theory.internal.core.maths.extensions.TheoryTransformer;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -39,14 +38,14 @@ public class ProjectManager {
 	private boolean deployedChanged;
 	private boolean scChanged;
 
-	private Map<ISCTheoryRoot, Set<IFormulaExtension>> scExtensionsMap;
-	private Map<IDeployedTheoryRoot, Set<IFormulaExtension>> deployedExtensionsMap;
+	private Map<String, Set<IFormulaExtension>> scExtensionsMap;
+	private Map<String, Set<IFormulaExtension>> deployedExtensionsMap;
 	private Set<IFormulaExtension> allDeployedExtensions;
 
 	public ProjectManager(IRodinProject project) {
 		this.project = project;
-		this.scExtensionsMap = new LinkedHashMap<ISCTheoryRoot, Set<IFormulaExtension>>();
-		this.deployedExtensionsMap = new LinkedHashMap<IDeployedTheoryRoot, Set<IFormulaExtension>>();
+		this.scExtensionsMap = new LinkedHashMap<String, Set<IFormulaExtension>>();
+		this.deployedExtensionsMap = new LinkedHashMap<String, Set<IFormulaExtension>>();
 		this.allDeployedExtensions = new LinkedHashSet<IFormulaExtension>();
 		this.graph = new ProjectTheoryGraph();
 	}
@@ -60,7 +59,7 @@ public class ProjectManager {
 		Set<ISCTheoryRoot> needed = graph.getNeededTheories(scRoot);
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		for (ISCTheoryRoot root : needed){
-			extensions.addAll(scExtensionsMap.get(root));
+			extensions.addAll(scExtensionsMap.get(root.getComponentName()));
 		}
 		return extensions;
 	}
@@ -69,15 +68,14 @@ public class ProjectManager {
 			throws CoreException {
 		deployedExtensionsMap.clear();
 		allDeployedExtensions.clear();
-		IDeployedTheoryRoot[] deployedRoots = DB_TCFacade
+		IDeployedTheoryRoot[] deployedRoots = DatabaseUtilities
 				.getDeployedTheories(project);
 		graph.setDeployedRoots(deployedRoots);
 
 		for (IDeployedTheoryRoot root : graph.getDeployedRoots()) {
-			TheoryTransformer transformer = new TheoryTransformer();
-			Set<IFormulaExtension> extensions = transformer.transform(root,
-					seedFactory, seedFactory.makeTypeEnvironment());
-			deployedExtensionsMap.put(root, extensions);
+			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root, seedFactory);
+			Set<IFormulaExtension> extensions = loader.load();
+			deployedExtensionsMap.put(root.getComponentName(), extensions);
 			allDeployedExtensions.addAll(extensions);
 		}
 	}
@@ -85,8 +83,8 @@ public class ProjectManager {
 	public synchronized void reloadDirtyExtensions(FormulaFactory seedFactory)
 			throws CoreException {
 		scExtensionsMap.clear();
-		ISCTheoryRoot[] scRoots = DB_TCFacade.getSCTheoryRoots(project,
-				new DB_TCFacade.TheoriesFilter<ISCTheoryRoot>() {
+		ISCTheoryRoot[] scRoots = DatabaseUtilities.getSCTheoryRoots(project,
+				new DatabaseUtilities.TheoriesFilter<ISCTheoryRoot>() {
 
 					@Override
 					public boolean filter(ISCTheoryRoot theory) {
@@ -96,10 +94,9 @@ public class ProjectManager {
 				});
 		graph.setCheckedRoots(scRoots);
 		for (ISCTheoryRoot root : graph.getCheckedRoots()) {
-			TheoryTransformer transformer = new TheoryTransformer();
-			Set<IFormulaExtension> extensions = transformer.transform(root,
-					seedFactory, seedFactory.makeTypeEnvironment());
-			scExtensionsMap.put(root, extensions);
+			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root, seedFactory);
+			Set<IFormulaExtension> extensions = loader.load();
+			scExtensionsMap.put(root.getComponentName(), extensions);
 		}
 	}
 
@@ -136,7 +133,7 @@ public class ProjectManager {
 	 *         project
 	 */
 	public boolean managingMathExtensionsProject() {
-		return project.getElementName().equals(DB_TCFacade.THEORIES_PROJECT);
+		return project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT);
 	}
 
 	public boolean hasDeployedChanged() {

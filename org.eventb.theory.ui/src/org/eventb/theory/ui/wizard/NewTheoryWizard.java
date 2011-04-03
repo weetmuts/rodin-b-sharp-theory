@@ -13,7 +13,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eventb.core.IConfigurationElement;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IInternalElement;
@@ -57,7 +57,7 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
-		final String fileName = DB_TCFacade.getTheoryFullName(page.getTheoryName());
+		final String fileName = DatabaseUtilities.getTheoryFullName(page.getTheoryName());
 		final String projectName = page.getProjectName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
@@ -104,7 +104,7 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Creating " + fileName, 2);
 		// Creating a project handle
-		final IRodinProject rodinProject = DB_TCFacade.getRodinProject(projectName);
+		final IRodinProject rodinProject = DatabaseUtilities.getRodinProject(projectName);
 		RodinCore.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor pMonitor) throws CoreException {
 				final IRodinFile rodinFile = rodinProject
@@ -112,7 +112,7 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 				rodinFile.create(false, pMonitor);
 				final IInternalElement rodinRoot = rodinFile.getRoot();
 				((IConfigurationElement) rodinRoot).setConfiguration(
-						DB_TCFacade.THEORY_CONFIGURATION, pMonitor);
+						DatabaseUtilities.THEORY_CONFIGURATION, pMonitor);
 				rodinFile.save(null, true);
 			}
 

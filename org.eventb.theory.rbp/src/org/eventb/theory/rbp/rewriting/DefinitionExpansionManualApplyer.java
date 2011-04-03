@@ -17,7 +17,7 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
 
 /**
@@ -50,9 +50,9 @@ public class DefinitionExpansionManualApplyer extends AbstractRulesApplyer{
 		if(formula instanceof IExtendedFormula){
 			IExtendedFormula eform = (IExtendedFormula) formula;
 			IFormulaExtension extension = eform.getExtension();
-			if(AST_TCFacade.isATheoryExtension(extension)){
+			if(AstUtilities.isATheoryExtension(extension)){
 				Predicate newPred = pred.rewriteSubFormula(position,
-						AST_TCFacade.delegateDefinitionExpansion(formula, factory), 
+						AstUtilities.delegateDefinitionExpansion(formula, factory), 
 						factory);
 				Predicate goal = (isGoal ? newPred : null);
 				IAntecedent[] ants = new IAntecedent[1];

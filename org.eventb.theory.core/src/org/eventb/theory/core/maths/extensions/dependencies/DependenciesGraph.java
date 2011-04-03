@@ -10,6 +10,7 @@ package org.eventb.theory.core.maths.extensions.dependencies;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -47,7 +48,7 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 	protected abstract E[] getEdgesOut(E element);
 	
 	@Override
-	public boolean setElements(E[] elements) throws CycleException {
+	public boolean setElements(E[] elements) {
 		startOver();
 		if(elements == null){
 			return false;
@@ -57,24 +58,21 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 	}
 
 	@Override
-	public boolean setElements(Collection<E> elements) throws CycleException {
+	public boolean setElements(Collection<E> elements) {
 		startOver();
 		// no elements to begin with
 		if(elements == null){
 			return false;
 		}
-		for (E element : elements){
+		Collection<E> closuredElements = closure(elements);
+		for (E element : closuredElements){
 			verticesMap.put(element.getComponentName(), new DependencyNode<E>(element));
 		}
 		for (DependencyNode<E> vertex : verticesMap.values()){
 			E element = vertex.element;
 			E[] connectedElements = getEdgesOut(element);
 			for (E e : connectedElements){
-				// some stated but missing dependencies
-				if(!verticesMap.containsKey(e)){
-					return false;
-				}
-				vertex.addConnectedNode(verticesMap.get(e));
+				vertex.addConnectedNode(verticesMap.get(e.getComponentName()));
 			}
 			//  FIXED Bug: the set of vertices was not augmented with the new vertex
 			vertices.add(vertex);
@@ -109,7 +107,7 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 	@Override
 	public Set<E> getLowerSet(E element) {
 		Set<E> set = new LinkedHashSet<E>();
-		DependencyNode<E> correspNode = verticesMap.get(element);
+		DependencyNode<E> correspNode = verticesMap.get(element.getComponentName());
 		if(correspNode == null){
 			throw new IllegalArgumentException(
 					"Method should only be invoked on an element that is included in the graph.");
@@ -141,7 +139,7 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 
 	@Override
 	public Set<E> exclude(E element) {
-		DependencyNode<E> node = verticesMap.get(element);
+		DependencyNode<E> node = verticesMap.get(element.getComponentName());
 		if(node == null)
 			throw new IllegalArgumentException(
 				"Method should only be invoked on an element that is included in the graph.");
@@ -162,12 +160,23 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements IDepen
 
 	@Override
 	public boolean contains(E element) {
-		return verticesMap.containsKey(element);
+		return verticesMap.containsKey(element.getComponentName());
 	}
 
 	private void startOver(){
 		vertices.clear();
 		verticesMap.clear();
+	}
+	
+	// TODO ensure this terminates i.e., no cycles
+	private Collection<E> closure(Collection<E> elements){
+		Collection<E> col = new HashSet<E>();
+		col.addAll(elements);
+		for (E element : elements){
+			E[] edgesOut = getEdgesOut(element);
+			col.addAll(closure(Arrays.asList(edgesOut)));
+		}
+		return col;
 	}
 	
 }

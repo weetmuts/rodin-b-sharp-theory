@@ -11,7 +11,11 @@ import static org.eventb.core.EventBAttributes.SOURCE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.HAS_ERROR_ATTRIBUTE;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,11 +40,12 @@ import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -111,8 +116,8 @@ public class DeployUtilities {
 		boolean isSound = true;
 		for (IPSStatus s : sts) {
 			if (s.getElementName().startsWith(element.getElementName())) {
-				if (!DB_TCFacade.isDischarged(s)
-						&& !DB_TCFacade.isReviewed(s)) {
+				if (!DatabaseUtilities.isDischarged(s)
+						&& !DatabaseUtilities.isReviewed(s)) {
 					isSound = false;
 				}
 			}
@@ -217,7 +222,7 @@ public class DeployUtilities {
 					target, monitor);
 			if (!theorem.hasValidatedAttribute()) {
 				boolean isSound = DeployUtilities.calculateSoundness(
-						DB_TCFacade.getSCTheoryParent(theorem), theorem);
+						DatabaseUtilities.getSCTheoryParent(theorem), theorem);
 				newTheorem.setValidated(isSound, monitor);
 
 			}
@@ -243,7 +248,7 @@ public class DeployUtilities {
 		}
 		if (!infRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					DB_TCFacade.getSCTheoryParent(infRule), infRule);
+					DatabaseUtilities.getSCTheoryParent(infRule), infRule);
 			newInfRule.setValidated(isSound, monitor);
 
 		}
@@ -263,7 +268,7 @@ public class DeployUtilities {
 		}
 		if (!rewRule.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					DB_TCFacade.getSCTheoryParent(rewRule), rewRule);
+					DatabaseUtilities.getSCTheoryParent(rewRule), rewRule);
 			newRewRule.setValidated(isSound, monitor);
 
 		}
@@ -299,7 +304,7 @@ public class DeployUtilities {
 		}
 		if (!newDefinition.hasValidatedAttribute()) {
 			boolean isSound = DeployUtilities.calculateSoundness(
-					DB_TCFacade.getSCTheoryParent(operatorDefinition),
+					DatabaseUtilities.getSCTheoryParent(operatorDefinition),
 					operatorDefinition);
 			newDefinition.setValidated(isSound, monitor);
 
@@ -370,4 +375,62 @@ public class DeployUtilities {
 
 	}
 
+}
+
+/**
+ * 
+ * @author maamria
+ *
+ */
+class TheoryHierarchy {
+	ISCTheoryRoot scTheoryRoot;
+	
+	public TheoryHierarchy(ISCTheoryRoot scTheoryRoot){
+		this.scTheoryRoot = scTheoryRoot;
+	}
+	
+	public SortedSet<ISCTheoryRoot> getImportedTheories() throws CoreException{
+		SortedSet<ISCTheoryRoot> sortedSet = new TreeSet<ISCTheoryRoot>(COMPARATOR);
+		Set<ISCTheoryRoot> closure = DatabaseUtilities.importClosure(scTheoryRoot);
+		sortedSet.addAll(closure);
+		return sortedSet;
+	}
+	
+	public SortedSet<ISCTheoryRoot> getDependentTheories() throws CoreException{
+		SortedSet<ISCTheoryRoot> sortedSet = new TreeSet<ISCTheoryRoot>(COMPARATOR);
+		IRodinProject project = scTheoryRoot.getRodinProject();
+		Set<ISCTheoryRoot> neededRoots = getImportedTheories();
+		Set<ISCTheoryRoot> allRoots = DatabaseUtilities.getSCTheoryRoots(project);
+		for (ISCTheoryRoot root : allRoots){
+			if (root.equals(scTheoryRoot) || neededRoots.contains(root)){
+				continue;
+			}
+			if (DatabaseUtilities.doesTheoryImportTheory(root, scTheoryRoot)){
+				sortedSet.add(root);
+			}
+		}
+		return sortedSet;
+	}
+	
+	private static final Comparator<ISCTheoryRoot> COMPARATOR = new Comparator<ISCTheoryRoot>() {
+
+		@Override
+		public int compare(ISCTheoryRoot root1, ISCTheoryRoot root2) {
+			try {
+				if (DatabaseUtilities.doesTheoryImportTheory(root1, root2)){
+					return 1;
+				}
+				else if(DatabaseUtilities.doesTheoryImportTheory(root2, root1)){
+					return -1;
+				}
+				else if(root1.getComponentName().equals(root2.getComponentName())){
+					return 0;
+				}
+			} catch (CoreException e) {
+				CoreUtilities.log(e, "Error comparing theories " + 
+						root1.getComponentName() + " and " + root2.getComponentName());
+			}
+			return 1;
+		}
+	};
 }

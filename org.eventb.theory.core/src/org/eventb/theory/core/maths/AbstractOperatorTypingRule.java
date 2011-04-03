@@ -35,7 +35,7 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
@@ -121,7 +121,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>> implement
 				.getExtension();
 		Formula<?> flattened = (Formula<?>) formula;
 		if (operatorExtension.isAssociative()) {
-			flattened = AST_TCFacade.unflatten(operatorExtension, childrenExprs, factory);
+			flattened = AstUtilities.unflatten(operatorExtension, childrenExprs, factory);
 		}
 
 		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(

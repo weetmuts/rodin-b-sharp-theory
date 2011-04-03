@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -42,7 +42,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 	public WorkspaceExtensionsManager() {
 		RodinCore.addElementChangedListener(this);
 		projectManagers = new HashMap<IRodinProject, ProjectManager>();
-		globalProjectManager = new ProjectManager(DB_TCFacade.getDeploymentProject(null));
+		globalProjectManager = new ProjectManager(DatabaseUtilities.getDeploymentProject(null));
 		basicFactory = FormulaFactory.getInstance(MathExtensionsUtilities.singletonExtension(MathExtensionsUtilities.COND));
 		seedFactory = FormulaFactory.getInstance(basicFactory.getExtensions());
 		populate();
@@ -50,7 +50,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root){
 		IRodinProject project = root.getRodinProject();
-		boolean isMathExtensionsProject = project.getElementName().equals(DB_TCFacade.THEORIES_PROJECT);
+		boolean isMathExtensionsProject = project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT);
 		// case Theory in MathExtensions
 		if (isMathExtensionsProject && root instanceof ITheoryRoot){
 			return EMPTY_SET;
@@ -75,7 +75,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		}
 		
 		// case Model 
-		if (!DB_TCFacade.originatedFromTheory(root.getRodinFile())){
+		if (!DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
 			ProjectManager manager = projectManagers.get(project);
 			Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 			extensions.addAll(globalProjectManager.getAllDeployedExtensions());
@@ -84,9 +84,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			}
 			return extensions;
 		}
-		// case theory dependent roots
-		if (DB_TCFacade.originatedFromTheory(root.getRodinFile())){
-			ISCTheoryRoot scRoot = DB_TCFacade.getSCTheory(root.getComponentName(), project);
+		// case theory dependent roots (not ITheoryRoot)
+		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
+			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(root.getComponentName(), project);
 			if (scRoot.exists()){
 				return getFormulaExtensions(scRoot);
 			}
@@ -105,7 +105,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		if (element instanceof IRodinProject) {
 			IRodinProject proj = (IRodinProject) element;
 			ProjectManager manager = 
-				proj.getElementName().equals(DB_TCFacade.THEORIES_PROJECT) ? globalProjectManager :projectManagers.get(proj);
+				proj.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT) ? globalProjectManager :projectManagers.get(proj);
 			if (manager != null){
 				manager.processDelta(delta);
 			}
@@ -146,7 +146,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			globalProjectManager.populate(basicFactory);
 			seedFactory = seedFactory.withExtensions(globalProjectManager.getAllDeployedExtensions());
 			for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
-				if(!project.getElementName().equals(DB_TCFacade.THEORIES_PROJECT) && project.isOpen()){
+				if(!project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT) && project.isOpen()){
 					ProjectManager manager = new ProjectManager(project);
 					manager.populate(seedFactory);
 					projectManagers.put(project, manager);

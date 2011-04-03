@@ -28,7 +28,7 @@ import org.eventb.theory.core.maths.IOperatorExtension;
  * @author maamria
  *
  */
-public class AST_TCFacade {
+public class AstUtilities {
 
 	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] {
 			Notation.POSTFIX.toString(), Notation.INFIX.toString() };

@@ -15,10 +15,11 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class SimpleDeployWizardPageOne extends AbstractDeployWizardPageOne{
 	
-	protected SimpleDeployWizardPageOne(String theoryName) {
+	protected SimpleDeployWizardPageOne(String theoryName, String projectName) {
 		super();
 		this.theoryName = theoryName;
-		setDescription("Deploy theory file to MathExtensions project.");
+		this.projectName = projectName;
+		setDescription("Deploy theory file.");
 	}
 
 	@Override

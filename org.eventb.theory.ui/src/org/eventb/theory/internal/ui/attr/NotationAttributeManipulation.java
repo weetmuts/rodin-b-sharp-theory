@@ -13,7 +13,7 @@ import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
 import org.eventb.theory.core.INotationTypeElement;
-import org.eventb.theory.core.AST_TCFacade;
+import org.eventb.theory.core.AstUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -25,7 +25,7 @@ public class NotationAttributeManipulation extends AbstractAttributeManipulation
 
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
-		return AST_TCFacade.POSSIBLE_NOTATION_TYPES;
+		return AstUtilities.POSSIBLE_NOTATION_TYPES;
 	}
 
 	

@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.StaticChecker;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.DB_TCFacade;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
@@ -31,9 +30,6 @@ public class TheoryStaticChecker extends StaticChecker {
 			monitor.beginTask(Messages.bind(Messages.build_extracting, file
 					.getName()), 1);
 			IRodinFile source = RodinCore.valueOf(file);
-			if (DB_TCFacade.doesDeployedTheoryExist(source.getRoot().getElementName(), source.getRodinProject())){
-				return;
-			}
 			ITheoryRoot root = (ITheoryRoot) source.getRoot();
 			IRodinFile target = root.getSCTheoryRoot().getRodinFile();
 			graph.addTarget(target.getResource());

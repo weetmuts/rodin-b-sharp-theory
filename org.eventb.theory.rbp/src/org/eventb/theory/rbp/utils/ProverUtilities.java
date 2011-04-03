@@ -14,7 +14,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.rbp.internal.base.IDeployedRule;
 
 /**
@@ -239,7 +239,7 @@ public class ProverUtilities {
 	 * @return the current formula factory
 	 */
 	public static FormulaFactory getCurrentFormulaFactory() {
-		return DB_TCFacade.getCurrentFormulaFactory();
+		return DatabaseUtilities.getCurrentFormulaFactory();
 	}
 
 	/**

@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
-import org.eventb.theory.core.DB_TCFacade;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IImportTheoryElement;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -62,7 +62,7 @@ public class ImportTheoryAttributeManipulation extends
 	public void setValue(IRodinElement element, String value,
 			IProgressMonitor monitor) throws RodinDBException {
 		IRodinProject proj = element.getRodinProject();
-		ISCTheoryRoot root = DB_TCFacade.getSCTheory(value, proj);
+		ISCTheoryRoot root = DatabaseUtilities.getSCTheory(value, proj);
 		if (root != null && root.exists())
 			asImportTheoryElement(element).setImportTheory(root, monitor);
 
@@ -150,7 +150,7 @@ public class ImportTheoryAttributeManipulation extends
 		final Iterator<String> iter = theories.iterator();
 		while (iter.hasNext()) {
 			final String name = iter.next();
-			final ITheoryRoot theory = DB_TCFacade.getTheory(name, prj);
+			final ITheoryRoot theory = DatabaseUtilities.getTheory(name, prj);
 			if (isImportedBy(root, theory)) {
 				iter.remove();
 			}
@@ -173,7 +173,7 @@ public class ImportTheoryAttributeManipulation extends
 		IRodinProject project = root.getRodinProject();
 		for (IImportTheory imp : imported) {
 			if (imp.hasImportTheory()) {
-				list.add(DB_TCFacade.getTheory(imp.getImportTheory()
+				list.add(DatabaseUtilities.getTheory(imp.getImportTheory()
 						.getComponentName(), project));
 			}
 		}
