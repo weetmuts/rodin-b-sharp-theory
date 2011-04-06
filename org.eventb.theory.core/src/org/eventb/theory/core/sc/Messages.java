@@ -93,7 +93,7 @@ public final class Messages {
 	public static String scuser_WDPredUndefError;
 	public static String scuser_OpCannotReferToTheseTypes;
 	public static String scuser_OperatorSynIsATypeParError;
-	public static String scuser_OperatorHasMoreThan1DirectDefError;
+	public static String scuser_OperatorHasMoreThan1DefError;
 	public static String scuser_MissingFormulaAttrError;
 	public static String scuser_OperatorNoDirectDefError;
 	public static String scuser_OperatorDefNotExpError;
@@ -131,6 +131,12 @@ public final class Messages {
 	public static String scuser_LHS_IsNotWDStrict;
 	public static String scuser_ImportDepCircularity;
 	public static String scuser_ImportConflict;
+	public static String scuser_ArgumentNotExistOrNotParametric;
+	public static String scuser_InductiveCaseMissing;
+	public static String scuser_ExprIsNotDatatypeConstr;
+	public static String scuser_ConstrAlreadyCovered;
+	public static String scuser_ExprNotApproInductiveCase;
+	public static String scuser_ConstrArgumentNotIdentifier;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

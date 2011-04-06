@@ -26,6 +26,7 @@ import static org.eventb.theory.core.TheoryAttributes.TOOL_TIP_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.IMPORT_THEORY_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -49,6 +50,7 @@ import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IFormulaTypeElement;
 import org.eventb.theory.core.IGivenTypeElement;
 import org.eventb.theory.core.IImportTheoryElement;
+import org.eventb.theory.core.IInductiveArgumentElement;
 import org.eventb.theory.core.IInteractiveElement;
 import org.eventb.theory.core.INotationTypeElement;
 import org.eventb.theory.core.IOperatorGroupElement;
@@ -72,14 +74,14 @@ import org.rodinp.core.RodinDBException;
  */
 @SuppressWarnings("restriction")
 public abstract class TheoryElement extends EventBElement implements
-	IAssociativeElement, ICommutativeElement, IFormulaElement,
-	IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
-	ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
-	IInteractiveElement, IToolTipElement, IDefinitionalElement, IGivenTypeElement,
-	ISCGivenTypeElement, ISCFormulaElement, IReasoningTypeElement, IValidatedElement,
-	IOperatorGroupElement, IImportTheoryElement
-{
-	
+		IAssociativeElement, ICommutativeElement, IFormulaElement,
+		IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
+		ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
+		IInteractiveElement, IToolTipElement, IDefinitionalElement,
+		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
+		IReasoningTypeElement, IValidatedElement, IOperatorGroupElement,
+		IImportTheoryElement, IInductiveArgumentElement {
+
 	public static final String BACKWARD_REASONING_TYPE = "backward";
 	public static final String FORWARD_REASONING_TYPE = "forward";
 	public static final String BACKWARD_AND_FORWARD_REASONING_TYPE = "both";
@@ -101,12 +103,12 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 
 	@Override
-	public void setOperatorGroup(String newGroup, IProgressMonitor monitor) 
-	throws RodinDBException{
+	public void setOperatorGroup(String newGroup, IProgressMonitor monitor)
+			throws RodinDBException {
 		// TODO Auto-generated method stub
 		setAttributeValue(GROUP_ID_ATTRIBUTE, newGroup, monitor);
 	}
-	
+
 	@Override
 	public boolean hasAssociativeAttribute() throws RodinDBException {
 		return hasAttribute(ASSOCIATIVE_ATTRIBUTE);
@@ -156,7 +158,8 @@ public abstract class TheoryElement extends EventBElement implements
 
 	@Override
 	public FormulaType getFormulaType() throws RodinDBException {
-		return (getAttributeValue(FORMULA_TYPE_ATTRIBUTE)? FormulaType.EXPRESSION : FormulaType.PREDICATE);
+		return (getAttributeValue(FORMULA_TYPE_ATTRIBUTE) ? FormulaType.EXPRESSION
+				: FormulaType.PREDICATE);
 	}
 
 	@Override
@@ -167,49 +170,44 @@ public abstract class TheoryElement extends EventBElement implements
 	@Override
 	public void setFormulaType(FormulaType type, IProgressMonitor monitor)
 			throws RodinDBException {
-		setAttributeValue(FORMULA_TYPE_ATTRIBUTE, type.equals(FormulaType.EXPRESSION) ? true : false, monitor);
+		setAttributeValue(FORMULA_TYPE_ATTRIBUTE,
+				type.equals(FormulaType.EXPRESSION) ? true : false, monitor);
 	}
 
 	@Override
 	public Notation getNotationType() throws RodinDBException {
-		return AstUtilities.getNotation(getAttributeValue(NOTATION_TYPE_ATTRIBUTE));
+		return AstUtilities
+				.getNotation(getAttributeValue(NOTATION_TYPE_ATTRIBUTE));
 	}
 
-	
 	@Override
 	public boolean hasNotationType() throws RodinDBException {
 		return hasAttribute(NOTATION_TYPE_ATTRIBUTE);
 	}
 
-	
 	@Override
 	public void setNotationType(String notation, IProgressMonitor monitor)
 			throws RodinDBException {
-		setAttributeValue(NOTATION_TYPE_ATTRIBUTE, 
-				notation, monitor);
+		setAttributeValue(NOTATION_TYPE_ATTRIBUTE, notation, monitor);
 	}
 
-	
 	@Override
 	public String getSyntaxSymbol() throws RodinDBException {
 		// remove trailing spaces
 		return getAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE).trim();
 	}
 
-	
 	@Override
 	public boolean hasSyntaxSymbol() throws RodinDBException {
 		return hasAttribute(SYNTAX_SYMBOL_ATTRIBUTE);
 	}
 
-	
 	@Override
 	public void setSyntaxSymbol(String newSymbol, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE, newSymbol.trim(), monitor);
-		
-	}
 
+	}
 
 	@Override
 	public String getType() throws RodinDBException {
@@ -222,7 +220,8 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 
 	@Override
-	public void setType(String type, IProgressMonitor monitor) throws RodinDBException {
+	public void setType(String type, IProgressMonitor monitor)
+			throws RodinDBException {
 		setAttributeValue(TYPE_ATTRIBUTE, type, monitor);
 	}
 
@@ -230,27 +229,22 @@ public abstract class TheoryElement extends EventBElement implements
 		return hasAttribute(AUTOMATIC_ATTRIBUTE);
 	}
 
-	
 	public boolean hasComplete() throws RodinDBException {
 		return hasAttribute(COMPLETE_ATTRIBUTE);
 	}
-	
-	
+
 	public boolean hasInteractive() throws RodinDBException {
 		return hasAttribute(INTERACTIVE_ATTRIBUTE);
 	}
 
-	
 	public boolean isAutomatic() throws RodinDBException {
 		return getAttributeValue(AUTOMATIC_ATTRIBUTE);
 	}
-	
-	
+
 	public boolean isComplete() throws RodinDBException {
 		return getAttributeValue(COMPLETE_ATTRIBUTE);
 	}
-	
-	
+
 	public boolean isInteractive() throws RodinDBException {
 		return getAttributeValue(INTERACTIVE_ATTRIBUTE);
 	}
@@ -259,42 +253,42 @@ public abstract class TheoryElement extends EventBElement implements
 			throws RodinDBException {
 		setAttributeValue(AUTOMATIC_ATTRIBUTE, auto, pm);
 	}
-	
-	
+
 	public void setComplete(boolean isComplete, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(COMPLETE_ATTRIBUTE, isComplete, pm);
-		
+
 	}
 
-	
 	public void setInteractive(boolean isInteractive, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(INTERACTIVE_ATTRIBUTE, isInteractive, pm);
-		
-	}
-	
-	public boolean hasToolTip() throws RodinDBException{
-		return hasAttribute(TOOL_TIP_ATTRIBUTE);
-	}
-	
-	public String getToolTip() throws RodinDBException{
-		return getAttributeValue(TOOL_TIP_ATTRIBUTE);
-	}
-	
-	public void setToolTip(String newToolTip, IProgressMonitor monitor) throws RodinDBException{
-		setAttributeValue(TOOL_TIP_ATTRIBUTE,newToolTip, monitor);
+
 	}
 
-	public boolean hasDescription() throws RodinDBException{
+	public boolean hasToolTip() throws RodinDBException {
+		return hasAttribute(TOOL_TIP_ATTRIBUTE);
+	}
+
+	public String getToolTip() throws RodinDBException {
+		return getAttributeValue(TOOL_TIP_ATTRIBUTE);
+	}
+
+	public void setToolTip(String newToolTip, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(TOOL_TIP_ATTRIBUTE, newToolTip, monitor);
+	}
+
+	public boolean hasDescription() throws RodinDBException {
 		return hasAttribute(DESC_ATTRIBUTE);
 	}
-	
-	public String getDescription() throws RodinDBException{
+
+	public String getDescription() throws RodinDBException {
 		return getAttributeValue(DESC_ATTRIBUTE);
 	}
-	
-	public void setDescription(String newDescription, IProgressMonitor monitor) throws RodinDBException{
+
+	public void setDescription(String newDescription, IProgressMonitor monitor)
+			throws RodinDBException {
 		setAttributeValue(DESC_ATTRIBUTE, newDescription, monitor);
 	}
 
@@ -328,7 +322,7 @@ public abstract class TheoryElement extends EventBElement implements
 	public void setGivenType(String type, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(GIVEN_TYPE_ATTRIBUTE, type, monitor);
-		
+
 	}
 
 	@Override
@@ -337,9 +331,7 @@ public abstract class TheoryElement extends EventBElement implements
 		IParseResult parserResult = factory.parseType(typeStr, V2);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
-					Messages.database_SCIdentifierTypeParseFailure,
-					this
-			);
+					Messages.database_SCIdentifierTypeParseFailure, this);
 		}
 		return parserResult.getParsedType();
 	}
@@ -348,7 +340,7 @@ public abstract class TheoryElement extends EventBElement implements
 	public void setSCGivenType(Type type, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(GIVEN_TYPE_ATTRIBUTE, type.toString(), monitor);
-		
+
 	}
 
 	@Override
@@ -357,14 +349,15 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 
 	@Override
-	public Formula<?> getSCFormula(FormulaFactory ff, ITypeEnvironment typeEnvironment) throws RodinDBException {
+	public Formula<?> getSCFormula(FormulaFactory ff,
+			ITypeEnvironment typeEnvironment) throws RodinDBException {
 		String form = getFormula();
 		Formula<?> formula = parseFormula(form, ff, false);
-		if(formula == null){
+		if (formula == null) {
 			return null;
 		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
-		if(result.hasProblem()){
+		if (result.hasProblem()) {
 			return null;
 		}
 		return formula;
@@ -372,10 +365,9 @@ public abstract class TheoryElement extends EventBElement implements
 
 	@Override
 	public void setSCFormula(Formula<?> formula, IProgressMonitor monitor)
-	throws RodinDBException{
+			throws RodinDBException {
 		setFormula(formula.toStringWithTypes(), monitor);
 	}
-
 
 	@Override
 	public boolean hasReasoningAttribute() throws RodinDBException {
@@ -385,55 +377,72 @@ public abstract class TheoryElement extends EventBElement implements
 	@Override
 	public boolean isSuitableForBackwardReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
-		return isSuitableForAllReasoning() ||
-			getReasoningTypeFor(type).equals(ReasoningType.BACKWARD);
+		return isSuitableForAllReasoning()
+				|| getReasoningTypeFor(type).equals(ReasoningType.BACKWARD);
 	}
 
 	@Override
 	public boolean isSuitableForForwardReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
-		return isSuitableForAllReasoning() || 
-			getReasoningTypeFor(type).equals(ReasoningType.FORWARD);
+		return isSuitableForAllReasoning()
+				|| getReasoningTypeFor(type).equals(ReasoningType.FORWARD);
 	}
 
 	@Override
 	public boolean isSuitableForAllReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
-		return getReasoningTypeFor(type).equals(ReasoningType.BACKWARD_AND_FORWARD);
+		return getReasoningTypeFor(type).equals(
+				ReasoningType.BACKWARD_AND_FORWARD);
 	}
 
 	@Override
 	public void setReasoningType(ReasoningType type, IProgressMonitor monitor)
 			throws RodinDBException {
-		setAttributeValue(REASONING_TYPE_ATTRIBUTE, getStringReasoningType(type), monitor);
-		
+		setAttributeValue(REASONING_TYPE_ATTRIBUTE,
+				getStringReasoningType(type), monitor);
+
 	}
-	
+
 	@Override
-	public boolean hasValidatedAttribute() throws RodinDBException{
+	public boolean hasValidatedAttribute() throws RodinDBException {
 		return hasAttribute(VALIDATED_ATTRIBUTE);
 	}
-	
+
 	@Override
-	public boolean isValidated() throws RodinDBException{
+	public boolean isValidated() throws RodinDBException {
 		return getAttributeValue(VALIDATED_ATTRIBUTE);
 	}
-	
+
 	@Override
-	public void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException{
+	public void setValidated(boolean isValidated, IProgressMonitor monitor)
+			throws RodinDBException {
 		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
 	}
-	
-	public boolean hasImportTheory() throws RodinDBException{
+
+	public boolean hasImportTheory() throws RodinDBException {
 		return hasAttribute(IMPORT_THEORY_ATTRIBUTE);
 	}
-	
-	public ISCTheoryRoot getImportTheory() throws RodinDBException{
+
+	public ISCTheoryRoot getImportTheory() throws RodinDBException {
 		return (ISCTheoryRoot) getAttributeValue(IMPORT_THEORY_ATTRIBUTE);
 	}
-	
-	public void setImportTheory(ISCTheoryRoot root, IProgressMonitor monitor) throws RodinDBException{
+
+	public void setImportTheory(ISCTheoryRoot root, IProgressMonitor monitor)
+			throws RodinDBException {
 		setAttributeValue(IMPORT_THEORY_ATTRIBUTE, root, monitor);
+	}
+
+	public boolean hasInductiveArgument() throws RodinDBException{
+		return hasAttribute(INDUCTIVE_ARGUMENT_ATTRIBUTE);
+	}
+
+	public String getInductiveArgument() throws RodinDBException{
+		return getAttributeValue(INDUCTIVE_ARGUMENT_ATTRIBUTE);
+	}
+
+	public void setInductiveArgument(String inductiveArgument, IProgressMonitor monitor)
+			throws RodinDBException{
+		setAttributeValue(INDUCTIVE_ARGUMENT_ATTRIBUTE, inductiveArgument, monitor);
 	}
 
 	/**
@@ -448,7 +457,7 @@ public abstract class TheoryElement extends EventBElement implements
 	 *            whether the formula is expected to have predicate variables
 	 * @return the parsed formula
 	 */
-	protected Formula<?> parseFormula(String formStr, FormulaFactory ff,
+	public static Formula<?> parseFormula(String formStr, FormulaFactory ff,
 			boolean isPattern) {
 		Formula<?> formula = null;
 		if (isPattern) {
@@ -472,7 +481,7 @@ public abstract class TheoryElement extends EventBElement implements
 				}
 			}
 		}
-	
+
 		return formula;
 	}
 
@@ -510,5 +519,5 @@ public abstract class TheoryElement extends EventBElement implements
 			return ReasoningType.BACKWARD_AND_FORWARD;
 		throw new IllegalArgumentException("unknown reasoning type " + type);
 	}
-	
+
 }

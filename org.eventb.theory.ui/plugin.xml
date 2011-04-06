@@ -139,6 +139,14 @@
             required="true"
             typeId="org.eventb.theory.core.givenType">
       </choiceAttribute>
+      <choiceAttribute
+            class="org.eventb.theory.internal.ui.attr.InductiveArgumentAttributeManipulation"
+            expandsHorizontally="false"
+            id="org.eventb.theory.ui.inductiveArgument"
+            prefix="case"
+            required="true"
+            typeId="org.eventb.theory.core.inductiveArgument">
+      </choiceAttribute>
       <element
             childrenSuffix="END"
             imagePath="icons/thy.gif"
@@ -213,6 +221,18 @@
             typeId="org.eventb.theory.core.directOperatorDefinition">
       </element>
       <element
+            defaultColumn="1"
+            imagePath="icons/inv_obj.gif"
+            prefix="recursive definition"
+            typeId="org.eventb.theory.core.recursiveOperatorDefinition">
+      </element>
+      <element
+            defaultColumn="2"
+            imagePath="icons/act_obj.gif"
+            prefix="cases"
+            typeId="org.eventb.theory.core.recursiveDefinitionCase">
+      </element>
+      <element
             defaultColumn="0"
             imagePath="icons/axms_obj.gif"
             prefix="PROOF RULES"
@@ -268,6 +288,17 @@
             prettyPrinter="org.eventb.theory.ui.editor.html.TheoremPrettyPrinter"
             typeId="org.eventb.theory.core.theorem">
       </element>
+      <childRelation
+            parentTypeId="org.eventb.theory.core.inferenceRule">
+         <childType
+               priority="10"
+               typeId="org.eventb.theory.core.given">
+         </childType>
+         <childType
+               priority="20"
+               typeId="org.eventb.theory.core.infer">
+         </childType>
+      </childRelation>
       <childRelation
             parentTypeId="org.eventb.theory.core.theoryRoot">
          <childType
@@ -327,6 +358,10 @@
                priority="30"
                typeId="org.eventb.theory.core.directOperatorDefinition">
          </childType>
+         <childType
+               priority="40"
+               typeId="org.eventb.theory.core.recursiveOperatorDefinition">
+         </childType>
       </childRelation>
       <childRelation
             parentTypeId="org.eventb.theory.core.proofRulesBlock">
@@ -351,14 +386,10 @@
          </childType>
       </childRelation>
       <childRelation
-            parentTypeId="org.eventb.theory.core.inferenceRule">
+            parentTypeId="org.eventb.theory.core.recursiveOperatorDefinition">
          <childType
                priority="10"
-               typeId="org.eventb.theory.core.given">
-         </childType>
-         <childType
-               priority="20"
-               typeId="org.eventb.theory.core.infer">
+               typeId="org.eventb.theory.core.recursiveDefinitionCase">
          </childType>
       </childRelation>
    </extension>
@@ -625,6 +656,30 @@
             elementTypeId="org.eventb.theory.core.typeArgument">
          <attributeReference
                descriptionId="org.eventb.theory.ui.givenType">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.theory.core.recursiveOperatorDefinition">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.theory.ui.inductiveArgument">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.theory.core.recursiveDefinitionCase">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.expression">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.theory.ui.formula">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
          </attributeReference>
       </attributeRelation>
    </extension>

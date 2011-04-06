@@ -115,6 +115,11 @@
             kind="string"
             name="%groupIDAttr">
       </attributeType>
+      <attributeType
+            id="inductiveArgument"
+            kind="string"
+            name="%inductiveArgumentAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -213,6 +218,16 @@
             id="theorem"
             name="%theorem">
       </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.RecursiveDefinitionCase"
+            id="recursiveDefinitionCase"
+            name="%recursiveDefinitionCase">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.RecursiveOperatorDefinition"
+            id="recursiveOperatorDefinition"
+            name="%recursiveOperatorDefinition">
+      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -310,6 +325,16 @@
             class="org.eventb.theory.core.basis.SCProofRulesBlock"
             id="scProofRulesBlock"
             name="%scProofRulesBlock">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCRecursiveDefinitionCase"
+            id="scRecursiveDefinitionCase"
+            name="%scRecursiveDefinitionCase">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCRecursiveOperatorDefinition"
+            id="scRecursiveOperatorDefinition"
+            name="%scRecursiveOperatorDefinition">
       </internalElementType>
    </extension>
    <extension

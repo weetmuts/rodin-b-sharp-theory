@@ -22,6 +22,7 @@ import org.eventb.internal.core.Util;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
+import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -125,5 +126,19 @@ public class SCNewOperatorDefinition extends TheoryElement implements ISCNewOper
 	@Override
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return ELEMENT_TYPE;
+	}
+
+	@Override
+	public ISCRecursiveOperatorDefinition getRecursiveOperatorDefinition(
+			String name) {
+		// TODO Auto-generated method stub
+		return getInternalElement(ISCRecursiveOperatorDefinition.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public ISCRecursiveOperatorDefinition[] getRecursiveOperatorDefinitions()
+			throws RodinDBException {
+		// TODO Auto-generated method stub
+		return getChildrenOfType(ISCRecursiveOperatorDefinition.ELEMENT_TYPE);
 	}
 }

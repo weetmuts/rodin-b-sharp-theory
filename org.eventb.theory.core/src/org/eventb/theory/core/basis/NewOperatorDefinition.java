@@ -11,6 +11,7 @@ import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IOperatorArgument;
 import org.eventb.theory.core.IOperatorWDCondition;
+import org.eventb.theory.core.IRecursiveOperatorDefinition;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -70,6 +71,20 @@ public class NewOperatorDefinition extends TheoryElement implements INewOperator
 	@Override
 	public IOperatorWDCondition getOperatorWDCondition(String name) {
 		return getInternalElement(IOperatorWDCondition.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public IRecursiveOperatorDefinition getRecursiveOperatorDefinition(
+			String name) {
+		// TODO Auto-generated method stub
+		return getInternalElement(IRecursiveOperatorDefinition.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public IRecursiveOperatorDefinition[] getRecursiveOperatorDefinitions()
+			throws RodinDBException {
+		// TODO Auto-generated method stub
+		return getChildrenOfType(IRecursiveOperatorDefinition.ELEMENT_TYPE);
 	}
 
 }

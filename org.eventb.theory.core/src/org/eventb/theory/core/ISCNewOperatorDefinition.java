@@ -18,48 +18,63 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for statically checked new operator definition.
  * 
- * <p> This interface is not intended to be implemented by clients.
+ * <p>
+ * This interface is not intended to be implemented by clients.
  * 
  * @see INewOperatorDefinition
  * 
  * @author maamria
- *
+ * 
  */
-public interface ISCNewOperatorDefinition extends ILabeledElement, ISyntaxSymbolElement,
-	IFormulaTypeElement, INotationTypeElement,IAssociativeElement, ICommutativeElement,
-	ITraceableElement, IHasErrorElement, ISCPredicateElement, IOperatorGroupElement,
-	IValidatedElement
-	{
-	
-	IInternalElementType<ISCNewOperatorDefinition> ELEMENT_TYPE = 
-		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scNewOperatorDefinition");
-	
+public interface ISCNewOperatorDefinition extends ILabeledElement,
+		ISyntaxSymbolElement, IFormulaTypeElement, INotationTypeElement,
+		IAssociativeElement, ICommutativeElement, ITraceableElement,
+		IHasErrorElement, ISCPredicateElement, IOperatorGroupElement,
+		IValidatedElement {
+
+	IInternalElementType<ISCNewOperatorDefinition> ELEMENT_TYPE = RodinCore
+			.getInternalElementType(TheoryPlugin.PLUGIN_ID
+					+ ".scNewOperatorDefinition");
+
 	/**
 	 * Returns a handle to the operator argument of the given name.
-	 * @param name the argument name
+	 * 
+	 * @param name
+	 *            the argument name
 	 * @return the operator argument
 	 */
 	ISCOperatorArgument getOperatorArgument(String name);
-	
+
 	/**
 	 * Returns all operator arguments of this operator.
+	 * 
 	 * @return all operator arguments
 	 * @throws RodinDBException
 	 */
 	ISCOperatorArgument[] getOperatorArguments() throws RodinDBException;
-	
+
 	/**
 	 * Returns a handle to the direct definition of the given name.
-	 * @param name the name of the definition
+	 * 
+	 * @param name
+	 *            the name of the definition
 	 * @return the direct definition
 	 */
 	ISCDirectOperatorDefinition getDirectOperatorDefinition(String name);
-	
+
 	/**
-	 * Returns all direct definitions that are the children of this operator definition.
+	 * Returns all direct definitions that are the children of this operator
+	 * definition.
+	 * 
 	 * @return all direct definitions
 	 * @throws RodinDBException
 	 */
-	ISCDirectOperatorDefinition[] getDirectOperatorDefinitions() throws RodinDBException;
+	ISCDirectOperatorDefinition[] getDirectOperatorDefinitions()
+			throws RodinDBException;
+
+	ISCRecursiveOperatorDefinition getRecursiveOperatorDefinition(String name);
+
+	ISCRecursiveOperatorDefinition[] getRecursiveOperatorDefinitions()
+			throws RodinDBException;
 
 }

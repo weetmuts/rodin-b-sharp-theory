@@ -23,9 +23,9 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			OperatorArgumentNameConflictError(
 			IMarker.SEVERITY_ERROR,
 			Messages.scuser_OperatorArgumentNameConflict), 
-			OperatorHasMoreThan1DirectDefError(
+			OperatorHasMoreThan1DefError(
 			IMarker.SEVERITY_ERROR,
-			Messages.scuser_OperatorHasMoreThan1DirectDefError), 
+			Messages.scuser_OperatorHasMoreThan1DefError), 
 			OperatorArgumentNameConflictWarning(
 			IMarker.SEVERITY_WARNING,
 			Messages.scuser_OperatorArgumentNameConflict), 
@@ -315,7 +315,25 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_IndRedundantImportWarn),
 			ImportConflict(
 			IMarker.SEVERITY_ERROR,
-			Messages.scuser_ImportConflict)
+			Messages.scuser_ImportConflict), 
+			ArgumentNotExistOrNotParametric(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_ArgumentNotExistOrNotParametric), 
+			InductiveCaseMissing(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_InductiveCaseMissing), 
+			ExprIsNotDatatypeConstr(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_ExprIsNotDatatypeConstr), 
+			ConstrAlreadyCovered(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_ConstrAlreadyCovered), 
+			ExprNotApproInductiveCase(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_ExprNotApproInductiveCase), 
+			ConstrArgumentNotIdentifier(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_ConstrArgumentNotIdentifier)
 	;
 
 	private int arity;

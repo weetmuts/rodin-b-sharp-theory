@@ -79,4 +79,8 @@ public interface INewOperatorDefinition extends ICommentedElement, ILabeledEleme
 	 */
 	IDirectOperatorDefinition[] getDirectOperatorDefinitions() throws RodinDBException;
 	
+	IRecursiveOperatorDefinition getRecursiveOperatorDefinition(String name);
+	
+	IRecursiveOperatorDefinition[] getRecursiveOperatorDefinitions() throws RodinDBException;
+	
 }

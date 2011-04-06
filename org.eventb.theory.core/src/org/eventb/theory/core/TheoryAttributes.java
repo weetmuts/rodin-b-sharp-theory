@@ -75,4 +75,8 @@ public class TheoryAttributes {
 	
 	public static IAttributeType.Handle IMPORT_THEORY_ATTRIBUTE = RodinCore
 		.getHandleAttrType(TheoryPlugin.PLUGIN_ID + ".importTheory");
+	
+	public static IAttributeType.String INDUCTIVE_ARGUMENT_ATTRIBUTE = RodinCore
+			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".inductiveArgument");
+	
 }
