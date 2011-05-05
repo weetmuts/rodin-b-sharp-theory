@@ -60,22 +60,12 @@
             typeId="org.eventb.theory.core.type">
       </textAttribute>
       <textAttribute
-            class="org.eventb.theory.internal.ui.attr.ToolTipAttributeManipulation"
-            expandsHorizontally="false"
-            foregroundColor="P_COMMENT_FOREGROUND"
-            id="org.eventb.theory.ui.toolTip"
-            isMath="false"
-            prefix="Tip:"
-            style="single"
-            typeId="org.eventb.theory.core.toolTip">
-      </textAttribute>
-      <textAttribute
             class="org.eventb.theory.internal.ui.attr.DescAttributeManipulation"
             expandsHorizontally="false"
             foregroundColor="P_COMMENT_FOREGROUND"
             id="org.eventb.theory.ui.desc"
             isMath="false"
-            prefix="Desc:"
+            prefix="Description"
             style="single"
             typeId="org.eventb.theory.core.desc">
       </textAttribute>
@@ -567,10 +557,6 @@
                descriptionId="org.eventb.theory.ui.desc">
          </attributeReference>
          <attributeReference
-               column="6"
-               descriptionId="org.eventb.theory.ui.toolTip">
-         </attributeReference>
-         <attributeReference
                descriptionId="org.eventb.ui.comment">
          </attributeReference>
       </attributeRelation>
@@ -609,10 +595,6 @@
          <attributeReference
                column="3"
                descriptionId="org.eventb.theory.ui.desc">
-         </attributeReference>
-         <attributeReference
-               column="4"
-               descriptionId="org.eventb.theory.ui.toolTip">
          </attributeReference>
          <attributeReference
                descriptionId="org.eventb.ui.comment">

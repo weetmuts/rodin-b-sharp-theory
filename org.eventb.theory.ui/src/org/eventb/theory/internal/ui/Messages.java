@@ -18,11 +18,9 @@ public class Messages {
 	
 	public static String rule_isAutomatic;
 	public static String rewriteRule_isComplete;
-	public static String rewriteRule_isConditional;
 	public static String rewriteRule_isIncomplete;
 	public static String rule_isInteractive;
 	public static String rule_isNotAutomatic;
-	public static String rewriteRule_isUnconditional;
 	public static String rule_isUnInteractive;
 	
 	public static String operator_isExpression;

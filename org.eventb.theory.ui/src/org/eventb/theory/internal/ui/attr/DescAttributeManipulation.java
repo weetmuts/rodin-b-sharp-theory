@@ -41,7 +41,7 @@ implements IAttributeManipulation {
 	
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		asDesc(element).setDescription("Change Me!", monitor);
+		asDesc(element).setDescription("Describe Me!", monitor);
 
 	}
 
