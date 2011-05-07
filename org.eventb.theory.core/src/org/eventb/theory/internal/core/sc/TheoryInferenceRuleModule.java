@@ -22,9 +22,9 @@ import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.eventb.theory.internal.core.sc.states.InferenceIdentifiers;
 import org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 

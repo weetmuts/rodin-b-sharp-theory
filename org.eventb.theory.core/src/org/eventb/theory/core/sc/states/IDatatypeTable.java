@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.sc.states;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
@@ -16,22 +16,15 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
  * Common protocol for a repository state that holds information about the currently processed datatype definition.
- * <br><br>
+ * <p>
  * This state keeps a pointer to the current datatype being processed , the pointer is the datatype identifier.
+ * <p> This interface is not intended to be implemented or extended by clients.
  * @author maamria
  *
  */
 public interface IDatatypeTable extends ISCState{
 	
-	/**
-	 * Error codes.
-	 * @author maamria
-	 *
-	 */
-	public static enum ERROR_CODE{NAME_IS_A_DATATYPE, NAME_IS_A_CONSTRUCTOR, NAME_IS_A_DESTRUCTOR};
-	
-	public final static IStateType<IDatatypeTable> STATE_TYPE = SCCore.getToolStateType(
-			TheoryPlugin.PLUGIN_ID + ".datatypeTable");
+	public final IStateType<IDatatypeTable> STATE_TYPE = SCCore.getToolStateType(TheoryPlugin.PLUGIN_ID + ".datatypeTable");
 	
 	/**
 	 * Augments the decoy factory to include the type expression corresponding to the datatype being processed.
@@ -63,7 +56,7 @@ public interface IDatatypeTable extends ISCState{
 	public boolean isErrorProne();
 	
 	/**
-	 * A call to method <code>isNameOk(String)</code> should be made to ensure unique names.
+	 * A call to method <code>checkName(String)</code> should be made to ensure unique names.
 	 * @param name
 	 * @param typeArgs
 	 */
@@ -72,10 +65,9 @@ public interface IDatatypeTable extends ISCState{
 	/**
 	 * Checks whether the current datatype has any base constructors; 
 	 * that is a constructor that does not refer to the type expression of the defined datatype.
-	 * @param typeExpression of the current datatype
 	 * @return whether the current datatype has a base constructor
 	 */
-	public boolean datatypeHasBaseConstructor(Type typeExpression);
+	public boolean datatypeHasBaseConstructor();
 	
 	/**
 	 * Checks if <code>name</code> is a different identifier to any 
@@ -83,7 +75,15 @@ public interface IDatatypeTable extends ISCState{
 	 * @param name
 	 * @return
 	 */
-	public ERROR_CODE isNameOk(String name);
+	public String checkName(String name);
+	
+	/**
+	 * Returns whether the given identifier is allowed to occur within a type of a destructor.
+	 * <p> An identifier is not allowed to occur in destructor's type is it has not been declared and it is not referenced type.
+	 * @param identifier the identifier to check
+	 * @return whether the identifier is allowed to occur
+	 */
+	public boolean isAllowedIdentifier(String  identifier);
 	
 	/**
 	 * Adds a constructor to the currently processed datatype.

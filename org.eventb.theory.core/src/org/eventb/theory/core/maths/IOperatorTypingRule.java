@@ -10,15 +10,14 @@ package org.eventb.theory.core.maths;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IWDMediator;
 
 /**
- * Common protocol for an operator typing rule.
- * <p> A typing rule provides information about arguments types, the arity of the operator,
+ * Common protocol for an operator typing rule. This should encapsulate the intuitive understanding of a typical type inference rule
+ * where operator arguments types are provided as well as the resultant type if any.
+ * <p> A typing rule provides information about arguments types, the arity of the operator and any resultant types,
  * 
  * @since 1.0
  * 
@@ -30,23 +29,10 @@ import org.eventb.core.ast.extension.IWDMediator;
 public interface IOperatorTypingRule<F extends Formula<F>> {
 	
 	/**
-	 * Adds the given operator argument as an argument of operator corresponding to this typing rule.
-	 * @param arg the operator argument
-	 */
-	public void addOperatorArgument(IOperatorArgument arg);
-	
-	/**
 	 * Returns the arity of the operator associated with this typing rule.
 	 * @return the arity
 	 */
 	public int getArity();
-	
-	/**
-	 * Sets the types on which the operator of this typing rule is polymorphic.
-	 * 
-	 * @param types the polymorphic types
-	 */
-	public void addTypeParameters(List<GivenType> types);
 	
 	/**
 	 * Returns the well-definedness predicate of the given formula whose formula extension must
@@ -58,14 +44,10 @@ public interface IOperatorTypingRule<F extends Formula<F>> {
 	public Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator);
 	
 	/**
-	 * Expands the definition of this operator if the given formula is an 
-	 * extended formula whose root is this operator.
-	 * @param extension the formula extension
-	 * @param extendedFormula the formula
-	 * @param factory the formula factory
-	 * @return the rewritten formula
+	 * Returns the well-definedness predicate general pattern for instances of the concerned operator.
+	 * @return the pattern well-definedness
 	 */
-	public F expandDefinition(IOperatorExtension<F> extension, F extendedFormula, FormulaFactory factory);
+	public Predicate getWDPredicate();
 	
 	/**
 	 * Returns the list of operator arguments.
@@ -73,10 +55,4 @@ public interface IOperatorTypingRule<F extends Formula<F>> {
 	 */
 	public List<IOperatorArgument> getOperatorArguments();
 	
-	/**
-	 * Returns the pattern WD predicate of this operator.
-	 * @return pattern WD predicate
-	 */
-	public Predicate getWDPredicate();
-
 }

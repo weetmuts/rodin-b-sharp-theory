@@ -12,7 +12,6 @@ import java.util.List;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
 /**
@@ -70,8 +69,7 @@ public interface IOperatorArgument{
 	 * Returns the list of given types occurring in the type of this argument.
 	 * 
 	 * @param factory
-	 * @param typeEnvironment
 	 * @return the list of given types
 	 */
-	public List<GivenType> getGivenTypes(FormulaFactory factory, ITypeEnvironment typeEnvironment);
+	public List<GivenType> getGivenTypes(FormulaFactory factory);
 }

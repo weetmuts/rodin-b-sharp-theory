@@ -8,6 +8,7 @@
 package org.eventb.theory.internal.core.maths;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Expression;
@@ -15,7 +16,6 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LanguageVersion;
@@ -25,6 +25,7 @@ import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.theory.core.maths.AbstractOperatorTypingRule;
 import org.eventb.theory.core.maths.IExpressionTypeChecker;
+import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
@@ -35,10 +36,13 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule<Exp
 implements IExpressionTypeChecker{
 	
 	protected Type resultantType;
+	protected boolean isAssociative;
 	
-	public ExpressionOperatorTypingRule(Expression directDefinition, Predicate wdPredicate, boolean isAssociative) {
-		super(directDefinition, wdPredicate, isAssociative);
-		this.resultantType = directDefinition.getType();
+	public ExpressionOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, 
+			FormulaFactory factory, Type resultantType, boolean isAssociative) {
+		super(operatorArguments, wdPredicate, factory);
+		this.resultantType = resultantType;
+		this.isAssociative = isAssociative;
 	}
 	
 	public String toString(){
@@ -47,7 +51,7 @@ implements IExpressionTypeChecker{
 
 	@Override
 	public boolean verifyType(Type proposedType, Expression[] childExprs,
-			Predicate[] childPreds, boolean isAssociative) {
+			Predicate[] childPreds) {
 		if(childExprs.length != arity && !isAssociative)
 			return false;
 		Map<GivenType, Type> calculatedInstantiations = new HashMap<GivenType, Type>();
@@ -64,7 +68,7 @@ implements IExpressionTypeChecker{
 			return true;
 		}
 		for(int i = 0 ; i < arity ; i++){
-			if(!unifyTypes(argumentsTypes.get(i).getArgumentType(), childExprs[i].getType(), calculatedInstantiations)){
+			if(!unifyTypes(operatorArguments.get(i).getArgumentType(), childExprs[i].getType(), calculatedInstantiations)){
 				return false;
 			}
 		}
@@ -72,8 +76,7 @@ implements IExpressionTypeChecker{
 	}
 
 	@Override
-	public Type typeCheck(ExtendedExpression expression,
-			boolean isAssociative, ITypeCheckMediator mediator) {
+	public Type typeCheck(ExtendedExpression expression, ITypeCheckMediator mediator) {
 		Expression[] childExpressions = expression.getChildExpressions();
 		if (isAssociative)
 		{
@@ -93,7 +96,7 @@ implements IExpressionTypeChecker{
 					mediator.newTypeVariable());
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
-			argumentTypesAsVars[i] = constructPatternType(argumentsTypes.get(i).getArgumentType(),
+			argumentTypesAsVars[i] = constructPatternType(operatorArguments.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}
 
@@ -106,13 +109,12 @@ implements IExpressionTypeChecker{
 	}
 
 	@Override
-	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
-			boolean isAssociative, ITypeMediator mediator) {
+	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds, ITypeMediator mediator) {
 		Type[] types = MathExtensionsUtilities.getTypes(childExprs);
-		return synthesizeType(types, mediator.getFactory(), isAssociative);
+		return synthesizeType(types, mediator.getFactory());
 	}
 	
-	protected Type synthesizeType(Type[] childrenTypes, FormulaFactory factory, boolean isAssociative){
+	protected Type synthesizeType(Type[] childrenTypes, FormulaFactory factory){
 		if (isAssociative)
 		{
 			// associative operators always have 2 or more children 
@@ -123,10 +125,10 @@ implements IExpressionTypeChecker{
 		String rawTypeExp = typeExpression.toString();
 		Expression exp = factory.parseExpression(rawTypeExp,
 				LanguageVersion.V2, null).getParsedExpression();
-		Map<FreeIdentifier, Expression> typeSubs = getTypeSubstitutions(childrenTypes, factory);
+		Map<FreeIdentifier, Expression> typeSubs = getTypeSubstitutions(childrenTypes);
 		if(typeSubs == null)
 			return null;
-		ITypeEnvironment typeEnvironment = generateTypeParametersTypeEnvironment(typeSubs, factory);
+		ITypeEnvironment typeEnvironment = generateTypeParametersTypeEnvironment(typeSubs);
 		exp.typeCheck(typeEnvironment);
 		Expression actTypeExpression = exp.substituteFreeIdents(typeSubs, factory);
 		try {
@@ -136,17 +138,29 @@ implements IExpressionTypeChecker{
 		}
 		return null;
 	}
+	
+	protected Map<FreeIdentifier, Expression> getTypeSubstitutions(Type[] childrenTypes) {
+		Map<FreeIdentifier, Expression> subs = new HashMap<FreeIdentifier, Expression>();
+		Map<GivenType, Type> instantiations = new HashMap<GivenType, Type>();
+		if (isAssociative) {
+			if (!isValidTypeInstantiation(0, childrenTypes[0], instantiations)) {
+				return null;
+			}
+		} else {
+			for (int i = 0; i < childrenTypes.length; i++) {
 
-	@Override
-	protected Expression getParsedFormula(String raw, FormulaFactory factory) {
-		IParseResult result = factory.parseExpression(raw, LanguageVersion.V2, raw);
-		if(result.hasProblem()){
-			return null;
+				if (!isValidTypeInstantiation(i, childrenTypes[i],
+						instantiations)) {
+					return null;
+				}
+			}
 		}
-		Expression newExpr = result.getParsedExpression();
-		return newExpr;
+		for (GivenType gType : instantiations.keySet()) {
+			subs.put(factory.makeFreeIdentifier(gType.getName(), null,
+					instantiations.get(gType).toExpression(factory).getType()),
+					instantiations.get(gType).toExpression(factory));
+		}
+		return subs;
 	}
 
-	
-	
 }

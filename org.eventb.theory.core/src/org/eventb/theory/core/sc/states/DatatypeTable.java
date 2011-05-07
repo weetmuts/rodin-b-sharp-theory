@@ -5,9 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.sc.states;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +22,8 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.maths.MathExtensionsFactory;
+import org.eventb.theory.core.sc.Messages;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -29,7 +33,9 @@ import org.eventb.theory.core.maths.MathExtensionsFactory;
 public class DatatypeTable extends State implements IDatatypeTable{
 	
 	private Map<String, DatatypeEntry> datatypes;
-	
+	// current datatype details
+	private Type typeExpression;
+	private List<String> referencedTypes;
 	private String currentDatatype = null;
 	private String currentConstructor = null;
 	
@@ -43,26 +49,30 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		this.initialFactory = initialFactory;
 		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		datatypes = new LinkedHashMap<String, DatatypeTable.DatatypeEntry>();
-		extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
+		extensionsFactory = MathExtensionsFactory.getDefault();
 	}
 	
 	@Override
 	public IStateType<?> getStateType() {
-		// TODO Auto-generated method stub
 		return STATE_TYPE;
 	}
 	
 	
 	public FormulaFactory augmentDecoyFormulaFactory(){
-		Set<IFormulaExtension> extensions  = datatypes.get(currentDatatype).generateTypeExpression();
+		DatatypeEntry entry = datatypes.get(currentDatatype);
+		// entry should not be null
+		Set<IFormulaExtension> extensions  = entry.generateTypeExpression();
 		if(extensions != null){
 			decoyFactory = decoyFactory.withExtensions(extensions);
 		}
+		typeExpression = MathExtensionsUtilities.
+				createTypeExpression(currentDatatype, Arrays.asList(entry.typeArguments), decoyFactory);
 		return decoyFactory;
 	}
 	
 	public FormulaFactory augmentFormulaFactory(){
-		Set<IFormulaExtension> extensions  = datatypes.get(currentDatatype).generateDatatypeExtensions();
+		DatatypeEntry entry = datatypes.get(currentDatatype);
+		Set<IFormulaExtension> extensions  = entry.generateDatatypeExtensions();
 		if(extensions != null){
 			initialFactory = initialFactory.withExtensions(extensions);
 		}
@@ -93,19 +103,24 @@ public class DatatypeTable extends State implements IDatatypeTable{
 	public void addDatatype(String name, String[] typeArgs){
 		datatypes.put(name, new DatatypeEntry(name, typeArgs));
 		currentDatatype = name;
+		referencedTypes = Arrays.asList(typeArgs);
 	}
 	
-	public boolean datatypeHasBaseConstructor(Type typeExpression){
+	public boolean datatypeHasBaseConstructor(){
 		return datatypes.get(currentDatatype).hasBaseConstructor(typeExpression, decoyFactory);
 	}
 	
-	public ERROR_CODE isNameOk(String name){
+	public boolean isAllowedIdentifier(String identifier) {
+		return referencedTypes.contains(identifier);
+	}
+	
+	public String checkName(String name){
 		if(datatypes.containsKey(name)){
-			return ERROR_CODE.NAME_IS_A_DATATYPE;
+			return Messages.scuser_IdenIsADatatypeNameError;
 		}
-		ERROR_CODE code = null;
+		String code = null;
 		for (DatatypeEntry entry : datatypes.values()){
-			code = entry.isNameOk(name);
+			code = entry.checkName(name);
 			if(code != null){
 				break;
 			}
@@ -159,13 +174,13 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		}
 		
 		
-		public ERROR_CODE isNameOk(String name){
+		public String checkName(String name){
 			if(constructors.containsKey(name)){
-				return ERROR_CODE.NAME_IS_A_CONSTRUCTOR;
+				return Messages.scuser_IdenIsAConsNameError;
 			}
-			ERROR_CODE code = null;
+			String code = null;
 			for (ConstructorEntry entry : constructors.values()){
-				code = entry.isNameOk(name);
+				code = entry.checkName(name);
 				if(code != null){
 					break;
 				}
@@ -204,9 +219,9 @@ public class DatatypeTable extends State implements IDatatypeTable{
 				destructors = new LinkedHashMap<String, Type>();
 			}
 			
-			public ERROR_CODE isNameOk(String name){
+			public String checkName(String name){
 				if(destructors.containsKey(name)){
-					return ERROR_CODE.NAME_IS_A_DESTRUCTOR;
+					return Messages.scuser_IdenIsADesNameError;
 				}
 				return null;
 			}
@@ -240,9 +255,6 @@ public class DatatypeTable extends State implements IDatatypeTable{
 				return isBase;
 			}
 			
-			/**
-			 * @since 2.0
-			 */
 			@Override
 			public boolean enterExtendedExpression(ExtendedExpression expression) {
 				if(expression.getTag() == typeExpression.getTag()){
@@ -253,5 +265,4 @@ public class DatatypeTable extends State implements IDatatypeTable{
 			}
 		}
 	}
-	
 }

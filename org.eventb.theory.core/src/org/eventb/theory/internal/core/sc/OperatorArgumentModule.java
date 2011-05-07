@@ -28,8 +28,8 @@ import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.eventb.theory.internal.core.sc.states.IOperatorInformation;
-import org.eventb.theory.internal.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 

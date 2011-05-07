@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,8 +33,7 @@ import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.sc.states.DatatypeTable;
-import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
@@ -48,7 +47,7 @@ import org.rodinp.core.IRodinFile;
  */
 public class ImportTheoryModule extends SCProcessorModule {
 
-	IModuleType<ImportTheoryModule> MODULE_TYPE = SCCore
+	private final IModuleType<ImportTheoryModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".importTheoryModule"); //$NON-NLS-1$
 
 	private Set<IImportTheory> importTheoriesDirectives;
@@ -58,21 +57,17 @@ public class ImportTheoryModule extends SCProcessorModule {
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		// Most processing is done here in the initialisation 
 		accuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		IRodinFile file = (IRodinFile) element;
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		IImportTheory[] importTheories = root.getImportTheories();
 		if (importTheories.length != 0) {
-			monitor.subTask(Messages
-					.bind(Messages.progress_TheoryImportTheories));
+			monitor.subTask(Messages.bind(Messages.progress_TheoryImportTheories));
 			importTheoriesDirectives = new HashSet<IImportTheory>();
 			ISCTheoryRoot targetRoot = root.getSCTheoryRoot();
 			processImports(importTheories, targetRoot, repository, monitor);
 		}
-		// datatype table state with appropriate formula factory
-		final DatatypeTable datatypeTable = new DatatypeTable(
-				repository.getFormulaFactory());
-		repository.setState(datatypeTable);
 	}
 
 	@Override
@@ -105,39 +100,26 @@ public class ImportTheoryModule extends SCProcessorModule {
 		for (IImportTheory importTheory : importTheories) {
 			// missing attribute
 			if (!importTheory.hasImportTheory()) {
-				createProblemMarker(importTheory,
-						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
-						TheoryGraphProblem.ImportTheoryAttrMissing);
+				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.ImportTheoryAttrMissing);
 				isAccurate = false;
 				continue;
 			}
 			ISCTheoryRoot importRoot = importTheory.getImportTheory();
 			// target does not exist
 			if (!importRoot.exists()) {
-				createProblemMarker(importTheory,
-						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
-						TheoryGraphProblem.ImportTheoryNotExist,
-						importRoot.getComponentName());
+				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.ImportTheoryNotExist, importRoot.getComponentName());
 				isAccurate = false;
 				continue;
 			}
 			// circularity
 			if (DatabaseUtilities.doesTheoryImportTheory(importRoot, targetRoot)) {
-				createProblemMarker(importTheory,
-						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
-						TheoryGraphProblem.ImportDepCircularity,
-						importRoot.getComponentName(),
-						targetRoot.getComponentName());
+				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, TheoryGraphProblem.ImportDepCircularity,importRoot.getComponentName(),targetRoot.getComponentName());
 				isAccurate = false;
 				continue;
 			}
 			// direct redundancy
 			if (importedTheories.contains(importRoot)) {
-				createProblemMarker(importTheory,
-						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
-						TheoryGraphProblem.RedundantImportWarn,
-						importRoot.getComponentName(),
-						targetRoot.getComponentName());
+				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.RedundantImportWarn,importRoot.getComponentName(),targetRoot.getComponentName());
 				isAccurate = false;
 				continue;
 			}
@@ -147,8 +129,22 @@ public class ImportTheoryModule extends SCProcessorModule {
 		}
 		// clear to use differently
 		importedTheories.clear();
-		// need to check for indirect redundancy
-		// map all import directives to the import closure of their target
+		// filter imports
+		isAccurate = filterImports(importedTheories);
+		patchFormulaFactory(importedTheories, repository);
+		if (!isAccurate){
+			accuracyInfo.setNotAccurate();
+		}
+	}
+
+	/**
+	 * Filters the provided set of theories to check against redundancies and conflicts.
+	 * @param importedTheories the set of imported theories
+	 * @return whether the filtering maintained the accuracy of the theory
+	 * @throws CoreException
+	 */
+	protected boolean filterImports(Set<ISCTheoryRoot> importedTheories) throws CoreException {
+		boolean isAccurate = true;;
 		Map<IImportTheory, Set<ISCTheoryRoot>> importMap = new LinkedHashMap<IImportTheory, Set<ISCTheoryRoot>>();
 		// need to check for conflicts
 		Map<IImportTheory, Set<String>> contributedSymbols = new LinkedHashMap<IImportTheory, Set<String>>();
@@ -214,6 +210,17 @@ public class ImportTheoryModule extends SCProcessorModule {
 				}
 			}
 		}
+		return isAccurate;
+	}
+
+	/**
+	 * Patches the formula factory to be used for the rest of the static checking process.
+	 * @param importedTheories the set of imported theories to consider
+	 * @param repository the state repository
+	 * @throws CoreException
+	 */
+	protected void patchFormulaFactory(Set<ISCTheoryRoot> importedTheories,
+			ISCStateRepository repository) throws CoreException {
 		// need to patch up formula factory
 		SCTheoriesGraph graph = new SCTheoriesGraph();
 		graph.setElements(importedTheories);
@@ -230,9 +237,6 @@ public class ImportTheoryModule extends SCProcessorModule {
 		}
 		repository.setFormulaFactory(factory);
 		repository.setTypeEnvironment(factory.makeTypeEnvironment());
-		if (!isAccurate){
-			accuracyInfo.setNotAccurate();
-		}
 	}
 
 	/**

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +34,7 @@ import org.rodinp.core.IRodinElement;
 @SuppressWarnings("restriction")
 public class MetavariableModule extends IdentifierModule {
 
-	IModuleType<MetavariableModule> MODULE_TYPE = SCCore
+	private final IModuleType<MetavariableModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".metavariableModule");
 
 	@Override
@@ -80,11 +80,7 @@ public class MetavariableModule extends IdentifierModule {
 			IIdentifierElement element) {
 		// TODO Auto-generated method stub
 		return TheorySymbolFactory.getInstance().makeLocalMetavariable(
-				name,
-				true,
-				element,
-				element.getAncestor(ITheoryRoot.ELEMENT_TYPE)
-						.getComponentName());
+				name, true, element, element.getAncestor(ITheoryRoot.ELEMENT_TYPE).getComponentName());
 	}
 
 }

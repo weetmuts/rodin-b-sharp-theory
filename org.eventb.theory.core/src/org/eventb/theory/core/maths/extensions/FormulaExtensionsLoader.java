@@ -38,6 +38,7 @@ import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.core.maths.MathExtensionsFactory;
+import org.eventb.theory.core.maths.OperatorExtensionProperties;
 import org.eventb.theory.internal.core.maths.OperatorArgument;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
@@ -239,7 +240,7 @@ class OperatorTransformer extends
 						arg.getIdentifierString(), arg.getType(factory));
 				operatorArguments.add(opArg);
 				for (GivenType t : opArg
-						.getGivenTypes(factory, typeEnvironment)) {
+						.getGivenTypes(factory)) {
 					if (!typeParameters.contains(t)) {
 						typeParameters.add(t);
 					}
@@ -258,22 +259,18 @@ class OperatorTransformer extends
 			Formula<?> directDefinition = scDirecDefinition.getSCFormula(
 					factory, tempTypeEnvironment);
 			IFormulaExtension extension = null;
+			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, groupID);
 			if (directDefinition instanceof Expression) {
-				extension = extensionsFactory.getFormulaExtension(operatorID,
-						syntax, formulaType, notation, groupID, isCommutative,
-						isAssociative, (Expression) directDefinition,
-						extensionsFactory.getTypingRule(typeParameters,
-								operatorArguments,
-								(Expression) directDefinition, wdCondition,
-								isAssociative), definition);
+				extension = extensionsFactory.getFormulaExtension(properties, isCommutative, isAssociative, 
+						extensionsFactory.getTypingRule(
+								operatorArguments, 
+								((Expression) directDefinition).getType(), 
+								wdCondition, isAssociative, factory), 
+							definition);
 			} else {
-				extension = extensionsFactory.getFormulaExtension(operatorID,
-						syntax, formulaType, notation, groupID, isCommutative,
-						(Predicate) directDefinition, extensionsFactory
-								.getTypingRule(typeParameters,
-										operatorArguments,
-										(Predicate) directDefinition,
-										wdCondition), definition);
+				extension = extensionsFactory.getFormulaExtension(properties, isCommutative, 
+						extensionsFactory.getTypingRule(operatorArguments, wdCondition, factory), 
+						definition);
 			}
 			return MathExtensionsUtilities.singletonExtension(extension);
 		} catch (CoreException exception) {
@@ -309,7 +306,7 @@ abstract class DefinitionTransformer<E extends IInternalElement> {
 	protected final Set<IFormulaExtension> EMPTY_EXT = new LinkedHashSet<IFormulaExtension>();
 
 	protected DefinitionTransformer() {
-		extensionsFactory = MathExtensionsFactory.getExtensionsFactory();
+		extensionsFactory = MathExtensionsFactory.getDefault();
 	}
 
 	/**

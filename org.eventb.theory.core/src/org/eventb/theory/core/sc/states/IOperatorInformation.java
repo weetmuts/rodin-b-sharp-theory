@@ -5,10 +5,8 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.sc.states;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
@@ -19,11 +17,10 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
- * An implementation of a repository state holding information about a new operator.
+ * Common protocol for a repository state holding information about a new operator.
  * 
  * <p> Objects of this type can be readily "converted" into an operator extension, if and only if they provide
  * all information needed to create such an extension as per AST requirements.
@@ -49,29 +46,13 @@ public interface IOperatorInformation extends ISCState{
 	 * @return whether the identifier is allowed to be used
 	 */
 	public boolean isAllowedIdentifier(FreeIdentifier ident) ;
-	
-	/**
-	 * Adds an operator argument with the given identifier and type.
-	 * @param ident the idenrifer of the argument
-	 * @param type the type of the argument
-	 */
-	public void addOperatorArgument(FreeIdentifier ident, Type type);
-	
-	
+
 	/**
 	 * Adds an operator argument with the given name and type.
 	 * @param ident the name of the argument
 	 * @param type the type of the argument
 	 */
 	public void addOperatorArgument(String ident, Type type);
-
-	/**
-	 * Generates a definitional rewrite rule for this operator.
-	 * @param newFactory that already knows about this extension
-	 * @param theoryRoot the SC theory root
-	 * @throws CoreException
-	 */
-	public void generateDefinitionalRule(FormulaFactory newFactory, ISCTheoryRoot theoryRoot) throws CoreException;
 	
 	/**
 	 * @return the syntax
@@ -125,16 +106,16 @@ public interface IOperatorInformation extends ISCState{
 	public void setWdCondition(Predicate wdCondition) ;
 
 	/**
-	 * @param directDefinition
-	 *            the directDefinition to set
-	 */
-	public void setDirectDefinition(Formula<?> directDefinition) ;
-
-	/**
 	 * Returns the resultant type of this operator if it produces expressions.
 	 * @return the resultant type if any, or <code>null</code>
 	 */
 	public Type getResultantType() ;
+	
+	/**
+	 * Set the resultant type of this operator if it produces expressions.
+	 * @param resultantType the resultant type
+	 */
+	public void setResultantType(Type resultantType) ;
 
 	/**
 	 * @param hasError

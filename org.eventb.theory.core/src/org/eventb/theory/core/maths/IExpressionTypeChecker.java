@@ -39,24 +39,18 @@ public interface IExpressionTypeChecker {
 	 * 		the children expressions
 	 * @param childPreds
 	 * 		the children predicates
-	 * @param isAssociative
-	 * 		whether the concerned operator is associative
 	 * @return
 	 */
-	public boolean verifyType(Type proposedType, Expression[] childExprs,
-			Predicate[] childPreds, boolean isAssociative);
+	public boolean verifyType(Type proposedType, Expression[] childExprs, Predicate[] childPreds);
 	
 	/**
 	 * Type checks the extended expression.
 	 * 
 	 * @param expression the expression to type check
-	 * @param isAssociative
-	 * 		whether the concerned operator is associative
 	 * @param tcMediator the type check mediator
 	 * @return the type of the given expression
 	 */
-	public Type typeCheck(ExtendedExpression expression,
-			boolean isAssociative, ITypeCheckMediator tcMediator);
+	public Type typeCheck(ExtendedExpression expression, ITypeCheckMediator tcMediator);
 	
 	/**
 	 * Synthesise a type of an extended expression based on the types of its children.
@@ -65,14 +59,11 @@ public interface IExpressionTypeChecker {
 	 * 		the children expressions
 	 * @param childPreds
 	 * 		the children predicates
-	 * @param isAssociative
-	 * 		whether the concerned operator is associative
 	 * @param mediator
 	 * 		the type mediator
 	 * @return
 	 * 		the symbolic type of the given expression
 	 */
-	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
-			boolean isAssociative, ITypeMediator mediator);
+	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds, ITypeMediator mediator);
 	
 }

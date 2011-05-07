@@ -11,14 +11,13 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.theory.core.maths.AbstractOperatorExtension;
 import org.eventb.theory.core.maths.IOperatorTypingRule;
+import org.eventb.theory.core.maths.OperatorExtensionProperties;
 
 /**
  * An implementation of a predicate operator extension.
@@ -30,13 +29,11 @@ import org.eventb.theory.core.maths.IOperatorTypingRule;
 public class PredicateOperatorExtension extends AbstractOperatorExtension<Predicate>
 		implements IPredicateExtension {
 	
-	public PredicateOperatorExtension(String operatorID, String syntax,
-			FormulaType formulaType, Notation notation, String groupID,
+	public PredicateOperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, IOperatorTypingRule<Predicate> typingRule,
-			Predicate directDefinition, Object source){
+			Object source){
 		
-		super(operatorID, syntax, formulaType, notation, groupID, isCommutative, false, 
-				typingRule, directDefinition, source);
+		super(properties, isCommutative, false, typingRule, source);
 	}
 
 	@Override

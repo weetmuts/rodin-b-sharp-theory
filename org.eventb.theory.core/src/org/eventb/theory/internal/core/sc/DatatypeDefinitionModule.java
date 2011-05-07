@@ -31,6 +31,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.sc.states.AddedTypeExpression;
+import org.eventb.theory.internal.core.sc.states.DatatypeTable;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable;
 import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.sc.states.IDatatypeTable.ERROR_CODE;
@@ -64,10 +65,10 @@ public class DatatypeDefinitionModule extends DatatypeModule {
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
 		ISCTheoryRoot targetRoot = (ISCTheoryRoot) target;
 		IDatatypeDefinition[] dtdef = root.getDatatypeDefinitions();
+		// datatype table state with appropriate formula factory
+		datatypeTable = new DatatypeTable(repository.getFormulaFactory());
+		repository.setState(datatypeTable);
 		if (dtdef.length != 0) {
-			// get the datatype table
-			datatypeTable = (IDatatypeTable) repository
-					.getState(IDatatypeTable.STATE_TYPE);
 			monitor.subTask(Messages.progress_TheoryDatatypes);
 			monitor.worked(1);
 			processDatatypes(dtdef, targetRoot, repository, monitor);

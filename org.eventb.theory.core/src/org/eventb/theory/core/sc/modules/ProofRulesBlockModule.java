@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,10 +26,9 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
-import org.eventb.theory.internal.core.sc.states.AbstractTheoryLabelSymbolTable;
-import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -41,16 +40,15 @@ import org.rodinp.core.IRodinFile;
 @SuppressWarnings("restriction")
 public class ProofRulesBlockModule extends LabeledElementModule{
 
-	IModuleType<ProofRulesBlockModule> MODULE_TYPE = 
+	private final IModuleType<ProofRulesBlockModule> MODULE_TYPE = 
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".proofRulesBlockModule");
 	
-	private static final int PRB_IDENT_SYMTAB_SIZE = 2047;
-	
-	private IProofRulesBlock[] rulesBlocks;
-	private ITypeEnvironment globalTypeEnvironment;
-	private FormulaFactory factory;
 	private IIdentifierSymbolTable identifierSymbolTable;
 	private TheoryAccuracyInfo theoryAccuracyInfo;
+
+	private ITypeEnvironment globalTypeEnvironment;
+
+	private IProofRulesBlock[] rulesBlocks;
 	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -61,6 +59,8 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 		ISCTheoryRoot targetRoot = (ISCTheoryRoot) target;
 		monitor.subTask(Messages.progress_TheoryProofRules);
 		monitor.worked(1);
+		
+		rulesBlocks = root.getProofRulesBlocks();
 		ILabelSymbolInfo[] blocks = fetchBlocks(file, repository, monitor);
 		ISCProofRulesBlock[] scProofRulesBlocks = new ISCProofRulesBlock[blocks.length];
 		commitBlocks(root, targetRoot, scProofRulesBlocks, blocks, monitor);
@@ -70,7 +70,7 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 	private void processBlocks(ISCProofRulesBlock[] scProofRulesBlocks,
 			ISCStateRepository repository, ILabelSymbolInfo[] blocks,
 			IProgressMonitor monitor) throws CoreException{
-		factory = repository.getFormulaFactory();
+		FormulaFactory factory = repository.getFormulaFactory();
 		globalTypeEnvironment = repository.getTypeEnvironment();
 		for (int i = 0; i < rulesBlocks.length; i++) {
 
@@ -78,7 +78,7 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 				
 				IIdentifierSymbolTable stackedIdentSymbolTable =
 					new StackedIdentifierSymbolTable(
-							identifierSymbolTable, PRB_IDENT_SYMTAB_SIZE,
+							identifierSymbolTable, ModulesUtils.IDENT_SYMTAB_SIZE,
 							factory);
 				
 				repository.setState(stackedIdentSymbolTable);
@@ -86,10 +86,11 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
-				
-				initProcessorModules(rulesBlocks[i], repository, null);
-				processModules(rulesBlocks[i], scProofRulesBlocks[i], repository, monitor);
-				endProcessorModules(rulesBlocks[i], repository, null);
+				{
+					initProcessorModules(rulesBlocks[i], repository, null);
+					processModules(rulesBlocks[i], scProofRulesBlocks[i], repository, monitor);
+					endProcessorModules(rulesBlocks[i], repository, null);
+				}
 			}
 			else {
 				theoryAccuracyInfo.setNotAccurate();
@@ -123,15 +124,13 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 		
 	}
 	
-	private static final String PRB_NAME_PREFIX = "PRB";
-	
 	private ISCProofRulesBlock createSCBlock(ISCTheoryRoot targetRoot,
 			int index, ILabelSymbolInfo symbolInfo,
 			IProofRulesBlock proofRulesBlock,
 			IProgressMonitor monitor) throws CoreException {
 		
 		ILabeledElement scProofRulesBlock = symbolInfo.createSCElement(targetRoot,
-				PRB_NAME_PREFIX + index, monitor);
+				ModulesUtils.PRB_NAME_PREFIX + index, monitor);
 		return (ISCProofRulesBlock) scProofRulesBlock;
 	}
 
@@ -167,11 +166,7 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		IRodinFile file = (IRodinFile) element;
-		ITheoryRoot root = (ITheoryRoot) file.getRoot();
-		rulesBlocks = root.getProofRulesBlocks();
 		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
-		factory = repository.getFormulaFactory();
 		globalTypeEnvironment = repository.getTypeEnvironment();
 		identifierSymbolTable = (IdentifierSymbolTable) repository.getState(IdentifierSymbolTable.STATE_TYPE);
 		
@@ -183,16 +178,14 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 		repository.setTypeEnvironment(globalTypeEnvironment);
 		theoryAccuracyInfo = null;
 		identifierSymbolTable = null;
-		factory = null;
 		globalTypeEnvironment = null;
-		rulesBlocks = null;
 		super.endModule(element, repository, monitor);
 	}
 	
 	@Override
-	protected AbstractTheoryLabelSymbolTable getLabelSymbolTableFromRepository(
+	protected TheoryLabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (AbstractTheoryLabelSymbolTable) 
+		return (TheoryLabelSymbolTable) 
 				repository.getState(TheoryLabelSymbolTable.STATE_TYPE);
 	}
 

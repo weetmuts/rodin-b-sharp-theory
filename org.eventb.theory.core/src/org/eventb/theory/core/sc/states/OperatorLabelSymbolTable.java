@@ -5,11 +5,16 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.sc.states;
 
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.tool.IStateType;
+import org.eventb.internal.core.sc.symbolTable.SymbolTable;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * An implementation of an operator label (ID) symbol table.
@@ -17,7 +22,10 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
  * @author maamria
  * 
  */
-public class OperatorLabelSymbolTable extends AbstractTheoryLabelSymbolTable{
+@SuppressWarnings("restriction")
+public class OperatorLabelSymbolTable extends 
+SymbolTable<ILabeledElement, IInternalElementType<? extends ILabeledElement>, ILabelSymbolInfo>
+implements ILabelSymbolTable{
 
 	public final static IStateType<OperatorLabelSymbolTable> STATE_TYPE = SCCore
 			.getToolStateType(TheoryPlugin.PLUGIN_ID

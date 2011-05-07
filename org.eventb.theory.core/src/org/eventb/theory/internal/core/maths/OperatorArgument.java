@@ -14,7 +14,6 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.theory.core.maths.IOperatorArgument;
 
@@ -74,8 +73,7 @@ public class OperatorArgument implements IOperatorArgument{
 	}
 
 	@Override
-	public List<GivenType> getGivenTypes(FormulaFactory factory,
-			ITypeEnvironment typeEnvironment) {
+	public List<GivenType> getGivenTypes(FormulaFactory factory) {
 		List<GivenType> result = new ArrayList<GivenType>();
 		Set<GivenType> types = argumentType.toExpression(factory).getGivenTypes();
 		for (GivenType type : types){

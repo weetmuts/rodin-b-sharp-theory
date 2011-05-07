@@ -8,16 +8,16 @@
 package org.eventb.theory.internal.core.maths;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.theory.core.maths.AbstractOperatorTypingRule;
+import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.core.maths.IPredicateTypeChecker;
 
 /**
@@ -30,8 +30,8 @@ implements IPredicateTypeChecker{
 	/**
 	 * @param extension
 	 */
-	public PredicateOperatorTypingRule(Predicate directDefinition, Predicate wdPredicate) {
-		super(directDefinition, wdPredicate, false);
+	public PredicateOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, FormulaFactory factory) {
+		super(operatorArguments, wdPredicate, factory);
 	}
 
 	@Override
@@ -46,7 +46,7 @@ implements IPredicateTypeChecker{
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
 			argumentTypesAsVars[i] = 
-					constructPatternType(argumentsTypes.get(i).getArgumentType(),
+					constructPatternType(operatorArguments.get(i).getArgumentType(),
 							parameterToTypeVarMap, mediator);
 		}
 		for (int i = 0; i < childExpressions.length; i++) {
@@ -55,16 +55,4 @@ implements IPredicateTypeChecker{
 		}
 		
 	}
-
-	@Override
-	protected Predicate getParsedFormula(String raw, FormulaFactory factory) {
-		IParseResult result = factory.parsePredicate(raw, LanguageVersion.V2, raw);
-		if(result.hasProblem()){
-			return null;
-		}
-		Predicate newPred = result.getParsedPredicate();
-		return newPred;
-	}
-
-	
 }

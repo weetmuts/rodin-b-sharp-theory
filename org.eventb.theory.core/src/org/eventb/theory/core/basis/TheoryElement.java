@@ -22,7 +22,6 @@ import static org.eventb.theory.core.TheoryAttributes.INTERACTIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.TOOL_TIP_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.IMPORT_THEORY_ATTRIBUTE;
@@ -59,7 +58,6 @@ import org.eventb.theory.core.ISCFormulaElement;
 import org.eventb.theory.core.ISCGivenTypeElement;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISyntaxSymbolElement;
-import org.eventb.theory.core.IToolTipElement;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.IValidatedElement;
 import org.eventb.theory.core.AstUtilities;
@@ -77,7 +75,7 @@ public abstract class TheoryElement extends EventBElement implements
 		IAssociativeElement, ICommutativeElement, IFormulaElement,
 		IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
 		ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
-		IInteractiveElement, IToolTipElement, IDefinitionalElement,
+		IInteractiveElement, IDefinitionalElement,
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
 		IReasoningTypeElement, IValidatedElement, IOperatorGroupElement,
 		IImportTheoryElement, IInductiveArgumentElement {
@@ -264,19 +262,6 @@ public abstract class TheoryElement extends EventBElement implements
 			throws RodinDBException {
 		setAttributeValue(INTERACTIVE_ATTRIBUTE, isInteractive, pm);
 
-	}
-
-	public boolean hasToolTip() throws RodinDBException {
-		return hasAttribute(TOOL_TIP_ATTRIBUTE);
-	}
-
-	public String getToolTip() throws RodinDBException {
-		return getAttributeValue(TOOL_TIP_ATTRIBUTE);
-	}
-
-	public void setToolTip(String newToolTip, IProgressMonitor monitor)
-			throws RodinDBException {
-		setAttributeValue(TOOL_TIP_ATTRIBUTE, newToolTip, monitor);
 	}
 
 	public boolean hasDescription() throws RodinDBException {

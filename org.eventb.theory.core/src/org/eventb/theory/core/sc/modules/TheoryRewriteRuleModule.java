@@ -1,9 +1,8 @@
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -14,10 +13,6 @@ import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
-import org.eventb.theory.internal.core.sc.states.FilteredLHSs;
-import org.eventb.theory.internal.core.sc.states.ParsedLHSFormula;
-import org.eventb.theory.internal.core.sc.states.RewriteRuleLabelSymbolTable;
-import org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -30,28 +25,9 @@ public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCR
 
 	public static final IModuleType<TheoryRewriteRuleModule> MODULE_TYPE = SCCore
 		.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryRewriteRuleModule");
-
-	
-	private FilteredLHSs filteredLHSs;
 	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
-	}
-	
-	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
-		super.initModule(element, repository, monitor);
-		filteredLHSs = new FilteredLHSs();
-
-	}
-	
-	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
-		filteredLHSs = null;
-		super.endModule(element, repository, monitor);
 	}
 	
 	@Override
@@ -61,20 +37,16 @@ public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCR
 				true, element, component);
 	}
 	
-	// Utilities
-	
 	protected IRewriteRule[] getRuleElements(IRodinElement element)
 			throws CoreException {
 		IProofRulesBlock rulesBlock = (IProofRulesBlock) element;
 		return rulesBlock.getRewriteRules();
 	}
 	
-	protected ILabelSymbolInfo[] fetchRules(String theoryName,
+	protected ILabelSymbolInfo[] fetchRules(IRewriteRule[] rules, String theoryName,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		ILabelSymbolInfo[] symbolInfos = new ILabelSymbolInfo[rules.length];
-		// set filtered lhs state
-		repository.setState(filteredLHSs);
 		initFilterModules(repository, monitor);
 		for (int i = 0; i < rules.length; i++) {
 			symbolInfos[i] = fetchLabel(rules[i], theoryName, monitor);
@@ -88,38 +60,14 @@ public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCR
 		return symbolInfos;
 	}
 	
-	
-	
-	
-	protected void processRules(ISCRewriteRule[] scRules,
+	protected void processRules(IRewriteRule[] rules, ISCRewriteRule[] scRules,
 			ISCStateRepository repository, ILabelSymbolInfo[] infos,
 			IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < rules.length; i++) {
 			if (infos[i] != null && !infos[i].hasError()) {
-				IRewriteRule rule = rules [i];
-				Formula<?> lhs = filteredLHSs.getRulesLHSs().get(rule.getLabel());
-				boolean ok = (lhs != null);
+				boolean ok = true;
 				if (ok) {
-					if(scRules[i] != null)
-						scRules[i].setSCFormula(lhs, monitor);
-					// upload the states to repository
-					// the label table
-					RewriteRuleLabelSymbolTable ruleLabelSymbolTable = new RewriteRuleLabelSymbolTable(
-							LABEL_SYMTAB_SIZE);
-					repository.setState(ruleLabelSymbolTable);
-					// 1- rule accuracy
-					RuleAccuracyInfo ruleAccuracyInfo = new RuleAccuracyInfo();
-					repository.setState(ruleAccuracyInfo);
-					// 2- the lhs formula
-					ParsedLHSFormula parsedLHS = new ParsedLHSFormula();
-					parsedLHS.setLHSFormula(lhs);
-					repository.setState(parsedLHS);
-					// call the children processor module
-					initProcessorModules(rule, repository, null);
-					processModules(rule, scRules[i], repository, monitor);
-					endProcessorModules(rule, repository, null);
-					if(scRules[i] != null)
-						scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(), monitor);
+					
 				}
 				if (!ok) {
 					infos[i].setError();
@@ -141,9 +89,9 @@ public class TheoryRewriteRuleModule extends TheoryRuleModule<IRewriteRule, ISCR
 	}
 
 	@Override
-	protected ISCRewriteRule[] createSCRulesArray() {
+	protected ISCRewriteRule[] createSCRulesArray(int length) {
 		// TODO Auto-generated method stub
-		return new ISCRewriteRule[rules.length];
+		return new ISCRewriteRule[length];
 	}
 
 	@Override

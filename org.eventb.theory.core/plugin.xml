@@ -378,323 +378,176 @@
    <extension
          point="org.eventb.core.scStateTypes">
       <stateType
-            class="org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable"
+            class="org.eventb.theory.core.sc.states.TheoryLabelSymbolTable"
             id="theoryLabelSymbolTable"
             name="%theoryLabelSymbolTable">
       </stateType>
       <stateType
-            class="org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo"
+            class="org.eventb.theory.core.sc.states.TheoryAccuracyInfo"
             id="theoryAccuracyInfo"
             name="%theoryAccuracyInfo">
       </stateType>
       <stateType
-            class="org.eventb.theory.internal.core.sc.states.AddedTypeExpression"
-            id="addedTypeExpression"
-            name="%addedTypeExpression">
-      </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.ReferencedTypes"
-            id="referencedTypes"
-            name="%referencedTypes">
-      </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.IDatatypeTable"
+            class="org.eventb.theory.core.sc.states.IDatatypeTable"
             id="datatypeTable"
             name="%datatypeTable">
       </stateType>
       <stateType
-            class="org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable"
+            class="org.eventb.theory.core.sc.states.OperatorLabelSymbolTable"
             id="operatorLabelSymbolTable"
             name="%operatorLabelSymbolTable">
       </stateType>
       <stateType
-            class="org.eventb.theory.internal.core.sc.states.IOperatorInformation"
+            class="org.eventb.theory.core.sc.states.IOperatorInformation"
             id="operatorInformation"
             name="%operatorInformation">
       </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.FilteredLHSs"
-            id="filteredLHSs"
-            name="%filteredLHSs">
-      </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.ParsedLHSFormula"
-            id="parsedLHSFormula"
-            name="%parsedLHSFormula">
-      </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.ParsedRHSFormula"
-            id="parsedRHSFormula"
-            name="%parsedRHSFormula">
-      </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.RewriteRuleLabelSymbolTable"
-            id="rewriteRuleLabelSymbolTable"
-            name="%rewriteRuleLabelSymbolTable">
-      </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo"
-            id="ruleAccuracyInfo"
-            name="%ruleAccuracyInfo">
-      </stateType>
-      <stateType
-            class="org.eventb.theory.internal.core.sc.states.InferenceIdentifiers"
-            id="inferenceIdentifiers"
-            name="%inferenceIdentifiers">
-      </stateType>
+      
    </extension>
    <extension
          point="org.eventb.core.scModuleTypes">
-       <rootType
-            class="org.eventb.theory.internal.core.sc.TheoryModule"
+      <rootType
+            class="org.eventb.theory.core.sc.modules.TheoryModule"
             id="theoryModule"
             input="org.eventb.theory.core.theoryRoot"
             name="%scTheoryModule">
       </rootType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.ImportTheoryModule"
-             id="importTheoryModule"
-             name="%scImportTheoryModule"
-             parent="org.eventb.theory.core.theoryModule">
-       </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.ImportTheoryModule"
+            id="importTheoryModule"
+            name="%scImportTheoryModule"
+            parent="org.eventb.theory.core.theoryModule">
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.TypeParameterModule"
+            id="typeParameterModule"
+            name="%scTypeParameterModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.importTheoryModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.DatatypeModule"
+            id="datatypeModule"
+            name="%scDatatypeModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.typeParameterModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.DatatypeConstructorModule"
+            id="datatypeConstructorModule"
+            name="%scDatatypeConstructorModule"
+            parent="org.eventb.theory.core.datatypeModule">
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.DatatypeDestructorModule"
+            id="datatypeDestructorModule"
+            name="%scDatatypeDestructorModule"
+            parent="org.eventb.theory.core.datatypeConstructorModule">
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorModule"
+            id="operatorModule"
+            name="%scOperatorModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.datatypeModule">
+         </prereq>
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.OperatorFilterModule"
+            id="operatorFilterModule"
+            name="%scOperatorFilterModule"
+            parent="org.eventb.theory.core.operatorModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorArgumentModule"
+            id="operatorArgumentModule"
+            name="%scOperatorArgumentModule"
+            parent="org.eventb.theory.core.operatorModule">
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorWDConditionModule"
+            id="operatorWDConditionModule"
+            name="%scOperatorWDConditionModule"
+            parent="org.eventb.theory.core.operatorModule">
+         <prereq
+               id="org.eventb.theory.core.operatorArgumentModule">
+         </prereq>
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.OperatorWDConditionFilterModule"
+            id="operatorWDConditionFilterModule"
+            name="%scOperatorWDConditionFilterModule"
+            parent="org.eventb.theory.core.operatorWDConditionModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorDefinitionsModule"
+            id="operatorDefinitionsModule"
+            name="%scOperatorDefinitionsModule"
+            parent="org.eventb.theory.core.operatorModule">
+         <prereq
+               id="org.eventb.theory.core.operatorWDConditionModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorPropertiesModule"
+            id="operatorPropertiesModule"
+            name="%scOperatorPropertiesModule"
+            parent="org.eventb.theory.core.operatorModule">
+         <prereq
+               id="org.eventb.theory.core.operatorDefinitionsModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorGrammarPatcherModule"
+            id="operatorGrammarPatcherModule"
+            name="%scOperatorGrammarPatcherModule"
+            parent="org.eventb.theory.core.operatorModule">
+         <prereq
+               id="org.eventb.theory.core.operatorPropertiesModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.TheoremModule"
+            id="theoremModule"
+            name="%scTheoremModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.operatorModule">
+         </prereq>
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.TheoremFilterModule"
+            id="theoremFilterModule"
+            name="%scTheoremFilterModule"
+            parent="org.eventb.theory.core.theoremModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.ProofRulesBlockModule"
+            id="proofRulesBlockModule"
+            name="%scProofRulesBlockModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.theoremModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.MetavariableModule"
+            id="metavariableModule"
+            name="%scMetavariableModule"
+            parent="org.eventb.theory.core.proofRulesBlockModule">
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.MetavariableFilterModule"
+            id="metavariableFilterModule"
+            name="%scMetavariableFilterModule"
+            parent="org.eventb.theory.core.metavariableModule">
+      </filterType>
       
-       <processorType
-             class="org.eventb.theory.internal.core.sc.TypeParameterModule"
-             id="typeParameterModule"
-             name="%scTypeParameterModule"
-             parent="org.eventb.theory.core.theoryModule">
-          <prereq
-                id="org.eventb.theory.core.importTheoryModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.DatatypeDefinitionModule"
-             id="datatypeDefinitionModule"
-             name="%datatypeDefinitionModule"
-             parent="org.eventb.theory.core.theoryModule">
-          <prereq
-                id="org.eventb.theory.core.typeParameterModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.DatatypeConstructorModule"
-             id="datatypeConstructorModule"
-             name="%datatypeConstructorModule"
-             parent="org.eventb.theory.core.datatypeDefinitionModule">
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.DatatypeDestructorModule"
-             id="datatypeDestructorModule"
-             name="%datatypeDestructorModule"
-             parent="org.eventb.theory.core.datatypeConstructorModule">
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.DatatypeDestructorIdentsModule"
-             id="datatypeDestructorIdentsModule"
-             name="%datatypeDestructorIdentsModule"
-             parent="org.eventb.theory.core.datatypeDestructorModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.DatatypeDefinitionCheckerModule"
-             id="datatypeDefinitionCheckerModule"
-             name="%datatypeDefinitionCheckerModule"
-             parent="org.eventb.theory.core.datatypeDefinitionModule">
-          <prereq
-                id="org.eventb.theory.core.datatypeConstructorModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.NewOperatorDefinitionModule"
-             id="newOperatorDefinitionModule"
-             name="%newOperatorDefinitionModule"
-             parent="org.eventb.theory.core.theoryModule">
-          <prereq
-                id="org.eventb.theory.core.datatypeDefinitionModule">
-          </prereq>
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.OperatorDefinitionFilterModule"
-             id="operatorDefinitionFilterModule"
-             name="%operatorDefinitionFilterModule"
-             parent="org.eventb.theory.core.newOperatorDefinitionModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.OperatorArgumentModule"
-             id="operatorArgumentModule"
-             name="%operatorArgumentModule"
-             parent="org.eventb.theory.core.newOperatorDefinitionModule">
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.OperatorArgumentFilterModule"
-             id="operatorArgumentFilterModule"
-             name="%operatorArgumentFilterModule"
-             parent="org.eventb.theory.core.operatorArgumentModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.OperatorWDConditionModule"
-             id="operatorWDConditionModule"
-             name="%operatorWDConditionModule"
-             parent="org.eventb.theory.core.newOperatorDefinitionModule">
-          <prereq
-                id="org.eventb.theory.core.operatorArgumentModule">
-          </prereq>
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.OperatorWDConditionFilterModule"
-             id="operatorWDConditionFilterModule"
-             name="%operatorWDConditionFilterModule"
-             parent="org.eventb.theory.core.operatorWDConditionModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.DirectOperatorDefinitionModule"
-             id="directOperatorDefinitionModule"
-             name="%directOperatorDefinitionModule"
-             parent="org.eventb.theory.core.newOperatorDefinitionModule">
-          <prereq
-                id="org.eventb.theory.core.operatorWDConditionModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.OperatorPropertiesModule"
-             id="operatorPropertiesModule"
-             name="%operatorPropertiesModule"
-             parent="org.eventb.theory.core.newOperatorDefinitionModule">
-          <prereq
-                id="org.eventb.theory.core.directOperatorDefinitionModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.OperatorGrammarPatcherModule"
-             id="operatorGrammarPatcherModule"
-             name="%operatorGrammarPatcherModule"
-             parent="org.eventb.theory.core.newOperatorDefinitionModule">
-          <prereq
-                id="org.eventb.theory.core.operatorPropertiesModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.ProofRulesBlockModule"
-             id="proofRulesBlockModule"
-             name="%proofRulesBlockModule"
-             parent="org.eventb.theory.core.theoryModule">
-          <prereq
-                id="org.eventb.theory.core.newOperatorDefinitionModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.MetavariableModule"
-             id="metavariableModule"
-             name="%metavariableModule"
-             parent="org.eventb.theory.core.proofRulesBlockModule">
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.MetavariableFilterModule"
-             id="metavariableFilterModule"
-             name="%metavariableFilterModule"
-             parent="org.eventb.theory.core.metavariableModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleModule"
-             id="theoryRewriteRuleModule"
-             name="%theoryRewriteRuleModule"
-             parent="org.eventb.theory.core.proofRulesBlockModule">
-          <prereq
-                id="org.eventb.theory.core.metavariableModule">
-          </prereq>
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleAutoModule"
-             id="theoryRewriteRuleAutoModule"
-             name="%theoryRewriteRuleAutoModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleModule">
-       </filterType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleCompleteModule"
-             id="theoryRewriteRuleCompleteModule"
-             name="%theoryRewriteRuleCompleteModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleModule">
-       </filterType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleInterModule"
-             id="theoryRewriteRuleInterModule"
-             name="%theoryRewriteRuleInterModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleModule">
-       </filterType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleLHSModule"
-             id="theoryRewriteRuleLHSModule"
-             name="%theoryRewriteRuleLHSModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleModule">
-       </filterType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleSidesModule"
-             id="theoryRewriteRuleSidesModule"
-             name="%theoryRewriteRuleSidesModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSModule"
-             id="theoryRewriteRuleRHSModule"
-             name="%theoryRewriteRuleRHSModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleModule">
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSIdentsModule"
-             id="theoryRewriteRuleRHSFormulasIdentModule"
-             name="%theoryRewriteRuleRHSFormulasIdentModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleRHSModule">
-       </filterType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryRewriteRuleRHSPredVarsModule"
-             id="theoryRewriteRuleRHSFormulasPredVarsModule"
-             name="%theoryRewriteRuleRHSFormulasPredVarsModule"
-             parent="org.eventb.theory.core.theoryRewriteRuleRHSModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.TheoryInferenceRuleModule"
-             id="theoryInferenceRuleModule"
-             name="%theoryInferenceRuleModule"
-             parent="org.eventb.theory.core.proofRulesBlockModule">
-          <prereq
-                id="org.eventb.theory.core.metavariableModule">
-          </prereq>
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoryInferenceRuleAttributesModule"
-             id="theoryInferenceRuleAttributesModule"
-             name="%theoryInferenceRuleAttributesModule"
-             parent="org.eventb.theory.core.theoryInferenceRuleModule">
-       </filterType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.TheoryInferenceGivenClauseModule"
-             id="theoryInferenceGivenClauseModule"
-             name="%theoryInferenceGivenClauseModule"
-             parent="org.eventb.theory.core.theoryInferenceRuleModule">
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.TheoryInferenceInferClauseModule"
-             id="theoryInferenceInferClauseModule"
-             name="%theoryInferenceInferClauseModule"
-             parent="org.eventb.theory.core.theoryInferenceRuleModule">
-          <prereq
-                id="org.eventb.theory.core.theoryInferenceGivenClauseModule">
-          </prereq>
-       </processorType>
-       <processorType
-             class="org.eventb.theory.internal.core.sc.TheoremModule"
-             id="theoremModule"
-             name="%theoremModule"
-             parent="org.eventb.theory.core.theoryModule">
-          <prereq
-                id="org.eventb.theory.core.newOperatorDefinitionModule">
-          </prereq>
-       </processorType>
-       <filterType
-             class="org.eventb.theory.internal.core.sc.TheoremFilterModule"
-             id="theoremFilterModule"
-             name="%theoremFilterModule"
-             parent="org.eventb.theory.core.theoremModule">
-       </filterType>
    </extension>
    <extension
          point="org.eventb.core.pogStateTypes">
@@ -780,7 +633,7 @@
                id="org.eventb.theory.core.typeParameterModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.datatypeDefinitionModule">
+               id="org.eventb.theory.core.datatypeModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.datatypeConstructorModule">
@@ -789,25 +642,13 @@
                id="org.eventb.theory.core.datatypeDestructorModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.datatypeDestructorIdentsModule">
+               id="org.eventb.theory.core.operatorModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.datatypeDefinitionCheckerModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.newOperatorDefinitionModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.operatorDefinitionFilterModule">
+               id="org.eventb.theory.core.operatorFilterModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorArgumentModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.operatorArgumentFilterModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.operatorPropertiesModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorWDConditionModule">
@@ -816,10 +657,19 @@
                id="org.eventb.theory.core.operatorWDConditionFilterModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.directOperatorDefinitionModule">
+               id="org.eventb.theory.core.operatorDefinitionsModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorPropertiesModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorGrammarPatcherModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoremModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.theoremFilterModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.proofRulesBlockModule">
@@ -829,51 +679,6 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.metavariableFilterModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoremModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoremFilterModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleAutoModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleCompleteModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleInterModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleLHSModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleRHSFormulasIdentModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleRHSModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleRHSFormulasPredVarsModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryRewriteRuleSidesModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryInferenceRuleModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryInferenceRuleAttributesModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryInferenceGivenClauseModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.theoryInferenceInferClauseModule">
          </scModule>
       </configuration>
       <configuration

@@ -137,6 +137,7 @@ public final class Messages {
 	public static String scuser_ConstrAlreadyCovered;
 	public static String scuser_ExprNotApproInductiveCase;
 	public static String scuser_ConstrArgumentNotIdentifier;
+	public static String scuser_OperatorCannotBePostfix;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

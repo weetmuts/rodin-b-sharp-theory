@@ -1,8 +1,7 @@
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
@@ -11,17 +10,21 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.sc.states.OperatorLabelSymbolTable;
-import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
+import org.eventb.theory.core.sc.states.OperatorLabelSymbolTable;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
+/**
+ * 
+ * @author maamria
+ *
+ */
 @SuppressWarnings("restriction")
 public class TheoryModule extends SCProcessorModule {
 
-	public static final IModuleType<TheoryModule> MODULE_TYPE = SCCore
+	private final IModuleType<TheoryModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryModule");
 
 	private final static int LABEL_SYMTAB_SIZE = 2047;
@@ -48,11 +51,6 @@ public class TheoryModule extends SCProcessorModule {
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		// TODO move this to import theory module
-		FormulaFactory factory = repository.getFormulaFactory().withExtensions(
-				(MathExtensionsUtilities.singletonExtension(MathExtensionsUtilities.COND)));
-		repository.setFormulaFactory(factory);
-		repository.setTypeEnvironment(MathExtensionsUtilities.getTypeEnvironmentForFactory(repository.getTypeEnvironment(), factory));
 		accuracyInfo = new TheoryAccuracyInfo();
 		final TheoryLabelSymbolTable labelSymbolTable = 
 			new TheoryLabelSymbolTable(

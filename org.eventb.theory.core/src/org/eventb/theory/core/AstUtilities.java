@@ -12,11 +12,9 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.theory.core.maths.IOperatorExtension;
@@ -283,38 +281,6 @@ public class AstUtilities {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Delegates the definition expansion request to the operator extension of the given extended formula.
-	 * 
-	 * @param extendedFormula the extended formula
-	 * @param factory the formula factory
-	 * @return the expanded definition or <code>null</code> if the extension of the formula is not a theory extension
-	 */
-	@SuppressWarnings("unchecked")
-	public static  Formula<?> delegateDefinitionExpansion(
-			Formula<?> extendedFormula, FormulaFactory factory) {
-		if (extendedFormula == null
-				|| !(extendedFormula instanceof IExtendedFormula)) {
-			return null;
-		}
-		IFormulaExtension extension = ((IExtendedFormula) extendedFormula)
-				.getExtension();
-		if (isATheoryExtension(extension)) {
-			if(extendedFormula instanceof Expression){
-				IOperatorExtension<Expression> opExtension = 
-					(IOperatorExtension<Expression>) extension;
-				return opExtension.expandDefinition((Expression)extendedFormula, factory);
-			}
-			else {
-				IOperatorExtension<Predicate> opExtension = 
-					(IOperatorExtension<Predicate>) extension;
-				return opExtension.expandDefinition((Predicate)extendedFormula, factory);
-			
-			}
-		}
-		return extendedFormula;
 	}
 
 	/**

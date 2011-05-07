@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,9 +22,9 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheorem;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
-import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -36,12 +36,11 @@ import org.rodinp.core.IRodinFile;
 @SuppressWarnings("restriction")
 public class TheoremModule extends PredicateModule<ITheorem>{
 
-	IModuleType<TheoremModule> MODULE_TYPE = 
+	private final IModuleType<TheoremModule> MODULE_TYPE = 
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoremModule");
 	
 	private TheoryAccuracyInfo theoryAccuracyInfo;
 
-	private static String THM_NAME_PREFIX = "THM";
 	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -60,7 +59,6 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 			ILabelSymbolInfo[] labelSymbolInfos, IProgressMonitor monitor) 
 	throws CoreException{
 		int index = 0;
-
 		for (int i = 0; i < formulaElements.length; i++) {
 			if (labelSymbolInfos[i] != null && !labelSymbolInfos[i].hasError()) {
 				scTheorems[i] = createSCTheorem(targetRoot, index++, labelSymbolInfos[i],
@@ -79,7 +77,7 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 			IProgressMonitor monitor) throws CoreException {
 		
 		ILabeledElement scTheorem = symbolInfo.createSCElement(targetRoot,
-				THM_NAME_PREFIX + index, monitor);
+				ModulesUtils.THM_NAME_PREFIX + index, monitor);
 		return (ISCTheorem) scTheorem;
 	}
 	
@@ -108,7 +106,6 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
@@ -145,8 +142,7 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
-		// nothing
-		
+		monitor.worked(1);
 	}
 
 	@Override
@@ -160,8 +156,7 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
 		// TODO Auto-generated method stub
-		return TheorySymbolFactory.getInstance().
-							makeLocalTheorem(symbol, true, element, component);
+		return TheorySymbolFactory.getInstance().makeLocalTheorem(symbol, true, element, component);
 	}
 
 }

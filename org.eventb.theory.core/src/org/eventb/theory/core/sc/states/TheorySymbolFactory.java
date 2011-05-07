@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.sc.states;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
