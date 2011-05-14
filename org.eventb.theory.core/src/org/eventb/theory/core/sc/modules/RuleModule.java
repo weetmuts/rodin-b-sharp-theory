@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,8 +19,8 @@ import org.eventb.theory.core.IRule;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRule;
 import org.eventb.theory.core.sc.Messages;
-import org.eventb.theory.internal.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.sc.states.TheoryLabelSymbolTable;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -29,21 +29,16 @@ import org.rodinp.core.IRodinElement;
  * 
  */
 @SuppressWarnings("restriction")
-public abstract class TheoryRuleModule<R extends IRule, S extends ISCRule>
+public abstract class RuleModule<R extends IRule, S extends ISCRule>
 		extends LabeledElementModule {
 
-	protected final static int LABEL_SYMTAB_SIZE = 2047;
-
 	protected TheoryAccuracyInfo accuracyInfo;
-	protected R[] rules;
-
 
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		rules = getRuleElements(element);
 		accuracyInfo = (TheoryAccuracyInfo) repository
 				.getState(TheoryAccuracyInfo.STATE_TYPE);
 
@@ -53,12 +48,13 @@ public abstract class TheoryRuleModule<R extends IRule, S extends ISCRule>
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		IProofRulesBlock block = (IProofRulesBlock) element;
+		R [] rules = getRuleElements(block);
 		monitor.subTask(Messages.bind(getMessage()));
-		ILabelSymbolInfo[] symbolInfos = fetchRules(block.getParent()
+		ILabelSymbolInfo[] symbolInfos = fetchRules(rules, block.getParent()
 				.getElementName(), repository, monitor);
-		S[] scRules = createSCRulesArray();
-		commitRules((ISCProofRulesBlock) target, scRules, symbolInfos, monitor);
-		processRules(scRules, repository, symbolInfos, monitor);
+		S[] scRules = createSCRulesArray(rules.length);
+		commitRules(rules, (ISCProofRulesBlock) target, scRules, symbolInfos, monitor);
+		processRules(rules, scRules, repository, symbolInfos, monitor);
 
 	}
 
@@ -66,13 +62,8 @@ public abstract class TheoryRuleModule<R extends IRule, S extends ISCRule>
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		accuracyInfo = null;
-		rules = null;
 		super.endModule(element, repository, monitor);
 	}
-
-	protected abstract String getMessage();
-	
-	protected abstract S[] createSCRulesArray();
 	
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
@@ -80,47 +71,98 @@ public abstract class TheoryRuleModule<R extends IRule, S extends ISCRule>
 		return makeLocalRule(symbol, element, component);
 	}
 
-	protected abstract ILabelSymbolInfo makeLocalRule(String symbol,
-			ILabeledElement element, String component) throws CoreException;
-	
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository
 				.getState(TheoryLabelSymbolTable.STATE_TYPE);
 	}
+	
+	/**
+	 * Returns the message to display as a progress message.
+	 * @return the progress message
+	 */
+	protected abstract String getMessage();
+	
+	/**
+	 * Returns the statically checked rules array.
+	 * @param length array length
+	 * @return the statically checked rules array
+	 */
+	protected abstract S[] createSCRulesArray(int length);
 
+	/**
+	 * Returns a symbol for a rule.
+	 * @param symbol the symbol
+	 * @param element the labelled element
+	 * @param component the component 
+	 * @return the symbol
+	 * @throws CoreException
+	 */
+	protected abstract ILabelSymbolInfo makeLocalRule(String symbol,
+			ILabeledElement element, String component) throws CoreException;
+	
+	/**
+	 * Returns the rule children of the given element.
+	 * @param element the rodin element
+	 * @return the rule children
+	 * @throws CoreException
+	 */
 	protected abstract R[] getRuleElements(IRodinElement element) throws CoreException ;
 
-	protected abstract ILabelSymbolInfo[] fetchRules(String theoryName,
+	/**
+	 * Fetches the symbols for the rules elements occurring in the given theory.
+	 * @param rules 
+	 * @param theoryName the name of the theory
+	 * @param repository the state repository
+	 * @param monitor the progress monitor
+	 * @return the fetched symbols
+	 * @throws CoreException
+	 */
+	protected abstract ILabelSymbolInfo[] fetchRules(R[] rules, String theoryName,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException;
+	
+	/**
+	 * Casts the labelled element to return the statically checked rule.
+	 * @param scRule the labelled element
+	 * @return the statically checked rule
+	 */
+	protected abstract S getSCRule(ILabeledElement scRule);
+	
+	/**
+	 * Performs the actual processing of rules.
+	 * @param rules the unchecked rules
+	 * @param scRules the statically checked rules
+	 * @param repository the state repository
+	 * @param infos the symbol infos
+	 * @param monitor the progress monitor
+	 * @throws CoreException
+	 */
+	protected abstract void processRules(R[] rules, S[] scRules,
+			ISCStateRepository repository, ILabelSymbolInfo[] infos,
+			IProgressMonitor monitor) throws CoreException ;
 
-	protected void commitRules(ISCProofRulesBlock target,
+	// Commits the SC rules
+	private void commitRules(R[] rules, ISCProofRulesBlock target,
 			S[] scRules, ILabelSymbolInfo[] symbolInfos,
 			IProgressMonitor monitor) throws CoreException {
-		int index = 1;
 		for (int i = 0; i < rules.length; i++) {
 			if (symbolInfos[i] != null && !symbolInfos[i].hasError()) {
-				scRules[i] = createSCRule(target, index++, symbolInfos[i],
+				scRules[i] = createSCRule(target, symbolInfos[i],
 						monitor);
 			}
 		}
 	}
 
-	// create an empty sc element
-	protected S createSCRule(ISCProofRulesBlock target, int index,
+	// create an empty SC rule element
+	private S createSCRule(ISCProofRulesBlock target,
 			ILabelSymbolInfo symbolInfo, IProgressMonitor monitor)
 			throws CoreException {
 		ILabeledElement scRule = symbolInfo.createSCElement(target,
 				symbolInfo.getSymbol(), monitor);
-		return cast(scRule);
+		S rule = getSCRule(scRule);
+		return rule;
 	}
 	
-	protected abstract S cast(ILabeledElement scRule);
-	
-	protected abstract void processRules(S[] scRules,
-			ISCStateRepository repository, ILabelSymbolInfo[] infos,
-			IProgressMonitor monitor) throws CoreException ;
-
 }

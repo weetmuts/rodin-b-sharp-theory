@@ -49,9 +49,6 @@ public class TheoryAttributes {
 	public static IAttributeType.Boolean COMPLETE_ATTRIBUTE = RodinCore
 			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".complete");
 
-	public static IAttributeType.String TOOL_TIP_ATTRIBUTE = RodinCore
-			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".toolTip");
-
 	public static IAttributeType.String DESC_ATTRIBUTE = RodinCore
 			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".desc");
 	

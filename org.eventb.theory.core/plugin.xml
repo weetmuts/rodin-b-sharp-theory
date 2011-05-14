@@ -76,11 +76,6 @@
             name="%eventBinteractiveAttr">
       </attributeType>
       <attributeType
-            id="toolTip"
-            kind="string"
-            name="%eventBtoolTip">
-      </attributeType>
-      <attributeType
             id="desc"
             kind="string"
             name="%eventBdesc">
@@ -402,6 +397,21 @@
             id="operatorInformation"
             name="%operatorInformation">
       </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.RewriteRuleLabelSymbolTable"
+            id="rewriteRuleLabelSymbolTable"
+            name="%rewriteRuleLabelSymbolTable">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.RuleAccuracyInfo"
+            id="ruleAccuracyInfo"
+            name="%ruleAccuracyInfo">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.InferenceIdentifiers"
+            id="inferenceIdentifiers"
+            name="%inferenceIdentifiers">
+      </stateType>
       
    </extension>
    <extension
@@ -547,6 +557,63 @@
             name="%scMetavariableFilterModule"
             parent="org.eventb.theory.core.metavariableModule">
       </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.RewriteRuleModule"
+            id="rewriteRuleModule"
+            name="%scRewriteRuleModule"
+            parent="org.eventb.theory.core.proofRulesBlockModule">
+         <prereq
+               id="org.eventb.theory.core.metavariableModule">
+         </prereq>
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.RewriteRuleFilterModule"
+            id="rewriteRuleFilterModule"
+            name="%scRewriteRuleFilterModule"
+            parent="org.eventb.theory.core.rewriteRuleModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.RewriteRuleRHSModule"
+            id="rewriteRuleRHSModule"
+            name="%scRewriteRuleRHSModule"
+            parent="org.eventb.theory.core.rewriteRuleModule">
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.RewriteRuleRHSFilterModule"
+            id="rewriteRuleRHSFilterModule"
+            name="%scRewriteRuleRHSFilterModule"
+            parent="org.eventb.theory.core.rewriteRuleRHSModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.InferenceRuleModule"
+            id="inferenceRuleModule"
+            name="%scInferenceRuleModule"
+            parent="org.eventb.theory.core.proofRulesBlockModule">
+         <prereq
+               id="org.eventb.theory.core.metavariableModule">
+         </prereq>
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.InferenceRuleFilterModule"
+            id="inferenceRuleFilterModule"
+            name="%scInferenceRuleFilterModule"
+            parent="org.eventb.theory.core.inferenceRuleModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.InferenceGivenClauseModule"
+            id="inferenceGivenClauseModule"
+            name="%scInferenceGivenClauseModule"
+            parent="org.eventb.theory.core.inferenceRuleModule">
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.InferenceInferClauseModule"
+            id="inferenceInferClauseModule"
+            name="%scInferenceInferClauseModule"
+            parent="org.eventb.theory.core.inferenceRuleModule">
+         <prereq
+               id="org.eventb.theory.core.inferenceGivenClauseModule">
+         </prereq>
+      </processorType>
       
    </extension>
    <extension
@@ -679,6 +746,30 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.metavariableFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.rewriteRuleModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.rewriteRuleFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.rewriteRuleRHSModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.rewriteRuleRHSFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.inferenceRuleModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.inferenceRuleFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.inferenceGivenClauseModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.inferenceInferClauseModule">
          </scModule>
       </configuration>
       <configuration

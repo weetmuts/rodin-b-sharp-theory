@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,8 +20,8 @@ import org.eventb.theory.core.IInferenceClause;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.ISCInferenceClause;
 import org.eventb.theory.core.ISCInferenceRule;
-import org.eventb.theory.internal.core.sc.states.InferenceIdentifiers;
-import org.eventb.theory.internal.core.sc.states.RuleAccuracyInfo;
+import org.eventb.theory.core.sc.states.InferenceIdentifiers;
+import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -30,12 +30,11 @@ import org.rodinp.core.IRodinElement;
  * @author maamria
  *
  */
-public abstract class TheoryInferenceClausesModule<C extends IInferenceClause, S extends ISCInferenceClause> 
+public abstract class InferenceClausesModule<C extends IInferenceClause, S extends ISCInferenceClause> 
 extends SCProcessorModule{
 
 	protected ITypeEnvironment typeEnvironment;
 	protected FormulaFactory factory;
-	private int index = 1;
 	protected InferenceIdentifiers inferenceIdentifiers;
 	protected RuleAccuracyInfo ruleAccuracyInfo;
 	
@@ -49,9 +48,7 @@ extends SCProcessorModule{
 		processClauses(clauses, rule, scRule, repository, monitor);
 	}
 	
-	
-	
-	protected void processClauses(C[] clauses, IInferenceRule rule,
+	protected final void processClauses(C[] clauses, IInferenceRule rule,
 			ISCInferenceRule scRule, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException{
 		boolean ok= true;
@@ -81,24 +78,11 @@ extends SCProcessorModule{
 
 	protected abstract boolean checkPredicate(Predicate predicate, C clause) throws CoreException;
 
-
-
-	private S createSCClause(Predicate predicate, C clause,
-			ISCInferenceRule scRule, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException{
-		S scClause = getSCClause(scRule, getPrefix()+index++);
-		scClause.create(null, monitor);
-		return scClause;
-		
-	}
-
 	protected abstract void addIdentifiers(Predicate predicate);
 	
 	protected abstract S getSCClause(ISCInferenceRule parent, String name);
 	
 	protected abstract C[] getClauses(IInferenceRule rule) throws CoreException;
-	
-	protected abstract String getPrefix(); 
 	
 	@Override
 	public void initModule(
@@ -123,5 +107,14 @@ extends SCProcessorModule{
 		inferenceIdentifiers = null;
 		ruleAccuracyInfo = null;
 		super.endModule(element, repository, monitor);
+	}
+	
+	private S createSCClause(Predicate predicate, C clause,
+			ISCInferenceRule scRule, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException{
+		S scClause = getSCClause(scRule, clause.getElementName());
+		scClause.create(null, monitor);
+		return scClause;
+		
 	}
 }

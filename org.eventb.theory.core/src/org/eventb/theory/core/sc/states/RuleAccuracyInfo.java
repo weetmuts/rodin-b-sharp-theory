@@ -1,4 +1,4 @@
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.sc.states;
 
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc;
+package org.eventb.theory.core.sc.modules;
 
 import java.util.Collection;
 
@@ -16,9 +16,9 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.IGiven;
+import org.eventb.theory.core.IInfer;
 import org.eventb.theory.core.IInferenceRule;
-import org.eventb.theory.core.ISCGiven;
+import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -26,16 +26,14 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class TheoryInferenceGivenClauseModule extends TheoryInferenceClausesModule<IGiven, ISCGiven>{
+public class InferenceInferClauseModule extends
+		InferenceClausesModule<IInfer, ISCInfer> {
 
-protected static final String GIV_NAME_PREFIX = "givc";
-	
-	public static final IModuleType<TheoryInferenceGivenClauseModule> MODULE_TYPE = SCCore
-		.getModuleType(TheoryPlugin.PLUGIN_ID
-			+ ".theoryInferenceGivenClauseModule");
-	
+	public static final IModuleType<InferenceInferClauseModule> MODULE_TYPE = SCCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".inferenceInferClauseModule");
+
 	@Override
 	public IModuleType<?> getModuleType() {
 		// TODO Auto-generated method stub
@@ -43,43 +41,40 @@ protected static final String GIV_NAME_PREFIX = "givc";
 	}
 
 	@Override
-	protected IGiven[] getClauses(IInferenceRule rule) throws CoreException {
+	protected IInfer[] getClauses(IInferenceRule rule) throws CoreException {
 		// TODO Auto-generated method stub
-		return rule.getGivens();
+		return rule.getInfers();
 	}
 
 	@Override
 	protected void addIdentifiers(Predicate predicate) {
 		Collection<GivenType> types = predicate.getGivenTypes();
 		FreeIdentifier iTypes[] = new FreeIdentifier[types.size()];
-		int i = 0 ;
-		for (GivenType type : types){
-			iTypes[i] = factory.makeFreeIdentifier(type.getName(), null, typeEnvironment.getType(type.getName()));
+		int i = 0;
+		for (GivenType type : types) {
+			iTypes[i] = factory.makeFreeIdentifier(type.getName(), null,
+					typeEnvironment.getType(type.getName()));
 			i++;
 		}
-		inferenceIdentifiers.addGivenIdentifiers(iTypes);
-		inferenceIdentifiers.addGivenIdentifiers(predicate.getFreeIdentifiers());
-		
+		inferenceIdentifiers.addInferIdentifiers(iTypes);
+		inferenceIdentifiers
+				.addInferIdentifiers(predicate.getFreeIdentifiers());
+
 	}
 
 	@Override
-	protected ISCGiven getSCClause(ISCInferenceRule parent, String name) {
-		ISCGiven scGiven = parent.getGiven(name);
-		return scGiven;
-	}
-
-
-	@Override
-	protected String getPrefix() {
-		// TODO Auto-generated method stub
-		return GIV_NAME_PREFIX;
+	protected ISCInfer getSCClause(ISCInferenceRule parent, String name) {
+		ISCInfer scInfer = parent.getInfer(name);
+		return scInfer;
 	}
 
 	@Override
-	protected boolean checkPredicate(Predicate predicate, IGiven clause) 
-	throws CoreException{
-		if(predicate.equals(MathExtensionsUtilities.BTRUE)){
-			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,TheoryGraphProblem.InferenceGivenBTRUEPredWarn);
+	protected boolean checkPredicate(Predicate predicate, IInfer clause)
+			throws CoreException {
+		if (predicate.equals(MathExtensionsUtilities.BTRUE)) {
+			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,
+					TheoryGraphProblem.InferenceInferBTRUEPredErr);
+			return false;
 		}
 		return true;
 	}

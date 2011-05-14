@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.sc.states;
+package org.eventb.theory.core.sc.states;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,8 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
  * infer and given clauses of an inference rule.
  * 
  * <p> This enables to identify the type of reasoning (backward/forward) which the currently processed inference rule is suitable for.
+ * 
+ * <p> Note that given types are treated as free identifiers.
  * 
  * @author maamria
  *
