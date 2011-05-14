@@ -274,9 +274,6 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			RuleNoInfersError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_RuleWithNoInfers),
-			RuleRequireOneInfer(
-			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_RuleRequireOneInfer),
 			NoToolTipWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_NoToolTipWarning), 
