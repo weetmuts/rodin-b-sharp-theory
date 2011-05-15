@@ -95,7 +95,7 @@ public final class Messages {
 	public static String scuser_OperatorSynIsATypeParError;
 	public static String scuser_OperatorHasMoreThan1DefError;
 	public static String scuser_MissingFormulaAttrError;
-	public static String scuser_OperatorNoDirectDefError;
+	public static String scuser_OperatorNoDefError;
 	public static String scuser_OperatorDefNotExpError;
 	public static String scuser_OperatorDefNotPredError;
 	public static String scuser_OperatorWithSameSynJustBeenAdded;

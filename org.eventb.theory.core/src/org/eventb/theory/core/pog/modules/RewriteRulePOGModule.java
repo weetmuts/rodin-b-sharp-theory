@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.pog;
+package org.eventb.theory.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,6 @@ import org.eventb.internal.core.pog.POGNatureFactory;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
@@ -42,10 +41,10 @@ import org.rodinp.core.IRodinElement;
  * 
  */
 @SuppressWarnings("restriction")
-public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
+public class RewriteRulePOGModule extends UtilityPOGModule {
 
-	public static final IModuleType<TheoryRewriteRulePOGModule> MODULE_TYPE = POGCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryRewriteRuleModule"); //$NON-NLS-1$
+	private final IModuleType<RewriteRulePOGModule> MODULE_TYPE = POGCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".rewriteRulePOGModule"); //$NON-NLS-1$
 
 	protected ITypeEnvironment typeEnvironment;
 	protected POGNatureFactory natureFactory;
@@ -74,11 +73,10 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IPORoot target = repository.getTarget();
-		ISCTheoryRoot root = element.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
 		ISCProofRulesBlock rulesBlock = (ISCProofRulesBlock) element;
 		ISCRewriteRule[] scRules = rulesBlock.getRewriteRules();
 		IPOPredicateSet hyp = target
-			.getPredicateSet(TheoryTypeParametersPOGModule.ABS_HYP_NAME);
+			.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
 		for (ISCRewriteRule rule : scRules) {
 			if(rule.hasDefinitionalAttribute() &&
 					rule.isDefinitional()){
@@ -136,7 +134,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 					String poName = ruleName + RULE_C_WD_SUFFIX + rhsLabel;
 					createPO(target, poName,
 							natureFactory.getNature(RULE_C_WD_DESC),
-							hyp, getHyps(accumulator, root),
+							hyp, EMPTY_PREDICATES,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()),
 							sources, new IPOGHint[]{getLocalHypothesisSelectionHint(target, poName, hyp)},
 							true, monitor);
@@ -159,7 +157,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 					String poName = ruleName + RULE_RHS_WD_SUFFIX + rhsLabel;
 					createPO(target, poName,
 							natureFactory.getNature(RULE_RHS_WD_DESC),
-							hyp, getHyps(accumulator, root),
+							hyp, EMPTY_PREDICATES,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()), sources,
 							 new IPOGHint[]{getLocalHypothesisSelectionHint(target, poName, hyp)},
 							true, monitor);
@@ -186,7 +184,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 							poName,
 							POGNatureFactory.getInstance().getNature(RULE_SOUNDNESS_DESC),
 							hyp,
-							getHyps(accumulator, root),
+							EMPTY_PREDICATES,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()),
 							sources, new IPOGHint[]{getLocalHypothesisSelectionHint(target, poName, hyp)},
 							true, monitor);
@@ -211,7 +209,7 @@ public class TheoryRewriteRulePOGModule extends TheoryPOGBaseModule {
 					Predicate poPredicate = library.makeImp(hyps, goal);
 					createPO(target, poName,
 							natureFactory.getNature(RULE_COMPLETENESS_DESC),
-							hyp, getHyps(accumulator, root),
+							hyp, EMPTY_PREDICATES,
 							makePredicate(makeClosedPredicate(poPredicate, typeEnvironment), rule.getSource()), sources,
 							new IPOGHint[]{getLocalHypothesisSelectionHint(target, poName, hyp)},
 							true, monitor);

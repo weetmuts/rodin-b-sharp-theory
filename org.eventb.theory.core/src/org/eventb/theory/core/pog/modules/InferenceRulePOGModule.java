@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.pog;
+package org.eventb.theory.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,6 @@ import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCProofRulesBlock;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
@@ -40,11 +39,10 @@ import org.rodinp.core.IRodinElement;
  * 
  */
 @SuppressWarnings("restriction")
-public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
+public class InferenceRulePOGModule extends UtilityPOGModule {
 
-	public static final IModuleType<TheoryInferenceRulePOGModule> MODULE_TYPE = POGCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID
-					+ ".theoryInferenceRuleModule"); //$NON-NLS-1
+	private final IModuleType<InferenceRulePOGModule> MODULE_TYPE = POGCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".inferenceRulePOGModule"); //$NON-NLS-1
 
 	private final static String RULE_SB_SUFFIX = "/S-INF_B";
 	private final static String RULE_SF_SUFFIX = "/S-INF_F";
@@ -74,11 +72,10 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IPORoot target = repository.getTarget();
-		ISCTheoryRoot root = element.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
 		ISCProofRulesBlock rulesBlock = (ISCProofRulesBlock) element;
 		ISCInferenceRule[] inferenceRules = rulesBlock.getInferenceRules();
 		IPOPredicateSet hyp = target
-				.getPredicateSet(TheoryTypeParametersPOGModule.ABS_HYP_NAME);
+				.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
 		for (ISCInferenceRule inferenceRule : inferenceRules) {
 			if (!inferenceRule.isAccurate()) {
 				continue;
@@ -116,14 +113,15 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 			Predicate poPredicate = library.makeImp(conj1, conj2);
 			if (!isTrivial(poPredicate)) {
 				if (inferenceRule.isSuitableForBackwardReasoning()) {
-					String poName = inferenceRule.getElementName() + RULE_SB_SUFFIX;
+					String poName = inferenceRule.getElementName()
+							+ RULE_SB_SUFFIX;
 					Predicate finalPO = library.makeImp(conj2WD, poPredicate);
 					createPO(
 							target,
 							poName,
 							natureFactory.getNature(RULE_SOUNDNESS_DESC_B),
 							hyp,
-							getHyps(accumulator, root),
+							EMPTY_PREDICATES,
 							makePredicate(
 									makeClosedPredicate(finalPO,
 											typeEnvironment), inferenceRule
@@ -140,7 +138,7 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 								poWDName,
 								natureFactory.getNature(RULE_WD_DESC_B),
 								hyp,
-								getHyps(accumulator, root),
+								EMPTY_PREDICATES,
 								makePredicate(
 										makeClosedPredicate(finalWDPO,
 												typeEnvironment), inferenceRule
@@ -152,14 +150,15 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 
 				}
 				if (inferenceRule.isSuitableForForwardReasoning()) {
-					String poName = inferenceRule.getElementName() + RULE_SF_SUFFIX;
+					String poName = inferenceRule.getElementName()
+							+ RULE_SF_SUFFIX;
 					Predicate finalPO = library.makeImp(conj1WD, poPredicate);
 					createPO(
 							target,
 							poName,
 							natureFactory.getNature(RULE_SOUNDNESS_DESC_F),
 							hyp,
-							getHyps(accumulator, root),
+							EMPTY_PREDICATES,
 							makePredicate(
 									makeClosedPredicate(finalPO,
 											typeEnvironment), inferenceRule
@@ -170,14 +169,14 @@ public class TheoryInferenceRulePOGModule extends TheoryPOGBaseModule {
 					if (!isTrivial(conj2WD)) {
 						String poWDName = inferenceRule.getElementName()
 								+ RULE_WDF_SUFFIX;
-						Predicate finalWDPO = library.makeImp(library.makeConj(conj1WD, conj1),
-								conj2WD);
+						Predicate finalWDPO = library.makeImp(
+								library.makeConj(conj1WD, conj1), conj2WD);
 						createPO(
 								target,
 								poWDName,
 								natureFactory.getNature(RULE_WD_DESC_F),
 								hyp,
-								getHyps(accumulator, root),
+								EMPTY_PREDICATES,
 								makePredicate(
 										makeClosedPredicate(finalWDPO,
 												typeEnvironment), inferenceRule

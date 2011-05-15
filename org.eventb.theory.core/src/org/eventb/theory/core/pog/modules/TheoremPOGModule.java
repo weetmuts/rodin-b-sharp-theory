@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.pog;
+package org.eventb.theory.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,10 +31,10 @@ import org.rodinp.core.IRodinFile;
  * 
  */
 @SuppressWarnings("restriction")
-public class TheoryTheoremPOGModule extends TheoryPOGBaseModule {
+public class TheoremPOGModule extends UtilityPOGModule {
 
-	public static final IModuleType<TheoryTheoremPOGModule> MODULE_TYPE = POGCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryTheoremModule"); //$NON-NLS-1
+	public static final IModuleType<TheoremPOGModule> MODULE_TYPE = POGCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoremPOGModule"); //$NON-NLS-1
 
 	private final static String THEOREM_WD_SUFFIX = "/WD-THM";
 	private final static String THEOREM_S_SUFFIX = "/S-THM";
@@ -62,7 +62,7 @@ public class TheoryTheoremPOGModule extends TheoryPOGBaseModule {
 		ISCTheoryRoot root = (ISCTheoryRoot) rodinFile.getRoot();
 		ISCTheorem[] theorems = root.getTheorems();
 		IPOPredicateSet hyp = target
-				.getPredicateSet(TheoryTypeParametersPOGModule.ABS_HYP_NAME);
+				.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
 		for (ISCTheorem theorem : theorems) {
 			String name = theorem.getLabel();
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
@@ -73,7 +73,7 @@ public class TheoryTheoremPOGModule extends TheoryPOGBaseModule {
 				String sequentName1 = name + THEOREM_S_SUFFIX;
 				createPO(target, sequentName1,
 						natureFactory.getNature(THEOREM_SOUNDNESS_DESC), hyp,
-						getHyps(accumulator, root), makePredicate(poPredicate, theorem.getSource()),
+						EMPTY_PREDICATES, makePredicate(poPredicate, theorem.getSource()),
 						sources, new IPOGHint[] {
 								getLocalHypothesisSelectionHint(target, sequentName1, hyp)
 						}, true, monitor);
@@ -82,16 +82,14 @@ public class TheoryTheoremPOGModule extends TheoryPOGBaseModule {
 					String sequentName2 = name + THEOREM_WD_SUFFIX;
 					createPO(target, name + THEOREM_WD_SUFFIX,
 							natureFactory.getNature(THEOREM_WD_DESC), hyp,
-							getHyps(accumulator, root),
+							EMPTY_PREDICATES,
 							makePredicate(wdPredicate, theorem.getSource()),
 							sources,  new IPOGHint[] {
 							getLocalHypothesisSelectionHint(target, sequentName2, hyp)
 							}, true, monitor);
 				}
-				accumulator.addHypothesis(poPredicate, name);
 			}
 		}
-		accumulator.makeImmutable();
 
 	}
 

@@ -140,9 +140,9 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			MissingFormulaAttrError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_MissingFormulaAttrError), 
-			OperatorNoDirectDefError(
+			OperatorNoDefError(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_OperatorNoDirectDefError), 
+			Messages.scuser_OperatorNoDefError), 
 			OperatorDefNotExpError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_OperatorDefNotExpError), 

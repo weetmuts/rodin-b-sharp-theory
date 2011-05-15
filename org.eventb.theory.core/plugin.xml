@@ -617,65 +617,60 @@
       
    </extension>
    <extension
-         point="org.eventb.core.pogStateTypes">
-      <stateType
-            class="org.eventb.theory.internal.core.pog.states.TheoremsAccumulator"
-            id="theoremsAccumulator"
-            name="%theoremsAccumulator">
-      </stateType>
-   </extension>
-   <extension
          point="org.eventb.core.pogModuleTypes">
       <rootType
-            class="org.eventb.theory.internal.core.pog.TheoryPOGModule"
-            id="theoryModule"
+            class="org.eventb.theory.core.pog.modules.TheoryPOGModule"
+            id="theoryPOGModule"
             input="org.eventb.theory.core.scTheoryRoot"
             name="%pogTheoryModule">
       </rootType>
       <processorType
-            class="org.eventb.theory.internal.core.pog.TheoryTypeParametersPOGModule"
-            id="theoryTypeParametersModule"
+            class="org.eventb.theory.core.pog.modules.TypeParametersPOGModule"
+            id="typeParametersPOGModule"
             name="%pogTheoryTypeParametersModule"
-            parent="org.eventb.theory.core.theoryModule">
+            parent="org.eventb.theory.core.theoryPOGModule">
       </processorType>
       <processorType
-            class="org.eventb.theory.internal.core.pog.TheoryOperatorExtensionPOGModule"
-            id="theoryOperatorExtensionModule"
+            class="org.eventb.theory.core.pog.modules.OperatorExtensionPOGModule"
+            id="operatorExtensionPOGModule"
             name="%pogTheoryOperatorExtensionModule"
-            parent="org.eventb.theory.core.theoryModule">
+            parent="org.eventb.theory.core.theoryPOGModule">
          <prereq
-               id="org.eventb.theory.core.theoryTypeParametersModule">
+               id="org.eventb.theory.core.typeParametersPOGModule">
          </prereq>
       </processorType>
       <processorType
-            class="org.eventb.theory.internal.core.pog.TheoryTheoremPOGModule"
-            id="theoryTheoremModule"
+            class="org.eventb.theory.core.pog.modules.TheoremPOGModule"
+            id="theoremPOGModule"
             name="%pogTheoryTheoremModule"
-            parent="org.eventb.theory.core.theoryModule">
+            parent="org.eventb.theory.core.theoryPOGModule">
          <prereq
-               id="org.eventb.theory.core.theoryOperatorExtensionModule">
+               id="org.eventb.theory.core.operatorExtensionPOGModule">
          </prereq>
       </processorType>
       <processorType
-            class="org.eventb.theory.internal.core.pog.TheoryRulesBlockPOGModule"
-            id="theoryRulesBlockModule"
+            class="org.eventb.theory.core.pog.modules.RulesBlockPOGModule"
+            id="rulesBlockPOGModule"
             name="%pogTheoryRulesBlockModule"
-            parent="org.eventb.theory.core.theoryModule">
+            parent="org.eventb.theory.core.theoryPOGModule">
          <prereq
-               id="org.eventb.theory.core.theoryTheoremModule">
+               id="org.eventb.theory.core.theoremPOGModule">
          </prereq>
       </processorType>
       <processorType
-            class="org.eventb.theory.internal.core.pog.TheoryRewriteRulePOGModule"
-            id="theoryRewriteRuleModule"
+            class="org.eventb.theory.core.pog.modules.RewriteRulePOGModule"
+            id="rewriteRulePOGModule"
             name="%pogTheoryRewriteRuleModule"
-            parent="org.eventb.theory.core.theoryRulesBlockModule">
+            parent="org.eventb.theory.core.rulesBlockPOGModule">
       </processorType>
       <processorType
-            class="org.eventb.theory.internal.core.pog.TheoryInferenceRulePOGModule"
-            id="theoryInferenceRuleModule"
+            class="org.eventb.theory.core.pog.modules.InferenceRulePOGModule"
+            id="inferenceRulePOGModule"
             name="%pogTheoryInferenceRuleModule"
-            parent="org.eventb.theory.core.theoryRulesBlockModule">
+            parent="org.eventb.theory.core.rulesBlockPOGModule">
+         <prereq
+               id="org.eventb.theory.core.rewriteRulePOGModule">
+         </prereq>
       </processorType>
    </extension>
    <extension
@@ -776,7 +771,7 @@
             id="thyPOG"
             name="%thyPOG">
          <pogModule
-               id="org.eventb.theory.core.theoryModule">
+               id="org.eventb.theory.core.theoryPOGModule">
          </pogModule>
       </configuration>
       <configuration
@@ -786,22 +781,22 @@
                id="org.eventb.theory.core.thyPOG">
          </config>
          <pogModule
-               id="org.eventb.theory.core.theoryTypeParametersModule">
+               id="org.eventb.theory.core.typeParametersPOGModule">
          </pogModule>
          <pogModule
-               id="org.eventb.theory.core.theoryOperatorExtensionModule">
+               id="org.eventb.theory.core.operatorExtensionPOGModule">
          </pogModule>
          <pogModule
-               id="org.eventb.theory.core.theoryRulesBlockModule">
+               id="org.eventb.theory.core.theoremPOGModule">
          </pogModule>
          <pogModule
-               id="org.eventb.theory.core.theoryRewriteRuleModule">
+               id="org.eventb.theory.core.rulesBlockPOGModule">
          </pogModule>
          <pogModule
-               id="org.eventb.theory.core.theoryInferenceRuleModule">
+               id="org.eventb.theory.core.rewriteRulePOGModule">
          </pogModule>
          <pogModule
-               id="org.eventb.theory.core.theoryTheoremModule">
+               id="org.eventb.theory.core.inferenceRulePOGModule">
          </pogModule>
         
       </configuration>

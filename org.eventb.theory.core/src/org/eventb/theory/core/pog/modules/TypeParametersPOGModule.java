@@ -10,7 +10,7 @@
  *     Systerel - separation of file and root element
  *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
-package org.eventb.theory.internal.core.pog;
+package org.eventb.theory.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,12 +38,12 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class TheoryTypeParametersPOGModule extends POGProcessorModule {
+public class TypeParametersPOGModule extends POGProcessorModule {
 
 	public static final String ABS_HYP_NAME = "ABSHYP";
 	
-	public static final IModuleType<TheoryTypeParametersPOGModule> MODULE_TYPE = 
-		POGCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryTypeParametersModule"); //$NON-NLS-1$
+	private final IModuleType<TypeParametersPOGModule> MODULE_TYPE = 
+		POGCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".typeParametersPOGModule"); //$NON-NLS-1$
 	
 	@Override
 	public IModuleType<?> getModuleType() {
@@ -61,7 +61,6 @@ public class TheoryTypeParametersPOGModule extends POGProcessorModule {
 		
 	}
 
-	
 	@Override
 	public void initModule(
 			IRodinElement element, 

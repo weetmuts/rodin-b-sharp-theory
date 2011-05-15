@@ -57,7 +57,7 @@ public class RewriteRuleFilterModule extends RuleFilterModule<IRewriteRule> {
 			createProblemMarker(rule, TheoryGraphProblem.RuleNoRhsError, rule.getLabel());
 			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	private boolean checkCompleteAttribute(IRewriteRule rule, ILabelSymbolInfo symbolInfo,

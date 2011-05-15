@@ -64,7 +64,7 @@ public class OperatorDefinitionsModule extends SCProcessorModule{
 			operatorInformation.setHasError();
 			if (opDefs.length + recDefs.length == 0) {
 				createProblemMarker(newOperatorDefinitions, EventBAttributes.LABEL_ATTRIBUTE,
-						TheoryGraphProblem.OperatorNoDirectDefError,
+						TheoryGraphProblem.OperatorNoDefError,
 						newOperatorDefinitions.getLabel());
 			} else {
 				createProblemMarker(newOperatorDefinitions, EventBAttributes.LABEL_ATTRIBUTE,

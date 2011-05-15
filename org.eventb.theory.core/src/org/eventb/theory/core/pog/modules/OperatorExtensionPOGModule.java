@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.pog;
+package org.eventb.theory.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,10 +25,10 @@ import org.rodinp.core.IRodinElement;
  * @author maamria
  * 
  */
-public class TheoryOperatorExtensionPOGModule extends POGProcessorModule {
+public class OperatorExtensionPOGModule extends POGProcessorModule {
 
-	public static final IModuleType<TheoryOperatorExtensionPOGModule> MODULE_TYPE = 
-		POGCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryOperatorExtensionModule"); 
+	private final IModuleType<OperatorExtensionPOGModule> MODULE_TYPE = 
+		POGCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorExtensionPOGModule"); 
 	
 	protected FormulaFactory factory;
 	protected ITypeEnvironment typeEnvironment;

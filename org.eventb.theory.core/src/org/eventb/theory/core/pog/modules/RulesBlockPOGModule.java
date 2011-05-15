@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.pog;
+package org.eventb.theory.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,15 +25,15 @@ import org.rodinp.core.IRodinFile;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class TheoryRulesBlockPOGModule extends POGProcessorModule{
+public class RulesBlockPOGModule extends POGProcessorModule {
 
-	public static final IModuleType<TheoryRulesBlockPOGModule> MODULE_TYPE = POGCore
-		.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryRulesBlockModule"); //$NON-NLS-1$
+	private final IModuleType<RulesBlockPOGModule> MODULE_TYPE = POGCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".rulesBlockPOGModule"); //$NON-NLS-1$
 	private ITypeEnvironment typeEnvironment;
 	private FormulaFactory factory;
-	
+
 	@Override
 	public void initModule(IRodinElement element,
 			IPOGStateRepository repository, IProgressMonitor monitor)
@@ -42,30 +42,30 @@ public class TheoryRulesBlockPOGModule extends POGProcessorModule{
 		typeEnvironment = repository.getTypeEnvironment();
 		factory = repository.getFormulaFactory();
 	}
-	
+
 	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IRodinFile scTheoryFile = (IRodinFile) element;
 		ISCTheoryRoot root = (ISCTheoryRoot) scTheoryFile.getRoot();
 		ISCProofRulesBlock[] rulesBlocks = root.getProofRulesBlocks();
-		for(ISCProofRulesBlock rulesBlock : rulesBlocks){
-			ITypeEnvironment localEnvironment = MathExtensionsUtilities.
-					getTypeEnvironmentForFactory(typeEnvironment, factory);
+		for (ISCProofRulesBlock rulesBlock : rulesBlocks) {
+			ITypeEnvironment localEnvironment = MathExtensionsUtilities
+					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			ISCMetavariable[] metavariables = rulesBlock.getMetavariables();
-			for(ISCMetavariable var : metavariables){
-				localEnvironment.addName(var.getIdentifierString(), var.getType(factory));
+			for (ISCMetavariable var : metavariables) {
+				localEnvironment.addName(var.getIdentifierString(),
+						var.getType(factory));
 			}
-			
 			repository.setTypeEnvironment(localEnvironment);
-			
-			initProcessorModules(rulesBlock, repository, monitor);
-			processModules(rulesBlock, repository, monitor);
-			endProcessorModules(rulesBlock, repository, monitor);
-			
+			{
+				initProcessorModules(rulesBlock, repository, monitor);
+				processModules(rulesBlock, repository, monitor);
+				endProcessorModules(rulesBlock, repository, monitor);
+			}
 			repository.setTypeEnvironment(typeEnvironment);
 		}
-		
+
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class TheoryRulesBlockPOGModule extends POGProcessorModule{
 		factory = null;
 		super.endModule(element, repository, monitor);
 	}
-	
+
 	@Override
 	public IModuleType<?> getModuleType() {
 		// TODO Auto-generated method stub
