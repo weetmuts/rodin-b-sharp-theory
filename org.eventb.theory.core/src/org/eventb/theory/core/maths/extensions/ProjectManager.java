@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.theory.core.DatabaseUtilities;
@@ -80,7 +82,7 @@ public class ProjectManager {
 		}
 	}
 
-	public synchronized void reloadDirtyExtensions(FormulaFactory seedFactory)
+	public synchronized void reloadDirtyExtensions(final FormulaFactory seedFactory)
 			throws CoreException {
 		scExtensionsMap.clear();
 		ISCTheoryRoot[] scRoots = DatabaseUtilities.getSCTheoryRoots(project,
@@ -93,9 +95,17 @@ public class ProjectManager {
 					}
 				});
 		graph.setCheckedRoots(scRoots);
+		
 		for (ISCTheoryRoot root : graph.getCheckedRoots()) {
+			
+			ISchedulingRule rule = root.getSchedulingRule();
+			Job.getJobManager().beginRule(rule, null);
+			
 			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root, seedFactory);
 			Set<IFormulaExtension> extensions = loader.load();
+			
+			Job.getJobManager().endRule(rule);
+			
 			scExtensionsMap.put(root.getComponentName(), extensions);
 		}
 	}

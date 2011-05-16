@@ -69,6 +69,7 @@ public abstract class AbstractOperatorExtension<F extends Formula<F>> implements
 			boolean isCommutative, boolean isAssociative,
 			IOperatorTypingRule<F> operatorTypingRule,
 			Object source) {
+		this.properties = properties;
 		this.isCommutative = isCommutative;
 		this.isAssociative = isAssociative;
 		this.operatorTypingRule = operatorTypingRule;
