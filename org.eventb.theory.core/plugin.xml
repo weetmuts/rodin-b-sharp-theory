@@ -495,9 +495,18 @@
             parent="org.eventb.theory.core.operatorWDConditionModule">
       </filterType>
       <processorType
-            class="org.eventb.theory.core.sc.modules.OperatorDefinitionsModule"
-            id="operatorDefinitionsModule"
-            name="%scOperatorDefinitionsModule"
+            class="org.eventb.theory.core.sc.modules.OperatorDirectDefinitionModule"
+            id="operatorDirectDefinitionModule"
+            name="%scOperatorDirectDefinitionModule"
+            parent="org.eventb.theory.core.operatorModule">
+         <prereq
+               id="org.eventb.theory.core.operatorWDConditionModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorRecursiveDefinitionModule"
+            id="operatorRecursiveDefinitionModule"
+            name="%scOperatorRecursiveDefinitionModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
                id="org.eventb.theory.core.operatorWDConditionModule">
@@ -509,7 +518,10 @@
             name="%scOperatorPropertiesModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
-               id="org.eventb.theory.core.operatorDefinitionsModule">
+               id="org.eventb.theory.core.operatorDirectDefinitionModule">
+         </prereq>
+         <prereq
+               id="org.eventb.theory.core.operatorRecursiveDefinitionModule">
          </prereq>
       </processorType>
       <processorType
@@ -719,7 +731,7 @@
                id="org.eventb.theory.core.operatorWDConditionFilterModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.operatorDefinitionsModule">
+               id="org.eventb.theory.core.operatorDirectDefinitionModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorPropertiesModule">
@@ -765,6 +777,9 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.inferenceInferClauseModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorRecursiveDefinitionModule">
          </scModule>
       </configuration>
       <configuration

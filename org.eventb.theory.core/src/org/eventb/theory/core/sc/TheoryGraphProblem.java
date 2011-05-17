@@ -333,7 +333,25 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_ConstrArgumentNotIdentifier), 
 			OperatorCannotBePostfix(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_OperatorCannotBePostfix)
+			Messages.scuser_OperatorCannotBePostfix), 
+			InductiveArgMissing(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_InductiveArgMissing), 
+			NoRecCasesError(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_NoRecCasesError), 
+			InductiveCaseNotAppropriateExp(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_InductiveCaseNotAppropriateExp), 
+			ConsArgNotIdentInCase(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_ConsArgNotIdentInCase), 
+			IdentCannotBeUsedAsConsArg(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_IdentCannotBeUsedAsConsArg), 
+			UnableToTypeCase(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_UnableToTypeCase)
 	;
 
 	private int arity;

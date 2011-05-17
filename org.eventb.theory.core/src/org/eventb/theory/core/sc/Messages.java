@@ -127,7 +127,6 @@ public final class Messages {
 	public static String scuser_TheoryInImportMissing;
 	public static String scuser_ImportTheoryNotExist;
 	public static String scuser_RedundantImportWarn;
-	public static String scuser_RuleRequireOneInfer;
 	public static String scuser_LHS_IsNotWDStrict;
 	public static String scuser_ImportDepCircularity;
 	public static String scuser_ImportConflict;
@@ -138,6 +137,12 @@ public final class Messages {
 	public static String scuser_ExprNotApproInductiveCase;
 	public static String scuser_ConstrArgumentNotIdentifier;
 	public static String scuser_OperatorCannotBePostfix;
+	public static String scuser_InductiveArgMissing;
+	public static String scuser_NoRecCasesError;
+	public static String scuser_InductiveCaseNotAppropriateExp;
+	public static String scuser_ConsArgNotIdentInCase;
+	public static String scuser_IdentCannotBeUsedAsConsArg;
+	public static String scuser_UnableToTypeCase;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

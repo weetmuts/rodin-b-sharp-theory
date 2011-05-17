@@ -244,5 +244,5 @@ public class OperatorModule extends LabeledElementModule{
 		globalTypeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 		repository.setTypeEnvironment(globalTypeEnvironment);
 	}
-
+	
 }

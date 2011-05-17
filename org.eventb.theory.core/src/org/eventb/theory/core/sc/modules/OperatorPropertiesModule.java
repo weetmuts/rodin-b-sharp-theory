@@ -8,7 +8,6 @@
 package org.eventb.theory.core.sc.modules;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +22,8 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.ast.extension.Arity;
-import org.eventb.internal.core.ast.extension.ArityCoverage;
 import org.eventb.theory.core.INewOperatorDefinition;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -38,52 +36,46 @@ import org.rodinp.core.RodinDBException;
 /**
  * 
  * @author maamria
- *
+ * 
  */
-@SuppressWarnings("restriction")
-public class OperatorPropertiesModule extends SCProcessorModule{
+public class OperatorPropertiesModule extends SCProcessorModule {
 
-	static final Set<ExtensionGenre> ALLOWED_GENRES = new HashSet<OperatorPropertiesModule.ExtensionGenre>();
+	private final IModuleType<OperatorPropertiesModule> MODULE_TYPE = SCCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorPropertiesModule");
 
-	static {
-		ALLOWED_GENRES.add(new ExtensionGenre(FormulaType.EXPRESSION, Notation.PREFIX, ArityCoverage.ANY));
-		ALLOWED_GENRES.add(new ExtensionGenre(FormulaType.EXPRESSION, Notation.INFIX, ArityCoverage.TWO_OR_MORE));
-		ALLOWED_GENRES.add(new ExtensionGenre(FormulaType.PREDICATE, Notation.PREFIX, ArityCoverage.ONE_OR_MORE));
-	}
-	
-	private final IModuleType<OperatorPropertiesModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
-			+ ".operatorPropertiesModule");
-	
 	private ITypeEnvironment typeEnvironment;
 	private IOperatorInformation operatorInformation;
-	
+
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		INewOperatorDefinition operatorDefinition = (INewOperatorDefinition) element;
-		
+
 		List<String> args = getOperatorArguments();
-		// Check for allowable extension kinds 
+		// Check for allowable extension kinds
 		boolean isCommutative = operatorDefinition.isCommutative();
 		boolean isAssos = operatorDefinition.isAssociative();
 		Notation notation = operatorDefinition.getNotationType();
 		int arity = args.size();
 		FormulaType formType = operatorDefinition.getFormulaType();
-		
-		if(!checkOperatorProperties(operatorDefinition,formType, notation, arity, isAssos, isCommutative, args)){
-			operatorInformation .setHasError();
-		}
-		else {
+
+		if (!checkOperatorProperties(operatorDefinition, formType, notation,
+				arity, isAssos, isCommutative, args)) {
+			operatorInformation.setHasError();
+		} else {
 			operatorInformation.setAssociative(isAssos);
 			operatorInformation.setCommutative(isCommutative);
 		}
-		if(operatorInformation.getWdCondition() == null){
+		if (operatorInformation.getWdCondition() == null) {
 			operatorInformation.setHasError();
 		}
-		
+		ISCTheoryRoot scTheoryRoot = target.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
+		if (scTheoryRoot != null){
+			
+		}
 	}
-	
+
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -107,100 +99,111 @@ public class OperatorPropertiesModule extends SCProcessorModule{
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
-	
-	protected ExtensionGenre isAllowedGenre(FormulaType formulaType, Notation notation, int arity){
-		for (ExtensionGenre genre : ALLOWED_GENRES){
-			if (genre.formulaType.equals(formulaType) &&
-					genre.notation.equals(notation)){
-				if (genre.arityCoverage.contains(new Arity(arity, arity))){
-					return genre;
+
+	/**
+	 * Checks the given operator properties against the requirements of the AST.
+	 * <p>
+	 * Returns whether the operator with the given properties can be handled by
+	 * the current AST setup.
+	 * 
+	 * @param operatorDefinition
+	 *            the new operator definition
+	 * @param formType
+	 *            the formula type
+	 * @param notation
+	 *            the notation
+	 * @param arity
+	 *            the arity
+	 * @param isAssociative
+	 *            whether the operator is marked to be associative
+	 * @param isCommutative
+	 *            whether the operator is marked to be commutative
+	 * @param arguments
+	 *            the arguments of the operator
+	 * @return whether the operator properties are acceptable as per current AST
+	 *         requirements
+	 * @throws RodinDBException
+	 */
+	protected boolean checkOperatorProperties(
+			INewOperatorDefinition operatorDefinition, FormulaType formType,
+			Notation notation, int arity, boolean isAssociative,
+			boolean isCommutative, List<String> arguments)
+			throws RodinDBException {
+		String opID = operatorDefinition.getLabel();
+		// Check notation
+		// 1- Postfix not supported
+		if (notation.equals(Notation.POSTFIX)) {
+			createProblemMarker(operatorDefinition,
+					EventBAttributes.LABEL_ATTRIBUTE,
+					TheoryGraphProblem.OperatorCannotBePostfix);
+			return false;
+		}
+		// Check formula type
+		if (formType.equals(FormulaType.PREDICATE)) {
+			// 2- Infix predicates not supported
+			if (notation.equals(Notation.INFIX)) {
+				createProblemMarker(operatorDefinition,
+						EventBAttributes.LABEL_ATTRIBUTE,
+						TheoryGraphProblem.OperatorPredOnlyPrefix);
+				return false;
+			}
+			// 3- Predicate operators need at least one argument
+			if (arity < 1) {
+				createProblemMarker(operatorDefinition,
+						EventBAttributes.LABEL_ATTRIBUTE,
+						TheoryGraphProblem.OperatorPredNeedOneOrMoreArgs);
+				return false;
+			}
+		}
+		// Issues with associativity
+		if (isAssociative) {
+			// 4- Predicate operators cannot be associative
+			if (formType.equals(FormulaType.PREDICATE)) {
+				createProblemMarker(operatorDefinition,
+						EventBAttributes.LABEL_ATTRIBUTE,
+						TheoryGraphProblem.OperatorPredCannotBeAssos);
+				return false;
+			} else {
+				// 5- Associative and prefix not supported
+				if (notation.equals(Notation.PREFIX)) {
+					createProblemMarker(operatorDefinition,
+							TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
+							TheoryGraphProblem.OperatorExpPrefixCannotBeAssos);
+					return false;
+				} else if (notation.equals(Notation.INFIX)) {
+					// 6- Infix needs at least two arguments
+					if (arity < 2) {
+						createProblemMarker(
+								operatorDefinition,
+								EventBAttributes.LABEL_ATTRIBUTE,
+								TheoryGraphProblem.OperatorExpInfixNeedsAtLeastTwoArgs);
+						return false;
+					}
+					// 7- Check actual associativity
+					else if (!checkAssociativity(arguments)) {
+						createProblemMarker(
+								operatorDefinition,
+								TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
+								TheoryGraphProblem.OperatorCannotBeAssosWarning,
+								opID);
+						return false;
+					}
 				}
 			}
 		}
-		return null;
-	}
-	
-	/**
-	 * Checks the given operator properties against the requirements of the AST. 
-	 * <p> Returns whether the operator with the given properties can be handled by the current AST setup.
-	 * 
-	 * @param operatorDefinition the new operator definition
-	 * @param formType the formula type
-	 * @param notation the notation
-	 * @param arity the arity
-	 * @param isAssociative whether the operator is marked to be associative
-	 * @param isCommutative whether the operator is marked to be commutative
-	 * @param arguments the arguments of the operator
-	 * @return whether the operator properties are acceptable as per current AST requirements
-	 * @throws RodinDBException
-	 */
-	protected boolean checkOperatorProperties(INewOperatorDefinition operatorDefinition, FormulaType formType, 
-			Notation notation, int arity, boolean isAssociative, boolean isCommutative, List<String> arguments)
-	throws RodinDBException{
-		String opID = operatorDefinition.getLabel();
-		ExtensionGenre extensionGenre = isAllowedGenre(formType, notation, arity);
-		if (extensionGenre == null){
-			// Check notation
-			// 1- Postfix not supported
-			if (notation.equals(Notation.POSTFIX)){
-				createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorCannotBePostfix);
+		// Issues with commutativity
+		if (isCommutative) {
+			// 8- Check actual commutativity
+			if (!checkCommutativity(arguments)) {
+				createProblemMarker(operatorDefinition,
+						TheoryAttributes.COMMUTATIVE_ATTRIBUTE,
+						TheoryGraphProblem.OperatorCannotBeCommutError, opID);
 				return false;
 			}
-			// Check formula type
-			if(formType.equals(FormulaType.PREDICATE)){
-				// 2- Infix predicates not supported
-				if (notation.equals(Notation.INFIX)){
-					createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredOnlyPrefix);
-					return false;
-				}
-				// 3- Predicate operators need at least one argument
-				if (arity < 1){
-					createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredNeedOneOrMoreArgs);
-					return false;
-				}
-			}
-			// Issues with associativity
-			if (isAssociative){
-				// 4- Predicate operators cannot be associative
-				if (formType.equals(FormulaType.PREDICATE)){
-					createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredCannotBeAssos);
-					return false;
-				}
-				else {
-					// 5- Associative and prefix not supported
-					if (notation.equals(Notation.PREFIX)){
-						createProblemMarker(operatorDefinition, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE, TheoryGraphProblem.OperatorExpPrefixCannotBeAssos);
-						return false;
-					}
-					else if (notation.equals(Notation.INFIX)){
-						// 6- Infix needs at least two arguments
-						if(arity < 2){
-							createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorExpInfixNeedsAtLeastTwoArgs);
-							return false;
-						}
-						// 7- Check actual associativity
-						else if(!checkAssociativity(arguments)){
-							createProblemMarker(operatorDefinition,
-									TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
-									TheoryGraphProblem.OperatorCannotBeAssosWarning, opID);
-							return false;
-						}
-					}
-				}
-			}
-			// Issues with commutativity
-			if (isCommutative){
-				// 8- Check actual commutativity
-				if(!checkCommutativity(arguments)){
-					createProblemMarker(operatorDefinition, TheoryAttributes.COMMUTATIVE_ATTRIBUTE, TheoryGraphProblem.OperatorCannotBeCommutError, opID);
-					return false;
-				}
-			}
-			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the argument of an operator. This method assumes that all given
 	 * sets are theory type parameters, and all other names must be operator
@@ -210,88 +213,58 @@ public class OperatorPropertiesModule extends SCProcessorModule{
 	 */
 	protected List<String> getOperatorArguments() {
 		Set<String> allNames = typeEnvironment.clone().getNames();
-		allNames.removeAll(MathExtensionsUtilities.getGivenSetsNames(typeEnvironment));
+		allNames.removeAll(MathExtensionsUtilities
+				.getGivenSetsNames(typeEnvironment));
 		return new ArrayList<String>(allNames);
 	}
-	
+
 	/**
-	 * An operator can be associative if it can have at least two arguments of the same type, which has to be the same
-	 * as the resultant type.
-	 * @param args the operator arguments
+	 * An operator can be associative if it can have at least two arguments of
+	 * the same type, which has to be the same as the resultant type.
+	 * 
+	 * @param args
+	 *            the operator arguments
 	 * @return whether this operator can be associative
 	 */
 	protected boolean checkAssociativity(List<String> args) {
-		if(!operatorInformation.isExpressionOperator() ||
-				(args.size() != 2)){
+		if (!operatorInformation.isExpressionOperator() || (args.size() != 2)) {
 			return false;
 		}
 		Type type = null;
-		for(String arg : args){
-			if(type == null){
+		for (String arg : args) {
+			if (type == null) {
 				type = typeEnvironment.getType(arg);
 			}
-			if (!type.equals(typeEnvironment.getType(arg))){
+			if (!type.equals(typeEnvironment.getType(arg))) {
 				return false;
 			}
 		}
-		if (!type.equals(operatorInformation.getResultantType())){
+		if (!type.equals(operatorInformation.getResultantType())) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
-	 * An operator can be commutative if it can have two arguments of the same type.
-	 * @param args the operator arguments
+	 * An operator can be commutative if it can have two arguments of the same
+	 * type.
+	 * 
+	 * @param args
+	 *            the operator arguments
 	 * @return whether this operator can be commutative
 	 */
 	protected boolean checkCommutativity(List<String> args) {
-		if(args.size() != 2){
+		if (args.size() != 2) {
 			return false;
 		}
 		Type type = null;
-		for(String arg : args){
-			if(type == null){
+		for (String arg : args) {
+			if (type == null) {
 				type = typeEnvironment.getType(arg);
 			}
-			if(!(type.equals(typeEnvironment.getType(arg))))
+			if (!(type.equals(typeEnvironment.getType(arg))))
 				return false;
 		}
 		return true;
-	}
-	
-	/**
-	 * A simple implementation of a genre of an extension.
-	 * @author maamria
-	 *
-	 */
-	static final class ExtensionGenre{
-		FormulaType formulaType;
-		Notation notation;
-		ArityCoverage arityCoverage;
-		
-		public ExtensionGenre(FormulaType formulaType, Notation notation, 
-				ArityCoverage arityCoverage){
-			this.formulaType = formulaType;
-			this.notation = notation;
-			this.arityCoverage = arityCoverage;
-		}
-		
-		public boolean equals(Object o){
-			if (o == this){
-				return true;
-			}
-			if (o == null || !(o instanceof ExtensionGenre)){
-				return false;
-			}
-			ExtensionGenre other = (ExtensionGenre) o;
-			return formulaType.equals(other.formulaType) && notation.equals(other.notation) && 
-				arityCoverage.equals(other.arityCoverage);
-		}
-	
-		public int hashCode(){
-			final int prime = 17;
-			return prime *formulaType.hashCode() + 17*notation.hashCode()+arityCoverage.hashCode();
-		}
 	}
 }

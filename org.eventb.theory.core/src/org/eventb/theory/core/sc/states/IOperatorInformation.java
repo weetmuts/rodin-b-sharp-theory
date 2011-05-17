@@ -7,6 +7,13 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.states;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
@@ -17,6 +24,9 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
+import org.eventb.theory.core.INewOperatorDefinition;
+import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
@@ -53,6 +63,12 @@ public interface IOperatorInformation extends ISCState{
 	 * @param type the type of the argument
 	 */
 	public void addOperatorArgument(String ident, Type type);
+	
+	/**
+	 * Returns the set of operator arguments in the same order as the definition.
+	 * @return the operator arguments
+	 */
+	public Set<IOperatorArgument> getOperatorArguments();
 	
 	/**
 	 * @return the syntax
@@ -93,7 +109,19 @@ public interface IOperatorInformation extends ISCState{
 	 *            the isCommutative to set
 	 */
 	public void setCommutative(boolean isCommutative) ;
-
+	
+	/**
+	 * Sets the definition of the current operator.
+	 * @param definition the definition
+	 */
+	public void setDefinition(IDefinition definition);
+	
+	/**
+	 * Returns the definition of this operator.
+	 * @return the operator definition
+	 */
+	public IDefinition getDefinition();
+	
 	/**
 	 * @return the wdCondition
 	 */
@@ -117,10 +145,6 @@ public interface IOperatorInformation extends ISCState{
 	 */
 	public void setResultantType(Type resultantType) ;
 
-	/**
-	 * @param hasError
-	 *            the hasError to set
-	 */
 	public void setHasError() ;
 
 	/**
@@ -135,5 +159,66 @@ public interface IOperatorInformation extends ISCState{
 	 * @return the formula extension
 	 */
 	public IFormulaExtension getExtension(Object sourceOfExtension, FormulaFactory factory) ;
+	
+	
+	public void generateDefinitionalRule(
+			INewOperatorDefinition originDefinition, 
+			ISCTheoryRoot theoryRoot,
+			FormulaFactory enhancedFactory) throws CoreException;
+	
+	/**
+	 * 
+	 * @author maamria
+	 *
+	 */
+	public static class DirectDefintion implements IDefinition{
+		private Formula<?> directDefintion;
+		
+		public DirectDefintion(Formula<?> directDefinition){
+			this.directDefintion = directDefinition;
+		}
+		
+		public Formula<?> getDefinition(){
+			return directDefintion;
+		}
+	}
+	
+	/**
+	 * 
+	 * @author maamria
+	 *
+	 */
+	public static class RecursiveDefinition implements IDefinition{
+		
+		private IOperatorArgument operatorArgument;
+		
+		private Map<Expression, Formula<?>> recursiveCases;
+		
+		public RecursiveDefinition(IOperatorArgument operatorArgument){
+			this.operatorArgument = operatorArgument;
+			this.recursiveCases = new LinkedHashMap<Expression, Formula<?>>();
+		}
+		
+		public IOperatorArgument getOperatorArgument(){
+			return operatorArgument;
+		}
+		
+		public Map<Expression, Formula<?>> getRecursiveCases(){
+			return recursiveCases;
+		}
+		
+		public void addRecursiveCase(Expression inductiveCase, Formula<?> definition){
+			recursiveCases.put(inductiveCase, definition);
+		}
+	}
+	
+	/**
+	 * Marker interface.
+	 * @author maamria
+	 *
+	 */
+	public static interface IDefinition{
+		
+	}
 	
 }

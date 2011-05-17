@@ -29,7 +29,7 @@ import org.eventb.theory.core.maths.IOperatorExtension;
 public class AstUtilities {
 
 	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] {
-			Notation.POSTFIX.toString(), Notation.INFIX.toString() };
+			Notation.PREFIX.toString(), Notation.INFIX.toString() };
 	
 	/**
 	 * Converts a string (e.g., "POSTFIX") to the corresponding notation.
