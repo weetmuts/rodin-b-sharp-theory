@@ -3,6 +3,7 @@ package org.eventb.theory.ui.editor.html;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IOperatorWDCondition;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
@@ -11,6 +12,7 @@ import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class OperatorWDconditionPrettyPrinter extends DefaultPrettyPrinter {
 
 	/**
@@ -37,8 +39,10 @@ public class OperatorWDconditionPrettyPrinter extends DefaultPrettyPrinter {
 						WDC_IDENTIFIER_SEPARATOR_BEGIN, 
 						WDC_IDENTIFIER_SEPARATOR_END);
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EventBEditorUtils.debugAndLogError(
+						e,
+						"Cannot get the details for wd condition "
+								+ cond.getElementName());
 			}
 		}
 	}

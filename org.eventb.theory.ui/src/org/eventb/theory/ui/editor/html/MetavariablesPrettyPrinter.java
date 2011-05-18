@@ -41,12 +41,4 @@ public class MetavariablesPrettyPrinter extends DefaultPrettyPrinter {
 			}
 		}
 	}
-	
-	@Override
-	public boolean appendSpecialPrefix(IInternalElement parent,
-			String defaultKeyword, IPrettyPrintStream ps, boolean empty) {
-		// return false to let the default prefix be used
-		return true;
-	}
-
 }

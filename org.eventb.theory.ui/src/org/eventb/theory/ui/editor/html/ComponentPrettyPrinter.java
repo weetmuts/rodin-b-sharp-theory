@@ -33,14 +33,10 @@ public class ComponentPrettyPrinter extends DefaultPrettyPrinter implements
 	}
 
 	protected static void appendComponentName(IPrettyPrintStream ps, String label) {
-		ps.appendString(label, //
-				getHTMLBeginForCSSClass(STYLE,
-						HorizontalAlignment.LEFT, //
-						VerticalAlignement.MIDDLE), //
-				getHTMLEndForCSSClass(STYLE, //
-						HorizontalAlignment.LEFT, //
-						VerticalAlignement.MIDDLE), //
-				COMPONENT_NAME_SEPARATOR_BEGIN, //
+		ps.appendString(label, 
+				getHTMLBeginForCSSClass(STYLE, HorizontalAlignment.LEFT, VerticalAlignement.MIDDLE), 
+				getHTMLEndForCSSClass(STYLE, HorizontalAlignment.LEFT, VerticalAlignement.MIDDLE), 
+				COMPONENT_NAME_SEPARATOR_BEGIN, 
 				COMPONENT_NAME_SEPARATOR_END);
 	}
 

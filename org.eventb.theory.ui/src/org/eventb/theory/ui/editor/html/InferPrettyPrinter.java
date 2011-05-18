@@ -4,7 +4,9 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IInfer;
+import org.eventb.theory.core.IInferenceRule;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.HorizontalAlignment;
@@ -12,6 +14,7 @@ import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class InferPrettyPrinter extends DefaultPrettyPrinter {
 
 	private static final String I_PRED = "axiomPredicate"; 
@@ -38,8 +41,10 @@ public class InferPrettyPrinter extends DefaultPrettyPrinter {
 								I_IDENT_SEPARATOR_BEGIN, 
 								I_IDENT_SEPARATOR_END);
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EventBEditorUtils.debugAndLogError(
+						e,
+						"Cannot get the details for infer "
+								+ i.getElementName());
 			}
 			
 		}
@@ -48,8 +53,29 @@ public class InferPrettyPrinter extends DefaultPrettyPrinter {
 	@Override
 	public boolean appendSpecialPrefix(IInternalElement parent,
 			String defaultKeyword, IPrettyPrintStream ps, boolean empty) {
-		ps.appendKeyword("	------------------");
+		if (parent instanceof IInferenceRule){
+			try {
+				int l = ((IInferenceRule) parent).getGivens().length + ((IInferenceRule) parent).getInfers().length;
+				if(l > 0){
+					ps.appendLevelBegin();
+					ps.appendString("--------------------------------------------------", getHTMLBeginForCSSClass(I_PRED, //
+											HorizontalAlignment.LEFT, //
+											VerticalAlignement.MIDDLE), //
+									getHTMLEndForCSSClass(I_PRED, //
+											HorizontalAlignment.LEFT, //
+											VerticalAlignement.MIDDLE), 
+											I_IDENT_SEPARATOR_BEGIN, 
+											I_IDENT_SEPARATOR_END);
+					ps.appendLevelEnd();
+				}
+			} catch (RodinDBException e) {
+				EventBEditorUtils.debugAndLogError(
+						e,
+						"Cannot get the children for rule "
+								+ parent.getElementName());
+			}
+		}
+		
 		return true;
 	}
-
 }

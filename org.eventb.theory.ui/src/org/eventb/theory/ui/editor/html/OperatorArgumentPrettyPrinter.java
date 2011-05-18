@@ -3,6 +3,7 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IOperatorArgument;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
@@ -12,6 +13,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 
+@SuppressWarnings("restriction")
 public class OperatorArgumentPrettyPrinter extends DefaultPrettyPrinter {
 
 	/**
@@ -40,7 +42,10 @@ public class OperatorArgumentPrettyPrinter extends DefaultPrettyPrinter {
 						OPARG_IDENT_SEPARATOR_BEGIN, 
 						OPARG_IDENT_SEPARATOR_END);
 			} catch (RodinDBException e) {
-				e.printStackTrace();
+				EventBEditorUtils.debugAndLogError(
+						e,
+						"Cannot get the details for op arg "
+								+ opArg.getElementName());
 			}
 		}
 	}

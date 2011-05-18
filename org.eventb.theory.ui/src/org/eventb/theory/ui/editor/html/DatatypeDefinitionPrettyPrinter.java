@@ -22,9 +22,7 @@ import org.rodinp.core.RodinDBException;
 @SuppressWarnings("restriction")
 public class DatatypeDefinitionPrettyPrinter extends DefaultPrettyPrinter implements
 	IElementPrettyPrinter{
-
-	// use an existing style...
-	//TODO use a dedicated style...flag up extensibility issue
+	
 	private static final String STYLE = "eventLabel";
 	private static final String DT_IDENT_SEPARATOR_BEGIN = null;
 	private static final String DT_IDENT_SEPARATOR_END = null;
@@ -47,9 +45,7 @@ public class DatatypeDefinitionPrettyPrinter extends DefaultPrettyPrinter implem
 		}
 	}
 
-	
-	
-	private static void writeDTNameAndTypePars(IDatatypeDefinition dt, IPrettyPrintStream ps)
+	private void writeDTNameAndTypePars(IDatatypeDefinition dt, IPrettyPrintStream ps)
 		throws RodinDBException{
 		
 		ps.appendString(wrapString(dt.getIdentifierString()+addTypeParameters(dt)+TWO_SPACES), 
@@ -74,12 +70,7 @@ public class DatatypeDefinitionPrettyPrinter extends DefaultPrettyPrinter implem
 		
 	}
 	
-	
-
-	
-
-
-	private static String writeBetweenBrackets(String str[]){
+	private String writeBetweenBrackets(String str[]){
 		if(str.length == 0) return "";
 		else if(str.length == 1) return "("+str[0]+")";
 		else {
@@ -95,7 +86,7 @@ public class DatatypeDefinitionPrettyPrinter extends DefaultPrettyPrinter implem
 		}
 	}
 	
-	private static String addTypeParameters(IDatatypeDefinition dtd)
+	private String addTypeParameters(IDatatypeDefinition dtd)
 	throws RodinDBException{
 		final ITypeArgument args[] = dtd.getTypeArguments();
 		List<String> pars = new ArrayList<String>();

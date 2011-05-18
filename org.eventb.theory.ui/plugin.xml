@@ -148,6 +148,7 @@
             defaultColumn="0"
             imagePath="icons/thy.gif"
             prefix="IMPORTS"
+            prettyPrinter="org.eventb.theory.ui.editor.html.ImportPrettyPrinter"
             typeId="org.eventb.theory.core.importTheory">
       </element>
       <element
@@ -199,7 +200,7 @@
       <element
             defaultColumn="1"
             imagePath="icons/axm_obj.gif"
-            prefix="condition"
+            prefix="well-definedness condition"
             prettyPrinter="org.eventb.theory.ui.editor.html.OperatorWDconditionPrettyPrinter"
             typeId="org.eventb.theory.core.operatorWDcondition">
       </element>

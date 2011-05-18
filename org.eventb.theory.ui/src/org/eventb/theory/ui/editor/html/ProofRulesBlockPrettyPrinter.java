@@ -4,6 +4,7 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
@@ -12,6 +13,7 @@ import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class ProofRulesBlockPrettyPrinter extends DefaultPrettyPrinter {
 
 	private static final String STYLE = "eventLabel";
@@ -34,8 +36,10 @@ public class ProofRulesBlockPrettyPrinter extends DefaultPrettyPrinter {
 						PRB_IDENT_SEPARATOR_BEGIN, 
 						PRB_IDENT_SEPARATOR_END);
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EventBEditorUtils.debugAndLogError(
+						e,
+						"Cannot get the details for rules block "
+								+ block.getElementName());
 			}
 		}
 	}

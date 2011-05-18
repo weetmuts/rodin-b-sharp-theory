@@ -27,8 +27,7 @@ public class NewOperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 	 * 
 	 */
 	private static final String COMMUT = "commut";
-	// use an existing style...
-	// TODO use a dedicated style...flag up extensibility issue
+	
 	private static final String OP_LABEL = "eventLabel";
 	private static final String OP_DETAILS = ".extended";
 	private static final String OP_FORMTYPE = "extended";
@@ -50,7 +49,7 @@ public class NewOperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 			} catch (CoreException e) {
 				EventBEditorUtils.debugAndLogError(
 						e,
-						"Cannot get the details for datatype "
+						"Cannot get the details for operator "
 								+ nod.getElementName());
 			}
 		}

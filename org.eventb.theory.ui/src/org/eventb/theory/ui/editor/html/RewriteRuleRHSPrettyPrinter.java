@@ -4,6 +4,7 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IRewriteRuleRightHandSide;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
@@ -12,6 +13,7 @@ import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class RewriteRuleRHSPrettyPrinter extends DefaultPrettyPrinter {
 
 	private static final String RHS_LABEL = "actionLabel"; 
@@ -62,8 +64,10 @@ public class RewriteRuleRHSPrettyPrinter extends DefaultPrettyPrinter {
 								RHS_IDENT_SEPARATOR_END);
 				ps.decrementLevel();
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EventBEditorUtils.debugAndLogError(
+						e,
+						"Cannot get the details for rhs "
+								+ rhs.getElementName());
 			}
 			
 		}

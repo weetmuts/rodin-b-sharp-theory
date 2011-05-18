@@ -4,6 +4,7 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IGiven;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
@@ -12,6 +13,7 @@ import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class GivenPrettyPrinter extends DefaultPrettyPrinter {
 
 	private static final String G_PRED = "axiomPredicate"; 
@@ -38,17 +40,20 @@ public class GivenPrettyPrinter extends DefaultPrettyPrinter {
 								G_IDENT_SEPARATOR_BEGIN, 
 								G_IDENT_SEPARATOR_END);
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EventBEditorUtils.debugAndLogError(
+						e,
+						"Cannot get the details for given "
+								+ g.getElementName());
 			}
 			
 		}
 	}
+	
 	
 	@Override
 	public boolean appendSpecialPrefix(IInternalElement parent,
 			String defaultKeyword, IPrettyPrintStream ps, boolean empty) {
 		return true;
 	}
-
+	
 }

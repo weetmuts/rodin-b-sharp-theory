@@ -17,8 +17,6 @@ import org.rodinp.core.RodinDBException;
 @SuppressWarnings("restriction")
 public class DatatypeConstructorPrettyPrinter extends DefaultPrettyPrinter {
 
-	// use an existing style...
-	//TODO use a dedicated style...flag up extensibility issue
 	private static final String STYLE = "convergence";
 	private static final String DTC_IDENT_SEPARATOR_BEGIN = null;
 	private static final String DTC_IDENT_SEPARATOR_END = null;
