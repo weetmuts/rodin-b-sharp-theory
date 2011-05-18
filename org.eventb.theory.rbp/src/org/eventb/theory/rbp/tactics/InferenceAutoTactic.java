@@ -7,10 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics;
 
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
-import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.theory.rbp.reasoners.AutoInferenceReasoner;
 
 /**
  * The automatic tactic for applying inference rules.
@@ -22,11 +21,12 @@ import org.eventb.theory.rbp.reasoners.AutoInferenceReasoner;
  * @author maamria
  *
  */
-public class InferenceAutoTactic extends AutoTactics.AbsractLazilyConstrTactic{
+public class InferenceAutoTactic implements ITactic{
 
 	@Override
-	protected ITactic getSingInstance() {
-		return BasicTactics.reasonerTac(new AutoInferenceReasoner(), null);
+	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

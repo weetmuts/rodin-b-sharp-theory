@@ -23,6 +23,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
+import org.eventb.core.ast.IFormulaInspector;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -35,6 +36,10 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.theory.rbp.base.IRuleBaseManager;
+import org.eventb.theory.rbp.base.RuleBaseManager;
+import org.eventb.theory.rbp.engine.IBinding;
+import org.eventb.theory.rbp.engine.MatchFinder;
 import org.eventb.theory.rbp.internal.base.IDeployedRewriteRule;
 import org.eventb.theory.rbp.internal.tactics.RewriteTacticApplication;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
@@ -48,14 +53,26 @@ import org.eventb.ui.prover.ITacticApplication;
  * @author maamria
  *
  */
-public class RewritesSelector extends RbPAbstractApplicationInspector{
+public class RewritesSelector implements IFormulaInspector<ITacticApplication>{
 
+	protected final Predicate predicate;
+	protected final MatchFinder finder;
+	protected final IRuleBaseManager manager;
+	protected final boolean isGoal;
 	
 	public RewritesSelector(Predicate predicate, boolean isGoal, FormulaFactory factory){
-		super(predicate, isGoal, factory);
+		this.predicate = predicate;
+		this.isGoal = isGoal;
+		this.manager = RuleBaseManager.getDefault();
+		this.finder = new MatchFinder(factory);
 	}
 	
-
+	/**
+	 * Checks if any rules are applicable to the formula <code>form</code>.
+	 * <p> Information about applicability are stored in the given accumulator.
+	 * @param form the formula
+	 * @param accum the accumulator
+	 */
 	protected void select(Formula<?> form, IAccumulator<ITacticApplication> accum) {
 		List<IDeployedRewriteRule> rules = manager.getRewriteRules(false, form.getClass());
 		for (IDeployedRewriteRule rule : rules) {
@@ -72,6 +89,19 @@ public class RewritesSelector extends RbPAbstractApplicationInspector{
 					);
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether the  <code>pattern</code> is matchable to <code>form</code>.
+	 * @param form the theory formula
+	 * @param pattern the pattern formula
+	 * @return <code>true</code> iff <code>pattern</code> is matchable to <code>form</code>
+	 */
+	protected boolean canFindABinding(Formula<?> form, Formula<?> pattern){
+		IBinding binding = finder.calculateBindings(form, pattern, true);
+		if(binding == null)
+			return false;
+		return true;
 	}
 	
 	@Override

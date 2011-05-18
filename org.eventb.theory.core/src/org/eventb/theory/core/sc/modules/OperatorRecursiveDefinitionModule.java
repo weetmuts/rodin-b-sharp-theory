@@ -67,7 +67,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule{
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
 		IRecursiveOperatorDefinition[] definitions = newOperatorDefinition.getRecursiveOperatorDefinitions();
 		if (definitions.length == 1){
-			processRecursiveDefinitions(definitions, newOperatorDefinition, scNewOperatorDefinition, repository, monitor);
+			//processRecursiveDefinitions(definitions, newOperatorDefinition, scNewOperatorDefinition, repository, monitor);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule{
 						else {
 							ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
 							localTypeEnvironment.addAll(tcResult.getInferredEnvironment());
-							operatorInformation.getExtension(sourceOfExtension, factory)
+							operatorInformation.getExtension(null, factory);
 						}
 						
 					}
@@ -223,5 +223,4 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule{
 	private void setError(){
 		operatorInformation.setHasError();
 	}
-
 }

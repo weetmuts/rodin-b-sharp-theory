@@ -73,7 +73,7 @@ public class DeployedObjectsFactory {
 		boolean isAutomatic = rule.isAutomatic();
 		boolean isInteractive = rule.isInteractive();
 		boolean isSound = rule.isValidated();
-		String toolTip = rule.getToolTip();
+		String toolTip = rule.getDescription();
 		String description = rule.getDescription();
 		
 		List<IDeployedGiven> givens = new ArrayList<IDeployedGiven>();
@@ -103,7 +103,7 @@ public class DeployedObjectsFactory {
 		boolean isInteractive = rule.isInteractive();
 		boolean isComplete = rule.isComplete();
 		boolean isSound = rule.isValidated();
-		String toolTip = rule.getToolTip();
+		String toolTip = rule.getDescription();
 		String description = rule.getDescription();
 		
 		IDeployedRewriteRule depRule = new DeployedRewriteRule(

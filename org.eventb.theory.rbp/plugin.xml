@@ -25,11 +25,6 @@
             id="manualInferenceReasoner"
             name="%manualInferenceReasoner">
       </reasoner>
-      <reasoner
-            class="org.eventb.theory.rbp.reasoners.DefinitionExpansionReasoner"
-            id="definitionExpansionReasoner"
-            name="%definitionExpansionReasoner">
-      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -106,28 +101,6 @@
             target="hypothesis"
             tooltip="%applyInf">
       </tactic>
-       <tactic
-             icon="icons/pending.gif"
-             id="RbP0eh"
-             interrupt="true"
-             name="%defExpander"
-             priority="5"
-             skipPostTactic="false"
-             tacticProvider="org.eventb.theory.rbp.tactics.DefinitionExpansionManualTactic"
-             target="hypothesis"
-             tooltip="%expandDef">
-       </tactic>
-       <tactic
-             icon="icons/pending.gif"
-             id="RbP0eg"
-             interrupt="true"
-             name="%defExpander"
-             priority="5"
-             skipPostTactic="false"
-             tacticProvider="org.eventb.theory.rbp.tactics.DefinitionExpansionManualTactic"
-             target="goal"
-             tooltip="%expandDef">
-       </tactic>
    </extension>
    <extension
          point="org.eventb.theory.rbp.expressionPatternMatchers">

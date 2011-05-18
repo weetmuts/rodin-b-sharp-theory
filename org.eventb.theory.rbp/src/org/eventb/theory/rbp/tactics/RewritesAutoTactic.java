@@ -1,9 +1,8 @@
 package org.eventb.theory.rbp.tactics;
 
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
-import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
 
 
 /**
@@ -14,10 +13,11 @@ import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
  * @author maamria
  *
  */
-public class RewritesAutoTactic extends AutoTactics.AbsractLazilyConstrTactic{
+public class RewritesAutoTactic implements ITactic{
 
 	@Override
-	protected ITactic getSingInstance() {
-		return BasicTactics.reasonerTac(new AutoRewriteReasoner(), null);
+	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

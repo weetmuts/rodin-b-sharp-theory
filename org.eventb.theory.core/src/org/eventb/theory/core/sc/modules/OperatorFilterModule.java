@@ -126,7 +126,7 @@ public class OperatorFilterModule extends SCFilterModule {
 		{
 			IDirectOperatorDefinition[] opDefs = opDef.getDirectOperatorDefinitions();
 			IRecursiveOperatorDefinition[] recDefs = opDef.getRecursiveOperatorDefinitions();
-			if (opDefs.length + recDefs.length > 1) {
+			if (opDefs.length + recDefs.length != 1) {
 				if (opDefs.length + recDefs.length == 0) {
 					createProblemMarker(opDef,
 							EventBAttributes.LABEL_ATTRIBUTE,
