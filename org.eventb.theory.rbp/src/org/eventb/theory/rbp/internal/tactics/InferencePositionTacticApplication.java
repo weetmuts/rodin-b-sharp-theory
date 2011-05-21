@@ -45,7 +45,9 @@ public class InferencePositionTacticApplication extends ExtendedPositionApplicat
 	}
 
 	public ITactic getTactic(String[] inputs, String globalInput) {
-		return BasicTactics.reasonerTac(new ManualInferenceReasoner(context), input);
+		ManualInferenceReasoner reasoner = new ManualInferenceReasoner();
+		reasoner.setContext(context);
+		return BasicTactics.reasonerTac(reasoner, input);
 	}
 
 	public String getTacticID() {

@@ -35,7 +35,9 @@ public class RewriteTacticApplication extends ExtendedPositionApplication
 	}
 
 	public ITactic getTactic(String[] inputs, String globalInput) {
-		return BasicTactics.reasonerTac(new ManualRewriteReasoner(context), input);
+		ManualRewriteReasoner reasoner = new ManualRewriteReasoner();
+		reasoner.setContext(context);
+		return BasicTactics.reasonerTac(reasoner, input);
 	}
 
 	public String getTacticID() {

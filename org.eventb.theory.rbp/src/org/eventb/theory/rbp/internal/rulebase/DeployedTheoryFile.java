@@ -19,6 +19,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCProofRulesBlock;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
 
 /**
@@ -31,6 +32,7 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 	private FormulaFactory factory;
 	private List<IDeployedRewriteRule> rewriteRules;
 	private List<IDeployedInferenceRule> inferenceRules;
+	private List<IDeployedTheorem> theorems; 
 
 	private ITypeEnvironment typeEnvironment;
 	private R theoryRoot;
@@ -51,6 +53,7 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 		this.typeEnvironment = factory.makeTypeEnvironment();
 		this.rewriteRules = new ArrayList<IDeployedRewriteRule>();
 		this.inferenceRules = new ArrayList<IDeployedInferenceRule>();
+		this.theorems = new ArrayList<IDeployedTheorem>();
 		loadTheory();
 	}
 
@@ -91,6 +94,12 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 				typeEnvironment.addGivenSet(par.getIdentifier(factory)
 						.getName());
 			}
+			ISCTheorem[] scTheorems = theoryRoot.getTheorems();
+			for (ISCTheorem thy : scTheorems){
+				IDeployedTheorem theorem = new DeployedTheorem(thy.getLabel(), thy.getPredicate(factory, typeEnvironment));
+				theorems.add(theorem);
+			}
+			
 			ISCProofRulesBlock[] blocks = theoryRoot.getProofRulesBlocks();
 			for (ISCProofRulesBlock b : blocks) {
 				for (IDeployedRewriteRule rule : DeployedObjectsFactory
@@ -115,6 +124,12 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 	public String toString() {
 		return theoryRoot.getComponentName() + "\n rew: " + rewriteRules
 				+ "\n inf: " + inferenceRules + "\n";
+	}
+
+	@Override
+	public List<IDeployedTheorem> getTheorems() {
+		// TODO Auto-generated method stub
+		return unmodifiableList(theorems);
 	}
 
 }

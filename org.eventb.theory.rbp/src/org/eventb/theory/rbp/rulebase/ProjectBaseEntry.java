@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
@@ -64,7 +65,7 @@ public class ProjectBaseEntry {
 			boolean automatic, Class<? extends Expression> clazz,
 			IEventBRoot root, FormulaFactory factory) {
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
-		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile())) {
+		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
 			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
@@ -92,7 +93,7 @@ public class ProjectBaseEntry {
 	public List<IDeployedRewriteRule> getPredicateRewriteRules(boolean automatic, 
 			Class<? extends Predicate> clazz, IEventBRoot root,FormulaFactory factory){
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
-		if (originatedFromTheory(root.getRodinFile())) {
+		if (originatedFromTheory(root.getRodinFile(), project)) {
 			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
@@ -119,7 +120,7 @@ public class ProjectBaseEntry {
 	
 	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName, String theoryName,
 			Class<? extends Expression> clazz, IEventBRoot root, FormulaFactory factory){
-		if (originatedFromTheory(root.getRodinFile())){
+		if (originatedFromTheory(root.getRodinFile(), project)){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
 			if (!scRoots.containsKey(scRoot)){
 				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
@@ -139,7 +140,7 @@ public class ProjectBaseEntry {
 	
 	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, String theoryName,
 			Class<? extends Predicate> clazz, IEventBRoot root, FormulaFactory factory){
-		if (originatedFromTheory(root.getRodinFile())){
+		if (originatedFromTheory(root.getRodinFile(), project)){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
 			if (!scRoots.containsKey(scRoot)){
 				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
@@ -160,7 +161,7 @@ public class ProjectBaseEntry {
 	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, 
 			IEventBRoot root,FormulaFactory factory){
 		List<IDeployedInferenceRule> toReturn = new ArrayList<IDeployedInferenceRule>();
-		if (originatedFromTheory(root.getRodinFile())){
+		if (originatedFromTheory(root.getRodinFile(), project)){
 			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
@@ -186,7 +187,7 @@ public class ProjectBaseEntry {
 	
 	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, 
 			IEventBRoot root, FormulaFactory factory){
-		if (originatedFromTheory(root.getRodinFile())){
+		if (originatedFromTheory(root.getRodinFile(), project)){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
 			if (!scRoots.containsKey(scRoot)){
 				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
@@ -227,7 +228,10 @@ public class ProjectBaseEntry {
 		if (scRoot.exists()) {
 			SCTheoriesGraph graph = new SCTheoriesGraph();
 			graph.setElements(getSCTheoryRoots());
-			return new ArrayList<ISCTheoryRoot>(graph.getUpperSet(scRoot));
+			// Fixed bug: added the sc theory file as a required root
+			Set<ISCTheoryRoot> upperSet = graph.getUpperSet(scRoot);
+			upperSet.add(scRoot);
+			return new ArrayList<ISCTheoryRoot>(upperSet);
 		}
 		return new ArrayList<ISCTheoryRoot>();
 	}

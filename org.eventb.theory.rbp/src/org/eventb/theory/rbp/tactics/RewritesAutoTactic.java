@@ -32,7 +32,8 @@ public class RewritesAutoTactic implements ITactic{
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
 			IPSStatus status = attempt.getStatus();
 			IPOContext poContext = new POContext(status);
-			AutoRewriteReasoner reasoner = new AutoRewriteReasoner(poContext);
+			AutoRewriteReasoner reasoner = new AutoRewriteReasoner();
+			reasoner.setContext(poContext);
 			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), null, pm);
 			if (reasonerOutput == null) return "! Plugin returned null !";
 			if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;

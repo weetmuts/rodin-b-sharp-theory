@@ -35,7 +35,9 @@ public class InferenceTacticApplication implements IPredicateApplication{
 	@Override
 	public ITactic getTactic(String[] inputs, String globalInput) {
 		// TODO Auto-generated method stub
-		return BasicTactics.reasonerTac(new ManualInferenceReasoner(context), input);
+		ManualInferenceReasoner reasoner = new ManualInferenceReasoner();
+		reasoner.setContext(context);
+		return BasicTactics.reasonerTac(reasoner, input);
 	}
 
 

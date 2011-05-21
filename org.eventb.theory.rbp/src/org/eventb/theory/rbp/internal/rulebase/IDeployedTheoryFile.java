@@ -33,6 +33,8 @@ public interface IDeployedTheoryFile {
 	 */
 	public List<IDeployedInferenceRule> getInferenceRules();
 	
+	public List<IDeployedTheorem> getTheorems();
+	
 	/**
 	 * <p>Returns the theory name.</p>
 	 * @return the name with extension

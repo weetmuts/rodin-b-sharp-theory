@@ -7,7 +7,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -26,7 +25,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  *
  */
-public class ManualRewriteReasoner implements IReasoner{
+public class ManualRewriteReasoner implements IContextAwareReasoner{
 
 	
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".manualRewriteReasoner";
@@ -37,7 +36,7 @@ public class ManualRewriteReasoner implements IReasoner{
 	
 	private ManualRewriter rewriter;
 	
-	public ManualRewriteReasoner(IPOContext context){
+	public void setContext(IPOContext context){
 		rewriter = new ManualRewriter(context);
 	}
 	

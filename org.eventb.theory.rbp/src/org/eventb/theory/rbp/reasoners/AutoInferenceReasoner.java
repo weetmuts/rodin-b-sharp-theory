@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
@@ -27,7 +26,7 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  * @author maamria
  * 
  */
-public class AutoInferenceReasoner extends EmptyInputReasoner implements IReasoner {
+public class AutoInferenceReasoner extends EmptyInputReasoner implements IContextAwareReasoner {
 
 	private static final String DISPLAY_NAME = "RbP1";
 	public static List<String> usedTheories = new ArrayList<String>();
@@ -35,7 +34,7 @@ public class AutoInferenceReasoner extends EmptyInputReasoner implements IReason
 
 	private AutoInferer autoInferer;
 	
-	public AutoInferenceReasoner(IPOContext context){
+	public void setContext(IPOContext context){
 		autoInferer = new AutoInferer(context);
 	}
 	

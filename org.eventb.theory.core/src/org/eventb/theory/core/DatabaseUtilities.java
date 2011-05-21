@@ -282,6 +282,15 @@ public class DatabaseUtilities {
 		}
 		return false;
 	}
+	
+	public static boolean originatedFromTheory(IRodinFile file, IRodinProject project){
+		if (file.getRodinProject().equals(project)){
+			return originatedFromTheory(file);
+		}
+		else {
+			return false;
+		}
+	}
 
 	/**
 	 * Rebuilds the given rodin project.

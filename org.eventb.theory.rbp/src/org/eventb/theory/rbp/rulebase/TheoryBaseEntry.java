@@ -238,6 +238,9 @@ implements ITheoryBaseEntry<R>{
 	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName,
 			Class<? extends Expression> clazz, FormulaFactory factory) {
 		checkStatus(factory);
+		if (interExpRewRules.get(clazz) == null){
+			return null;
+		}
 		for (IDeployedRewriteRule rule : interExpRewRules.get(clazz)){
 			if (rule.getRuleName().equals(ruleName)){
 				return rule;
@@ -250,6 +253,9 @@ implements ITheoryBaseEntry<R>{
 	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName,
 			Class<? extends Predicate> clazz, FormulaFactory factory) {
 		checkStatus(factory);
+		if (interPredRewRules.get(clazz) == null){
+			return null;
+		}
 		for (IDeployedRewriteRule rule : interPredRewRules.get(clazz)){
 			if (rule.getRuleName().equals(ruleName)){
 				return rule;

@@ -101,6 +101,16 @@
             target="hypothesis"
             tooltip="%applyInf">
       </tactic>
+      <tactic
+            icon="icons/thy.gif"
+            id="thRbP"
+            interrupt="false"
+            name="%thRbP.desc"
+            priority="3"
+            proofCommand="org.eventb.theory.rbp.tactics.InstantiateTheoremTactic"
+            target="global"
+            toolbar="org.eventb.ui.sequentToolbar"
+            tooltip="%thRbP.tip"/>
    </extension>
    <extension
          point="org.eventb.theory.rbp.expressionPatternMatchers">

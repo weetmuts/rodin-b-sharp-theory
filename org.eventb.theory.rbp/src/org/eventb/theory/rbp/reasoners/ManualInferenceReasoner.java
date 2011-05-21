@@ -12,7 +12,6 @@ import java.util.Set;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -29,7 +28,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  *
  */
-public class ManualInferenceReasoner implements IReasoner{
+public class ManualInferenceReasoner implements IContextAwareReasoner{
 
 	private static final String FORWARD_VAL = "forward";
 	private static final String BACKWARD_VAL = "backward";
@@ -43,7 +42,7 @@ public class ManualInferenceReasoner implements IReasoner{
 	
 	private ManualInferer inferer;
 	
-	public ManualInferenceReasoner(IPOContext context){
+	public void setContext(IPOContext context){
 		inferer = new ManualInferer(context);
 	}
 	

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoning.AutoRewriter;
@@ -13,7 +12,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 @SuppressWarnings("restriction")
-public class AutoRewriteReasoner extends AbstractAutoRewrites implements IReasoner {
+public class AutoRewriteReasoner extends AbstractAutoRewrites implements IContextAwareReasoner {
 
 	public static List<String> usedTheories = new ArrayList<String>();
 	private static final String DISPLAY_NAME = "RbP0";
@@ -22,8 +21,11 @@ public class AutoRewriteReasoner extends AbstractAutoRewrites implements IReason
 	
 	private AutoRewriter rewriter;
 	
-	public AutoRewriteReasoner(IPOContext context) {
+	public AutoRewriteReasoner() {
 		super(true);
+	}
+	
+	public void setContext(IPOContext context){
 		rewriter = new AutoRewriter(context);
 	}
 
