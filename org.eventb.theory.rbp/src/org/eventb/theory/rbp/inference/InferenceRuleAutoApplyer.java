@@ -18,11 +18,12 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.rbp.engine.IBinding;
-import org.eventb.theory.rbp.internal.base.IDeployedGiven;
-import org.eventb.theory.rbp.internal.base.IDeployedInferenceRule;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedGiven;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.reasoners.AutoInferenceReasoner;
 import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
 import org.eventb.theory.rbp.reasoning.InferenceDerivationTree;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * An implementation of an automatic inference rules applyer.
@@ -33,8 +34,8 @@ import org.eventb.theory.rbp.reasoning.InferenceDerivationTree;
  */
 public class InferenceRuleAutoApplyer extends AbstractRulesApplyer {
 
-	public InferenceRuleAutoApplyer(FormulaFactory factory) {
-		super(factory);
+	public InferenceRuleAutoApplyer(FormulaFactory factory, IPOContext context) {
+		super(factory, context);
 	}
 
 	/**
@@ -44,8 +45,7 @@ public class InferenceRuleAutoApplyer extends AbstractRulesApplyer {
 	 */
 	public IAntecedent[] applyRules(IProverSequent sequent) {
 		// only inference rules that are backward and automatic
-		List<IDeployedInferenceRule> rules = manager.getInferenceRules(
-				ReasoningType.BACKWARD, true);
+		List<IDeployedInferenceRule> rules = manager.getInferenceRules(true, ReasoningType.BACKWARD, context, factory);
 		IAntecedent goalAntecedent = ProverFactory.makeAntecedent(sequent.goal());
 		InferenceDerivationTree tree = new InferenceDerivationTree(goalAntecedent, null);
 		for (IDeployedInferenceRule rule : rules) {

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.internal.base;
+package org.eventb.theory.rbp.internal.rulebase;
 
 import org.eventb.core.ast.Predicate;
 
@@ -13,28 +13,28 @@ import org.eventb.core.ast.Predicate;
  * @author maamria
  *
  */
-public final class DeployedInfer implements IDeployedInfer{
+public final class DeployedGiven implements IDeployedGiven{
 
 	private Predicate pred;
 
-	public DeployedInfer(Predicate pred){
+	public DeployedGiven(Predicate pred){
 		this.pred = pred;
 	}
 	
 	@Override
-	public Predicate getInferClause() {
+	public Predicate getGivenClause() {
 		// TODO Auto-generated method stub
 		return pred;
 	}
 	
 	public boolean equals(Object o){
-		if(o==null || !(o instanceof DeployedInfer)){
+		if(o==null || !(o instanceof DeployedGiven)){
 			return false;
 		}
 		if(this == o){
 			return true;
 		}
-		return pred.equals(((DeployedInfer)o).pred);
+		return pred.equals(((DeployedGiven)o).pred);
 	}
 	
 	public int hashCode(){

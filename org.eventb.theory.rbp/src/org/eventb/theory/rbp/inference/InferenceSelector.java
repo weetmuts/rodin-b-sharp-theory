@@ -14,16 +14,16 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.rbp.base.IRuleBaseManager;
-import org.eventb.theory.rbp.base.RuleBaseManager;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.MatchFinder;
-import org.eventb.theory.rbp.internal.base.IDeployedGiven;
-import org.eventb.theory.rbp.internal.base.IDeployedInferenceRule;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedGiven;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.internal.tactics.InferencePositionTacticApplication;
 import org.eventb.theory.rbp.internal.tactics.InferenceTacticApplication;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
+import org.eventb.theory.rbp.rulebase.BaseManager;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.ui.prover.ITacticApplication;
 
 /**
@@ -33,11 +33,13 @@ import org.eventb.ui.prover.ITacticApplication;
 public class InferenceSelector {
 
 	protected MatchFinder finder;
-	protected IRuleBaseManager ruleBaseManager;
+	protected BaseManager ruleBaseManager;
+	private IPOContext context;
 
-	public InferenceSelector(FormulaFactory factory) {
-		ruleBaseManager = RuleBaseManager.getDefault();
+	public InferenceSelector(FormulaFactory factory, IPOContext context) {
+		ruleBaseManager = BaseManager.getDefault();
 		finder = new MatchFinder(factory);
+		this.context = context;
 	}
 
 	public List<ITacticApplication> select(Predicate predicate,
@@ -47,7 +49,7 @@ public class InferenceSelector {
 			// backward
 			Predicate goal = sequent.goal();
 			List<IDeployedInferenceRule> rules = ruleBaseManager
-					.getInferenceRules(ReasoningType.BACKWARD, false);
+					.getInferenceRules(false , ReasoningType.BACKWARD, context, null);
 			boolean addedPredApp = false;
 			for (IDeployedInferenceRule rule : rules) {
 				IBinding binding = finder.calculateBindings(goal, rule
@@ -57,19 +59,19 @@ public class InferenceSelector {
 						apps.add(new InferenceTacticApplication(
 								new InferenceInput(rule.getTheoryName(), rule
 										.getRuleName(), rule.getDescription(),
-										null, false), rule.getToolTip()));
+										null, false), rule.getToolTip(), context));
 						addedPredApp = true;
 					} else {
 						apps.add(new InferencePositionTacticApplication(
 								new InferenceInput(rule.getTheoryName(), rule
 										.getRuleName(), rule.getDescription(),
-										null, false), rule.getToolTip()));
+										null, false), rule.getToolTip(), context));
 					}
 				}
 			}
 		} else {
 			List<IDeployedInferenceRule> rules = ruleBaseManager
-					.getInferenceRules(ReasoningType.FORWARD, false);
+					.getInferenceRules(false, ReasoningType.FORWARD, null, null);
 			boolean addedPredApp = false;
 			for (IDeployedInferenceRule rule : rules) {
 				List<IDeployedGiven> givens = rule.getGivens();
@@ -131,14 +133,14 @@ public class InferenceSelector {
 						apps.add(new InferenceTacticApplication(
 								new InferenceInput(rule.getTheoryName(), rule
 										.getRuleName(), rule.getDescription(),
-										predicate, true), rule.getToolTip()));
+										predicate, true), rule.getToolTip(), context));
 						addedPredApp = true;
 					}
 					else {
 						apps.add(new InferencePositionTacticApplication(
 								new InferenceInput(rule.getTheoryName(), rule
 										.getRuleName(), rule.getDescription(),
-										predicate, true), rule.getToolTip()));
+										predicate, true), rule.getToolTip(), context));
 					}
 				}
 			}

@@ -17,10 +17,11 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.theory.rbp.engine.IBinding;
-import org.eventb.theory.rbp.internal.base.IDeployedGiven;
-import org.eventb.theory.rbp.internal.base.IDeployedInferenceRule;
 import org.eventb.theory.rbp.internal.engine.MatchingFactory;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedGiven;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * An implementation of an inference rules manual applyer.
@@ -31,8 +32,8 @@ import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
  */
 public class InferenceRuleManualApplyer extends AbstractRulesApplyer {
 
-	public InferenceRuleManualApplyer(FormulaFactory factory) {
-		super(factory);
+	public InferenceRuleManualApplyer(FormulaFactory factory, IPOContext context) {
+		super(factory, context);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -55,8 +56,7 @@ public class InferenceRuleManualApplyer extends AbstractRulesApplyer {
 	 */
 	public IAntecedent[] applyRule(IProverSequent sequent, Predicate pred,
 			boolean forward, String theoryName, String ruleName) {
-		IDeployedInferenceRule rule = manager.getInferenceRule(ruleName,
-				theoryName);
+		IDeployedInferenceRule rule = manager.getInferenceRule(theoryName, ruleName, context, factory);
 		if (rule == null) {
 			return null;
 		}

@@ -18,6 +18,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.reasoning.ManualRewriter;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * <p>An implementation of a manual reasoner for the rule base.</p>
@@ -36,8 +37,8 @@ public class ManualRewriteReasoner implements IReasoner{
 	
 	private ManualRewriter rewriter;
 	
-	public ManualRewriteReasoner(){
-		rewriter = new ManualRewriter();
+	public ManualRewriteReasoner(IPOContext context){
+		rewriter = new ManualRewriter(context);
 	}
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput,

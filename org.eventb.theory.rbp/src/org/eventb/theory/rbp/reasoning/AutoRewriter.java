@@ -26,6 +26,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.theory.rbp.rewriting.RewriteRuleAutoApplyer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * <p>An implementation of a rewrite rule automatic rewriter.</p>
@@ -37,10 +38,15 @@ public class AutoRewriter implements IFormulaRewriter{
 	private RewriteRuleAutoApplyer applyer ;
 	private FormulaFactory factory;
 
+	private IPOContext context;
+	
+	public AutoRewriter(IPOContext context){
+		this.context = context;
+	}
 	
 	public void setFormulaFactory(FormulaFactory factory){
 		this.factory = factory;
-		this.applyer = new RewriteRuleAutoApplyer(factory);
+		this.applyer = new RewriteRuleAutoApplyer(factory, context);
 		
 	}
 

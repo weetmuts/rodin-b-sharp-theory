@@ -9,6 +9,7 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoning.AutoRewriter;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 @SuppressWarnings("restriction")
@@ -21,9 +22,9 @@ public class AutoRewriteReasoner extends AbstractAutoRewrites implements IReason
 	
 	private AutoRewriter rewriter;
 	
-	public AutoRewriteReasoner() {
+	public AutoRewriteReasoner(IPOContext context) {
 		super(true);
-		rewriter = new AutoRewriter();
+		rewriter = new AutoRewriter(context);
 	}
 
 	public String getReasonerID() {

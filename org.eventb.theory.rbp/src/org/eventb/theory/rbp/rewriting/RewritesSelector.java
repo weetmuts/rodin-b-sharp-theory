@@ -17,6 +17,7 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
@@ -36,13 +37,13 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.theory.rbp.base.IRuleBaseManager;
-import org.eventb.theory.rbp.base.RuleBaseManager;
 import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.engine.MatchFinder;
-import org.eventb.theory.rbp.internal.base.IDeployedRewriteRule;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
 import org.eventb.theory.rbp.internal.tactics.RewriteTacticApplication;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
+import org.eventb.theory.rbp.rulebase.BaseManager;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.ui.prover.ITacticApplication;
 
 /**
@@ -57,14 +58,19 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication>{
 
 	protected final Predicate predicate;
 	protected final MatchFinder finder;
-	protected final IRuleBaseManager manager;
+	protected final BaseManager manager;
 	protected final boolean isGoal;
+	protected final FormulaFactory factory;
 	
-	public RewritesSelector(Predicate predicate, boolean isGoal, FormulaFactory factory){
+	private IPOContext context;
+	
+	public RewritesSelector(Predicate predicate, boolean isGoal, FormulaFactory factory, IPOContext context){
 		this.predicate = predicate;
 		this.isGoal = isGoal;
-		this.manager = RuleBaseManager.getDefault();
+		this.factory = factory;
+		this.manager = BaseManager.getDefault();
 		this.finder = new MatchFinder(factory);
+		this.context = context;
 	}
 	
 	/**
@@ -74,7 +80,9 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication>{
 	 * @param accum the accumulator
 	 */
 	protected void select(Formula<?> form, IAccumulator<ITacticApplication> accum) {
-		List<IDeployedRewriteRule> rules = manager.getRewriteRules(false, form.getClass());
+		List<IDeployedRewriteRule> rules = ((form instanceof Expression 
+				? manager.getExpressionRewriteRules(false, ((Expression)form).getClass(), context, factory)
+				: manager.getPredicateRewriteRules(false, ((Predicate) form).getClass(), context, factory)));
 		for (IDeployedRewriteRule rule : rules) {
 			if (canFindABinding(form, rule.getLeftHandSide())){
 				if(rule.isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())){
@@ -85,7 +93,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication>{
 						new RewriteInput(rule.getTheoryName(), rule.getRuleName(), 
 								rule.getDescription(), isGoal ? null : predicate, 
 								accum.getCurrentPosition()), 
-						rule.getToolTip())
+						rule.getToolTip(), context)
 					);
 			}
 		}

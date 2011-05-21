@@ -15,7 +15,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.DatabaseUtilities;
-import org.eventb.theory.rbp.internal.base.IDeployedRule;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedRule;
 
 /**
  * Some utilities used by RbP.

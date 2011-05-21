@@ -11,6 +11,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.theory.rbp.inference.InferenceRuleAutoApplyer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * @author maamria
@@ -19,9 +20,14 @@ import org.eventb.theory.rbp.inference.InferenceRuleAutoApplyer;
 public class AutoInferer {
 	
 	private InferenceRuleAutoApplyer applyer;
+	private IPOContext context;
+	
+	public AutoInferer(IPOContext context){
+		this.context = context;
+	}
 	
 	public void setFormulaFactory(FormulaFactory factory){
-		applyer = new InferenceRuleAutoApplyer(factory);
+		applyer = new InferenceRuleAutoApplyer(factory, context);
 	}
 	
 	public IAntecedent[] applyInferenceRules(IProverSequent sequent){

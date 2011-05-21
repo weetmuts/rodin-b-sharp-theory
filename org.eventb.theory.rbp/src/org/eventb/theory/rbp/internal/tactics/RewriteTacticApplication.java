@@ -7,6 +7,7 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualRewriteReasoner;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.ui.prover.IPositionApplication;
 
 public class RewriteTacticApplication extends ExtendedPositionApplication
@@ -14,11 +15,13 @@ public class RewriteTacticApplication extends ExtendedPositionApplication
 
 	private final RewriteInput input;
 	private final String linkLabel;
+	private IPOContext context;
 
-	public RewriteTacticApplication(RewriteInput input, String linklabel) {
+	public RewriteTacticApplication(RewriteInput input, String linklabel, IPOContext context) {
 		super(input.pred, input.position);
 		this.input = input;
 		this.linkLabel = linklabel;
+		this.context = context;
 	}
 
 	public Point getHyperlinkBounds(String parsedString,
@@ -32,7 +35,7 @@ public class RewriteTacticApplication extends ExtendedPositionApplication
 	}
 
 	public ITactic getTactic(String[] inputs, String globalInput) {
-		return BasicTactics.reasonerTac(new ManualRewriteReasoner(), input);
+		return BasicTactics.reasonerTac(new ManualRewriteReasoner(context), input);
 	}
 
 	public String getTacticID() {

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.internal.base;
+package org.eventb.theory.rbp.internal.rulebase;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;

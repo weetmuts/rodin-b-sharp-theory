@@ -5,22 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.internal.base;
+package org.eventb.theory.rbp.internal.rulebase;
 
 import org.eventb.core.ast.Predicate;
 
 /**
- * Common protocol for a given clause.
+ * Common protocol for an infer clause.
  * 
  * @author maamria
  *
  */
-public interface IDeployedGiven {
-	
-	/**
-	 * Returns the given clause.
-	 * @return the given clause
-	 */
-	public Predicate getGivenClause();
+public interface IDeployedInfer {
 
+	/**
+	 * Returns the infer clause.
+	 * @return the infer clause
+	 */
+	public Predicate getInferClause();
+	
 }

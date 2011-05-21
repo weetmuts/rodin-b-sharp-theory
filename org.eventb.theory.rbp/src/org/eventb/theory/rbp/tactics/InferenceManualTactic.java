@@ -16,6 +16,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.theory.rbp.inference.InferenceSelector;
+import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.POContext;
 import org.eventb.ui.prover.DefaultTacticProvider;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
@@ -33,9 +35,9 @@ public class InferenceManualTactic extends DefaultTacticProvider implements ITac
 		if (node.getProofTree().getOrigin() instanceof IProofAttempt){
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
 			IPSStatus status = attempt.getStatus();
-			POContext poContext = new POContext(status);
+			IPOContext poContext = new POContext(status);
 			FormulaFactory factory = node.getFormulaFactory();
-			InferenceSelector selector = new InferenceSelector(factory);
+			InferenceSelector selector = new InferenceSelector(factory, poContext);
 			return selector.select(hyp, node.getSequent());
 		}
 		// Contextual information needed

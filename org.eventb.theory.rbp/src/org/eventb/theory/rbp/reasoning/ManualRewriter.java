@@ -5,6 +5,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.theory.rbp.rewriting.RewriteRuleManualApplyer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * <p>An implementation of a manual rewriter.</p>
@@ -15,8 +16,14 @@ public class ManualRewriter {
 
 	private RewriteRuleManualApplyer applyer ;
 	
+	private IPOContext context;
+	
+	public ManualRewriter(IPOContext context){
+		this.context = context;
+	}
+	
 	public void setFormulaFactory(FormulaFactory factory){
-		applyer = new RewriteRuleManualApplyer(factory);
+		applyer = new RewriteRuleManualApplyer(factory, context);
 	}
 	
 	/**

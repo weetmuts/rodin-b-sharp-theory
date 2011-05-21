@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
@@ -14,9 +15,10 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.theory.rbp.engine.IBinding;
-import org.eventb.theory.rbp.internal.base.IDeployedRewriteRule;
-import org.eventb.theory.rbp.internal.base.IDeployedRuleRHS;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedRuleRHS;
 import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
@@ -27,8 +29,8 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  */
 public class RewriteRuleManualApplyer extends AbstractRulesApplyer{
 	
-	public RewriteRuleManualApplyer(FormulaFactory factory) {
-		super(factory);
+	public RewriteRuleManualApplyer(FormulaFactory factory, IPOContext context) {
+		super(factory, context);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -49,8 +51,10 @@ public class RewriteRuleManualApplyer extends AbstractRulesApplyer{
 			return null;
 		}
 		// get the rule
-		@SuppressWarnings("unchecked")
-		IDeployedRewriteRule rule = manager.getInteractiveRule(ruleName, theoryName, formula.getClass());
+		IDeployedRewriteRule rule = 
+			((formula instanceof Expression ? 
+					manager.getExpressionRewriteRule(ruleName, theoryName, ((Expression)formula).getClass(), context, factory) :
+					manager.getPredicateRewriteRule(ruleName, theoryName, ((Predicate) formula).getClass(), context, factory)));
 		if(rule == null){
 			return null;
 		}

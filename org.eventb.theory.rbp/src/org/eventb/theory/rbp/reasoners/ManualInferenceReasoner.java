@@ -23,6 +23,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
 import org.eventb.theory.rbp.reasoning.ManualInferer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * @author maamria
@@ -42,8 +43,8 @@ public class ManualInferenceReasoner implements IReasoner{
 	
 	private ManualInferer inferer;
 	
-	public ManualInferenceReasoner(){
-		inferer = new ManualInferer();
+	public ManualInferenceReasoner(IPOContext context){
+		inferer = new ManualInferer(context);
 	}
 	
 	@Override

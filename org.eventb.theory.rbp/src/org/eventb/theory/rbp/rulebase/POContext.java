@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.tactics;
+package org.eventb.theory.rbp.rulebase;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSStatus;
@@ -16,24 +16,24 @@ import org.eventb.theory.core.DatabaseUtilities;
  * @author maamria
  *
  */
-public class POContext {
-
+public class POContext implements IPOContext{
 	private IPSStatus psStatus;
-	
-	public POContext(IPSStatus psStatus){
+
+	public POContext(IPSStatus psStatus) {
 		this.psStatus = psStatus;
 	}
-	
-	public IEventBRoot getParentRoot(){
+
+	public IEventBRoot getParentRoot() {
 		return (IEventBRoot) psStatus.getRoot();
 	}
-	
-	public boolean isTheoryRelated(){
+
+	public boolean isTheoryRelated() {
 		return DatabaseUtilities.originatedFromTheory(psStatus.getRodinFile());
 	}
-	
-	public boolean inMathExtensions(){
-		return DatabaseUtilities.isMathExtensionsProject(psStatus.getRodinProject());
+
+	public boolean inMathExtensions() {
+		return DatabaseUtilities.isMathExtensionsProject(psStatus
+				.getRodinProject());
 	}
-	
+
 }

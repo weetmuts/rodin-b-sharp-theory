@@ -1,0 +1,194 @@
+/*******************************************************************************
+ * Copyright (c) 2010 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eventb.theory.rbp.internal.rulebase;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
+import org.eventb.theory.core.ISCGiven;
+import org.eventb.theory.core.ISCInfer;
+import org.eventb.theory.core.ISCInferenceRule;
+import org.eventb.theory.core.ISCMetavariable;
+import org.eventb.theory.core.ISCProofRulesBlock;
+import org.eventb.theory.core.ISCRewriteRule;
+import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
+import org.rodinp.core.RodinDBException;
+
+/**
+ * @author maamria
+ * 
+ */
+public class DeployedObjectsFactory {
+
+	public static List<IDeployedRewriteRule> getDeployedRewriteRules(
+			ISCProofRulesBlock block, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		try {
+			List<IDeployedRewriteRule> result = new ArrayList<IDeployedRewriteRule>();
+			ITypeEnvironment augTypeEnvironment = typeEnvironment.clone();
+			ISCMetavariable[] vars = block.getMetavariables();
+			for (ISCMetavariable var : vars) {
+				augTypeEnvironment.add(var.getIdentifier(factory));
+			}
+			ISCRewriteRule[] rules = block.getRewriteRules();
+			for (ISCRewriteRule rule : rules) {
+				IDeployedRewriteRule deployedRewriteRule = getDeployedRewriteRule(
+						rule, factory, augTypeEnvironment);
+				if (deployedRewriteRule != null)
+					result.add(deployedRewriteRule);
+			}
+
+			return result;
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<IDeployedRewriteRule>();
+	}
+
+	public static List<IDeployedInferenceRule> getDeployedInferenceRules(
+			ISCProofRulesBlock block, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		try {
+			List<IDeployedInferenceRule> result = new ArrayList<IDeployedInferenceRule>();
+			ITypeEnvironment augTypeEnvironment = typeEnvironment.clone();
+			ISCMetavariable[] vars = block.getMetavariables();
+			for (ISCMetavariable var : vars) {
+				augTypeEnvironment.add(var.getIdentifier(factory));
+			}
+			ISCInferenceRule[] rules = block.getInferenceRules();
+			for (ISCInferenceRule rule : rules) {
+				IDeployedInferenceRule deployedInferenceRule = getDeployedInferenceRule(
+						rule, factory, augTypeEnvironment);
+				if (deployedInferenceRule != null)
+					result.add(deployedInferenceRule);
+			}
+
+			return result;
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<IDeployedInferenceRule>();
+	}
+
+	public static IDeployedInferenceRule getDeployedInferenceRule(
+			ISCInferenceRule rule, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		try {
+			String ruleName = rule.getElementName();
+			String theoryName = rule.getRoot().getElementName();
+			boolean isAutomatic = rule.isAutomatic();
+			boolean isInteractive = rule.isInteractive();
+			String toolTip = rule.getDescription();
+			String description = rule.getDescription();
+
+			List<IDeployedGiven> givens = new ArrayList<IDeployedGiven>();
+			for (ISCGiven given : rule.getGivens()) {
+				IDeployedGiven deployedGiven = getDeployedGiven(given, factory,
+						typeEnvironment);
+				if (deployedGiven == null) {
+					return null;
+				}
+				givens.add(deployedGiven);
+			}
+			IDeployedInfer infer = getDeployedInfer(rule.getInfers()[0],
+					factory, typeEnvironment);
+			if(infer == null){
+				return null;
+			}
+
+			IDeployedInferenceRule infRule = new DeployedInferenceRule(
+					ruleName, theoryName, isAutomatic, isInteractive, true,
+					toolTip, description,
+					rule.isSuitableForBackwardReasoning(),
+					rule.isSuitableForForwardReasoning(), givens, infer,
+					typeEnvironment);
+			return infRule;
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static IDeployedRewriteRule getDeployedRewriteRule(
+			ISCRewriteRule rule, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		try {
+			String ruleName = rule.getElementName();
+			String theoryName = rule.getRoot().getElementName();
+			Formula<?> lhs = rule.getSCFormula(factory, typeEnvironment);
+			List<IDeployedRuleRHS> ruleRHSs = new ArrayList<IDeployedRuleRHS>();
+			for (ISCRewriteRuleRightHandSide rhs : rule.getRuleRHSs()) {
+				IDeployedRuleRHS deployedRuleRHS = getDeployedRuleRHS(rhs,
+						factory, typeEnvironment);
+				if (deployedRuleRHS == null) {
+					return null;
+				}
+				ruleRHSs.add(deployedRuleRHS);
+			}
+			boolean isAutomatic = rule.isAutomatic();
+			boolean isInteractive = rule.isInteractive();
+			boolean isComplete = rule.isComplete();
+			String toolTip = rule.getDescription();
+			String description = rule.getDescription();
+
+			IDeployedRewriteRule depRule = new DeployedRewriteRule(ruleName,
+					theoryName, lhs, ruleRHSs, isAutomatic, isInteractive,
+					isComplete, true, toolTip, description, typeEnvironment);
+			return depRule;
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static IDeployedRuleRHS getDeployedRuleRHS(
+			ISCRewriteRuleRightHandSide rhs, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		try {
+			String name = rhs.getElementName();
+			Formula<?> rhsForm = rhs.getSCFormula(factory, typeEnvironment);
+			Predicate cond = rhs.getPredicate(factory, typeEnvironment);
+			IDeployedRuleRHS depRHS = new DeployedRuleRHS(name, rhsForm, cond);
+			return depRHS;
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static IDeployedGiven getDeployedGiven(ISCGiven given,
+			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
+		try {
+			IDeployedGiven dep = new DeployedGiven(given.getPredicate(factory,
+					typeEnvironment));
+			return dep;
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static IDeployedInfer getDeployedInfer(ISCInfer given,
+			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
+		try {
+			IDeployedInfer dep = new DeployedInfer(given.getPredicate(factory,
+					typeEnvironment));
+			return dep;
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+}

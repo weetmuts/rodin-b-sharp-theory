@@ -8,10 +8,10 @@
 package org.eventb.theory.rbp.reasoning;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.theory.rbp.base.IRuleBaseManager;
-import org.eventb.theory.rbp.base.RuleBaseManager;
 import org.eventb.theory.rbp.engine.MatchFinder;
 import org.eventb.theory.rbp.engine.SimpleBinder;
+import org.eventb.theory.rbp.rulebase.BaseManager;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * Common implementation of proof rules applyer.
@@ -23,15 +23,16 @@ public class AbstractRulesApplyer {
 
 	protected MatchFinder finder;
 	protected SimpleBinder simpleBinder;
-	protected IRuleBaseManager manager;
+	protected BaseManager manager;
 	protected FormulaFactory factory;
 	
-	protected AbstractRulesApplyer(FormulaFactory factory){
-		this.manager = RuleBaseManager.getDefault();
+	protected IPOContext context;
+	
+	protected AbstractRulesApplyer(FormulaFactory factory, IPOContext context){
+		this.manager = BaseManager.getDefault();
 		this.factory = factory;
 		this.finder = new MatchFinder(factory);
 		this.simpleBinder = new SimpleBinder(factory);
-		
-		
+		this.context = context;
 	}
 }

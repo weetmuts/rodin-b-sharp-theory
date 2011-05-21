@@ -13,6 +13,7 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualInferenceReasoner;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.ui.prover.IPredicateApplication;
 
 /**
@@ -23,16 +24,18 @@ public class InferenceTacticApplication implements IPredicateApplication{
 
 	String toolTip;
 	InferenceInput input;
+	IPOContext context;
 	
-	public InferenceTacticApplication(InferenceInput input , String toolTip){
+	public InferenceTacticApplication(InferenceInput input , String toolTip, IPOContext context){
 		this.toolTip = toolTip;
 		this.input = input;
+		this.context = context;
 	}
 	
 	@Override
 	public ITactic getTactic(String[] inputs, String globalInput) {
 		// TODO Auto-generated method stub
-		return BasicTactics.reasonerTac(new ManualInferenceReasoner(), input);
+		return BasicTactics.reasonerTac(new ManualInferenceReasoner(context), input);
 	}
 
 

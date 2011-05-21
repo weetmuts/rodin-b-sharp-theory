@@ -20,6 +20,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoning.AutoInferer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
@@ -34,8 +35,8 @@ public class AutoInferenceReasoner extends EmptyInputReasoner implements IReason
 
 	private AutoInferer autoInferer;
 	
-	public AutoInferenceReasoner(){
-		autoInferer = new AutoInferer();
+	public AutoInferenceReasoner(IPOContext context){
+		autoInferer = new AutoInferer(context);
 	}
 	
 	@Override

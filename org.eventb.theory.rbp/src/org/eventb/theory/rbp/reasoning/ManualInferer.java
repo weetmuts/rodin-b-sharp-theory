@@ -12,6 +12,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.theory.rbp.inference.InferenceRuleManualApplyer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * @author maamria
@@ -20,9 +21,14 @@ import org.eventb.theory.rbp.inference.InferenceRuleManualApplyer;
 public class ManualInferer {
 
 	private InferenceRuleManualApplyer applyer ;
+	private IPOContext context;
+	
+	public ManualInferer(IPOContext context){
+		this.context = context;
+	}
 	
 	public void setFormulaFactory(FormulaFactory factory){
-		applyer = new InferenceRuleManualApplyer(factory);
+		applyer = new InferenceRuleManualApplyer(factory, context);
 	}
 	
 	/**

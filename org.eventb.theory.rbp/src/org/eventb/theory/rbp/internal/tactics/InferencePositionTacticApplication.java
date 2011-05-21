@@ -15,6 +15,7 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualInferenceReasoner;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * @author maamria
@@ -24,11 +25,13 @@ public class InferencePositionTacticApplication extends ExtendedPositionApplicat
 
 	private String toolTip;
 	private InferenceInput input;
+	IPOContext context;
 	
-	public InferencePositionTacticApplication(InferenceInput input , String toolTip) {
+	public InferencePositionTacticApplication(InferenceInput input , String toolTip, IPOContext context) {
 		super(input.pred, IPosition.ROOT);
 		this.toolTip = toolTip;
 		this.input = input;
+		this.context = context;
 	}
 	
 	public Point getHyperlinkBounds(String parsedString,
@@ -42,7 +45,7 @@ public class InferencePositionTacticApplication extends ExtendedPositionApplicat
 	}
 
 	public ITactic getTactic(String[] inputs, String globalInput) {
-		return BasicTactics.reasonerTac(new ManualInferenceReasoner(), input);
+		return BasicTactics.reasonerTac(new ManualInferenceReasoner(context), input);
 	}
 
 	public String getTacticID() {
