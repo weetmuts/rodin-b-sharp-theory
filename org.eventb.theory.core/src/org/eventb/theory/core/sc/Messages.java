@@ -143,6 +143,9 @@ public final class Messages {
 	public static String scuser_ConsArgNotIdentInCase;
 	public static String scuser_IdentCannotBeUsedAsConsArg;
 	public static String scuser_UnableToTypeCase;
+	public static String scuser_RecCaseAlreadyCovered;
+	public static String scuser_TypeMissmatchOfRecDef;
+	public static String scuser_NoCoverageAllRecCase;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

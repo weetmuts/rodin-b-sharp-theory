@@ -351,7 +351,16 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_IdentCannotBeUsedAsConsArg), 
 			UnableToTypeCase(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_UnableToTypeCase)
+			Messages.scuser_UnableToTypeCase), 
+			RecCaseAlreadyCovered(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_RecCaseAlreadyCovered), 
+			TypeMissmatchOfRecDef(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_TypeMissmatchOfRecDef), 
+			NoCoverageAllRecCase(
+			IMarker.SEVERITY_ERROR,
+			Messages.scuser_NoCoverageAllRecCase)
 	;
 
 	private int arity;
