@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.theory.feature"
       label="%featureName"
-      version="1.0.0"
+      version="0.8.0"
       provider-name="%providerName">
 
    <description url="http://wiki.event-b.org/index.php/Theory_News_and_Support">
