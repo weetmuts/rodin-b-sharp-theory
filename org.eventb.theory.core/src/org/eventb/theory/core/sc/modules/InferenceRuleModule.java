@@ -112,6 +112,7 @@ public class InferenceRuleModule extends
 					processModules(rule, scRules[i], repository, monitor);
 					endProcessorModules(rule, repository, null);
 				}
+				inferenceIdentifiers.makeImmutable();
 				if (scRules[i] != null)
 					scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(),
 							monitor);

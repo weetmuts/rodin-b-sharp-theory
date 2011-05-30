@@ -412,6 +412,11 @@
             id="inferenceIdentifiers"
             name="%inferenceIdentifiers">
       </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.IRecursiveDefinitionInfo"
+            id="recursiveDefinitionInfo"
+            name="%recursiveDefinitionInfo">
+      </stateType>
       
    </extension>
    <extension
@@ -511,6 +516,18 @@
          <prereq
                id="org.eventb.theory.core.operatorWDConditionModule">
          </prereq>
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.OperatorRecursiveDefinitionFilterModule"
+            id="operatorRecursiveDefinitionFilterModule"
+            name="%scOperatorRecursiveDefinitionFilterModule"
+            parent="org.eventb.theory.core.operatorRecursiveDefinitionModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorRecursiveCaseModule"
+            id="operatorRecursiveCaseModule"
+            name="%scOperatorRecursiveCaseModule"
+            parent="org.eventb.theory.core.operatorRecursiveDefinitionModule">
       </processorType>
       <processorType
             class="org.eventb.theory.core.sc.modules.OperatorPropertiesModule"
@@ -780,6 +797,12 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorRecursiveDefinitionModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorRecursiveDefinitionFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorRecursiveCaseModule">
          </scModule>
       </configuration>
       <configuration

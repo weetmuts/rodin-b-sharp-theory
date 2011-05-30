@@ -215,12 +215,14 @@
             defaultColumn="1"
             imagePath="icons/inv_obj.gif"
             prefix="recursive definition"
+            prettyPrinter="org.eventb.theory.ui.editor.html.OperatorRecursiveDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.recursiveOperatorDefinition">
       </element>
       <element
             defaultColumn="2"
             imagePath="icons/act_obj.gif"
             prefix="cases"
+            prettyPrinter="org.eventb.theory.ui.editor.html.OperatorRecursiveCasePrettyPrinter"
             typeId="org.eventb.theory.core.recursiveDefinitionCase">
       </element>
       <element

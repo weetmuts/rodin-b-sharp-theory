@@ -8,8 +8,10 @@
 package org.eventb.theory.core.sc.states;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
@@ -42,7 +44,15 @@ public class InferenceIdentifiers extends State implements ISCState{
 		givenIdents = new ArrayList<FreeIdentifier>();
 	}
 	
-	public void addInferIdentifiers(FreeIdentifier[] idents){
+	@Override
+	public void makeImmutable() {
+		inferIdents = Collections.unmodifiableList(inferIdents);
+		givenIdents = Collections.unmodifiableList(givenIdents);
+		super.makeImmutable();
+	}
+	
+	public void addInferIdentifiers(FreeIdentifier[] idents) throws CoreException{
+		assertMutable();
 		for(FreeIdentifier ident : idents){
 			if(!inferIdents.contains(ident)){
 				inferIdents.add(ident);
@@ -50,7 +60,8 @@ public class InferenceIdentifiers extends State implements ISCState{
 		}
 	}
 
-	public void addGivenIdentifiers(FreeIdentifier[] idents){
+	public void addGivenIdentifiers(FreeIdentifier[] idents) throws CoreException{
+		assertMutable();
 		for(FreeIdentifier ident : idents){
 			if(!givenIdents.contains(ident)){
 				givenIdents.add(ident);
@@ -58,20 +69,24 @@ public class InferenceIdentifiers extends State implements ISCState{
 		}
 	}
 	
-	public boolean isRuleApplicable(){
+	public boolean isRuleApplicable() throws CoreException{
+		assertImmutable();
 		return givenIdents.containsAll(inferIdents) ||
 			inferIdents.containsAll(givenIdents);
 	}
 	
-	public boolean isRuleBackwardApplicable(){
+	public boolean isRuleBackwardApplicable() throws CoreException{
+		assertImmutable();
 		return inferIdents.containsAll(givenIdents);
 	}
 	
-	public boolean isRuleForwardApplicable(){
+	public boolean isRuleForwardApplicable() throws CoreException{
+		assertImmutable();
 		return givenIdents.containsAll(inferIdents);
 	}
 	
-	public boolean isRuleApplicableInBothDirections(){
+	public boolean isRuleApplicableInBothDirections() throws CoreException{
+		assertImmutable();
 		return isRuleBackwardApplicable() &&
 			isRuleForwardApplicable();
 	}

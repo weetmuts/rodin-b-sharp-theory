@@ -23,7 +23,6 @@ import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -46,6 +45,7 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 	private ITypeEnvironment typeEnvironment;
 	private IOperatorInformation operatorInformation;
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -70,10 +70,7 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 		if (operatorInformation.getWdCondition() == null) {
 			operatorInformation.setHasError();
 		}
-		ISCTheoryRoot scTheoryRoot = target.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
-		if (scTheoryRoot != null){
-			
-		}
+		operatorInformation.makeImmutable();
 	}
 
 	@Override
@@ -128,7 +125,7 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 			INewOperatorDefinition operatorDefinition, FormulaType formType,
 			Notation notation, int arity, boolean isAssociative,
 			boolean isCommutative, List<String> arguments)
-			throws RodinDBException {
+			throws CoreException {
 		String opID = operatorDefinition.getLabel();
 		// Check notation
 		// 1- Postfix not supported
@@ -226,7 +223,7 @@ public class OperatorPropertiesModule extends SCProcessorModule {
 	 *            the operator arguments
 	 * @return whether this operator can be associative
 	 */
-	protected boolean checkAssociativity(List<String> args) {
+	protected boolean checkAssociativity(List<String> args) throws CoreException{
 		if (!operatorInformation.isExpressionOperator() || (args.size() != 2)) {
 			return false;
 		}

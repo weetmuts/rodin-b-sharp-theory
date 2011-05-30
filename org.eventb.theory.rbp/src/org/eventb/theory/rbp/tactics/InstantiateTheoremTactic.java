@@ -8,10 +8,17 @@
 package org.eventb.theory.rbp.tactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.POContext;
+import org.eventb.theory.rbp.tactics.ui.InstantiateTheoremWizard;
 import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
@@ -29,7 +36,19 @@ public class InstantiateTheoremTactic implements IProofCommand {
 	@Override
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
-		// nothing to do
+		IProofTreeNode node = us.getCurrentPO().getCurrentNode();
+		if (node.getProofTree().getOrigin() instanceof IProofAttempt){
+			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
+			IPSStatus status = attempt.getStatus();
+			IPOContext poContext = new POContext(status);
+			FormulaFactory factory = node.getFormulaFactory();
+			// fire the wizard
+			InstantiateTheoremWizard wizard = new InstantiateTheoremWizard(poContext, factory);
+			WizardDialog dialog = new WizardDialog(wizard.getShell(), wizard);
+			dialog.setTitle(wizard.getWindowTitle());
+			dialog.open();
+		}
+		
 	}
 
 }

@@ -78,9 +78,9 @@ extends SCProcessorModule{
 
 	protected abstract boolean checkPredicate(Predicate predicate, C clause) throws CoreException;
 
-	protected abstract void addIdentifiers(Predicate predicate);
+	protected abstract void addIdentifiers(Predicate predicate) throws CoreException;
 	
-	protected abstract S getSCClause(ISCInferenceRule parent, String name);
+	protected abstract S getSCClause(ISCInferenceRule parent, String name) throws CoreException;
 	
 	protected abstract C[] getClauses(IInferenceRule rule) throws CoreException;
 	

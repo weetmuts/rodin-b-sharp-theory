@@ -47,7 +47,7 @@ public class InferenceInferClauseModule extends
 	}
 
 	@Override
-	protected void addIdentifiers(Predicate predicate) {
+	protected void addIdentifiers(Predicate predicate) throws CoreException{
 		Collection<GivenType> types = predicate.getGivenTypes();
 		FreeIdentifier iTypes[] = new FreeIdentifier[types.size()];
 		int i = 0;

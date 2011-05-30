@@ -214,7 +214,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 		return null;
 	}
 
-	private void setError() {
+	private void setError() throws CoreException{
 		operatorInformation.setHasError();
 	}
 
