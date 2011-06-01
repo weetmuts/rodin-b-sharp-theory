@@ -76,9 +76,9 @@ public class RecursiveDefinitionInfo extends State implements IRecursiveDefiniti
 		entries.put(defCase, new CaseEntry(exp, typeEnvironment));
 	}
 	
-	public CaseEntry getEntry(IRecursiveDefinitionCase defCase) throws CoreException{
+	public Map<IRecursiveDefinitionCase, CaseEntry> getEntries() throws CoreException{
 		assertImmutable();
-		return entries.get(defCase);
+		return entries;
 	}
 	
 	public boolean isAccurate() throws CoreException{

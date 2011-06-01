@@ -1,5 +1,7 @@
 package org.eventb.theory.core.sc.states;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
@@ -29,7 +31,7 @@ public interface IRecursiveDefinitionInfo extends ISCState {
 	public void addEntry(IRecursiveDefinitionCase defCase, 
 			ExtendedExpression exp, ITypeEnvironment typeEnvironment) throws CoreException;
 	
-	public CaseEntry getEntry(IRecursiveDefinitionCase defCase) throws CoreException;
+	public Map<IRecursiveDefinitionCase, CaseEntry> getEntries() throws CoreException;
 	
 	public boolean isAccurate() throws CoreException;
 	

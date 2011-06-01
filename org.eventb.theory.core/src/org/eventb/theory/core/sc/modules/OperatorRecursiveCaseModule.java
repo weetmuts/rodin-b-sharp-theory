@@ -52,7 +52,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 		ISCRecursiveOperatorDefinition scDefinition = (ISCRecursiveOperatorDefinition) target;
 		IRecursiveDefinitionCase[] recursiveDefinitionCases = definition
 				.getRecursiveDefinitionCases();
-		if (recursiveDefinitionCases.length > 1) {
+		if (recursiveDefinitionCases.length > 0) {
 			process(recursiveDefinitionCases, scDefinition, repository, monitor);
 		}
 	}

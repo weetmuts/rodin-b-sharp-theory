@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
@@ -24,6 +26,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.sc.states.IRecursiveDefinitionInfo.CaseEntry;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -55,60 +58,79 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 			RecursiveDefinitionInfo recursiveDefinitionInfo = new RecursiveDefinitionInfo();
 			repository.setState(recursiveDefinitionInfo);
 			IRecursiveOperatorDefinition recursiveOperatorDefinition = definitions[0];
-			process(recursiveOperatorDefinition, newOperatorDefinition, scNewOperatorDefinition, recursiveDefinitionInfo,repository, monitor);
+			process(recursiveOperatorDefinition, newOperatorDefinition,
+					scNewOperatorDefinition, recursiveDefinitionInfo,
+					repository, monitor);
 			repository.removeState(RecursiveDefinitionInfo.STATE_TYPE);
 		}
 	}
 
 	protected void process(
-			IRecursiveOperatorDefinition recursiveOperatorDefinition, INewOperatorDefinition parent,
-			ISCNewOperatorDefinition target, RecursiveDefinitionInfo recursiveDefinitionInfo, 
-			ISCStateRepository repository, IProgressMonitor monitor)  throws CoreException{
+			IRecursiveOperatorDefinition recursiveOperatorDefinition,
+			INewOperatorDefinition parent, ISCNewOperatorDefinition target,
+			RecursiveDefinitionInfo recursiveDefinitionInfo,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		boolean error = false;
 		initFilterModules(repository, monitor);
-		if (!filterModules(recursiveOperatorDefinition, repository, monitor)){
+		if (!filterModules(recursiveOperatorDefinition, repository, monitor)) {
 			operatorInformation.setHasError();
 			error = true;
 		}
 		endFilterModules(repository, monitor);
-		if (!error){
-			ISCRecursiveOperatorDefinition scDefinition = 
-				createSCDefinition(recursiveOperatorDefinition, target, recursiveDefinitionInfo, monitor);
-			IRecursiveDefinitionCase[] cases = recursiveOperatorDefinition.getRecursiveDefinitionCases();
-			for (IRecursiveDefinitionCase defCase : cases){
-				initProcessorModules(defCase, repository, monitor);
-				processModules(defCase, scDefinition, repository, monitor);
-				endProcessorModules(defCase, repository, monitor);
+		if (!error) {
+			ISCRecursiveOperatorDefinition scDefinition = createSCDefinition(
+					recursiveOperatorDefinition, target,
+					recursiveDefinitionInfo, monitor);
+			// processor modules
+			{
+				initProcessorModules(recursiveOperatorDefinition, repository,
+						monitor);
+				processModules(recursiveOperatorDefinition, scDefinition,
+						repository, monitor);
+				endProcessorModules(recursiveOperatorDefinition, repository,
+						monitor);
 			}
 			recursiveDefinitionInfo.makeImmutable();
-			if (!recursiveDefinitionInfo.isAccurate()){
+			if (!recursiveDefinitionInfo.isAccurate()) {
 				operatorInformation.setHasError();
-			}
-			else {
-				if (!recursiveDefinitionInfo.coveredAllConstructors()){
-					createProblemMarker(recursiveOperatorDefinition, 
+			} else {
+				if (!recursiveDefinitionInfo.coveredAllConstructors()) {
+					createProblemMarker(recursiveOperatorDefinition,
 							TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
 							TheoryGraphProblem.NoCoverageAllRecCase);
 					operatorInformation.setHasError();
+				} else {
+					Map<IRecursiveDefinitionCase, CaseEntry> entries = recursiveDefinitionInfo
+							.getEntries();
+					for (IRecursiveDefinitionCase defCase : entries.keySet()) {
+						if (!defCase.hasFormula()) {
+							createProblemMarker(defCase,
+									TheoryAttributes.FORMULA_ATTRIBUTE,
+									TheoryGraphProblem.MissingFormulaAttrError);
+						} else {
+							CaseEntry caseEntry = entries.get(defCase);
+						}
+
+					}
 				}
-				else {
-					
-				}
-				
+
 			}
 		}
 	}
-	
-	protected ISCRecursiveOperatorDefinition createSCDefinition(IRecursiveOperatorDefinition source, 
+
+	protected ISCRecursiveOperatorDefinition createSCDefinition(
+			IRecursiveOperatorDefinition source,
 			ISCNewOperatorDefinition target, RecursiveDefinitionInfo info,
-			IProgressMonitor monitor) throws CoreException{
-		ISCRecursiveOperatorDefinition scDefinition = target.getRecursiveOperatorDefinition(source.getElementName());
+			IProgressMonitor monitor) throws CoreException {
+		ISCRecursiveOperatorDefinition scDefinition = target
+				.getRecursiveOperatorDefinition(source.getElementName());
 		scDefinition.create(null, monitor);
 		scDefinition.setSource(source, monitor);
-		scDefinition.setInductiveArgument(info.getInductiveArgument().getName(), monitor);
+		scDefinition.setInductiveArgument(
+				info.getInductiveArgument().getName(), monitor);
 		return scDefinition;
 	}
-	
 
 	@Override
 	public IModuleType<?> getModuleType() {
