@@ -49,24 +49,21 @@ public class OperatorRecursiveCasePrettyPrinter extends DefaultPrettyPrinter {
 		INewOperatorDefinition opDef = def.getAncestor(INewOperatorDefinition.ELEMENT_TYPE);
 		StringBuilder builder = new StringBuilder();
 		try {
+			String inductiveArg = ((IRecursiveOperatorDefinition) parent).getInductiveArgument();
 			if (opDef.getNotationType().equals(Notation.INFIX)) {
 				IOperatorArgument args[] = opDef.getOperatorArguments();
 				if (args.length == 0) {
 					builder.append(opDef.getSyntaxSymbol() + TWO_SPACES);
 				} else {
-					String inductiveArg = ((IRecursiveOperatorDefinition) parent).getInductiveArgument();
 					int i = 0;
 					for (IOperatorArgument arg : args) {
 						String argStr = arg.getIdentifierString();
-						if (arg.getIdentifierString().equals(inductiveArg)){
+						if (argStr.equals(inductiveArg)){
 							argStr = def.getExpressionString();
 						}
-						builder.append("(" + argStr
-								+ ONE_SPACES + ":" + ONE_SPACES + arg.getType()
-								+ ")");
+						builder.append(argStr );
 						if (i < args.length - 1) {
-							builder.append(ONE_SPACES + opDef.getSyntaxSymbol()
-									+ ONE_SPACES);
+							builder.append(ONE_SPACES + opDef.getSyntaxSymbol() + ONE_SPACES);
 						}
 						i++;
 					}
@@ -79,8 +76,11 @@ public class OperatorRecursiveCasePrettyPrinter extends DefaultPrettyPrinter {
 					builder.append("(");
 					int i = 0;
 					for (IOperatorArgument arg : args) {
-						builder.append(arg.getIdentifierString() + ONE_SPACES
-								+ ":" + ONE_SPACES + arg.getType());
+						String argStr = arg.getIdentifierString();
+						if (argStr.equals(inductiveArg)){
+							argStr = def.getExpressionString();
+						}
+						builder.append(argStr);
 						if (i < args.length - 1) {
 							builder.append(", ");
 						}

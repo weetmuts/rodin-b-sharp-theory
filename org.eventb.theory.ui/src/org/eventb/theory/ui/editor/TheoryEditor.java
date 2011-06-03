@@ -7,7 +7,6 @@ import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
@@ -50,24 +49,15 @@ public class TheoryEditor extends EventBEditor<ITheoryRoot> {
 	@Override
 	protected void addPages() {
 		EventBEditorPage htmlPage = new HTMLPage();
+		EventBEditorPage editPage = new EditPage();
 		try {
 			htmlPage.initialize(this);
 			addPage(htmlPage);
-			// only create the edit page if deployed counterpart does not exist
-			if(!DatabaseUtilities.hasDeployedVersion(getRodinInput().getSCTheoryRoot())){
-				EventBEditorPage editPage = new EditPage();
-				editPage.initialize(this);
-				addPage(editPage);
-			}
+			editPage.initialize(this);
+			addPage(editPage);
 		} catch (PartInitException e) {
 			TheoryUIUtils.log(e,
 					"Failed to initialise page for "+ getRodinInput().getRodinFile().getElementName()+".");
 		}
 	}
-
-	@Override
-	protected void createPages() {
-		super.createPages();
-	}
-
 }
