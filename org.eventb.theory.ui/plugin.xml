@@ -482,8 +482,8 @@
                descriptionId="org.eventb.ui.identifier">
          </attributeReference>
          <attributeReference
-               column="2"
-               descriptionId="org.eventb.theory.ui.type">
+               column="1"
+               descriptionId="org.eventb.ui.expression">
          </attributeReference>
          <attributeReference
                descriptionId="org.eventb.ui.comment">

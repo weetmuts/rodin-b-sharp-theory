@@ -139,7 +139,7 @@ public class NewOperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 					int i = 0;
 					for (IOperatorArgument arg : args) {
 						builder.append("(" + arg.getIdentifierString()
-								+ ONE_SPACES + ":" + ONE_SPACES + arg.getType()
+								+ ONE_SPACES + ":" + ONE_SPACES + arg.getExpressionString()
 								+ ")");
 						if (i < args.length - 1) {
 							builder.append(ONE_SPACES + opDef.getSyntaxSymbol()
@@ -158,7 +158,7 @@ public class NewOperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 					int i = 0;
 					for (IOperatorArgument arg : args) {
 						builder.append(arg.getIdentifierString() + ONE_SPACES
-								+ ":" + ONE_SPACES + arg.getType());
+								+ ":" + ONE_SPACES + arg.getExpressionString());
 						if (i < args.length - 1) {
 							builder.append(", ");
 						}
