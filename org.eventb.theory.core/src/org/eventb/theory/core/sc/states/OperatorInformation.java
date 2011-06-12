@@ -62,7 +62,6 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	private Notation notation;
 	private boolean isAssociative = false;
 	private boolean isCommutative = false;
-	private Predicate wdCondition;
 	private List<Predicate> wdConditions;
 	private List<String> allowedIdentifiers;
 	private Map<String, IOperatorArgument> opArguments;
@@ -165,8 +164,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		if (wdConditions.size() == 1){
 			return wdConditions.get(0);
 		}
-		this.wdCondition = MathExtensionsUtilities.conjunctPredicates(wdConditions, factory);
-		return wdCondition;
+		return MathExtensionsUtilities.conjunctPredicates(wdConditions, factory);
 	}
 
 	/**

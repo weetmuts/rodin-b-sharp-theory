@@ -95,15 +95,8 @@ public class ProjectManager {
 		graph.setCheckedRoots(scRoots);
 		
 		for (ISCTheoryRoot root : graph.getCheckedRoots()) {
-			
-			//ISchedulingRule rule = root.getSchedulingRule();
-			//Job.getJobManager().beginRule(rule, null);
-			
 			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root, seedFactory);
 			Set<IFormulaExtension> extensions = loader.load();
-			
-			//Job.getJobManager().endRule(rule);
-			
 			scExtensionsMap.put(root.getComponentName(), extensions);
 		}
 	}

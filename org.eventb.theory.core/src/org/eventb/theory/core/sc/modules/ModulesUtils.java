@@ -40,13 +40,13 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public class ModulesUtils {
-	
+
 	public static final int IDENT_SYMTAB_SIZE = 2047;
-	
+
 	public static final int LABEL_SYMTAB_SIZE = 2047;
-	
+
 	public static final String THM_NAME_PREFIX = "Thm";
-	
+
 	public static final String PRB_NAME_PREFIX = "PRB";
 
 	/**
@@ -149,15 +149,15 @@ public class ModulesUtils {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Parses and type checks the non-pattern formula occurring as an attribute to the given 
-	 * formula element.
+	 * Parses and type checks the non-pattern formula occurring as an attribute
+	 * to the given formula element.
 	 * 
 	 * @param element
 	 *            the rodin element
 	 * @param isExpression
-	 * 				whether to parse an expression or a predicate
+	 *            whether to parse an expression or a predicate
 	 * @param ff
 	 *            the formula factory
 	 * @param typeEnvironment
@@ -167,31 +167,40 @@ public class ModulesUtils {
 	 * @return the parsed formula
 	 * @throws CoreException
 	 */
-	public static Formula<?> parseAndCheckFormula(IFormulaElement element, boolean isExpression,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay markerDisplay) 
-	throws CoreException{
+	public static Formula<?> parseAndCheckFormula(IFormulaElement element,
+			boolean isExpression, boolean issueErrors, FormulaFactory ff,
+			ITypeEnvironment typeEnvironment, IMarkerDisplay markerDisplay)
+			throws CoreException {
 		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
 		String form = element.getFormula();
 		Formula<?> formula = null;
-		if (!isExpression){
+		if (isExpression) {
 			IParseResult result = ff.parseExpression(form, V2, null);
-			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
-					result, markerDisplay)) {
-				return null;
+			if (issueErrors) {
+				if (CoreUtilities.issueASTProblemMarkers(element,
+						attributeType, result, markerDisplay)) {
+					return null;
+				}
+			} else {
+				if (result.hasProblem()) {
+					return null;
+				}
 			}
-			else {
-				formula = result.getParsedExpression();
-			}
-		}
-		else {
+			formula = result.getParsedExpression();
+
+		} else {
 			IParseResult result = ff.parsePredicate(form, V2, null);
-			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
-					result, markerDisplay)) {
-				return null;
+			if (issueErrors) {
+				if (CoreUtilities.issueASTProblemMarkers(element,
+						attributeType, result, markerDisplay)) {
+					return null;
+				}
+			} else {
+				if (result.hasProblem()) {
+					return null;
+				}
 			}
-			else {
-				formula = result.getParsedPredicate();
-			}
+			formula = result.getParsedPredicate();
 		}
 		FreeIdentifier[] idents = formula.getFreeIdentifiers();
 		for (FreeIdentifier ident : idents) {
@@ -203,16 +212,22 @@ public class ModulesUtils {
 			}
 		}
 		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
-		if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
-				tcResult, markerDisplay)) {
-			return null;
+		if (issueErrors) {
+			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
+					tcResult, markerDisplay)) {
+				return null;
+			}
+		} else {
+			if (tcResult.hasProblem()) {
+				return null;
+			}
 		}
 		return formula;
 	}
-	
+
 	/**
-	 * Parses and type checks the non-pattern formula occurring as an attribute to the given 
-	 * formula element.
+	 * Parses and type checks the non-pattern formula occurring as an attribute
+	 * to the given formula element.
 	 * 
 	 * @param element
 	 *            the rodin element
@@ -226,11 +241,13 @@ public class ModulesUtils {
 	 * @throws CoreException
 	 */
 	public static Formula<?> parseAndCheckFormula(IFormulaElement element,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay markerDisplay)
-			throws CoreException {
-		Formula<?> formula = parseAndCheckFormula(element, true, ff, typeEnvironment, markerDisplay);
-		if (formula == null){
-			formula = parseAndCheckFormula(element, false, ff, typeEnvironment, markerDisplay);
+			FormulaFactory ff, ITypeEnvironment typeEnvironment,
+			IMarkerDisplay markerDisplay) throws CoreException {
+		Formula<?> formula = parseAndCheckFormula(element, true, false, ff,
+				typeEnvironment, markerDisplay);
+		if (formula == null) {
+			formula = parseAndCheckFormula(element, false, true, ff,
+					typeEnvironment, markerDisplay);
 		}
 		return formula;
 	}

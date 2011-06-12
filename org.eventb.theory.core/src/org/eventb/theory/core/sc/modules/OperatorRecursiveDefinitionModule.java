@@ -113,7 +113,6 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 		super.initModule(element, repository, monitor);
 		operatorInformation = (IOperatorInformation) repository
 				.getState(IOperatorInformation.STATE_TYPE);
-		repository.getTypeEnvironment();
 	}
 
 	@Override

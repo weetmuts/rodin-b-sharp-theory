@@ -48,6 +48,7 @@ public interface IRecursiveDefinitionInfo extends ISCState {
 	public static class CaseEntry {
 		ExtendedExpression caseExpression;
 		ITypeEnvironment localTypeEnvironment;
+		private boolean erroneous;
 
 		// expression must be type checked
 		public CaseEntry(ExtendedExpression caseExpression,
@@ -64,6 +65,14 @@ public interface IRecursiveDefinitionInfo extends ISCState {
 			return localTypeEnvironment;
 		}
 		
+		public boolean isErroneous() {
+			return erroneous;
+		}
+
+		public void setErroneous() {
+			this.erroneous = true;
+		}
+
 		public boolean isBaseCase(){
 			boolean isBase = true;
 			for (FreeIdentifier ident : caseExpression.getFreeIdentifiers()) {
