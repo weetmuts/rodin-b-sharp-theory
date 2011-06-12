@@ -1,0 +1,45 @@
+/*******************************************************************************
+ * Copyright (c) 2011 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eventb.theory.core;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Type;
+import org.rodinp.core.RodinDBException;
+
+/**
+ * 
+ * @author maamria
+ *
+ */
+public interface ISCTypeElement {
+
+	/**
+	 * Returns whether the type attribute is set.
+	 * @return whether the type attribute is set
+	 * @throws RodinDBException
+	 */
+	boolean hasType() throws RodinDBException;
+	
+	/**
+	 * Returns the type associated with this element.
+	 * @param factory the formula factory
+	 * @return the type
+	 * @throws RodinDBException
+	 */
+	Type getType(FormulaFactory factory) throws RodinDBException;
+	
+	/**
+	 * Sets the type associated with this element to the given type.
+	 * @param type the type
+	 * @param monitor the progress monitor
+	 * @throws RodinDBException
+	 */
+	void setType(Type type, IProgressMonitor monitor) throws RodinDBException;
+	
+}

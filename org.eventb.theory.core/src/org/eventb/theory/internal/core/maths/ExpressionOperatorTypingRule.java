@@ -39,8 +39,8 @@ implements IExpressionTypeChecker{
 	protected boolean isAssociative;
 	
 	public ExpressionOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, 
-			FormulaFactory factory, Type resultantType, boolean isAssociative) {
-		super(operatorArguments, wdPredicate, factory);
+			Type resultantType, boolean isAssociative) {
+		super(operatorArguments, wdPredicate);
 		this.resultantType = resultantType;
 		this.isAssociative = isAssociative;
 	}
@@ -90,7 +90,7 @@ implements IExpressionTypeChecker{
 			return null;
 		}
 		Type[] argumentTypesAsVars = new Type[arity];
-		HashMap<Type, Type> parameterToTypeVarMap = new HashMap<Type, Type>();
+		HashMap<GivenType, Type> parameterToTypeVarMap = new HashMap<GivenType, Type>();
 		for (int i = 0; i < typeParameters.size(); i++) {
 			parameterToTypeVarMap.put(typeParameters.get(i),
 					mediator.newTypeVariable());
@@ -125,10 +125,10 @@ implements IExpressionTypeChecker{
 		String rawTypeExp = typeExpression.toString();
 		Expression exp = factory.parseExpression(rawTypeExp,
 				LanguageVersion.V2, null).getParsedExpression();
-		Map<FreeIdentifier, Expression> typeSubs = getTypeSubstitutions(childrenTypes);
+		Map<FreeIdentifier, Expression> typeSubs = getTypeSubstitutions(childrenTypes, factory);
 		if(typeSubs == null)
 			return null;
-		ITypeEnvironment typeEnvironment = generateTypeParametersTypeEnvironment(typeSubs);
+		ITypeEnvironment typeEnvironment = generateTypeParametersTypeEnvironment(typeSubs, factory);
 		exp.typeCheck(typeEnvironment);
 		Expression actTypeExpression = exp.substituteFreeIdents(typeSubs, factory);
 		try {
@@ -139,7 +139,7 @@ implements IExpressionTypeChecker{
 		return null;
 	}
 	
-	protected Map<FreeIdentifier, Expression> getTypeSubstitutions(Type[] childrenTypes) {
+	protected Map<FreeIdentifier, Expression> getTypeSubstitutions(Type[] childrenTypes, FormulaFactory factory) {
 		Map<FreeIdentifier, Expression> subs = new HashMap<FreeIdentifier, Expression>();
 		Map<GivenType, Type> instantiations = new HashMap<GivenType, Type>();
 		if (isAssociative) {
@@ -149,8 +149,7 @@ implements IExpressionTypeChecker{
 		} else {
 			for (int i = 0; i < childrenTypes.length; i++) {
 
-				if (!isValidTypeInstantiation(i, childrenTypes[i],
-						instantiations)) {
+				if (!isValidTypeInstantiation(i, childrenTypes[i], instantiations)) {
 					return null;
 				}
 			}

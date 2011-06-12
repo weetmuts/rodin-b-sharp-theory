@@ -7,26 +7,18 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
-import org.eventb.theory.core.IRecursiveDefinitionCase;
 import org.eventb.theory.core.IRecursiveOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
-import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
-import org.eventb.theory.core.sc.states.IRecursiveDefinitionInfo.CaseEntry;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -43,9 +35,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 					+ ".operatorRecursiveDefinitionModule");
 
 	private IOperatorInformation operatorInformation;
-	private FormulaFactory factory;
-	private ITypeEnvironment typeEnvironment;
-
+	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -54,7 +44,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
 		IRecursiveOperatorDefinition[] definitions = newOperatorDefinition
 				.getRecursiveOperatorDefinitions();
-		if (definitions.length == 1) {
+		if (definitions.length == 1 && !operatorInformation.hasError()) {
 			RecursiveDefinitionInfo recursiveDefinitionInfo = new RecursiveDefinitionInfo();
 			repository.setState(recursiveDefinitionInfo);
 			IRecursiveOperatorDefinition recursiveOperatorDefinition = definitions[0];
@@ -91,31 +81,9 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 				endProcessorModules(recursiveOperatorDefinition, repository,
 						monitor);
 			}
-			recursiveDefinitionInfo.makeImmutable();
 			if (!recursiveDefinitionInfo.isAccurate()) {
 				operatorInformation.setHasError();
-			} else {
-				if (!recursiveDefinitionInfo.coveredAllConstructors()) {
-					createProblemMarker(recursiveOperatorDefinition,
-							TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
-							TheoryGraphProblem.NoCoverageAllRecCase);
-					operatorInformation.setHasError();
-				} else {
-					Map<IRecursiveDefinitionCase, CaseEntry> entries = recursiveDefinitionInfo
-							.getEntries();
-					for (IRecursiveDefinitionCase defCase : entries.keySet()) {
-						if (!defCase.hasFormula()) {
-							createProblemMarker(defCase,
-									TheoryAttributes.FORMULA_ATTRIBUTE,
-									TheoryGraphProblem.MissingFormulaAttrError);
-						} else {
-							CaseEntry caseEntry = entries.get(defCase);
-						}
-
-					}
-				}
-
-			}
+			} 
 		}
 	}
 
@@ -145,16 +113,13 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 		super.initModule(element, repository, monitor);
 		operatorInformation = (IOperatorInformation) repository
 				.getState(IOperatorInformation.STATE_TYPE);
-		factory = repository.getFormulaFactory();
-		typeEnvironment = repository.getTypeEnvironment();
+		repository.getTypeEnvironment();
 	}
 
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		operatorInformation = null;
-		factory = null;
-		typeEnvironment = null;
 		super.endModule(element, repository, monitor);
 	}
 }

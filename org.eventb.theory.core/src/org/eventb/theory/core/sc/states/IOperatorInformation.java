@@ -8,8 +8,8 @@
 package org.eventb.theory.core.sc.states;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Expression;
@@ -65,10 +65,10 @@ public interface IOperatorInformation extends ISCState{
 	public void addOperatorArgument(String ident, Type type);
 	
 	/**
-	 * Returns the set of operator arguments in the same order as the definition.
-	 * @return the operator arguments
+	 * Returns the operator arguments of this operator
+	 * @return operator arguments
 	 */
-	public Set<IOperatorArgument> getOperatorArguments();
+	public List<IOperatorArgument> getOperatorArguments();
 	
 	/**
 	 * @return the syntax
@@ -97,6 +97,11 @@ public interface IOperatorInformation extends ISCState{
 	 *            the notation to set
 	 */
 	public void setNotation(Notation notation) ;
+	
+	/**
+	 * @return the notation
+	 */
+	public Notation getNotation() ;
 
 	/**
 	 * @param isAssociative
@@ -117,12 +122,6 @@ public interface IOperatorInformation extends ISCState{
 	public void setDefinition(IDefinition definition);
 	
 	/**
-	 * Returns the definition of this operator.
-	 * @return the operator definition
-	 */
-	public IDefinition getDefinition();
-	
-	/**
 	 * @return the wdCondition
 	 */
 	public Predicate getWdCondition() ;
@@ -131,7 +130,7 @@ public interface IOperatorInformation extends ISCState{
 	 * @param wdCondition
 	 *            the wdCondition to set
 	 */
-	public void setWdCondition(Predicate wdCondition) ;
+	public void addWDCondition(Predicate wdCondition) ;
 
 	/**
 	 * Returns the resultant type of this operator if it produces expressions.
@@ -145,6 +144,9 @@ public interface IOperatorInformation extends ISCState{
 	 */
 	public void setResultantType(Type resultantType) ;
 
+	/**
+	 * Sets the operator as having an error associated with it.
+	 */
 	public void setHasError() ;
 
 	/**
@@ -155,12 +157,23 @@ public interface IOperatorInformation extends ISCState{
 	/**
 	 * Returns the mathematical extension corresponding to this operator information.
 	 * @param sourceOfExtension the source of the extension
-	 * @param factory the formula factory to use
 	 * @return the formula extension
 	 */
-	public IFormulaExtension getExtension(Object sourceOfExtension, FormulaFactory factory) ;
+	public IFormulaExtension getExtension(Object sourceOfExtension) ;
 	
+	/**
+	 * Returns an interim extension useful when checking a recursive definition.
+	 * @return the formula extension
+	 */
+	public IFormulaExtension getInterimExtension() ;
 	
+	/**
+	 * Generates the set of definitional rules that effectively provide the semantics for the operator being defined.
+	 * @param originDefinition the origin definition
+	 * @param theoryRoot the parent root where the rules will be created
+	 * @param enhancedFactory the formula factory that know about this extension
+	 * @throws CoreException
+	 */
 	public void generateDefinitionalRule(
 			INewOperatorDefinition originDefinition, 
 			ISCTheoryRoot theoryRoot,
@@ -190,16 +203,16 @@ public interface IOperatorInformation extends ISCState{
 	 */
 	public static class RecursiveDefinition implements IDefinition{
 		
-		private IOperatorArgument operatorArgument;
+		private FreeIdentifier operatorArgument;
 		
 		private Map<Expression, Formula<?>> recursiveCases;
 		
-		public RecursiveDefinition(IOperatorArgument operatorArgument){
+		public RecursiveDefinition(FreeIdentifier operatorArgument){
 			this.operatorArgument = operatorArgument;
 			this.recursiveCases = new LinkedHashMap<Expression, Formula<?>>();
 		}
 		
-		public IOperatorArgument getOperatorArgument(){
+		public FreeIdentifier getOperatorArgument(){
 			return operatorArgument;
 		}
 		

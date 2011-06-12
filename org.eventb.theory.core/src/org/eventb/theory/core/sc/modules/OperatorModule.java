@@ -155,24 +155,20 @@ public class OperatorModule extends LabeledElementModule{
 			ISCNewOperatorDefinition[] scNewOpDefs,
 			ILabelSymbolInfo[] labelSymbolInfos, IProgressMonitor monitor) 
 	throws CoreException{
-		int index = 0;
-
 		for (int i = 0; i < newOpDefs.length; i++) {
 			if (labelSymbolInfos[i] != null && !labelSymbolInfos[i].hasError()) {
-				scNewOpDefs[i] = createSCNewOperatorDefinition(targetRoot, index++, labelSymbolInfos[i],
+				scNewOpDefs[i] = createSCNewOperatorDefinition(targetRoot, labelSymbolInfos[i],
 						newOpDefs[i], monitor);
 			}
 			else {
 				theoryAccuracyInfo.setNotAccurate();
 			}
 		}
-		
 	}
 	
 	/**
 	 * Create a statically checked operator definition corresponding to the given operator definition.
 	 * @param targetRoot the target root
-	 * @param index the index
 	 * @param symbolInfo the symbol info
 	 * @param newOpDef the operator definition
 	 * @param monitor the progress monitor
@@ -180,12 +176,12 @@ public class OperatorModule extends LabeledElementModule{
 	 * @throws CoreException
 	 */
 	protected ISCNewOperatorDefinition createSCNewOperatorDefinition(ISCTheoryRoot targetRoot,
-			int index, ILabelSymbolInfo symbolInfo,
+			ILabelSymbolInfo symbolInfo,
 			INewOperatorDefinition newOpDef,
 			IProgressMonitor monitor) throws CoreException {
 		
 		ILabeledElement scNewOpDef = symbolInfo.createSCElement(targetRoot,
-				ModulesUtils.OP_NAME_PREFIX + index, monitor);
+				null, monitor);
 		return (ISCNewOperatorDefinition) scNewOpDef;
 	}
 	

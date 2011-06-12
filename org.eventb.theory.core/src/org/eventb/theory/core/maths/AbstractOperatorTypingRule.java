@@ -57,7 +57,6 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 	protected int arity = 0;
 	protected List<GivenType> typeParameters;
 	protected Predicate wdPredicate;
-	protected FormulaFactory factory;
 	
 	/**
 	 * Creates a basic typing rule with the supplied arguments, the given well-definedness predicate.
@@ -68,13 +67,12 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 	 * @param wdPredicate the well-definedness predicate, must not be <code>null</code>
 	 * @param factory the formula factory
 	 */
-	public AbstractOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, FormulaFactory factory) {
+	public AbstractOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate) {
 		this.operatorArguments = operatorArguments;
 		this.arity = operatorArguments.size();
-		this.factory = factory;
 		this.typeParameters = new ArrayList<GivenType>();
 		for (IOperatorArgument operatorArgument : operatorArguments){
-			addTypeParameters(operatorArgument.getGivenTypes(factory));
+			addTypeParameters(MathExtensionsUtilities.getGivenTypes(operatorArgument.getArgumentType()));
 		}
 		this.wdPredicate = wdPredicate;
 	}
@@ -82,11 +80,6 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 	@Override
 	public int getArity() {
 		return arity;
-	}
-
-	@Override
-	public Predicate getWDPredicate(){
-		return wdPredicate;
 	}
 	
 	@Override
@@ -103,7 +96,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 		}
 
 		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(
-				((IExtendedFormula) flattened).getChildExpressions());
+				((IExtendedFormula) flattened).getChildExpressions(), factory);
 		if (allSubs == null) {
 			return null;
 		}
@@ -111,17 +104,12 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 		Predicate pred = factory
 				.parsePredicate(rawWD, LanguageVersion.V2, null)
 				.getParsedPredicate();
-		ITypeEnvironment typeEnvironment = generateOverallTypeEnvironment(allSubs);
+		ITypeEnvironment typeEnvironment = generateOverallTypeEnvironment(allSubs, factory);
 		pred.typeCheck(typeEnvironment);
 		Predicate actWDPred = pred.substituteFreeIdents(allSubs, factory);
 		Predicate actWDPredWD = actWDPred.getWDPredicate(factory);
 		return MathExtensionsUtilities.conjunctPredicates(new Predicate[] {
 				actWDPredWD, actWDPred }, factory);
-	}
-
-	@Override
-	public List<IOperatorArgument> getOperatorArguments() {
-		return operatorArguments;
 	}
 
 	public boolean equals(Object o) {
@@ -230,11 +218,10 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 		return true;
 	}
 
-	protected Map<FreeIdentifier, Expression> getOverallSubstitutions(Expression[] childrenExpressions) {
+	protected Map<FreeIdentifier, Expression> getOverallSubstitutions(Expression[] childrenExpressions, FormulaFactory factory) {
 		Type[] childrenTypes = MathExtensionsUtilities
 				.getTypes(childrenExpressions);
-		Map<FreeIdentifier, Expression> initial = getTypeSubstitutions(
-				childrenTypes);
+		Map<FreeIdentifier, Expression> initial = getTypeSubstitutions(childrenTypes, factory);
 		if (initial != null) {
 			for (IOperatorArgument arg : operatorArguments) {
 				initial.put(factory.makeFreeIdentifier(arg.getArgumentName(),
@@ -245,16 +232,14 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 		return initial;
 	}
 
-	protected Map<FreeIdentifier, Expression> getTypeSubstitutions(Type[] childrenTypes) {
+	protected Map<FreeIdentifier, Expression> getTypeSubstitutions(Type[] childrenTypes, FormulaFactory factory) {
 		Map<FreeIdentifier, Expression> subs = new HashMap<FreeIdentifier, Expression>();
 		Map<GivenType, Type> instantiations = new HashMap<GivenType, Type>();
 		for (int i = 0; i < childrenTypes.length; i++) {
-
 			if (!isValidTypeInstantiation(i, childrenTypes[i], instantiations)) {
 				return null;
 			}
 		}
-
 		for (GivenType gType : instantiations.keySet()) {
 			subs.put(factory.makeFreeIdentifier(gType.getName(), null,
 					instantiations.get(gType).toExpression(factory).getType()),
@@ -273,7 +258,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 		return unifyTypes(argumentType, proposedType, calculatedInstantiations);
 	}
 
-	protected ITypeEnvironment generateTypeParametersTypeEnvironment(Map<FreeIdentifier, Expression> typeSubs) {
+	protected ITypeEnvironment generateTypeParametersTypeEnvironment(Map<FreeIdentifier, Expression> typeSubs, FormulaFactory factory) {
 		ITypeEnvironment actualTypeEnvironment = factory.makeTypeEnvironment();
 		for (FreeIdentifier ident : typeSubs.keySet()) {
 			actualTypeEnvironment.addName(ident.getName(), typeSubs.get(ident)
@@ -282,7 +267,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 		return actualTypeEnvironment;
 	}
 
-	protected ITypeEnvironment generateOverallTypeEnvironment(Map<FreeIdentifier, Expression> allSubs) {
+	protected ITypeEnvironment generateOverallTypeEnvironment(Map<FreeIdentifier, Expression> allSubs, FormulaFactory factory) {
 		ITypeEnvironment actualTypeEnvironment = factory.makeTypeEnvironment();
 		for (FreeIdentifier ident : allSubs.keySet()) {
 			actualTypeEnvironment.addName(ident.getName(), allSubs.get(ident)
@@ -312,7 +297,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 	 * @return the constructed type
 	 */
 	protected Type constructPatternType(Type theoryType,
-			Map<Type, Type> typeParameterToTypeVariablesMap,
+			Map<GivenType, Type> typeParameterToTypeVariablesMap,
 			ITypeMediator mediator) {
 
 		if (typeParameterToTypeVariablesMap.containsKey(theoryType)) {

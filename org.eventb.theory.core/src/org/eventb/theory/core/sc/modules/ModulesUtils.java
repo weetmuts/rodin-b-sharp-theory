@@ -9,9 +9,6 @@ package org.eventb.theory.core.sc.modules;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
@@ -19,11 +16,9 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.theory.core.IFormulaElement;
@@ -49,8 +44,6 @@ public class ModulesUtils {
 	public static final int IDENT_SYMTAB_SIZE = 2047;
 	
 	public static final int LABEL_SYMTAB_SIZE = 2047;
-	
-	public static final String OP_NAME_PREFIX = "NewOP";
 	
 	public static final String THM_NAME_PREFIX = "Thm";
 	
@@ -158,23 +151,64 @@ public class ModulesUtils {
 	}
 	
 	/**
-	 * Returns the given types occurring in <code>type</code>.
+	 * Parses and type checks the non-pattern formula occurring as an attribute to the given 
+	 * formula element.
 	 * 
-	 * @param type
-	 *            the type
-	 * @param factory
-	 * 			  the formula factory
-	 * @return the given types
+	 * @param element
+	 *            the rodin element
+	 * @param isExpression
+	 * 				whether to parse an expression or a predicate
+	 * @param ff
+	 *            the formula factory
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
+	 * @return the parsed formula
+	 * @throws CoreException
 	 */
-	public static GivenType[] getTypesOccurringIn(Type type, FormulaFactory factory) {
-		List<GivenType> types = new ArrayList<GivenType>();
-		FreeIdentifier[] idents = type.toExpression(factory)
-				.getFreeIdentifiers();
-		for (FreeIdentifier ident : idents) {
-			types.add(factory.makeGivenType(ident.getName()));
+	public static Formula<?> parseAndCheckFormula(IFormulaElement element, boolean isExpression,
+			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay markerDisplay) 
+	throws CoreException{
+		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
+		String form = element.getFormula();
+		Formula<?> formula = null;
+		if (!isExpression){
+			IParseResult result = ff.parseExpression(form, V2, null);
+			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
+					result, markerDisplay)) {
+				return null;
+			}
+			else {
+				formula = result.getParsedExpression();
+			}
 		}
-		return types.toArray(new GivenType[types.size()]);
-	} 
+		else {
+			IParseResult result = ff.parsePredicate(form, V2, null);
+			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
+					result, markerDisplay)) {
+				return null;
+			}
+			else {
+				formula = result.getParsedPredicate();
+			}
+		}
+		FreeIdentifier[] idents = formula.getFreeIdentifiers();
+		for (FreeIdentifier ident : idents) {
+			if (!typeEnvironment.contains(ident.getName())) {
+				markerDisplay.createProblemMarker(element, attributeType,
+						GraphProblem.UndeclaredFreeIdentifierError,
+						ident.getName());
+				return null;
+			}
+		}
+		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
+		if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
+				tcResult, markerDisplay)) {
+			return null;
+		}
+		return formula;
+	}
 	
 	/**
 	 * Parses and type checks the non-pattern formula occurring as an attribute to the given 
@@ -194,35 +228,9 @@ public class ModulesUtils {
 	public static Formula<?> parseAndCheckFormula(IFormulaElement element,
 			FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay markerDisplay)
 			throws CoreException {
-		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
-		String form = element.getFormula();
-		Formula<?> formula = null;
-		IParseResult result = ff.parsePredicate(form, V2, null);
-		if (result.hasProblem()) {
-			result = ff.parseExpression(form, V2, null);
-			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
-					result, markerDisplay)) {
-				return null;
-			} else {
-				formula = result.getParsedExpression();
-			}
-		} else {
-			formula = result.getParsedPredicate();
-		}
-
-		FreeIdentifier[] idents = formula.getFreeIdentifiers();
-		for (FreeIdentifier ident : idents) {
-			if (!typeEnvironment.contains(ident.getName())) {
-				markerDisplay.createProblemMarker(element, attributeType,
-						GraphProblem.UndeclaredFreeIdentifierError,
-						ident.getName());
-				return null;
-			}
-		}
-		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
-		if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
-				tcResult, markerDisplay)) {
-			return null;
+		Formula<?> formula = parseAndCheckFormula(element, true, ff, typeEnvironment, markerDisplay);
+		if (formula == null){
+			formula = parseAndCheckFormula(element, false, ff, typeEnvironment, markerDisplay);
 		}
 		return formula;
 	}

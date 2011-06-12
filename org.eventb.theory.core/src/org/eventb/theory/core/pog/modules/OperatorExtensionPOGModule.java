@@ -121,7 +121,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 						.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
 				// ///////////////////////////////////
 				// ////////WD Strength
-				String poName = definition.getElementName()
+				String poName = definition.getLabel()
 						+ OPERATOR_WD_POSTFIX;
 				Predicate wdStrengthPredicate = getClosedPOPredicate(
 						wdCondition, defFormula.getWDPredicate(factory),
@@ -146,7 +146,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 							(Expression) defFormula, identifiers,
 							localTypeEnvironment);
 					if (!isTrivial(assocChecker)) {
-						poName = definition.getElementName()
+						poName = definition.getLabel()
 								+ OPERATOR_ASSOC_POSTFIX;
 						createPO(
 								target,
@@ -168,7 +168,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 							(Expression) defFormula, identifiers,
 							localTypeEnvironment);
 					if (!isTrivial(commutChecker)) {
-						poName = definition.getElementName()
+						poName = definition.getLabel()
 								+ OPERATOR_COMMUT_POSTFIX;
 						createPO(
 								target,

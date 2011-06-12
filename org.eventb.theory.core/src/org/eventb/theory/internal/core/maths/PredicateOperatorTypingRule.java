@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
@@ -30,8 +30,8 @@ implements IPredicateTypeChecker{
 	/**
 	 * @param extension
 	 */
-	public PredicateOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, FormulaFactory factory) {
-		super(operatorArguments, wdPredicate, factory);
+	public PredicateOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate) {
+		super(operatorArguments, wdPredicate);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ implements IPredicateTypeChecker{
 			ITypeCheckMediator mediator) {
 		Expression[] childExpressions = predicate.getChildExpressions();
 		Type[] argumentTypesAsVars = new Type[arity];
-		HashMap<Type, Type> parameterToTypeVarMap = new HashMap<Type, Type>();
+		HashMap<GivenType, Type> parameterToTypeVarMap = new HashMap<GivenType, Type>();
 		for (int i = 0; i < typeParameters.size(); i++) {
 			parameterToTypeVarMap.put(typeParameters.get(i),
 					mediator.newTypeVariable());

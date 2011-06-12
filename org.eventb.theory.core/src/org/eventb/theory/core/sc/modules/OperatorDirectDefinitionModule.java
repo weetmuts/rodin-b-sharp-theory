@@ -58,7 +58,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 		INewOperatorDefinition newOperatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
 		IDirectOperatorDefinition[] definitions = newOperatorDefinition.getDirectOperatorDefinitions();
-		if (definitions.length == 1){
+		if (definitions.length == 1 && !operatorInformation.hasError()){
 			processDirectDefinitions(definitions, newOperatorDefinition, scNewOperatorDefinition, repository, monitor);
 		}
 
@@ -111,7 +111,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 					if (operatorInformation.getWdCondition() == null) {
 						Predicate wdPredicate = defFormula.getWDPredicate(factory);
 						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
-						operatorInformation.setWdCondition(wdPredicate);
+						operatorInformation.addWDCondition(wdPredicate);
 					}
 				} else {
 					setError();
@@ -129,7 +129,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 						Predicate wdPredicate = defFormula
 								.getWDPredicate(factory);
 						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
-						operatorInformation.setWdCondition(wdPredicate);
+						operatorInformation.addWDCondition(wdPredicate);
 					}
 
 				} else {

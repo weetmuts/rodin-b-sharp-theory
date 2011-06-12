@@ -50,13 +50,16 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 		if(!operatorInformation.hasError()){
 			String syntax = operatorInformation.getSyntax();
 			if(MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
-				IFormulaExtension formulaExtension = operatorInformation.getExtension(scNewOperatorDefinition, factory);
+				IFormulaExtension formulaExtension = operatorInformation.getExtension(scNewOperatorDefinition);
 				FormulaFactory newFactory = factory.withExtensions(
 						GeneralUtilities.singletonSet(formulaExtension));
 				repository.setFormulaFactory(newFactory);
 				factory = repository.getFormulaFactory();
 				scNewOperatorDefinition.setHasError(false, monitor);
 				scNewOperatorDefinition.setOperatorGroup(formulaExtension.getGroupId(), monitor);
+				if (operatorInformation.isExpressionOperator()){
+					scNewOperatorDefinition.setType(operatorInformation.getResultantType(), monitor);
+				}
 				operatorInformation.generateDefinitionalRule(newOperatorDefinition, theoryRoot, factory);
 			}
 			else {
@@ -64,7 +67,6 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAdded, syntax);
 				operatorInformation.setHasError();
 				opHasError = true;
-				
 			}
 		}
 		else {

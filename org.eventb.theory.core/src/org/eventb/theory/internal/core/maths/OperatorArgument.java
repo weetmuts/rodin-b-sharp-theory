@@ -7,15 +7,14 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.maths;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
 import org.eventb.theory.core.maths.IOperatorArgument;
+import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -73,12 +72,7 @@ public class OperatorArgument implements IOperatorArgument{
 	}
 
 	@Override
-	public List<GivenType> getGivenTypes(FormulaFactory factory) {
-		List<GivenType> result = new ArrayList<GivenType>();
-		Set<GivenType> types = argumentType.toExpression(factory).getGivenTypes();
-		for (GivenType type : types){
-			result.add(type);
-		}
-		return result;
+	public List<GivenType> getGivenTypes() {
+		return MathExtensionsUtilities.getGivenTypes(argumentType);
 	}
 }

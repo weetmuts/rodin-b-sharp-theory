@@ -120,7 +120,7 @@ public abstract class AbstractOperatorExtension<F extends Formula<F>> implements
 	}
 	
 	public String toString(){
-		return properties.getSyntax() +"-->" + operatorTypingRule.toString();
+		return properties.getSyntax() +"==" + operatorTypingRule.toString();
 	}
 	
 	public boolean isCommutative(){

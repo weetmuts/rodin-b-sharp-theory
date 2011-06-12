@@ -29,7 +29,7 @@ import org.rodinp.core.RodinDBException;
 public interface ISCNewOperatorDefinition extends ILabeledElement,
 		ISyntaxSymbolElement, IFormulaTypeElement, INotationTypeElement,
 		IAssociativeElement, ICommutativeElement, ITraceableElement,
-		IHasErrorElement, ISCPredicateElement, IOperatorGroupElement,
+		IHasErrorElement, ISCPredicateElement, ISCTypeElement, IOperatorGroupElement,
 		IValidatedElement {
 
 	IInternalElementType<ISCNewOperatorDefinition> ELEMENT_TYPE = RodinCore

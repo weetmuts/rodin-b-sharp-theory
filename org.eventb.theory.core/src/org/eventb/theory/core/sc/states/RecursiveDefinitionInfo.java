@@ -26,14 +26,16 @@ import org.eventb.theory.core.IRecursiveDefinitionCase;
 @SuppressWarnings("restriction")
 public class RecursiveDefinitionInfo extends State implements IRecursiveDefinitionInfo {
 
-	private Map<IRecursiveDefinitionCase, CaseEntry> entries;
+	private Map<IRecursiveDefinitionCase, CaseEntry> baseEntries;
+	private Map<IRecursiveDefinitionCase, CaseEntry> inductiveEntries;
 	private FreeIdentifier inductiveArgument;
-	private boolean accurate;
+	private boolean accurate = true;
 	private IDatatype datatype;
 	private Set<IExpressionExtension> coveredConstructors;
 	
 	public RecursiveDefinitionInfo(){
-		entries = new LinkedHashMap<IRecursiveDefinitionCase, CaseEntry>();
+		baseEntries = new LinkedHashMap<IRecursiveDefinitionCase, CaseEntry>();
+		inductiveEntries = new LinkedHashMap<IRecursiveDefinitionCase, CaseEntry>();
 		coveredConstructors = new LinkedHashSet<IExpressionExtension>();
 	}
 	
@@ -48,7 +50,6 @@ public class RecursiveDefinitionInfo extends State implements IRecursiveDefiniti
 		}
 		IExpressionExtension extension = ((ExtendedExpression)type.toExpression(factory)).getExtension();
 		datatype = (IDatatype) extension.getOrigin();
-		coveredConstructors.add(extension);
 	}
 	
 	public boolean isConstructor(IExpressionExtension extension) throws CoreException{
@@ -73,12 +74,24 @@ public class RecursiveDefinitionInfo extends State implements IRecursiveDefiniti
 	public void addEntry(IRecursiveDefinitionCase defCase, 
 			ExtendedExpression exp, ITypeEnvironment typeEnvironment) throws CoreException{
 		assertMutable();
-		entries.put(defCase, new CaseEntry(exp, typeEnvironment));
+		CaseEntry caseEntry = new CaseEntry(exp, typeEnvironment);
+		if (caseEntry.isBaseCase()){
+			baseEntries.put(defCase, caseEntry);
+		}
+		else {
+			inductiveEntries.put(defCase, caseEntry);
+		}
+		coveredConstructors.add(exp.getExtension());
 	}
 	
-	public Map<IRecursiveDefinitionCase, CaseEntry> getEntries() throws CoreException{
+	public Map<IRecursiveDefinitionCase, CaseEntry> getBaseEntries() throws CoreException{
 		assertImmutable();
-		return entries;
+		return baseEntries;
+	}
+	
+	public Map<IRecursiveDefinitionCase, CaseEntry> getInductiveEntries() throws CoreException{
+		assertImmutable();
+		return inductiveEntries;
 	}
 	
 	public boolean isAccurate() throws CoreException{
@@ -93,7 +106,8 @@ public class RecursiveDefinitionInfo extends State implements IRecursiveDefiniti
 
 	@Override
 	public void makeImmutable() {
-		entries = Collections.unmodifiableMap(entries);
+		baseEntries = Collections.unmodifiableMap(baseEntries);
+		inductiveEntries = Collections.unmodifiableMap(inductiveEntries);
 		super.makeImmutable();
 	}
 	

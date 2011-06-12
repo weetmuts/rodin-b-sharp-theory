@@ -31,7 +31,9 @@ public interface IRecursiveDefinitionInfo extends ISCState {
 	public void addEntry(IRecursiveDefinitionCase defCase, 
 			ExtendedExpression exp, ITypeEnvironment typeEnvironment) throws CoreException;
 	
-	public Map<IRecursiveDefinitionCase, CaseEntry> getEntries() throws CoreException;
+	public Map<IRecursiveDefinitionCase, CaseEntry> getBaseEntries() throws CoreException;
+	
+	public Map<IRecursiveDefinitionCase, CaseEntry> getInductiveEntries() throws CoreException;
 	
 	public boolean isAccurate() throws CoreException;
 	
@@ -47,6 +49,7 @@ public interface IRecursiveDefinitionInfo extends ISCState {
 		ExtendedExpression caseExpression;
 		ITypeEnvironment localTypeEnvironment;
 
+		// expression must be type checked
 		public CaseEntry(ExtendedExpression caseExpression,
 				ITypeEnvironment localTypeEnvironment) {
 			this.caseExpression = caseExpression;
@@ -59,6 +62,17 @@ public interface IRecursiveDefinitionInfo extends ISCState {
 
 		public ITypeEnvironment getLocalTypeEnvironment() {
 			return localTypeEnvironment;
+		}
+		
+		public boolean isBaseCase(){
+			boolean isBase = true;
+			for (FreeIdentifier ident : caseExpression.getFreeIdentifiers()) {
+				if (ident.getType().equals(caseExpression.getType())) {
+					isBase = false;
+					break;
+				}
+			}
+			return isBase;
 		}
 	}
 }

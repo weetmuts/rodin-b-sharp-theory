@@ -360,7 +360,13 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_TypeMissmatchOfRecDef), 
 			NoCoverageAllRecCase(
 			IMarker.SEVERITY_ERROR,
-			Messages.scuser_NoCoverageAllRecCase)
+			Messages.scuser_NoCoverageAllRecCase), 
+			RecOpTypeNotConsistent(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_RecOpTypeNotConsistent), 
+			OpArgExprNotSet(
+					IMarker.SEVERITY_ERROR, 
+					Messages.scuser_OpArgExprNotSet)
 	;
 
 	private int arity;

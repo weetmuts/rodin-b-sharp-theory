@@ -8,6 +8,7 @@
 package org.eventb.theory.core;
 
 import org.eventb.core.ICommentedElement;
+import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
@@ -23,7 +24,7 @@ import org.rodinp.core.RodinCore;
  * @author maamria
  *
  */
-public interface IOperatorArgument extends IIdentifierElement, ITypeElement, ICommentedElement{
+public interface IOperatorArgument extends IIdentifierElement, IExpressionElement, ICommentedElement{
 
 	IInternalElementType<IOperatorArgument> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".operatorArgument");

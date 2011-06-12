@@ -21,7 +21,6 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IOperatorWDCondition;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -47,7 +46,6 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		INewOperatorDefinition newOpDef = (INewOperatorDefinition) element;
-		ISCNewOperatorDefinition scNewOpDef = (ISCNewOperatorDefinition) target;
 		IOperatorWDCondition[] wdConds = newOpDef.getOperatorWDConditions();
 		
 		if(wdConds != null && wdConds.length > 0){
@@ -56,8 +54,7 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 				if(target != null){
 					Predicate wdPredWD = wdPred.getWDPredicate(factory);
 					wdPred = MathExtensionsUtilities.conjunctPredicates(new Predicate[]{wdPredWD, wdPred}, factory);
-					scNewOpDef.setPredicate(wdPred, monitor);
-					operatorInformation.setWdCondition(wdPred);
+					operatorInformation.addWDCondition(wdPred);
 				}
 				else{
 					operatorInformation.setHasError();

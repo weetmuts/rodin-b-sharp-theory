@@ -19,8 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IExpressionElement;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.ASTProblem;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -225,6 +227,47 @@ public class CoreUtilities {
 			return null;
 		}
 		return predicate;
+	}
+	
+	/**
+	 * Parses and type checks the expression occurring as an attribute to the
+	 * given element
+	 * 
+	 * @param element
+	 *            the rodin element
+	 * @param ff
+	 *            the formula factory
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
+	 * @return the parsed expression
+	 * @throws CoreException
+	 */
+	public static Expression parseAndCheckExpression(IExpressionElement element,
+			FormulaFactory ff, ITypeEnvironment typeEnvironment,
+			IMarkerDisplay display) throws CoreException {
+		IAttributeType.String attributeType = EventBAttributes.EXPRESSION_ATTRIBUTE;
+		String exp = element.getExpressionString();
+		IParseResult result = ff.parseExpression(exp, V2, null);
+		if (issueASTProblemMarkers(element, attributeType, result, display)) {
+			return null;
+		}
+		Expression expression = result.getParsedExpression();
+		FreeIdentifier[] idents = expression.getFreeIdentifiers();
+		for (FreeIdentifier ident : idents) {
+			if (!typeEnvironment.contains(ident.getName())) {
+				display.createProblemMarker(element, attributeType,
+						GraphProblem.UndeclaredFreeIdentifierError,
+						ident.getName());
+				return null;
+			}
+		}
+		ITypeCheckResult tcResult = expression.typeCheck(typeEnvironment);
+		if (issueASTProblemMarkers(element, attributeType, tcResult, display)) {
+			return null;
+		}
+		return expression;
 	}
 
 	/**

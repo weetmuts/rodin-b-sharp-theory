@@ -26,6 +26,20 @@ import org.rodinp.core.RodinDBException;
 public interface IExtensionRulesSource extends IInternalElement{
 
 	/**
+	 * Returns a handle to the type parameter with the given name.
+	 * @param name the parameter name
+	 * @return a handle to the parameter
+	 */
+	public ISCTypeParameter getSCTypeParameter(String name);
+
+	/**
+	 * Returns all type parameters which are the children of this element.
+	 * @return all type parameters
+	 * @throws RodinDBException
+	 */
+	public ISCTypeParameter[] getSCTypeParameters() throws RodinDBException;
+	
+	/**
 	 * Returns a handle to the proof block with the given name.
 	 * @param name of the proof block
 	 * @return the proof block

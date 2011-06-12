@@ -500,12 +500,21 @@
             parent="org.eventb.theory.core.operatorWDConditionModule">
       </filterType>
       <processorType
+            class="org.eventb.theory.core.sc.modules.OperatorSyntacticPropertiesModule"
+            id="operatorSyntacticPropertiesModule"
+            name="%scOperatorSyntacticPropertiesModule"
+            parent="org.eventb.theory.core.operatorModule">
+         <prereq
+               id="org.eventb.theory.core.operatorWDConditionModule">
+         </prereq>
+      </processorType>
+      <processorType
             class="org.eventb.theory.core.sc.modules.OperatorDirectDefinitionModule"
             id="operatorDirectDefinitionModule"
             name="%scOperatorDirectDefinitionModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
-               id="org.eventb.theory.core.operatorWDConditionModule">
+               id="org.eventb.theory.core.operatorSyntacticPropertiesModule">
          </prereq>
       </processorType>
       <processorType
@@ -514,7 +523,7 @@
             name="%scOperatorRecursiveDefinitionModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
-               id="org.eventb.theory.core.operatorWDConditionModule">
+               id="org.eventb.theory.core.operatorSyntacticPropertiesModule">
          </prereq>
       </processorType>
       <filterType
@@ -530,9 +539,9 @@
             parent="org.eventb.theory.core.operatorRecursiveDefinitionModule">
       </processorType>
       <processorType
-            class="org.eventb.theory.core.sc.modules.OperatorPropertiesModule"
-            id="operatorPropertiesModule"
-            name="%scOperatorPropertiesModule"
+            class="org.eventb.theory.core.sc.modules.OperatorSemanticPropertiesModule"
+            id="operatorSemanticPropertiesModule"
+            name="%scOperatorSemanticPropertiesModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
                id="org.eventb.theory.core.operatorDirectDefinitionModule">
@@ -547,7 +556,7 @@
             name="%scOperatorGrammarPatcherModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
-               id="org.eventb.theory.core.operatorPropertiesModule">
+               id="org.eventb.theory.core.operatorSemanticPropertiesModule">
          </prereq>
       </processorType>
       <processorType
@@ -751,7 +760,7 @@
                id="org.eventb.theory.core.operatorDirectDefinitionModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.operatorPropertiesModule">
+               id="org.eventb.theory.core.operatorSemanticPropertiesModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorGrammarPatcherModule">
@@ -803,6 +812,9 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorRecursiveCaseModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.operatorSyntacticPropertiesModule">
          </scModule>
       </configuration>
       <configuration

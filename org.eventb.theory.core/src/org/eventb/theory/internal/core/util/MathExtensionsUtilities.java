@@ -22,7 +22,10 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperator;
@@ -445,6 +448,34 @@ public class MathExtensionsUtilities {
 				return o1.getIndex() - o2.getIndex();
 			}
 		});
+		return list;
+	}
+	
+	/**
+	 * Returns the given types occurring in <code>type</code>.
+	 * @param type the type
+	 * @return all given types
+	 */
+	public static List<GivenType> getGivenTypes(Type type){
+		List<GivenType> list = new ArrayList<GivenType>();
+		if (type instanceof GivenType){
+			list.add((GivenType) type);
+		}
+		if (type instanceof ParametricType){
+			ParametricType parametricType = (ParametricType) type;
+			for (Type t : parametricType.getTypeParameters()){
+				list.addAll(getGivenTypes(t));
+			}
+		}
+		if (type instanceof PowerSetType){
+			PowerSetType powerSetType = (PowerSetType) type;
+			list.addAll(getGivenTypes(powerSetType.getBaseType()));
+		}
+		if (type instanceof ProductType){
+			ProductType productType = (ProductType) type;
+			list.addAll(getGivenTypes(productType.getLeft()));
+			list.addAll(getGivenTypes(productType.getRight()));
+		}
 		return list;
 	}
 }

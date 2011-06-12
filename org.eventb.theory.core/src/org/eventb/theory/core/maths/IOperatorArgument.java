@@ -68,8 +68,7 @@ public interface IOperatorArgument{
 	/**
 	 * Returns the list of given types occurring in the type of this argument.
 	 * 
-	 * @param factory
 	 * @return the list of given types
 	 */
-	public List<GivenType> getGivenTypes(FormulaFactory factory);
+	public List<GivenType> getGivenTypes();
 }

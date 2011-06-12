@@ -137,9 +137,9 @@ public final class MathExtensionsFactory {
 	 * @return the appropriate typing rule
 	 */
 	public ExpressionOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Type resultantType, 
-			Predicate wdPredicate, boolean isAssociative, FormulaFactory factory){
+			Predicate wdPredicate, boolean isAssociative){
 		ExpressionOperatorTypingRule typingRule  = 
-			new ExpressionOperatorTypingRule(operatorArguments, wdPredicate, factory, resultantType, isAssociative);
+			new ExpressionOperatorTypingRule(operatorArguments, wdPredicate, resultantType, isAssociative);
 		
 		return typingRule;
 	}
@@ -152,9 +152,9 @@ public final class MathExtensionsFactory {
 	 * @param factory 
 	 * @return the appropriate typing rule
 	 */
-	public PredicateOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, FormulaFactory factory){
+	public PredicateOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate){
 		PredicateOperatorTypingRule typingRule  = 
-			new PredicateOperatorTypingRule(operatorArguments, wdPredicate, factory);
+			new PredicateOperatorTypingRule(operatorArguments, wdPredicate);
 		return typingRule;
 	}
 	

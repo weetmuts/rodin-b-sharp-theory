@@ -14,8 +14,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
@@ -28,13 +32,11 @@ import org.eventb.theory.core.IOperatorArgument;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -49,6 +51,8 @@ public class OperatorArgumentModule extends IdentifierModule {
 	private final IModuleType<OperatorArgumentModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorArgumentModule");
 
+	private IOperatorInformation operatorInformation;
+	
 	/**
 	 * TODO this should not be needed. Need to request change to implementation
 	 * of symbol tables.
@@ -61,10 +65,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 			throws CoreException {
 		INewOperatorDefinition operatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scOperatorDefinition = (ISCNewOperatorDefinition) target;
-		IOperatorArgument[] arguments = operatorDefinition
-				.getOperatorArguments();
-		IOperatorInformation operatorInformation = (IOperatorInformation) repository
-				.getState(IOperatorInformation.STATE_TYPE);
+		IOperatorArgument[] arguments = operatorDefinition.getOperatorArguments();
 		insertionOrderedSymbols = new ArrayList<IIdentifierSymbolInfo>();
 		fetchSymbols(arguments, target, repository, monitor);
 		for (IIdentifierSymbolInfo symbolInfo : insertionOrderedSymbols) {
@@ -92,6 +93,21 @@ public class OperatorArgumentModule extends IdentifierModule {
 				symbolInfo.makeImmutable();
 			}
 		}
+	}
+	
+	@Override
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		super.initModule(element, repository, monitor);
+		operatorInformation = (IOperatorInformation) repository.getState(IOperatorInformation.STATE_TYPE);
+	}
+
+	@Override
+	public void endModule(IRodinElement element, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		operatorInformation = null;
+		super.endModule(element, repository, monitor);
 	}
 
 	@Override
@@ -151,48 +167,26 @@ public class OperatorArgumentModule extends IdentifierModule {
 	 */
 	protected boolean checkAndType(IOperatorArgument operatorArgument, IIdentifierSymbolInfo identifierSymbolInfo)
 			throws CoreException {
-		if (!operatorArgument.hasType() || operatorArgument.getType().equals("")) {
-			createProblemMarker(operatorArgument, TheoryAttributes.TYPE_ATTRIBUTE,
-					TheoryGraphProblem.TypeAttrMissingForOpArgError,
-					operatorArgument.getIdentifierString());
+		if (!operatorArgument.hasExpressionString() || operatorArgument.getExpressionString().equals("")) {
+			createProblemMarker(operatorArgument, EventBAttributes.EXPRESSION_ATTRIBUTE,
+					GraphProblem.ExpressionUndefError);
 			return false;
 		}
-		Type type = CoreUtilities.parseTypeExpression(operatorArgument, factory, this);
-		if (type == null) {
+		Expression exp = CoreUtilities.parseAndCheckExpression(operatorArgument, factory, typeEnvironment, this);
+		if (exp == null){
 			return false;
 		}
-		if (!checkTypeParameters(type, operatorArgument)) {
+		Type type = exp.getType();
+		if (!(type instanceof PowerSetType)){
+			createProblemMarker(operatorArgument, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.OpArgExprNotSet);
 			return false;
 		}
-		identifierSymbolInfo.setType(type);
-		return true;
-	}
-
-	/**
-	 * Returns whether the given type of the argument uses only the type parameters declared in the enclosing theory.
-	 * @param type the type of the argument
-	 * @param operatorArgument the operator argument
-	 * @return whether the given type of the argument uses only the type parameters
-	 * @throws CoreException
-	 */
-	protected boolean checkTypeParameters(Type type, IOperatorArgument operatorArgument)
-			throws CoreException {
-		FreeIdentifier[] idents = type.toExpression(factory).getSyntacticallyFreeIdentifiers();
-		List<String> givenSets = MathExtensionsUtilities.getGivenSetsNames(typeEnvironment);
-		for (FreeIdentifier ident : idents) {
-			if (!typeEnvironment.contains(ident.getName())) {
-				createProblemMarker(operatorArgument, TheoryAttributes.TYPE_ATTRIBUTE,
-						GraphProblem.UndeclaredFreeIdentifierError,
-						ident.getName());
-				return false;
-			} else if (!givenSets.contains(ident.getName())) {
-				createProblemMarker(operatorArgument, TheoryAttributes.TYPE_ATTRIBUTE,
-						TheoryGraphProblem.IdentIsNotTypeParError,
-						ident.getName());
-				return false;
-			}
+		identifierSymbolInfo.setType(type.getBaseType());
+		if (!exp.isATypeExpression()){
+			FreeIdentifier identifier = factory.makeFreeIdentifier(identifierSymbolInfo.getSymbol(), null, type);
+			Predicate wdCondition = factory.makeRelationalPredicate(Formula.IN, identifier, exp, null);
+			operatorInformation.addWDCondition(wdCondition);
 		}
 		return true;
 	}
-
 }

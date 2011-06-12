@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
-import java.util.List;
-
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -42,17 +40,5 @@ public interface IOperatorTypingRule<F extends Formula<F>> {
 	 * @return the instantiated well-definedness condition
 	 */
 	public Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator);
-	
-	/**
-	 * Returns the well-definedness predicate general pattern for instances of the concerned operator.
-	 * @return the pattern well-definedness
-	 */
-	public Predicate getWDPredicate();
-	
-	/**
-	 * Returns the list of operator arguments.
-	 * @return operator arguments
-	 */
-	public List<IOperatorArgument> getOperatorArguments();
 	
 }

@@ -18,14 +18,14 @@ import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.FORMULA_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GIVEN_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GROUP_ID_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.IMPORT_THEORY_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.INTERACTIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.IMPORT_THEORY_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -39,6 +39,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.basis.EventBElement;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
+import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.core.IAssociativeElement;
 import org.eventb.theory.core.IAutomaticElement;
 import org.eventb.theory.core.ICommutativeElement;
@@ -57,10 +58,10 @@ import org.eventb.theory.core.IReasoningTypeElement;
 import org.eventb.theory.core.ISCFormulaElement;
 import org.eventb.theory.core.ISCGivenTypeElement;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ISCTypeElement;
 import org.eventb.theory.core.ISyntaxSymbolElement;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.IValidatedElement;
-import org.eventb.theory.core.AstUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -75,7 +76,7 @@ public abstract class TheoryElement extends EventBElement implements
 		IAssociativeElement, ICommutativeElement, IFormulaElement,
 		IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
 		ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
-		IInteractiveElement, IDefinitionalElement,
+		IInteractiveElement, IDefinitionalElement, ISCTypeElement,
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
 		IReasoningTypeElement, IValidatedElement, IOperatorGroupElement,
 		IImportTheoryElement, IInductiveArgumentElement {
@@ -90,21 +91,34 @@ public abstract class TheoryElement extends EventBElement implements
 
 	@Override
 	public boolean hasOperatorGroup() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return hasAttribute(GROUP_ID_ATTRIBUTE);
 	}
 
 	@Override
 	public String getOperatorGroup() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getAttributeValue(GROUP_ID_ATTRIBUTE);
 	}
 
 	@Override
 	public void setOperatorGroup(String newGroup, IProgressMonitor monitor)
 			throws RodinDBException {
-		// TODO Auto-generated method stub
 		setAttributeValue(GROUP_ID_ATTRIBUTE, newGroup, monitor);
+	}
+	
+	@Override
+	public Type getType(FormulaFactory factory) throws RodinDBException {
+		String type = getType();
+		IParseResult result = factory.parseType(type, V2);
+		if (result.hasProblem()){
+			throw Util.newRodinDBException(org.eventb.theory.core.sc.Messages.database_SCTypeParseFailure, this);
+		}
+		return result.getParsedType();
+	}
+
+	@Override
+	public void setType(Type type, IProgressMonitor monitor)
+			throws RodinDBException {
+		setType(type.toString(), monitor);
 	}
 
 	@Override
@@ -504,5 +518,4 @@ public abstract class TheoryElement extends EventBElement implements
 			return ReasoningType.BACKWARD_AND_FORWARD;
 		throw new IllegalArgumentException("unknown reasoning type " + type);
 	}
-
 }
