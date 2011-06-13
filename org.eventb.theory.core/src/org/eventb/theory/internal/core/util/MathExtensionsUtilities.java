@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -369,27 +368,6 @@ public class MathExtensionsUtilities {
 			result.add(g.getId());
 		}
 		return result;
-	}
-
-	
-	/**
-	 * Returns the type parameters occurring in the given type.
-	 * 
-	 * @param type
-	 *            the type
-	 * @param factory
-	 *            the formula factory
-	 * @return the list of occurring types parameters
-	 */
-	public static List<Type> getTypeParametersInType(Type type,
-			FormulaFactory factory) {
-		FreeIdentifier[] idents = type.toExpression(factory)
-				.getFreeIdentifiers();
-		List<Type> types = new ArrayList<Type>();
-		for (FreeIdentifier ident : idents) {
-			types.add(factory.makeGivenType(ident.getName()));
-		}
-		return types;
 	}
 
 	/**

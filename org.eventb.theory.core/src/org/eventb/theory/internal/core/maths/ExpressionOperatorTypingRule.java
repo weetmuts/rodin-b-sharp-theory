@@ -30,45 +30,42 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule<Expression>
-implements IExpressionTypeChecker{
-	
+public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule<Expression> implements IExpressionTypeChecker {
+
 	protected Type resultantType;
 	protected boolean isAssociative;
-	
-	public ExpressionOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, 
-			Type resultantType, boolean isAssociative) {
+
+	public ExpressionOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Type resultantType, boolean isAssociative) {
 		super(operatorArguments, wdPredicate);
 		this.resultantType = resultantType;
 		this.isAssociative = isAssociative;
+		this.typeParameters.addAll(MathExtensionsUtilities.getGivenTypes(resultantType));
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return super.toString() + "=>" + resultantType.toString();
 	}
 
 	@Override
-	public boolean verifyType(Type proposedType, Expression[] childExprs,
-			Predicate[] childPreds) {
-		if(childExprs.length != arity && !isAssociative)
+	public boolean verifyType(Type proposedType, Expression[] childExprs, Predicate[] childPreds) {
+		if (childExprs.length != arity && !isAssociative)
 			return false;
 		Map<GivenType, Type> calculatedInstantiations = new HashMap<GivenType, Type>();
-		if(!unifyTypes(resultantType, proposedType, calculatedInstantiations)){
+		if (!unifyTypes(resultantType, proposedType, calculatedInstantiations)) {
 			return false;
 		}
-		if (isAssociative)
-		{
-			for(int i = 0 ; i < arity ; i++){
-				if(!unifyTypes(resultantType, childExprs[i].getType(), calculatedInstantiations)){
+		if (isAssociative) {
+			for (int i = 0; i < arity; i++) {
+				if (!unifyTypes(resultantType, childExprs[i].getType(), calculatedInstantiations)) {
 					return false;
 				}
 			}
 			return true;
 		}
-		for(int i = 0 ; i < arity ; i++){
-			if(!unifyTypes(operatorArguments.get(i).getArgumentType(), childExprs[i].getType(), calculatedInstantiations)){
+		for (int i = 0; i < arity; i++) {
+			if (!unifyTypes(operatorArguments.get(i).getArgumentType(), childExprs[i].getType(), calculatedInstantiations)) {
 				return false;
 			}
 		}
@@ -78,8 +75,7 @@ implements IExpressionTypeChecker{
 	@Override
 	public Type typeCheck(ExtendedExpression expression, ITypeCheckMediator mediator) {
 		Expression[] childExpressions = expression.getChildExpressions();
-		if (isAssociative)
-		{
+		if (isAssociative) {
 			final Type t = mediator.newTypeVariable();
 			for (Expression child : childExpressions) {
 				mediator.sameType(child.getType(), t);
@@ -91,21 +87,18 @@ implements IExpressionTypeChecker{
 		}
 		Type[] argumentTypesAsVars = new Type[arity];
 		HashMap<GivenType, Type> parameterToTypeVarMap = new HashMap<GivenType, Type>();
-		for (int i = 0; i < typeParameters.size(); i++) {
-			parameterToTypeVarMap.put(typeParameters.get(i),
-					mediator.newTypeVariable());
+		for (GivenType givenType : typeParameters) {
+			parameterToTypeVarMap.put(givenType, mediator.newTypeVariable());
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
-			argumentTypesAsVars[i] = constructPatternType(operatorArguments.get(i).getArgumentType(),
-							parameterToTypeVarMap, mediator);
+			argumentTypesAsVars[i] = constructPatternType(operatorArguments.get(i).getArgumentType(), parameterToTypeVarMap, mediator);
 		}
 
 		for (int i = 0; i < childExpressions.length; i++) {
 			Type currentType = childExpressions[i].getType();
 			mediator.sameType(argumentTypesAsVars[i], currentType);
 		}
-		return constructPatternType(resultantType,
-				parameterToTypeVarMap, mediator);
+		return constructPatternType(resultantType, parameterToTypeVarMap, mediator);
 	}
 
 	@Override
@@ -113,20 +106,20 @@ implements IExpressionTypeChecker{
 		Type[] types = MathExtensionsUtilities.getTypes(childExprs);
 		return synthesizeType(types, mediator.getFactory());
 	}
-	
-	protected Type synthesizeType(Type[] childrenTypes, FormulaFactory factory){
-		if (isAssociative)
-		{
-			// associative operators always have 2 or more children 
+
+	protected Type synthesizeType(Type[] childrenTypes, FormulaFactory factory) {
+		if (isAssociative) {
+			// associative operators always have 2 or more children
 			return childrenTypes[0];
 		}
-		
+
 		Expression typeExpression = resultantType.toExpression(factory);
 		String rawTypeExp = typeExpression.toString();
-		Expression exp = factory.parseExpression(rawTypeExp,
-				LanguageVersion.V2, null).getParsedExpression();
+		Expression exp = factory.parseExpression(rawTypeExp, LanguageVersion.V2, null).getParsedExpression();
 		Map<FreeIdentifier, Expression> typeSubs = getTypeSubstitutions(childrenTypes, factory);
-		if(typeSubs == null)
+		// FIXED Bug if type substitutions is empty that means we are dealing with a generic operator, 
+		// hence need proposed type and type check
+		if (typeSubs == null || typeSubs.isEmpty())
 			return null;
 		ITypeEnvironment typeEnvironment = generateTypeParametersTypeEnvironment(typeSubs, factory);
 		exp.typeCheck(typeEnvironment);
@@ -138,7 +131,7 @@ implements IExpressionTypeChecker{
 		}
 		return null;
 	}
-	
+
 	protected Map<FreeIdentifier, Expression> getTypeSubstitutions(Type[] childrenTypes, FormulaFactory factory) {
 		Map<FreeIdentifier, Expression> subs = new HashMap<FreeIdentifier, Expression>();
 		Map<GivenType, Type> instantiations = new HashMap<GivenType, Type>();
@@ -155,9 +148,7 @@ implements IExpressionTypeChecker{
 			}
 		}
 		for (GivenType gType : instantiations.keySet()) {
-			subs.put(factory.makeFreeIdentifier(gType.getName(), null,
-					instantiations.get(gType).toExpression(factory).getType()),
-					instantiations.get(gType).toExpression(factory));
+			subs.put(factory.makeFreeIdentifier(gType.getName(), null, instantiations.get(gType).toExpression(factory).getType()), instantiations.get(gType).toExpression(factory));
 		}
 		return subs;
 	}

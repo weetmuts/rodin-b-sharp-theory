@@ -7,11 +7,12 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
@@ -55,7 +56,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 
 	protected List<IOperatorArgument> operatorArguments;
 	protected int arity = 0;
-	protected List<GivenType> typeParameters;
+	protected Set<GivenType> typeParameters;
 	protected Predicate wdPredicate;
 	
 	/**
@@ -70,7 +71,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 	public AbstractOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate) {
 		this.operatorArguments = operatorArguments;
 		this.arity = operatorArguments.size();
-		this.typeParameters = new ArrayList<GivenType>();
+		this.typeParameters = new HashSet<GivenType>();
 		for (IOperatorArgument operatorArgument : operatorArguments){
 			addTypeParameters(MathExtensionsUtilities.getGivenTypes(operatorArgument.getArgumentType()));
 		}

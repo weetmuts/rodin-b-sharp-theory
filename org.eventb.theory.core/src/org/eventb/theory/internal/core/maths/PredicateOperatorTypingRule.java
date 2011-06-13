@@ -40,9 +40,8 @@ implements IPredicateTypeChecker{
 		Expression[] childExpressions = predicate.getChildExpressions();
 		Type[] argumentTypesAsVars = new Type[arity];
 		HashMap<GivenType, Type> parameterToTypeVarMap = new HashMap<GivenType, Type>();
-		for (int i = 0; i < typeParameters.size(); i++) {
-			parameterToTypeVarMap.put(typeParameters.get(i),
-					mediator.newTypeVariable());
+		for (GivenType givenType : typeParameters) {
+			parameterToTypeVarMap.put(givenType,mediator.newTypeVariable());
 		}
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
 			argumentTypesAsVars[i] = 

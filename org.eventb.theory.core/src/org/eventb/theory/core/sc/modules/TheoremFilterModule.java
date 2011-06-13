@@ -51,7 +51,8 @@ public class TheoremFilterModule extends SCFilterModule{
 			return false;
 		}
 		ILabelSymbolInfo info = labelSymbolTable.getSymbolInfo(label);
-		info.setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, thmPredicate.toString());
+		// FIXED Bug used toStringWithTypes() instead of toString() to avoid losing type information
+		info.setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, thmPredicate.toStringWithTypes());
 		return true;
 	}
 	
