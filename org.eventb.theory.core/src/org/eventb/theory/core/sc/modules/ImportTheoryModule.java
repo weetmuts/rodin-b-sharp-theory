@@ -154,7 +154,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 					.importClosure(referencedRoot);
 			allReferencedRoots.add(referencedRoot);
 			importMap.put(importTheory, allReferencedRoots);
-			contributedSymbols.put(importTheory, CoreUtilities.getSyntacticAdditionsOfHierarchy(referencedRoot));
+			contributedSymbols.put(importTheory, CoreUtilities.getSyntacticSymbolsOfHierarchy(referencedRoot));
 		}
 		// check redundant imports
 		IImportTheory[] importTheoriesArray = importTheoriesDirectives

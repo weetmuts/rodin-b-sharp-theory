@@ -99,8 +99,7 @@ public class MathExtensionsUtilities {
 	 *            the type environment
 	 * @return all given types
 	 */
-	public static List<String> getGivenSetsNames(
-			ITypeEnvironment typeEnvironment) {
+	public static List<String> getGivenSetsNames(ITypeEnvironment typeEnvironment) {
 		List<String> result = new ArrayList<String>();
 		for (String name : typeEnvironment.getNames()) {
 			if (isGivenSet(typeEnvironment, name)) {
@@ -120,8 +119,7 @@ public class MathExtensionsUtilities {
 	 *            the name
 	 * @return whether <code>name</code> is a given set
 	 */
-	public static boolean isGivenSet(ITypeEnvironment typeEnvironment,
-			String name) {
+	public static boolean isGivenSet(ITypeEnvironment typeEnvironment, String name) {
 		Type type = typeEnvironment.getType(name);
 		if (type == null) {
 			return false;
@@ -143,8 +141,7 @@ public class MathExtensionsUtilities {
 	 *            the formula factor
 	 * @return the predicate
 	 */
-	public static Predicate conjunctPredicates(Predicate[] preds,
-			FormulaFactory ff) {
+	public static Predicate conjunctPredicates(Predicate[] preds, FormulaFactory ff) {
 		List<Predicate> pList = new ArrayList<Predicate>();
 		for (Predicate p : preds) {
 			if (!p.equals(BTRUE)) {
@@ -163,8 +160,7 @@ public class MathExtensionsUtilities {
 	 *            the formula factor
 	 * @return the predicate
 	 */
-	public static Predicate conjunctPredicates(List<Predicate> preds,
-			FormulaFactory ff) {
+	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff) {
 		while (preds.contains(BTRUE)) {
 			preds.remove(BTRUE);
 		}
@@ -186,11 +182,10 @@ public class MathExtensionsUtilities {
 	 * @param typeArguments
 	 *            the list of type arguments
 	 * @param the
-	 *            formula factory tha knows about this datatype
+	 *            formula factory that knows about this datatype
 	 * @return the type expression
 	 */
-	public static Type createTypeExpression(String identifierString,
-			List<String> typeArguments, FormulaFactory ff) {
+	public static Type createTypeExpression(String identifierString, List<String> typeArguments, FormulaFactory ff) {
 		String result = identifierString;
 		if (typeArguments.size() != 0) {
 			result += "(";
@@ -201,33 +196,38 @@ public class MathExtensionsUtilities {
 				}
 			}
 			result += ")";
-	
+
 		}
 		IParseResult parseResult = ff.parseType(result, LanguageVersion.V2);
-		if(parseResult.hasProblem())
+		if (parseResult.hasProblem())
 			return null;
 		return parseResult.getParsedType();
-	
+
 	}
 
 	/**
 	 * Returns a formula factory with only one extension; the COND extension.
+	 * 
 	 * @return the formula factory with COND
 	 */
-	public static FormulaFactory getFactoryWithCond(){
+	public static FormulaFactory getFactoryWithCond() {
 		return FormulaFactory.getInstance(singletonExtension(COND));
 	}
-	
+
 	/**
-	 * Returns an appropriate group for the operator with the supplied properties.
+	 * Returns an appropriate group for the operator with the supplied
+	 * properties.
 	 * <p>
-	 * @param formulaType the formula type of the operator
-	 * @param notation the notation of the operator
-	 * @param arity the airty of the operator
+	 * 
+	 * @param formulaType
+	 *            the formula type of the operator
+	 * @param notation
+	 *            the notation of the operator
+	 * @param arity
+	 *            the airty of the operator
 	 * @return the appropriate group
 	 */
-	public static String getGroupFor(FormulaType formulaType,
-			Notation notation, int arity) {
+	public static String getGroupFor(FormulaType formulaType, Notation notation, int arity) {
 		String group = DUMMY_OPERATOR_GROUP;
 		switch (formulaType) {
 		case EXPRESSION: {
@@ -289,7 +289,7 @@ public class MathExtensionsUtilities {
 	 * @return whether an operator with the given ID already exists
 	 */
 	public static boolean checkOperatorID(String id, FormulaFactory ff) {
-		return !populateOpIDs(ff).contains(id);
+		return !getOperatorIDs(ff).contains(id);
 	}
 
 	/**
@@ -302,9 +302,8 @@ public class MathExtensionsUtilities {
 	 *            the formula factory
 	 * @return whether an operator with the given symbol already exists
 	 */
-	public static boolean checkOperatorSyntaxSymbol(String symbol,
-			FormulaFactory ff) {
-		return !populateOpSyntaxSymbols(ff).contains(symbol);
+	public static boolean checkOperatorSyntaxSymbol(String symbol, FormulaFactory ff) {
+		return !getOperatorSyntaxSymbols(ff).contains(symbol);
 	}
 
 	/**
@@ -317,17 +316,18 @@ public class MathExtensionsUtilities {
 	 * @return whether a group with the given ID already exists
 	 */
 	public static boolean checkGroupID(String id, FormulaFactory ff) {
-		return !populateOperatorGroupIDs(ff).contains(id);
+		return !getOperatorGroups(ff).contains(id);
 	}
 
 	/**
-	 * Populates all syntax symbols of all operators recognised by the given formula
-	 * factory.
+	 * Populates all syntax symbols of all operators recognised by the given
+	 * formula factory.
 	 * 
-	 * @param ff the formula factory
+	 * @param ff
+	 *            the formula factory
 	 * @return the list of all syntax symbols
 	 */
-	static List<String> populateOpSyntaxSymbols(FormulaFactory ff) {
+	static List<String> getOperatorSyntaxSymbols(FormulaFactory ff) {
 		List<String> result = new ArrayList<String>();
 		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
 		for (IOperatorGroup g : groups) {
@@ -337,14 +337,16 @@ public class MathExtensionsUtilities {
 		}
 		return result;
 	}
+
 	/**
 	 * Populates all IDs of all operators recognised by the given formula
 	 * factory.
 	 * 
-	 * @param ff the formula factory
+	 * @param ff
+	 *            the formula factory
 	 * @return the list of all existing IDs
 	 */
-	static List<String> populateOpIDs(FormulaFactory ff) {
+	static List<String> getOperatorIDs(FormulaFactory ff) {
 		List<String> result = new ArrayList<String>();
 		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
 		for (IOperatorGroup g : groups) {
@@ -354,14 +356,16 @@ public class MathExtensionsUtilities {
 		}
 		return result;
 	}
+
 	/**
 	 * Populates all groups of all operators recognised by the given formula
 	 * factory.
 	 * 
-	 * @param ff the formula factory
+	 * @param ff
+	 *            the formula factory
 	 * @return the list of all existing group IDs
 	 */
-	static List<String> populateOperatorGroupIDs(FormulaFactory ff) {
+	static List<String> getOperatorGroups(FormulaFactory ff) {
 		List<String> result = new ArrayList<String>();
 		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
 		for (IOperatorGroup g : groups) {
@@ -386,17 +390,18 @@ public class MathExtensionsUtilities {
 	}
 
 	/**
-	 * Creates a type environment using the given factory with all the names occurring
-	 * in the given type environment.
+	 * Creates a type environment using the given factory with all the names
+	 * occurring in the given type environment.
 	 * 
-	 * @param typeEnvironment the old type environment
-	 * @param factory the formula factory
+	 * @param typeEnvironment
+	 *            the old type environment
+	 * @param factory
+	 *            the formula factory
 	 * @return the new type environment
 	 */
-	public static ITypeEnvironment getTypeEnvironmentForFactory(
-			ITypeEnvironment typeEnvironment, FormulaFactory factory){
+	public static ITypeEnvironment getTypeEnvironmentForFactory(ITypeEnvironment typeEnvironment, FormulaFactory factory) {
 		ITypeEnvironment newTypeEnvironment = factory.makeTypeEnvironment();
-		for (String name : typeEnvironment.getNames()){
+		for (String name : typeEnvironment.getNames()) {
 			newTypeEnvironment.addName(name, typeEnvironment.getType(name));
 		}
 		return newTypeEnvironment;
@@ -404,23 +409,26 @@ public class MathExtensionsUtilities {
 
 	/**
 	 * Returns a singleton set containing one mathematical extension.
-	 * @param element the mathematical extension
+	 * 
+	 * @param element
+	 *            the mathematical extension
 	 * @return a singleton set
 	 */
-	public static Set<IFormulaExtension> singletonExtension(IFormulaExtension element){
+	public static Set<IFormulaExtension> singletonExtension(IFormulaExtension element) {
 		return GeneralUtilities.singletonSet(element);
 	}
 
 	/**
-	 * Returns a sorted list of the given operator arguments. Operator arguments are sorted
-	 * in ascending order by their index.
-	 * @param args the operator arguments
+	 * Returns a sorted list of the given operator arguments. Operator arguments
+	 * are sorted in ascending order by their index.
+	 * 
+	 * @param args
+	 *            the operator arguments
 	 * @return the sorted list of operator arguments
 	 */
-	public static List<IOperatorArgument> sort(Collection<IOperatorArgument> args){
+	public static List<IOperatorArgument> sortOperatorArguments(Collection<IOperatorArgument> args) {
 		List<IOperatorArgument> list = new ArrayList<IOperatorArgument>(args);
 		Collections.sort(list, new Comparator<IOperatorArgument>() {
-
 			@Override
 			public int compare(IOperatorArgument o1, IOperatorArgument o2) {
 				return o1.getIndex() - o2.getIndex();
@@ -428,28 +436,30 @@ public class MathExtensionsUtilities {
 		});
 		return list;
 	}
-	
+
 	/**
 	 * Returns the given types occurring in <code>type</code>.
-	 * @param type the type
+	 * 
+	 * @param type
+	 *            the type
 	 * @return all given types
 	 */
-	public static List<GivenType> getGivenTypes(Type type){
+	public static List<GivenType> getGivenTypes(Type type) {
 		List<GivenType> list = new ArrayList<GivenType>();
-		if (type instanceof GivenType){
+		if (type instanceof GivenType) {
 			list.add((GivenType) type);
 		}
-		if (type instanceof ParametricType){
+		if (type instanceof ParametricType) {
 			ParametricType parametricType = (ParametricType) type;
-			for (Type t : parametricType.getTypeParameters()){
+			for (Type t : parametricType.getTypeParameters()) {
 				list.addAll(getGivenTypes(t));
 			}
 		}
-		if (type instanceof PowerSetType){
+		if (type instanceof PowerSetType) {
 			PowerSetType powerSetType = (PowerSetType) type;
 			list.addAll(getGivenTypes(powerSetType.getBaseType()));
 		}
-		if (type instanceof ProductType){
+		if (type instanceof ProductType) {
 			ProductType productType = (ProductType) type;
 			list.addAll(getGivenTypes(productType.getLeft()));
 			list.addAll(getGivenTypes(productType.getRight()));

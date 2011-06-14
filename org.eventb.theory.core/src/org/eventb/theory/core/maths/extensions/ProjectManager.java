@@ -83,15 +83,7 @@ public class ProjectManager {
 	public synchronized void reloadDirtyExtensions(final FormulaFactory seedFactory)
 			throws CoreException {
 		scExtensionsMap.clear();
-		ISCTheoryRoot[] scRoots = DatabaseUtilities.getSCTheoryRoots(project,
-				new DatabaseUtilities.TheoriesFilter<ISCTheoryRoot>() {
-
-					@Override
-					public boolean filter(ISCTheoryRoot theory) {
-						// TODO Auto-generated method stub
-						return theory.exists();
-					}
-				});
+		ISCTheoryRoot[] scRoots = DatabaseUtilities.getSCTheoryRoots(project, DatabaseUtilities.getExistingSCTheoriesFilter());
 		graph.setCheckedRoots(scRoots);
 		
 		for (ISCTheoryRoot root : graph.getCheckedRoots()) {

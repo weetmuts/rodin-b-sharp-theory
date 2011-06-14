@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
@@ -20,17 +18,19 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.theory.core.maths.IOperatorExtension;
 
 /**
- * Utilities from the Theory Core that are mostly useful for the Rule-based Prover.
+ * Utilities from the Theory Core that are mostly useful for the Rule-based
+ * Prover.
+ * 
+ * TODO fix the flattening method
  * 
  * @since 1.0
  * @author maamria
- *
+ * 
  */
 public class AstUtilities {
 
-	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] {
-			Notation.PREFIX.toString(), Notation.INFIX.toString() };
-	
+	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] { Notation.PREFIX.toString(), Notation.INFIX.toString() };
+
 	/**
 	 * Converts a string (e.g., "POSTFIX") to the corresponding notation.
 	 * 
@@ -43,116 +43,64 @@ public class AstUtilities {
 			return Notation.POSTFIX;
 		} else if (type.equalsIgnoreCase(Notation.INFIX.toString())) {
 			return Notation.INFIX;
-		}// default to prefix 
+		}// default to prefix
 		else {
 			return Notation.PREFIX;
 		}
 	}
-	
+
 	/**
 	 * Returns whether the given extended expression is associative.
-	 * @param expression the extended expression
+	 * 
+	 * @param expression
+	 *            the extended expression
 	 * @return whether the given extended expression is associative
 	 */
-	public static boolean isAssociative(ExtendedExpression expression){
-		return expression != null &&
-			expression.getExtension() instanceof IOperatorExtension &&
-			((IOperatorExtension<?>) expression.getExtension()).isAssociative();
+	public static boolean isAssociative(ExtendedExpression expression) {
+		return expression != null && expression.getExtension() instanceof IOperatorExtension && ((IOperatorExtension<?>) expression.getExtension()).isAssociative();
 	}
-	
+
 	/**
 	 * Returns whether the given extended expression is associative commutative.
-	 * @param expression the extended expression
+	 * 
+	 * @param expression
+	 *            the extended expression
 	 * @return whether the given extended expression is associative commutative
 	 */
-	public static boolean isAC(ExtendedExpression expression){
-		return isAssociative(expression) &&
-			((IOperatorExtension<?>) expression.getExtension()).isCommutative();
+	public static boolean isAC(ExtendedExpression expression) {
+		return isAssociative(expression) && ((IOperatorExtension<?>) expression.getExtension()).isCommutative();
 	}
-	
+
 	/**
 	 * Returns the non-flattened version of the the extended expression with the
 	 * given children.
-	 * @param extension the formula extension
-	 * @param children the extended expression children
-	 * @param factory the formula factory
-	 * @return the non-flattened extended expression
-	 * TODO the result is right-associative/ make left-associative
+	 * 
+	 * @param extension
+	 *            the formula extension
+	 * @param children
+	 *            the extended expression children
+	 * @param factory
+	 *            the formula factory
+	 * @return the non-flattened extended expression TODO the result is
+	 *         right-associative/ make left-associative
 	 */
-	public static ExtendedExpression unflatten(IFormulaExtension extension,
-			Expression[] children, FormulaFactory factory) {
-		if(!isATheoryExtension(extension)){
-			if (extension instanceof IExpressionExtension){
-				return factory.makeExtendedExpression(
-						(IExpressionExtension)extension, 
-						children, new Predicate[0], null);
+	public static ExtendedExpression unflatten(IFormulaExtension extension, Expression[] children, FormulaFactory factory) {
+		if (!isATheoryExtension(extension)) {
+			if (extension instanceof IExpressionExtension) {
+				return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0], null);
 			}
-	
 		}
-		if(isATheoryExtension(extension) && !((IOperatorExtension<?>) extension).isAssociative()){
-			return factory.makeExtendedExpression((IExpressionExtension)extension, children, new Predicate[0], null);
+		if (isAnAssociativeExtension(extension)) {
+			return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0], null);
 		}
 		// only works for extended expressions resulting from theory extensions
 		// children length has to be 2 or more
 		IExpressionExtension expreExtension = (IExpressionExtension) extension;
 		if (children.length == 2) {
-			return factory.makeExtendedExpression(expreExtension, children,
-					new Predicate[0], null);
+			return factory.makeExtendedExpression(expreExtension, children, new Predicate[0], null);
 		} else {
 			Expression[] toWorkWith = subChildren(1, children);
-			return factory.makeExtendedExpression(
-					expreExtension,
-					new Expression[] { children[0],
-							unflatten(extension, toWorkWith, factory) },
-					new Predicate[0], null);
-		}
-	}
-	
-	/**
-	 * Returns the non-flattened version of the the associative expression with the
-	 * given children.
-	 * @param tag the expression tag
-	 * @param children the extended expression children
-	 * @param factory the formula factory
-	 * @return the non-flattened associative expression
-	 * 
-	 * TODO the result is right-associative/ make left-associative
-	 */
-	public static AssociativeExpression unflatten(int tag,
-			Expression[] children, FormulaFactory factory) {
-		// only works for associative expressions (TODO check tag)
-		if (children.length == 2) {
-			return factory.makeAssociativeExpression(tag, children, null);
-		} else {
-			Expression[] toWorkWith = subChildren(1, children);
-			return factory.makeAssociativeExpression(
-					tag,
-					new Expression[] { children[0],
-							unflatten(tag, toWorkWith, factory)}, null);
-		}
-	}
-	
-	/**
-	 * Returns the non-flattened version of the the associative predicate with the
-	 * given children.
-	 * @param tag the predicate tag
-	 * @param children the predicate children
-	 * @param factory the formula factory
-	 * @return the non-flattened associative predicate
-	 * 
-	 * TODO the result is right-associative/ make left-associative
-	 */
-	public static AssociativePredicate unflatten(int tag,
-			Predicate[] children, FormulaFactory factory) {
-		// only works for associative predicates (TODO check tag)
-		if (children.length == 2) {
-			return factory.makeAssociativePredicate(tag, children, null);
-		} else {
-			Predicate[] toWorkWith = subChildren(1, children);
-			return factory.makeAssociativePredicate(
-					tag,
-					new Predicate[] { children[0],
-							unflatten(tag, toWorkWith, factory)}, null);
+			return factory.makeExtendedExpression(expreExtension, new Expression[] { children[0], unflatten(extension, toWorkWith, factory) }, new Predicate[0], null);
 		}
 	}
 
@@ -167,29 +115,7 @@ public class AstUtilities {
 	 *            the original array
 	 * @return the sub-array
 	 */
-	public static Predicate[] subChildren(int start, Predicate[] children) {
-		if (start > children.length - 1) {
-			return new Predicate[0];
-		} else {
-			Predicate[] result = new Predicate[children.length - start];
-			for (int i = 0; i < result.length; i++) {
-				result[i] = children[i + start];
-			}
-			return result;
-		}
-	}
-	/**
-	 * This method returns the array resulting from taking the elements of
-	 * children in the same order starting from the (zero-based) given starting
-	 * index (inclusive).
-	 * 
-	 * @param start
-	 *            the starting index
-	 * @param children
-	 *            the original array
-	 * @return the sub-array
-	 */
-	public static Expression[] subChildren(int start, Expression[] children) {
+	static Expression[] subChildren(int start, Expression[] children) {
 		if (start > children.length - 1) {
 			return new Expression[0];
 		} else {
@@ -211,8 +137,7 @@ public class AstUtilities {
 	 * @return operator position
 	 */
 	@SuppressWarnings("unchecked")
-	public static PositionPoint getPositionOfOperator(ExtendedExpression eexp,
-			String predStr) {
+	public static PositionPoint getPositionOfOperator(ExtendedExpression eexp, String predStr) {
 		assert eexp.getExtension() instanceof IOperatorExtension;
 		PositionPoint point = null;
 		IOperatorExtension<Expression> extension = (IOperatorExtension<Expression>) eexp.getExtension();
@@ -222,18 +147,15 @@ public class AstUtilities {
 		case INFIX:
 			Expression ie1 = eexp.getChildExpressions()[0];
 			Expression ie2 = eexp.getChildExpressions()[1];
-			point = getOperatorPosition(predStr, ie1.getSourceLocation()
-					.getEnd() + 1, ie2.getSourceLocation().getStart());
+			point = getOperatorPosition(predStr, ie1.getSourceLocation().getEnd() + 1, ie2.getSourceLocation().getStart());
 			break;
 
 		default:
 			if (eexp.getChildExpressions().length == 0) {
-				point = getOperatorPosition(predStr, eexp.getSourceLocation()
-						.getStart(), eexp.getSourceLocation().getEnd() + 1);
+				point = getOperatorPosition(predStr, eexp.getSourceLocation().getStart(), eexp.getSourceLocation().getEnd() + 1);
 			} else {
 				Expression pe1 = eexp.getChildExpressions()[0];
-				point = getOperatorPosition(predStr, eexp.getSourceLocation()
-						.getStart(), pe1.getSourceLocation().getStart());
+				point = getOperatorPosition(predStr, eexp.getSourceLocation().getStart(), pe1.getSourceLocation().getStart());
 			}
 			break;
 		}
@@ -249,13 +171,11 @@ public class AstUtilities {
 	 *            the string of the predicate
 	 * @return operator position
 	 */
-	public static PositionPoint getPositionOfOperator(ExtendedPredicate epred,
-			String predStr) {
+	public static PositionPoint getPositionOfOperator(ExtendedPredicate epred, String predStr) {
 		assert epred.getExtension() instanceof IOperatorExtension;
 		PositionPoint point = null;
 		Expression pe1 = epred.getChildExpressions()[0];
-		point = getOperatorPosition(predStr, epred.getSourceLocation()
-				.getStart(), pe1.getSourceLocation().getStart());
+		point = getOperatorPosition(predStr, epred.getSourceLocation().getStart(), pe1.getSourceLocation().getStart());
 		return point;
 	}
 
@@ -268,15 +188,17 @@ public class AstUtilities {
 	public static boolean isATheoryExtension(IFormulaExtension extension) {
 		return extension instanceof IOperatorExtension;
 	}
-	
+
 	/**
 	 * Returns whether the given extension is an associative theory extension.
-	 * @param extension the theory extension
+	 * 
+	 * @param extension
+	 *            the theory extension
 	 * @return whether the extension declares an associative operator
 	 */
-	public static boolean isAnAssociativeExtension(IFormulaExtension extension){
-		if(isATheoryExtension(extension)){
-			if(((IOperatorExtension<?>) extension).isAssociative()){
+	public static boolean isAnAssociativeExtension(IFormulaExtension extension) {
+		if (isATheoryExtension(extension)) {
+			if (((IOperatorExtension<?>) extension).isAssociative()) {
 				return true;
 			}
 		}
@@ -297,8 +219,7 @@ public class AstUtilities {
 	 * @return the location in the predicate string ignore the empty spaces or
 	 *         brackets in the beginning and in the end.
 	 */
-	protected static PositionPoint getOperatorPosition(String predStr,
-			int start, int end) {
+	protected static PositionPoint getOperatorPosition(String predStr, int start, int end) {
 		int i = start;
 		int x = start;
 		int y;
@@ -337,7 +258,8 @@ public class AstUtilities {
 	/**
 	 * An implementation of a point.
 	 * 
-	 * <p> This is a hook to avoid using the SWT point implementation.
+	 * <p>
+	 * This is a hook to avoid using the SWT point implementation.
 	 * 
 	 * @author maamria
 	 * 

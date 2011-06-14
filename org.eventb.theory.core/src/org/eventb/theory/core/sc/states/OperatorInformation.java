@@ -387,7 +387,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	 * @return the child expressions
 	 */
 	protected Expression[] getChildExpressionsForLhs(FormulaFactory ff) {
-		IOperatorArgument[] opArgsArray = (MathExtensionsUtilities.sort(opArguments.values())).toArray(new IOperatorArgument[opArguments.size()]);
+		IOperatorArgument[] opArgsArray = (MathExtensionsUtilities.sortOperatorArguments(opArguments.values())).toArray(new IOperatorArgument[opArguments.size()]);
 		Expression[] exps = new Expression[opArguments.size()];
 		for (int i = 0; i < exps.length; i++) {
 			exps[i] = ff.makeFreeIdentifier(opArgsArray[i].getArgumentName(), null, opArgsArray[i].getArgumentType());

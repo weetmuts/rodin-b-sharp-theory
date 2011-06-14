@@ -40,8 +40,7 @@ public final class TheoryDeployer implements ITheoryDeployer {
 	protected IRodinFile targetFile;
 	protected IDeploymentResult deploymentResult;
 
-	public TheoryDeployer(ISCTheoryRoot theoryRoot, boolean force,
-			boolean rebuildProjects) {
+	public TheoryDeployer(ISCTheoryRoot theoryRoot, boolean force, boolean rebuildProjects) {
 		assert theoryRoot.exists();
 		this.theoryRoot = theoryRoot;
 		this.force = force;
@@ -54,8 +53,7 @@ public final class TheoryDeployer implements ITheoryDeployer {
 		try {
 			deploy(monitor);
 		} catch (CoreException exception) {
-			deploymentResult = new DeploymentResult(false,
-					exception.getMessage());
+			deploymentResult = new DeploymentResult(false, exception.getMessage());
 		}
 		if (!deploymentResult.succeeded()) {
 			if (targetFile != null && targetFile.exists()) {
@@ -72,44 +70,33 @@ public final class TheoryDeployer implements ITheoryDeployer {
 		// need to check if the target project is null
 		{
 			if (targetProject == null) {
-				deploymentResult = new DeploymentResult(false,
-						"Deployment project does not exist.");
+				deploymentResult = new DeploymentResult(false, "Deployment project does not exist.");
 				return false;
 			}
 		}
 		// need to check for conflicts between the theory to be deployed and any
 		// deployed theories
 		{
-			Set<String> theorySymbols = CoreUtilities
-					.getSyntacticAdditionsOfHierarchy(theoryRoot);
-			Map<String, Set<String>> otherSymbols = CoreUtilities
-					.getDeployedSyntacticAdditionsOfOtherHierarchies(theoryRoot);
+			Set<String> theorySymbols = CoreUtilities.getSyntacticSymbolsOfHierarchy(theoryRoot);
+			Map<String, Set<String>> otherSymbols = CoreUtilities.getDeployedSyntaxSymbolsOfOtherHierarchies(theoryRoot);
 
 			for (String deployedTheoryName : otherSymbols.keySet()) {
-				if (!Collections.disjoint(theorySymbols,
-						otherSymbols.get(deployedTheoryName))) {
-					deploymentResult = new DeploymentResult(false,
-							"Syntax symbols defined in statically checked theory " + theoryName
-									+ " clash with symbols defined in deployed theory "
-									+ deployedTheoryName + ".");
+				if (!Collections.disjoint(theorySymbols, otherSymbols.get(deployedTheoryName))) {
+					deploymentResult = new DeploymentResult(false, "Syntax symbols defined in statically checked theory " + theoryName
+							+ " clash with symbols defined in deployed theory " + deployedTheoryName + ".");
 					return false;
 				}
 			}
 
 		}
 		// create the target file
-		targetFile = targetProject.getRodinFile(DatabaseUtilities
-				.getDeployedTheoryFullName(theoryName));
-		IDeployedTheoryRoot deployedTheoryRoot = (IDeployedTheoryRoot) targetFile
-				.getRoot();
+		targetFile = targetProject.getRodinFile(DatabaseUtilities.getDeployedTheoryFullName(theoryName));
+		IDeployedTheoryRoot deployedTheoryRoot = (IDeployedTheoryRoot) targetFile.getRoot();
 
 		// if force not requested
 		{
 			if (targetFile.exists() && !force) {
-				deploymentResult = new DeploymentResult(false,
-						"Deployed theory " + theoryName
-								+ " already exists in the project "
-								+ targetProject.getElementName() + ".");
+				deploymentResult = new DeploymentResult(false, "Deployed theory " + theoryName + " already exists in the project " + targetProject.getElementName() + ".");
 				return false;
 			}
 		}
@@ -129,13 +116,10 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			}
 		}
 		// copy the elements across
-		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot,
-				theoryRoot, monitor)
-				&& copyProverExtensions(deployedTheoryRoot, theoryRoot, monitor);
+		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot, theoryRoot, monitor) && copyProverExtensions(deployedTheoryRoot, theoryRoot, monitor);
 
 		deployedTheoryRoot.setAccuracy(accurate, monitor);
-		deployedTheoryRoot.setComment("GENERATED THEORY FILE: !DO NOT CHANGE!",
-				monitor);
+		deployedTheoryRoot.setComment("GENERATED THEORY FILE: !DO NOT CHANGE!", monitor);
 		targetFile.save(monitor, true);
 		deploymentResult = new DeploymentResult(true, null);
 		// in case rebuilding is requested by the user
@@ -160,25 +144,18 @@ public final class TheoryDeployer implements ITheoryDeployer {
 		}
 	}
 
-	protected boolean setDeployedTheoryDependencies(ISCTheoryRoot source,
-			IDeployedTheoryRoot target) throws CoreException {
+	protected boolean setDeployedTheoryDependencies(ISCTheoryRoot source, IDeployedTheoryRoot target) throws CoreException {
 		ISCImportTheory[] imports = source.getImportTheories();
 		for (ISCImportTheory importThy : imports) {
 			if (importThy.hasImportTheory()) {
 				ISCTheoryRoot importedRoot = importThy.getImportTheory();
-				IDeployedTheoryRoot deployedCounterpart = importedRoot
-						.getDeployedTheoryRoot();
+				IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
 				if (!deployedCounterpart.exists()) {
-					deploymentResult = new DeploymentResult(false,
-							"Failed dependencies : deployed theory "
-									+ deployedCounterpart.getComponentName()
-									+ " does not exist in the project "
-									+ importedRoot.getRodinProject()
-											.getElementName() + ".");
+					deploymentResult = new DeploymentResult(false, "Failed dependencies : deployed theory " + deployedCounterpart.getComponentName()
+							+ " does not exist in the project " + importedRoot.getRodinProject().getElementName() + ".");
 					return false;
 				}
-				IUseTheory use = target.getUsedTheory(deployedCounterpart
-						.getComponentName());
+				IUseTheory use = target.getUsedTheory(deployedCounterpart.getComponentName());
 				use.create(null, null);
 				use.setUsedTheory(deployedCounterpart, null);
 			}

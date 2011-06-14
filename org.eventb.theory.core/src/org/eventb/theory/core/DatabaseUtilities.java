@@ -9,6 +9,7 @@ package org.eventb.theory.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -58,37 +58,25 @@ public class DatabaseUtilities {
 	public static final String DEPLOYED_THEORY_FILE_EXTENSION = "dtf";
 
 	// The theory configuration for the SC and POG
-	public static final String THEORY_CONFIGURATION = TheoryPlugin.PLUGIN_ID
-			+ ".thy";
-
-	// ////////////////////////////////////////////////////////////////////////////////////
-	// //////////////////////////////// DB
-	// ////////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////////
+	public static final String THEORY_CONFIGURATION = TheoryPlugin.PLUGIN_ID + ".thy";
 
 	/**
 	 * Returns a SC theory that exists in the given project. If the theory does
 	 * not exist, <code>null</code> is returned.
 	 * 
 	 * @param fullName
-	 *            the full name of the SC theory file inc. extension
+	 *            the name of the SC theory
 	 * @param project
 	 *            the rodin project
 	 * @return the SC theory
 	 * @throws CoreException
 	 */
-	public static ISCTheoryRoot getExistingTheoryRoot(String fullName,
-			String project) throws CoreException {
-		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(
-				project);
-		if (rodinProject.exists()) {
-			IRodinFile file = rodinProject.getRodinFile(fullName);
-			if (file.exists()) {
-				ISCTheoryRoot theoryRoot = (ISCTheoryRoot) file.getRoot();
-				if (theoryRoot.exists()) {
-					return theoryRoot;
-				}
+	public static ISCTheoryRoot getExistingTheoryRoot(String fullName, String project) throws CoreException {
+		IRodinProject rodinProject = getRodinProject(project);
+		if (rodinProject != null) {
+			ISCTheoryRoot theoryRoot = getSCTheory(fullName, rodinProject);
+			if (theoryRoot.exists()){
+				return theoryRoot;
 			}
 		}
 		return null;
@@ -104,10 +92,8 @@ public class DatabaseUtilities {
 	 * @return SC theories
 	 * @throws CoreException
 	 */
-	public static ISCTheoryRoot[] getSCTheoryRoots(IRodinProject project,
-			TheoriesFilter<ISCTheoryRoot> filter) throws CoreException {
-		ISCTheoryRoot[] roots = project
-				.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
+	public static ISCTheoryRoot[] getSCTheoryRoots(IRodinProject project, ITheoryFilter<ISCTheoryRoot> filter) throws CoreException {
+		ISCTheoryRoot[] roots = project.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
 		List<ISCTheoryRoot> okRoots = new ArrayList<ISCTheoryRoot>();
 		for (ISCTheoryRoot root : roots) {
 			if (filter.filter(root)) {
@@ -126,17 +112,6 @@ public class DatabaseUtilities {
 	 */
 	public static ISCTheoryRoot getSCTheoryParent(IRodinElement element) {
 		return element.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
-	}
-
-	/**
-	 * Returns the theory parent of the given element if any.
-	 * 
-	 * @param element
-	 *            the rodin element
-	 * @return the parent theory
-	 */
-	public static ITheoryRoot getTheoryParent(IRodinElement element) {
-		return element.getAncestor(ITheoryRoot.ELEMENT_TYPE);
 	}
 
 	/**
@@ -167,8 +142,7 @@ public class DatabaseUtilities {
 	 *            the actual elements
 	 * @return the set
 	 */
-	public static <E extends IInternalElement> Set<String> getNames(
-			List<E> elements) {
+	public static <E extends IInternalElement> Set<String> getNames(Collection<E> elements) {
 		Set<String> set = new LinkedHashSet<String>();
 		for (E e : elements) {
 			set.add(e.getElementName());
@@ -191,11 +165,7 @@ public class DatabaseUtilities {
 				if (!root.isAccurate()) {
 					return false;
 				}
-				l = root.getSCDatatypeDefinitions().length
-						+ root.getSCNewOperatorDefinitions().length
-						+ root.getProofRulesBlocks().length
-						+ root.getTheorems().length;
-
+				l = root.getSCDatatypeDefinitions().length + root.getSCNewOperatorDefinitions().length + root.getProofRulesBlocks().length + root.getTheorems().length;
 			}
 		} catch (RodinDBException e) {
 			CoreUtilities.log(e, "Failed to retrieve details from theory.");
@@ -228,25 +198,25 @@ public class DatabaseUtilities {
 	}
 
 	/**
-	 * Returns the fullname of a theory file.
+	 * Returns the full name of a theory file.
 	 * 
-	 * @param name
+	 * @param bareName
 	 *            the name
-	 * @return the fullname
+	 * @return the full name
 	 */
-	public static String getTheoryFullName(String name) {
-		return name + "." + THEORY_FILE_EXTENSION;
+	public static String getTheoryFullName(String bareName) {
+		return bareName + "." + THEORY_FILE_EXTENSION;
 	}
 
 	/**
-	 * Returns the fullname of a SC theory file.
+	 * Returns the full name of a SC theory file.
 	 * 
-	 * @param name
+	 * @param bareName
 	 *            the name
-	 * @return the fullname
+	 * @return the full name
 	 */
-	public static String getSCTheoryFullName(String name) {
-		return name + "." + SC_THEORY_FILE_EXTENSION;
+	public static String getSCTheoryFullName(String bareName) {
+		return bareName + "." + SC_THEORY_FILE_EXTENSION;
 	}
 
 	/**
@@ -272,22 +242,25 @@ public class DatabaseUtilities {
 	 * @return whether the file originated from a theory
 	 * @throws CoreException
 	 */
-	public static boolean originatedFromTheory(IRodinFile file)
-			 {
+	public static boolean originatedFromTheory(IRodinFile file) {
 		IRodinProject project = file.getRodinProject();
-		IRodinFile theory = project.getRodinFile(file.getBareName() + "."
-				+ THEORY_FILE_EXTENSION);
-		if (theory.exists()) {
+		ITheoryRoot theoryRoot = getTheory(file.getBareName(), project);
+		if (theoryRoot.exists()) {
 			return true;
 		}
 		return false;
 	}
-	
-	public static boolean originatedFromTheory(IRodinFile file, IRodinProject project){
-		if (file.getRodinProject().equals(project)){
+
+	/**
+	 * Returns whether the file originated from a theory within the given rodin project.
+	 * @param file the rodin file
+	 * @param project the rodin project
+	 * @return whether the file originated from a theory within the given rodin project
+	 */
+	public static boolean originatedFromTheory(IRodinFile file, IRodinProject project) {
+		if (file.getRodinProject().equals(project)) {
 			return originatedFromTheory(file);
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -301,17 +274,20 @@ public class DatabaseUtilities {
 	 *            the progress monitor
 	 * @throws CoreException
 	 */
-	public static void rebuild(IRodinProject project, IProgressMonitor monitor)
-			throws CoreException {
+	public static void rebuild(final IRodinProject project, IProgressMonitor monitor) throws CoreException {
 		if (project == null || !project.exists()) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					TheoryPlugin.PLUGIN_ID,
-					"attempting to rebuild a non-existent project"));
+			throw new CoreException(new Status(IStatus.ERROR, TheoryPlugin.PLUGIN_ID, "attempting to rebuild a non-existent project"));
 		}
-		IProject nativeProj = ((IProject) project.getAdapter(IProject.class));
-		if (nativeProj != null) {
-			nativeProj.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-		}
+		RodinCore.run(new IWorkspaceRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IProject nativeProj = ((IProject) project.getAdapter(IProject.class));
+				if (nativeProj != null) {
+					nativeProj.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+				}
+			}
+		}, monitor);
+		
 	}
 
 	/**
@@ -323,24 +299,19 @@ public class DatabaseUtilities {
 	 */
 	public static void rebuild(IProgressMonitor monitor) throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
-
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				for (IRodinProject project : RodinCore.getRodinDB()
-						.getRodinProjects()) {
-					rebuild(project, monitor);
+				for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()) {
+					IProject nativeProj = ((IProject) project.getAdapter(IProject.class));
+					if (nativeProj != null) {
+						nativeProj.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+					}
 				}
 			}
 		}, monitor);
 
 	}
-
-	// ////////////////////////////////////////////////////////////////////////////////////
-	// //////////////////////////////// Deploy
-	// ////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////////
-
+	
 	/**
 	 * Returns a deployer for the given theory.
 	 * 
@@ -355,11 +326,8 @@ public class DatabaseUtilities {
 	 * @return the deployed theory
 	 * @throws CoreException
 	 */
-	public static final ITheoryDeployer getTheoryDeployer(String theoryName,
-			String project, boolean force, boolean rebuildProject)
-			throws CoreException {
-		String fullName = theoryName + "." + SC_THEORY_FILE_EXTENSION;
-		ISCTheoryRoot theoryRoot = getExistingTheoryRoot(fullName, project);
+	public static final ITheoryDeployer getTheoryDeployer(String theoryName, String project, boolean force, boolean rebuildProject) throws CoreException {
+		ISCTheoryRoot theoryRoot = getExistingTheoryRoot(theoryName, project);
 		if (theoryRoot == null) {
 			return null;
 		}
@@ -376,11 +344,8 @@ public class DatabaseUtilities {
 	 * @return deployed theories
 	 * @throws CoreException
 	 */
-	public static IDeployedTheoryRoot[] getDeployedTheories(
-			IRodinProject project, TheoriesFilter<IDeployedTheoryRoot> filter)
-			throws CoreException {
-		IDeployedTheoryRoot[] roots = project
-				.getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
+	public static IDeployedTheoryRoot[] getDeployedTheories(IRodinProject project, ITheoryFilter<IDeployedTheoryRoot> filter) throws CoreException {
+		IDeployedTheoryRoot[] roots = project.getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
 		List<IDeployedTheoryRoot> okRoots = new ArrayList<IDeployedTheoryRoot>();
 		for (IDeployedTheoryRoot root : roots) {
 			if (filter.filter(root)) {
@@ -397,18 +362,15 @@ public class DatabaseUtilities {
 	 * @return list of deployable SC theories
 	 * @throws CoreException
 	 */
-	public static List<ISCTheoryRoot> getDeployableSCTheories(String projectName)
-			throws CoreException {
+	public static List<ISCTheoryRoot> getDeployableSCTheories(String projectName) throws CoreException {
 		IRodinProject project = RodinCore.getRodinDB().getRodinProject(projectName);
-		if (!project.exists()){
+		if (!project.exists()) {
 			return new ArrayList<ISCTheoryRoot>();
 		}
-		ISCTheoryRoot[] roots = project
-				.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
+		ISCTheoryRoot[] roots = project.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
 		List<ISCTheoryRoot> list = new ArrayList<ISCTheoryRoot>();
 		for (ISCTheoryRoot scRoot : roots) {
-			if (!getDeployedTheory(scRoot.getComponentName(), project).exists()
-					&& !isTheoryEmptyOrNotAccurate(scRoot)) {
+			if (!getDeployedTheory(scRoot.getComponentName(), project).exists() && !isTheoryEmptyOrNotAccurate(scRoot)) {
 				list.add(scRoot);
 			}
 		}
@@ -423,18 +385,8 @@ public class DatabaseUtilities {
 	 * @return deployed theories
 	 * @throws CoreException
 	 */
-	public static IDeployedTheoryRoot[] getDeployedTheories(
-			IRodinProject project) throws CoreException {
-
-		return getDeployedTheories(project,
-				new TheoriesFilter<IDeployedTheoryRoot>() {
-
-					@Override
-					public boolean filter(IDeployedTheoryRoot theory) {
-						// TODO Auto-generated method stub
-						return theory.exists();
-					}
-				});
+	public static IDeployedTheoryRoot[] getDeployedTheories(IRodinProject project) throws CoreException {
+		return getDeployedTheories(project, getExistingDeployedTheoriesFilter());
 	}
 
 	/**
@@ -444,8 +396,7 @@ public class DatabaseUtilities {
 	 * @param project
 	 * @return a handle to the deployed theory
 	 */
-	public static IDeployedTheoryRoot getDeployedTheory(String name,
-			IRodinProject project) {
+	public static IDeployedTheoryRoot getDeployedTheory(String name, IRodinProject project) {
 		IRodinFile file = project.getRodinFile(getDeployedTheoryFullName(name));
 		return (IDeployedTheoryRoot) file.getRoot();
 	}
@@ -460,41 +411,38 @@ public class DatabaseUtilities {
 	 *            the Rodin project
 	 * @return whether the deployed theory exists
 	 */
-	public static boolean doesDeployedTheoryExist(String name,
-			IRodinProject project) {
+	public static boolean doesDeployedTheoryExist(String name, IRodinProject project) {
 		return getDeployedTheory(name, project).exists();
 	}
 
 	/**
-	 * Returns the fullname of a deployed theory file.
+	 * Returns the full name of a deployed theory file.
 	 * 
 	 * @param name
 	 *            the name
-	 * @return the fullname
+	 * @return the full name
 	 */
 	public static String getDeployedTheoryFullName(String name) {
 		return name + "." + DEPLOYED_THEORY_FILE_EXTENSION;
 	}
 
 	/**
-	 * Returns whether deployed theory <code>user</code> uses theory
-	 * <code>user</code>.
+	 * Returns whether deployed theory <code>importer</code> imports deployed theory
+	 * <code>importee</code>.
 	 * 
-	 * @param user
-	 * @param used
+	 * @param importer
+	 * @param importee
 	 * @return whether use relationship exists
 	 * @throws CoreException
 	 */
-	public static boolean doesTheoryUseTheory(IDeployedTheoryRoot user,
-			IDeployedTheoryRoot used) throws CoreException {
-		if (user == null || !user.exists()) {
+	public static boolean doesTheoryImportTheory(IDeployedTheoryRoot importer, IDeployedTheoryRoot importee) throws CoreException {
+		if (importer == null || !importer.exists()) {
 			return false;
 		}
-		String usedName = used.getComponentName();
-		List<IDeployedTheoryRoot> theories = getUsedTheories(user);
+		String usedName = importee.getComponentName();
+		List<IDeployedTheoryRoot> theories = getImportedTheories(importer);
 		for (IDeployedTheoryRoot theory : theories) {
-			if (theory.getComponentName().equals(usedName)
-					|| doesTheoryUseTheory(theory, used)) {
+			if (theory.getComponentName().equals(usedName) || doesTheoryImportTheory(theory, importee)) {
 				return true;
 			}
 		}
@@ -510,16 +458,14 @@ public class DatabaseUtilities {
 	 * @return whether import relationship exists
 	 * @throws CoreException
 	 */
-	public static boolean doesTheoryImportTheory(ITheoryRoot importer,
-			ISCTheoryRoot importee) throws CoreException {
+	public static boolean doesTheoryImportTheory(ITheoryRoot importer, ISCTheoryRoot importee) throws CoreException {
 		if (importer == null || !importer.exists()) {
 			return false;
 		}
 		String importeeName = importee.getComponentName();
 		List<ISCTheoryRoot> theories = getImportedTheories(importer);
 		for (ISCTheoryRoot theory : theories) {
-			if (theory.getComponentName().equals(importeeName)
-					|| doesTheoryImportTheory(theory, importee)) {
+			if (theory.getComponentName().equals(importeeName) || doesTheoryImportTheory(theory, importee)) {
 				return true;
 			}
 		}
@@ -535,16 +481,14 @@ public class DatabaseUtilities {
 	 * @return whether import relationship exists
 	 * @throws CoreException
 	 */
-	public static boolean doesTheoryImportTheory(ISCTheoryRoot importer,
-			ISCTheoryRoot importee) throws CoreException {
+	public static boolean doesTheoryImportTheory(ISCTheoryRoot importer, ISCTheoryRoot importee) throws CoreException {
 		if (importer == null || !importer.exists()) {
 			return false;
 		}
 		String importeeName = importee.getComponentName();
 		List<ISCTheoryRoot> theories = getImportedTheories(importer);
 		for (ISCTheoryRoot theory : theories) {
-			if (theory.getComponentName().equals(importeeName)
-					|| doesTheoryImportTheory(theory, importee)) {
+			if (theory.getComponentName().equals(importeeName) || doesTheoryImportTheory(theory, importee)) {
 				return true;
 			}
 		}
@@ -559,15 +503,14 @@ public class DatabaseUtilities {
 	 * @return the list of imported SC theories
 	 * @throws CoreException
 	 */
-	public static List<ISCTheoryRoot> getImportedTheories(ISCTheoryRoot importer)
-			throws CoreException {
+	public static List<ISCTheoryRoot> getImportedTheories(ISCTheoryRoot importer) throws CoreException {
 		if (importer == null || !importer.exists()) {
 			return null;
 		}
 		ISCImportTheory[] importedTheories = importer.getImportTheories();
 		List<ISCTheoryRoot> result = new ArrayList<ISCTheoryRoot>();
 		for (ISCImportTheory use : importedTheories) {
-			if(use.hasImportTheory())
+			if (use.hasImportTheory())
 				result.add(use.getImportTheory());
 		}
 		return result;
@@ -581,93 +524,65 @@ public class DatabaseUtilities {
 	 * @return the list of imported SC theories
 	 * @throws CoreException
 	 */
-	public static List<ISCTheoryRoot> getImportedTheories(ITheoryRoot importer)
-			throws CoreException {
+	public static List<ISCTheoryRoot> getImportedTheories(ITheoryRoot importer) throws CoreException {
 		if (importer == null || !importer.exists()) {
 			return null;
 		}
 		IImportTheory[] importedTheories = importer.getImportTheories();
 		List<ISCTheoryRoot> result = new ArrayList<ISCTheoryRoot>();
 		for (IImportTheory use : importedTheories) {
-			if(use.hasImportTheory())
+			if (use.hasImportTheory())
 				result.add(use.getImportTheory());
 		}
 		return result;
 	}
 
 	/**
-	 * Returns the deployed theories used by the given theory.
+	 * Returns the deployed theories imported by the given theory.
 	 * 
-	 * @param user
+	 * @param theory
 	 *            the deployed theory
 	 * @return the list of used theories
 	 * @throws CoreException
 	 */
-	public static List<IDeployedTheoryRoot> getUsedTheories(IDeployedTheoryRoot user)
-			throws CoreException {
-		if (user == null || !user.exists()) {
+	public static List<IDeployedTheoryRoot> getImportedTheories(IDeployedTheoryRoot theory) throws CoreException {
+		if (theory == null || !theory.exists()) {
 			return null;
 		}
-		IUseTheory[] usedTheories = user.getUsedTheories();
+		IUseTheory[] usedTheories = theory.getUsedTheories();
 		List<IDeployedTheoryRoot> result = new ArrayList<IDeployedTheoryRoot>();
 		for (IUseTheory use : usedTheories) {
-			if(use.hasUseTheory())
+			if (use.hasUseTheory())
 				result.add(use.getUsedTheory());
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns the list of SC theories that can be imported by the given unchecked theory.
+	 * Returns the list of SC theories that can be imported by the given
+	 * unchecked theory.
 	 * 
-	 * <p> This method essentially avoids redundancy and circularity.
-	 * @param theory the unchecked theory
+	 * <p>
+	 * This method essentially avoids redundancy and circularity.
+	 * 
+	 * @param theory
+	 *            the unchecked theory
 	 * @return the list of potential imports
 	 * @throws CoreException
 	 */
-	public static ISCTheoryRoot[] getPotentialTheoryImports(ITheoryRoot theory)
-	throws CoreException{
+	public static ISCTheoryRoot[] getPotentialTheoryImports(ITheoryRoot theory) throws CoreException {
 		IRodinProject project = theory.getRodinProject();
-		ISCTheoryRoot[] allSCRoots = getSCTheoryRoots(project, new TheoriesFilter<ISCTheoryRoot>() {
-
-			@Override
-			public boolean filter(ISCTheoryRoot theory) {
-				// TODO Auto-generated method stub
-				return theory.exists();
-			}
-		});
+		ISCTheoryRoot[] allSCRoots = getSCTheoryRoots(project, getExistingSCTheoriesFilter());
 		List<ISCTheoryRoot> potentialImports = new ArrayList<ISCTheoryRoot>();
 		ISCTheoryRoot theorySC = theory.getSCTheoryRoot();
-		for (ISCTheoryRoot root : allSCRoots){
-			if(
-					// not import oneself
-					!root.getComponentName().equals(theory.getComponentName()) &&
-					// no circularity
-					!doesTheoryImportTheory(root, theorySC)
-					){
+		for (ISCTheoryRoot root : allSCRoots) {
+			// not import oneself and no circularity
+			if (!root.getComponentName().equals(theory.getComponentName()) &&
+					!doesTheoryImportTheory(root, theorySC)) {
 				potentialImports.add(root);
 			}
 		}
-		
 		return potentialImports.toArray(new ISCTheoryRoot[potentialImports.size()]);
-	}
-	
-	/**
-	 * A utility to return the names of a collection of internal elements.
-	 * @param elements the internal elements
-	 * @return the names of the elements
-	 */
-	public static String[] getInternalElementNames(IInternalElement... elements ){
-		if (elements == null){
-			// return an empty array of names TODO check this for safety
-			return new String[0];
-		}
-		String[] names = new String[elements.length];
-		int i = 0;
-		for (IInternalElement element : elements){
-			names[i++] = element.getElementName();
-		}
-		return names;
 	}
 
 	/**
@@ -677,8 +592,7 @@ public class DatabaseUtilities {
 	 */
 	public static void ensureDeploymentProjectExists() throws CoreException {
 
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(new Path(THEORIES_PROJECT));
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(THEORIES_PROJECT));
 
 		if (resource != null) {
 			if (!resource.isAccessible()) {
@@ -686,15 +600,12 @@ public class DatabaseUtilities {
 			}
 			return;
 		}
-		final IRodinProject rodinProject = RodinCore.getRodinDB()
-				.getRodinProject(THEORIES_PROJECT);
+		final IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(THEORIES_PROJECT);
 		if (rodinProject.exists()) {
 			return;
 		}
 		try {
-
 			RodinCore.run(new IWorkspaceRunnable() {
-
 				@Override
 				public void run(IProgressMonitor pMonitor) throws CoreException {
 					IProject project = rodinProject.getProject();
@@ -702,8 +613,7 @@ public class DatabaseUtilities {
 						project.create(null);
 					project.open(null);
 					IProjectDescription description = project.getDescription();
-					description
-							.setNatureIds(new String[] { RodinCore.NATURE_ID });
+					description.setNatureIds(new String[] { RodinCore.NATURE_ID });
 					project.setDescription(description, null);
 				}
 
@@ -731,17 +641,7 @@ public class DatabaseUtilities {
 	}
 
 	/**
-	 * Returns the formula factory with the currently deployed extensions.
-	 * 
-	 * @return formula factory
-	 */
-	public static FormulaFactory getCurrentFormulaFactory() {
-		// TODO change this
-		return FormulaFactory.getDefault();
-	}
-
-	/**
-	 * Marks the given deployed theory as outdated.
+	 * Removes the deployed theory and any deployed theories that depend on it.
 	 * 
 	 * @param root
 	 *            the deployed theory
@@ -749,19 +649,16 @@ public class DatabaseUtilities {
 	public static void cleanUp(final IDeployedTheoryRoot root) {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
-
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					if (root.exists()) {
-						IDeployedTheoryRoot[] depRoots = getDeployedTheories(root
-								.getRodinProject());
+						IDeployedTheoryRoot[] depRoots = getDeployedTheories(root.getRodinProject());
 						root.getRodinFile().delete(true, monitor);
 						for (IDeployedTheoryRoot dep : depRoots) {
-							if (dep.getComponentName().equals(
-									root.getComponentName())) {
+							if (dep.getComponentName().equals(root.getComponentName())) {
 								continue;
 							}
-							if (doesTheoryUseTheory(dep, root)) {
+							if (doesTheoryImportTheory(dep, root)) {
 								dep.getRodinFile().delete(true, monitor);
 							}
 						}
@@ -785,40 +682,15 @@ public class DatabaseUtilities {
 	 * @throws CoreException
 	 */
 	public static IRodinProject getDeploymentProject(IProgressMonitor monitor) {
-		final IRodinProject project = RodinCore.getRodinDB().getRodinProject(
-				THEORIES_PROJECT);
+		final IRodinProject project = RodinCore.getRodinDB().getRodinProject(THEORIES_PROJECT);
 		try {
 			ensureDeploymentProjectExists();
 
 		} catch (CoreException e) {
-			CoreUtilities.log(e, "Failed to create deployed theories project.");
+			CoreUtilities.log(e, "Failed to access/create deployed theories project.");
 			return null;
 		}
 		return project;
-	}
-
-	/**
-	 * 
-	 * A simple protocol for formula extensions sources filter.
-	 * 
-	 * @author maamria
-	 * 
-	 * @param <T>
-	 *            the type of the source
-	 */
-	public static interface TheoriesFilter<T extends IFormulaExtensionsSource> {
-
-		/**
-		 * Returns whether the given theory satisfies the criteria of this
-		 * filter.
-		 * 
-		 * @param theory
-		 *            the theory
-		 * @return whether <code>theory</code> satisfies the criteria of this
-		 *         filter
-		 */
-		public boolean filter(T theory);
-
 	}
 
 	/**
@@ -829,10 +701,8 @@ public class DatabaseUtilities {
 	 * @return whether status PO has been discharged
 	 * @throws RodinDBException
 	 */
-	public static boolean isDischarged(IPSStatus status)
-			throws RodinDBException {
-		return (status.getConfidence() > IConfidence.REVIEWED_MAX)
-				&& (!status.isBroken());
+	public static boolean isDischarged(IPSStatus status) throws RodinDBException {
+		return (status.getConfidence() > IConfidence.REVIEWED_MAX) && (!status.isBroken());
 	}
 
 	/**
@@ -844,65 +714,111 @@ public class DatabaseUtilities {
 	 * @throws RodinDBException
 	 */
 	public static boolean isReviewed(IPSStatus status) throws RodinDBException {
-		return (status.getConfidence() > IConfidence.PENDING)
-				&& (status.getConfidence() <= IConfidence.REVIEWED_MAX);
+		return (status.getConfidence() > IConfidence.PENDING) && (status.getConfidence() <= IConfidence.REVIEWED_MAX);
 	}
-	
+
 	/**
-	 * Returns whether the given element is within a project level scoped theory/component.
-	 * @param element the internal element
+	 * Returns whether the given element is within a project level scoped
+	 * theory/component.
+	 * 
+	 * @param element
+	 *            the internal element
 	 * @return whether the given element is project level scoped
 	 */
-	public static boolean projectLevelScoped(IInternalElement element){
+	public static boolean projectLevelScoped(IInternalElement element) {
 		IRodinProject project = element.getRodinProject();
-		if(project.getElementName().equals(THEORIES_PROJECT)){
+		if (isMathExtensionsProject(project)) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Returns whether the given project is the <code>MathExtensions</code> project.
-	 * @param project the Rodin project, must not be <code>null</code>
-	 * @return whether <code>project</code> is the <code>MathExtensions</code> project
+	 * Returns whether the given project is the <code>MathExtensions</code>
+	 * project.
+	 * 
+	 * @param project
+	 *            the Rodin project, must not be <code>null</code>
+	 * @return whether <code>project</code> is the <code>MathExtensions</code>
+	 *         project
 	 */
-	public static boolean isMathExtensionsProject(IRodinProject project){
+	public static boolean isMathExtensionsProject(IRodinProject project) {
 		return THEORIES_PROJECT.equals(project.getElementName());
 	}
-	
+
 	/**
-	 * Returns all the theories imported by the given theory directly and indirectly.
-	 * @param root the SC theory root
+	 * Returns all the theories imported by the given theory directly and
+	 * indirectly.
+	 * 
+	 * @param root
+	 *            the SC theory root
 	 * @return all imported theories
 	 * @throws CoreException
 	 */
-	public static Set<ISCTheoryRoot> importClosure(ISCTheoryRoot root) throws CoreException{
+	public static Set<ISCTheoryRoot> importClosure(ISCTheoryRoot root) throws CoreException {
 		Set<ISCTheoryRoot> set = new LinkedHashSet<ISCTheoryRoot>();
 		List<ISCTheoryRoot> imported = getImportedTheories(root);
 		set.addAll(imported);
-		for (ISCTheoryRoot scRoot : imported){
+		for (ISCTheoryRoot scRoot : imported) {
 			set.addAll(importClosure(scRoot));
 		}
 		return set;
 	}
-	
+
 	/**
 	 * Returns all theory roots that exist and are not temporary.
-	 * @param project the rodin project
-	 * @return all non-temp sc theory roots
+	 * 
+	 * @param project
+	 *            the rodin project
+	 * @return all non-temporary SC theory roots
 	 * @throws CoreException
 	 */
-	public static Set<ISCTheoryRoot> getSCTheoryRoots(IRodinProject project) throws CoreException{
+	public static Set<ISCTheoryRoot> getSCTheoryRoots(IRodinProject project) throws CoreException {
 		Set<ISCTheoryRoot> set = new LinkedHashSet<ISCTheoryRoot>();
-		ISCTheoryRoot[] roots = getSCTheoryRoots(project, new TheoriesFilter<ISCTheoryRoot>() {
-
-			@Override
-			public boolean filter(ISCTheoryRoot theory) {
-				// TODO Auto-generated method stub
-				return theory.exists() && !theory.getRodinFile().getElementName().endsWith(SC_THEORY_FILE_EXTENSION+"_tmp");
-			}
-		});
+		ISCTheoryRoot[] roots = getSCTheoryRoots(project, getNonTempSCTheoriesFilter());
 		set.addAll(Arrays.asList(roots));
 		return set;
+	}
+	
+	/**
+	 * Returns a filter that accepts existing SC theory file with the ordinary file extension.
+	 * @return a theory filter
+	 */
+	public static ITheoryFilter<ISCTheoryRoot> getNonTempSCTheoriesFilter(){
+		
+		return new ITheoryFilter<ISCTheoryRoot>() {
+			@Override
+			public boolean filter(ISCTheoryRoot theory) {
+				return theory.exists() && !theory.getRodinFile().getElementName().endsWith(SC_THEORY_FILE_EXTENSION + "_tmp");
+			}
+		};
+	}
+	
+	/**
+	 * Returns a filter that accepts existing SC theories.
+	 * @return a theory filter
+	 */
+	public static ITheoryFilter<ISCTheoryRoot> getExistingSCTheoriesFilter(){
+		
+		return new ITheoryFilter<ISCTheoryRoot>() {
+			@Override
+			public boolean filter(ISCTheoryRoot theory) {
+				return theory.exists();
+			}
+		};
+	}
+	
+	/**
+	 * Returns a filter that accepts existing deployed theories.
+	 * @return a theory filter
+	 */
+	public static ITheoryFilter<IDeployedTheoryRoot> getExistingDeployedTheoriesFilter(){
+		
+		return new ITheoryFilter<IDeployedTheoryRoot>() {
+			@Override
+			public boolean filter(IDeployedTheoryRoot theory) {
+				return theory.exists();
+			}
+		};
 	}
 }

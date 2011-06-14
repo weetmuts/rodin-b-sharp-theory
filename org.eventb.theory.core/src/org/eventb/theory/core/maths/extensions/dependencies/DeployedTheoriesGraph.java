@@ -27,10 +27,10 @@ public class DeployedTheoriesGraph extends DependenciesGraph<IDeployedTheoryRoot
 				IDeployedTheoryRoot root1 = node1.element;
 				IDeployedTheoryRoot root2 = node2.element;
 				try {
-					if (DatabaseUtilities.doesTheoryUseTheory(root1, root2)){
+					if (DatabaseUtilities.doesTheoryImportTheory(root1, root2)){
 						return 1;
 					}
-					else if(DatabaseUtilities.doesTheoryUseTheory(root2, root1)){
+					else if(DatabaseUtilities.doesTheoryImportTheory(root2, root1)){
 						return -1;
 					}
 					else if(root1.getComponentName().equals(root2.getComponentName())){
@@ -50,7 +50,7 @@ public class DeployedTheoriesGraph extends DependenciesGraph<IDeployedTheoryRoot
 		// TODO Auto-generated method stub
 		List<IDeployedTheoryRoot> imported;
 		try {
-			imported = DatabaseUtilities.getUsedTheories(element);
+			imported = DatabaseUtilities.getImportedTheories(element);
 			return imported.toArray(new IDeployedTheoryRoot[imported.size()]);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

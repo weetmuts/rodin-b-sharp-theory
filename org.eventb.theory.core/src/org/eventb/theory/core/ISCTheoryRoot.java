@@ -45,8 +45,7 @@ ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
 	 * @return the type environment
 	 * @throws RodinDBException
 	 */
-	ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
-			throws RodinDBException;
+	ITypeEnvironment getTypeEnvironment(FormulaFactory factory) throws RodinDBException;
 	
 	/**
 	 * <p>Returns the deployed theory file corresponding to the given <code>bareName</code>.</p>

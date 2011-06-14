@@ -59,6 +59,8 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * Utilities used by this plug-in.
+ * <p>
+ * TODO double check <code>getDeployedSyntaxSymbolsOfOtherHierarchies(ISCTheoryRoot)</code>
  * 
  * @author maamria
  * 
@@ -68,9 +70,14 @@ public class CoreUtilities {
 	private static final Object[] NO_OBJECT = new Object[0];
 
 	/**
-	 * <p>Facility to log the given exception alongside the given message.</p>
-	 * @param exc the exception
-	 * @param message the error message
+	 * <p>
+	 * Facility to log the given exception alongside the given message.
+	 * </p>
+	 * 
+	 * @param exc
+	 *            the exception
+	 * @param message
+	 *            the error message
 	 */
 	public static void log(Throwable exc, String message) {
 		if (exc instanceof RodinDBException) {
@@ -82,8 +89,7 @@ public class CoreUtilities {
 		if (message == null) {
 			message = "Unknown context"; //$NON-NLS-1$
 		}
-		IStatus status = new Status(IStatus.ERROR, TheoryPlugin.PLUGIN_ID,
-				IStatus.ERROR, message, exc);
+		IStatus status = new Status(IStatus.ERROR, TheoryPlugin.PLUGIN_ID, IStatus.ERROR, message, exc);
 		TheoryPlugin.getDefault().getLog().log(status);
 	}
 
@@ -102,11 +108,8 @@ public class CoreUtilities {
 	 * @return whether given predicates does not reference illegal identifiers
 	 * @throws CoreException
 	 */
-	public static boolean checkAgainstTypeParameters(IPredicateElement element,
-			Predicate pred, ITypeEnvironment typeEnvironment,
-			IMarkerDisplay display) throws CoreException {
-		return checkAgainstTypeParameters(element, pred,
-				EventBAttributes.PREDICATE_ATTRIBUTE, typeEnvironment, display);
+	public static boolean checkAgainstTypeParameters(IPredicateElement element, Predicate pred, ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws CoreException {
+		return checkAgainstTypeParameters(element, pred, EventBAttributes.PREDICATE_ATTRIBUTE, typeEnvironment, display);
 	}
 
 	/**
@@ -124,35 +127,34 @@ public class CoreUtilities {
 	 * @return whether given formula does not reference illegal identifiers
 	 * @throws CoreException
 	 */
-	public static boolean checkAgainstTypeParameters(IFormulaElement element,
-			Formula<?> formula, ITypeEnvironment typeEnvironment,
-			IMarkerDisplay display) throws CoreException {
-		return checkAgainstTypeParameters(element, formula,
-				TheoryAttributes.FORMULA_ATTRIBUTE, typeEnvironment, display);
+	public static boolean checkAgainstTypeParameters(IFormulaElement element, Formula<?> formula, ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws CoreException {
+		return checkAgainstTypeParameters(element, formula, TheoryAttributes.FORMULA_ATTRIBUTE, typeEnvironment, display);
 	}
 
 	/**
 	 * Checks whether the given formula refers only to the given types in
 	 * <code>typeEnvironment</code>.
 	 * 
-	 * @param element the internal element
-	 * @param formula the formula
-	 * @param attrType the attribute type
-	 * @param typeEnvironment the type environment
-	 * @param display the marker display for error reporting
+	 * @param element
+	 *            the internal element
+	 * @param formula
+	 *            the formula
+	 * @param attrType
+	 *            the attribute type
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
 	 * @return whether formula refers only to type parameters
 	 * @throws RodinDBException
 	 */
-	protected static boolean checkAgainstTypeParameters(
-			IInternalElement element, Formula<?> formula,
-			IAttributeType attrType, ITypeEnvironment typeEnvironment,
+	protected static boolean checkAgainstTypeParameters(IInternalElement element, Formula<?> formula, IAttributeType attrType, ITypeEnvironment typeEnvironment,
 			IMarkerDisplay display) throws RodinDBException {
 		Set<GivenType> types = formula.getGivenTypes();
 		boolean ok = true;
 		for (GivenType type : types) {
 			if (!MathExtensionsUtilities.isGivenSet(typeEnvironment, type.getName())) {
-				display.createProblemMarker(element, attrType,
-						TheoryGraphProblem.NonTypeParOccurError, type.getName());
+				display.createProblemMarker(element, attrType, TheoryGraphProblem.NonTypeParOccurError, type.getName());
 				ok = false;
 			}
 		}
@@ -172,16 +174,11 @@ public class CoreUtilities {
 	 * @return the type
 	 * @throws CoreException
 	 */
-	public static Type parseTypeExpression(ITypeElement typingElmnt,
-			FormulaFactory factory, IMarkerDisplay display)
-			throws CoreException {
+	public static Type parseTypeExpression(ITypeElement typingElmnt, FormulaFactory factory, IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = TheoryAttributes.TYPE_ATTRIBUTE;
 		String expString = typingElmnt.getType();
-
 		IParseResult parseResult = factory.parseType(expString, V2);
-
-		if (issueASTProblemMarkers(typingElmnt, attributeType, parseResult,
-				display)) {
+		if (issueASTProblemMarkers(typingElmnt, attributeType, parseResult, display)) {
 			return null;
 		}
 		Type type = parseResult.getParsedType();
@@ -189,7 +186,7 @@ public class CoreUtilities {
 	}
 
 	/**
-	 * Parses and type checks the predicate occuring as an attribute to the
+	 * Parses and type checks the predicate occurring as an attribute to the
 	 * given element
 	 * 
 	 * @param element
@@ -203,9 +200,7 @@ public class CoreUtilities {
 	 * @return the parsed predicate
 	 * @throws CoreException
 	 */
-	public static Predicate parseAndCheckPredicate(IPredicateElement element,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment,
-			IMarkerDisplay display) throws CoreException {
+	public static Predicate parseAndCheckPredicate(IPredicateElement element, FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
 		String pred = element.getPredicateString();
 		IParseResult result = ff.parsePredicate(pred, V2, null);
@@ -216,9 +211,7 @@ public class CoreUtilities {
 		FreeIdentifier[] idents = predicate.getFreeIdentifiers();
 		for (FreeIdentifier ident : idents) {
 			if (!typeEnvironment.contains(ident.getName())) {
-				display.createProblemMarker(element, attributeType,
-						GraphProblem.UndeclaredFreeIdentifierError,
-						ident.getName());
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
 				return null;
 			}
 		}
@@ -228,7 +221,7 @@ public class CoreUtilities {
 		}
 		return predicate;
 	}
-	
+
 	/**
 	 * Parses and type checks the expression occurring as an attribute to the
 	 * given element
@@ -244,9 +237,7 @@ public class CoreUtilities {
 	 * @return the parsed expression
 	 * @throws CoreException
 	 */
-	public static Expression parseAndCheckExpression(IExpressionElement element,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment,
-			IMarkerDisplay display) throws CoreException {
+	public static Expression parseAndCheckExpression(IExpressionElement element, FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = EventBAttributes.EXPRESSION_ATTRIBUTE;
 		String exp = element.getExpressionString();
 		IParseResult result = ff.parseExpression(exp, V2, null);
@@ -257,9 +248,7 @@ public class CoreUtilities {
 		FreeIdentifier[] idents = expression.getFreeIdentifiers();
 		for (FreeIdentifier ident : idents) {
 			if (!typeEnvironment.contains(ident.getName())) {
-				display.createProblemMarker(element, attributeType,
-						GraphProblem.UndeclaredFreeIdentifierError,
-						ident.getName());
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
 				return null;
 			}
 		}
@@ -285,9 +274,7 @@ public class CoreUtilities {
 	 * @return whether an error is encountered
 	 * @throws RodinDBException
 	 */
-	public static boolean issueASTProblemMarkers(IInternalElement element,
-			IAttributeType.String attributeType, IResult result,
-			IMarkerDisplay display) throws RodinDBException {
+	public static boolean issueASTProblemMarkers(IInternalElement element, IAttributeType.String attributeType, IResult result, IMarkerDisplay display) throws RodinDBException {
 
 		boolean errorIssued = false;
 		for (ASTProblem parserProblem : result.getProblems()) {
@@ -322,8 +309,7 @@ public class CoreUtilities {
 				break;
 
 			case InvalidTypeExpression:
-				// internal error
-				problem = ParseProblem.InternalError;
+				problem = ParseProblem.InvalidTypeExpressionError;
 				objects = NO_OBJECT;
 				break;
 
@@ -380,7 +366,7 @@ public class CoreUtilities {
 			case VariousPossibleErrors:
 
 				problem = ParseProblem.SyntaxError;
-
+				
 				objects = new Object[] { parserProblem.toString() };
 				break;
 			default:
@@ -392,12 +378,9 @@ public class CoreUtilities {
 			}
 
 			if (location == null) {
-				display.createProblemMarker(element, attributeType, problem,
-						objects);
+				display.createProblemMarker(element, attributeType, problem, objects);
 			} else {
-				display.createProblemMarker(element, attributeType,
-						location.getStart(), location.getEnd(), problem,
-						objects);
+				display.createProblemMarker(element, attributeType, location.getStart(), location.getEnd(), problem, objects);
 			}
 
 			errorIssued |= problem.getSeverity() == IMarker.SEVERITY_ERROR;
@@ -405,63 +388,75 @@ public class CoreUtilities {
 
 		return errorIssued;
 	}
-	
+
 	/**
-	 * Returns the set of all syntactic additions specified in the given source.
-	 * @param source the formula extensions source
-	 * @return the set of syntactic additions
+	 * Returns the set of all syntax symbols specified in the given source.
+	 * 
+	 * @param source
+	 *            the formula extensions source
+	 * @return the set of syntactic symbols
 	 * @throws CoreException
 	 */
-	public static Set<String> accumulateSyntacticAdditions(IFormulaExtensionsSource source) throws CoreException{
+	public static Set<String> getSyntaxSymbols(IFormulaExtensionsSource source) throws CoreException {
 		Set<String> set = new TreeSet<String>();
 		// start by datatypes
 		ISCDatatypeDefinition[] datatypeDefinitions = source.getSCDatatypeDefinitions();
-		for (ISCDatatypeDefinition definition : datatypeDefinitions){
+		for (ISCDatatypeDefinition definition : datatypeDefinitions) {
 			set.add(definition.getIdentifierString());
 			ISCDatatypeConstructor[] constructors = definition.getConstructors();
-			for (ISCDatatypeConstructor constructor : constructors){
+			for (ISCDatatypeConstructor constructor : constructors) {
 				set.add(constructor.getIdentifierString());
 				ISCConstructorArgument arguments[] = constructor.getConstructorArguments();
-				for (ISCConstructorArgument argument : arguments){
+				for (ISCConstructorArgument argument : arguments) {
 					set.add(argument.getIdentifierString());
 				}
 			}
 		}
 		// next operators
 		ISCNewOperatorDefinition[] operatorDefinitions = source.getSCNewOperatorDefinitions();
-		for (ISCNewOperatorDefinition definition : operatorDefinitions){
+		for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 			set.add(definition.getSyntaxSymbol());
 		}
 		return set;
 	}
-	
+
 	/**
-	 * Returns the syntactic additions of the hierarchy up to the specified leaf.
-	 * @param leaf the leaf theory
-	 * @return all syntactic additions
+	 * Returns the syntactic symbols of the hierarchy up to the specified leaf theory.
+	 * 
+	 * @param leaf
+	 *            the leaf theory
+	 * @return all syntactic symbols
 	 * @throws CoreException
 	 */
-	public static Set<String> getSyntacticAdditionsOfHierarchy(ISCTheoryRoot leaf) throws CoreException{
+	public static Set<String> getSyntacticSymbolsOfHierarchy(ISCTheoryRoot leaf) throws CoreException {
 		Set<ISCTheoryRoot> imported = DatabaseUtilities.importClosure(leaf);
 		Set<String> set = new TreeSet<String>();
-		set.addAll(accumulateSyntacticAdditions(leaf));
-		for (ISCTheoryRoot root : imported){
-			Set<String> rootSet = accumulateSyntacticAdditions(root);
+		set.addAll(getSyntaxSymbols(leaf));
+		for (ISCTheoryRoot root : imported) {
+			Set<String> rootSet = getSyntaxSymbols(root);
 			if (rootSet != null)
 				set.addAll(rootSet);
 		}
 		return set;
 	}
-	
-	public static Map<String, Set<String>> getDeployedSyntacticAdditionsOfOtherHierarchies(ISCTheoryRoot hierarchyToIgnoreLeaf) throws CoreException{
+
+	/**
+	 * Returns the set of syntax symbols defined in other deployed hierarchies with respect to <code>hierarchyToIgnoreLeaf</code>.
+	 * <p> As an example, given a SC theory <code>T1</code> that import SC theory <code>T2</code>, and <code>T3</code> is a deployed theory.
+	 * From the standpoint of <code>T1</code>, this method returns the syntactic contributions of <code>T3</code> but not <code>T2</code>.
+	 * @param hierarchyToIgnoreLeaf the SC theory 
+	 * @return the set of syntax symbols from other deployed hierarchies
+	 * @throws CoreException
+	 */
+	public static Map<String, Set<String>> getDeployedSyntaxSymbolsOfOtherHierarchies(ISCTheoryRoot hierarchyToIgnoreLeaf) throws CoreException {
 		Set<ISCTheoryRoot> hierarchyToIgnore = DatabaseUtilities.importClosure(hierarchyToIgnoreLeaf);
-		Set<String> names = DatabaseUtilities.getNames(hierarchyToIgnore.toArray(new ISCTheoryRoot[hierarchyToIgnore.size()]));
+		Set<String> names = DatabaseUtilities.getNames(hierarchyToIgnore);
 		IRodinProject project = hierarchyToIgnoreLeaf.getRodinProject();
 		IDeployedTheoryRoot[] deployedRoots = project.getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
 		Map<String, Set<String>> deployedMap = new TreeMap<String, Set<String>>();
-		for (IDeployedTheoryRoot root : deployedRoots){
-			if (!names.contains(root.getComponentName())){
-				Set<String> contrib = accumulateSyntacticAdditions(root);
+		for (IDeployedTheoryRoot root : deployedRoots) {
+			if (!names.contains(root.getComponentName())) {
+				Set<String> contrib = getSyntaxSymbols(root);
 				deployedMap.put(root.getComponentName(), contrib);
 			}
 		}
