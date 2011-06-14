@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IWDMediator;
@@ -19,12 +18,10 @@ import org.eventb.core.ast.extension.IWDMediator;
  * 
  * @since 1.0
  * 
- * @param <F> the type of the operator extension (Expression or Predicate)
- * 
  * @author maamria
  *
  */
-public interface IOperatorTypingRule<F extends Formula<F>> {
+public interface IOperatorTypingRule {
 	
 	/**
 	 * Returns the arity of the operator associated with this typing rule.

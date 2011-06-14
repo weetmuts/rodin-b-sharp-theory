@@ -26,11 +26,11 @@ import org.eventb.theory.core.maths.OperatorExtensionProperties;
  * @author maamria
  * 
  */
-public class PredicateOperatorExtension extends AbstractOperatorExtension<Predicate>
+public class PredicateOperatorExtension extends AbstractOperatorExtension
 		implements IPredicateExtension {
 	
 	public PredicateOperatorExtension(OperatorExtensionProperties properties,
-			boolean isCommutative, IOperatorTypingRule<Predicate> typingRule,
+			boolean isCommutative, IOperatorTypingRule typingRule,
 			Object source){
 		
 		super(properties, isCommutative, false, typingRule, source);

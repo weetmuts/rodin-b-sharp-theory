@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -21,18 +22,22 @@ import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.core.maths.AbstractOperatorTypingRule;
 import org.eventb.theory.core.maths.IExpressionTypeChecker;
 import org.eventb.theory.core.maths.IOperatorArgument;
+import org.eventb.theory.core.maths.IOperatorExtension;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
  * 
  */
-public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule<Expression> implements IExpressionTypeChecker {
+public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule implements IExpressionTypeChecker {
 
 	protected Type resultantType;
 	protected boolean isAssociative;
@@ -151,6 +156,15 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule<Exp
 			subs.put(factory.makeFreeIdentifier(gType.getName(), null, instantiations.get(gType).toExpression(factory).getType()), instantiations.get(gType).toExpression(factory));
 		}
 		return subs;
+	}
+
+	@Override
+	protected Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory) {
+		 IFormulaExtension extension = formula.getExtension();
+		 if (((IOperatorExtension) extension).isAssociative())
+			 return AstUtilities.unflatten(extension,formula.getChildExpressions(), factory);
+		 else 
+			 return (Formula<?>) formula;
 	}
 
 }

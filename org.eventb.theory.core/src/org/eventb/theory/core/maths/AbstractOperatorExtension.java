@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
@@ -21,7 +20,7 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * 
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractOperatorExtension<F extends Formula<F>> implements IOperatorExtension<F> {
+public abstract class AbstractOperatorExtension implements IOperatorExtension {
 	
 	protected OperatorExtensionProperties properties;
 	private String operatorGroup;
@@ -29,7 +28,7 @@ public abstract class AbstractOperatorExtension<F extends Formula<F>> implements
 	/**
 	 * Well-definedness condition
 	 */
-	protected IOperatorTypingRule<F> operatorTypingRule;
+	protected IOperatorTypingRule operatorTypingRule;
 
 	/**
 	 * Operator properties
@@ -67,7 +66,7 @@ public abstract class AbstractOperatorExtension<F extends Formula<F>> implements
 	 */
 	protected AbstractOperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative,
-			IOperatorTypingRule<F> operatorTypingRule,
+			IOperatorTypingRule operatorTypingRule,
 			Object source) {
 		this.properties = properties;
 		this.isCommutative = isCommutative;
@@ -105,7 +104,7 @@ public abstract class AbstractOperatorExtension<F extends Formula<F>> implements
 		if (o == null || !(o instanceof AbstractOperatorExtension)) {
 			return false;
 		}
-		AbstractOperatorExtension<?> abs = (AbstractOperatorExtension<?>) o;
+		AbstractOperatorExtension abs = (AbstractOperatorExtension) o;
 		return abs.properties.equals(properties)
 				&& abs.isAssociative == isAssociative
 				&& abs.isCommutative == isCommutative

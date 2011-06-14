@@ -33,12 +33,12 @@ import org.eventb.theory.core.maths.OperatorExtensionProperties;
  * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionOperatorExtension extends AbstractOperatorExtension<Expression>
+public class ExpressionOperatorExtension extends AbstractOperatorExtension
 		implements IExpressionExtension {
 
 	public ExpressionOperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative,
-			IOperatorTypingRule<Expression> typingRule,
+			IOperatorTypingRule typingRule,
 			Object source) {
 
 		super(properties, isCommutative, isAssociative, typingRule,source);

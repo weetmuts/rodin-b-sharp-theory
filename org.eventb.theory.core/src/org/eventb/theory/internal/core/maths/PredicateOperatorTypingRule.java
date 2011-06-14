@@ -12,9 +12,12 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.theory.core.maths.AbstractOperatorTypingRule;
 import org.eventb.theory.core.maths.IOperatorArgument;
@@ -24,7 +27,7 @@ import org.eventb.theory.core.maths.IPredicateTypeChecker;
  * @author maamria
  *
  */
-public class PredicateOperatorTypingRule extends AbstractOperatorTypingRule<Predicate>
+public class PredicateOperatorTypingRule extends AbstractOperatorTypingRule
 implements IPredicateTypeChecker{
 
 	/**
@@ -53,5 +56,10 @@ implements IPredicateTypeChecker{
 			mediator.sameType(argumentTypesAsVars[i], currentType);
 		}
 		
+	}
+
+	@Override
+	protected Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory) {
+		return (Formula<?>) formula;
 	}
 }

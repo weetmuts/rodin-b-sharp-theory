@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 
@@ -17,13 +16,11 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
  * 
  * @since 1.0
  * 
- * @param <F> the type of the formula
- * 
  * @author maamria
  *
  */
 
-public interface IOperatorExtension<F extends Formula<F>> extends IFormulaExtension{
+public interface IOperatorExtension extends IFormulaExtension{
 	
 	/**
 	 * Returns whether this operator is associative.

@@ -33,7 +33,6 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
@@ -51,8 +50,7 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * @see IPredicateExtension
  * @see IExpressionExtension
  */
-public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
-		implements IOperatorTypingRule<F> {
+public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule {
 
 	protected List<IOperatorArgument> operatorArguments;
 	protected int arity = 0;
@@ -87,17 +85,9 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
 		FormulaFactory factory = wdMediator.getFormulaFactory();
-		Expression[] childrenExprs = formula.getChildExpressions();
-		IOperatorExtension<?> operatorExtension = (IOperatorExtension<?>) formula
-				.getExtension();
-		Formula<?> flattened = (Formula<?>) formula;
-		if (operatorExtension.isAssociative()) {
-			flattened = AstUtilities.unflatten(operatorExtension,
-					childrenExprs, factory);
-		}
-
+		Formula<?> unflattened = unflatten(formula, factory);
 		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(
-				((IExtendedFormula) flattened).getChildExpressions(), factory);
+				((IExtendedFormula) unflattened).getChildExpressions(), factory);
 		if (allSubs == null) {
 			return null;
 		}
@@ -119,7 +109,7 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 		if (o == null || !(o instanceof AbstractOperatorTypingRule)) {
 			return false;
 		}
-		AbstractOperatorTypingRule<?> rule = (AbstractOperatorTypingRule<?>) o;
+		AbstractOperatorTypingRule rule = (AbstractOperatorTypingRule) o;
 		return operatorArguments.equals(rule.operatorArguments)
 				&& arity == rule.arity
 				&& typeParameters.equals(rule.typeParameters)
@@ -134,6 +124,14 @@ public abstract class AbstractOperatorTypingRule<F extends Formula<F>>
 	public String toString() {
 		return GeneralUtilities.toString(operatorArguments);
 	}
+	
+	/**
+	 * Unflattening may be necessary to compute well-definedness condition of a flattened associative extended expression.
+	 * @param formula the formula to unflatten
+	 * @param factory the formula factory to use
+	 * @return the unflattened formula
+	 */
+	protected abstract Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory);
 
 	private void addTypeParameters(List<GivenType> types) {
 		for (GivenType type : types) {

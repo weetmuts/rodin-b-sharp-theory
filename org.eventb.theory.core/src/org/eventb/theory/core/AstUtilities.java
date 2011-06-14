@@ -57,7 +57,7 @@ public class AstUtilities {
 	 * @return whether the given extended expression is associative
 	 */
 	public static boolean isAssociative(ExtendedExpression expression) {
-		return expression != null && expression.getExtension() instanceof IOperatorExtension && ((IOperatorExtension<?>) expression.getExtension()).isAssociative();
+		return expression != null && expression.getExtension() instanceof IOperatorExtension && ((IOperatorExtension) expression.getExtension()).isAssociative();
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class AstUtilities {
 	 * @return whether the given extended expression is associative commutative
 	 */
 	public static boolean isAC(ExtendedExpression expression) {
-		return isAssociative(expression) && ((IOperatorExtension<?>) expression.getExtension()).isCommutative();
+		return isAssociative(expression) && ((IOperatorExtension) expression.getExtension()).isCommutative();
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class AstUtilities {
 				return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0], null);
 			}
 		}
-		if (isAnAssociativeExtension(extension)) {
+		if (!isAnAssociativeExtension(extension)) {
 			return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0], null);
 		}
 		// only works for extended expressions resulting from theory extensions
@@ -136,11 +136,10 @@ public class AstUtilities {
 	 *            the string of the expression
 	 * @return operator position
 	 */
-	@SuppressWarnings("unchecked")
 	public static PositionPoint getPositionOfOperator(ExtendedExpression eexp, String predStr) {
 		assert eexp.getExtension() instanceof IOperatorExtension;
 		PositionPoint point = null;
-		IOperatorExtension<Expression> extension = (IOperatorExtension<Expression>) eexp.getExtension();
+		IOperatorExtension extension = (IOperatorExtension) eexp.getExtension();
 		Notation notation = extension.getNotation();
 
 		switch (notation) {
@@ -198,7 +197,7 @@ public class AstUtilities {
 	 */
 	public static boolean isAnAssociativeExtension(IFormulaExtension extension) {
 		if (isATheoryExtension(extension)) {
-			if (((IOperatorExtension<?>) extension).isAssociative()) {
+			if (((IOperatorExtension) extension).isAssociative()) {
 				return true;
 			}
 		}
