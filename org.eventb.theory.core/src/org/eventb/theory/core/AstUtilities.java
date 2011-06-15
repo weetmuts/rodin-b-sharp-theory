@@ -21,8 +21,6 @@ import org.eventb.theory.core.maths.IOperatorExtension;
  * Utilities from the Theory Core that are mostly useful for the Rule-based
  * Prover.
  * 
- * TODO fix the flattening method
- * 
  * @since 1.0
  * @author maamria
  * 
@@ -81,8 +79,7 @@ public class AstUtilities {
 	 *            the extended expression children
 	 * @param factory
 	 *            the formula factory
-	 * @return the non-flattened extended expression TODO the result is
-	 *         right-associative/ make left-associative
+	 * @return the non-flattened extended expression, the result is left-associative
 	 */
 	public static ExtendedExpression unflatten(IFormulaExtension extension, Expression[] children, FormulaFactory factory) {
 		if (!isATheoryExtension(extension)) {
@@ -96,32 +93,37 @@ public class AstUtilities {
 		// only works for extended expressions resulting from theory extensions
 		// children length has to be 2 or more
 		IExpressionExtension expreExtension = (IExpressionExtension) extension;
-		if (children.length == 2) {
+		int length = children.length;
+		if (length == 2) {
 			return factory.makeExtendedExpression(expreExtension, children, new Predicate[0], null);
 		} else {
-			Expression[] toWorkWith = subChildren(1, children);
-			return factory.makeExtendedExpression(expreExtension, new Expression[] { children[0], unflatten(extension, toWorkWith, factory) }, new Predicate[0], null);
+			Expression[] toWorkWith = subChildren(length - 2, children);
+			return factory.makeExtendedExpression(expreExtension, new Expression[] {unflatten(extension, toWorkWith, factory), children[length - 1]}, new Predicate[0], null);
 		}
 	}
 
 	/**
 	 * This method returns the array resulting from taking the elements of
-	 * children in the same order starting from the (zero-based) given starting
+	 * children in the same order ending at the (zero-based) given ending
 	 * index (inclusive).
 	 * 
-	 * @param start
-	 *            the starting index
+	 * @param end
+	 *            the ending index (zero-based)
 	 * @param children
 	 *            the original array
 	 * @return the sub-array
 	 */
-	static Expression[] subChildren(int start, Expression[] children) {
-		if (start > children.length - 1) {
+	static Expression[] subChildren(int end, Expression[] children) {
+		if (end > children.length - 1){
+			return children;
+		}
+		if (end < 0) {
 			return new Expression[0];
 		} else {
-			Expression[] result = new Expression[children.length - start];
-			for (int i = 0; i < result.length; i++) {
-				result[i] = children[i + start];
+			int newLength = end + 1;
+			Expression[] result = new Expression[newLength];
+			for (int i = 0; i < newLength; i++) {
+				result[i] = children[i];
 			}
 			return result;
 		}

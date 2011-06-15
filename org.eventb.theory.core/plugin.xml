@@ -51,11 +51,6 @@
             name="%notationTypeAttr">
       </attributeType>
       <attributeType
-            id="syntaxSymbol"
-            kind="string"
-            name="%syntaxSymbolAttr">
-      </attributeType>
-      <attributeType
             id="type"
             kind="string"
             name="%typeAttr">

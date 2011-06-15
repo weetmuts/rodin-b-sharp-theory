@@ -22,6 +22,7 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IRecursiveOperatorDefinition;
+import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -47,51 +48,45 @@ public class OperatorFilterModule extends SCFilterModule {
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		INewOperatorDefinition opDef = (INewOperatorDefinition) element;
-		String opID = opDef.getLabel();
+		ITheoryRoot theoryRoot = opDef.getAncestor(ITheoryRoot.ELEMENT_TYPE);
+		String opLabel = opDef.getLabel();
 		// check against the symbol table for operator labels
 		OperatorLabelSymbolTable labelSymbolTable = (OperatorLabelSymbolTable) repository
 				.getState(OperatorLabelSymbolTable.STATE_TYPE);
-		ILabelSymbolInfo symbolInfo = labelSymbolTable.getSymbolInfo(opID);
+		ILabelSymbolInfo symbolInfo = labelSymbolTable.getSymbolInfo(opLabel);
 		if (symbolInfo == null) {
 			return false;
 		}
 		// check ID is unique
-		if (!MathExtensionsUtilities.checkOperatorID(opDef.getLabel(), factory)) {
+		String operatorId = theoryRoot.getComponentName() + "." + opLabel;
+		if (!MathExtensionsUtilities.checkOperatorID(operatorId, factory)) {
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE,
-					TheoryGraphProblem.OperatorIDExistsError, opID);
+					TheoryGraphProblem.OperatorIDExistsError, opLabel);
 			return false;
 		}
-		if (!opDef.hasSyntaxSymbol() || opDef.getSyntaxSymbol().equals("")) {
-			createProblemMarker(opDef,
-					TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE,
-					TheoryGraphProblem.OperatorSynMissingError, opID);
-			return false;
-		}
-		String syntax = opDef.getSyntaxSymbol();
+		String syntax = opLabel;
 		// check syntax
 		if (typeEnvironment.contains(syntax)) {
 			createProblemMarker(opDef,
-					TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE,
+					EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorSynIsATypeParError, syntax);
 			return false;
 		}
 		if (!MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
 			createProblemMarker(opDef,
-					TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE,
+					EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorSynExistsError, syntax);
 			return false;
 		}
 		if (!FormulaFactory.checkSymbol(syntax) || syntax.contains(" ")) {
 			createProblemMarker(opDef,
-					TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE,
+					EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorInvalidSynError, syntax);
 			return false;
 		}
-		symbolInfo.setAttributeValue(TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE,
-				syntax);
 		if (!opDef.hasFormulaType()) {
 			createProblemMarker(opDef, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
-					TheoryGraphProblem.OperatorFormTypeMissingError, opID);
+					TheoryGraphProblem.OperatorFormTypeMissingError, opLabel);
 			return false;
 		}
 		FormulaType formType = opDef.getFormulaType();
@@ -100,7 +95,7 @@ public class OperatorFilterModule extends SCFilterModule {
 		if (!opDef.hasNotationType()) {
 			createProblemMarker(opDef,
 					TheoryAttributes.NOTATION_TYPE_ATTRIBUTE,
-					TheoryGraphProblem.OperatorNotationTypeMissingError, opID);
+					TheoryGraphProblem.OperatorNotationTypeMissingError, opLabel);
 			return false;
 		}
 		Notation notation = opDef.getNotationType();
@@ -109,14 +104,14 @@ public class OperatorFilterModule extends SCFilterModule {
 
 		if (!opDef.hasAssociativeAttribute()) {
 			createProblemMarker(opDef, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
-					TheoryGraphProblem.OperatorAssocMissingError, opID);
+					TheoryGraphProblem.OperatorAssocMissingError, opLabel);
 			return false;
 		}
 		symbolInfo.setAttributeValue(TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
 				opDef.isAssociative());
 		if (!opDef.hasCommutativeAttribute()) {
 			createProblemMarker(opDef, TheoryAttributes.COMMUTATIVE_ATTRIBUTE,
-					TheoryGraphProblem.OperatorCommutMissingError, opID);
+					TheoryGraphProblem.OperatorCommutMissingError, opLabel);
 			return false;
 		}
 		symbolInfo.setAttributeValue(TheoryAttributes.COMMUTATIVE_ATTRIBUTE,

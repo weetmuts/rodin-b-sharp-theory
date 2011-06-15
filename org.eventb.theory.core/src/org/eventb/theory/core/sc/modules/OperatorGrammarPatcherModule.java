@@ -9,6 +9,7 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.sc.SCCore;
@@ -18,7 +19,6 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
@@ -63,7 +63,7 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 				operatorInformation.generateDefinitionalRule(newOperatorDefinition, theoryRoot, factory);
 			}
 			else {
-				createProblemMarker((INewOperatorDefinition) element,TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE, 
+				createProblemMarker((INewOperatorDefinition) element,EventBAttributes.LABEL_ATTRIBUTE, 
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAdded, syntax);
 				operatorInformation.setHasError();
 				opHasError = true;

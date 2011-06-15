@@ -90,15 +90,6 @@
             required="true"
             typeId="org.eventb.theory.core.notationType">
       </choiceAttribute>
-      <textAttribute
-            class="org.eventb.theory.internal.ui.attr.SyntaxSymbolAttributeManipulation"
-            expandsHorizontally="false"
-            id="org.eventb.theory.ui.syntaxSymbol"
-            isMath="true"
-            prefix="Syntax"
-            style="single"
-            typeId="org.eventb.theory.core.syntaxSymbol">
-      </textAttribute>
       <choiceAttribute
             class="org.eventb.theory.internal.ui.attr.ImportTheoryAttributeManipulation"
             expandsHorizontally="false"
@@ -453,22 +444,18 @@
          </attributeReference>
          <attributeReference
                column="1"
-               descriptionId="org.eventb.theory.ui.syntaxSymbol">
-         </attributeReference>
-         <attributeReference
-               column="2"
                descriptionId="org.eventb.theory.ui.formulaType">
          </attributeReference>
          <attributeReference
-               column="3"
+               column="2"
                descriptionId="org.eventb.theory.ui.notationType">
          </attributeReference>
          <attributeReference
-               column="4"
+               column="3"
                descriptionId="org.eventb.theory.ui.associative">
          </attributeReference>
          <attributeReference
-               column="5"
+               column="4"
                descriptionId="org.eventb.theory.ui.commutative">
          </attributeReference>
          <attributeReference

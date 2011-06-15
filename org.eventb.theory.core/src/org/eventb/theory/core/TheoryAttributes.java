@@ -34,9 +34,6 @@ public class TheoryAttributes {
 	public static IAttributeType.String NOTATION_TYPE_ATTRIBUTE = RodinCore
 			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".notationType");
 
-	public static IAttributeType.String SYNTAX_SYMBOL_ATTRIBUTE = RodinCore
-			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".syntaxSymbol");
-
 	public static IAttributeType.String TYPE_ATTRIBUTE = RodinCore
 			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".type");
 

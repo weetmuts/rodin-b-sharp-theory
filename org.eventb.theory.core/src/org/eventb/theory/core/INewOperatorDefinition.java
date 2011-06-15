@@ -31,7 +31,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface INewOperatorDefinition extends ICommentedElement, ILabeledElement,
-	ISyntaxSymbolElement, IFormulaTypeElement, INotationTypeElement,
+	IFormulaTypeElement, INotationTypeElement,
 	IAssociativeElement, ICommutativeElement{
 
 	IInternalElementType<INewOperatorDefinition> ELEMENT_TYPE = 

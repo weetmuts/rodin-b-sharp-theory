@@ -23,7 +23,6 @@ import static org.eventb.theory.core.TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBU
 import static org.eventb.theory.core.TheoryAttributes.INTERACTIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.SYNTAX_SYMBOL_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 
@@ -59,7 +58,6 @@ import org.eventb.theory.core.ISCFormulaElement;
 import org.eventb.theory.core.ISCGivenTypeElement;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeElement;
-import org.eventb.theory.core.ISyntaxSymbolElement;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.IValidatedElement;
 import org.rodinp.core.IRodinElement;
@@ -74,7 +72,7 @@ import org.rodinp.core.RodinDBException;
 @SuppressWarnings("restriction")
 public abstract class TheoryElement extends EventBElement implements
 		IAssociativeElement, ICommutativeElement, IFormulaElement,
-		IFormulaTypeElement, INotationTypeElement, ISyntaxSymbolElement,
+		IFormulaTypeElement, INotationTypeElement, 
 		ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
 		IInteractiveElement, IDefinitionalElement, ISCTypeElement,
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
@@ -201,24 +199,6 @@ public abstract class TheoryElement extends EventBElement implements
 	public void setNotationType(String notation, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(NOTATION_TYPE_ATTRIBUTE, notation, monitor);
-	}
-
-	@Override
-	public String getSyntaxSymbol() throws RodinDBException {
-		// remove trailing spaces
-		return getAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE).trim();
-	}
-
-	@Override
-	public boolean hasSyntaxSymbol() throws RodinDBException {
-		return hasAttribute(SYNTAX_SYMBOL_ATTRIBUTE);
-	}
-
-	@Override
-	public void setSyntaxSymbol(String newSymbol, IProgressMonitor monitor)
-			throws RodinDBException {
-		setAttributeValue(SYNTAX_SYMBOL_ATTRIBUTE, newSymbol.trim(), monitor);
-
 	}
 
 	@Override

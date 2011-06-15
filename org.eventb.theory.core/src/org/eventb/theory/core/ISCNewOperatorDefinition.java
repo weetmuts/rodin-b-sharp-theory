@@ -27,7 +27,7 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public interface ISCNewOperatorDefinition extends ILabeledElement,
-		ISyntaxSymbolElement, IFormulaTypeElement, INotationTypeElement,
+		IFormulaTypeElement, INotationTypeElement,
 		IAssociativeElement, ICommutativeElement, ITraceableElement,
 		IHasErrorElement, ISCPredicateElement, ISCTypeElement, IOperatorGroupElement,
 		IValidatedElement {

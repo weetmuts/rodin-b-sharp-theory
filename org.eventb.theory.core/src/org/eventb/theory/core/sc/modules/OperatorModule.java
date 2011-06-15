@@ -216,7 +216,7 @@ public class OperatorModule extends LabeledElementModule{
 				// copying of information
 				operatorInformation.setFormulaType(newOpDefs[i].getFormulaType());
 				operatorInformation.setNotation(newOpDefs[i].getNotationType());
-				operatorInformation.setSyntax(newOpDefs[i].getSyntaxSymbol());
+				operatorInformation.setSyntax(newOpDefs[i].getLabel());
 				operatorInformation.setAssociative(newOpDefs[i].isAssociative());
 				operatorInformation.setCommutative(newOpDefs[i].isCommutative());
 				

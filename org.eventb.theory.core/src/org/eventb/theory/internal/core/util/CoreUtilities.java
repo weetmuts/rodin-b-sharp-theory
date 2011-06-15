@@ -415,7 +415,7 @@ public class CoreUtilities {
 		// next operators
 		ISCNewOperatorDefinition[] operatorDefinitions = source.getSCNewOperatorDefinitions();
 		for (ISCNewOperatorDefinition definition : operatorDefinitions) {
-			set.add(definition.getSyntaxSymbol());
+			set.add(definition.getLabel());
 		}
 		return set;
 	}

@@ -51,7 +51,7 @@ public class OperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 			if (opDef.getNotationType().equals(Notation.INFIX)) {
 				IOperatorArgument args[] = opDef.getOperatorArguments();
 				if (args.length == 0) {
-					builder.append(opDef.getSyntaxSymbol() + TWO_SPACES);
+					builder.append(opDef.getLabel() + TWO_SPACES);
 				} else {
 					int i = 0;
 					for (IOperatorArgument arg : args) {
@@ -59,7 +59,7 @@ public class OperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 								+ ONE_SPACES + ":" + ONE_SPACES + arg.getExpressionString()
 								+ ")");
 						if (i < args.length - 1) {
-							builder.append(ONE_SPACES + opDef.getSyntaxSymbol()
+							builder.append(ONE_SPACES + opDef.getLabel()
 									+ ONE_SPACES);
 						}
 						i++;
@@ -67,7 +67,7 @@ public class OperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 					builder.append(TWO_SPACES);
 				}
 			} else {
-				builder.append(opDef.getSyntaxSymbol());
+				builder.append(opDef.getLabel());
 				IOperatorArgument args[] = opDef.getOperatorArguments();
 				if (args.length > 0) {
 					builder.append("(");

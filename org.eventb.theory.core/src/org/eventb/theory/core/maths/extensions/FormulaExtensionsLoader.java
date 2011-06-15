@@ -220,7 +220,7 @@ class OperatorTransformer extends
 			}
 			String theoryName = definition.getParent().getElementName();
 			String operatorID = theoryName + "." + definition.getLabel();
-			String syntax = definition.getSyntaxSymbol();
+			String syntax = definition.getLabel();
 			FormulaType formulaType = definition.getFormulaType();
 			Notation notation = definition.getNotationType();
 			String groupID = definition.getOperatorGroup();
