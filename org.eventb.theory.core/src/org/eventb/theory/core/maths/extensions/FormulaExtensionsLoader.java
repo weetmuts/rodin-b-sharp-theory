@@ -219,8 +219,8 @@ class OperatorTransformer extends
 				return EMPTY_EXT;
 			}
 			String theoryName = definition.getParent().getElementName();
-			String operatorID = theoryName + "." + definition.getLabel();
 			String syntax = definition.getLabel();
+			String operatorID = MathExtensionsUtilities.makeOperatorID(theoryName, syntax);
 			FormulaType formulaType = definition.getFormulaType();
 			Notation notation = definition.getNotationType();
 			String groupID = definition.getOperatorGroup();

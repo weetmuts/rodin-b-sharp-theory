@@ -58,7 +58,7 @@ public class OperatorFilterModule extends SCFilterModule {
 			return false;
 		}
 		// check ID is unique
-		String operatorId = theoryRoot.getComponentName() + "." + opLabel;
+		String operatorId = MathExtensionsUtilities.makeOperatorID(theoryRoot.getComponentName(), opLabel);
 		if (!MathExtensionsUtilities.checkOperatorID(operatorId, factory)) {
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorIDExistsError, opLabel);

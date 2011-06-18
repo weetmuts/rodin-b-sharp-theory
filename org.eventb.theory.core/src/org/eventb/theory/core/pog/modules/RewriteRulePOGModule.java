@@ -95,7 +95,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 			ArrayList<Predicate> allConditions = new ArrayList<Predicate>();
 			ArrayList<Predicate> wdAllConditions = new ArrayList<Predicate>();
 			
-			String ruleName = rule.getElementName();
+			String ruleName = rule.getLabel();
 			
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
 					IPOSource.DEFAULT_ROLE, rule.getSource()) };

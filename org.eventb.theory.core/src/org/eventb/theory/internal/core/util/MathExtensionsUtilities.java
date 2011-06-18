@@ -388,6 +388,16 @@ public class MathExtensionsUtilities {
 		}
 		return types;
 	}
+	
+	/**
+	 * Returns an operator ID with the given details.
+	 * @param theoryName the parent theory
+	 * @param syntax the syntax of the operator
+	 * @return a suitable operator ID
+	 */
+	public static String makeOperatorID(String theoryName, String syntax){
+		return theoryName + "." + syntax;
+	}
 
 	/**
 	 * Creates a type environment using the given factory with all the names
