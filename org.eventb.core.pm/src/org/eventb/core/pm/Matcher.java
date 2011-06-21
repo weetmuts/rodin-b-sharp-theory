@@ -10,7 +10,7 @@ package org.eventb.core.pm;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.engine.MatchingFactory;
+import org.eventb.core.pm.basis.MatchingFactory;
 
 /**
  * 

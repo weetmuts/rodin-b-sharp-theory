@@ -1,4 +1,4 @@
-package org.eventb.core.pm.basis.engine;
+package org.eventb.core.pm.basis;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,6 +11,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
@@ -24,9 +26,10 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.IExpressionMatcher;
-import org.eventb.core.pm.basis.IPredicateMatcher;
+import org.eventb.core.internal.pm.ExpressionPatternMatchersRegistry;
+import org.eventb.core.internal.pm.PredicatePatternMatchersRegistry;
+import org.eventb.core.pm.basis.engine.Binding;
+import org.eventb.core.pm.basis.engine.MatchingUtilities;
 import org.eventb.core.pm.matchers.exp.AssociativeExpressionMatcher;
 import org.eventb.core.pm.matchers.exp.AtomicExpressionMatcher;
 import org.eventb.core.pm.matchers.exp.BinaryExpressionMatcher;
@@ -92,11 +95,15 @@ public final class MatchingFactory {
 	
 	private static MatchingFactory instance;
 	
+	private ExpressionPatternMatchersRegistry expressionPatternMatchersRegistry;
+	private PredicatePatternMatchersRegistry predicatePatternMatchersRegistry;
+	
 	/**
 	 * Private constructor.
 	 */
 	private MatchingFactory(){
-		
+		expressionPatternMatchersRegistry = ExpressionPatternMatchersRegistry.getMatchersRegistry();
+		predicatePatternMatchersRegistry = PredicatePatternMatchersRegistry.getMatchersRegistry();
 	}
 	
 	/**
@@ -115,14 +122,28 @@ public final class MatchingFactory {
 		}
 		
 		if(formula instanceof Expression){
-			IExpressionMatcher expMatcher = getExpressionMatcher(((Expression)formula).getClass());
+			IExpressionMatcher expMatcher = null;
+			if (formula instanceof ExtendedExpression){
+				ExtendedExpression extendedExpression = (ExtendedExpression) formula;
+				expMatcher = expressionPatternMatchersRegistry.getMatcher(extendedExpression.getExtension().getClass());
+			}
+			else {
+				 expMatcher = getExpressionMatcher(((Expression)formula).getClass());
+			}
 			if (expMatcher == null){
 				return false;
 			}
 			return expMatcher.match((Expression)formula, (Expression)pattern, initialBinding);
 		}
 		else {
-			IPredicateMatcher predMatcher = getPredicateMatcher(((Predicate)formula).getClass());
+			IPredicateMatcher predMatcher = null;
+			if (formula instanceof ExtendedPredicate){
+				ExtendedPredicate extendedPredicate = (ExtendedPredicate) formula;
+				predMatcher = predicatePatternMatchersRegistry.getMatcher(extendedPredicate.getExtension().getClass());
+			}
+			else {
+				predMatcher = getPredicateMatcher(((Predicate)formula).getClass());
+			}
 			if (predMatcher == null){
 				return false;
 			}
@@ -154,4 +175,6 @@ public final class MatchingFactory {
 		}
 		return instance;
 	}
+	
+	
 }

@@ -38,7 +38,7 @@ import org.eventb.core.pm.basis.IBinding;
  * @author maamria
  * 
  */
-final class Binding implements IBinding {
+public final class Binding implements IBinding {
 
 	// mappings stores
 	private Map<FreeIdentifier, Expression> binding;
@@ -55,7 +55,7 @@ final class Binding implements IBinding {
 	private AssociativeExpressionComplement expComplement;
 	private AssociativePredicateComplement predComplement;
 
-	protected Binding(
+	public Binding(
 			boolean isPartialMatchAcceptable, FormulaFactory factory) {
 		this.isPartialMatchAcceptable = isPartialMatchAcceptable;
 		binding = new HashMap<FreeIdentifier, Expression>();

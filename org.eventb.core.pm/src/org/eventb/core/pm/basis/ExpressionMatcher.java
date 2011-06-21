@@ -1,7 +1,6 @@
 package org.eventb.core.pm.basis;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.pm.basis.engine.MatchingFactory;
 
 /**
  * An abstract implementation of an expression matcher.

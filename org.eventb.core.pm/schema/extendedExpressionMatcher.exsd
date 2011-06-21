@@ -55,7 +55,7 @@
                   The class should provide an implementation of how bindings are gathered. The anatomy of extended expression can be specific to the type of extension used/implemented.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.core.pm.ExtendedExpressionMatcher:"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.core.pm.basis.ExtendedExpressionMatcher:"/>
                </appinfo>
             </annotation>
          </attribute>

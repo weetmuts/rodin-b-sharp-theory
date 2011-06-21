@@ -5,12 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pm;
+package org.eventb.core.pm.basis;
 
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.pm.basis.PredicateMatcher;
 
 /**
  * 

@@ -5,12 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pm;
+package org.eventb.core.pm.basis;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.pm.basis.ExpressionMatcher;
 
 /**
  * 

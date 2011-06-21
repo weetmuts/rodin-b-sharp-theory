@@ -7,10 +7,13 @@
  *******************************************************************************/
 package org.eventb.core.pm.basis.engine;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.plugin.PMPlugin;
 
 /**
  * 
@@ -54,4 +57,17 @@ public class MatchingUtilities {
 		return true;
 	}
 	
+	/**
+	 * Logs the given exception with the message.
+	 * @param exc the exception
+	 * @param message the message
+	 */
+	public static void log(Throwable exc, String message) {
+		if (message == null) {
+			message = "Unknown context"; //$NON-NLS-1$
+		}
+		IStatus status = new Status(IStatus.ERROR, PMPlugin.PLUGIN_ID,
+				IStatus.ERROR, message, exc);
+		PMPlugin.getDefault().getLog().log(status);
+	}
 }

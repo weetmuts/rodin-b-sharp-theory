@@ -10,7 +10,7 @@ package org.eventb.core.pm.matchers.exp;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.engine.MatchingFactory;
+import org.eventb.core.pm.basis.MatchingFactory;
 
 /**
  * @author maamria
