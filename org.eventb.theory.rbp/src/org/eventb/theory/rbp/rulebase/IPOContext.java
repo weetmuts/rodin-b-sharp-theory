@@ -11,16 +11,29 @@ import org.eventb.core.IEventBRoot;
 
 /**
  * Common protocol for proof obligation contextual information.
+ * <p> Instances of this interface should only be created inside a tactic.
  * @author maamria
  * @since 1.0
  *
  */
 public interface IPOContext {
 	
+	/**
+	 * Returns the parent root corresponding to the proof obligation.
+	 * @return the parent root
+	 */
 	public IEventBRoot getParentRoot();
 	
+	/**
+	 * Returns whether the proof obligation is related to a theory component.
+	 * @return whether the proof obligation is related to a theory component
+	 */
 	public boolean isTheoryRelated();
 	
+	/**
+	 * Returns whether the proof obligation corresponds to a component in the <code>MathExtensions</code> project.
+	 * @return  whether the proof obligation corresponds to a component in the <code>MathExtensions</code> project
+	 */
 	public boolean inMathExtensions();
 	
 }

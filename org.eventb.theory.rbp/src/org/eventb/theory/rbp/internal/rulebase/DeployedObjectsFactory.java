@@ -22,6 +22,7 @@ import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -50,7 +51,7 @@ public class DeployedObjectsFactory {
 
 			return result;
 		} catch (CoreException e) {
-			e.printStackTrace();
+			ProverUtilities.log(e, "error creating deployed inference rules from "+ block);
 		}
 		return new ArrayList<IDeployedRewriteRule>();
 	}
@@ -75,7 +76,7 @@ public class DeployedObjectsFactory {
 
 			return result;
 		} catch (CoreException e) {
-			e.printStackTrace();
+			ProverUtilities.log(e, "error creating deployed inference rules from "+ block);
 		}
 		return new ArrayList<IDeployedInferenceRule>();
 	}
@@ -114,7 +115,7 @@ public class DeployedObjectsFactory {
 					typeEnvironment);
 			return infRule;
 		} catch (CoreException e) {
-			e.printStackTrace();
+			ProverUtilities.log(e, "error creating deployed inference rule from "+ rule);
 		}
 		return null;
 	}
@@ -126,6 +127,9 @@ public class DeployedObjectsFactory {
 			String ruleName = rule.getElementName();
 			String theoryName = rule.getRoot().getElementName();
 			Formula<?> lhs = rule.getSCFormula(factory, typeEnvironment);
+			if (lhs == null){
+				return null;
+			}
 			List<IDeployedRuleRHS> ruleRHSs = new ArrayList<IDeployedRuleRHS>();
 			for (ISCRewriteRuleRightHandSide rhs : rule.getRuleRHSs()) {
 				IDeployedRuleRHS deployedRuleRHS = getDeployedRuleRHS(rhs,
@@ -146,7 +150,7 @@ public class DeployedObjectsFactory {
 					isComplete, true, toolTip, description, typeEnvironment);
 			return depRule;
 		} catch (CoreException e) {
-			e.printStackTrace();
+			ProverUtilities.log(e, "error creating deployed rewrite rule from "+ rule);
 		}
 		return null;
 	}
@@ -161,7 +165,7 @@ public class DeployedObjectsFactory {
 			IDeployedRuleRHS depRHS = new DeployedRuleRHS(name, rhsForm, cond);
 			return depRHS;
 		} catch (CoreException e) {
-			e.printStackTrace();
+			ProverUtilities.log(e, "error creating deployed rule rhs from "+ rhs);
 		}
 		return null;
 	}
@@ -173,20 +177,19 @@ public class DeployedObjectsFactory {
 					typeEnvironment));
 			return dep;
 		} catch (CoreException e) {
-			e.printStackTrace();
+			ProverUtilities.log(e, "error creating deployed given clause from "+ given);
 		}
 		return null;
 	}
 
-	public static IDeployedInfer getDeployedInfer(ISCInfer given,
+	public static IDeployedInfer getDeployedInfer(ISCInfer infer,
 			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
 		try {
-			IDeployedInfer dep = new DeployedInfer(given.getPredicate(factory,
+			IDeployedInfer dep = new DeployedInfer(infer.getPredicate(factory,
 					typeEnvironment));
 			return dep;
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ProverUtilities.log(e, "error creating deployed infer clause from "+ infer);
 		}
 		return null;
 	}

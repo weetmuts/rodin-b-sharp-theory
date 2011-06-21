@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
-import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.ISignatureReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
@@ -16,7 +16,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @since 1.0
  *
  */
-public interface IContextAwareReasoner extends IReasoner{
+public interface IContextAwareReasoner extends ISignatureReasoner{
 
 	/**
 	 * Sets the context in which this reasoner is called. 

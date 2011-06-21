@@ -117,4 +117,10 @@ public class ManualRewriteReasoner implements IContextAwareReasoner{
 		writer.putString(DESC_KEY, ((RewriteInput) input).ruleDesc);
 	}
 
+	@Override
+	public String getSignature() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

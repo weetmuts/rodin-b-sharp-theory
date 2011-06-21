@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.rulebase;
+package org.eventb.theory.rbp.internal.rulebase;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * 
@@ -32,8 +33,7 @@ public class POContext implements IPOContext{
 	}
 
 	public boolean inMathExtensions() {
-		return DatabaseUtilities.isMathExtensionsProject(psStatus
-				.getRodinProject());
+		return DatabaseUtilities.isMathExtensionsProject(psStatus.getRodinProject());
 	}
 
 }

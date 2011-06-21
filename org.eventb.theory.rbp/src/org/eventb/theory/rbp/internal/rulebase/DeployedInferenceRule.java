@@ -40,32 +40,27 @@ public final class DeployedInferenceRule extends AbstractDeployedRule implements
 
 	@Override
 	public List<IDeployedGiven> getGivens() {
-		// TODO Auto-generated method stub
 		return givens;
 	}
 
 	
 	@Override
 	public IDeployedInfer getInfer() {
-		// TODO Auto-generated method stub
 		return infer;
 	}
 
 	@Override
 	public boolean isSuitableForBackwardReasoning() {
-		// TODO Auto-generated method stub
 		return backward;
 	}
 
 	@Override
 	public boolean isSuitableForForwardReasoning() {
-		// TODO Auto-generated method stub
 		return forward;
 	}
 
 	@Override
 	public boolean isSuitableForAllReasoning() {
-		// TODO Auto-generated method stub
 		return backward && forward;
 	}
 	
@@ -91,7 +86,6 @@ public final class DeployedInferenceRule extends AbstractDeployedRule implements
 
 	@Override
 	public ReasoningType getReasoningType() {
-		// TODO Auto-generated method stub
 		if(backward && forward)
 			return ReasoningType.BACKWARD_AND_FORWARD;
 		else if(forward)

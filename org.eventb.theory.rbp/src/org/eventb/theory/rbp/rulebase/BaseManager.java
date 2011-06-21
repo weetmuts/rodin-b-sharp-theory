@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -23,6 +24,8 @@ import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
+import org.eventb.theory.rbp.internal.rulebase.ProjectBaseEntry;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinDB;
@@ -41,114 +44,84 @@ public class BaseManager implements IElementChangedListener {
 
 	private static BaseManager manager;
 
-	private Map<IRodinProject, ProjectBaseEntry> projectEntries;
+	private Map<IRodinProject, IProjectBaseEntry> projectEntries;
 	private ProjectBaseEntry mathExtensionsProjectEntry;
 
 	private BaseManager() {
-		projectEntries = new LinkedHashMap<IRodinProject, ProjectBaseEntry>();
+		projectEntries = new LinkedHashMap<IRodinProject, IProjectBaseEntry>();
 		RodinCore.addElementChangedListener(this);
 	}
 
-	public List<IDeployedRewriteRule> getExpressionRewriteRules(
-			boolean automatic, Class<? extends Expression> clazz,
-			IPOContext context, FormulaFactory factory) {
+	public List<IDeployedRewriteRule> getExpressionRewriteRules(boolean automatic, Class<? extends Expression> clazz, IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		rules.addAll(mathExtensionsProjectEntry.getExpressionRewriteRules(
-				automatic, clazz, parentRoot, factory));
+		rules.addAll(mathExtensionsProjectEntry.getExpressionRewriteRules(automatic, clazz, parentRoot, factory));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject())
-					.getExpressionRewriteRules(automatic, clazz, parentRoot,
-							factory));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRules(automatic, clazz, parentRoot, factory));
 		}
 		return rules;
 	}
 
-	public List<IDeployedRewriteRule> getPredicateRewriteRules(
-			boolean automatic, Class<? extends Predicate> clazz,
-			IPOContext context, FormulaFactory factory) {
+	public List<IDeployedRewriteRule> getPredicateRewriteRules(boolean automatic, Class<? extends Predicate> clazz, IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		rules.addAll(mathExtensionsProjectEntry.getPredicateRewriteRules(
-				automatic, clazz, parentRoot, factory));
+		rules.addAll(mathExtensionsProjectEntry.getPredicateRewriteRules(automatic, clazz, parentRoot, factory));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject())
-					.getPredicateRewriteRules(automatic, clazz, parentRoot,
-							factory));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRules(automatic, clazz, parentRoot, factory));
 		}
 		return rules;
 	}
 
-	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName,
-			String theoryName, Class<? extends Expression> clazz,
-			IPOContext context, FormulaFactory factory) {
+	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName, String theoryName, Class<? extends Expression> clazz, IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
-		IDeployedRewriteRule rule = mathExtensionsProjectEntry
-				.getExpressionRewriteRule(ruleName, theoryName, clazz,
-						parentRoot, factory);
+		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
 		if (rule == null) {
-			return projectEntries.get(parentRoot.getRodinProject())
-					.getExpressionRewriteRule(ruleName, theoryName, clazz,
-							parentRoot, factory);
+			return projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
 		}
 		return rule;
 	}
 
-	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName,
-			String theoryName, Class<? extends Predicate> clazz,
-			IPOContext context, FormulaFactory factory) {
+	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, String theoryName, Class<? extends Predicate> clazz, IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
-		IDeployedRewriteRule rule = mathExtensionsProjectEntry
-				.getPredicateRewriteRule(ruleName, theoryName, clazz,
-						parentRoot, factory);
+		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
 		if (rule == null) {
-			return projectEntries.get(parentRoot.getRodinProject())
-					.getPredicateRewriteRule(ruleName, theoryName, clazz,
-							parentRoot, factory);
+			return projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
 		}
 		return rule;
 	}
 
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic,
-			ReasoningType type, IPOContext context, FormulaFactory factory) {
+	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedInferenceRule> rules = new ArrayList<IDeployedInferenceRule>();
-		rules.addAll(mathExtensionsProjectEntry.getInferenceRules(automatic,
-				type, parentRoot, factory));
+		rules.addAll(mathExtensionsProjectEntry.getInferenceRules(automatic, type, parentRoot, factory));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject())
-					.getInferenceRules(automatic, type, parentRoot, factory));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getInferenceRules(automatic, type, parentRoot, factory));
 		}
 		return rules;
 	}
 
-	public IDeployedInferenceRule getInferenceRule(String theoryName,
-			String ruleName, IPOContext context, FormulaFactory factory) {
+	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 
-		IDeployedInferenceRule rule = mathExtensionsProjectEntry
-				.getInferenceRule(theoryName, ruleName, parentRoot, factory);
+		IDeployedInferenceRule rule = mathExtensionsProjectEntry.getInferenceRule(theoryName, ruleName, parentRoot, factory);
 		if (rule == null) {
-			return projectEntries
-					.get(parentRoot.getRodinProject())
-					.getInferenceRule(theoryName, ruleName, parentRoot, factory);
+			return projectEntries.get(parentRoot.getRodinProject()).getInferenceRule(theoryName, ruleName, parentRoot, factory);
 		}
 		return rule;
 	}
 
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
-		// TODO Auto-generated method stub
 		try {
 			processDelta(event.getDelta());
 		} catch (CoreException e) {
-			e.printStackTrace();
+			ProverUtilities.log(e, "error while processing change in db affecting the base manager");
 		}
 	}
 
@@ -172,20 +145,16 @@ public class BaseManager implements IElementChangedListener {
 			check(rodinProject);
 			if (file.getRoot() instanceof IDeployedTheoryRoot) {
 				if (DatabaseUtilities.isMathExtensionsProject(rodinProject)) {
-					mathExtensionsProjectEntry
-							.setHasChanged((IDeployedTheoryRoot) file.getRoot());
+					mathExtensionsProjectEntry.setHasChanged((IDeployedTheoryRoot) file.getRoot());
 				} else {
-					projectEntries.get(rodinProject).setHasChanged(
-							(IDeployedTheoryRoot) file.getRoot());
+					projectEntries.get(rodinProject).setHasChanged((IDeployedTheoryRoot) file.getRoot());
 				}
 			}
 			if (file.getRoot() instanceof ISCTheoryRoot) {
 				if (DatabaseUtilities.isMathExtensionsProject(rodinProject)) {
-					mathExtensionsProjectEntry
-							.setHasChanged((ISCTheoryRoot) file.getRoot());
+					mathExtensionsProjectEntry.setHasChanged((ISCTheoryRoot) file.getRoot());
 				} else {
-					projectEntries.get(rodinProject).setHasChanged(
-							(ISCTheoryRoot) file.getRoot());
+					projectEntries.get(rodinProject).setHasChanged((ISCTheoryRoot) file.getRoot());
 				}
 			}
 		}
@@ -193,8 +162,7 @@ public class BaseManager implements IElementChangedListener {
 
 	protected void check(IRodinProject project) {
 		if (mathExtensionsProjectEntry == null) {
-			mathExtensionsProjectEntry = new ProjectBaseEntry(
-					DatabaseUtilities.getDeploymentProject(null));
+			mathExtensionsProjectEntry = new ProjectBaseEntry(DatabaseUtilities.getDeploymentProject(new NullProgressMonitor()));
 		}
 		if (!DatabaseUtilities.isMathExtensionsProject(project)) {
 			if (!projectEntries.containsKey(project)) {

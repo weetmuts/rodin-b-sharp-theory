@@ -8,13 +8,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.core.ast.AssociativeExpression;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedRule;
+import org.eventb.theory.rbp.plugin.RbPPlugin;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Some utilities used by RbP.
@@ -34,47 +37,6 @@ public class ProverUtilities {
 			.makeLiteralPredicate(Formula.BTRUE, null);
 
 	/**
-	 * Make sure tag is for an associative expression.
-	 * <p>
-	 * This method checks whether the operator is ac.
-	 * 
-	 * @param tag
-	 * @return
-	 */
-	public static boolean isAssociativeCommutative(int tag) {
-		if (tag == AssociativeExpression.BCOMP
-				|| tag == AssociativeExpression.FCOMP) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * <p>
-	 * Utility to check whether a given formula is an expression.
-	 * </p>
-	 * 
-	 * @param form
-	 * @return whether form is an expression
-	 */
-	public static boolean isExpression(Formula<?> form) {
-		return form instanceof Expression;
-	}
-
-	/**
-	 * <p>
-	 * Utility to check whether the given formula is a theory formula.
-	 * </p>
-	 * 
-	 * @param form
-	 *            to check
-	 * @return whether <code>form</code> is a theory formula
-	 */
-	public static boolean isTheoryFormula(Formula<?> form) {
-		return (form instanceof Expression) || (form instanceof Predicate);
-	}
-
-	/**
 	 * <p>
 	 * Merges all the lists of rules in the <code>Map</code>
 	 * <code>allRules</code>.
@@ -83,8 +45,7 @@ public class ProverUtilities {
 	 * @param allRules
 	 * @return the merged list
 	 */
-	public static <E, F extends IDeployedRule> List<F> mergeLists(
-			Map<E, List<F>> allRules) {
+	public static <E, F extends IDeployedRule> List<F> mergeLists(Map<E, List<F>> allRules) {
 		List<F> result = new ArrayList<F>();
 		for (E key : allRules.keySet()) {
 			result.addAll(allRules.get(key));
@@ -107,9 +68,7 @@ public class ProverUtilities {
 	 *            whether to parse an expression or a predicate
 	 * @return the parsed formula or <code>null</code> if there was an error
 	 */
-	public static Formula<?> parseFormulaString(String formStr,
-			boolean isExpression, FormulaFactory factory) {
-
+	public static Formula<?> parseFormula(String formStr,boolean isExpression, FormulaFactory factory) {
 		Formula<?> form = null;
 		if (isExpression) {
 			IParseResult r = factory.parseExpressionPattern(formStr, V2, null);
@@ -122,7 +81,7 @@ public class ProverUtilities {
 	}
 
 	// to parse a Theory formula i.e. predicate or expression
-	public static Formula<?> parseFormula(String formula, FormulaFactory factory) {
+	public static Formula<?> parseFormulaPattern(String formula, FormulaFactory factory) {
 		IParseResult res = factory.parseExpressionPattern(formula, V2, null);
 		if (res.hasProblem()) {
 			res = factory.parsePredicatePattern(formula, V2, null);
@@ -140,7 +99,7 @@ public class ProverUtilities {
 	 * Utility to print items in a list in a displayable fashion.
 	 * </p>
 	 * <p>
-	 * The return of this method will be of the shape: {<}item0,...,itemn{>}
+	 * The return of this method will be of the shape: {<}item_0,...,item_n{>}
 	 * </p>
 	 * 
 	 * @param items
@@ -261,7 +220,7 @@ public class ProverUtilities {
 	}
 
 	/**
-	 * Returns the given collection if it is not <code>null</code>, and en empty collection otherwise.
+	 * Returns the given collection if it is not <code>null</code>, and an empty collection otherwise.
 	 * @param <E> the type of elements
 	 * @param col the collection
 	 * @return a safe collection
@@ -273,13 +232,13 @@ public class ProverUtilities {
 	}
 
 	/**
-	 * Returns the integer that is represented in <code>str</code>.
-	 * @param str the string representation
+	 * Returns the integer that is represented in <code>string</code>.
+	 * @param string the string representation
 	 * @return the integer
 	 */
-	public static int parseInteger(String str) {
+	public static int parseInteger(String string) {
 		try {
-			int num = Integer.parseInt(str);
+			int num = Integer.parseInt(string);
 			return num;
 		} catch (NumberFormatException e) {
 			return -1;
@@ -303,6 +262,26 @@ public class ProverUtilities {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Logs the given exception with the message.
+	 * @param exc the exception
+	 * @param message the message
+	 */
+	public static void log(Throwable exc, String message) {
+		if (exc instanceof RodinDBException) {
+			final Throwable nestedExc = ((RodinDBException) exc).getException();
+			if (nestedExc != null) {
+				exc = nestedExc;
+			}
+		}
+		if (message == null) {
+			message = "Unknown context"; //$NON-NLS-1$
+		}
+		IStatus status = new Status(IStatus.ERROR, RbPPlugin.PLUGIN_ID,
+				IStatus.ERROR, message, exc);
+		RbPPlugin.getDefault().getLog().log(status);
 	}
 
 }

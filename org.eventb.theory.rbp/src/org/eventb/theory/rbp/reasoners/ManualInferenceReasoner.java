@@ -129,4 +129,10 @@ public class ManualInferenceReasoner implements IContextAwareReasoner{
 		return inferer.getAntecedents(sequent, pred, forward, theoryName, ruleName);
 	}
 
+	@Override
+	public String getSignature() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

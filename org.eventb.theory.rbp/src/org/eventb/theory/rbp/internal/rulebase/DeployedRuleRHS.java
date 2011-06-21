@@ -29,19 +29,16 @@ public final class DeployedRuleRHS implements IDeployedRuleRHS{
 	
 	@Override
 	public Predicate getCondition() {
-		// TODO Auto-generated method stub
 		return cond;
 	}
 
 	@Override
 	public Formula<?> getRHSFormula() {
-		// TODO Auto-generated method stub
 		return rhs;
 	}
 
 	@Override
 	public String getRHSName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
 	

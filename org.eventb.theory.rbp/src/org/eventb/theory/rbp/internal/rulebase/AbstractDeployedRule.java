@@ -76,9 +76,4 @@ public abstract class AbstractDeployedRule implements IDeployedRule{
 	public boolean isSound() {
 		return isSound;
 	}
-	
-	@SuppressWarnings("unused")
-	private String removeThyExtension(String nameWithExt){
-		return nameWithExt.substring(0, nameWithExt.length()-4);
-	}
 }

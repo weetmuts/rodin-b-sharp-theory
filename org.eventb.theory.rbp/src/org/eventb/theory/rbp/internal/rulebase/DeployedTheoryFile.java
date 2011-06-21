@@ -43,9 +43,10 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 	 * extension).
 	 * </p>
 	 * 
-	 * @param theoryName
-	 *            with extension .thy
+	 * @param theoryRoot
+	 *            the theory root
 	 * @param factory
+	 * 				the formula factory
 	 */
 	public DeployedTheoryFile(R theoryRoot, FormulaFactory factory) {
 		this.theoryRoot = theoryRoot;
@@ -59,31 +60,26 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 
 	@Override
 	public List<IDeployedRewriteRule> getRewriteRules() {
-		// TODO Auto-generated method stub
 		return unmodifiableList(rewriteRules);
 	}
 
 	@Override
 	public ITypeEnvironment getGloablTypeEnvironment() {
-		// TODO Auto-generated method stub
 		return typeEnvironment.clone();
 	}
 
 	@Override
 	public List<IDeployedInferenceRule> getInferenceRules() {
-		// TODO Auto-generated method stub
 		return unmodifiableList(inferenceRules);
 	}
 
 	@Override
 	public String getTheoryName() {
-		// TODO Auto-generated method stub
 		return theoryRoot.getComponentName();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return rewriteRules.size() + inferenceRules.size() == 0;
 	}
 
@@ -128,7 +124,6 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 
 	@Override
 	public List<IDeployedTheorem> getTheorems() {
-		// TODO Auto-generated method stub
 		return unmodifiableList(theorems);
 	}
 

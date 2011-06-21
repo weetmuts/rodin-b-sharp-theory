@@ -26,13 +26,11 @@ public class DeployedTheorem implements IDeployedTheorem{
 	
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
 
 	@Override
 	public Predicate getTheorem() {
-		// TODO Auto-generated method stub
 		return theorem;
 	}
 

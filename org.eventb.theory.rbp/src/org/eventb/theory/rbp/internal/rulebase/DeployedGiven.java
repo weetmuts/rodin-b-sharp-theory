@@ -23,7 +23,6 @@ public final class DeployedGiven implements IDeployedGiven{
 	
 	@Override
 	public Predicate getGivenClause() {
-		// TODO Auto-generated method stub
 		return pred;
 	}
 	

@@ -20,8 +20,14 @@ import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
 
 /**
+ * Common protocol for a theory entry that can be queried for various rules it holds.
+ * 
+ * <p> Each query must supply a <code>FormulaFactory</code> so that parsing is carried out if necessary.
+ * 
+ * <p> It might be useful to just call <code>IEventbRoot.getFormulaFactory()</code> instead of passing a formula factory.
  * 
  * @author maamria
+ * @since 1.0
  *
  */
 public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & IExtensionRulesSource> {
@@ -87,4 +93,7 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	
 	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, Class<? extends Predicate> clazz, FormulaFactory factory);
 	
+	public boolean hasChanged();
+	
+	public void setHasChanged(boolean hasChanged) ;
 }

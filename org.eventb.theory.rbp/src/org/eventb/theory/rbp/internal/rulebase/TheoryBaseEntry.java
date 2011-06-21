@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.rulebase;
+package org.eventb.theory.rbp.internal.rulebase;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,35 +20,44 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.rbp.internal.rulebase.DeployedTheoryFile;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedTheoryFile;
+import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * 
  * @author maamria
- *
+ * 
  */
-public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & IExtensionRulesSource> 
-implements ITheoryBaseEntry<R>{
+public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & IExtensionRulesSource> implements ITheoryBaseEntry<R> {
 
 	private boolean hasChanged;
 	private R theoryRoot;
-	
+
+	/**
+	 * All rules.
+	 */
 	private List<IDeployedRewriteRule> rewriteRules;
 	private List<IDeployedInferenceRule> inferenceRules;
-	
+
+	/**
+	 * Mapped automatic rules by runtime class of formula.
+	 */
 	private Map<Class<? extends Expression>, List<IDeployedRewriteRule>> autoExpRewRules;
 	private Map<Class<? extends Predicate>, List<IDeployedRewriteRule>> autoPredRewRules;
-	
+
+	/**
+	 * Mapped interactive rules by runtime class of formula.
+	 */
 	private Map<Class<? extends Expression>, List<IDeployedRewriteRule>> interExpRewRules;
 	private Map<Class<? extends Predicate>, List<IDeployedRewriteRule>> interPredRewRules;
-	
+
+	/**
+	 * Mapped inference rules by reasoning type runtime class.
+	 */
 	private Map<ReasoningType, List<IDeployedInferenceRule>> autoTypedInferenceMap;
 	private Map<ReasoningType, List<IDeployedInferenceRule>> interTypedInferenceMap;
 
-	public TheoryBaseEntry(R theoryRoot){
+	public TheoryBaseEntry(R theoryRoot) {
 		this.theoryRoot = theoryRoot;
 		this.autoExpRewRules = new LinkedHashMap<Class<? extends Expression>, List<IDeployedRewriteRule>>();
 		this.autoPredRewRules = new LinkedHashMap<Class<? extends Predicate>, List<IDeployedRewriteRule>>();
@@ -56,11 +65,11 @@ implements ITheoryBaseEntry<R>{
 		this.interPredRewRules = new LinkedHashMap<Class<? extends Predicate>, List<IDeployedRewriteRule>>();
 		this.autoTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IDeployedInferenceRule>>();
 		this.interTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IDeployedInferenceRule>>();
-		
+		// set to true to initiate an reload
 		this.hasChanged = true;
 	}
-	
-	protected void reload(FormulaFactory factory){
+
+	protected void reload(FormulaFactory factory) {
 		IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
 		rewriteRules = file.getRewriteRules();
 		inferenceRules = file.getInferenceRules();
@@ -71,40 +80,37 @@ implements ITheoryBaseEntry<R>{
 		interPredRewRules.clear();
 		autoTypedInferenceMap.clear();
 		interTypedInferenceMap.clear();
-		
-		for (IDeployedRewriteRule rule : rewriteRules){
-			if (rule.isAutomatic()){
+
+		for (IDeployedRewriteRule rule : rewriteRules) {
+			if (rule.isAutomatic()) {
 				Formula<?> leftHandSide = rule.getLeftHandSide();
-				if (leftHandSide instanceof Expression){
+				if (leftHandSide instanceof Expression) {
 					Expression exp = (Expression) leftHandSide;
-					if (autoExpRewRules.get(exp.getClass()) == null){
+					if (autoExpRewRules.get(exp.getClass()) == null) {
 						List<IDeployedRewriteRule> list = new ArrayList<IDeployedRewriteRule>();
 						autoExpRewRules.put(exp.getClass(), list);
 					}
 					autoExpRewRules.get(exp.getClass()).add(rule);
-				}
-				else {
+				} else {
 					Predicate pred = (Predicate) leftHandSide;
-					if (autoPredRewRules.get(pred.getClass()) == null){
+					if (autoPredRewRules.get(pred.getClass()) == null) {
 						List<IDeployedRewriteRule> list = new ArrayList<IDeployedRewriteRule>();
 						autoPredRewRules.put(pred.getClass(), list);
 					}
 					autoPredRewRules.get(pred.getClass()).add(rule);
 				}
-			}
-			else{
+			} else {
 				Formula<?> leftHandSide = rule.getLeftHandSide();
-				if (leftHandSide instanceof Expression){
+				if (leftHandSide instanceof Expression) {
 					Expression exp = (Expression) leftHandSide;
-					if (interExpRewRules.get(exp.getClass()) == null){
+					if (interExpRewRules.get(exp.getClass()) == null) {
 						List<IDeployedRewriteRule> list = new ArrayList<IDeployedRewriteRule>();
 						interExpRewRules.put(exp.getClass(), list);
 					}
 					interExpRewRules.get(exp.getClass()).add(rule);
-				}
-				else {
+				} else {
 					Predicate pred = (Predicate) leftHandSide;
-					if (interPredRewRules.get(pred.getClass()) == null){
+					if (interPredRewRules.get(pred.getClass()) == null) {
 						List<IDeployedRewriteRule> list = new ArrayList<IDeployedRewriteRule>();
 						interPredRewRules.put(pred.getClass(), list);
 					}
@@ -112,18 +118,17 @@ implements ITheoryBaseEntry<R>{
 				}
 			}
 		}
-		for (IDeployedInferenceRule rule : inferenceRules){
-			if (rule.isAutomatic()){
+		for (IDeployedInferenceRule rule : inferenceRules) {
+			if (rule.isAutomatic()) {
 				ReasoningType type = rule.getReasoningType();
-				if (!autoTypedInferenceMap.containsKey(type)){
+				if (!autoTypedInferenceMap.containsKey(type)) {
 					List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
 					autoTypedInferenceMap.put(type, list);
 				}
 				autoTypedInferenceMap.get(type).add(rule);
-			}
-			else {
+			} else {
 				ReasoningType type = rule.getReasoningType();
-				if (!interTypedInferenceMap.containsKey(type)){
+				if (!interTypedInferenceMap.containsKey(type)) {
 					List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
 					interTypedInferenceMap.put(type, list);
 				}
@@ -131,14 +136,14 @@ implements ITheoryBaseEntry<R>{
 			}
 		}
 	}
-	
-	protected void checkStatus(FormulaFactory factory){
-		if (hasChanged){
+
+	protected void checkStatus(FormulaFactory factory) {
+		if (hasChanged) {
 			reload(factory);
 			setHasChanged(false);
 		}
 	}
-	
+
 	public boolean hasChanged() {
 		return hasChanged;
 	}
@@ -148,14 +153,12 @@ implements ITheoryBaseEntry<R>{
 	}
 
 	@Override
-	public List<IDeployedRewriteRule> getExpressionRewriteRules(
-			boolean automatic, Class<? extends Expression> clazz, FormulaFactory factory) {
+	public List<IDeployedRewriteRule> getExpressionRewriteRules(boolean automatic, Class<? extends Expression> clazz, FormulaFactory factory) {
 		checkStatus(factory);
-		if (automatic){
-			if(autoExpRewRules.containsKey(clazz))
+		if (automatic) {
+			if (autoExpRewRules.containsKey(clazz))
 				return getList(autoExpRewRules.get(clazz));
-		}
-		else{
+		} else {
 			if (interExpRewRules.containsKey(clazz))
 				return getList(interExpRewRules.get(clazz));
 		}
@@ -163,14 +166,12 @@ implements ITheoryBaseEntry<R>{
 	}
 
 	@Override
-	public List<IDeployedRewriteRule> getPredicateRewriteRules(
-			boolean automatic, Class<? extends Predicate> clazz, FormulaFactory factory) {
+	public List<IDeployedRewriteRule> getPredicateRewriteRules(boolean automatic, Class<? extends Predicate> clazz, FormulaFactory factory) {
 		checkStatus(factory);
-		if (automatic){
-			if(autoPredRewRules.containsKey(clazz))
+		if (automatic) {
+			if (autoPredRewRules.containsKey(clazz))
 				return getList(autoPredRewRules.get(clazz));
-		}
-		else{
+		} else {
 			if (interPredRewRules.containsKey(clazz))
 				return getList(interPredRewRules.get(clazz));
 		}
@@ -178,43 +179,41 @@ implements ITheoryBaseEntry<R>{
 	}
 
 	@Override
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic,
-			ReasoningType type, FormulaFactory factory) {
+	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, FormulaFactory factory) {
 		checkStatus(factory);
 		List<IDeployedInferenceRule> toReturn = new ArrayList<IDeployedInferenceRule>();
-		if(automatic){
-			if (!autoTypedInferenceMap.containsKey(type)){
+		if (automatic) {
+			if (!autoTypedInferenceMap.containsKey(type)) {
 				List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
 				autoTypedInferenceMap.put(type, list);
 			}
-			List<IDeployedInferenceRule> bfRules = autoTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD);
-			switch(type){
-			case BACKWARD: 
+			List<IDeployedInferenceRule> bfRules = ProverUtilities.safeList(autoTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD));
+			switch (type) {
+			case BACKWARD:
 			case FORWARD: {
 				toReturn.addAll(bfRules);
 				toReturn.addAll(autoTypedInferenceMap.get(type));
 				break;
 			}
-			case BACKWARD_AND_FORWARD:{
+			case BACKWARD_AND_FORWARD: {
 				toReturn.addAll(bfRules);
 			}
 			}
-		}
-		else {
-			if (!interTypedInferenceMap.containsKey(type)){
+		} else {
+			if (!interTypedInferenceMap.containsKey(type)) {
 				List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
 				interTypedInferenceMap.put(type, list);
 			}
-			List<IDeployedInferenceRule> bfRules = interTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD);
-			switch(type){
-			case BACKWARD: 
+			List<IDeployedInferenceRule> bfRules = ProverUtilities.safeList(interTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD));
+			switch (type) {
+			case BACKWARD:
 			case FORWARD: {
 				if (bfRules != null)
 					toReturn.addAll(bfRules);
 				toReturn.addAll(interTypedInferenceMap.get(type));
 				break;
 			}
-			case BACKWARD_AND_FORWARD:{
+			case BACKWARD_AND_FORWARD: {
 				if (bfRules != null)
 					toReturn.addAll(bfRules);
 			}
@@ -226,8 +225,8 @@ implements ITheoryBaseEntry<R>{
 	@Override
 	public IDeployedInferenceRule getInferenceRule(String ruleName, FormulaFactory factory) {
 		checkStatus(factory);
-		for (IDeployedInferenceRule rule : inferenceRules){
-			if (rule.getRuleName().equals(ruleName)){
+		for (IDeployedInferenceRule rule : inferenceRules) {
+			if (rule.getRuleName().equals(ruleName)) {
 				return rule;
 			}
 		}
@@ -235,14 +234,13 @@ implements ITheoryBaseEntry<R>{
 	}
 
 	@Override
-	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName,
-			Class<? extends Expression> clazz, FormulaFactory factory) {
+	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName, Class<? extends Expression> clazz, FormulaFactory factory) {
 		checkStatus(factory);
-		if (interExpRewRules.get(clazz) == null){
+		if (interExpRewRules.get(clazz) == null) {
 			return null;
 		}
-		for (IDeployedRewriteRule rule : interExpRewRules.get(clazz)){
-			if (rule.getRuleName().equals(ruleName)){
+		for (IDeployedRewriteRule rule : interExpRewRules.get(clazz)) {
+			if (rule.getRuleName().equals(ruleName)) {
 				return rule;
 			}
 		}
@@ -250,14 +248,13 @@ implements ITheoryBaseEntry<R>{
 	}
 
 	@Override
-	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName,
-			Class<? extends Predicate> clazz, FormulaFactory factory) {
+	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, Class<? extends Predicate> clazz, FormulaFactory factory) {
 		checkStatus(factory);
-		if (interPredRewRules.get(clazz) == null){
+		if (interPredRewRules.get(clazz) == null) {
 			return null;
 		}
-		for (IDeployedRewriteRule rule : interPredRewRules.get(clazz)){
-			if (rule.getRuleName().equals(ruleName)){
+		for (IDeployedRewriteRule rule : interPredRewRules.get(clazz)) {
+			if (rule.getRuleName().equals(ruleName)) {
 				return rule;
 			}
 		}
@@ -266,12 +263,15 @@ implements ITheoryBaseEntry<R>{
 
 	/**
 	 * Returns a list with same element but different reference.
-	 * @param <E> the type of elements
-	 * @param list the original list
+	 * 
+	 * @param <E>
+	 *            the type of elements
+	 * @param list
+	 *            the original list
 	 * @return same list with different reference
 	 */
-	private <E> List<E> getList(List<E> list){
+	private <E> List<E> getList(List<E> list) {
 		return new ArrayList<E>(list);
 	}
-	
+
 }

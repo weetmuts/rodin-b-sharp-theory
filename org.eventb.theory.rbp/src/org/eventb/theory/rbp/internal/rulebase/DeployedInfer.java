@@ -23,7 +23,6 @@ public final class DeployedInfer implements IDeployedInfer{
 	
 	@Override
 	public Predicate getInferClause() {
-		// TODO Auto-generated method stub
 		return pred;
 	}
 	

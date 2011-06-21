@@ -47,4 +47,10 @@ public class AutoRewriteReasoner extends AbstractAutoRewrites implements IContex
 		rewriter.setFormulaFactory(formulaFactory);
 		return rewriter;
 	}
+
+	@Override
+	public String getSignature() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.rulebase;
+package org.eventb.theory.rbp.internal.rulebase;
 import static org.eventb.theory.core.DatabaseUtilities.originatedFromTheory;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,25 +23,27 @@ import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
+import org.eventb.theory.rbp.rulebase.IProjectBaseEntry;
+import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.IRodinProject;
 
 /**
  * 
  * @author maamria
+ * @since 1.0
  * 
  */
-public class ProjectBaseEntry {
+public class ProjectBaseEntry implements IProjectBaseEntry{
 
 	private IRodinProject project;
-	private Map<IDeployedTheoryRoot, TheoryBaseEntry<IDeployedTheoryRoot>> deployedRoots;
-	private Map<ISCTheoryRoot, TheoryBaseEntry<ISCTheoryRoot>> scRoots;
+	private Map<IDeployedTheoryRoot, ITheoryBaseEntry<IDeployedTheoryRoot>> deployedRoots;
+	private Map<ISCTheoryRoot, ITheoryBaseEntry<ISCTheoryRoot>> scRoots;
 
 	public ProjectBaseEntry(IRodinProject project) {
 		this.project = project;
-		this.deployedRoots = new LinkedHashMap<IDeployedTheoryRoot, TheoryBaseEntry<IDeployedTheoryRoot>>();
-		this.scRoots = new LinkedHashMap<ISCTheoryRoot, TheoryBaseEntry<ISCTheoryRoot>>();
+		this.deployedRoots = new LinkedHashMap<IDeployedTheoryRoot, ITheoryBaseEntry<IDeployedTheoryRoot>>();
+		this.scRoots = new LinkedHashMap<ISCTheoryRoot, ITheoryBaseEntry<ISCTheoryRoot>>();
 	}
 	
 	public void setHasChanged(ISCTheoryRoot scRoot){
@@ -213,8 +215,7 @@ public class ProjectBaseEntry {
 		try {
 			return DatabaseUtilities.getDeployedTheories(project);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ProverUtilities.log(e, "error while getting deployed roots of "+ project.getElementName());
 		}
 		return new IDeployedTheoryRoot[0];
 	}
@@ -238,11 +239,9 @@ public class ProjectBaseEntry {
 
 	private ISCTheoryRoot[] getSCTheoryRoots() {
 		try {
-			return DatabaseUtilities.getSCTheoryRoots(project,
-					DatabaseUtilities.getNonTempSCTheoriesFilter());
+			return DatabaseUtilities.getSCTheoryRoots(project, DatabaseUtilities.getNonTempSCTheoriesFilter());
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ProverUtilities.log(e, "error while getting sc theory roots of "+ project.getElementName());
 		}
 		return new ISCTheoryRoot[0];
 	}

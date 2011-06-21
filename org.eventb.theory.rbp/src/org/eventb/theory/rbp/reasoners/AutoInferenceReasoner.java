@@ -67,4 +67,10 @@ public class AutoInferenceReasoner extends EmptyInputReasoner implements IContex
 		return toDisplay;
 	}
 
+	@Override
+	public String getSignature() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
