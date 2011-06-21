@@ -6,7 +6,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.theory.rbp.engine.IBinding;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
 import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
 import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
@@ -21,7 +20,6 @@ public class RewriteRuleAutoApplyer extends AbstractRulesApplyer{
 	
 	public RewriteRuleAutoApplyer(FormulaFactory factory, IPOContext context) {
 		super(factory, context);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -46,21 +44,10 @@ public class RewriteRuleAutoApplyer extends AbstractRulesApplyer{
 	}
 
 	private Formula<?> applyRule(Formula<?> original, IDeployedRewriteRule rule){
-		Formula<?> ruleLhs = rule.getLeftHandSide();
-		IBinding binding = finder.calculateBindings(original, ruleLhs, true);
-		if(binding == null){
-			return original;
-		}
-		// since rule is unconditional
-		Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
-		Formula<?> result = simpleBinder.bind(ruleRhs, binding, true);
-		
-		addUsedTheory(rule.getTheoryName());
-
-		return result;
+		return null;
 	}
 	
-	private void addUsedTheory(String name){
+	protected void addUsedTheory(String name){
 		if(!AutoRewriteReasoner.usedTheories.contains(name))
 			AutoRewriteReasoner.usedTheories.add(name);
 	}

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="expressionPatternMatchers" name="%expPatternMatcherID" schema="schema/expressionPatternMatchers.exsd"/>
-   <extension-point id="predicatePatternMatchers" name="%predPatternMatcherID" schema="schema/predicatePatternMatchers.exsd"/>
    <extension
          point="org.eventb.core.seqprover.reasoners">
       <reasoner
@@ -101,117 +99,6 @@
             target="hypothesis"
             tooltip="%applyInf">
       </tactic>
-      <tactic
-            icon="icons/thy.gif"
-            id="thRbP"
-            interrupt="false"
-            name="%thRbP.desc"
-            priority="3"
-            proofCommand="org.eventb.theory.rbp.tactics.InstantiateTheoremTactic"
-            target="global"
-            toolbar="org.eventb.ui.sequentToolbar"
-            tooltip="%thRbP.tip"/>
-   </extension>
-   <extension
-         point="org.eventb.theory.rbp.expressionPatternMatchers">
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.AssociativeExpressionMatcher"
-            name="Associative Expression Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.AtomicExpressionMatcher"
-            name="Atomic Expression Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.BinaryExpressionMatcher"
-            name="Binary Expression Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.BoolExpressionMatcher"
-            name="Bool Expression Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.BoundIdentifierMatcher"
-            name="Bound Identifier Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.ExtendedExpressionMatcher"
-            name="Extended Expression Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.IntegerLiteralMatcher"
-            name="Integer Literal Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.QuantifiedExpressionMatcher"
-            name="Quantified Expression Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.SetExtensionMatcher"
-            name="Set Extension Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-      <expressionPatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.exp.UnaryExpressionMatcher"
-            name="Unary Expression Matcher"
-            priority="1">
-      </expressionPatternMatcher>
-   </extension>
-   <extension
-         point="org.eventb.theory.rbp.predicatePatternMatchers">
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.AssociativePredicateMatcher"
-            name="Associative Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.BinaryPredicateMatcher"
-            name="Binary Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.ExtendedPredicateMatcher"
-            name="Extended Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.LiteralPredicateMatcher"
-            name="Literal Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.QuantifiedPredicateMatcher"
-            name="Quantified Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.RelationalPredicateMatcher"
-            name="Relational Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.SimplePredicateMatcher"
-            name="Simple Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.UnaryPredicateMatcher"
-            name="Unary Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
-      <predicatePatternMatcher
-            class="org.eventb.theory.rbp.internal.engine.pred.MultiplePredicateMatcher"
-            name="Multiple Predicate Matcher"
-            priority="1">
-      </predicatePatternMatcher>
    </extension>
    
 

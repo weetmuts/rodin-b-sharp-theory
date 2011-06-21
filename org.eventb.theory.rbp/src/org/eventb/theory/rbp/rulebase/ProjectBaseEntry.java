@@ -228,7 +228,7 @@ public class ProjectBaseEntry {
 		if (scRoot.exists()) {
 			SCTheoriesGraph graph = new SCTheoriesGraph();
 			graph.setElements(getSCTheoryRoots());
-			// Fixed bug: added the sc theory file as a required root
+			// Fixed bug: added the SC theory file as a required root
 			Set<ISCTheoryRoot> upperSet = graph.getUpperSet(scRoot);
 			upperSet.add(scRoot);
 			return new ArrayList<ISCTheoryRoot>(upperSet);
@@ -239,16 +239,7 @@ public class ProjectBaseEntry {
 	private ISCTheoryRoot[] getSCTheoryRoots() {
 		try {
 			return DatabaseUtilities.getSCTheoryRoots(project,
-					new DatabaseUtilities.TheoriesFilter<ISCTheoryRoot>() {
-
-						@Override
-						public boolean filter(ISCTheoryRoot theory) {
-							// TODO Auto-generated method stub
-							return theory.exists()
-									&& !theory.getRodinFile().getElementName()
-											.contains("_tmp");
-						}
-					});
+					DatabaseUtilities.getNonTempSCTheoriesFilter());
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

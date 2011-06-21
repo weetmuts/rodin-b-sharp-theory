@@ -37,8 +37,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.theory.rbp.engine.IBinding;
-import org.eventb.theory.rbp.engine.MatchFinder;
+import org.eventb.core.pm.Matcher;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
 import org.eventb.theory.rbp.internal.tactics.RewriteTacticApplication;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
@@ -57,7 +56,7 @@ import org.eventb.ui.prover.ITacticApplication;
 public class RewritesSelector implements IFormulaInspector<ITacticApplication>{
 
 	protected final Predicate predicate;
-	protected final MatchFinder finder;
+	protected final Matcher finder;
 	protected final BaseManager manager;
 	protected final boolean isGoal;
 	protected final FormulaFactory factory;
@@ -69,7 +68,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication>{
 		this.isGoal = isGoal;
 		this.factory = factory;
 		this.manager = BaseManager.getDefault();
-		this.finder = new MatchFinder(factory);
+		this.finder = new Matcher(factory);
 		this.context = context;
 	}
 	
@@ -106,9 +105,6 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication>{
 	 * @return <code>true</code> iff <code>pattern</code> is matchable to <code>form</code>
 	 */
 	protected boolean canFindABinding(Formula<?> form, Formula<?> pattern){
-		IBinding binding = finder.calculateBindings(form, pattern, true);
-		if(binding == null)
-			return false;
 		return true;
 	}
 	

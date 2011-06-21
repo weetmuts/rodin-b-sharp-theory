@@ -14,7 +14,6 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedRule;
 
 /**
@@ -231,15 +230,6 @@ public class ProverUtilities {
 			return factory.makeAssociativePredicate(tag,
 					es.toArray(new Predicate[es.size()]), null);
 		}
-	}
-
-	/**
-	 * Returns the formula factory with the currently deployed extensions.
-	 * 
-	 * @return the current formula factory
-	 */
-	public static FormulaFactory getCurrentFormulaFactory() {
-		return DatabaseUtilities.getCurrentFormulaFactory();
 	}
 
 	/**

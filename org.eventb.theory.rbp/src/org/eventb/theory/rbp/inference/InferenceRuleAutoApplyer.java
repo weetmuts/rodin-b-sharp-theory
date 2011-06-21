@@ -7,18 +7,14 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.inference;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.rbp.engine.IBinding;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedGiven;
 import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.reasoners.AutoInferenceReasoner;
 import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
@@ -60,26 +56,7 @@ public class InferenceRuleAutoApplyer extends AbstractRulesApplyer {
 	}
 
 	protected void applyRule(InferenceDerivationTree tree, IDeployedInferenceRule rule) {
-		if (tree.continueDeriving()) {
-			IAntecedent ant = tree.getAntecedent();
-			Predicate goal = ant.getGoal();
-			Predicate infer = rule.getInfer().getInferClause();
-			IBinding binding = finder.calculateBindings(goal, infer, false);
-			if (binding != null) {
-				List<IDeployedGiven> givens = rule.getGivens();
-				Set<IAntecedent> ants = new LinkedHashSet<IAntecedent>();
-				for (IDeployedGiven given : givens) {
-					Predicate pred = (Predicate) simpleBinder.bind(
-							given.getGivenClause(), binding, false);
-					IAntecedent a = ProverFactory.makeAntecedent(pred);
-					ants.add(a);
-				}
-				tree.setAntecedents(ants);
-				for (InferenceDerivationTree derivTree : tree.getInferenceTrees()) {
-					applyRule(derivTree, rule);
-				}
-			}
-		}
+		
 	}
 
 	protected void addUsedTheory(String name) {
