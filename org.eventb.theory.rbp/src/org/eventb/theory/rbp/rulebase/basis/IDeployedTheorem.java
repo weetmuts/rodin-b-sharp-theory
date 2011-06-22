@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.internal.rulebase;
+package org.eventb.theory.rbp.rulebase.basis;
 
 import org.eventb.core.ast.Predicate;
 
@@ -14,24 +14,9 @@ import org.eventb.core.ast.Predicate;
  * @author maamria
  *
  */
-public class DeployedTheorem implements IDeployedTheorem{
+public interface IDeployedTheorem {
 
-	private String name;
-	private Predicate theorem;
-
-	public DeployedTheorem(String name, Predicate theorem){
-		this.name = name;
-		this.theorem = theorem;
-	}
+	public String getName();
 	
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public Predicate getTheorem() {
-		return theorem;
-	}
-
+	public Predicate getTheorem();
 }

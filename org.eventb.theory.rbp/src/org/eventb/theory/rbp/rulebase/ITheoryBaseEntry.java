@@ -16,8 +16,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 
 /**
  * Common protocol for a theory entry that can be queried for various rules it holds.

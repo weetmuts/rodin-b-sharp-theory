@@ -28,9 +28,9 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
 import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 
 /**
  * <p>An implementation of a rewrite rule automatic rewriter.</p>

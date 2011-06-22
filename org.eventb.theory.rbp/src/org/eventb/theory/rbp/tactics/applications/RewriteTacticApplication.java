@@ -1,4 +1,4 @@
-package org.eventb.theory.rbp.internal.tactics;
+package org.eventb.theory.rbp.tactics.applications;
 
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.Predicate;

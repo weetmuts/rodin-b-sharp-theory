@@ -39,11 +39,11 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.pm.IMatchingResult;
 import org.eventb.core.pm.Matcher;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
-import org.eventb.theory.rbp.internal.tactics.RewriteTacticApplication;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
+import org.eventb.theory.rbp.tactics.applications.RewriteTacticApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
 /**

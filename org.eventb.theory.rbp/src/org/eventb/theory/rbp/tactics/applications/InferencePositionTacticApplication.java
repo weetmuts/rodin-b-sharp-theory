@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.internal.tactics;
+package org.eventb.theory.rbp.tactics.applications;
 
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.IPosition;

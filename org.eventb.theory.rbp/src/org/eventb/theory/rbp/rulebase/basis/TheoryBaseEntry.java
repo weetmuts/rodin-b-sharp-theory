@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.internal.rulebase;
+package org.eventb.theory.rbp.rulebase.basis;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

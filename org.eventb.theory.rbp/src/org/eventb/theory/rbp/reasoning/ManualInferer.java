@@ -15,9 +15,9 @@ import org.eventb.core.pm.SimpleBinder;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedGiven;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedGiven;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 
 /**
  * @author maamria

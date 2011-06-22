@@ -1,4 +1,4 @@
-package org.eventb.theory.rbp.internal.rulebase;
+package org.eventb.theory.rbp.rulebase.basis;
 
 
 /**

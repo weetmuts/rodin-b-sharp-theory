@@ -15,9 +15,9 @@ import org.eventb.core.pm.IMatchingResult;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRuleRHS;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRuleRHS;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**

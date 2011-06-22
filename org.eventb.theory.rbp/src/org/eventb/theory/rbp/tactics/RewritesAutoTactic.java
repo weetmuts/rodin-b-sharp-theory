@@ -7,9 +7,9 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.theory.rbp.internal.rulebase.POContext;
 import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.POContext;
 
 
 /**

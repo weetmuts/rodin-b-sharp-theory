@@ -14,8 +14,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.theory.rbp.internal.rulebase.IDeployedRule;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRule;
 import org.rodinp.core.RodinDBException;
 
 /**
