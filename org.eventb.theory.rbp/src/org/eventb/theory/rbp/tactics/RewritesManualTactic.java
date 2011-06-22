@@ -9,7 +9,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.theory.rbp.internal.rulebase.POContext;
-import org.eventb.theory.rbp.rewriting.RewritesSelector;
+import org.eventb.theory.rbp.reasoning.RewritesSelector;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.ui.prover.DefaultTacticProvider;
 import org.eventb.ui.prover.ITacticApplication;
@@ -28,7 +28,7 @@ public class RewritesManualTactic extends DefaultTacticProvider implements ITact
 		if (node.getProofTree().getOrigin() instanceof IProofAttempt){
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
 			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status);
+			IPOContext poContext = new POContext(status, attempt.getFormulaFactory());
 			FormulaFactory factory = node.getFormulaFactory();
 			boolean isGoal = hyp == null;
 			Predicate pred = ( isGoal ? node.getSequent().goal() : hyp);

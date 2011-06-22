@@ -42,7 +42,6 @@ public class ManualRewriteReasoner implements IContextAwareReasoner{
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput,
 			IProofMonitor pm) {
-		rewriter.setFormulaFactory(seq.getFormulaFactory());
 		final RewriteInput input = (RewriteInput) reasonerInput;
 		final Predicate hyp = input.pred;
 		final IPosition position = input.position;
@@ -120,7 +119,7 @@ public class ManualRewriteReasoner implements IContextAwareReasoner{
 	@Override
 	public String getSignature() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

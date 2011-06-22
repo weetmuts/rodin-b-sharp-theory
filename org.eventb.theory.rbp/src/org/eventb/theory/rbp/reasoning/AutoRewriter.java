@@ -1,5 +1,7 @@
 package org.eventb.theory.rbp.reasoning;
 
+import java.util.List;
+
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -11,6 +13,7 @@ import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
@@ -25,7 +28,8 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.theory.rbp.rewriting.RewriteRuleAutoApplyer;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedRewriteRule;
+import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
@@ -33,23 +37,71 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  * @see DefaultRewriter
  */
-public class AutoRewriter implements IFormulaRewriter{
+public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewriter{
 	
-	private RewriteRuleAutoApplyer applyer ;
 	private FormulaFactory factory;
-
-	private IPOContext context;
 	
 	public AutoRewriter(IPOContext context){
-		this.context = context;
+		super(context);
 	}
 	
-	public void setFormulaFactory(FormulaFactory factory){
-		this.factory = factory;
-		this.applyer = new RewriteRuleAutoApplyer(factory, context);
-		
+	/**
+	 * <p>Applies automatic expression rewrite rules to the given expression.</p>
+	 * @param original to rewrite
+	 * @return the rewritten expression
+	 */
+	protected Expression applyExpressionRewrites(Expression original){
+		Expression expression = ((Expression) applyRules(original));
+		if(original.equals(expression)){
+			return original;
+		}
+		// return rewritten
+		return expression;
 	}
 
+	/**
+	 * <p>Applies automatic predicate rewrite rules to the given predicate.</p>
+	 * @param original to rewrite
+	 * @return the rewritten predicate
+	 */
+	protected Predicate applyPredicateRewrites(Predicate original){
+		Predicate pred = ((Predicate) applyRules(original));
+		if(original.equals(pred)){
+			return original;
+		}
+		// return rewritten
+		return pred;
+	}
+	
+	/**
+	 * Returns the formula resulting from applying all the (applicable) automatic unconditional rules.
+	 * @param original the formula to rewrite
+	 * @return the rewritten formula
+	 */
+	private Formula<?> applyRules(Formula<?> original){
+		List<IDeployedRewriteRule> rules = getRules(original);
+		Formula<?> result = original;
+		for(IDeployedRewriteRule rule: rules){
+			result = applyRule(result, rule);
+		}
+		return result;
+	}
+	
+	private List<IDeployedRewriteRule> getRules(Formula<?> original) {
+		if (original instanceof Expression){
+			return manager.getExpressionRewriteRules(true, ((Expression)original).getClass(), context, factory);
+		}
+		return manager.getPredicateRewriteRules(true, ((Predicate)original).getClass(), context, factory);
+	}
+
+	private Formula<?> applyRule(Formula<?> original, IDeployedRewriteRule rule){
+		return null;
+	}
+	
+	protected void addUsedTheory(String name){
+		if(!AutoRewriteReasoner.usedTheories.contains(name))
+			AutoRewriteReasoner.usedTheories.add(name);
+	}
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 		return applyExpressionRewrites(expression);
@@ -150,34 +202,6 @@ public class AutoRewriter implements IFormulaRewriter{
 	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
 		return applyPredicateRewrites(predicate);
-	}
-
-	/**
-	 * <p>Applies automatic expression rewrite rules to the given expression.</p>
-	 * @param original to rewrite
-	 * @return the rewritten expression
-	 */
-	protected Expression applyExpressionRewrites(Expression original){
-		Expression expression = ((Expression) applyer.applyRules(original));
-		if(original.equals(expression)){
-			return original;
-		}
-		// return rewritten
-		return expression;
-	}
-
-	/**
-	 * <p>Applies automatic predicate rewrite rules to the given predicate.</p>
-	 * @param original to rewrite
-	 * @return the rewritten predicate
-	 */
-	protected Predicate applyPredicateRewrites(Predicate original){
-		Predicate pred = ((Predicate) applyer.applyRules(original));
-		if(original.equals(pred)){
-			return original;
-		}
-		// return rewritten
-		return pred;
 	}
 
 	@Override

@@ -40,14 +40,12 @@ public class AutoInferenceReasoner extends EmptyInputReasoner implements IContex
 	
 	@Override
 	public String getReasonerID() {
-		// TODO Auto-generated method stub
 		return REASONER_ID;
 	}
 
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		autoInferer.setFormulaFactory(seq.getFormulaFactory());
 		IAntecedent[] antecedents = autoInferer.applyInferenceRules(seq);
 		if (antecedents == null) {
 			return ProverFactory.reasonerFailure(this, input, "Inference "
@@ -55,9 +53,7 @@ public class AutoInferenceReasoner extends EmptyInputReasoner implements IContex
 					+ seq.goal() + ".");
 		}
 		// Generate the successful reasoner output
-		return 
-			ProverFactory.makeProofRule(
-					this, null, seq.goal(), getDisplayName(), antecedents);
+		return ProverFactory.makeProofRule(this, null, seq.goal(), getDisplayName(), antecedents);
 	}
 	
 	protected String getDisplayName() {
@@ -69,8 +65,7 @@ public class AutoInferenceReasoner extends EmptyInputReasoner implements IContex
 
 	@Override
 	public String getSignature() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

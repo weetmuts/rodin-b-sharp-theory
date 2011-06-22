@@ -93,7 +93,6 @@ public class ManualInferenceReasoner implements IContextAwareReasoner{
 	@Override
 	public IReasonerOutput apply(IProverSequent sequent, IReasonerInput reasonerInput,
 			IProofMonitor pm) {
-		inferer.setFormulaFactory(sequent.getFormulaFactory());
 		final InferenceInput input = (InferenceInput) reasonerInput;
 		final Predicate pred = input.pred;
 		final boolean forward = input.forward;
@@ -132,7 +131,7 @@ public class ManualInferenceReasoner implements IContextAwareReasoner{
 	@Override
 	public String getSignature() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

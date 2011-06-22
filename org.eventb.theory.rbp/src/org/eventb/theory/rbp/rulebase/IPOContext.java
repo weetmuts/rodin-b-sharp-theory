@@ -8,6 +8,7 @@
 package org.eventb.theory.rbp.rulebase;
 
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.ast.FormulaFactory;
 
 /**
  * Common protocol for proof obligation contextual information.
@@ -35,5 +36,11 @@ public interface IPOContext {
 	 * @return  whether the proof obligation corresponds to a component in the <code>MathExtensions</code> project
 	 */
 	public boolean inMathExtensions();
+	
+	/**
+	 * Returns the formula factory appropriate for this context.
+	 * @return the appropriate formula factory
+	 */
+	public FormulaFactory getFormulaFactory();
 	
 }

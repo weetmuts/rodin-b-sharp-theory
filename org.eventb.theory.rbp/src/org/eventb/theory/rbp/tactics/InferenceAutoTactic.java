@@ -38,7 +38,7 @@ public class InferenceAutoTactic implements ITactic{
 			}
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
 			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status);
+			IPOContext poContext = new POContext(status, attempt.getFormulaFactory());
 			AutoInferenceReasoner reasoner = new AutoInferenceReasoner();
 			reasoner.setContext(poContext);
 			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), null, pm);

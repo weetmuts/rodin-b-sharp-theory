@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -135,60 +134,6 @@ public class ProverUtilities {
 	 */
 	public static boolean sameClass(Object o1, Object o2) {
 		return o1.getClass().equals(o2.getClass());
-	}
-
-	/**
-	 * Returns the associative expression that fit the given details.
-	 * @param tag
-	 * @param exps
-	 * @param factory
-	 * @return the expression
-	 */
-	public static Expression makeAssociativeExpression(int tag,
-			Expression[] exps, FormulaFactory factory) {
-		List<Expression> es = new ArrayList<Expression>();
-		for (Expression e : exps) {
-			if (e != null) {
-				es.add(e);
-			}
-		}
-		if(es.size() < 1){
-			throw 
-			 new IllegalArgumentException("Cannot make associative expression from empty array of children.");
-		}
-		if (es.size() == 1)
-			return es.get(0);
-		else {
-			return factory.makeAssociativeExpression(tag,
-					es.toArray(new Expression[es.size()]), null);
-		}
-	}
-
-	/**
-	 * Returns the associative predicate that fit the given details.
-	 * @param tag
-	 * @param preds
-	 * @param factory
-	 * @return the predicate
-	 */
-	public static Predicate makeAssociativePredicate(int tag,
-			Predicate[] preds, FormulaFactory factory) {
-		List<Predicate> es = new ArrayList<Predicate>();
-		for (Predicate e : preds) {
-			if (e != null) {
-				es.add(e);
-			}
-		}
-		if(es.size() < 1){
-			throw 
-			 new IllegalArgumentException("Cannot make associative predicate from empty array of children.");
-		}
-		if (es.size() == 1)
-			return es.get(0);
-		else {
-			return factory.makeAssociativePredicate(tag,
-					es.toArray(new Predicate[es.size()]), null);
-		}
 	}
 
 	/**

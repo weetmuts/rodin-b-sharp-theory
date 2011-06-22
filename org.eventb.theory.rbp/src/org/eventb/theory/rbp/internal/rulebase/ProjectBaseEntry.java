@@ -224,11 +224,11 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		if (!originatedFromTheory(root.getRodinFile())) {
 			return new ArrayList<ISCTheoryRoot>();
 		}
-		ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(
-				root.getComponentName(), project);
+		ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(root.getComponentName(), project);
 		if (scRoot.exists()) {
 			SCTheoriesGraph graph = new SCTheoriesGraph();
 			graph.setElements(getSCTheoryRoots());
+			// TODO fix this may introduce cyclic dep
 			// Fixed bug: added the SC theory file as a required root
 			Set<ISCTheoryRoot> upperSet = graph.getUpperSet(scRoot);
 			upperSet.add(scRoot);

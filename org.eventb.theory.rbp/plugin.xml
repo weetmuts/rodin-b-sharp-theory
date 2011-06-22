@@ -100,6 +100,18 @@
             tooltip="%applyInf">
       </tactic>
    </extension>
+   <extension
+         point="org.eventb.core.pm.extendedExpressionMatcher">
+      <extendedExpressionMatcher
+            class="org.eventb.theory.rbp.pm.TheoryExtendedExpressionMatcher">
+      </extendedExpressionMatcher>
+   </extension>
+   <extension
+         point="org.eventb.core.pm.extendedPredicateMatcher">
+      <extendedPredicateMatcher
+            class="org.eventb.theory.rbp.pm.TheoryExtendedPredicateMatcher">
+      </extendedPredicateMatcher>
+   </extension>
    
 
 </plugin>

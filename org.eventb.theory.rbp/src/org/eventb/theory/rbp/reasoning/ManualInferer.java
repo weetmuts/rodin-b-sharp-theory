@@ -7,28 +7,29 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoning;
 
-import org.eventb.core.ast.FormulaFactory;
+import java.util.List;
+
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IMatchingResult;
+import org.eventb.core.pm.SimpleBinder;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.theory.rbp.inference.InferenceRuleManualApplyer;
+import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedGiven;
+import org.eventb.theory.rbp.internal.rulebase.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * @author maamria
  *
  */
-public class ManualInferer {
-
-	private InferenceRuleManualApplyer applyer ;
-	private IPOContext context;
+public class ManualInferer extends AbstractRulesApplyer{
+	
+	private SimpleBinder binder;
 	
 	public ManualInferer(IPOContext context){
-		this.context = context;
-	}
-	
-	public void setFormulaFactory(FormulaFactory factory){
-		applyer = new InferenceRuleManualApplyer(factory, context);
+		super(context);
+		this.binder = new SimpleBinder(context.getFormulaFactory());
 	}
 	
 	/**
@@ -42,6 +43,68 @@ public class ManualInferer {
 	 * @return the antecedents or <code>null</code> if the rule is not found or inapplicable
 	 */
 	public IAntecedent[] getAntecedents(IProverSequent sequent, Predicate pred, boolean forward, String theoryName, String ruleName){
-		return applyer.applyRule(sequent, pred, forward, theoryName, ruleName);
+		return applyRule(sequent, pred, forward, theoryName, ruleName);
+	}
+	
+	/**
+	 * Returns the antecedents resulting from applying the specified rule.
+	 * <p>
+	 * 
+	 * @param sequent
+	 *            the prover sequent
+	 * @param pred
+	 *            the predicate
+	 * @param forward
+	 *            whether the rule should be applied in a forward fashion
+	 * @param theoryName
+	 *            the theory of the rule
+	 * @param ruleName
+	 *            the rule name
+	 * @return the antecedents or <code>null</code> if the rule was not found or
+	 *         is inapplicable.
+	 */
+	public IAntecedent[] applyRule(IProverSequent sequent, Predicate pred,
+			boolean forward, String theoryName, String ruleName) {
+		IDeployedInferenceRule rule = manager.getInferenceRule(theoryName, ruleName, context, factory);
+		if (rule == null) {
+			return null;
+		}
+		if (!(forward && rule.isSuitableForForwardReasoning())
+				&& !(!forward && rule.isSuitableForBackwardReasoning())) {
+			return null;
+		}
+
+		if (forward && !sequent.containsHypothesis(pred)) {
+			return null;
+		}
+		if (forward)
+			return forwardReason(sequent, pred, rule);
+		else
+			return backwardReason(sequent, rule);
+	}
+
+	protected IAntecedent[] backwardReason(IProverSequent sequent,
+			IDeployedInferenceRule rule) {
+		Predicate goal = sequent.goal();
+		Predicate infer = rule.getInfer().getInferClause();
+		IMatchingResult binding = finder.match(goal, infer, false);
+		if (binding != null) {
+			List<IDeployedGiven> givens = rule.getGivens();
+			IAntecedent[] antecedents = new IAntecedent[givens.size()];
+			int i = 0;
+			for (IDeployedGiven given : givens) {
+				Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), binding);
+				antecedents[i] = ProverFactory.makeAntecedent(subGoal);
+				i++;
+			}
+			return antecedents;
+		}
+		return null;
+	}
+
+	protected IAntecedent[] forwardReason(IProverSequent sequent, 
+			Predicate hypothesis, IDeployedInferenceRule rule){
+		return null;
+		
 	}
 }
