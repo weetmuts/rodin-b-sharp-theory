@@ -70,7 +70,11 @@ public final class Binding implements IBinding {
 	}
 
 	public String toString() {
-		return "Binding: " + binding;
+		StringBuilder builder = new StringBuilder();
+		builder.append("Expression binding : " + binding + "\n");
+		builder.append("Predicate binding : " + predBinding + "\n");
+		builder.append((isPartialMatchAcceptable ? "": "Not ")+ "Accepting Partial Match.");
+		return builder.toString();
 	}
 
 	public boolean isBindingInsertable(IBinding binding) {

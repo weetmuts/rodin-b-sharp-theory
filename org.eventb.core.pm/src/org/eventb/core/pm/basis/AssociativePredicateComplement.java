@@ -31,5 +31,13 @@ public final class AssociativePredicateComplement implements IAssociativeComplem
 	public Predicate getToPrepend() {
 		return toPrepend;
 	}
+	
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append("Tag : "+ tag +"\n");
+		builder.append("Predicate to append : "+ toAppend + "\n");
+		builder.append("Predicate to prepend : "+ toPrepend);
+		return builder.toString();
+	}
 
 }

@@ -7,15 +7,19 @@
  *******************************************************************************/
 package org.eventb.core.pm;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.basis.engine.MatchingUtilities;
+import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
 
 /**
  * An implementation of a simple binder.
  * 
  * @since 1.0
  * @author maamria
- *
+ * 
  */
 public class SimpleBinder {
 
@@ -24,14 +28,26 @@ public class SimpleBinder {
 	public SimpleBinder(FormulaFactory factory) {
 		this.factory = factory;
 	}
-	
+
 	/**
-	 * Returns the formula resulting from binding the pattern to the binding of the given matching result.
-	 * @param pattern the pattern
-	 * @param result the matching result
+	 * Returns the formula resulting from binding the pattern to the binding of
+	 * the given matching result.
+	 * 
+	 * @param pattern
+	 *            the pattern
+	 * @param result
+	 *            the matching result
 	 * @return the resultant formula
 	 */
-	public Formula<?> bind(Formula<?> pattern, IMatchingResult result){
-		return null;
+	public Formula<?> bind(Formula<?> pattern, IMatchingResult result) {
+		if (result == null) {
+			return null;
+		}
+		IBinding binding = (IBinding) result;
+		Formula<?> resultFormula = MatchingUtilities.parseFormula(pattern.toString(), pattern instanceof Expression, factory);
+		Formula<?> finalResultFormula = resultFormula.rewrite(new PredicateVariableSubstituter(binding.getPredicateMappings(), factory));
+		finalResultFormula.typeCheck(binding.getTypeEnvironment());
+		Formula<?> formula = finalResultFormula.substituteFreeIdents(binding.getExpressionMappings(), factory);
+		return formula;
 	}
 }

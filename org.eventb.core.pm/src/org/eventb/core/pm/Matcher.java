@@ -13,8 +13,10 @@ import org.eventb.core.pm.basis.IBinding;
 import org.eventb.core.pm.basis.MatchingFactory;
 
 /**
- * 
+ * An implementation of a matching engine.
+ * <p> All matching processes are initiated from within a matcher.
  * @author maamria
+ * @since 1.0
  * 
  */
 public class Matcher {
@@ -39,9 +41,18 @@ public class Matcher {
 	public IMatchingResult match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch) {
 		IBinding initialBinding = matchingFactory.createBinding(acceptPartialMatch, factory);
 		if (matchingFactory.match(form, pattern, initialBinding)){
+			initialBinding.makeImmutable();
 			return initialBinding;
 		}
 		return null;
+	}
+
+	public FormulaFactory getFactory() {
+		return factory;
+	}
+
+	public MatchingFactory getMatchingFactory() {
+		return matchingFactory;
 	}
 
 }

@@ -33,5 +33,4 @@ public abstract class ExtendedExpressionMatcher<E extends IExpressionExtension> 
 	public Class<E> getExtensionClass(){
 		return extensionClass;
 	}
-
 }

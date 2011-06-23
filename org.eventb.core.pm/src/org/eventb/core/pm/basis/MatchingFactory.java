@@ -101,10 +101,7 @@ public final class MatchingFactory {
 	/**
 	 * Private constructor.
 	 */
-	private MatchingFactory(){
-		expressionPatternMatchersRegistry = ExpressionPatternMatchersRegistry.getMatchersRegistry();
-		predicatePatternMatchersRegistry = PredicatePatternMatchersRegistry.getMatchersRegistry();
-	}
+	private MatchingFactory(){}
 	
 	/**
 	 * <p> Matches <code>form</code> and <code>pattern</code> to augment the existing binding.</p>
@@ -114,6 +111,11 @@ public final class MatchingFactory {
 	 * @return whether the matching succeeded
 	 */
 	public final boolean match(Formula<?> formula, Formula<?> pattern, IBinding initialBinding){
+		// ensure existence of the registeries, DO NOT DO this in constructor
+		{
+			expressionPatternMatchersRegistry = ExpressionPatternMatchersRegistry.getMatchersRegistry();
+			predicatePatternMatchersRegistry = PredicatePatternMatchersRegistry.getMatchersRegistry();
+		}
 		if(initialBinding == null){
 			throw new IllegalArgumentException("Matching started without a binding object.");
 		}

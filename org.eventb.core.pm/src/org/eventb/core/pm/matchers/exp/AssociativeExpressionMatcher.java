@@ -2,6 +2,9 @@ package org.eventb.core.pm.matchers.exp;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.pm.assoc.ACProblem;
+import org.eventb.core.pm.assoc.AProblem;
+import org.eventb.core.pm.assoc.AssociativityProblem;
 import org.eventb.core.pm.basis.ExpressionMatcher;
 import org.eventb.core.pm.basis.IBinding;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
@@ -21,7 +24,6 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 	@Override
 	protected boolean gatherBindings(AssociativeExpression form,
 			AssociativeExpression pattern, IBinding existingBinding){
-		
 		// if tag is different
 		if(form.getTag() != pattern.getTag())
 			return false;
@@ -29,16 +31,21 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 		// get the children
 		Expression[] formChildren = form.getChildren();
 		Expression[] patternChildren = pattern.getChildren();
-		// work with binary representations
-		if(formChildren.length != 2 || patternChildren.length != 2
-				|| formChildren.length != patternChildren.length){
-			return false;
+		AssociativityProblem<Expression> problem = null;
+		if (isAC){
+			problem = new ACProblem<Expression>(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
 		}
-		Expression formChild1 = formChildren[0];
-		Expression patternChild1 = patternChildren[0];
-		Expression formChild2 = formChildren[1];
-		Expression patternChild2 = patternChildren[1];
-		return AssociativityHandler.match(formChild1, patternChild1, formChild2, patternChild2, isAC, existingBinding, matchingFactory);
+		else {
+			problem = new AProblem<Expression>(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
+		}
+		IBinding binding = (IBinding) problem.solve(false);
+		if (binding != null){
+			binding.makeImmutable();
+			if (existingBinding.insertBinding(binding)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
