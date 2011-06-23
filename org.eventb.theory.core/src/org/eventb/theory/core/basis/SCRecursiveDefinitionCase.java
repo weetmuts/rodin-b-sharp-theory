@@ -38,6 +38,7 @@ public class SCRecursiveDefinitionCase extends SCExpressionElement implements
 		return hasAttribute(TheoryAttributes.FORMULA_ATTRIBUTE);
 	}
 
+	// TODO check if necessary to make this method raise an exception instead of returning null when failed
 	@Override
 	public Formula<?> getSCFormula(FormulaFactory ff,
 			ITypeEnvironment typeEnvironment) throws RodinDBException {

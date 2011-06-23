@@ -35,8 +35,18 @@ ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
 	IInternalElementType<ISCTheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheoryRoot");
 	
+	/**
+	 * Returns the import theory directive with the given name
+	 * @param name the name 
+	 * @return the import theory
+	 */
 	public ISCImportTheory getImportTheory(String name);
 	
+	/**
+	 * Returns all import theories children of this element.
+	 * @return all import theories
+	 * @throws RodinDBException
+	 */
 	public ISCImportTheory[] getImportTheories() throws RodinDBException;
 	
 	/**
@@ -67,5 +77,32 @@ ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
 	 * @return the deployed theory root
 	 */
 	IDeployedTheoryRoot getDeployedTheoryRoot(String bareName);
+	
+	/**
+	 * Returns whether a deployed version of this theory exists in the database.
+	 * @return whether a deployed version of this theory exists in the database
+	 */
+	boolean hasDeployedVersion();
+	
+	/**
+	 * <p>Returns the theory file corresponding to the given <code>bareName</code>.</p>
+	 * <p>This is handle-only method.</p>
+	 * @param bareName
+	 * @return the rodin file
+	 */
+	IRodinFile getTheoryFile(String bareName);
+	/**
+	 * <p>Returns the theory root corresponding to this element.</p>
+	 * <p>This is handle-only method.</p>
+	 * @return the theory root
+	 */
+	ITheoryRoot getTheoryRoot();
+	/**
+	 * <p>Returns the  theory root corresponding to the given <code>bareName</code>.</p>
+	 * <p>This is handle-only method.</p>
+	 * @param bareName
+	 * @return the theory root
+	 */
+	ITheoryRoot getTheoryRoot(String bareName);
 	
 }

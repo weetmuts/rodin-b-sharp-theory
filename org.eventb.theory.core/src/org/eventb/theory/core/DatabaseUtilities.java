@@ -321,17 +321,15 @@ public class DatabaseUtilities {
 	 *            the Event-B project, must exist
 	 * @param targetProject
 	 *            the Event-B target project, must exist
-	 * @param force
-	 *            whether to force deployment
 	 * @return the deployed theory
 	 * @throws CoreException
 	 */
-	public static final ITheoryDeployer getTheoryDeployer(String theoryName, String project, boolean force, boolean rebuildProject) throws CoreException {
+	public static final ITheoryDeployer getTheoryDeployer(String theoryName, String project, boolean rebuildProject) throws CoreException {
 		ISCTheoryRoot theoryRoot = getExistingTheoryRoot(theoryName, project);
 		if (theoryRoot == null) {
 			return null;
 		}
-		return new TheoryDeployer(theoryRoot, force, rebuildProject);
+		return new TheoryDeployer(theoryRoot, rebuildProject);
 	}
 
 	/**
@@ -357,7 +355,7 @@ public class DatabaseUtilities {
 
 	/**
 	 * Returns the list of SC theories that can be deployed i.e., theories that
-	 * are not empty and not already deployed.
+	 * are accurate and not empty.
 	 * 
 	 * @return list of deployable SC theories
 	 * @throws CoreException
@@ -370,7 +368,7 @@ public class DatabaseUtilities {
 		ISCTheoryRoot[] roots = project.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
 		List<ISCTheoryRoot> list = new ArrayList<ISCTheoryRoot>();
 		for (ISCTheoryRoot scRoot : roots) {
-			if (!getDeployedTheory(scRoot.getComponentName(), project).exists() && !isTheoryEmptyOrNotAccurate(scRoot)) {
+			if (!isTheoryEmptyOrNotAccurate(scRoot)) {
 				list.add(scRoot);
 			}
 		}
@@ -623,21 +621,6 @@ public class DatabaseUtilities {
 			CoreUtilities.log(e, "Failed to create deployed theories project.");
 		}
 
-	}
-
-	/**
-	 * Returns whether a deployed version of the given theory exists.
-	 * 
-	 * @param root
-	 *            the SC theory root
-	 * @return whether a deployed version exists
-	 */
-	public static boolean hasDeployedVersion(ISCTheoryRoot root) {
-		if (root == null) {
-			return false;
-		}
-		IDeployedTheoryRoot dep = root.getDeployedTheoryRoot();
-		return dep.exists();
 	}
 
 	/**

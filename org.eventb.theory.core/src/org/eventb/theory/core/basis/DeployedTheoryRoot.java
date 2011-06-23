@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCDatatypeDefinition;
@@ -15,6 +16,7 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.IUseTheory;
+import org.eventb.theory.core.TheoryAttributes;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -37,13 +39,11 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 	
 	@Override
 	public IUseTheory getUsedTheory(String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(IUseTheory.ELEMENT_TYPE, name);
 	}
 
 	@Override
 	public IUseTheory[] getUsedTheories() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(IUseTheory.ELEMENT_TYPE);
 	}
 	
@@ -70,25 +70,21 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 
 	@Override
 	public ISCProofRulesBlock getProofRulesBlock(String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(ISCProofRulesBlock.ELEMENT_TYPE, name);
 	}
 
 	@Override
 	public ISCProofRulesBlock[] getProofRulesBlocks() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCProofRulesBlock.ELEMENT_TYPE);
 	}
 
 	@Override
 	public ISCTheorem getTheorem(String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(ISCTheorem.ELEMENT_TYPE, name);
 	}
 
 	@Override
 	public ISCTheorem[] getTheorems() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
 	}
 
@@ -100,7 +96,21 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 	@Override
 	public ISCNewOperatorDefinition[] getSCNewOperatorDefinitions()
 			throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCNewOperatorDefinition.ELEMENT_TYPE);
+	}
+	
+	@Override
+	public boolean hasOutdatedAttribute() throws RodinDBException {
+		return hasAttribute(TheoryAttributes.OUTDATED_ATTRIBUTE);
+	}
+
+	@Override
+	public boolean isOutdated() throws RodinDBException {
+		return getAttributeValue(TheoryAttributes.OUTDATED_ATTRIBUTE);
+	}
+
+	@Override
+	public void setOutdated(boolean isOutdated, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(TheoryAttributes.OUTDATED_ATTRIBUTE, isOutdated, monitor);
 	}
 }

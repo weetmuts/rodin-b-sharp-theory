@@ -110,6 +110,11 @@
             kind="string"
             name="%inductiveArgumentAttr">
       </attributeType>
+      <attributeType
+            id="outdated"
+            kind="boolean"
+            name="%outdatedAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">

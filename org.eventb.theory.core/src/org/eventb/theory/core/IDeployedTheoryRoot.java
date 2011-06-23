@@ -32,12 +32,11 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public interface IDeployedTheoryRoot extends IEventBRoot, IAccuracyElement ,
-IFormulaExtensionsSource, IExtensionRulesSource, 
+IFormulaExtensionsSource, IExtensionRulesSource, IOutdatedElement,
 ICommentedElement{
 
 	IInternalElementType<IDeployedTheoryRoot> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".deployedTheoryRoot");
-	
 	
 	/**
 	 * Returns a handle to an used theory element with the given name.

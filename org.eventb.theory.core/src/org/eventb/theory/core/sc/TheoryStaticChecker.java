@@ -19,32 +19,24 @@ import org.rodinp.core.builder.IGraph;
 
 /**
  * @author maamria
- *
+ * 
  */
 public class TheoryStaticChecker extends StaticChecker {
 
-	
-	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)
-			throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		try {
-			monitor.beginTask(Messages.bind(Messages.build_extracting, file
-					.getName()), 1);
+			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
 			IRodinFile source = RodinCore.valueOf(file);
 			ITheoryRoot root = (ITheoryRoot) source.getRoot();
 			IRodinFile target = root.getSCTheoryRoot().getRodinFile();
 			graph.addTarget(target.getResource());
-			graph.addToolDependency(source.getResource(), target.getResource(),
-					true);
+			graph.addToolDependency(source.getResource(), target.getResource(), true);
 			// FIXME added user dependencies on imports
 			IImportTheory[] importTheories = root.getImportTheories();
 			for (IImportTheory importTheory : importTheories) {
 				if (importTheory.hasImportTheory()) {
-					IRodinFile importedTheory = importTheory
-							.getImportTheory().getRodinFile();
-					graph.addUserDependency(
-							source.getResource(), 
-							importedTheory.getResource(), 
-							target.getResource(), false);
+					IRodinFile importedTheory = importTheory.getImportTheory().getRodinFile();
+					graph.addUserDependency(source.getResource(), importedTheory.getResource(), target.getResource(), false);
 				}
 			}
 

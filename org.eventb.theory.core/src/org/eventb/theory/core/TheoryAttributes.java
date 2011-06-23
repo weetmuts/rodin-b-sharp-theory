@@ -73,4 +73,7 @@ public class TheoryAttributes {
 	public static IAttributeType.String INDUCTIVE_ARGUMENT_ATTRIBUTE = RodinCore
 			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".inductiveArgument");
 	
+	public static IAttributeType.Boolean OUTDATED_ATTRIBUTE = RodinCore
+			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".outdated");
+	
 }

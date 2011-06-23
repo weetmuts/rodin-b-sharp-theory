@@ -9,6 +9,7 @@
 package org.eventb.theory.core.basis;
 
 import org.eventb.core.basis.EventBRoot;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
@@ -18,7 +19,6 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheorem;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeParameter;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -40,7 +40,6 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 		return ELEMENT_TYPE;
 	}
 	
-
 	@Override
 	public ITypeParameter getTypeParameter(String name) {
 		return getInternalElement(ITypeParameter.ELEMENT_TYPE, name);
@@ -131,14 +130,16 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 
 	@Override
 	public IImportTheory getImportTheory(String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(IImportTheory.ELEMENT_TYPE, name);
 	}
 
 	@Override
 	public IImportTheory[] getImportTheories() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(IImportTheory.ELEMENT_TYPE);
 	}
-
+	
+	@Override
+	public boolean hasDeployedVersion() {
+		return getDeployedTheoryRoot().exists();
+	}
 }

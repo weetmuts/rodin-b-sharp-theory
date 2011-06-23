@@ -29,13 +29,23 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface ITheoryRoot extends 
-	IEventBRoot, ICommentedElement, IConfigurationElement {
+	IEventBRoot,ICommentedElement, IConfigurationElement {
 
 	IInternalElementType<ITheoryRoot> ELEMENT_TYPE = RodinCore
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".theoryRoot");
 
+	/**
+	 * Returns the import theory directive with the given name
+	 * @param name the name 
+	 * @return the import theory
+	 */
 	public IImportTheory getImportTheory(String name);
 	
+	/**
+	 * Returns all import theories children of this element.
+	 * @return all import theories
+	 * @throws RodinDBException
+	 */
 	public IImportTheory[] getImportTheories() throws RodinDBException;
 	
 	
@@ -145,5 +155,11 @@ public interface ITheoryRoot extends
 	 * @return the deployed theory root
 	 */
 	IDeployedTheoryRoot getDeployedTheoryRoot(String bareName);
+	
+	/**
+	 * Returns whether a deployed version of this theory exists in the database.
+	 * @return whether a deployed version of this theory exists in the database
+	 */
+	boolean hasDeployedVersion();
 	
 }

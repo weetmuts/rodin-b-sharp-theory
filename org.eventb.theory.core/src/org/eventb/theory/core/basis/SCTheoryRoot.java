@@ -19,6 +19,7 @@ import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -75,25 +76,21 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 
 	@Override
 	public ISCProofRulesBlock getProofRulesBlock(String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(ISCProofRulesBlock.ELEMENT_TYPE, name);
 	}
 
 	@Override
 	public ISCProofRulesBlock[] getProofRulesBlocks() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCProofRulesBlock.ELEMENT_TYPE);
 	}
 
 	@Override
 	public ISCTheorem getTheorem(String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(ISCTheorem.ELEMENT_TYPE, name);
 	}
 
 	@Override
 	public ISCTheorem[] getTheorems() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
 	}
 
@@ -105,7 +102,6 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 	@Override
 	public ISCNewOperatorDefinition[] getSCNewOperatorDefinitions()
 			throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCNewOperatorDefinition.ELEMENT_TYPE);
 	}
 
@@ -130,13 +126,34 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 
 	@Override
 	public ISCImportTheory getImportTheory(String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(ISCImportTheory.ELEMENT_TYPE,name);
 	}
 
 	@Override
 	public ISCImportTheory[] getImportTheories() throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
+	}
+
+	@Override
+	public boolean hasDeployedVersion() {
+		return getDeployedTheoryRoot().exists();
+	}
+
+	@Override
+	public IRodinFile getTheoryFile(String bareName) {
+		String fileName = DatabaseUtilities.getTheoryFullName(bareName);
+		IRodinFile file = getRodinProject().getRodinFile(fileName);
+		return file;
+	}
+
+	@Override
+	public ITheoryRoot getTheoryRoot() {
+		return getTheoryRoot(getElementName());
+	}
+
+	@Override
+	public ITheoryRoot getTheoryRoot(String bareName) {
+		ITheoryRoot root = (ITheoryRoot) getTheoryFile(bareName).getRoot();
+		return root;
 	}
 }

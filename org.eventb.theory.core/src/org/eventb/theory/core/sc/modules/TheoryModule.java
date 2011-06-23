@@ -39,6 +39,9 @@ public class TheoryModule extends SCProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
+		if (theoryRoot.hasDeployedVersion()){
+			theoryRoot.getDeployedTheoryRoot().setOutdated(true, monitor);
+		}
 		endProcessorModules(element, repository, monitor);
 		removeStates(repository);
 	}
