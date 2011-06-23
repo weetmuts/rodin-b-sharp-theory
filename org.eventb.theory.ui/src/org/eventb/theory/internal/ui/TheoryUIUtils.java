@@ -198,30 +198,7 @@ public class TheoryUIUtils {
 			}
 		}
 	}
-
-	/**
-	 * <p>
-	 * Returns an array of Rodin projects currently in the workspace.
-	 * </p>
-	 * 
-	 * @return an array of projects names
-	 */
-	public static String[] getProjectsNames() {
-		IRodinProject[] projs = null;
-		ArrayList<String> names = new ArrayList<String>();
-		try {
-			projs = TheoryUIPlugIn.getRodinDatabase().getRodinProjects();
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		if (projs != null) {
-			for (IRodinProject p : projs) {
-				names.add(p.getElementName());
-			}
-		}
-		return names.toArray(new String[names.size()]);
-	}
-
+	
 	/**
 	 * <p>
 	 * Facility to log the given exception alongside the given message.
@@ -243,21 +220,6 @@ public class TheoryUIUtils {
 		IStatus status = new Status(IStatus.ERROR, TheoryUIPlugIn.PLUGIN_ID,
 				IStatus.ERROR, message, exc);
 		TheoryUIPlugIn.getDefault().getLog().log(status);
-	}
-
-	/**
-	 * Throw a Core exception.
-	 * <p>
-	 * 
-	 * @param message
-	 *            The message for displaying
-	 * @throws CoreException
-	 *             a Core exception with the status contains the input message
-	 */
-	public static void throwCoreException(String message) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, TheoryUIPlugIn.PLUGIN_ID,
-				IStatus.OK, message, null);
-		throw new CoreException(status);
 	}
 
 	/**
@@ -292,7 +254,7 @@ public class TheoryUIUtils {
 
 			}.extract(tps, new String[tps.length]);
 		} catch (CoreException e1) {
-			e1.printStackTrace();
+			log(e1, "error getting type parameter details");
 		}
 
 		IDatatypeDefinition def = element
@@ -316,7 +278,7 @@ public class TheoryUIUtils {
 
 			}).extract(tas, new String[tas.length]);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			log(e, "error getting type argument details");
 		}
 		List<String> list = new ArrayList<String>();
 		list.addAll(Arrays.asList(all));
@@ -346,54 +308,13 @@ public class TheoryUIUtils {
 		public abstract T get(S s) throws CoreException;
 	}
 
-	/**
-	 * Get an EXISTING SC theory rather than the temp SC file bct_tmp. Returns
-	 * the 1st encountered file.
-	 * 
-	 * @param theoryName
-	 * @param projectName
-	 * @return
-	 */
-	public static IRodinFile getSCTheoryInProject(String theoryName,
-			String projectName) {
-		IRodinFile file = null;
-		try {
-			ISCTheoryRoot[] roots = RodinCore.getRodinDB()
-					.getRodinProject(projectName)
-					.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
-			for (ISCTheoryRoot root : roots) {
-				if (root.getElementName().equals(theoryName)) {
-					if (root.exists()) {
-						file = root.getRodinFile();
-						break;
-					}
-				}
-			}
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		return file;
-	}
-
 	public static boolean createDeployEmptyTheoryDialog(Shell shell,
 			ITheoryRoot root) {
 		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
 		if (!scRoot.exists() || DatabaseUtilities.isTheoryEmptyOrNotAccurate(scRoot)) {
 			MessageDialog.openError(shell, "Error",
-					"Cannot deploy inaccurate or empty theory " + root.getComponentName()
-							+ ".");
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean createDeployDeployedTheoryDialog(Shell shell,
-			ITheoryRoot root) {
-		IDeployedTheoryRoot depRoot = root.getDeployedTheoryRoot();
-		if (depRoot.exists()) {
-			MessageDialog.openError(shell, "Error",
-					"Cannot deploy deployed theory " + root.getComponentName()
-							+ ".");
+					"Cannot deploy inaccurate or empty theory '" + root.getComponentName()
+							+ "'.");
 			return false;
 		}
 		return true;
@@ -404,8 +325,8 @@ public class TheoryUIUtils {
 		IDeployedTheoryRoot depRoot = root.getDeployedTheoryRoot();
 		if (!depRoot.exists()) {
 			MessageDialog.openError(shell, "Error",
-					"Theory " + root.getComponentName()
-							+ " has not been deployed.");
+					"Theory '" + root.getComponentName()
+							+ "' has not been deployed.");
 			return false;
 		}
 		return true;
@@ -413,11 +334,13 @@ public class TheoryUIUtils {
 
 	public static boolean createConfirmUndeployTheoryDialog(Shell shell,
 			ITheoryRoot root) {
-		return MessageDialog.openConfirm(
-				shell,
-				"Confirm",
-				"Confirm undeploying deployed theory "
-						+ root.getComponentName() + ".");
+		return MessageDialog.openConfirm(shell,
+				"Confirm Undeployment",
+				"Confirm undeploying deployed theory '"
+						+ root.getComponentName() 
+						+ "'.\n If you confirm undeployment, project '"
+						+ root.getRodinProject().getElementName()
+						+"' will be rebuilt.");
 
 	}
 
@@ -490,11 +413,12 @@ public class TheoryUIUtils {
 		IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
 				.getActivePage();
 		IEditorReference[] parts = page.findEditors(
-				new FileEditorInput(DatabaseUtilities
-						.getTheory(theoryName,
-								DatabaseUtilities.getRodinProject(projectName))
-						.getRodinFile().getResource()), null,
-				IWorkbenchPage.MATCH_INPUT);
+				new FileEditorInput(
+						DatabaseUtilities.getTheory(
+								theoryName, 
+								DatabaseUtilities.getRodinProject(projectName)).getRodinFile().getResource()), 
+						null,
+						IWorkbenchPage.MATCH_INPUT);
 		for (IEditorReference ref : parts) {
 			IEditorPart part = (IEditorPart) ref.getPart(true);
 			part.getSite().getPage().closeEditor(part, false);
@@ -503,15 +427,22 @@ public class TheoryUIUtils {
 
 	/**
 	 * Returns the image for explorer display of the given theory.
-	 * <p> Theories that have deployed counterparts have a different (blue rather than green) icon.
+	 * <p> Theories that have deployed counterparts have a different icon.
 	 * @param root the theory root
 	 * @return the image
 	 */
 	public static Image getTheoryImage(ITheoryRoot root) {
-		IDeployedTheoryRoot deplRoot = DatabaseUtilities.getDeployedTheory(
-				root.getElementName(), root.getRodinProject());
-		if (deplRoot.exists()) {
-			return TheoryImage.getImage(ITheoryImages.IMG_DTHEORY);
+		if (root.hasDeployedVersion()) {
+			try {
+				IDeployedTheoryRoot deployedTheoryRoot = root.getDeployedTheoryRoot();
+				if (deployedTheoryRoot.hasOutdatedAttribute() && deployedTheoryRoot.isOutdated())
+					return TheoryImage.getImage(ITheoryImages.IMG_OTHEORY);
+				else {
+					return TheoryImage.getImage(ITheoryImages.IMG_DTHEORY);
+				}
+			} catch (RodinDBException e) {
+				log(e, "error while checking outdatedness of theory to get the appropriate image");
+			}
 		}
 		return TheoryImage.getImage(ITheoryImages.IMG_THEORY);
 	}

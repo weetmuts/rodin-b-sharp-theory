@@ -1,4 +1,4 @@
-package org.eventb.theory.ui.internal.deploy;
+package org.eventb.theory.ui.deploy;
 
 import org.eclipse.swt.widgets.Shell;
 

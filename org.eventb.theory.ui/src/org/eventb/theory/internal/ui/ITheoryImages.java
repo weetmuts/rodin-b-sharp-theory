@@ -39,9 +39,6 @@ public interface ITheoryImages extends IEventBSharedImages{
 	public static final String IMG_DTHEORY = "Deployed Theory";
 	public static final String IMG_DTHEORY_PATH = "icons/thyDep.gif";
 	
-	public static final String IMG_DEPLOY = "Deploy";
-	public static final String IMG_DEPLOY_PATH = "icons/deploy.gif";
-	
-	public static final String IMG_UDEPLOY = "Undeploy";
-	public static final String IMG_UDEPLOY_PATH = "icons/undeploy.gif";
+	public static final String IMG_OTHEORY = "Outdated Theory";
+	public static final String IMG_OTHEORY_PATH = "icons/thy-outdated.gif";
 }

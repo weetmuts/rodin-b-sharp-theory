@@ -11,10 +11,8 @@ import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.DatabaseUtilities;
-import org.eventb.theory.internal.ui.ITheoryImages;
-import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
-import org.eventb.theory.ui.internal.deploy.SimpleDeployWizard;
+import org.eventb.theory.ui.deploy.SimpleDeployWizard;
 import org.eventb.theory.ui.internal.explorer.ActionProvider;
 import org.eventb.theory.ui.internal.explorer.NavigatorActionProvider;
 
@@ -52,11 +50,9 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 						.getStructuredViewer().getSelection();
 				if (!(sel.isEmpty())) {
 					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						if (TheoryUIUtils.createDeployDeployedTheoryDialog(site.getViewSite().getShell(),
-								(ITheoryRoot)sel.getFirstElement())
-								&& TheoryUIUtils.createDeployEmptyTheoryDialog(site.getViewSite().getShell(),
+						if (TheoryUIUtils.createDeployEmptyTheoryDialog(
+								site.getViewSite().getShell(), 
 								(ITheoryRoot)sel.getFirstElement())) {
-
 							SimpleDeployWizard wizard = new SimpleDeployWizard(
 									null, (ITheoryRoot) sel.getFirstElement());
 							WizardDialog wd = new WizardDialog(null, wizard);
@@ -69,8 +65,6 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 			}
 		};
 		action.setText("&Deploy");
-		action.setImageDescriptor(TheoryImage
-				.getImageDescriptor(ITheoryImages.IMG_DEPLOY_PATH));
 		return action;
 	}
 	
@@ -82,14 +76,11 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 				if (!(sel.isEmpty())) {
 					if (sel.getFirstElement() instanceof ITheoryRoot) {
 						ITheoryRoot theory = (ITheoryRoot)sel.getFirstElement();
-						if (TheoryUIUtils.createUndeployUndeployedTheoryDialog(site.getViewSite().getShell(),
-								theory)
-								&&
+						if (TheoryUIUtils.createUndeployUndeployedTheoryDialog(site.getViewSite().getShell(),theory) &&
 								TheoryUIUtils.createConfirmUndeployTheoryDialog(site.getViewSite().getShell(),
 										theory)) {
 
-							DatabaseUtilities.cleanUp(
-									theory.getDeployedTheoryRoot());
+							DatabaseUtilities.cleanUp(theory.getDeployedTheoryRoot());
 							TheoryUIUtils.closeEditorsFor(theory.getComponentName(), 
 									theory.getRodinProject().getElementName());
 						}
@@ -99,8 +90,6 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 			}
 		};
 		action.setText("&Undeploy");
-		action.setImageDescriptor(TheoryImage
-				.getImageDescriptor(ITheoryImages.IMG_UDEPLOY_PATH));
 		return action;
 	}
 

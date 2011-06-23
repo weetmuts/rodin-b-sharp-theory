@@ -1,4 +1,4 @@
-package org.eventb.theory.ui.internal.deploy;
+package org.eventb.theory.ui.deploy;
 
 import java.util.ArrayList;
 
@@ -168,8 +168,8 @@ public class DeployWizardPageTwo extends WizardPage {
 			theoryName = ((AbstractDeployWizardPageOne) getPreviousPage()).getTheoryName();
 			theoryLabel.setText(projectName + "\\" + theoryName);
 			projectLabel.setText(projectName);
-			IRodinFile file = TheoryUIUtils.getSCTheoryInProject(theoryName,
-					projectName);
+			IRodinFile file = DatabaseUtilities.getSCTheory(theoryName, 
+					DatabaseUtilities.getRodinProject(projectName)).getRodinFile();
 			if (file != null) {
 				populatePOs(file);
 				dTitle = "Discharged POs (" + dPOs.size() + "/" + totalNumPOs

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.ui.internal.deploy;
+package org.eventb.theory.ui.deploy;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.theory.core.ITheoryRoot;

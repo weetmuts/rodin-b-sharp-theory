@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.ui.internal.deploy;
+package org.eventb.theory.ui.deploy;
 
 import static org.eventb.theory.internal.ui.Messages.deploy_deployFailure;
 import static org.eventb.theory.internal.ui.Messages.deploy_deploySuccess;
@@ -24,24 +24,24 @@ import org.eventb.theory.internal.ui.TheoryUIUtils;
 
 /**
  * @author maamria
- *
+ * 
  */
-public abstract class AbstractDeployWizard extends Wizard{
+public abstract class AbstractDeployWizard extends Wizard {
 
 	private Shell shell;
-	
+
 	protected AbstractDeployWizardPageOne wizardPageOne;
 	protected DeployWizardPageTwo wizardPageTwo;
-	
+
 	public AbstractDeployWizard(Shell shell) {
 		super();
 		setNeedsProgressMonitor(true);
 		this.shell = shell;
 	}
-	
+
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}
-	
+
 	@Override
 	public void addPages() {
 		setWindowTitle("Deploy Theory");
@@ -50,53 +50,45 @@ public abstract class AbstractDeployWizard extends Wizard{
 		wizardPageTwo = new DeployWizardPageTwo();
 		addPage(wizardPageTwo);
 	}
-	
+
 	protected abstract AbstractDeployWizardPageOne getPageOne();
-	
-	private String getProjectName(){
+
+	private String getProjectName() {
 		return wizardPageOne.getProjectName();
 	}
-	
-	private String getTheoryName(){
+
+	private String getTheoryName() {
 		return wizardPageOne.getTheoryName();
 	}
-	
-	private boolean rebuildProjects(){
+
+	private boolean rebuildProjects() {
 		return wizardPageOne.rebuildProjects();
 	}
-	
+
 	@Override
 	public boolean performFinish() {
-
 		final String projectName = getProjectName();
 		final String theoryName = getTheoryName();
-		final boolean force = false;
 		final boolean rebuild = rebuildProjects();
 
 		ITheoryDeployer deployer = null;
 		try {
-			deployer = DatabaseUtilities.getTheoryDeployer(theoryName,
-					projectName, force, rebuild);
+			deployer = DatabaseUtilities.getTheoryDeployer(theoryName, projectName, rebuild);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			TheoryUIUtils.log(e, "cannot get appropriate deployer for theory " + theoryName);
 		}
 		if (deployer == null) {
 			return false;
 		}
-		
-		
-		
+
 		TheoryUIUtils.runWithProgress(deployer, null);
 		IDeploymentResult deploymentResult = deployer.getDeploymentResult();
-		if(!deploymentResult.succeeded()){
+		if (!deploymentResult.succeeded()) {
 			MessageDialog.openError(shell, "Error", 
-					Messages.bind(deploy_deployFailure+"\n"+deploymentResult.getErrorMessage(), 
-							theoryName));
+					Messages.bind(deploy_deployFailure + "\n" + deploymentResult.getErrorMessage(), "'" + theoryName + "'"));
 			return false;
-		}
-		else {
-			MessageDialog.openInformation(shell, "Success", 
-					Messages.bind(deploy_deploySuccess, theoryName));
+		} else {
+			MessageDialog.openInformation(shell, "Success", Messages.bind(deploy_deploySuccess, "'" + theoryName + "'"));
 		}
 		TheoryUIUtils.closeEditorsFor(theoryName, projectName);
 		return true;

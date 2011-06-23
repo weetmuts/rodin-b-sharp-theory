@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.ui.internal.deploy;
+package org.eventb.theory.ui.deploy;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -29,7 +29,7 @@ public abstract class AbstractDeployWizardPageOne extends WizardPage {
 
 	protected AbstractDeployWizardPageOne() {
 		super("deployWizard");
-		setTitle("Deploy theory ");
+		setTitle("Deploy theory");
 	}
 
 	@Override
@@ -60,8 +60,7 @@ public abstract class AbstractDeployWizardPageOne extends WizardPage {
 	protected abstract void customise(Composite container);
 
 	protected void initialise() {
-		btnRebuildProjects.setSelection(true);
-		rebuildProjects = true;
+		rebuildProjects = false;
 	}
 
 	public String getTheoryName() {

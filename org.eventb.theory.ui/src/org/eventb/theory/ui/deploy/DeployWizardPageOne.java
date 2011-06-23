@@ -1,4 +1,4 @@
-package org.eventb.theory.ui.internal.deploy;
+package org.eventb.theory.ui.deploy;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eclipse.swt.layout.GridLayout;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -50,7 +51,7 @@ public class DeployWizardPageOne extends AbstractDeployWizardPageOne {
 			return;
 		}
 		btnRebuildProjects.setEnabled(true);
-		super.dialogChanged();
+		updateStatus(null);
 	}
 
 	private void updateStatus(String message) {
@@ -120,8 +121,7 @@ public class DeployWizardPageOne extends AbstractDeployWizardPageOne {
 					.getDeployableSCTheories(projectName));
 			return col.toArray(new String[col.size()]);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TheoryUIUtils.log(e, "error retrieving deployable statically checked theories.");
 		}
 		return new String[0];
 	}
@@ -134,8 +134,7 @@ public class DeployWizardPageOne extends AbstractDeployWizardPageOne {
 				col.add(project.getElementName());
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TheoryUIUtils.log(e, "error retrieving available rodin projects.");
 		}
 		return col.toArray(new String[col.size()]);
 	}

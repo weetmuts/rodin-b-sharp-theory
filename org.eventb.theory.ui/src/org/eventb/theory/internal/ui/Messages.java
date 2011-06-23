@@ -30,11 +30,6 @@ public class Messages {
 	public static String operator_isCommutative;
 	public static String operator_isNotCommutative;
 	
-	
-	public static String theoryUIUtils_deploySuccess;
-	public static String theoryUIUtils_deployConfirm;
-	public static String theoryUIUtils_unexpectedError;
-	
 	private static final String BUNDLE_NAME = "org.eventb.theory.internal.ui.messages"; //$NON-NLS-1$
 
 	static {
