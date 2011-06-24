@@ -20,9 +20,6 @@ public class BinaryExpressionMatcher extends  ExpressionMatcher<BinaryExpression
 	@Override
 	protected boolean gatherBindings(BinaryExpression beForm,
 			BinaryExpression bePattern, IBinding existingBinding){
-		if(beForm.getTag() != bePattern.getTag()){
-			return false;
-		}
 		// for left's
 		Expression fLeft = beForm.getLeft();
 		Expression pLeft = bePattern.getLeft();

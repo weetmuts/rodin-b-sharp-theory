@@ -20,9 +20,6 @@ public class UnaryExpressionMatcher extends ExpressionMatcher<UnaryExpression> {
 	@Override
 	protected boolean gatherBindings(UnaryExpression ueForm,
 			UnaryExpression uePattern, IBinding existingBinding){
-		if(ueForm.getTag() != uePattern.getTag()){
-			return false;
-		}
 		Expression formExp = ueForm.getChild();
 		Expression patternExp = uePattern.getChild();
 		if(patternExp instanceof FreeIdentifier){

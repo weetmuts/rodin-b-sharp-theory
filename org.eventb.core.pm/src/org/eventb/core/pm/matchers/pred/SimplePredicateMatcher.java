@@ -21,9 +21,6 @@ public class SimplePredicateMatcher extends PredicateMatcher<SimplePredicate> {
 	@Override
 	protected boolean gatherBindings(SimplePredicate spForm,
 			SimplePredicate spPattern, IBinding existingBinding){
-		if(spForm.getTag() != spPattern.getTag()){
-			return false;
-		}
 		Expression fExp = spForm.getExpression();
 		Expression pExp = spPattern.getExpression();
 		if(pExp instanceof FreeIdentifier){

@@ -23,10 +23,6 @@ public class AssociativePredicateMatcher extends PredicateMatcher<AssociativePre
 	@Override
 	protected boolean gatherBindings(AssociativePredicate form,
 			AssociativePredicate pattern, IBinding existingBinding){
-		// if tag is diff
-		if(form.getTag() != pattern.getTag())
-			return false;
-		
 		// get the children
 		Predicate[] formChildren = form.getChildren();
 		Predicate[] patternChildren = pattern.getChildren();
@@ -60,7 +56,6 @@ public class AssociativePredicateMatcher extends PredicateMatcher<AssociativePre
 				return false;
 			}
 		}
-		
 		return true;
 		
 	}

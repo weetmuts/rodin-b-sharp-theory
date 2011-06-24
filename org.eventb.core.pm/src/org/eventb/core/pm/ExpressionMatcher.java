@@ -24,12 +24,21 @@ public abstract class ExpressionMatcher<E extends Expression> implements IExpres
 			IBinding existingBinding) {
 		E eForm = getExpression(form);
 		E ePattern = getExpression(pattern);
+		if (eForm.getTag() != ePattern.getTag()){
+			return false;
+		}
+		if (!existingBinding.canUnifyTypes(eForm.getType(), ePattern.getType())){
+			return false;
+		}
+		// by this point the expression have the same tag and types are unifyable
 		return gatherBindings(eForm, ePattern, existingBinding);
 		
 	}
 
 	/**
 	 * Augments the given binding with the matching information.
+	 * 
+	 * <p> The formula and the pattern can be assumed to have the same tag, and that their types are unifyable.
 	 * @param form the formula
 	 * @param pattern the pattern against which to match
 	 * @param existingBinding the binding

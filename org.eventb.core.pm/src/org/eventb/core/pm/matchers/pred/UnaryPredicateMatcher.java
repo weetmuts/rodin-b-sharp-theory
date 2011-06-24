@@ -20,9 +20,6 @@ public class UnaryPredicateMatcher extends PredicateMatcher<UnaryPredicate> {
 	@Override
 	protected boolean gatherBindings(UnaryPredicate upForm, UnaryPredicate upPattern,
 			IBinding existingBinding){
-		if(upPattern.getTag() != upForm.getTag()){
-			return false;
-		}
 		Predicate fChild = upForm.getChild();
 		Predicate pChild = upPattern.getChild();
 		if(pChild instanceof PredicateVariable){

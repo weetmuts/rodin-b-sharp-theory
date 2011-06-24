@@ -20,9 +20,6 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 	@Override
 	protected boolean gatherBindings(BinaryPredicate bpForm,
 			BinaryPredicate bpPattern, IBinding existingBinding){
-		if(bpForm.getTag() != bpPattern.getTag()){
-			return false;
-		}
 		Predicate fLeft = bpForm.getLeft();
 		Predicate pLeft = bpPattern.getLeft();
 		if(pLeft instanceof PredicateVariable){

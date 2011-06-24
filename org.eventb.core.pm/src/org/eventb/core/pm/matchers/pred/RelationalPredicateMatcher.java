@@ -21,9 +21,6 @@ public class RelationalPredicateMatcher extends PredicateMatcher<RelationalPredi
 	@Override
 	protected boolean gatherBindings(RelationalPredicate rpForm,
 			RelationalPredicate rpPattern, IBinding existingBinding){
-		if(rpForm.getTag() != rpPattern.getTag()){
-			return false;
-		}
 		Expression pLeft = rpPattern.getLeft();
 		Expression fLeft = rpForm.getLeft();
 		if(pLeft instanceof FreeIdentifier){

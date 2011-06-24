@@ -19,12 +19,8 @@ public class AtomicExpressionMatcher extends ExpressionMatcher<AtomicExpression>
 	@Override
 	protected boolean gatherBindings(AtomicExpression form,
 			AtomicExpression pattern, IBinding existingBinding){
-		// tags not equal
-		if(form.getTag() != pattern.getTag()){
-			return false;
-		}
-		// tags equal, unify types
-		return existingBinding.canUnifyTypes(form.getType(), pattern.getType());
+		// no further action required
+		return true;
 	}
 	
 	@Override

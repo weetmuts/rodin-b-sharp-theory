@@ -24,9 +24,6 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 	@Override
 	protected boolean gatherBindings(AssociativeExpression form,
 			AssociativeExpression pattern, IBinding existingBinding){
-		// if tag is different
-		if(form.getTag() != pattern.getTag())
-			return false;
 		boolean isAC = MatchingUtilities.isAssociativeCommutative(form.getTag());
 		// get the children
 		Expression[] formChildren = form.getChildren();

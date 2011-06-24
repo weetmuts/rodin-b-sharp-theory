@@ -22,9 +22,6 @@ public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredi
 	@Override
 	protected boolean gatherBindings(QuantifiedPredicate qpForm,
 			QuantifiedPredicate qpPattern, IBinding existingBinding) {
-		if (qpForm.getTag() != qpPattern.getTag()) {
-			return false;
-		}
 		BoundIdentDecl[] fDec = qpForm.getBoundIdentDecls();
 		BoundIdentDecl[] pDec = qpPattern.getBoundIdentDecls();
 		if (!boundIdentDecsMatch(fDec, pDec, existingBinding)) {

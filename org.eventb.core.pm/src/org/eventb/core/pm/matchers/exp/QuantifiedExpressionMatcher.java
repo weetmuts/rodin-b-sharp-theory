@@ -25,9 +25,6 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 	@Override
 	protected boolean gatherBindings(QuantifiedExpression qeForm,
 			QuantifiedExpression qePattern, IBinding existingBinding){
-		if(qeForm.getTag() != qePattern.getTag()){
-			return false;
-		}
 		if(qeForm.getTag() == Formula.CSET){
 			if(qeForm.getForm() != qePattern.getForm()){
 				return false;

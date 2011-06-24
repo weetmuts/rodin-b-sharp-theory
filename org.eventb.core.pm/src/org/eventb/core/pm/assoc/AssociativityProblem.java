@@ -55,6 +55,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 		this.matcher = new Matcher(factory);
 		this.indexedFormulae = getIndexedFormulae(formulae);
 		this.indexedPatterns = getIndexedFormulae(patterns);
+		this.variables = new ArrayList<IndexedFormula<F>>();
 		this.searchSpace = generateSearchSpace();
 		if (indexedFormulae.size() < indexedPatterns.size()){
 			isSolvable = false;

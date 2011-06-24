@@ -24,12 +24,17 @@ public abstract class PredicateMatcher<P extends Predicate> implements IPredicat
 			IBinding existingBinding) {
 		P pForm = getPredicate(form);
 		P pPattern = getPredicate(pattern);
+		if (pForm.getTag() != pPattern.getTag()){
+			return false;
+		}
 		return gatherBindings(pForm, pPattern, existingBinding);
 		
 	}
 	
 	/**
 	 * Augments the given binding with the matching information.
+	 * 
+	 * <p> The given formula and pattern can be assumed to have the same tag.
 	 * @param form the formula
 	 * @param pattern the pattern against which to match
 	 * @param existingBinding the binding
