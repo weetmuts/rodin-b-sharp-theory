@@ -8,58 +8,54 @@
 package org.eventb.theory.rbp.reasoners.input;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * An implementation of an inference reasoner input.
+ * 
  * @since 1.0
  * 
  * @author maamria
- *
+ * 
  */
-public class InferenceInput implements IReasonerInput{
+public class InferenceInput extends ContextualInput {
 
 	public boolean forward;
-	public Predicate pred;
 	public String ruleDesc;
 	public String ruleName;
 	public String theoryName;
-	
+	public Predicate predicate;
+
 	/**
 	 * Constructs an input with the given parameters.
-	 * @param theoryName the parent theory
-	 * @param ruleName the name of the rule to apply
-	 * @param ruleDesc the description to display if rule applied successfully
-	 * @param pred 
-	 * @param forward whether the rule is for forward reasoning
+	 * 
+	 * @param theoryName
+	 *            the parent theory
+	 * @param ruleName
+	 *            the name of the rule to apply
+	 * @param ruleDesc
+	 *            the description to display if rule applied successfully
+	 * @param pred
+	 *            the predicate
+	 * @param forward
+	 *            whether the rule is for forward reasoning
+	 * @param context
+	 *            the PO context
 	 */
-	public InferenceInput(String theoryName, String ruleName, String ruleDesc,
-			Predicate pred, boolean forward){
+	public InferenceInput(String theoryName, String ruleName, String ruleDesc, Predicate predicate, boolean forward, IPOContext context) {
+		super(context);
 		this.forward = forward;
-		this.pred = pred;
 		this.ruleDesc = ruleDesc;
 		this.ruleName = ruleName;
 		this.theoryName = theoryName;
-	}
-	
-	@Override
-	public boolean hasError() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String getError() {
-		// TODO Auto-generated method stub
-		return null;
+		this.predicate = predicate;
 	}
 
 	@Override
 	public void applyHints(ReplayHints renaming) {
-		if(pred !=null){
-			renaming.applyHints(pred);
+		if (predicate != null) {
+			predicate = renaming.applyHints(predicate);
 		}
 	}
-
 }

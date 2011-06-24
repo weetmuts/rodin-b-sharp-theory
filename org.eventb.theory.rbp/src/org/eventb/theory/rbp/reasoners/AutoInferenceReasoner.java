@@ -11,32 +11,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
+import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoning.AutoInferer;
-import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * @author maamria
  * 
  */
-public class AutoInferenceReasoner extends EmptyInputReasoner implements IContextAwareReasoner {
+public class AutoInferenceReasoner extends ContextAwareReasoner {
 
-	private static final String DISPLAY_NAME = "RbP1";
-	public static List<String> usedTheories = new ArrayList<String>();
 	private static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".autoInferenceReasoner";
-
-	private AutoInferer autoInferer;
 	
-	public void setContext(IPOContext context){
-		autoInferer = new AutoInferer(context);
-	}
+	private static final String DISPLAY_NAME = "RbP1";
+	
+	public static List<String> usedTheories = new ArrayList<String>();
 	
 	@Override
 	public String getReasonerID() {
@@ -46,26 +41,27 @@ public class AutoInferenceReasoner extends EmptyInputReasoner implements IContex
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
+		ContextualInput contextualInput = (ContextualInput) input;
+		AutoInferer autoInferer = new AutoInferer(contextualInput.context);
 		IAntecedent[] antecedents = autoInferer.applyInferenceRules(seq);
 		if (antecedents == null) {
-			return ProverFactory.reasonerFailure(this, input, "Inference "
+			return ProverFactory.reasonerFailure(this, contextualInput, "Inference "
 					+ getReasonerID() + " is not applicable for "
 					+ seq.goal() + ".");
 		}
 		// Generate the successful reasoner output
-		return ProverFactory.makeProofRule(this, null, seq.goal(), getDisplayName(), antecedents);
+		return ProverFactory.makeProofRule(this, contextualInput, seq.goal(), getDisplayName(), antecedents);
 	}
 	
+	@Override
+	public String getSignature() {
+		return REASONER_ID;
+	}
+
 	protected String getDisplayName() {
 		String toDisplay = DISPLAY_NAME + ProverUtilities.printListedItems(usedTheories);
 		// clear the list of used theories now
 		usedTheories.clear();
 		return toDisplay;
 	}
-
-	@Override
-	public String getSignature() {
-		return "";
-	}
-
 }

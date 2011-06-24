@@ -9,7 +9,6 @@ package org.eventb.theory.rbp.rulebase.basis;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
@@ -21,11 +20,9 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 public class POContext implements IPOContext{
 	
 	private IPSStatus psStatus;
-	private FormulaFactory factory;
 
-	public POContext(IPSStatus psStatus, FormulaFactory factory) {
+	public POContext(IPSStatus psStatus) {
 		this.psStatus = psStatus;
-		this.factory = factory;
 	}
 
 	@Override
@@ -42,10 +39,7 @@ public class POContext implements IPOContext{
 	public boolean inMathExtensions() {
 		return DatabaseUtilities.isMathExtensionsProject(psStatus.getRodinProject());
 	}
-
-	@Override
-	public FormulaFactory getFormulaFactory() {
-		return factory;
+	public String toString(){
+		return psStatus.getHandleIdentifier();
 	}
-
 }

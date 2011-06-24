@@ -10,7 +10,7 @@ package org.eventb.theory.rbp.reasoning;
 import java.util.List;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pm.IMatchingResult;
+import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.SimpleBinder;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -29,7 +29,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 	
 	public ManualInferer(IPOContext context){
 		super(context);
-		this.binder = new SimpleBinder(context.getFormulaFactory());
+		this.binder = new SimpleBinder(context.getParentRoot().getFormulaFactory());
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 			IDeployedInferenceRule rule) {
 		Predicate goal = sequent.goal();
 		Predicate infer = rule.getInfer().getInferClause();
-		IMatchingResult binding = finder.match(goal, infer, false);
+		IBinding binding = finder.match(goal, infer, false);
 		if (binding != null) {
 			List<IDeployedGiven> givens = rule.getGivens();
 			IAntecedent[] antecedents = new IAntecedent[givens.size()];

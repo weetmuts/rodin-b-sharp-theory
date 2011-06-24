@@ -13,7 +13,6 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualInferenceReasoner;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
-import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.ui.prover.IPredicateApplication;
 
 /**
@@ -22,24 +21,17 @@ import org.eventb.ui.prover.IPredicateApplication;
  */
 public class InferenceTacticApplication implements IPredicateApplication{
 
-	String toolTip;
 	InferenceInput input;
-	IPOContext context;
 	
-	public InferenceTacticApplication(InferenceInput input , String toolTip, IPOContext context){
-		this.toolTip = toolTip;
+	public InferenceTacticApplication(InferenceInput input){
 		this.input = input;
-		this.context = context;
 	}
 	
 	@Override
 	public ITactic getTactic(String[] inputs, String globalInput) {
-		// TODO Auto-generated method stub
 		ManualInferenceReasoner reasoner = new ManualInferenceReasoner();
-		reasoner.setContext(context);
 		return BasicTactics.reasonerTac(reasoner, input);
 	}
-
 
 	@Override
 	public String getTacticID() {
@@ -48,12 +40,12 @@ public class InferenceTacticApplication implements IPredicateApplication{
 
 	@Override
 	public Image getIcon() {
-		return RbPPlugin.getDefault().getInferImage();
+		return null;
 	}
 
 	@Override
 	public String getTooltip() {
-		return toolTip;
+		return input.ruleDesc;
 	}
 
 }

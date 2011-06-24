@@ -8,6 +8,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
+import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.POContext;
 
@@ -20,7 +21,6 @@ import org.eventb.theory.rbp.rulebase.basis.POContext;
  * @author maamria
  *
  */
-@SuppressWarnings("restriction")
 public class RewritesAutoTactic implements ITactic{
 
 	@Override
@@ -31,10 +31,9 @@ public class RewritesAutoTactic implements ITactic{
 			}
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
 			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status, attempt.getFormulaFactory());
+			IPOContext poContext = new POContext(status);
 			AutoRewriteReasoner reasoner = new AutoRewriteReasoner();
-			reasoner.setContext(poContext);
-			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), null, pm);
+			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), new ContextualInput(poContext), pm);
 			if (reasonerOutput == null) return "! Plugin returned null !";
 			if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
 			IProofRule rule = (IProofRule)reasonerOutput;

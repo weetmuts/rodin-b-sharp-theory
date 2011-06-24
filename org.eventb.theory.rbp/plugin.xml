@@ -80,7 +80,7 @@
             tooltip="%applyRew">
       </tactic>
       <tactic
-            icon="icons/infer.gif"
+            icon="icons/thy.gif"
             id="RbP1g"
             interrupt="true"
             name="%rbpInfTactics"
@@ -90,7 +90,7 @@
             tooltip="%applyInf">
       </tactic>
        <tactic
-            icon="icons/infer.gif"
+            icon="icons/thy.gif"
             id="RbP1h"
             interrupt="true"
             name="%rbpInfTactics"

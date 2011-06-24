@@ -24,11 +24,8 @@ import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
  */
 public class AutoInferer extends AbstractRulesApplyer {
 	
-	private IPOContext context;
-	
 	public AutoInferer(IPOContext context){
 		super(context);
-		this.context = context;
 	}
 
 	public IAntecedent[] applyInferenceRules(IProverSequent sequent){

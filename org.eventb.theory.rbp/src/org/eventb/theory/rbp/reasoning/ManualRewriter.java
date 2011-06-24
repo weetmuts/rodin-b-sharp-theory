@@ -11,7 +11,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.ComplexBinder;
-import org.eventb.core.pm.IMatchingResult;
+import org.eventb.core.pm.IBinding;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -31,7 +31,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 	
 	public ManualRewriter(IPOContext context){
 		super(context);
-		this.binder = new ComplexBinder(context.getFormulaFactory());
+		this.binder = new ComplexBinder(factory);
 	}
 	
 	/**
@@ -80,8 +80,8 @@ public class ManualRewriter extends AbstractRulesApplyer{
 		}
 		Formula<?> ruleLhs = rule.getLeftHandSide();
 		// calculate binding between rule lhs and subformula
-		IMatchingResult result = finder.match(formula, ruleLhs, true);
-		if (result == null) {
+		IBinding binding = finder.match(formula, ruleLhs, true);
+		if (binding == null) {
 			return null;
 		}
 		List<IDeployedRuleRHS> ruleRHSs = rule.getRightHandSides();
@@ -98,13 +98,13 @@ public class ManualRewriter extends AbstractRulesApplyer{
 		// for each right hand side make an antecedent
 		for (IDeployedRuleRHS rhs : ruleRHSs) {
 			// get the condition
-			Predicate condition = (Predicate) binder.bind(rhs.getCondition(), result, false);
+			Predicate condition = (Predicate) binder.bind(rhs.getCondition(), binding, false);
 			// if rule is incomplete keep it till later as we will make negation
 			// of disjunction of all conditions
 			if (!doesNotRequiresAdditionalAntecedents)
 				allConditions.add(condition);
 			// get the new subformula
-			Formula<?> rhsFormula = binder.bind(rhs.getRHSFormula(), result, true);
+			Formula<?> rhsFormula = binder.bind(rhs.getRHSFormula(), binding, true);
 			// apply the rewriting at the given position
 			Predicate newPred = predicate.rewriteSubFormula(position, rhsFormula, factory);
 

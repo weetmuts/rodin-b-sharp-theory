@@ -15,111 +15,104 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
+import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.reasoning.ManualRewriter;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
- * <p>An implementation of a manual reasoner for the rule base.</p>
- * <p>It takes as input the predicate (to rewrite), the position, the rule name and its parent theory' name.</p>
+ * <p>
+ * An implementation of a manual reasoner for the rule base.
+ * </p>
+ * 
  * @author maamria
- *
+ * 
  */
-public class ManualRewriteReasoner implements IContextAwareReasoner{
+public class ManualRewriteReasoner extends ContextAwareReasoner {
 
-	
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".manualRewriteReasoner";
+	
 	private static final String DESC_KEY = "ruleDesc";
 	private static final String POSITION_KEY = "pos";
 	private static final String RULE_KEY = "rewRule";
 	private static final String THEORY_KEY = "theory";
-	
-	private ManualRewriter rewriter;
-	
-	public void setContext(IPOContext context){
-		rewriter = new ManualRewriter(context);
-	}
-	
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput,
-			IProofMonitor pm) {
+
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm) {
 		final RewriteInput input = (RewriteInput) reasonerInput;
-		final Predicate hyp = input.pred;
+		final Predicate hyp = input.predicate;
 		final IPosition position = input.position;
 		final String theoryName = input.theoryName;
 		final String ruleName = input.ruleName;
 		final String displayName = input.ruleDesc;
-		
+		final IPOContext context = input.context;
+
+		ManualRewriter rewriter = new ManualRewriter(context);
+
 		final Predicate goal = seq.goal();
 		if (hyp == null) {
-			IAntecedent[] antecedents = getAntecedents(goal, position, true, theoryName, ruleName);
-			if(antecedents == null){
-				return ProverFactory.reasonerFailure(this, input, 
-						"Rule "+ruleName+" is not applicable to "+goal +" at position "+position);
+			IAntecedent[] antecedents = rewriter.getAntecedents(goal, position, true, theoryName, ruleName);
+			if (antecedents == null) {
+				return ProverFactory.reasonerFailure(this, input, "Rule " + ruleName + " is not applicable to " + goal + " at position " + position);
 			}
-			return ProverFactory.makeProofRule(this, input, goal,
-					displayName +" on goal", antecedents);
+			return ProverFactory.makeProofRule(this, input, goal, displayName + " on goal", antecedents);
 		} else {
 			// Hypothesis rewriting
 			if (!seq.containsHypothesis(hyp)) {
-				return ProverFactory.reasonerFailure(this, input,
-						"Nonexistent hypothesis: " + hyp);
+				return ProverFactory.reasonerFailure(this, input, "Nonexistent hypothesis: " + hyp);
 			}
-			IAntecedent[] antecedents = getAntecedents(hyp, position, false, theoryName, ruleName);
-			if(antecedents == null){
-				return ProverFactory.reasonerFailure(this, input, 
-						"Rule "+ruleName+" is not applicable to "+hyp +" at position "+position);
+			IAntecedent[] antecedents = rewriter.getAntecedents(hyp, position, false, theoryName, ruleName);
+			if (antecedents == null) {
+				return ProverFactory.reasonerFailure(this, input, "Rule " + ruleName + " is not applicable to " + hyp + " at position " + position);
 			}
-			return ProverFactory.makeProofRule(this, input, null, hyp,displayName+ " on "+hyp, antecedents);
+			return ProverFactory.makeProofRule(this, input, null, hyp, displayName + " on " + hyp, antecedents);
 		}
 	}
 
-	protected IAntecedent[] getAntecedents(Predicate pred, IPosition position, boolean isGoal, String theoryName, String ruleName){
-		return rewriter.getAntecedents(pred, position, isGoal, theoryName, ruleName);
-	}
-	
-	public IReasonerInput deserializeInput(IReasonerInputReader reader)
-			throws SerializeException {
-		final String posString = reader.getString(POSITION_KEY);
-		final String theoryString = reader.getString(THEORY_KEY);
-		final String ruleString = reader.getString(RULE_KEY);
-		final String ruleDesc = reader.getString(DESC_KEY);
-		final IPosition position = FormulaFactory.makePosition(posString);
-		
-		Set<Predicate> neededHyps = reader.getNeededHyps();
-
-		final int length = neededHyps.size();
-		if (length == 0) {
-			// Goal rewriting
-			return new RewriteInput(theoryString, ruleString, ruleDesc, null, position);
-		}
-		// Hypothesis rewriting
-		if (length != 1) {
-			throw new SerializeException(new IllegalStateException(
-					"Expected exactly one needed hypothesis!"));
-		}
-		Predicate pred = null;
-		for (Predicate hyp : neededHyps) {
-			pred = hyp;
-		}
-		return new RewriteInput(theoryString, ruleString, ruleDesc,pred, position);
-	}
-	
-	public String getReasonerID() {
-		return REASONER_ID;
-	}
-
-	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
-			throws SerializeException {
+	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) throws SerializeException {
+		super.serializeInput(input, writer);
 		writer.putString(POSITION_KEY, ((RewriteInput) input).position.toString());
 		writer.putString(THEORY_KEY, ((RewriteInput) input).theoryName);
 		writer.putString(RULE_KEY, ((RewriteInput) input).ruleName);
 		writer.putString(DESC_KEY, ((RewriteInput) input).ruleDesc);
 	}
 
+	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
+		final String posString = reader.getString(POSITION_KEY);
+		final String theoryString = reader.getString(THEORY_KEY);
+		final String ruleString = reader.getString(RULE_KEY);
+		final String ruleDesc = reader.getString(DESC_KEY);
+		final String poContextStr = reader.getString(CONTEXT_INPUT_KEY);
+		final IPOContext context = ContextualInput.deserialise(poContextStr);
+		if (context == null) {
+			throw new SerializeException(new IllegalStateException("PO contextual information cannot be retrieved!"));
+		}
+		final IPosition position = FormulaFactory.makePosition(posString);
+
+		Set<Predicate> neededHyps = reader.getNeededHyps();
+
+		final int length = neededHyps.size();
+		if (length == 0) {
+			// Goal rewriting
+			return new RewriteInput(theoryString, ruleString, ruleDesc, null, position, context);
+		}
+		// Hypothesis rewriting
+		if (length != 1) {
+			throw new SerializeException(new IllegalStateException("Expected exactly one needed hypothesis!"));
+		}
+		Predicate pred = null;
+		for (Predicate hyp : neededHyps) {
+			pred = hyp;
+		}
+		return new RewriteInput(theoryString, ruleString, ruleDesc, pred, position, context);
+	}
+
+	public String getReasonerID() {
+		return REASONER_ID;
+	}
+
 	@Override
 	public String getSignature() {
-		// TODO Auto-generated method stub
-		return "";
+		return REASONER_ID;
 	}
 
 }

@@ -10,8 +10,8 @@ package org.eventb.theory.rbp.pm;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.pm.basis.ExtendedPredicateMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExtendedPredicateMatcher;
+import org.eventb.core.pm.IBinding;
 import org.eventb.theory.internal.core.maths.PredicateOperatorExtension;
 
 /**
@@ -45,5 +45,4 @@ public class TheoryExtendedPredicateMatcher extends ExtendedPredicateMatcher<Pre
 		}
 		return true;
 	}
-
 }

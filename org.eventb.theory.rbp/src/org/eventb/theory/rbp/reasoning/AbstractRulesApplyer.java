@@ -14,11 +14,14 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * Common implementation of proof rules applyer.
+ * 
+ * <p> This class is intended to provide fields that are common to rule applyers.
+ * 
  * @since 1.0
  * @author maamria
  *
  */
-public class AbstractRulesApplyer {
+public abstract class AbstractRulesApplyer {
 
 	protected Matcher finder;
 	protected BaseManager manager;
@@ -27,7 +30,7 @@ public class AbstractRulesApplyer {
 	
 	protected AbstractRulesApplyer(IPOContext context){
 		this.manager = BaseManager.getDefault();
-		this.factory = context.getFormulaFactory();
+		this.factory = context.getParentRoot().getFormulaFactory();
 		this.finder = new Matcher(factory);
 		this.context = context;
 	}

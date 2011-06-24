@@ -28,6 +28,8 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.pm.ComplexBinder;
+import org.eventb.core.pm.IBinding;
 import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
@@ -39,10 +41,11 @@ import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
  */
 public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewriter{
 	
-	private FormulaFactory factory;
+	private ComplexBinder binder;
 	
 	public AutoRewriter(IPOContext context){
 		super(context);
+		this.binder =  new ComplexBinder(factory);
 	}
 	
 	/**
@@ -95,7 +98,16 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	}
 
 	private Formula<?> applyRule(Formula<?> original, IDeployedRewriteRule rule){
-		return null;
+		Formula<?> ruleLhs = rule.getLeftHandSide();
+		IBinding binding = finder.match(original, ruleLhs, true);
+		if(binding == null){
+			return original;
+		}
+		// since rule is unconditional
+		Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
+		Formula<?> result = binder.bind(ruleRhs, binding, true);
+		addUsedTheory(rule.getTheoryName());
+		return result;
 	}
 	
 	protected void addUsedTheory(String name){
@@ -206,7 +218,6 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 
 	@Override
 	public boolean autoFlatteningMode() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
@@ -218,7 +229,6 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 
 	@Override
 	public FormulaFactory getFactory() {
-		// TODO Auto-generated method stub
 		return factory;
 	}
 

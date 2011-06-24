@@ -28,7 +28,7 @@ public class RewritesManualTactic extends DefaultTacticProvider implements ITact
 		if (node.getProofTree().getOrigin() instanceof IProofAttempt){
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
 			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status, attempt.getFormulaFactory());
+			IPOContext poContext = new POContext(status);
 			FormulaFactory factory = node.getFormulaFactory();
 			boolean isGoal = hyp == null;
 			Predicate pred = ( isGoal ? node.getSequent().goal() : hyp);

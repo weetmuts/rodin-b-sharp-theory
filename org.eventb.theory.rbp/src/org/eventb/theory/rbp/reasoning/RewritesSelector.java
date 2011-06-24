@@ -37,7 +37,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.pm.IMatchingResult;
+import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.Matcher;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.rulebase.BaseManager;
@@ -93,8 +93,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 					continue;
 				}
 				accum.add(new RewriteTacticApplication(new RewriteInput(rule.getTheoryName(), rule.getRuleName(), 
-						rule.getDescription(), isGoal ? null : predicate, accum.getCurrentPosition()), 
-						rule.getToolTip(), context));
+						rule.getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
 			}
 		}
 	}
@@ -111,8 +110,8 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	 *         <code>form</code>
 	 */
 	protected boolean canFindABinding(Formula<?> form, Formula<?> pattern) {
-		IMatchingResult result = finder.match(form, pattern, true);
-		if (result == null) {
+		IBinding binding = finder.match(form, pattern, true);
+		if (binding == null) {
 			return false;
 		}
 		return true;

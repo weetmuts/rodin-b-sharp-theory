@@ -10,15 +10,19 @@ package org.eventb.theory.rbp.pm;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.pm.basis.ExtendedExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExtendedExpressionMatcher;
+import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.assoc.ACProblem;
+import org.eventb.core.pm.assoc.AProblem;
+import org.eventb.core.pm.assoc.AssociativityProblem;
 import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.internal.core.maths.ExpressionOperatorExtension;
 
 /**
  * 
  * @author maamria
- *
+ * @since 1.0
+ * 
  */
 public class TheoryExtendedExpressionMatcher extends ExtendedExpressionMatcher<ExpressionOperatorExtension> {
 
@@ -35,37 +39,32 @@ public class TheoryExtendedExpressionMatcher extends ExtendedExpressionMatcher<E
 		Expression[] patChildren = pattern.getChildExpressions();
 
 		if (AstUtilities.isAssociative(pattern)) {
-			if (formChildren.length != 2 || patChildren.length != 2
-					|| formChildren.length != patChildren.length) {
-				return false;
-			}
-			if (AstUtilities.isAC(pattern)) {
-				if (!AssociativityHandler.match(formChildren[0],
-						patChildren[0], formChildren[1], patChildren[1], true,
-						existingBinding, matchingFactory)) {
-					return false;
-				}
+			AssociativityProblem<Expression> problem = null;
+			if (AstUtilities.isAC(pattern)){
+				problem = new ACProblem<Expression>(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
 			}
 			else {
-				if (!AssociativityHandler.match(formChildren[0],
-						patChildren[0], formChildren[1], patChildren[1], false,
-						existingBinding, matchingFactory)) {
-					return false;
+				problem = new AProblem<Expression>(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
+			}
+			IBinding binding = (IBinding) problem.solve(false);
+			if (binding != null){
+				binding.makeImmutable();
+				if (existingBinding.insertBinding(binding)){
+					return true;
 				}
 			}
+			return false;
 		} else
 			for (int i = 0; i < patChildren.length; i++) {
 				Expression patChild = patChildren[i];
 				if (patChild instanceof FreeIdentifier) {
-					if (!existingBinding.putExpressionMapping((FreeIdentifier) patChild,
-							formChildren[i])) {
+					if (!existingBinding.putExpressionMapping((FreeIdentifier) patChild, formChildren[i])) {
 						return false;
 					}
-				} else if (!matchingFactory.match(formChildren[i], patChild,
-						existingBinding)) {
+				} else if (!matchingFactory.match(formChildren[i], patChild, existingBinding)) {
 					return false;
 				}
 			}
-		return existingBinding.canUnifyTypes(form.getType(), pattern.getType());
+		return true;
 	}
 }

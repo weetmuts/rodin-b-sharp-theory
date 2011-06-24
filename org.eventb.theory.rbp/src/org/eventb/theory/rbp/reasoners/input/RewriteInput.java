@@ -2,8 +2,8 @@ package org.eventb.theory.rbp.reasoners.input;
 
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * <p>The input to this reasoner includes the predicate, the position as well as rule-related information.</p>
@@ -11,43 +11,37 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  * @author maamria
  *
  */
-public class RewriteInput implements IReasonerInput{
+public class RewriteInput extends ContextualInput{
 	
 	public IPosition position;
-	public Predicate pred;
 	public String ruleDesc;
 	public String ruleName;
 	public String theoryName;
+	public Predicate predicate;
 	
 	/**
 	 * Constructs an input with the given parameters.
 	 * @param theoryName the parent theory
 	 * @param ruleName the name of the rule to apply
 	 * @param ruleDesc the description to display if rule applied successfully
-	 * @param pred 
-	 * @param position 
+	 * @param pred the predicate
+	 * @param position the position
+	 * @param context the context
 	 */
 	public RewriteInput(String theoryName, String ruleName, String ruleDesc,
-			Predicate pred, IPosition position){
+			Predicate predicate, IPosition position, IPOContext context){
+		super(context);
 		this.position = position;
-		this.pred = pred;
 		this.ruleDesc = ruleDesc;
 		this.ruleName = ruleName;
 		this.theoryName = theoryName;
+		this.predicate = predicate;
 	}
 	
+	@Override
 	public void applyHints(ReplayHints renaming) {
-		if(pred !=null){
-			renaming.applyHints(pred);
+		if (predicate != null) {
+			predicate = renaming.applyHints(predicate);
 		}
-		
-	}
-	
-	public String getError() {
-		return null;
-	}
-	
-	public boolean hasError() {
-		return false;
 	}
 }

@@ -35,7 +35,7 @@ public class InferenceManualTactic extends DefaultTacticProvider implements ITac
 		if (node.getProofTree().getOrigin() instanceof IProofAttempt){
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
 			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status, attempt.getFormulaFactory());
+			IPOContext poContext = new POContext(status);
 			FormulaFactory factory = node.getFormulaFactory();
 			InferenceSelector selector = new InferenceSelector(factory, poContext);
 			return selector.select(hyp, node.getSequent());
