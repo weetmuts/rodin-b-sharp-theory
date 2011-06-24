@@ -3,8 +3,8 @@ package org.eventb.core.pm.matchers.pred;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.PredicateMatcher;
+import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.PredicateMatcher;
 
 /**
  * @since 1.0
@@ -30,7 +30,6 @@ public class UnaryPredicateMatcher extends PredicateMatcher<UnaryPredicate> {
 		}
 		return matchingFactory.match(fChild, pChild, existingBinding);
 	}
-
 
 	@Override
 	protected UnaryPredicate getPredicate(Predicate p) {

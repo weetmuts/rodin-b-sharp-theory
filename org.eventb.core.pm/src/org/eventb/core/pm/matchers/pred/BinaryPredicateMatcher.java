@@ -3,8 +3,8 @@ package org.eventb.core.pm.matchers.pred;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.PredicateMatcher;
+import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.PredicateMatcher;
 
 /**
  * @since 1.0
@@ -26,8 +26,7 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 		Predicate fLeft = bpForm.getLeft();
 		Predicate pLeft = bpPattern.getLeft();
 		if(pLeft instanceof PredicateVariable){
-			return existingBinding.putPredicateMapping(
-					(PredicateVariable)pLeft, fLeft);
+			return existingBinding.putPredicateMapping((PredicateVariable)pLeft, fLeft);
 		}
 		else if(!matchingFactory.match(fLeft, pLeft, existingBinding)){
 			return false;
@@ -36,8 +35,7 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 		Predicate fRight = bpForm.getRight();
 		Predicate pRight = bpPattern.getRight();
 		if(pRight instanceof PredicateVariable){
-			return existingBinding.putPredicateMapping(
-					(PredicateVariable)pRight, fRight);
+			return existingBinding.putPredicateMapping((PredicateVariable)pRight, fRight);
 		}
 		return matchingFactory.match(fRight, pRight, existingBinding);
 	}

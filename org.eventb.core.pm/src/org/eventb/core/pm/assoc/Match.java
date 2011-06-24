@@ -8,10 +8,13 @@
 package org.eventb.core.pm.assoc;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.IBinding;
 
 /**
+ * A simple implementation of a match.
  * 
+ * <p> A match has an indexed pattern, an indexed formula and a binding 
+ * that when applied to the pattern results in the formula.
  * @author maamria
  *
  */
@@ -33,14 +36,26 @@ public class Match<F extends Formula<F>> {
 		this.binding = binding;
 	}
 
+	/**
+	 * Returns the indexed formula.
+	 * @return the indexed formula
+	 */
 	public IndexedFormula<F> getIndexedFormula() {
 		return indexedFormula;
 	}
 
+	/**
+	 * Returns the indexed pattern.
+	 * @return the indexed pattern
+	 */
 	public IndexedFormula<F> getIndexedPattern() {
 		return indexedPattern;
 	}
 
+	/**
+	 * Returns the binding that unifies the pattern with the formula.
+	 * @return the binding
+	 */
 	public IBinding getBinding() {
 		return binding;
 	}

@@ -4,8 +4,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.PredicateMatcher;
+import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.PredicateMatcher;
 
 /**
  * @since 1.0
@@ -24,7 +24,6 @@ public class RelationalPredicateMatcher extends PredicateMatcher<RelationalPredi
 		if(rpForm.getTag() != rpPattern.getTag()){
 			return false;
 		}
-		
 		Expression pLeft = rpPattern.getLeft();
 		Expression fLeft = rpForm.getLeft();
 		if(pLeft instanceof FreeIdentifier){
@@ -37,7 +36,6 @@ public class RelationalPredicateMatcher extends PredicateMatcher<RelationalPredi
 				return false;
 			}
 		}
-		
 		Expression pRight = rpPattern.getRight();
 		Expression fRight = rpForm.getRight();
 		if(pRight instanceof FreeIdentifier){

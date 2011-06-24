@@ -12,7 +12,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.PredicateVariable;
 
 /**
+ * An implementation of an indexed formula.
  * 
+ * <p> An indexed formula contains an Event-B formula associated with an index. 
+ * <p>This is particularly useful when dealing with many formulae in an associative formula that are equal 
+ * (by a call to the <code>Object.equals(Object)</code>), in which case it is necessary to differentiate between them.
+ * 
+ * @since 1.0
  * @author maamria
  *
  */
@@ -20,27 +26,34 @@ public class IndexedFormula<F extends Formula<F>>{
 
 	private F formula;
 	private int index;
-	private int numberOfMatches = 0;
-	private boolean immutable = false;
 	
 	public IndexedFormula(int index, F formula){
 		this.index = index;
 		this.formula = formula;
 	}
 	
+	/**
+	 * Returns the formula.
+	 * @return the formula
+	 */
+	public F getFormula() {
+		return formula;
+	}
+
+	/**
+	 * Returns the index.
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+	
+	/**
+	 * Returns whether the formula is a variable (predicate variable or free identifier).
+	 * @return whether the formula is a variable
+	 */
 	public boolean isVariable(){
 		return formula instanceof FreeIdentifier || formula instanceof PredicateVariable;
-	}
-	
-	public void incrementNumberOfMatches(){
-		if (immutable){
-			throw new UnsupportedOperationException("Indexed formula is immutable : cannot increment number of matches");
-		}
-		numberOfMatches++;
-	}
-	
-	public void makeImmutable(){
-		this.immutable = true;
 	}
 	
 	@Override
@@ -53,34 +66,16 @@ public class IndexedFormula<F extends Formula<F>>{
 		}
 		IndexedFormula<?> indexedFormula = (IndexedFormula<?>)obj;
 		return indexedFormula.formula.equals(formula) && 
-				indexedFormula.index == index && 
-				indexedFormula.numberOfMatches == numberOfMatches &&
-				indexedFormula.immutable == immutable;
+				indexedFormula.index == index ;
 	}
 	
 	@Override
 	public int hashCode() {
-		return formula.hashCode() + 17* index + 31*numberOfMatches + new Boolean(immutable).hashCode();
+		return formula.hashCode() + 17* index;
 	}
 	
 	@Override
 	public String toString() {
 		return "IndexedFormula{" + index + ":" + formula + "}";
-	}
-
-	public F getFormula() {
-		return formula;
-	}
-
-	public int getIndex() {
-		return index;
-	}
-
-	public int getNumberOfMatches() {
-		return numberOfMatches;
-	}
-
-	public boolean isImmutable() {
-		return immutable;
 	}
 }

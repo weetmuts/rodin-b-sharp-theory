@@ -10,7 +10,12 @@ package org.eventb.core.pm.assoc;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 
-public class AProblem<F extends Formula<F>> extends AssociativityProblem<F>{
+/**
+ * 
+ * @author maamria
+ *
+ */
+public final class AProblem<F extends Formula<F>> extends AssociativityProblem<F>{
 
 	public AProblem(int tag, F[] formulae, F[] patterns, FormulaFactory factory) {
 		super(tag, formulae, patterns, factory);

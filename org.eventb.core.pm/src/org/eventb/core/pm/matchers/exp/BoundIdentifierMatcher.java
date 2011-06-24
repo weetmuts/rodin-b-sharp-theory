@@ -2,10 +2,12 @@ package org.eventb.core.pm.matchers.exp;
 
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.pm.basis.ExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExpressionMatcher;
+import org.eventb.core.pm.IBinding;
 
 /**
+ * TODO FIXME check only the index and type, could be more intricate?
+ * 
  * @since 1.0
  * @author maamria
  *

@@ -10,12 +10,13 @@ package org.eventb.core.pm;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pm.basis.IBinding;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
 
 /**
  * An implementation of a simple binder.
+ * 
+ * <p> This class is not intended to be extended by clients.
  * 
  * @since 1.0
  * @author maamria
@@ -30,20 +31,18 @@ public class SimpleBinder {
 	}
 
 	/**
-	 * Returns the formula resulting from binding the pattern to the binding of
-	 * the given matching result.
+	 * Returns the formula resulting from binding the pattern by the given binding.
 	 * 
 	 * @param pattern
 	 *            the pattern
-	 * @param result
-	 *            the matching result
+	 * @param binding
+	 *            the binding
 	 * @return the resultant formula
 	 */
-	public Formula<?> bind(Formula<?> pattern, IMatchingResult result) {
-		if (result == null) {
+	public Formula<?> bind(Formula<?> pattern, IBinding binding) {
+		if (binding == null) {
 			return null;
 		}
-		IBinding binding = (IBinding) result;
 		Formula<?> resultFormula = MatchingUtilities.parseFormula(pattern.toString(), pattern instanceof Expression, factory);
 		Formula<?> finalResultFormula = resultFormula.rewrite(new PredicateVariableSubstituter(binding.getPredicateMappings(), factory));
 		finalResultFormula.typeCheck(binding.getTypeEnvironment());

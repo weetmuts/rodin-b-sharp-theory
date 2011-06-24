@@ -5,15 +5,17 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.extension.IExpressionExtension;
 
 /**
- * 
+ * A basic implementation for an extended expression matcher.
+ * <p> This class is intended to be sub-classed by clients.
  * @author maamria
+ * @since 1.0
  *
  */
 public abstract class ExtendedExpressionMatcher<E extends IExpressionExtension> extends ExpressionMatcher<ExtendedExpression>{

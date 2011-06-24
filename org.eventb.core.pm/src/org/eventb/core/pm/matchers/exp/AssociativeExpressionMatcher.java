@@ -2,11 +2,11 @@ package org.eventb.core.pm.matchers.exp;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.pm.ExpressionMatcher;
+import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.assoc.ACProblem;
 import org.eventb.core.pm.assoc.AProblem;
 import org.eventb.core.pm.assoc.AssociativityProblem;
-import org.eventb.core.pm.basis.ExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 
 /**

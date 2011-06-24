@@ -2,8 +2,8 @@ package org.eventb.core.pm.matchers.pred;
 
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.PredicateMatcher;
+import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.PredicateMatcher;
 
 /**
  * @since 1.0
@@ -14,7 +14,6 @@ public class LiteralPredicateMatcher extends PredicateMatcher<LiteralPredicate> 
 
 	public LiteralPredicateMatcher() {
 		super(LiteralPredicate.class);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

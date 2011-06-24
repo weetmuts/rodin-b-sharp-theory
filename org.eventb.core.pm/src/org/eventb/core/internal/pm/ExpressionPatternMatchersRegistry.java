@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.pm.basis.ExtendedExpressionMatcher;
-import org.eventb.core.pm.basis.IExpressionMatcher;
+import org.eventb.core.pm.ExtendedExpressionMatcher;
+import org.eventb.core.pm.IExpressionMatcher;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 import org.eventb.core.pm.plugin.PMPlugin;
 

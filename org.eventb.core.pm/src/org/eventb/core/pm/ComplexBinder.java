@@ -13,20 +13,19 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.pm.basis.AssociativeExpressionComplement;
-import org.eventb.core.pm.basis.AssociativePredicateComplement;
-import org.eventb.core.pm.basis.IBinding;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 
 /**
  * An implementation of a more structured binder that can be used when
  * associative matching is involved.
  * 
+ * <p> This class is not intended to be sub-classed by clients.
+ * 
  * @since 1.0
  * @author maamria
  * 
  */
-public class ComplexBinder extends SimpleBinder {
+public final class ComplexBinder extends SimpleBinder {
 
 	public ComplexBinder(FormulaFactory factory) {
 		super(factory);
@@ -38,18 +37,17 @@ public class ComplexBinder extends SimpleBinder {
 	 * 
 	 * @param pattern
 	 *            the pattern
-	 * @param result
+	 * @param binding
 	 *            the matching result
 	 * @param includeComplement
 	 *            whether associative complements should be considered
 	 * @return the resultant formula
 	 */
-	public Formula<?> bind(Formula<?> pattern, IMatchingResult result, boolean includeComplement) {
-		Formula<?> formula = super.bind(pattern, result);
+	public Formula<?> bind(Formula<?> pattern, IBinding binding, boolean includeComplement) {
+		Formula<?> formula = super.bind(pattern, binding);
 		if (!includeComplement) {
 			return formula;
 		}
-		IBinding binding = (IBinding) result;
 		if (formula instanceof Expression) {
 			AssociativeExpressionComplement comp = binding.getAssociativeExpressionComplement();
 			if (comp != null) {

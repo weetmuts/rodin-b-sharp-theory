@@ -3,8 +3,8 @@ package org.eventb.core.pm.matchers.exp;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.pm.basis.ExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExpressionMatcher;
+import org.eventb.core.pm.IBinding;
 
 /**
  * @since 1.0
@@ -23,7 +23,7 @@ public class BinaryExpressionMatcher extends  ExpressionMatcher<BinaryExpression
 		if(beForm.getTag() != bePattern.getTag()){
 			return false;
 		}
-		// for left<s>
+		// for left's
 		Expression fLeft = beForm.getLeft();
 		Expression pLeft = bePattern.getLeft();
 		if(pLeft instanceof FreeIdentifier){
@@ -36,7 +36,7 @@ public class BinaryExpressionMatcher extends  ExpressionMatcher<BinaryExpression
 				return false;
 			}
 		}
-		// for right<s>
+		// for right's
 		Expression fRight = beForm.getRight();
 		Expression pRight = bePattern.getRight();
 		if(pRight instanceof FreeIdentifier){

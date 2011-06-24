@@ -1,9 +1,11 @@
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
 
 import org.eventb.core.ast.Predicate;
 
 /**
  * <p>Common protocol for a predicate matcher.</p>
+ * 
+ * <p> This interface is not intended to be implemented by clients.
  * @author maamria
  */
 public interface IPredicateMatcher{

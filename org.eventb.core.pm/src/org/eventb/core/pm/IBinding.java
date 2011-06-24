@@ -1,4 +1,6 @@
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
+
+import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -7,7 +9,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
-import org.eventb.core.pm.IMatchingResult;
 
 /**
  * Common protocol for a binding responsible for collecting all information accumulated suring a single matching process.
@@ -30,7 +31,7 @@ import org.eventb.core.pm.IMatchingResult;
  * @version 1.0
  *
  */
-public interface IBinding extends IMatchingResult{
+public interface IBinding{
 	
 	/**
 	 * Returns whether this binding is immutable.
@@ -123,4 +124,28 @@ public interface IBinding extends IMatchingResult{
 	 * @return the formula factory
 	 */
 	public FormulaFactory getFormulaFactory();
+	
+	/**
+	 * Returns the expression mappings of the matching process.
+	 * @return expression mappings, or <code>null</code> if matching failed
+	 */
+	public Map<FreeIdentifier, Expression> getExpressionMappings();
+	
+	/**
+	 * Returns the predicate mappings of the matching process.
+	 * @return predicate mappings, or <code>null</code> if matching failed
+	 */
+	public Map<PredicateVariable, Predicate> getPredicateMappings();
+	
+	/**
+	 * Returns an object containing information about unmatched expressions.
+	 * @return the associative complement
+	 */
+	public AssociativeExpressionComplement getAssociativeExpressionComplement();
+	
+	/**
+	 * Returns an object containing information about unmatched predicates.
+	 * @return the associative complement
+	 */
+	public AssociativePredicateComplement getAssociativePredicateComplement();
 }

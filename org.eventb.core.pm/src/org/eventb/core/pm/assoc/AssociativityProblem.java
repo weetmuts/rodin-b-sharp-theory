@@ -14,9 +14,8 @@ import java.util.List;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pm.IMatchingResult;
+import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.Matcher;
-import org.eventb.core.pm.basis.IBinding;
 
 /**
  * A basic implementation of an associative problem.
@@ -67,7 +66,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	 * @param acceptPartialMatch whether to accept a partial match
 	 * @return the matching result, or <code>null</code> if the problem cannot be solved [by this algorithm]
 	 */
-	public IMatchingResult solve(boolean acceptPartialMatch){
+	public IBinding solve(boolean acceptPartialMatch){
 		if (!isSolvable){
 			return null;
 		}
@@ -98,14 +97,11 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 			List<Match<F>> matches = new ArrayList<Match<F>>();
 			for (IndexedFormula<F> indexedFormula : indexedFormulae){
 				F formula = indexedFormula.getFormula();
-				IMatchingResult result = matcher.match(formula, pattern, false);
-				if (result != null){
-					IBinding binding = (IBinding) result;
+				IBinding binding = matcher.match(formula, pattern, false);
+				if (binding != null){
 					matches.add(new Match<F>(indexedFormula, indexedPattern, binding));
-					indexedPattern.incrementNumberOfMatches();
 				}
 			}
-			indexedPattern.makeImmutable();
 			searchSpace.add(new MatchEntry<F>(indexedPattern, matches));
 			if (matches.size() == 0){
 				isSolvable = false;

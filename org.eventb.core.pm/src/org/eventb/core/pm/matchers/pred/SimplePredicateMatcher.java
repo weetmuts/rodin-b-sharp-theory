@@ -4,8 +4,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.PredicateMatcher;
+import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.PredicateMatcher;
 
 /**
  * @since 1.0

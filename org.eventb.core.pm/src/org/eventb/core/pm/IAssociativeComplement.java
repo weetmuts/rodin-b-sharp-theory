@@ -1,4 +1,4 @@
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
 
 import org.eventb.core.ast.Formula;
 

@@ -4,8 +4,8 @@ import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.pm.basis.ExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExpressionMatcher;
+import org.eventb.core.pm.IBinding;
 
 /**
  * @since 1.0

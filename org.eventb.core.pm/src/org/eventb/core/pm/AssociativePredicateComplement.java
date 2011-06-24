@@ -1,10 +1,13 @@
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
 
 import org.eventb.core.ast.Predicate;
 
 /**
  * An implementation of a complement to an associative predicate.
+ * 
+ * <p> This class is not intended to be sub-classed by clients.
  * @author maamria
+ * @since 1.0
  *
  */
 public final class AssociativePredicateComplement implements IAssociativeComplement<Predicate>{

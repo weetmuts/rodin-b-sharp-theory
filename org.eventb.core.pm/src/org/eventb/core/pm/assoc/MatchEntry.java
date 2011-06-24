@@ -14,6 +14,9 @@ import org.eventb.core.ast.Formula;
 
 /**
  * Immutable match entry implementation.
+ * 
+ * <p> A match entry stores the list of matches for a particular indexed pattern.
+ * 
  * @author maamria
  *
  */
@@ -27,13 +30,26 @@ public class MatchEntry<F extends Formula<F>> {
 		this.matches = matches;
 	}
 	
+	/**
+	 * Returns the rank (i.e., number of matches) of the entry.
+	 * @return the rank
+	 */
 	public int getRank(){
 		return matches.size();
 	}
 	
+	/**
+	 * Returns the indexed pattern whose matches this entry is holding.
+	 * @return the indexed pattern
+	 */
 	public IndexedFormula<F> getIndexedPattern() {
 		return indexedPattern;
 	}
+	
+	/**
+	 * Returns the list of matches stored in this entry.
+	 * @return the list of matches
+	 */
 	public List<Match<F>> getMatches() {
 		return Collections.unmodifiableList(matches);
 	}

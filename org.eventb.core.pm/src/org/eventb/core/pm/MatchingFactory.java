@@ -1,4 +1,4 @@
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -52,6 +52,8 @@ import org.eventb.core.pm.matchers.pred.UnaryPredicateMatcher;
  * A matching factory that has the following capabilities:
  * <p>1- <u> Return a matcher</u> for a given formula class.
  * <p>2-<u> Create a fresh binding </u> when starting a matching process.
+ * 
+ * <p> Clients need not use this class directly. An instance is available as part of the matchers hierarchy.
  * @since 1.0
  * @author maamria
  *

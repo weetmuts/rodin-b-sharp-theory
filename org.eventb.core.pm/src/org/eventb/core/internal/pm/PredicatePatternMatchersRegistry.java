@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.pm.basis.ExtendedPredicateMatcher;
-import org.eventb.core.pm.basis.IPredicateMatcher;
+import org.eventb.core.pm.ExtendedPredicateMatcher;
+import org.eventb.core.pm.IPredicateMatcher;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 import org.eventb.core.pm.plugin.PMPlugin;
 

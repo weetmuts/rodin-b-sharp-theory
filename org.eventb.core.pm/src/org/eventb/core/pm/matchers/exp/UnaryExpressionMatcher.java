@@ -3,8 +3,8 @@ package org.eventb.core.pm.matchers.exp;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.pm.basis.ExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExpressionMatcher;
+import org.eventb.core.pm.IBinding;
 
 /**
  * @since 1.0
@@ -25,7 +25,6 @@ public class UnaryExpressionMatcher extends ExpressionMatcher<UnaryExpression> {
 		}
 		Expression formExp = ueForm.getChild();
 		Expression patternExp = uePattern.getChild();
-		
 		if(patternExp instanceof FreeIdentifier){
 			return existingBinding.putExpressionMapping((FreeIdentifier)patternExp, formExp);
 		}

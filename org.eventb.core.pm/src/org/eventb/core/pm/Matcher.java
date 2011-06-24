@@ -9,17 +9,16 @@ package org.eventb.core.pm;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.MatchingFactory;
 
 /**
  * An implementation of a matching engine.
  * <p> All matching processes are initiated from within a matcher.
+ * <p> This class is not intended to be sub-classed by clients.
  * @author maamria
  * @since 1.0
  * 
  */
-public class Matcher {
+public final class Matcher {
 
 	private FormulaFactory factory;
 	private MatchingFactory matchingFactory;
@@ -36,9 +35,9 @@ public class Matcher {
 	 * @param form the formula
 	 * @param pattern the pattern
 	 * @param acceptPartialMatch whether to accept a partial match
-	 * @return the matching result, or <code>null</code> if matching failed
+	 * @return the binding, or <code>null</code> if matching failed
 	 */
-	public IMatchingResult match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch) {
+	public IBinding match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch) {
 		IBinding initialBinding = matchingFactory.createBinding(acceptPartialMatch, factory);
 		if (matchingFactory.match(form, pattern, initialBinding)){
 			initialBinding.makeImmutable();
@@ -47,10 +46,18 @@ public class Matcher {
 		return null;
 	}
 
+	/**
+	 * Returns the formula factory with which this matcher is working.
+	 * @return the formula factory
+	 */
 	public FormulaFactory getFactory() {
 		return factory;
 	}
 
+	/**
+	 * Returns the matching factory used by this matcher.
+	 * @return the matching factory
+	 */
 	public MatchingFactory getMatchingFactory() {
 		return matchingFactory;
 	}

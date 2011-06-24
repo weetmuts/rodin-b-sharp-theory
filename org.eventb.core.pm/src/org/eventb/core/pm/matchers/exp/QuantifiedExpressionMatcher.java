@@ -7,10 +7,11 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.pm.basis.ExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExpressionMatcher;
+import org.eventb.core.pm.IBinding;
 
 /**
+ * TODO FIXME this is good when we only have one quantifier variable.
  * @since 1.0
  * @author maamria
  *
@@ -37,7 +38,6 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 		if(!boundIdentDecsMatch(fDec, pDec, existingBinding)){
 			return false;
 		}
-		
 		Expression fExp = qeForm.getExpression();
 		Expression pExp = qePattern.getExpression();
 		if(pExp instanceof FreeIdentifier){
@@ -50,12 +50,10 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 				return false;
 			}
 		}
-		
 		Predicate fPred = qeForm.getPredicate();
 		Predicate pPred = qePattern.getPredicate();
 		if(pPred instanceof PredicateVariable){
 			return existingBinding.putPredicateMapping((PredicateVariable) pPred, fPred);
-			
 		}
 		return matchingFactory.match(fPred, pPred, existingBinding);
 	}
@@ -65,14 +63,6 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 		return (QuantifiedExpression) e;
 	}
 
-	
-	
-	/**
-	 *  TODO FIXME this is incomplete
-	 * @param fDecs
-	 * @param pDecs
-	 * @return
-	 */
 	private boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, 
 			BoundIdentDecl[] patternDecs, IBinding existingBinding){
 		if(formulaDecs.length == patternDecs.length){

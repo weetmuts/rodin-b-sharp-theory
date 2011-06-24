@@ -2,8 +2,8 @@ package org.eventb.core.pm.matchers.exp;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.SetExtension;
-import org.eventb.core.pm.basis.ExpressionMatcher;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.ExpressionMatcher;
+import org.eventb.core.pm.IBinding;
 
 /**
  * TODO emulate associative matching
@@ -28,7 +28,6 @@ public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
 			}
 		}
 		return false;
-		
 	}
 
 	@Override

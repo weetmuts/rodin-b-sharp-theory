@@ -1,9 +1,10 @@
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
 
 import org.eventb.core.ast.Expression;
 
 /**
  * An abstract implementation of an expression matcher.
+ * <p> This class is NOT intended to be sub-classed by clients.
  * @since 1.0
  * @author maamria
  *

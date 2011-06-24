@@ -4,10 +4,11 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.pm.basis.IBinding;
-import org.eventb.core.pm.basis.PredicateMatcher;
+import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.PredicateMatcher;
 
 /**
+ * TODO FIXME this is good when we only have one quantifier variable.
  * @since 1.0
  * @author maamria
  * 
@@ -33,8 +34,7 @@ public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredi
 		Predicate fPred = qpForm.getPredicate();
 		Predicate pPred = qpPattern.getPredicate();
 		if (pPred instanceof PredicateVariable) {
-			return existingBinding.putPredicateMapping(
-					(PredicateVariable) pPred, fPred);
+			return existingBinding.putPredicateMapping((PredicateVariable) pPred, fPred);
 		} 
 		return matchingFactory.match(fPred, pPred, existingBinding);
 	}
@@ -44,13 +44,6 @@ public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredi
 		return (QuantifiedPredicate) p;
 	}
 
-	/**
-	 * TODO FIXME this is incomplete
-	 * 
-	 * @param fDecs
-	 * @param pDecs
-	 * @return
-	 */
 	private boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs,
 			BoundIdentDecl[] patternDecs, IBinding existingBinding) {
 		if (formulaDecs.length == patternDecs.length) {

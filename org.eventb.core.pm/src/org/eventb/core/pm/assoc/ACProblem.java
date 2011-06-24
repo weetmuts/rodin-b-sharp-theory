@@ -17,7 +17,7 @@ import org.eventb.core.ast.FormulaFactory;
  * @author maamria
  *
  */
-public class ACProblem<F extends Formula<F>> extends AssociativityProblem<F> {
+public final class ACProblem<F extends Formula<F>> extends AssociativityProblem<F> {
 
 	public ACProblem(int tag, F[] formulae, F[] patterns, FormulaFactory factory) {
 		super(tag, formulae, patterns, factory);

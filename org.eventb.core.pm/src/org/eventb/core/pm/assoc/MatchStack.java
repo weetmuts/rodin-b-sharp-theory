@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Stack;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.Matcher;
-import org.eventb.core.pm.basis.IBinding;
 
 /**
  * 

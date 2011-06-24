@@ -1,10 +1,12 @@
-package org.eventb.core.pm.basis;
+package org.eventb.core.pm;
 
 import org.eventb.core.ast.Expression;
 
 
 /**
  * <p>Common protocol for an expression matcher.</p>
+ * 
+ * <p> This interface is not intended to be implemented by clients.
  * 
  * @author maamria
  */

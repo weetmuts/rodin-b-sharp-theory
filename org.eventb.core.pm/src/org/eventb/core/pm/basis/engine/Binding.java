@@ -18,9 +18,9 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.pm.basis.AssociativeExpressionComplement;
-import org.eventb.core.pm.basis.AssociativePredicateComplement;
-import org.eventb.core.pm.basis.IBinding;
+import org.eventb.core.pm.AssociativeExpressionComplement;
+import org.eventb.core.pm.AssociativePredicateComplement;
+import org.eventb.core.pm.IBinding;
 
 /**
  * <p>
