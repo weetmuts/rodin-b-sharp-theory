@@ -279,6 +279,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			rewRule.setSCFormula(lhs, null);
 			ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 			rhs.create(null, null);
+			rhs.setLabel(syntax + " rhs", null);
 			rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
 			rhs.setSCFormula(((DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
 		} else if (definition instanceof RecursiveDefinition) {
@@ -312,6 +313,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 				rewRule.setSCFormula(lhs, null);
 				ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 				rhs.create(null, null);
+				rhs.setLabel(syntax + " rhs", null);
 				rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
 				rhs.setSCFormula(recursiveCases.get(indCase).substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
 			}
@@ -342,6 +344,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		rewRule.setInteractive(true, null);
 		rewRule.setComplete(true, null);
 		rewRule.setDescription(description, null);
+		rewRule.setLabel(name, null);
 		rewRule.setAccuracy(true, null);
 		rewRule.setValidated(true, null);
 		return rewRule;
