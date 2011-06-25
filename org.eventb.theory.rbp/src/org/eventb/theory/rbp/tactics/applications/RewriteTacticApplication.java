@@ -37,7 +37,7 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 	}
 
 	public String getHyperlinkLabel() {
-		return input.ruleDesc;
+		return input.description;
 	}
 
 	public ITactic getTactic(String[] inputs, String globalInput) {

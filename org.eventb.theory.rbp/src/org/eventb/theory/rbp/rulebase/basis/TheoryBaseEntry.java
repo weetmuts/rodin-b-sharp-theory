@@ -82,7 +82,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		interTypedInferenceMap.clear();
 
 		for (IDeployedRewriteRule rule : rewriteRules) {
-			if (rule.isAutomatic()) {
+			// only automatic + unconditional rewrites
+			if (rule.isAutomatic() && !rule.isConditional()) {
 				Formula<?> leftHandSide = rule.getLeftHandSide();
 				if (leftHandSide instanceof Expression) {
 					Expression exp = (Expression) leftHandSide;
@@ -91,7 +92,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 						autoExpRewRules.put(exp.getClass(), list);
 					}
 					autoExpRewRules.get(exp.getClass()).add(rule);
-				} else {
+				} 
+				else {
 					Predicate pred = (Predicate) leftHandSide;
 					if (autoPredRewRules.get(pred.getClass()) == null) {
 						List<IDeployedRewriteRule> list = new ArrayList<IDeployedRewriteRule>();
@@ -99,7 +101,9 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 					}
 					autoPredRewRules.get(pred.getClass()).add(rule);
 				}
-			} else {
+			} 
+			// interactive rewrites
+			if (rule.isInteracive()) {
 				Formula<?> leftHandSide = rule.getLeftHandSide();
 				if (leftHandSide instanceof Expression) {
 					Expression exp = (Expression) leftHandSide;
@@ -119,14 +123,17 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			}
 		}
 		for (IDeployedInferenceRule rule : inferenceRules) {
-			if (rule.isAutomatic()) {
+			// automatic + backward inference only
+			if (rule.isAutomatic() && rule.isSuitableForBackwardReasoning()) {
 				ReasoningType type = rule.getReasoningType();
 				if (!autoTypedInferenceMap.containsKey(type)) {
 					List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
 					autoTypedInferenceMap.put(type, list);
 				}
 				autoTypedInferenceMap.get(type).add(rule);
-			} else {
+			} 
+			// interactive inference
+			if(rule.isInteracive()){
 				ReasoningType type = rule.getReasoningType();
 				if (!interTypedInferenceMap.containsKey(type)) {
 					List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
@@ -191,8 +198,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			switch (type) {
 			case BACKWARD:
 			case FORWARD: {
+				toReturn.addAll(ProverUtilities.safeList(autoTypedInferenceMap.get(type)));
 				toReturn.addAll(bfRules);
-				toReturn.addAll(autoTypedInferenceMap.get(type));
 				break;
 			}
 			case BACKWARD_AND_FORWARD: {
@@ -208,9 +215,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			switch (type) {
 			case BACKWARD:
 			case FORWARD: {
-				if (bfRules != null)
-					toReturn.addAll(bfRules);
-				toReturn.addAll(interTypedInferenceMap.get(type));
+				toReturn.addAll(ProverUtilities.safeList(interTypedInferenceMap.get(type)));
+				toReturn.addAll(bfRules);
 				break;
 			}
 			case BACKWARD_AND_FORWARD: {

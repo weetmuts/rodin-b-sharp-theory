@@ -85,7 +85,7 @@ public class DeployedObjectsFactory {
 			ISCInferenceRule rule, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {
 		try {
-			String ruleName = rule.getElementName();
+			String ruleName = rule.getLabel();
 			String theoryName = rule.getRoot().getElementName();
 			boolean isAutomatic = rule.isAutomatic();
 			boolean isInteractive = rule.isInteractive();
@@ -124,7 +124,7 @@ public class DeployedObjectsFactory {
 			ISCRewriteRule rule, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {
 		try {
-			String ruleName = rule.getElementName();
+			String ruleName = rule.getLabel();
 			String theoryName = rule.getRoot().getElementName();
 			Formula<?> lhs = rule.getSCFormula(factory, typeEnvironment);
 			if (lhs == null){
@@ -159,7 +159,7 @@ public class DeployedObjectsFactory {
 			ISCRewriteRuleRightHandSide rhs, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {
 		try {
-			String name = rhs.getElementName();
+			String name = rhs.getLabel();
 			Formula<?> rhsForm = rhs.getSCFormula(factory, typeEnvironment);
 			Predicate cond = rhs.getPredicate(factory, typeEnvironment);
 			IDeployedRuleRHS depRHS = new DeployedRuleRHS(name, rhsForm, cond);

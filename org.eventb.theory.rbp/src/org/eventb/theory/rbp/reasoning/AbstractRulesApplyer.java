@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoning;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.Matcher;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
@@ -25,13 +24,11 @@ public abstract class AbstractRulesApplyer {
 
 	protected Matcher finder;
 	protected BaseManager manager;
-	protected FormulaFactory factory;
 	protected IPOContext context;
 	
 	protected AbstractRulesApplyer(IPOContext context){
 		this.manager = BaseManager.getDefault();
-		this.factory = context.getParentRoot().getFormulaFactory();
-		this.finder = new Matcher(factory);
+		this.finder = new Matcher(context.getFormulaFactory());
 		this.context = context;
 	}
 }

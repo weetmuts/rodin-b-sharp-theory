@@ -27,11 +27,13 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 	 * A variable to indicate whether more derivations can be carried out on this tree.
 	 */
 	protected boolean deriveFurther;
+	protected boolean hasBeenDerived;
 	
 	public InferenceDerivationTree(IAntecedent value,
 			TreeNode<IAntecedent> parent) {
 		super(value, parent);
 		deriveFurther = true;
+		hasBeenDerived = false;
 	}
 	
 	/**
@@ -42,6 +44,7 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 		if(col.size()==0){
 			deriveFurther = false;
 		}
+		hasBeenDerived = true;
 		setChildren(col);
 	}
 	
@@ -72,7 +75,7 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 	 */
 	public Set<InferenceDerivationTree> getInferenceTrees(){
 		Set<InferenceDerivationTree> set = new LinkedHashSet<InferenceDerivationTree>();
-		for (TreeNode<IAntecedent> node : children){
+		for (TreeNode<IAntecedent> node : getLeafs()){
 			set.add((InferenceDerivationTree) node);
 		}
 		return set;
@@ -80,7 +83,6 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 
 	@Override
 	protected TreeNode<IAntecedent> getNode(IAntecedent node) {
-		// TODO Auto-generated method stub
 		return new InferenceDerivationTree(node, this);
 	}
 	
@@ -91,6 +93,10 @@ public class InferenceDerivationTree extends TreeNode<IAntecedent>{
 	 */
 	public boolean continueDeriving(){
 		return deriveFurther;
+	}
+	
+	public boolean hasBeenDerived(){
+		return hasBeenDerived;
 	}
 	
 	public String toString(){

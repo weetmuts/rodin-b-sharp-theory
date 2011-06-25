@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics;
 
-import org.eventb.core.IPSStatus;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -22,7 +22,7 @@ import org.eventb.theory.rbp.rulebase.basis.POContext;
 /**
  * The automatic tactic for applying inference rules.
  * 
- * <p> At the moment, only rules that can be applied in a backward fashion can be used automatically.
+ * <p> Only inference rules that can be applied backwardly can be automatic.
  * 
  * @since 1.0
  * 
@@ -38,10 +38,11 @@ public class InferenceAutoTactic implements ITactic{
 				return "Root already has children";
 			}
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
-			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status);
+			IPOContext poContext = new POContext(
+					(IEventBRoot) attempt.getStatus().getRoot());
 			AutoInferenceReasoner reasoner = new AutoInferenceReasoner();
-			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), new ContextualInput(poContext), pm);
+			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(),
+					new ContextualInput(poContext), pm);
 			if (reasonerOutput == null) return "! Plugin returned null !";
 			if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
 			IProofRule rule = (IProofRule)reasonerOutput;

@@ -38,6 +38,8 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 	}
 	
 	public void setChildren(Collection<E> col){
+		if (col == null)
+			throw new IllegalArgumentException("cannot accept null collection for children");
 		this.childrenMap = new LinkedHashMap<E, TreeNode<E>>();
 		this.children = new LinkedHashSet<TreeNode<E>>();
 		for (E node : col){
@@ -47,6 +49,7 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 	
 	public Collection<E> getLeafValues(){
 		Collection<TreeNode<E>> nodeLeafs = getLeafs();
+		// no children , this node is a leaf itself
 		if(nodeLeafs == null){
 			return null;
 		}
@@ -55,7 +58,6 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 			leafs.add(node.getValue());
 		}
 		return leafs;
-		
 	}
 	
 	/**
@@ -73,15 +75,18 @@ public abstract class TreeNode<E> implements ITreeNode<E>{
 	 * @return the leaf nodes
 	 */
 	public Collection<TreeNode<E>> getLeafs(){
-		Set<TreeNode<E>> leafs = new LinkedHashSet<TreeNode<E>>();
+		// this node is a leaf
 		if(children == null){
 			return null;
 		}
-		else {
-			for (TreeNode<E> node : children){
-				if (node.getLeafs() != null)
-					leafs.addAll(node.getLeafs());
-			}
+		Set<TreeNode<E>> leafs = new LinkedHashSet<TreeNode<E>>();
+		for (TreeNode<E> node : children){
+			// this child is not a leaf, add its leafs
+			if (node.getLeafs() != null)
+				leafs.addAll(node.getLeafs());
+			// this child is a leaf
+			else 
+				leafs.add(node);
 		}
 		return leafs;
 	}

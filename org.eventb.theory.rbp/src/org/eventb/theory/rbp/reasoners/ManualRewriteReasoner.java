@@ -43,7 +43,7 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 		final IPosition position = input.position;
 		final String theoryName = input.theoryName;
 		final String ruleName = input.ruleName;
-		final String displayName = input.ruleDesc;
+		final String displayName = input.description;
 		final IPOContext context = input.context;
 
 		ManualRewriter rewriter = new ManualRewriter(context);
@@ -73,7 +73,7 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 		writer.putString(POSITION_KEY, ((RewriteInput) input).position.toString());
 		writer.putString(THEORY_KEY, ((RewriteInput) input).theoryName);
 		writer.putString(RULE_KEY, ((RewriteInput) input).ruleName);
-		writer.putString(DESC_KEY, ((RewriteInput) input).ruleDesc);
+		writer.putString(DESC_KEY, ((RewriteInput) input).description);
 	}
 
 	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {

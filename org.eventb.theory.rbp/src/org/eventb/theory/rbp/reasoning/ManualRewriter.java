@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.ComplexBinder;
@@ -31,21 +32,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 	
 	public ManualRewriter(IPOContext context){
 		super(context);
-		this.binder = new ComplexBinder(factory);
-	}
-	
-	/**
-	 * Returns the antecedents resulting from applying the specified rule.
-	 * <p>
-	 * @param pred to which the rule was applicable
-	 * @param position 
-	 * @param isGoal 
-	 * @param theoryName
-	 * @param ruleName
-	 * @return the antecedents or <code>null</code> if the rule is not found or inapplicable
-	 */
-	public IAntecedent[] getAntecedents(Predicate pred, IPosition position, boolean isGoal, String theoryName, String ruleName){
-		return applyRule(pred, position, isGoal, theoryName, ruleName);
+		this.binder = new ComplexBinder(context.getFormulaFactory());
 	}
 	
 	/**
@@ -65,16 +52,17 @@ public class ManualRewriter extends AbstractRulesApplyer{
 	 * @return the antecedents or <code>null</code> if the rule was not found or
 	 *         is inapplicable.
 	 */
-	public IAntecedent[] applyRule(Predicate predicate, IPosition position, boolean isGoal, String theoryName, String ruleName) {
+	public IAntecedent[] getAntecedents(Predicate predicate, IPosition position, boolean isGoal, String theoryName, String ruleName){
 		// get the subformula
 		Formula<?> formula = predicate.getSubFormula(position);
 		if (formula == null) {
 			return null;
 		}
+		FormulaFactory factory = context.getFormulaFactory();
 		// get the rule
 		IDeployedRewriteRule rule = ((formula instanceof Expression ? 
-				manager.getExpressionRewriteRule(ruleName, theoryName, ((Expression) formula).getClass(), context, factory)
-				: manager.getPredicateRewriteRule(ruleName, theoryName, ((Predicate) formula).getClass(), context, factory)));
+				manager.getExpressionRewriteRule(ruleName, theoryName, ((Expression) formula).getClass(), context)
+				: manager.getPredicateRewriteRule(ruleName, theoryName, ((Predicate) formula).getClass(), context)));
 		if (rule == null) {
 			return null;
 		}
@@ -85,7 +73,6 @@ public class ManualRewriter extends AbstractRulesApplyer{
 			return null;
 		}
 		List<IDeployedRuleRHS> ruleRHSs = rule.getRightHandSides();
-		assert ruleRHSs.size() > 0;
 		// @BUG FIX: when rule is unconditional there is no need to generate
 		// extra antecedent
 		boolean doesNotRequiresAdditionalAntecedents = rule.isComplete() || !rule.isConditional();
@@ -107,7 +94,6 @@ public class ManualRewriter extends AbstractRulesApplyer{
 			Formula<?> rhsFormula = binder.bind(rhs.getRHSFormula(), binding, true);
 			// apply the rewriting at the given position
 			Predicate newPred = predicate.rewriteSubFormula(position, rhsFormula, factory);
-
 			Predicate goal = (isGoal ? newPred : null);
 			Set<Predicate> addedHyps = new HashSet<Predicate>();
 			// add interesting hyps only (no T)
@@ -132,7 +118,6 @@ public class ManualRewriter extends AbstractRulesApplyer{
 		}
 		if (!doesNotRequiresAdditionalAntecedents) {
 			// we have one left to fill
-			assert allConditions.size() >= 1;
 			Predicate negOfDisj = factory.makeUnaryPredicate(Formula.NOT,
 					allConditions.size() == 1 ? allConditions.get(0) : factory.makeAssociativePredicate(Formula.LOR, allConditions, null)
 							, null);

@@ -53,7 +53,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		final boolean forward = input.forward;
 		final String theoryName = input.theoryName;
 		final String ruleName = input.ruleName;
-		final String displayName = input.ruleDesc;
+		final String displayName = input.description;
 		final IPOContext context = input.context;
 		
 		ManualInferer inferer = new ManualInferer(context);
@@ -89,7 +89,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		writer.putString(FORWARD_KEY, ((InferenceInput) input).forward ? FORWARD_VAL : BACKWARD_VAL);
 		writer.putString(THEORY_KEY, ((InferenceInput) input).theoryName);
 		writer.putString(RULE_KEY, ((InferenceInput) input).ruleName);
-		writer.putString(DESC_KEY, ((InferenceInput) input).ruleDesc);
+		writer.putString(DESC_KEY, ((InferenceInput) input).description);
 	}
 
 	@Override

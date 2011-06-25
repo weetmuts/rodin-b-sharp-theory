@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners.input;
 
-import org.eventb.core.IPSStatus;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
@@ -19,13 +19,21 @@ import org.rodinp.core.RodinCore;
 
 /**
  * 
+ * An implementation of a reasoner input that provides contextual
+ * information about the proof obligation in question.
+ * 
  * @author maamria
+ * @since 1.0
  *
  */
 public class ContextualInput implements IReasonerInput{
 
 	public IPOContext context;
 	
+	/**
+	 * Create a contextual reasoner input.
+	 * @param context the proof obligation context
+	 */
 	public ContextualInput(IPOContext context){
 		this.context = context;
 	}
@@ -51,8 +59,8 @@ public class ContextualInput implements IReasonerInput{
 	
 	public static IPOContext deserialise(String serialisedForm){
 		IRodinElement element = RodinCore.valueOf(serialisedForm);
-		if (element instanceof IPSStatus){
-			return new POContext((IPSStatus) element);
+		if (element instanceof IEventBRoot){
+			return new POContext((IEventBRoot) element);
 		}
 		return null;
 	}

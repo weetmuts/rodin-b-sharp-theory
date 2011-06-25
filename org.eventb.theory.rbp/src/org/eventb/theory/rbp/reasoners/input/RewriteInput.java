@@ -14,7 +14,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 public class RewriteInput extends ContextualInput{
 	
 	public IPosition position;
-	public String ruleDesc;
+	public String description;
 	public String ruleName;
 	public String theoryName;
 	public Predicate predicate;
@@ -32,7 +32,7 @@ public class RewriteInput extends ContextualInput{
 			Predicate predicate, IPosition position, IPOContext context){
 		super(context);
 		this.position = position;
-		this.ruleDesc = ruleDesc;
+		this.description = ruleDesc;
 		this.ruleName = ruleName;
 		this.theoryName = theoryName;
 		this.predicate = predicate;

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
@@ -52,66 +51,66 @@ public class BaseManager implements IElementChangedListener {
 		RodinCore.addElementChangedListener(this);
 	}
 
-	public List<IDeployedRewriteRule> getExpressionRewriteRules(boolean automatic, Class<? extends Expression> clazz, IPOContext context, FormulaFactory factory) {
+	public List<IDeployedRewriteRule> getExpressionRewriteRules(boolean automatic, Class<? extends Expression> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		rules.addAll(mathExtensionsProjectEntry.getExpressionRewriteRules(automatic, clazz, parentRoot, factory));
+		rules.addAll(mathExtensionsProjectEntry.getExpressionRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRules(automatic, clazz, parentRoot, factory));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
 		}
 		return rules;
 	}
 
-	public List<IDeployedRewriteRule> getPredicateRewriteRules(boolean automatic, Class<? extends Predicate> clazz, IPOContext context, FormulaFactory factory) {
+	public List<IDeployedRewriteRule> getPredicateRewriteRules(boolean automatic, Class<? extends Predicate> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		rules.addAll(mathExtensionsProjectEntry.getPredicateRewriteRules(automatic, clazz, parentRoot, factory));
+		rules.addAll(mathExtensionsProjectEntry.getPredicateRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRules(automatic, clazz, parentRoot, factory));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
 		}
 		return rules;
 	}
 
-	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName, String theoryName, Class<? extends Expression> clazz, IPOContext context, FormulaFactory factory) {
+	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName, String theoryName, Class<? extends Expression> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
-		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
+		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
 		if (rule == null) {
-			return projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
+			return projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
 		}
 		return rule;
 	}
 
-	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, String theoryName, Class<? extends Predicate> clazz, IPOContext context, FormulaFactory factory) {
+	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, String theoryName, Class<? extends Predicate> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
-		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
+		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
 		if (rule == null) {
-			return projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, factory);
+			return projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
 		}
 		return rule;
 	}
 
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, IPOContext context, FormulaFactory factory) {
+	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedInferenceRule> rules = new ArrayList<IDeployedInferenceRule>();
-		rules.addAll(mathExtensionsProjectEntry.getInferenceRules(automatic, type, parentRoot, factory));
+		rules.addAll(mathExtensionsProjectEntry.getInferenceRules(automatic, type, parentRoot, context.getFormulaFactory()));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getInferenceRules(automatic, type, parentRoot, factory));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getInferenceRules(automatic, type, parentRoot, context.getFormulaFactory()));
 		}
 		return rules;
 	}
 
-	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IPOContext context, FormulaFactory factory) {
+	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 
-		IDeployedInferenceRule rule = mathExtensionsProjectEntry.getInferenceRule(theoryName, ruleName, parentRoot, factory);
+		IDeployedInferenceRule rule = mathExtensionsProjectEntry.getInferenceRule(theoryName, ruleName, parentRoot, context.getFormulaFactory());
 		if (rule == null) {
-			return projectEntries.get(parentRoot.getRodinProject()).getInferenceRule(theoryName, ruleName, parentRoot, factory);
+			return projectEntries.get(parentRoot.getRodinProject()).getInferenceRule(theoryName, ruleName, parentRoot, context.getFormulaFactory());
 		}
 		return rule;
 	}

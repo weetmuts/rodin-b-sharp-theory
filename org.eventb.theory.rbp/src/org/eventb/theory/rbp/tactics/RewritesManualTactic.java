@@ -3,8 +3,7 @@ package org.eventb.theory.rbp.tactics;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -17,6 +16,9 @@ import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * The manual tactic for applying interactive rewrite rules.
+ * 
+ * <p> Conditional, definitional and unconditional rules can be applied interactively.
+ * 
  * @since 1.0
  * @author maamria
  *
@@ -27,12 +29,11 @@ public class RewritesManualTactic extends DefaultTacticProvider implements ITact
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node.getProofTree().getOrigin() instanceof IProofAttempt){
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
-			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status);
-			FormulaFactory factory = node.getFormulaFactory();
+			IPOContext poContext = new POContext(
+					(IEventBRoot) attempt.getStatus().getRoot());
 			boolean isGoal = hyp == null;
 			Predicate pred = ( isGoal ? node.getSequent().goal() : hyp);
-			return pred.inspect(new RewritesSelector(pred, isGoal, factory, poContext));
+			return pred.inspect(new RewritesSelector(pred, isGoal, poContext));
 		}
 		// Contextual information needed
 		return new ArrayList<ITacticApplication>();

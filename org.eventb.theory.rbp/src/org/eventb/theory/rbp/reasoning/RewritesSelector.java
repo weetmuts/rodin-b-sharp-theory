@@ -21,7 +21,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaInspector;
@@ -60,16 +59,14 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	protected final Matcher finder;
 	protected final BaseManager manager;
 	protected final boolean isGoal;
-	protected final FormulaFactory factory;
 
 	private IPOContext context;
 
-	public RewritesSelector(Predicate predicate, boolean isGoal, FormulaFactory factory, IPOContext context) {
+	public RewritesSelector(Predicate predicate, boolean isGoal, IPOContext context) {
 		this.predicate = predicate;
 		this.isGoal = isGoal;
-		this.factory = factory;
 		this.manager = BaseManager.getDefault();
-		this.finder = new Matcher(factory);
+		this.finder = new Matcher(context.getFormulaFactory());
 		this.context = context;
 	}
 
@@ -85,8 +82,8 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	 */
 	protected void select(Formula<?> formula, IAccumulator<ITacticApplication> accum) {
 		List<IDeployedRewriteRule> rules = ((formula instanceof Expression ? 
-				manager.getExpressionRewriteRules(false, ((Expression) formula).getClass(), context, factory) : 
-					manager.getPredicateRewriteRules(false, ((Predicate) formula).getClass(), context, factory)));
+				manager.getExpressionRewriteRules(false, ((Expression) formula).getClass(), context) : 
+					manager.getPredicateRewriteRules(false, ((Predicate) formula).getClass(), context)));
 		for (IDeployedRewriteRule rule : rules) {
 			if (canFindABinding(formula, rule.getLeftHandSide())) {
 				if (rule.isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {
@@ -170,12 +167,11 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	@Override
 	public void inspect(ExtendedPredicate predicate, IAccumulator<ITacticApplication> accumulator) {
 		select(predicate, accumulator);
-
 	}
 
 	@Override
 	public void inspect(FreeIdentifier identifier, IAccumulator<ITacticApplication> accumulator) {
-
+		// nothing
 	}
 
 	@Override
@@ -198,7 +194,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 
 	@Override
 	public void inspect(PredicateVariable predicate, IAccumulator<ITacticApplication> accumulator) {
-
+		// nothing
 	}
 
 	@Override

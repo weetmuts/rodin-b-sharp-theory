@@ -22,7 +22,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 public class InferenceInput extends ContextualInput {
 
 	public boolean forward;
-	public String ruleDesc;
+	public String description;
 	public String ruleName;
 	public String theoryName;
 	public Predicate predicate;
@@ -46,7 +46,7 @@ public class InferenceInput extends ContextualInput {
 	public InferenceInput(String theoryName, String ruleName, String ruleDesc, Predicate predicate, boolean forward, IPOContext context) {
 		super(context);
 		this.forward = forward;
-		this.ruleDesc = ruleDesc;
+		this.description = ruleDesc;
 		this.ruleName = ruleName;
 		this.theoryName = theoryName;
 		this.predicate = predicate;

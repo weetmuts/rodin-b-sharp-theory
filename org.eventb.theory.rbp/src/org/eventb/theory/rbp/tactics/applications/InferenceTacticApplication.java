@@ -45,7 +45,7 @@ public class InferenceTacticApplication implements IPredicateApplication{
 
 	@Override
 	public String getTooltip() {
-		return input.ruleDesc;
+		return input.description;
 	}
 
 }

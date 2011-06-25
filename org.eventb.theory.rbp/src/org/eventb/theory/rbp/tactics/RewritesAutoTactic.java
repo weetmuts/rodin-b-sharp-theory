@@ -1,6 +1,6 @@
 package org.eventb.theory.rbp.tactics;
 
-import org.eventb.core.IPSStatus;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -16,7 +16,8 @@ import org.eventb.theory.rbp.rulebase.basis.POContext;
 /**
  * The automatic tactic for applying automatic rewrite rules.
  * 
- * <p> At the moment, only unconditional rewrite rules can be applied automatically.
+ * <p> Only unconditional rewrite rules can be applied automatically.
+ * 
  * @since 1.0
  * @author maamria
  *
@@ -30,10 +31,11 @@ public class RewritesAutoTactic implements ITactic{
 				return "Root already has children";
 			}
 			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
-			IPSStatus status = attempt.getStatus();
-			IPOContext poContext = new POContext(status);
+			IPOContext poContext = new POContext(
+					(IEventBRoot) attempt.getStatus().getRoot());
 			AutoRewriteReasoner reasoner = new AutoRewriteReasoner();
-			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), new ContextualInput(poContext), pm);
+			IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(),
+					new ContextualInput(poContext), pm);
 			if (reasonerOutput == null) return "! Plugin returned null !";
 			if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
 			IProofRule rule = (IProofRule)reasonerOutput;

@@ -45,7 +45,7 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	
 	public AutoRewriter(IPOContext context){
 		super(context);
-		this.binder =  new ComplexBinder(factory);
+		this.binder =  new ComplexBinder(context.getFormulaFactory());
 	}
 	
 	/**
@@ -77,40 +77,35 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	}
 	
 	/**
-	 * Returns the formula resulting from applying all the (applicable) automatic unconditional rules.
+	 * Returns the formula resulting from applying all the (applicable) 
+	 * automatic unconditional rules.
 	 * @param original the formula to rewrite
 	 * @return the rewritten formula
 	 */
 	private Formula<?> applyRules(Formula<?> original){
-		List<IDeployedRewriteRule> rules = getRules(original);
+		List<IDeployedRewriteRule> rules = (original instanceof Expression ? 
+				manager.getExpressionRewriteRules(true, ((Expression)original).getClass(), context):
+				manager.getPredicateRewriteRules(true, ((Predicate)original).getClass(), context));
 		Formula<?> result = original;
 		for(IDeployedRewriteRule rule: rules){
-			result = applyRule(result, rule);
+			Formula<?> ruleLhs = rule.getLeftHandSide();
+			IBinding binding = finder.match(original, ruleLhs, true);
+			if(binding == null){
+				return original;
+			}
+			// since rule is unconditional
+			Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
+			Formula<?> boundRhs = binder.bind(ruleRhs, binding, true);
+			if (boundRhs == null){
+				return original;
+			}
+			addUsedTheory(rule.getTheoryName());
+			result = boundRhs;
 		}
 		return result;
 	}
 	
-	private List<IDeployedRewriteRule> getRules(Formula<?> original) {
-		if (original instanceof Expression){
-			return manager.getExpressionRewriteRules(true, ((Expression)original).getClass(), context, factory);
-		}
-		return manager.getPredicateRewriteRules(true, ((Predicate)original).getClass(), context, factory);
-	}
-
-	private Formula<?> applyRule(Formula<?> original, IDeployedRewriteRule rule){
-		Formula<?> ruleLhs = rule.getLeftHandSide();
-		IBinding binding = finder.match(original, ruleLhs, true);
-		if(binding == null){
-			return original;
-		}
-		// since rule is unconditional
-		Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
-		Formula<?> result = binder.bind(ruleRhs, binding, true);
-		addUsedTheory(rule.getTheoryName());
-		return result;
-	}
-	
-	protected void addUsedTheory(String name){
+	private void addUsedTheory(String name){
 		if(!AutoRewriteReasoner.usedTheories.contains(name))
 			AutoRewriteReasoner.usedTheories.add(name);
 	}
@@ -146,13 +141,13 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 
 	@Override
 	public Expression rewrite(BoundIdentifier identifier) {
-		// TODO Auto-generated method stub
+		// DO NOT REWRITE IDENTIFIER
 		return identifier;
 	}
 
 	@Override
 	public Expression rewrite(FreeIdentifier identifier) {
-		// TODO Auto-generated method stub
+		// DO NOT REWRITE IDENTIFIER
 		return identifier;
 	}
 
@@ -223,17 +218,16 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	
 	@Override
 	public void enteringQuantifier(int nbOfDeclarations) {
-		// TODO Auto-generated method stub
-		
+		// nothing to do
 	}
 
 	@Override
 	public FormulaFactory getFactory() {
-		return factory;
+		return context.getFormulaFactory();
 	}
 
 	@Override
 	public void leavingQuantifier(int nbOfDeclarations) {
-		// TODO Auto-generated method stub
+		// nothing to do
 	}
 }
