@@ -14,6 +14,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.Matcher;
+import org.eventb.core.pm.assoc.ACPredicateProblem;
 import org.eventb.core.pm.assoc.ACProblem;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
@@ -81,7 +82,7 @@ public class InferenceSelector {
 						otherHyps.add(hyp);
 					}
 				}
-				ACProblem<Predicate> acProblem = new ACProblem<Predicate>(
+				ACProblem<Predicate> acProblem = new ACPredicateProblem(
 						Formula.LAND, otherHyps.toArray(new Predicate[otherHyps.size()]), 
 						otherGivens.toArray(new Predicate[otherGivens.size()]), context.getFormulaFactory());
 				IBinding finalBinding = acProblem.solve(true);

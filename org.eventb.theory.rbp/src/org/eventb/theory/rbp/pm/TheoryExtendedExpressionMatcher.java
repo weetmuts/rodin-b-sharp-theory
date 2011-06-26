@@ -12,8 +12,8 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pm.ExtendedExpressionMatcher;
 import org.eventb.core.pm.IBinding;
-import org.eventb.core.pm.assoc.ACProblem;
-import org.eventb.core.pm.assoc.AProblem;
+import org.eventb.core.pm.assoc.ACExpressionProblem;
+import org.eventb.core.pm.assoc.AExpressionProblem;
 import org.eventb.core.pm.assoc.AssociativityProblem;
 import org.eventb.theory.core.AstUtilities;
 import org.eventb.theory.internal.core.maths.ExpressionOperatorExtension;
@@ -41,10 +41,10 @@ public class TheoryExtendedExpressionMatcher extends ExtendedExpressionMatcher<E
 		if (AstUtilities.isAssociative(pattern)) {
 			AssociativityProblem<Expression> problem = null;
 			if (AstUtilities.isAC(pattern)){
-				problem = new ACProblem<Expression>(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
+				problem = new ACExpressionProblem(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
 			}
 			else {
-				problem = new AProblem<Expression>(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
+				problem = new AExpressionProblem(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
 			}
 			IBinding binding = (IBinding) problem.solve(false);
 			if (binding != null){

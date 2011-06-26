@@ -68,4 +68,8 @@ public class MatchStack<F extends Formula<F>> {
 		}
 		return internalBinding;
 	}
+	
+	public List<IndexedFormula<F>> getUsedUpFormulae(){
+		return new ArrayList<IndexedFormula<F>>(usedUp);
+	}
 }

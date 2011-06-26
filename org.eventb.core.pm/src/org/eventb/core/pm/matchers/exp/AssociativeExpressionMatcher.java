@@ -4,8 +4,8 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.pm.ExpressionMatcher;
 import org.eventb.core.pm.IBinding;
-import org.eventb.core.pm.assoc.ACProblem;
-import org.eventb.core.pm.assoc.AProblem;
+import org.eventb.core.pm.assoc.ACExpressionProblem;
+import org.eventb.core.pm.assoc.AExpressionProblem;
 import org.eventb.core.pm.assoc.AssociativityProblem;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 
@@ -30,10 +30,10 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 		Expression[] patternChildren = pattern.getChildren();
 		AssociativityProblem<Expression> problem = null;
 		if (isAC){
-			problem = new ACProblem<Expression>(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
+			problem = new ACExpressionProblem(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
 		}
 		else {
-			problem = new AProblem<Expression>(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
+			problem = new AExpressionProblem(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
 		}
 		IBinding binding = (IBinding) problem.solve(false);
 		if (binding != null){

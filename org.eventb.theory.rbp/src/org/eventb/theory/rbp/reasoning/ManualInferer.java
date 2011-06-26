@@ -20,6 +20,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.SimpleBinder;
+import org.eventb.core.pm.assoc.ACPredicateProblem;
 import org.eventb.core.pm.assoc.ACProblem;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -128,7 +129,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 				otherHyps.add(hyp);
 			}
 		}
-		ACProblem<Predicate> acProblem = new ACProblem<Predicate>(
+		ACProblem<Predicate> acProblem = new ACPredicateProblem(
 				Formula.LAND, otherHyps.toArray(new Predicate[otherHyps.size()]), 
 				otherGivens.toArray(new Predicate[otherGivens.size()]), context.getFormulaFactory());
 		IBinding finalBinding = acProblem.solve(true);
