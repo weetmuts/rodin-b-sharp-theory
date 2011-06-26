@@ -23,6 +23,7 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  */
 public final class DeployedRewriteRule extends AbstractDeployedRule implements IDeployedRewriteRule{
 
+	private boolean isDefinitional;
 	private boolean isComplete;
 	private boolean isConditional;
 	private Formula<?> lhs;
@@ -30,14 +31,15 @@ public final class DeployedRewriteRule extends AbstractDeployedRule implements I
 	
 	public DeployedRewriteRule(String ruleName, String theoryName,
 			Formula<?> lhs, List<IDeployedRuleRHS> ruleRHSs,
-			boolean isAutomatic, boolean isInteractive, boolean isComplete,
-			boolean isSound, String toolTip, String description,
-			ITypeEnvironment typeEnv){
+			boolean isAutomatic, boolean isInteractive, boolean isComplete, 
+			boolean isDefinitional, boolean isSound, String toolTip, 
+			String description, ITypeEnvironment typeEnv){
 		super(ruleName, theoryName, isAutomatic, isInteractive, isSound, toolTip, description, typeEnv);
 		this.lhs = lhs;
 		this.ruleRHSs = unmodifiableList(ruleRHSs);
 		this.isComplete = isComplete;
 		this.isConditional = computeConditionality();
+		this.isDefinitional = isDefinitional;
 	}
 	
 	public Formula<?> getLeftHandSide() {
@@ -61,6 +63,10 @@ public final class DeployedRewriteRule extends AbstractDeployedRule implements I
 	
 	public boolean isExpression() {
 		return lhs instanceof Expression;
+	}
+	
+	public boolean isDefinitional() {
+		return isDefinitional;
 	}
 
 	private boolean computeConditionality(){
@@ -87,13 +93,13 @@ public final class DeployedRewriteRule extends AbstractDeployedRule implements I
 			theoryName.equals(deployeRule.theoryName) && toolTip.equals(deployeRule.toolTip) &&
 			description.equals(deployeRule.description) && lhs.equals(deployeRule.lhs) &&
 			isComplete == deployeRule.isComplete && isAutomatic == deployeRule.isAutomatic &&
-			isInteractive == deployeRule.isInteractive;
+			isInteractive == deployeRule.isInteractive && isDefinitional == deployeRule.isDefinitional;
 	}
 	
 	public int hashCode(){
 		return ProverUtilities.
 		combineHashCode(ruleName, theoryName, lhs, ruleRHSs, toolTip, description, 
-				new Boolean(isAutomatic && isInteractive && isInteractive));
+				new Boolean(isAutomatic && isInteractive && isInteractive && isDefinitional));
 	}
 	
 	public String toString(){

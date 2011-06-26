@@ -21,6 +21,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoning.AutoRewriter;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
@@ -34,7 +35,7 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 	
 	private static final String DISPLAY_NAME = "RbP0";
 	
-	public static List<String> usedTheories = new ArrayList<String>();
+	public static List<String> usedAutoTheories = new ArrayList<String>();
 	
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -43,7 +44,7 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
 		ContextualInput contextualInput = (ContextualInput) input;
 		final FormulaFactory ff = seq.getFormulaFactory();
-		final IFormulaRewriter rewriter = new AutoRewriter(contextualInput.context);
+		final IFormulaRewriter rewriter = getRewriter(contextualInput.context);
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			// Rewrite the hypothesis
@@ -93,10 +94,14 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 	}
 	
 	protected String getDisplayName() {
-		String toDisplay = DISPLAY_NAME + ProverUtilities.printListedItems(usedTheories);
+		String toDisplay = DISPLAY_NAME + ProverUtilities.printListedItems(usedAutoTheories);
 		// clear the list of used theories now
-		usedTheories.clear();
+		usedAutoTheories.clear();
 		return toDisplay;
+	}
+	
+	protected IFormulaRewriter getRewriter(IPOContext context){
+		 return new AutoRewriter(context);
 	}
 
 	/**

@@ -142,12 +142,13 @@ public class DeployedObjectsFactory {
 			boolean isAutomatic = rule.isAutomatic();
 			boolean isInteractive = rule.isInteractive();
 			boolean isComplete = rule.isComplete();
+			boolean isDefinitional = rule.hasDefinitionalAttribute() && rule.isDefinitional();
 			String toolTip = rule.getDescription();
 			String description = rule.getDescription();
 
 			IDeployedRewriteRule depRule = new DeployedRewriteRule(ruleName,
 					theoryName, lhs, ruleRHSs, isAutomatic, isInteractive,
-					isComplete, true, toolTip, description, typeEnvironment);
+					isComplete, isDefinitional,true, toolTip, description, typeEnvironment);
 			return depRule;
 		} catch (CoreException e) {
 			ProverUtilities.log(e, "error creating deployed rewrite rule from "+ rule);

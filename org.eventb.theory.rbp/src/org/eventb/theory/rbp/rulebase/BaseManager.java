@@ -50,6 +50,28 @@ public class BaseManager implements IElementChangedListener {
 		projectEntries = new LinkedHashMap<IRodinProject, IProjectBaseEntry>();
 		RodinCore.addElementChangedListener(this);
 	}
+	
+	public List<IDeployedRewriteRule> getDefinitionalExpressionRules(Class<? extends Expression> clazz, IPOContext context){
+		List<IDeployedRewriteRule> allExpRules = getExpressionRewriteRules(false, clazz, context);
+		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
+		for (IDeployedRewriteRule deployedRewriteRule : allExpRules){
+			if (deployedRewriteRule.isDefinitional()){
+				toReturn.add(deployedRewriteRule);
+			}
+		}
+		return toReturn;
+	}
+	
+	public List<IDeployedRewriteRule> getDefinitionalPredicateRules(Class<? extends Predicate> clazz, IPOContext context){
+		List<IDeployedRewriteRule> allExpRules = getPredicateRewriteRules(false, clazz, context);
+		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
+		for (IDeployedRewriteRule deployedRewriteRule : allExpRules){
+			if (deployedRewriteRule.isDefinitional()){
+				toReturn.add(deployedRewriteRule);
+			}
+		}
+		return toReturn;
+	}
 
 	public List<IDeployedRewriteRule> getExpressionRewriteRules(boolean automatic, Class<? extends Expression> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();

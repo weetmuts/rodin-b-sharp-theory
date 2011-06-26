@@ -83,21 +83,19 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @return the rewritten formula
 	 */
 	private Formula<?> applyRules(Formula<?> original){
-		List<IDeployedRewriteRule> rules = (original instanceof Expression ? 
-				manager.getExpressionRewriteRules(true, ((Expression)original).getClass(), context):
-				manager.getPredicateRewriteRules(true, ((Predicate)original).getClass(), context));
+		List<IDeployedRewriteRule> rules = getRules(original);
 		Formula<?> result = original;
 		for(IDeployedRewriteRule rule: rules){
 			Formula<?> ruleLhs = rule.getLeftHandSide();
 			IBinding binding = finder.match(original, ruleLhs, true);
 			if(binding == null){
-				return original;
+				return result;
 			}
 			// since rule is unconditional
 			Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
 			Formula<?> boundRhs = binder.bind(ruleRhs, binding, true);
 			if (boundRhs == null){
-				return original;
+				return result;
 			}
 			addUsedTheory(rule.getTheoryName());
 			result = boundRhs;
@@ -105,9 +103,16 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 		return result;
 	}
 	
-	private void addUsedTheory(String name){
-		if(!AutoRewriteReasoner.usedTheories.contains(name))
-			AutoRewriteReasoner.usedTheories.add(name);
+	protected List<IDeployedRewriteRule> getRules(Formula<?> original){
+		List<IDeployedRewriteRule> rules = (original instanceof Expression ? 
+				manager.getExpressionRewriteRules(true, ((Expression)original).getClass(), context):
+				manager.getPredicateRewriteRules(true, ((Predicate)original).getClass(), context));
+		return rules;
+	}
+	
+	protected void addUsedTheory(String name){
+		if(!AutoRewriteReasoner.usedAutoTheories.contains(name))
+			AutoRewriteReasoner.usedAutoTheories.add(name);
 	}
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {

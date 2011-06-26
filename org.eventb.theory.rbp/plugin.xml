@@ -23,6 +23,11 @@
             id="manualInferenceReasoner"
             name="%manualInferenceReasoner">
       </reasoner>
+      <reasoner
+            class="org.eventb.theory.rbp.reasoners.ReduceToClassicLanguageReasoner"
+            id="reduceToClassicLanguageReasoner"
+            name="%reduceToClassicLanguageReasoner">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -80,7 +85,7 @@
             tooltip="%applyRew">
       </tactic>
       <tactic
-            icon="icons/thy.gif"
+            icon="icons/thyDep.gif"
             id="RbP1g"
             interrupt="true"
             name="%rbpInfTactics"
@@ -90,7 +95,7 @@
             tooltip="%applyInf">
       </tactic>
        <tactic
-            icon="icons/thy.gif"
+            icon="icons/thyDep.gif"
             id="RbP1h"
             interrupt="true"
             name="%rbpInfTactics"
@@ -99,6 +104,17 @@
             target="hypothesis"
             tooltip="%applyInf">
       </tactic>
+       <tactic
+             icon="icons/thyReduce.gif"
+             id="RbP2Classic"
+             interrupt="true"
+             name="%reduceToClassicTactic"
+             priority="3"
+             tacticProvider="org.eventb.theory.rbp.tactics.ReduceToClassicLanguageTacticProvider"
+             target="global"
+             toolbar="org.eventb.ui.sequentToolbar"
+             tooltip="%reduceToClassicLang">
+       </tactic>
    </extension>
    <extension
          point="org.eventb.core.pm.extendedExpressionMatcher">

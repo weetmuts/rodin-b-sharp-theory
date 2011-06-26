@@ -50,4 +50,10 @@ public interface IDeployedRewriteRule extends IDeployedRule{
 	 * @return whether lhs of rule is an expression
 	 */
 	public boolean isExpression();
+	
+	/**
+	 * Returns whether this rule is definitional.
+	 * @return whether this rule is definitional
+	 */
+	public boolean  isDefinitional();
 }
