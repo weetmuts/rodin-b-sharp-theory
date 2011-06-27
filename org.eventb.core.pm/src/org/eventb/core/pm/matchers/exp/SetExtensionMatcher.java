@@ -1,9 +1,12 @@
 package org.eventb.core.pm.matchers.exp;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.pm.ExpressionMatcher;
 import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.assoc.ACExpressionProblem;
+import org.eventb.core.pm.assoc.AssociativityProblem;
 
 /**
  * TODO emulate associative matching
@@ -20,13 +23,11 @@ public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
 	@Override
 	protected boolean gatherBindings(SetExtension form, SetExtension pattern,
 			IBinding existingBinding)  {
-		if(form.getMembers().length == 1 && pattern.getMembers().length == 1){
-			Expression formMem = form.getMembers()[0];
-			Expression patternMem = pattern.getMembers()[0];
-			if(matchingFactory.match(formMem, patternMem, existingBinding)){
-				return true;
-			}
-		}
+		Expression[] formMembers = form.getMembers();
+		Expression[] patternMembers = pattern.getMembers();
+		AssociativityProblem<Expression> problem = new ACExpressionProblem(Formula.BUNION, 
+				formMembers, patternMembers, existingBinding.getFormulaFactory());
+		IBinding binding = problem.solve(false);
 		return false;
 	}
 

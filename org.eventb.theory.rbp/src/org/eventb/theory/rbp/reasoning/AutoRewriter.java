@@ -89,13 +89,13 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 			Formula<?> ruleLhs = rule.getLeftHandSide();
 			IBinding binding = finder.match(original, ruleLhs, true);
 			if(binding == null){
-				return result;
+				continue;
 			}
 			// since rule is unconditional
 			Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
 			Formula<?> boundRhs = binder.bind(ruleRhs, binding, true);
 			if (boundRhs == null){
-				return result;
+				continue;
 			}
 			addUsedTheory(rule.getTheoryName());
 			result = boundRhs;

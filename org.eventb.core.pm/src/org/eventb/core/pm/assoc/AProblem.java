@@ -17,6 +17,8 @@ import org.eventb.core.pm.IBinding;
 /**
  * A basic implementation of a pure (non-commutative) matching problem.
  * @author maamria
+ * 
+ * TODO FINISH THIS
  *
  */
 public abstract class AProblem<F extends Formula<F>> extends AssociativityProblem<F>{

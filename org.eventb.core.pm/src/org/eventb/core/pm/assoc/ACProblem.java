@@ -16,6 +16,8 @@ import org.eventb.core.pm.IBinding;
 
 /**
  * A basic implementation of an AC matching problem.
+ * 
+ * TODO FINISH THIS
  * @author maamria
  *
  */

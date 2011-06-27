@@ -35,7 +35,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
 /**
- * 
+ * An implementation of the rule base manager.
  * @author maamria
  * 
  */
@@ -51,22 +51,34 @@ public class BaseManager implements IElementChangedListener {
 		RodinCore.addElementChangedListener(this);
 	}
 	
+	/**
+	 * Returns the list of definitional rewrite rules for the given formula class under the given context.
+	 * @param clazz the formula runtime class
+	 * @param context the proof obligation context
+	 * @return the list of rewrite rules
+	 */
 	public List<IDeployedRewriteRule> getDefinitionalExpressionRules(Class<? extends Expression> clazz, IPOContext context){
 		List<IDeployedRewriteRule> allExpRules = getExpressionRewriteRules(false, clazz, context);
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		for (IDeployedRewriteRule deployedRewriteRule : allExpRules){
-			if (deployedRewriteRule.isDefinitional()){
+			if (deployedRewriteRule.isDefinitional() && !deployedRewriteRule.isConditional()){
 				toReturn.add(deployedRewriteRule);
 			}
 		}
 		return toReturn;
 	}
 	
+	/**
+	 * Returns the list of definitional rewrite rules for the given formula class under the given context.
+	 * @param clazz the formula runtime class
+	 * @param context the proof obligation context
+	 * @return the list of rewrite rules
+	 */
 	public List<IDeployedRewriteRule> getDefinitionalPredicateRules(Class<? extends Predicate> clazz, IPOContext context){
 		List<IDeployedRewriteRule> allExpRules = getPredicateRewriteRules(false, clazz, context);
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		for (IDeployedRewriteRule deployedRewriteRule : allExpRules){
-			if (deployedRewriteRule.isDefinitional()){
+			if (deployedRewriteRule.isDefinitional() && !deployedRewriteRule.isConditional()){
 				toReturn.add(deployedRewriteRule);
 			}
 		}
@@ -95,6 +107,14 @@ public class BaseManager implements IElementChangedListener {
 		return rules;
 	}
 
+	/**
+	 * Returns the deployed expression rewrite rule with the given parameters.
+	 * @param ruleName the name of the rule
+	 * @param theoryName the name of the parent theory
+	 * @param clazz the runtime class of the formula in its lhs
+	 * @param context the obligation context
+	 * @return the deployed rule, or <code>null</code> if not found
+	 */
 	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName, String theoryName, Class<? extends Expression> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
@@ -105,6 +125,14 @@ public class BaseManager implements IElementChangedListener {
 		return rule;
 	}
 
+	/**
+	 * Returns the deployed predicate rewrite rule with the given parameters.
+	 * @param ruleName the name of the rule
+	 * @param theoryName the name of the parent theory
+	 * @param clazz the runtime class of the formula in its lhs
+	 * @param context the obligation context
+	 * @return the deployed rule, or <code>null</code> if not found
+	 */
 	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, String theoryName, Class<? extends Predicate> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
@@ -126,6 +154,13 @@ public class BaseManager implements IElementChangedListener {
 		return rules;
 	}
 
+	/**
+	 * Returns the deployed inference rule that matches the given details.
+	 * @param theoryName the theory name
+	 * @param ruleName the rule name
+	 * @param context the obligation context
+	 * @return the deployed inference rule, or <code>null</code> if not found
+	 */
 	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
@@ -136,17 +171,27 @@ public class BaseManager implements IElementChangedListener {
 		}
 		return rule;
 	}
+	
+	/**
+	 * Returns the singleton instance.
+	 * @return the singleton instance
+	 */
+	public static BaseManager getDefault() {
+		if (manager == null)
+			manager = new BaseManager();
+		return manager;
+	}
 
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
 		} catch (CoreException e) {
-			ProverUtilities.log(e, "error while processing change in db affecting the base manager");
+			ProverUtilities.log(e, "error while processing change in db affecting the rule base manager");
 		}
 	}
-
-	protected void processDelta(IRodinElementDelta delta) throws CoreException {
+	
+	private void processDelta(IRodinElementDelta delta) throws CoreException {
 		IRodinElement element = delta.getElement();
 		IRodinElementDelta[] affected = delta.getAffectedChildren();
 		if (element instanceof IRodinDB) {
@@ -181,7 +226,7 @@ public class BaseManager implements IElementChangedListener {
 		}
 	}
 
-	protected void check(IRodinProject project) {
+	private void check(IRodinProject project) {
 		if (mathExtensionsProjectEntry == null) {
 			mathExtensionsProjectEntry = new ProjectBaseEntry(DatabaseUtilities.getDeploymentProject(new NullProgressMonitor()));
 		}
@@ -191,11 +236,5 @@ public class BaseManager implements IElementChangedListener {
 				projectEntries.put(project, entry);
 			}
 		}
-	}
-
-	public static BaseManager getDefault() {
-		if (manager == null)
-			manager = new BaseManager();
-		return manager;
 	}
 }
