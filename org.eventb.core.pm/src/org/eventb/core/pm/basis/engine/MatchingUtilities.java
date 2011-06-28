@@ -15,11 +15,13 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.plugin.PMPlugin;
 
 /**
@@ -201,6 +203,30 @@ public class MatchingUtilities {
 			}
 		}
 		return list;
+	}
+	
+	/**
+	 * Returns whether the two arrays of declarations match (simple implementation).
+	 * @param formulaDecs the formula declarations
+	 * @param patternDecs the pattern declarations
+	 * @param existingBinding the existing binding
+	 * @return whether the declarations match
+	 */
+	public static boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, 
+			BoundIdentDecl[] patternDecs, IBinding existingBinding){
+		if(formulaDecs.length == patternDecs.length){
+			int index = 0;
+			for(BoundIdentDecl pDec: patternDecs){
+				BoundIdentDecl fDec = formulaDecs[index];
+				if(!existingBinding.canUnifyTypes(fDec.getType(), pDec.getType())){
+					return false;
+				}
+				index++;
+			}
+			return true;
+		}
+		else 
+			return false;
 	}
 
 }

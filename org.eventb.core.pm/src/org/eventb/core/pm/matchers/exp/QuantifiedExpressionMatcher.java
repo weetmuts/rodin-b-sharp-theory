@@ -9,6 +9,7 @@ import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.pm.ExpressionMatcher;
 import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.basis.engine.MatchingUtilities;
 
 /**
  * TODO FIXME this is good when we only have one quantifier variable.
@@ -32,7 +33,7 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 		}
 		BoundIdentDecl[] fDec = qeForm.getBoundIdentDecls();
 		BoundIdentDecl[] pDec = qePattern.getBoundIdentDecls();
-		if(!boundIdentDecsMatch(fDec, pDec, existingBinding)){
+		if(!MatchingUtilities.boundIdentDecsMatch(fDec, pDec, existingBinding)){
 			return false;
 		}
 		Expression fExp = qeForm.getExpression();
@@ -59,22 +60,4 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 	protected QuantifiedExpression getExpression(Expression e) {
 		return (QuantifiedExpression) e;
 	}
-
-	private boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, 
-			BoundIdentDecl[] patternDecs, IBinding existingBinding){
-		if(formulaDecs.length == patternDecs.length){
-			int index = 0;
-			for(BoundIdentDecl pDec: patternDecs){
-				BoundIdentDecl fDec = formulaDecs[index];
-				if(!existingBinding.canUnifyTypes(fDec.getType(), pDec.getType())){
-					return false;
-				}
-				index++;
-			}
-			return true;
-		}
-		else 
-			return false;
-	}
-
 }

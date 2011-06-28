@@ -1,15 +1,12 @@
 package org.eventb.core.pm.matchers.exp;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.pm.ExpressionMatcher;
 import org.eventb.core.pm.IBinding;
-import org.eventb.core.pm.assoc.ACExpressionProblem;
-import org.eventb.core.pm.assoc.AssociativityProblem;
 
 /**
- * TODO emulate associative matching
+ * Simple matcher, expected to work only with singleton sets.
  * @since 1.0
  * @author maamria
  *
@@ -23,11 +20,16 @@ public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
 	@Override
 	protected boolean gatherBindings(SetExtension form, SetExtension pattern,
 			IBinding existingBinding)  {
-		Expression[] formMembers = form.getMembers();
 		Expression[] patternMembers = pattern.getMembers();
-		AssociativityProblem<Expression> problem = new ACExpressionProblem(Formula.BUNION, 
-				formMembers, patternMembers, existingBinding.getFormulaFactory());
-		IBinding binding = problem.solve(false);
+		Expression[] formMembers = form.getMembers();
+		// work with singleton
+		if(formMembers.length == 1 && patternMembers.length == 1){
+			Expression formMem = formMembers[0];
+			Expression patternMem = patternMembers[0];
+			if(matchingFactory.match(formMem, patternMem, existingBinding)){
+				return true;
+			}
+		}
 		return false;
 	}
 
