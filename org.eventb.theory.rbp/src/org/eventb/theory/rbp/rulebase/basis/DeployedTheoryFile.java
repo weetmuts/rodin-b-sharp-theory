@@ -19,8 +19,8 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCProofRulesBlock;
-import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * @author maamria
@@ -90,29 +90,18 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 				typeEnvironment.addGivenSet(par.getIdentifier(factory)
 						.getName());
 			}
-			ISCTheorem[] scTheorems = theoryRoot.getTheorems();
-			for (ISCTheorem thy : scTheorems){
-				IDeployedTheorem theorem = new DeployedTheorem(thy.getLabel(), thy.getPredicate(factory, typeEnvironment));
-				theorems.add(theorem);
-			}
-			
+			theorems.addAll(DeployedObjectsFactory.getDeployedTheorems(theoryRoot, factory, typeEnvironment));
 			ISCProofRulesBlock[] blocks = theoryRoot.getProofRulesBlocks();
 			for (ISCProofRulesBlock b : blocks) {
-				for (IDeployedRewriteRule rule : DeployedObjectsFactory
-						.getDeployedRewriteRules(b, factory, typeEnvironment)) {
-					rewriteRules.add(rule);
-				}
-				inferenceRules
-						.addAll(DeployedObjectsFactory
-								.getDeployedInferenceRules(b, factory,
-										typeEnvironment));
+				rewriteRules.addAll(DeployedObjectsFactory.getDeployedRewriteRules(b, factory, typeEnvironment));
+				inferenceRules.addAll(DeployedObjectsFactory.getDeployedInferenceRules(b, factory,typeEnvironment));
 			}
 		} catch (CoreException e) {
 			// cleanup
 			rewriteRules = new ArrayList<IDeployedRewriteRule>();
 			inferenceRules = new ArrayList<IDeployedInferenceRule>();
 			typeEnvironment = factory.makeTypeEnvironment();
-			e.printStackTrace();
+			ProverUtilities.log(e, "unable to load theory properly");
 		}
 
 	}

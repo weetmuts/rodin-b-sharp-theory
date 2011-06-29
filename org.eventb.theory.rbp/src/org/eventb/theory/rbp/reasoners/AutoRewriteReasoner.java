@@ -93,6 +93,7 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 		return REASONER_ID;
 	}
 	
+	// can be overridden to provide alternative display name
 	protected String getDisplayName() {
 		String toDisplay = DISPLAY_NAME + ProverUtilities.printListedItems(usedAutoTheories);
 		// clear the list of used theories now
@@ -100,6 +101,7 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 		return toDisplay;
 	}
 	
+	// can be overridden to provide alternative rewriter
 	protected IFormulaRewriter getRewriter(IPOContext context){
 		 return new AutoRewriter(context);
 	}

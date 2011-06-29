@@ -15,6 +15,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
@@ -22,6 +23,7 @@ import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.RodinDBException;
 
@@ -31,6 +33,23 @@ import org.rodinp.core.RodinDBException;
  */
 public class DeployedObjectsFactory {
 
+	public static List<IDeployedTheorem> getDeployedTheorems(IExtensionRulesSource source, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment){
+		try {
+			List<IDeployedTheorem> result = new ArrayList<IDeployedTheorem>();
+			ISCTheorem[] scTheorems = source.getTheorems();
+			for (ISCTheorem scTheorem : scTheorems){
+				IDeployedTheorem deployedTheorem = 
+					new DeployedTheorem(scTheorem.getLabel(), scTheorem.getPredicate(factory, typeEnvironment));
+				result.add(deployedTheorem);
+			}
+			return result;
+		} catch(CoreException e){
+			ProverUtilities.log(e, "error creating deployed theorems from "+ source);
+		}
+		return new ArrayList<IDeployedTheorem>();
+	}
+	
 	public static List<IDeployedRewriteRule> getDeployedRewriteRules(
 			ISCProofRulesBlock block, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {

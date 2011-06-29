@@ -21,7 +21,9 @@ import org.eventb.ui.prover.IPredicateApplication;
  */
 public class InferenceTacticApplication implements IPredicateApplication{
 
-	InferenceInput input;
+	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbP1";
+	
+	private InferenceInput input;
 	
 	public InferenceTacticApplication(InferenceInput input){
 		this.input = input;
@@ -35,7 +37,7 @@ public class InferenceTacticApplication implements IPredicateApplication{
 
 	@Override
 	public String getTacticID() {
-		return RbPPlugin.PLUGIN_ID + ".inferenceTactic";
+		return TACTIC_ID;
 	}
 
 	@Override

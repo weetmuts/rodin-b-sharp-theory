@@ -18,6 +18,7 @@ import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 
 /**
  * Common protocol for a theory entry that can be queried for various rules it holds.
@@ -92,6 +93,8 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	 */
 	
 	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, Class<? extends Predicate> clazz, FormulaFactory factory);
+	
+	public List<IDeployedTheorem> getDeployedTheorems(FormulaFactory factory);
 	
 	public boolean hasChanged();
 	

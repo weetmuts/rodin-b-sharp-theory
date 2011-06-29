@@ -23,7 +23,9 @@ import org.eventb.ui.prover.IPositionApplication;
  */
 public class RewriteTacticApplication extends DefaultPositionApplication implements IPositionApplication {
 
-	private final RewriteInput input;
+	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbP0";
+	
+	private RewriteInput input;
 
 	public RewriteTacticApplication(RewriteInput input) {
 		super(input.predicate, input.position);
@@ -46,7 +48,7 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 	}
 
 	public String getTacticID() {
-		return RbPPlugin.PLUGIN_ID + ".rewriteTactic";
+		return TACTIC_ID;
 	}
 	
 	public Point getOperatorPosition(Predicate predicate, String predStr) {

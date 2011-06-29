@@ -16,13 +16,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 import org.eventb.theory.rbp.rulebase.basis.ProjectBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.ElementChangedEvent;
@@ -49,6 +52,12 @@ public class BaseManager implements IElementChangedListener {
 	private BaseManager() {
 		projectEntries = new LinkedHashMap<IRodinProject, IProjectBaseEntry>();
 		RodinCore.addElementChangedListener(this);
+	}
+	
+	public Map<IRodinProject,Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(IPOContext context, FormulaFactory factory){
+		IEventBRoot parentRoot = context.getParentRoot();
+		check(parentRoot.getRodinProject());
+		return null;
 	}
 	
 	/**

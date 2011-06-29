@@ -20,6 +20,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
@@ -206,6 +207,36 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 			return deployedRoots.get(depRoot).getInferenceRule(ruleName, factory);
 		}
 	}
+	
+
+	@Override
+	public Map<IExtensionRulesSource, List<IDeployedTheorem>> getTheorems(IEventBRoot root, FormulaFactory factory) {
+		String componentName = root.getComponentName();
+		Map<IExtensionRulesSource, List<IDeployedTheorem>> map = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
+		if (originatedFromTheory(root.getRodinFile(), project)){
+			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(componentName, project);
+			List<ISCTheoryRoot> requiredRoots = getRequiredSCRoots(scRoot);
+			for (ISCTheoryRoot scTheoryRoot : requiredRoots){
+				if (!scRoots.containsKey(scTheoryRoot)){
+					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scTheoryRoot);
+					scRoots.put(scTheoryRoot, entry);
+				} 
+				map.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
+			}
+		}
+		else {
+			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
+			for (IDeployedTheoryRoot deployedRoot : deployedTheoryRoots){
+				if (!deployedRoots.containsKey(deployedRoot)){
+					TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(deployedRoot);
+					deployedRoots.put(deployedRoot, entry);
+				}
+				map.put(deployedRoot, deployedRoots.get(deployedRoot).getDeployedTheorems(factory));
+			}
+		}
+		return map;
+	}
+
 
 	public boolean managingMathExtensionsProject() {
 		return DatabaseUtilities.isMathExtensionsProject(project);
@@ -245,5 +276,4 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		}
 		return new ISCTheoryRoot[0];
 	}
-
 }

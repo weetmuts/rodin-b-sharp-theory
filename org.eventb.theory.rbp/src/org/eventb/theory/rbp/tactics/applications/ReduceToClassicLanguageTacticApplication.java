@@ -26,9 +26,9 @@ import org.eventb.ui.prover.ITacticApplication;
  *
  */
 public class ReduceToClassicLanguageTacticApplication implements ITacticApplication {
-
-	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbP2Classic";
 	
+	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbP2Classic";
+
 	@Override
 	public String getTacticID() {
 		return TACTIC_ID;

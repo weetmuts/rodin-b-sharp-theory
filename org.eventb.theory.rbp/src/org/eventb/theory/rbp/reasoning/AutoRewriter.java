@@ -103,6 +103,13 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 		return result;
 	}
 	
+	/**
+	 * Returns the list of rewrite rules to apply.
+	 * 
+	 * <p> Override this method to specify different list of rules.
+	 * @param original
+	 * @return
+	 */
 	protected List<IDeployedRewriteRule> getRules(Formula<?> original){
 		List<IDeployedRewriteRule> rules = (original instanceof Expression ? 
 				manager.getExpressionRewriteRules(true, ((Expression)original).getClass(), context):
@@ -110,6 +117,12 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 		return rules;
 	}
 	
+	/**
+	 * Adds the given name as a used theory.
+	 * 
+	 * <p> Override this to use a different list for storage.
+	 * @param name
+	 */
 	protected void addUsedTheory(String name){
 		if(!AutoRewriteReasoner.usedAutoTheories.contains(name))
 			AutoRewriteReasoner.usedAutoTheories.add(name);

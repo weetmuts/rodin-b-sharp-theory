@@ -8,16 +8,19 @@
 package org.eventb.theory.rbp.rulebase;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 
 /**
  * 
@@ -45,6 +48,8 @@ public interface IProjectBaseEntry {
 	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, IEventBRoot root,FormulaFactory factory);
 	
 	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IEventBRoot root, FormulaFactory factory);
+	
+	public Map<IExtensionRulesSource, List<IDeployedTheorem>> getTheorems(IEventBRoot root, FormulaFactory factory);
 	
 	public boolean managingMathExtensionsProject();
 	

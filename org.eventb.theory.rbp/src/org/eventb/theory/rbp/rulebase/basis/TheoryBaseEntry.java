@@ -38,6 +38,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	 */
 	private List<IDeployedRewriteRule> rewriteRules;
 	private List<IDeployedInferenceRule> inferenceRules;
+	private List<IDeployedTheorem> theorems;
 
 	/**
 	 * Mapped automatic rules by runtime class of formula.
@@ -73,6 +74,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
 		rewriteRules = file.getRewriteRules();
 		inferenceRules = file.getInferenceRules();
+		theorems = file.getTheorems();
 		// clear all
 		autoExpRewRules.clear();
 		autoPredRewRules.clear();
@@ -158,6 +160,13 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	public void setHasChanged(boolean hasChanged) {
 		this.hasChanged = hasChanged;
 	}
+	
+	@Override
+	public List<IDeployedTheorem> getDeployedTheorems(FormulaFactory factory) {
+		checkStatus(factory);
+		return theorems;
+	}
+
 
 	@Override
 	public List<IDeployedRewriteRule> getExpressionRewriteRules(boolean automatic, Class<? extends Expression> clazz, FormulaFactory factory) {
@@ -279,5 +288,4 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	private <E> List<E> getList(List<E> list) {
 		return new ArrayList<E>(list);
 	}
-
 }

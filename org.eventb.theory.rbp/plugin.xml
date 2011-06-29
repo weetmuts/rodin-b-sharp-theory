@@ -66,42 +66,22 @@
          point="org.eventb.ui.proofTactics">
       <tactic
             icon="icons/pending.gif"
-            id="RbP0g"
+            id="RbP0"
             interrupt="true"
             name="%rbpRewTactics"
             priority="5"
             tacticProvider="org.eventb.theory.rbp.tactics.RewritesManualTactic"
-            target="goal"
-            tooltip="%applyRew">
-      </tactic>
-       <tactic
-            icon="icons/pending.gif"
-            id="RbP0h"
-            interrupt="true"
-            name="%rbpRewTactics"
-            priority="5"
-            tacticProvider="org.eventb.theory.rbp.tactics.RewritesManualTactic"
-            target="hypothesis"
+            target="any"
             tooltip="%applyRew">
       </tactic>
       <tactic
             icon="icons/thyDep.gif"
-            id="RbP1g"
+            id="RbP1"
             interrupt="true"
             name="%rbpInfTactics"
             priority="5"
             tacticProvider="org.eventb.theory.rbp.tactics.InferenceManualTactic"
-            target="goal"
-            tooltip="%applyInf">
-      </tactic>
-       <tactic
-            icon="icons/thyDep.gif"
-            id="RbP1h"
-            interrupt="true"
-            name="%rbpInfTactics"
-            priority="5"
-            tacticProvider="org.eventb.theory.rbp.tactics.InferenceManualTactic"
-            target="hypothesis"
+            target="any"
             tooltip="%applyInf">
       </tactic>
        <tactic
@@ -110,10 +90,22 @@
              interrupt="true"
              name="%reduceToClassicTactic"
              priority="3"
-             tacticProvider="org.eventb.theory.rbp.tactics.ReduceToClassicLanguageTacticProvider"
+             tacticProvider="org.eventb.theory.rbp.tactics.ReduceToClassicLanguageTactic"
              target="global"
              toolbar="org.eventb.ui.sequentToolbar"
              tooltip="%reduceToClassicLang">
+       </tactic>
+       <tactic
+             icon="icons/thyDep.gif"
+             id="RbPtheorems"
+             interrupt="false"
+             name="%insertTheoremTactic"
+             priority="4"
+             skipPostTactic="false"
+             tacticProvider="org.eventb.theory.rbp.tactics.TheoremInstantiationTactic"
+             target="global"
+             toolbar="org.eventb.ui.sequentToolbar"
+             tooltip="%insertTheorem">
        </tactic>
    </extension>
    <extension

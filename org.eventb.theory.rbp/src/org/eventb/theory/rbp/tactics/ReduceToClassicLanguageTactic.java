@@ -23,7 +23,7 @@ import org.eventb.ui.prover.ITacticProvider;
  * @author maamria
  * @since 1.0
  */
-public class ReduceToClassicLanguageTacticProvider implements ITacticProvider {
+public class ReduceToClassicLanguageTactic implements ITacticProvider {
 
 	@Override
 	public List<ITacticApplication> getPossibleApplications(IProofTreeNode node, Predicate hyp, String globalInput) {
