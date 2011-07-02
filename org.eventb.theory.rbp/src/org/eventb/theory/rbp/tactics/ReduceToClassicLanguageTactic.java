@@ -28,8 +28,8 @@ public class ReduceToClassicLanguageTactic implements ITacticProvider {
 	@Override
 	public List<ITacticApplication> getPossibleApplications(IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node != null && node.isOpen()) {
-				ITacticApplication appli = new ReduceToClassicLanguageTacticApplication();
-				return singletonList(appli);
+			ITacticApplication appli = new ReduceToClassicLanguageTacticApplication();
+			return singletonList(appli);
 		}
 		return new ArrayList<ITacticApplication>();
 	}

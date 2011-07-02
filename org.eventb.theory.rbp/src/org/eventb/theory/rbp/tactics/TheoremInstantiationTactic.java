@@ -7,40 +7,30 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics;
 
+import static java.util.Collections.singletonList;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.theory.rbp.reasoning.RewritesSelector;
-import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.rulebase.basis.POContext;
-import org.eventb.ui.prover.DefaultTacticProvider;
+import org.eventb.theory.rbp.tactics.applications.TheoremInstantiationTacticApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
 
 /**
- * 
+ * A tactic provider that enables instantiating and adding polymorphic theorems.
  * @author maamria
  *
  */
-public class TheoremInstantiationTactic extends DefaultTacticProvider implements ITacticProvider {
+public class TheoremInstantiationTactic implements ITacticProvider{
 
-	public List<ITacticApplication> getPossibleApplications(
-			IProofTreeNode node, Predicate hyp, String globalInput) {
-		if (node.getProofTree().getOrigin() instanceof IProofAttempt){
-			IProofAttempt attempt = (IProofAttempt) node.getProofTree().getOrigin();
-			IPOContext poContext = new POContext(
-					(IEventBRoot) attempt.getComponent().getPORoot());
-			boolean isGoal = hyp == null;
-			Predicate pred = ( isGoal ? node.getSequent().goal() : hyp);
-			return pred.inspect(new RewritesSelector(pred, isGoal, poContext));
+	@Override
+	public List<ITacticApplication> getPossibleApplications(IProofTreeNode node, Predicate hyp, String globalInput) {
+		if (node != null && node.isOpen()) {
+			ITacticApplication appli = new TheoremInstantiationTacticApplication();
+			return singletonList(appli);
 		}
-		// Contextual information needed
 		return new ArrayList<ITacticApplication>();
-		
 	}
-	
 }

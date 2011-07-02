@@ -34,4 +34,9 @@ public class DeployedTheorem implements IDeployedTheorem{
 		return theorem;
 	}
 
+	@Override
+	public boolean hasTypeParameters() {
+		return theorem.getGivenTypes().size() != 0;
+	}
+
 }

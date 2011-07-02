@@ -56,8 +56,16 @@ public class BaseManager implements IElementChangedListener {
 	
 	public Map<IRodinProject,Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(IPOContext context, FormulaFactory factory){
 		IEventBRoot parentRoot = context.getParentRoot();
-		check(parentRoot.getRodinProject());
-		return null;
+		IRodinProject rodinProject = parentRoot.getRodinProject();
+		check(rodinProject);
+		Map<IRodinProject,Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new
+			LinkedHashMap<IRodinProject, Map<IExtensionRulesSource,List<IDeployedTheorem>>>();
+		map.put(DatabaseUtilities.getDeploymentProject(new NullProgressMonitor()), 
+				mathExtensionsProjectEntry.getTheorems(parentRoot, factory));
+		if (!context.inMathExtensions()){
+			map.put(rodinProject, projectEntries.get(rodinProject).getTheorems(parentRoot, factory));
+		}
+		return map;
 	}
 	
 	/**

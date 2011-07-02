@@ -19,4 +19,6 @@ public interface IDeployedTheorem {
 	public String getName();
 	
 	public Predicate getTheorem();
+	
+	public boolean hasTypeParameters();
 }

@@ -28,6 +28,11 @@
             id="reduceToClassicLanguageReasoner"
             name="%reduceToClassicLanguageReasoner">
       </reasoner>
+      <reasoner
+            class="org.eventb.theory.rbp.reasoners.InstantiateTheoremReasoner"
+            id="instantiateTheoremReasoner"
+            name="%instantiateTheoremReasoner">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -101,7 +106,6 @@
              interrupt="false"
              name="%insertTheoremTactic"
              priority="4"
-             skipPostTactic="false"
              tacticProvider="org.eventb.theory.rbp.tactics.TheoremInstantiationTactic"
              target="global"
              toolbar="org.eventb.ui.sequentToolbar"
