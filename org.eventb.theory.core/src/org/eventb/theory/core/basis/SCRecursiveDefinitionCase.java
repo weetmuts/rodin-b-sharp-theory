@@ -15,6 +15,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.SCExpressionElement;
 import org.eventb.theory.core.ISCRecursiveDefinitionCase;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;

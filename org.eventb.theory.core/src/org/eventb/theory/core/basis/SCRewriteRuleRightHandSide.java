@@ -19,6 +19,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
+import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;

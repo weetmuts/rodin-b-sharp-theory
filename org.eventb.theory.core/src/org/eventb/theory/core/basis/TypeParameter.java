@@ -9,6 +9,7 @@
 package org.eventb.theory.core.basis;
 
 import org.eventb.theory.core.ITypeParameter;
+import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;

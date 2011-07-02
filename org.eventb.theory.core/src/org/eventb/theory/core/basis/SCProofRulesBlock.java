@@ -11,6 +11,7 @@ import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
+import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.basis;
+package org.eventb.theory.core;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
@@ -38,28 +38,6 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.basis.EventBElement;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
-import org.eventb.theory.core.AstUtilities;
-import org.eventb.theory.core.IAssociativeElement;
-import org.eventb.theory.core.IAutomaticElement;
-import org.eventb.theory.core.ICommutativeElement;
-import org.eventb.theory.core.ICompleteElement;
-import org.eventb.theory.core.IDefinitionalElement;
-import org.eventb.theory.core.IDescriptionElement;
-import org.eventb.theory.core.IFormulaElement;
-import org.eventb.theory.core.IFormulaTypeElement;
-import org.eventb.theory.core.IGivenTypeElement;
-import org.eventb.theory.core.IImportTheoryElement;
-import org.eventb.theory.core.IInductiveArgumentElement;
-import org.eventb.theory.core.IInteractiveElement;
-import org.eventb.theory.core.INotationTypeElement;
-import org.eventb.theory.core.IOperatorGroupElement;
-import org.eventb.theory.core.IReasoningTypeElement;
-import org.eventb.theory.core.ISCFormulaElement;
-import org.eventb.theory.core.ISCGivenTypeElement;
-import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.ISCTypeElement;
-import org.eventb.theory.core.ITypeElement;
-import org.eventb.theory.core.IValidatedElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

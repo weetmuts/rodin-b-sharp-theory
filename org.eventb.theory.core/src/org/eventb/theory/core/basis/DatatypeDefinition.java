@@ -10,6 +10,7 @@ package org.eventb.theory.core.basis;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.ITypeArgument;
+import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;

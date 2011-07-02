@@ -23,6 +23,7 @@ import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
+import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;

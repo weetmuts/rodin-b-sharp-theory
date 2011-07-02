@@ -10,6 +10,7 @@ package org.eventb.theory.core.basis;
 import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.ISCRecursiveDefinitionCase;
 import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
+import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
