@@ -39,8 +39,13 @@ public class DeployedObjectsFactory {
 			List<IDeployedTheorem> result = new ArrayList<IDeployedTheorem>();
 			ISCTheorem[] scTheorems = source.getTheorems();
 			for (ISCTheorem scTheorem : scTheorems){
+				if (!scTheorem.hasLabel() || !scTheorem.hasPredicateString() ||
+						!scTheorem.hasOrderAttribute()){
+					continue;
+				}
 				IDeployedTheorem deployedTheorem = 
-					new DeployedTheorem(scTheorem.getLabel(), scTheorem.getPredicate(factory, typeEnvironment));
+					new DeployedTheorem(scTheorem.getLabel(), 
+							scTheorem.getPredicate(factory, typeEnvironment), scTheorem.getOrder());
 				result.add(deployedTheorem);
 			}
 			return result;

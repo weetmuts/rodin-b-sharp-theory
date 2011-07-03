@@ -14,11 +14,13 @@ import org.eventb.core.ast.Predicate;
  * @author maamria
  *
  */
-public interface IDeployedTheorem {
+public interface IDeployedTheorem extends Comparable<IDeployedTheorem> {
 
 	public String getName();
 	
 	public Predicate getTheorem();
 	
 	public boolean hasTypeParameters();
+	
+	public int getOrder();
 }

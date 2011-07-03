@@ -11,13 +11,18 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
+import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
 
 /**
  * An implementation of a more structured binder that can be used when
  * associative matching is involved.
+ * 
+ * <p> Complex binders can be used to bind the right hand side of a rewrite rule with
+ * associative complement potentially playing a part.
  * 
  * <p> This class is not intended to be sub-classed by clients.
  * 
@@ -25,10 +30,12 @@ import org.eventb.core.pm.basis.engine.MatchingUtilities;
  * @author maamria
  * 
  */
-public final class ComplexBinder extends SimpleBinder {
+public final class ComplexBinder {
 
+	FormulaFactory factory;
+	
 	public ComplexBinder(FormulaFactory factory) {
-		super(factory);
+		this.factory =  factory;
 	}
 
 	/**
@@ -44,7 +51,34 @@ public final class ComplexBinder extends SimpleBinder {
 	 * @return the resultant formula
 	 */
 	public Formula<?> bind(Formula<?> pattern, IBinding binding, boolean includeComplement) {
-		Formula<?> formula = super.bind(pattern, binding);
+		if (binding == null) {
+			return null;
+		}
+		Formula<?> resultFormula = MatchingUtilities.parseFormula(
+				pattern.toString(), pattern instanceof Expression, factory);
+		Formula<?> finalResultFormula = resultFormula.rewrite(
+				new PredicateVariableSubstituter(binding.getPredicateMappings(), factory));
+		finalResultFormula.typeCheck(binding.getTypeEnvironment());
+		// if the result is still not type-checked (e.g., dealing with atomic expression like {})
+		if(!finalResultFormula.isTypeChecked()){
+			// get the formula of the binding
+			Formula<?> matchedFormula = binding.getFormula();
+			// this should only happen with expressions
+			if (matchedFormula instanceof Expression){
+				// make a relational predicate with the formula = finalResultFormula to 
+				// facilitate type checking
+				RelationalPredicate relationalPredicate = 
+					factory.makeRelationalPredicate(Formula.EQUAL, 
+							(Expression)finalResultFormula, 
+							(Expression)matchedFormula, null);
+				// type check
+				relationalPredicate.typeCheck(binding.getTypeEnvironment());
+				// we should have a type-checked version of the final result
+				finalResultFormula = relationalPredicate.getLeft();
+			}
+		}
+		// make the substitutions
+		Formula<?> formula = finalResultFormula.substituteFreeIdents(binding.getExpressionMappings(), factory);
 		if (!includeComplement) {
 			return formula;
 		}

@@ -81,8 +81,6 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 										theory)) {
 
 							DatabaseUtilities.cleanUp(theory.getDeployedTheoryRoot());
-							TheoryUIUtils.closeEditorsFor(theory.getComponentName(), 
-									theory.getRodinProject().getElementName());
 						}
 
 					}

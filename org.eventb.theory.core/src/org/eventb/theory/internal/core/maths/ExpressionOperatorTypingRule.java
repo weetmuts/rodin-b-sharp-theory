@@ -52,6 +52,23 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule imp
 	public String toString() {
 		return super.toString() + "=>" + resultantType.toString();
 	}
+	// FIXED BUG : equality of typing rules for expressions
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (o == null || !(o instanceof ExpressionOperatorTypingRule)) {
+			return false;
+		}
+		ExpressionOperatorTypingRule rule = (ExpressionOperatorTypingRule) o;
+		return super.equals(rule) && isAssociative == rule.isAssociative &&
+			resultantType.equals(rule.resultantType);
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode() + 7 *resultantType.hashCode() + 11 * (new Boolean(isAssociative)).hashCode();
+	}
 
 	@Override
 	public boolean verifyType(Type proposedType, Expression[] childExprs, Predicate[] childPreds) {

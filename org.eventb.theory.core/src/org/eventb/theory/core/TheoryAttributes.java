@@ -76,4 +76,7 @@ public class TheoryAttributes {
 	public static IAttributeType.Boolean OUTDATED_ATTRIBUTE = RodinCore
 			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".outdated");
 	
+	public static IAttributeType.Integer ORDER_ATTRIBUTE = RodinCore
+		.getIntegerAttrType(TheoryPlugin.PLUGIN_ID + ".order");
+	
 }

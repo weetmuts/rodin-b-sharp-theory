@@ -16,6 +16,11 @@ import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
 /**
  * An implementation of a simple binder.
  * 
+ * <p> This binder can be used to apply a binding (result of matching process) on a pattern.
+ * 
+ * <p> Simple binders can be used to : (1) bind a condition of a rewrite rule, (2) bind given/infers 
+ * of inference rules.
+ * 
  * <p> This class is not intended to be extended by clients.
  * 
  * @since 1.0
@@ -32,6 +37,8 @@ public class SimpleBinder {
 
 	/**
 	 * Returns the formula resulting from binding the pattern by the given binding.
+	 * 
+	 * <p> A type-check is attempted on the resultant formula, but clients should double-check.
 	 * 
 	 * @param pattern
 	 *            the pattern

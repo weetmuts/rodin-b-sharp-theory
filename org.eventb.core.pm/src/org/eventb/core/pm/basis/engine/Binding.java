@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -40,6 +41,8 @@ import org.eventb.core.pm.IBinding;
  */
 public final class Binding implements IBinding {
 
+	private Formula<?> formula;
+	private Formula<?> pattern;
 	// mappings stores
 	private Map<FreeIdentifier, Expression> binding;
 	private Map<FreeIdentifier, Type> typeParametersInstantiations;
@@ -55,18 +58,47 @@ public final class Binding implements IBinding {
 	private AssociativeExpressionComplement expComplement;
 	private AssociativePredicateComplement predComplement;
 
-	public Binding(
+	/**
+	 * Creates a binding that will contain match information between <code>formula</code> and
+	 * <code>pattern</code>. It is possible to specify whether a complete or partial match
+	 * is acceptable. This is relevant when matching associative formulae.
+	 * @param formula the formula to match
+	 * @param pattern the pattern to match against
+	 * @param isPartialMatchAcceptable whether a partial match is acceptable
+	 * @param factory the formula factory
+	 */
+	public Binding(Formula<?> formula, Formula<?> pattern,
 			boolean isPartialMatchAcceptable, FormulaFactory factory) {
+		this.formula = formula;
+		this.pattern =  pattern;
 		this.isPartialMatchAcceptable = isPartialMatchAcceptable;
+		this.factory = factory;
 		binding = new HashMap<FreeIdentifier, Expression>();
 		typeParametersInstantiations = new HashMap<FreeIdentifier, Type>();
 		predBinding = new HashMap<PredicateVariable, Predicate>();
-		this.factory = factory;
 		typeEnvironment = factory.makeTypeEnvironment();
+	}
+	
+	/**
+	 * Creates a binding that can be used as an accumulator of other bindings.
+	 * @param factory the formula factory
+	 */
+	public Binding(FormulaFactory factory) {
+		this(null, null, false, factory);
 	}
 
 	public boolean isImmutable() {
 		return isImmutable;
+	}
+	
+	@Override
+	public Formula<?> getFormula() {
+		return formula;
+	}
+
+	@Override
+	public Formula<?> getPattern() {
+		return pattern;
 	}
 
 	public String toString() {

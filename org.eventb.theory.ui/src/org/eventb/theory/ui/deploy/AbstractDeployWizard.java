@@ -90,7 +90,6 @@ public abstract class AbstractDeployWizard extends Wizard {
 		} else {
 			MessageDialog.openInformation(shell, "Success", Messages.bind(deploy_deploySuccess, "'" + theoryName + "'"));
 		}
-		TheoryUIUtils.closeEditorsFor(theoryName, projectName);
 		return true;
 	}
 }

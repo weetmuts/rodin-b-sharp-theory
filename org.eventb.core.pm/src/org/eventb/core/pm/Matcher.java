@@ -38,7 +38,7 @@ public final class Matcher {
 	 * @return the binding, or <code>null</code> if matching failed
 	 */
 	public IBinding match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch) {
-		IBinding initialBinding = matchingFactory.createBinding(acceptPartialMatch, factory);
+		IBinding initialBinding = matchingFactory.createBinding(form, pattern,acceptPartialMatch, factory);
 		if (matchingFactory.match(form, pattern, initialBinding)){
 			initialBinding.makeImmutable();
 			return initialBinding;

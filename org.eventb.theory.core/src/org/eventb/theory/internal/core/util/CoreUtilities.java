@@ -452,7 +452,10 @@ public class CoreUtilities {
 		Set<ISCTheoryRoot> hierarchyToIgnore = DatabaseUtilities.importClosure(hierarchyToIgnoreLeaf);
 		Set<String> names = DatabaseUtilities.getNames(hierarchyToIgnore);
 		IRodinProject project = hierarchyToIgnoreLeaf.getRodinProject();
-		IDeployedTheoryRoot[] deployedRoots = project.getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE);
+		IDeployedTheoryRoot[] deployedRoots = 
+			DatabaseUtilities.getDeployedTheories(project, 
+					DatabaseUtilities.getExistingDeployedTheoriesFilter());
+		
 		Map<String, Set<String>> deployedMap = new TreeMap<String, Set<String>>();
 		for (IDeployedTheoryRoot root : deployedRoots) {
 			if (!names.contains(root.getComponentName())) {

@@ -160,13 +160,27 @@ public final class MatchingFactory {
 	}
 	
 	/**
-	 * Returns an empty binding to start a matching process.
+	 * Returns an empty binding to start a matching process between <code>formula</code> and
+	 * <code>pattern</code>.
+	 * @param formula the formula
+	 * @param pattern the pattern
 	 * @param isPartialMatchAcceptable whether a partial match is acceptable
 	 * @param factory the formula factory
 	 * @return an empty binding
 	 */
-	public final IBinding createBinding(boolean isPartialMatchAcceptable, FormulaFactory factory){
-		return new Binding(isPartialMatchAcceptable, factory);
+	public final IBinding createBinding(Formula<?> formula, Formula<?> pattern,
+			boolean isPartialMatchAcceptable, FormulaFactory factory){
+		return new Binding(formula, pattern, isPartialMatchAcceptable, factory);
+	}
+	
+	/**
+	 * Returns an empty binding that can be used to accumulate other bindings.
+	 * <p> This binding is independent of the formula and pattern it matches if any.
+	 * @param factory the formula factory
+	 * @return an empty binding
+	 */
+	public final IBinding createBinding(FormulaFactory factory){
+		return new Binding(factory);
 	}
 	
 	private IExpressionMatcher getExpressionMatcher(Class<? extends Expression> clazz){

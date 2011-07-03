@@ -63,6 +63,7 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 			if (labelSymbolInfos[i] != null && !labelSymbolInfos[i].hasError()) {
 				scTheorems[i] = createSCTheorem(targetRoot, index++, labelSymbolInfos[i],
 						formulaElements[i], monitor);
+				scTheorems[i].setOrder(i, monitor);
 			}
 			else {
 				theoryAccuracyInfo.setNotAccurate();

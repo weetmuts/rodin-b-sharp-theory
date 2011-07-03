@@ -99,6 +99,8 @@ public final class TheoryDeployer implements ITheoryDeployer {
 		// check for failed dependencies and copy across the satisfied dependencies (use directives) 
 		{
 			if (!setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot)) {
+				if(targetFile.exists())
+					targetFile.delete(true, monitor);
 				return false;
 			}
 		}

@@ -115,6 +115,11 @@
             kind="boolean"
             name="%outdatedAttr">
       </attributeType>
+      <attributeType
+            id="order"
+            kind="integer"
+            name="%orderAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">

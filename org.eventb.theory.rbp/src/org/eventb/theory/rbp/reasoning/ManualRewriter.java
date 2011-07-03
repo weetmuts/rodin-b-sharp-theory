@@ -13,6 +13,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.ComplexBinder;
 import org.eventb.core.pm.IBinding;
+import org.eventb.core.pm.SimpleBinder;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -27,12 +28,9 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  *
  */
 public class ManualRewriter extends AbstractRulesApplyer{
-
-	private ComplexBinder binder;
 	
 	public ManualRewriter(IPOContext context){
 		super(context);
-		this.binder = new ComplexBinder(context.getFormulaFactory());
 	}
 	
 	/**
@@ -82,16 +80,20 @@ public class ManualRewriter extends AbstractRulesApplyer{
 		// may need to make an extra antecedent if rule incomplete
 		List<Predicate> allConditions = (doesNotRequiresAdditionalAntecedents ? null : new ArrayList<Predicate>());
 		int index = 0;
+		// binder for the condition
+		SimpleBinder simpleBinder = new SimpleBinder(factory);
+		// binder for the rhs
+		ComplexBinder complexBinder =  new ComplexBinder(factory);
 		// for each right hand side make an antecedent
 		for (IDeployedRuleRHS rhs : ruleRHSs) {
 			// get the condition
-			Predicate condition = (Predicate) binder.bind(rhs.getCondition(), binding, false);
+			Predicate condition = (Predicate) simpleBinder.bind(rhs.getCondition(), binding);
 			// if rule is incomplete keep it till later as we will make negation
 			// of disjunction of all conditions
 			if (!doesNotRequiresAdditionalAntecedents)
 				allConditions.add(condition);
 			// get the new subformula
-			Formula<?> rhsFormula = binder.bind(rhs.getRHSFormula(), binding, true);
+			Formula<?> rhsFormula = complexBinder.bind(rhs.getRHSFormula(), binding, true);
 			// apply the rewriting at the given position
 			Predicate newPred = predicate.rewriteSubFormula(position, rhsFormula, factory);
 			Predicate goal = (isGoal ? newPred : null);

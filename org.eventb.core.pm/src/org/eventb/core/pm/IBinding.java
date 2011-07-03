@@ -3,6 +3,7 @@ package org.eventb.core.pm;
 import java.util.Map;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -32,6 +33,18 @@ import org.eventb.core.ast.Type;
  *
  */
 public interface IBinding{
+	
+	/**
+	 * Returns the formula to match.
+	 * @return the formula
+	 */
+	public Formula<?> getFormula();
+	
+	/**
+	 * Returns the formula against which to match.
+	 * @return the pattern
+	 */
+	public Formula<?> getPattern();
 	
 	/**
 	 * Returns whether this binding is immutable.

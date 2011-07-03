@@ -54,6 +54,9 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 				FormulaFactory newFactory = factory.withExtensions(
 						GeneralUtilities.singletonSet(formulaExtension));
 				repository.setFormulaFactory(newFactory);
+				repository.setTypeEnvironment(
+						MathExtensionsUtilities.getTypeEnvironmentForFactory(
+								repository.getTypeEnvironment(), newFactory));
 				factory = repository.getFormulaFactory();
 				scNewOperatorDefinition.setHasError(false, monitor);
 				scNewOperatorDefinition.setOperatorGroup(formulaExtension.getGroupId(), monitor);

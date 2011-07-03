@@ -61,7 +61,7 @@ public class MatchStack<F extends Formula<F>> {
 	}
 
 	public IBinding getFinalBinding() {
-		IBinding internalBinding = matcher.getMatchingFactory().createBinding(false, matcher.getFactory());
+		IBinding internalBinding = matcher.getMatchingFactory().createBinding(matcher.getFactory());
 		Enumeration<Match<F>> elements = matchesStack.elements();
 		while (elements.hasMoreElements()) {
 			internalBinding.insertBinding(elements.nextElement().getBinding());

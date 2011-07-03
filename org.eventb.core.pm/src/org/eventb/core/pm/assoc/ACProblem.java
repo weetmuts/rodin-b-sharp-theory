@@ -31,7 +31,7 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 		if (!isSolvable) {
 			return null;
 		}
-		IBinding initialBinding = matcher.getMatchingFactory().createBinding(false, matcher.getFactory());
+		IBinding initialBinding = matcher.getMatchingFactory().createBinding(matcher.getFactory());
 		MatchStack<F> matchStack = new MatchStack<F>(matcher);
 		if (searchSpace.size() > 0) {
 			MatchEntry<F> matchEntry = searchSpace.get(0);
@@ -58,7 +58,8 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 			IndexedFormula<F> var = variables.get(i);
 			putVariableMapping(var, allFormulae.get(i), initialBinding);
 		}
-		putVariableMapping(variables.get(sizeOfVariables-1), allFormulae.get(sizeOfVariables-1), initialBinding);
+		if(sizeOfVariables > 0)
+			putVariableMapping(variables.get(sizeOfVariables-1), allFormulae.get(sizeOfVariables-1), initialBinding);
 		return initialBinding;
 	}
 	

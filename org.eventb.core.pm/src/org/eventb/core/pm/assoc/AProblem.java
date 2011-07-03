@@ -32,7 +32,7 @@ public abstract class AProblem<F extends Formula<F>> extends AssociativityProble
 		if (!isSolvable) {
 			return null;
 		}
-		IBinding initialBinding = matcher.getMatchingFactory().createBinding(false, matcher.getFactory());
+		IBinding initialBinding = matcher.getMatchingFactory().createBinding(matcher.getFactory());
 		MatchStack<F> matchStack = new MatchStack<F>(matcher);
 		if (searchSpace.size() > 0) {
 			MatchEntry<F> matchEntry = searchSpace.get(0);

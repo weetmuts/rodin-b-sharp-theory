@@ -5,10 +5,11 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            file="toc.xml">
+            file="html/eclipse-toc.xml"
+            primary="true">
       </toc>
       <toc
-            file="theoryToc.xml"
+            file="html/index.html"
             primary="true">
       </toc>
    </extension>
