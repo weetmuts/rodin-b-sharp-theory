@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,21 +32,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.ITypeParameter;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.ui.editor.TheoryEditor;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
+import org.eventb.ui.EventBUIPlugin;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
@@ -401,31 +402,6 @@ public class TheoryUIUtils {
 	}
 
 	/**
-	 * Closes any open editors for the given theory.
-	 * 
-	 * @param theoryName
-	 *            the theory name
-	 * @param projectName
-	 *            the project
-	 */
-	public static void closeEditorsFor(String theoryName, String projectName) {
-		IWorkbench workbench = TheoryUIPlugIn.getDefault().getWorkbench();
-		IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
-				.getActivePage();
-		IEditorReference[] parts = page.findEditors(
-				new FileEditorInput(
-						DatabaseUtilities.getTheory(
-								theoryName, 
-								DatabaseUtilities.getRodinProject(projectName)).getRodinFile().getResource()), 
-						null,
-						IWorkbenchPage.MATCH_INPUT);
-		for (IEditorReference ref : parts) {
-			IEditorPart part = (IEditorPart) ref.getPart(true);
-			part.getSite().getPage().closeEditor(part, false);
-		}
-	}
-
-	/**
 	 * Returns the image for explorer display of the given theory.
 	 * <p> Theories that have deployed counterparts have a different icon.
 	 * @param root the theory root
@@ -445,5 +421,26 @@ public class TheoryUIUtils {
 			}
 		}
 		return TheoryImage.getImage(ITheoryImages.IMG_THEORY);
+	}
+	
+	/**
+	 * Close the open editor for a particular Rodin File
+	 * 
+	 * @param file
+	 *            A Rodin File
+	 * @throws PartInitException
+	 *             Exception when closing the editor
+	 */
+	public static void closeOpenedEditor(IRodinFile file) throws PartInitException {
+		IEditorReference[] editorReferences = EventBUIPlugin.getActivePage().getEditorReferences();
+		for (int j = 0; j < editorReferences.length; j++) {
+			IFile inputFile = (IFile) editorReferences[j].getEditorInput().getAdapter(IFile.class);
+
+			if (file.getResource().equals(inputFile)) {
+				IEditorPart editor = editorReferences[j].getEditor(true);
+				IWorkbenchPage page = EventBUIPlugin.getActivePage();
+				page.closeEditor(editor, false);
+			}
+		}
 	}
 }
