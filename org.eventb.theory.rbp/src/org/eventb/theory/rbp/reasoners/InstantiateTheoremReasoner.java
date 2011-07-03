@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -78,13 +80,13 @@ public class InstantiateTheoremReasoner extends SingleStringInputReasoner implem
 		Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 		addedHyps.add(theoremPredicate);
 		Predicate wdPredicate = theoremPredicate.getWDPredicate(factory);
+		boolean addWd = false;
 		if(!wdPredicate.equals(ProverUtilities.BTRUE)){
 			addedHyps.add(wdPredicate);
+			addWd = true;
 		}
-		// make the antecedent
-		IAntecedent antecedent = ProverFactory.makeAntecedent(null, addedHyps,
-				ProverFactory.makeSelectHypAction(Collections.singleton(theoremPredicate)));
-		// make the proof rule
+		// make the antecedent : no free idents / no hyp actions
+		IAntecedent antecedent = makeAntecedent(null, addedHyps, addWd ? Collections.singleton(wdPredicate): null, null, null);
 		return ProverFactory.makeProofRule(this, stringInput, null, DISPLAY_NAME, antecedent);
 	}
 
