@@ -6,6 +6,9 @@ import org.eventb.core.ast.Expression;
 /**
  * <p>Common protocol for an expression matcher.</p>
  * 
+ * <p> An expression matcher matches a formula and a pattern and if successful augments a binding
+ * with suitable mappings.
+ * 
  * <p> This interface is not intended to be implemented by clients.
  * 
  * @author maamria

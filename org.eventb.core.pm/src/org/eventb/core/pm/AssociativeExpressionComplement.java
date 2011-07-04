@@ -5,7 +5,7 @@ import org.eventb.core.ast.Expression;
 /**
  * An implementation of a complement to an associative expression.
  * 
- * <p> This class is not intended to be sub-classed by clients.
+ * <p> This class is not intended to be extended by clients.
  * @author maamria
  * @since 1.0
  *

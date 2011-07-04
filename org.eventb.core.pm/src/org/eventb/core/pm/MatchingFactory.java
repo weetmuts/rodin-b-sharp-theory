@@ -52,10 +52,11 @@ import org.eventb.core.pm.matchers.pred.UnaryPredicateMatcher;
 
 /**
  * A matching factory that has the following capabilities:
- * <p>1- <u> Return a matcher</u> for a given formula class.
- * <p>2-<u> Create a fresh binding </u> when starting a matching process.
+ * <p>1- Return a matcher for a given formula class.
+ * <p>2-Create a fresh binding when starting a matching process.
  * 
- * <p> Clients need not use this class directly. An instance is available as part of the matchers hierarchy.
+ * <p> Clients need not use this class directly. 
+ * An instance is available as part of the matchers hierarchy class definition.
  * @since 1.0
  * @author maamria
  *
@@ -122,18 +123,23 @@ public final class MatchingFactory {
 			expressionPatternMatchersRegistry = ExpressionPatternMatchersRegistry.getMatchersRegistry();
 			predicatePatternMatchersRegistry = PredicatePatternMatchersRegistry.getMatchersRegistry();
 		}
+		// initial binding cannot be null
 		if(initialBinding == null){
 			throw new IllegalArgumentException("Matching started without a binding object.");
 		}
+		// if they are not of the same class, do not bother
 		if(!MatchingUtilities.sameClass(formula, pattern)){
 			return false;
 		}
-		
+		// case Expression : use an expression matcher
 		if(formula instanceof Expression){
+			// get the matcher from the map
 			IExpressionMatcher expMatcher = getExpressionMatcher(((Expression)formula).getClass());
+			// override if an extended expression => get it from the registry
 			if (formula instanceof ExtendedExpression){
 				ExtendedExpression extendedExpression = (ExtendedExpression) formula;
 				IExpressionMatcher matcher = expressionPatternMatchersRegistry.getMatcher(extendedExpression.getExtension().getClass());
+				// if we have a suitable matcher
 				if (matcher != null){
 					expMatcher = matcher;
 				}
@@ -141,13 +147,18 @@ public final class MatchingFactory {
 			if (expMatcher == null){
 				return false;
 			}
+			// initiate matching process
 			return expMatcher.match((Expression)formula, (Expression)pattern, initialBinding);
 		}
+		// case Predicate : use a predicate matcher
 		else {
+			// get the matcher from the map
 			IPredicateMatcher predMatcher = getPredicateMatcher(((Predicate)formula).getClass());
+			// override if an extended predicate => get it from the registry
 			if (formula instanceof ExtendedPredicate){
 				ExtendedPredicate extendedPredicate = (ExtendedPredicate) formula;
 				IPredicateMatcher matcher = predicatePatternMatchersRegistry.getMatcher(extendedPredicate.getExtension().getClass());
+				// if we have a suitable matcher
 				if (matcher != null){
 					predMatcher = matcher;
 				}
@@ -155,6 +166,7 @@ public final class MatchingFactory {
 			if (predMatcher == null){
 				return false;
 			}
+			// initiate matching process
 			return predMatcher.match((Predicate)formula, (Predicate) pattern, initialBinding);
 		}
 	}
@@ -191,6 +203,10 @@ public final class MatchingFactory {
 		return PREDICATE_MATCHERS.get(clazz);
 	}
 	
+	/**
+	 * Returns the singleton instance of the factory.
+	 * @return the singleton matching factory
+	 */
 	public static MatchingFactory getInstance(){
 		if (instance == null){
 			instance = new MatchingFactory();

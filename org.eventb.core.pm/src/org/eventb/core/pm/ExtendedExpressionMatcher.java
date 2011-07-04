@@ -13,7 +13,10 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 
 /**
  * A basic implementation for an extended expression matcher.
- * <p> This class is intended to be sub-classed by clients.
+ * <p> This class is parameterised on the type of the extension of the operator. Contributors
+ * to the extension point '<code>org.eventb.core.pm.extendedExpressionMatcher</code>' should extend
+ * this class.
+ * <p> This class is intended to be extended by clients.
  * @author maamria
  * @since 1.0
  *

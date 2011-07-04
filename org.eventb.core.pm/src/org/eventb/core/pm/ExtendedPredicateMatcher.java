@@ -13,7 +13,11 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 
 /**
  * A basic implementation for an extended predicate matcher.
- * <p> This class is intended to be sub-classed by clients.
+ * 
+ * <p> This class is parameterised on the type of the extension of the operator. Contributors
+ * to the extension point '<code>org.eventb.core.pm.extendedPredicateMatcher</code>' should extend
+ * this class.
+ * <p> This class is intended to be extended by clients.
  * @author maamria
  * @since 1.0
  *

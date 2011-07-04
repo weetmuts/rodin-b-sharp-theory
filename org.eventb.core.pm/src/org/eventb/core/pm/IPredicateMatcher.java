@@ -5,6 +5,9 @@ import org.eventb.core.ast.Predicate;
 /**
  * <p>Common protocol for a predicate matcher.</p>
  * 
+ * <p> A predicate matcher matches a formula and a pattern and if successful augments a binding
+ * with suitable mappings.
+ * 
  * <p> This interface is not intended to be implemented by clients.
  * @author maamria
  */

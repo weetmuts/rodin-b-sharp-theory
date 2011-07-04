@@ -5,7 +5,7 @@ import org.eventb.core.ast.Predicate;
 /**
  * An implementation of a complement to an associative predicate.
  * 
- * <p> This class is not intended to be sub-classed by clients.
+ * <p> This class is not intended to be extended by clients.
  * @author maamria
  * @since 1.0
  *

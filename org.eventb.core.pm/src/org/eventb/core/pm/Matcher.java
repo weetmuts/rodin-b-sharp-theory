@@ -12,7 +12,9 @@ import org.eventb.core.ast.FormulaFactory;
 
 /**
  * An implementation of a matching engine.
- * <p> All matching processes are initiated from within a matcher.
+ * <p> All matching processes are initiated from within a matcher. Each matcher works with
+ * a an instance of a <code>FormulaFactory</code> to ensure consistency of mathematical
+ * extensions used throughout a matching process.
  * <p> This class is not intended to be sub-classed by clients.
  * @author maamria
  * @since 1.0

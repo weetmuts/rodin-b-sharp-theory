@@ -4,7 +4,8 @@ import org.eventb.core.ast.Predicate;
 
 /**
  * An abstract implementation of a predicate matcher.
- * <p> This class is NOT intended to be sub-classed by clients.
+ * <p> This class is not intended to be extended by clients.
+ * @see ExtendedPredicateMatcher
  * @since 1.0
  * @author maamria
  *
