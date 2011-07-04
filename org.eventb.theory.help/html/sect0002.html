@@ -11,7 +11,7 @@
 <link href="sect0001.html" rel="prev" />
 <link href="index.html" rel="parent" />
 <meta name="aesop" content="information" />
-<title>2 Overview</title>
+<title>2 Capabilities</title>
 </head>
 <body>
 <div class="navigation">
@@ -20,7 +20,7 @@
 <tr>
 <td class="online-navigation"><a title="1 Motivation" href="sect0001.html" rel="prev"><img src="icons/previous.png" border="0" height="32" alt="Previous Page" width="32" /></a></td>
 <td class="online-navigation"><a title="Theory Plug-in User Manual v1.0" href="index.html" rel="parent"><img src="icons/up.png" border="0" height="32" alt="Up One Level" width="32" /></a></td>
-<td class="online-navigation"><a title="Capabilities" href="sect0003.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
+<td class="online-navigation"><a title="Quick Start" href="sect0003.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
 <td align="center" width="100%">Theory Plug-in User Manual v1.0</td>
 <td class="online-navigation"><a href="index.html" rel="contents" title="Table of Contents"><img src="icons/contents.png" border="0" height="32" alt="Contents" width="32" /></a></td>
 <td class="online-navigation"><img src="icons/blank.png" border="0" height="32" alt="" width="32" /></td>
@@ -32,15 +32,23 @@
 <span><b class="navlabel">Up:</b>
 <a href="index.html" class="sectref" rel="parent">Theory Plug-in User Manual v1.0</a></span>
 <span><b class="navlabel">Next:</b>
-<a href="sect0003.html" class="sectref" rel="next">Capabilities</a></span>
+<a href="sect0003.html" class="sectref" rel="next">Quick Start</a></span>
 </div>
 <hr /></div>
 </div>
 
 
 
-<div><h1 id="a0000000003">2 Overview</h1>
-<p> The Theory plug-in is a Rodin extension that provides the facility to define mathematical extensions as well as prover extensions. Mathematical extensions are new operator definitions and new datatype definitions. Operator definitions can be expression operators (e.g., card) and predicate operators (e.g., finite). Datatypes extensions can be used to define enumerated datatypes (e.g., DIRECTION) as well as inductive datatypes (e.g., Tree). The placeholder for mathematical and prover extensions is a Theory construct which looks similar to contexts and machines. A theory can include datatypes definitions, operator definitions, inference and rewrite rules as well as polymorphic theorems. The user manual provides a step-by-step guide to developing and using theories. </p></div>
+<div><h1 id="a0000000003">2 Capabilities</h1>
+<p> The Theory plug-in has the following capabilities: </p><ol class="enumerate">
+<li><p><b class="bfseries"><i class="itshape">Theory Definition:</i></b> </p><ol class="enumerate">
+<li><p>Definition of <b class="bfseries">datatypes</b>: datatypes are defined by supplying the types on which they are polymorphic, a set of constructors one of which has to be a base constructor. Each constructor may or may not have destructors. </p></li><li><p>Definition of <b class="bfseries">operators</b>: operators can be defined as predicate or expression operators. An expression operator is an operator that "returns" an expression, an example existing operator is <img src="images/img-0004.png" alt="$card$" style="vertical-align:0px; 
+                                     width:33px; 
+                                     height:11px" class="math gen" />. A predicate operator is one that "returns" a predicate, an example existing predicate operator is <img src="images/img-0005.png" alt="$finite$" style="vertical-align:-3px; 
+                                     width:44px; 
+                                     height:14px" class="math gen" />. </p></li><li><p>Definition of <b class="bfseries">rewrite rules</b>: rewrite rules are one-directional equalities that can be applied from left to right. The Theory plug-in can be used to define rewrite rules. </p></li><li><p>Definition of <b class="bfseries">inference rules</b>: inference rules can be used to infer new hypotheses, split a goal into sub-goals or discharge sequents. </p></li><li><p>Definition of <b class="bfseries">polymorphic theorems</b>: theorems can be defined and validated once, and can then be imported into sequents of proof obligations if a suitable type instantiation is available. </p></li><li><p><b class="bfseries">Validation of extensions</b>: where appropriate, proof obligations are generated to ensure soundness of extensions. This includes, proof obligations for validity of inference and rewrite rules, as well as proof obligations to validate operator properties such as associativity and commutativity. </p></li>
+</ol></li><li><p><b class="bfseries"><i class="itshape">Theory Deployment:</i></b> this step signifies that a theory is ready for use. Theories can be deployed after they have been optionally validated by the user. It is strongly advisable to discharge all proof obligations before deployment. </p></li>
+</ol><p> Once a theory has been deployed to its designated project, all its extensions (mathematical and prover extensions) can be used in models. In later sections, we show the two different scopes of theory availability. </p></div>
 
 
 
@@ -51,7 +59,7 @@
 <tr>
 <td class="online-navigation"><a title="1 Motivation" href="sect0001.html" rel="prev"><img src="icons/previous.png" border="0" height="32" alt="Previous Page" width="32" /></a></td>
 <td class="online-navigation"><a title="Theory Plug-in User Manual v1.0" href="index.html" rel="parent"><img src="icons/up.png" border="0" height="32" alt="Up One Level" width="32" /></a></td>
-<td class="online-navigation"><a title="Capabilities" href="sect0003.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
+<td class="online-navigation"><a title="Quick Start" href="sect0003.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
 <td align="center" width="100%">Theory Plug-in User Manual v1.0</td>
 <td class="online-navigation"><a href="index.html" rel="contents" title="Table of Contents"><img src="icons/contents.png" border="0" height="32" alt="Contents" width="32" /></a></td>
 <td class="online-navigation"><img src="icons/blank.png" border="0" height="32" alt="" width="32" /></td>
@@ -63,7 +71,7 @@
 <span><b class="navlabel">Up:</b>
 <a href="index.html" class="sectref" rel="parent">Theory Plug-in User Manual v1.0</a></span>
 <span><b class="navlabel">Next:</b>
-<a href="sect0003.html" class="sectref" rel="next">Capabilities</a></span>
+<a href="sect0003.html" class="sectref" rel="next">Quick Start</a></span>
 </div>
 </div>
 <hr />

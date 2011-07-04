@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<map version="2.0">
+<mapID target="toplevelfolder">
+<mapID target="a0000000002" url="sect0001.html" />
+<mapID target="a0000000003" url="sect0002.html" />
+<mapID target="a0000000004" url="sect0003.html" />
+<mapID target="a0000000005" url="sect0004.html" />
+<mapID target="a0000000006" url="sect0005.html" />
+<mapID target="a0000000007" url="sect0006.html" />
+<mapID target="a0000000008" url="sect0007.html" />
+<mapID target="a0000000009" url="sect0008.html" />
+<mapID target="a0000000010" url="sect0009.html" />
+<mapID target="a0000000011" url="sect0010.html" />
+<mapID target="a0000000012" url="sect0011.html" />
+<mapID target="a0000000013" url="sect0012.html" />
+<mapID target="a0000000014" url="sect0013.html" />
+<mapID target="a0000000015" url="sect0014.html" />
+<mapID target="a0000000016" url="sect0015.html" />
+<mapID target="a0000000017" url="sect0016.html" />
+<mapID target="a0000000018" url="sect0017.html" />
+<mapID target="a0000000019" url="sect0018.html" />
+<mapID target="a0000000020" url="sect0019.html" />
+<mapID target="a0000000021" url="sect0020.html" />
+<mapID target="a0000000022" url="sect0021.html" />
+</mapID>
+</map>
