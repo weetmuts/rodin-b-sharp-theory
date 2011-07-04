@@ -1,6 +1,7 @@
 package org.eventb.core.pm.matchers.exp;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.pm.ExpressionMatcher;
 import org.eventb.core.pm.IBinding;
@@ -26,6 +27,11 @@ public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
 		if(formMembers.length == 1 && patternMembers.length == 1){
 			Expression formMem = formMembers[0];
 			Expression patternMem = patternMembers[0];
+			if(patternMem instanceof FreeIdentifier){
+				if(existingBinding.putExpressionMapping((FreeIdentifier) patternMem, formMem)){
+					return true;
+				}
+			}
 			if(matchingFactory.match(formMem, patternMem, existingBinding)){
 				return true;
 			}
