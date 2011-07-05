@@ -55,7 +55,6 @@ public abstract class RuleModule<R extends IRule, S extends ISCRule>
 		S[] scRules = createSCRulesArray(rules.length);
 		commitRules(rules, (ISCProofRulesBlock) target, scRules, symbolInfos, monitor);
 		processRules(rules, scRules, repository, symbolInfos, monitor);
-
 	}
 
 	@Override

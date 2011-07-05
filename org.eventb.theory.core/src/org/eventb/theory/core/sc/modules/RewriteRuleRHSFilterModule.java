@@ -160,6 +160,8 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 						TheoryAttributes.FORMULA_ATTRIBUTE,
 						TheoryGraphProblem.RuleTypeMismatchError, lhsType,
 						rhsType);
+				// Bug FIXED : needed to return null here
+				return null;
 			}
 		}
 		return rhsFormula;

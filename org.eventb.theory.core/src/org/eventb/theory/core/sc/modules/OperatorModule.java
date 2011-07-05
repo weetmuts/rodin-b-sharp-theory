@@ -124,21 +124,25 @@ public class OperatorModule extends LabeledElementModule{
 	protected ILabelSymbolInfo[] fetchOperators(INewOperatorDefinition[] newOpDefs, String theoryName,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		boolean accurate = true;
 		initFilterModules(repository, monitor);
 		ILabelSymbolInfo[] labelSymbolInfos = new ILabelSymbolInfo[newOpDefs.length];
 		for(int i = 0 ; i < newOpDefs.length; i++){
 			INewOperatorDefinition opDef = newOpDefs[i];
 			labelSymbolInfos[i] = fetchLabel(opDef, theoryName, monitor);
 			if(labelSymbolInfos[i] == null){
+				accurate = false;
 				continue;
 			}
 			if (!filterModules(opDef, repository, null)) {
 				labelSymbolInfos[i].setError();
-
+				accurate = false;
 			}
 		}
 		endFilterModules(repository, null);
-			
+		if (!accurate){
+			theoryAccuracyInfo.setNotAccurate();
+		}
 		return labelSymbolInfos;
 	}
 	
@@ -199,7 +203,6 @@ public class OperatorModule extends LabeledElementModule{
 			ISCStateRepository repository, ILabelSymbolInfo[] operators,
 			IProgressMonitor monitor) throws CoreException{
 		for (int i = 0; i < newOpDefs.length; i++) {
-
 			if (operators[i] != null && !operators[i].hasError()) {
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
@@ -231,6 +234,10 @@ public class OperatorModule extends LabeledElementModule{
 					factory = repository.getFormulaFactory();
 					globalTypeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 					repository.setTypeEnvironment(globalTypeEnvironment);
+				}
+				else {
+					scNewOpDefs[i].setHasError(true, monitor);
+					theoryAccuracyInfo.setNotAccurate();
 				}
 			}
 			monitor.worked(1);

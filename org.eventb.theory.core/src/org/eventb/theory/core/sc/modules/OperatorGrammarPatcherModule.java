@@ -45,8 +45,7 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 			throws CoreException {
 		INewOperatorDefinition newOperatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
-		ISCTheoryRoot theoryRoot = scNewOperatorDefinition.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
-		boolean opHasError = false;
+		ISCTheoryRoot theoryRoot = scNewOperatorDefinition.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);;
 		if(!operatorInformation.hasError()){
 			String syntax = operatorInformation.getSyntax();
 			if(MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
@@ -69,13 +68,8 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 				createProblemMarker((INewOperatorDefinition) element,EventBAttributes.LABEL_ATTRIBUTE, 
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAdded, syntax);
 				operatorInformation.setHasError();
-				opHasError = true;
 			}
 		}
-		else {
-			opHasError = true;
-		}
-		scNewOperatorDefinition.setHasError(opHasError, monitor);
 	}
 
 	@Override

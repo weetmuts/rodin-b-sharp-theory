@@ -51,12 +51,12 @@ extends SCProcessorModule{
 	protected final void processClauses(C[] clauses, IInferenceRule rule,
 			ISCInferenceRule scRule, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException{
-		boolean ok= true;
+		boolean accurate= true;
 		for(int i = 0 ; i < clauses.length; i++){
 			C clause = clauses[i];
 			if(!clause.hasPredicateString()){
 				createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE, GraphProblem.PredicateUndefError);
-				ok = false;
+				accurate = false;
 				continue;
 			}
 			Predicate predicate = CoreUtilities.parseAndCheckPredicate(clause, factory, typeEnvironment, this);
@@ -66,12 +66,15 @@ extends SCProcessorModule{
 					scClause.setPredicate(predicate, monitor);
 					addIdentifiers(predicate);
 				}
+				else {
+					accurate = false;
+				}
 			}
 			else {
-				ok = false;
+				accurate = false;
 			}
 		}
-		if(!ok)
+		if(!accurate)
 			ruleAccuracyInfo.setNotAccurate();
 		
 	}

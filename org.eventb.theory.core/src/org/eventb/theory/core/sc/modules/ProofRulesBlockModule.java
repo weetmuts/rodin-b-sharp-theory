@@ -137,6 +137,7 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 	protected ILabelSymbolInfo[] fetchBlocks(IRodinFile theoryFile,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		boolean accurate = true;
 		String theoryName = theoryFile.getElementName();
 		initFilterModules(repository, monitor);
 		ILabelSymbolInfo[] labelSymbolInfos = new ILabelSymbolInfo[rulesBlocks.length];
@@ -144,16 +145,18 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 			IProofRulesBlock block = rulesBlocks[i];
 			labelSymbolInfos[i] = fetchLabel(block, theoryName, monitor);
 			if(labelSymbolInfos[i] == null){
+				accurate = false;
 				continue;
 			}
 			if (!filterModules(block, repository, null)) {
-
 				labelSymbolInfos[i].setError();
-
+				accurate = false;
 			}
 		}
 		endFilterModules(repository, null);
-
+		if(!accurate){
+			theoryAccuracyInfo.setNotAccurate();
+		}
 		return labelSymbolInfos;
 	}
 	@Override

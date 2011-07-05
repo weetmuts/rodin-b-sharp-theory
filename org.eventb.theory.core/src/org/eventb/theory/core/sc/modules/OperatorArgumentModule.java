@@ -69,8 +69,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 		insertionOrderedSymbols = new ArrayList<IIdentifierSymbolInfo>();
 		fetchSymbols(arguments, target, repository, monitor);
 		for (IIdentifierSymbolInfo symbolInfo : insertionOrderedSymbols) {
-			if (symbolInfo == null) {
-				operatorInformation.setHasError();
+			if (symbolInfo == null) {operatorInformation.setHasError();
 			} else if (symbolInfo.getSymbolType() == ISCOperatorArgument.ELEMENT_TYPE
 					&& symbolInfo.isPersistent()) {
 				Type type = symbolInfo.getType();

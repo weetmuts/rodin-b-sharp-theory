@@ -69,17 +69,23 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 	protected ILabelSymbolInfo[] fetchRules(IRewriteRule[] rules, String theoryName,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		boolean accurate = true;
 		ILabelSymbolInfo[] symbolInfos = new ILabelSymbolInfo[rules.length];
 		initFilterModules(repository, monitor);
 		for (int i = 0; i < rules.length; i++) {
 			symbolInfos[i] = fetchLabel(rules[i], theoryName, monitor);
-			if (symbolInfos[i] == null)
+			if (symbolInfos[i] == null){
+				accurate = false;
 				continue;
+			}
 			if (!filterModules(rules[i], repository, monitor)) {
 				symbolInfos[i].setError();
+				accurate = false;
 			}
 		}
 		endFilterModules(repository, monitor);
+		if(!accurate)
+			accuracyInfo.setNotAccurate();
 		return symbolInfos;
 	}
 	
@@ -108,6 +114,9 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 						endProcessorModules(rule, repository, null);
 						// accuracy
 						scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(), monitor);
+						if(!ruleAccuracyInfo.isAccurate()){
+							accuracyInfo.setNotAccurate();
+						}
 					}
 					else {
 						ok = false;

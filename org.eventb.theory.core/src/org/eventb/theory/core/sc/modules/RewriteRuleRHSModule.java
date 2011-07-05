@@ -22,6 +22,7 @@ import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.states.RewriteRuleLabelSymbolTable;
+import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -38,6 +39,8 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 		.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".rewriteRuleRHSModule");
 	
+	private RuleAccuracyInfo accuracyInfo;
+	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -53,7 +56,6 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 	
@@ -65,37 +67,60 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 				scRHSs[i] =(ISCRewriteRuleRightHandSide) symbolInfos[i].
 						createSCElement(scRewriteRule, symbolInfos[i].getSymbol(), monitor);
 			}
+			else {
+				accuracyInfo.setNotAccurate();
+			}
 		}
 	}
 
 	private ILabelSymbolInfo[] fetchRHSs(IRewriteRuleRightHandSide[] ruleRHSs,
 			String theoryName, ISCStateRepository repository,
 			IProgressMonitor monitor)  throws CoreException{
+		boolean accurate = true;
 		ILabelSymbolInfo[] symbolInfos = new ILabelSymbolInfo[ruleRHSs.length];
 		initFilterModules(repository, monitor);
 		for (int i = 0; i < ruleRHSs.length; i++) {
 			symbolInfos[i] = fetchLabel(ruleRHSs[i], theoryName, monitor);
-			if (symbolInfos[i] == null)
+			if (symbolInfos[i] == null){
+				accurate = false;
 				continue;
+			}
 			if (!filterModules(ruleRHSs[i], repository, monitor)) {
 				symbolInfos[i].setError();
+				accurate = false;
 			}
 		}
 		endFilterModules(repository, monitor);
+		if(!accurate){
+			accuracyInfo.setNotAccurate();
+		}
 		return symbolInfos;
+	}
+	
+	@Override
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		super.initModule(element, repository, monitor);
+		accuracyInfo = (RuleAccuracyInfo) repository.getState(RuleAccuracyInfo.STATE_TYPE);
+	}
+
+	@Override
+	public void endModule(IRodinElement element, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		accuracyInfo = null;
+		super.endModule(element, repository, monitor);
 	}
 
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		// TODO Auto-generated method stub
 		return (RewriteRuleLabelSymbolTable) repository.getState(RewriteRuleLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		// TODO Auto-generated method stub
 		return TheorySymbolFactory.getInstance().makeLocalRHS(symbol, true, element, component);
 	}
 

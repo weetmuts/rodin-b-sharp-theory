@@ -33,15 +33,12 @@ import org.rodinp.core.IRodinProblem;
  * 
  */
 @SuppressWarnings("restriction")
-public class InferenceRuleModule extends
-		RuleModule<IInferenceRule, ISCInferenceRule> {
+public class InferenceRuleModule extends RuleModule<IInferenceRule, ISCInferenceRule> {
 
-	public static final IModuleType<InferenceRuleModule> MODULE_TYPE = SCCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID + ".inferenceRuleModule");
+	public static final IModuleType<InferenceRuleModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".inferenceRuleModule");
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
@@ -56,34 +53,36 @@ public class InferenceRuleModule extends
 	}
 
 	@Override
-	protected ILabelSymbolInfo makeLocalRule(String symbol,
-			ILabeledElement element, String component) throws CoreException {
-		return TheorySymbolFactory.getInstance().makeLocalInferenceRule(symbol,
-				true, element, component);
+	protected ILabelSymbolInfo makeLocalRule(String symbol, ILabeledElement element, String component) throws CoreException {
+		return TheorySymbolFactory.getInstance().makeLocalInferenceRule(symbol, true, element, component);
 	}
 
 	@Override
-	protected IInferenceRule[] getRuleElements(IRodinElement element)
-			throws CoreException {
+	protected IInferenceRule[] getRuleElements(IRodinElement element) throws CoreException {
 		IProofRulesBlock rulesBlock = (IProofRulesBlock) element;
 		return rulesBlock.getInferenceRules();
 	}
 
 	@Override
-	protected ILabelSymbolInfo[] fetchRules(IInferenceRule[] rules,
-			String theoryName, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	protected ILabelSymbolInfo[] fetchRules(IInferenceRule[] rules, String theoryName, 
+			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		boolean accurate = true;
 		ILabelSymbolInfo[] symbolInfos = new ILabelSymbolInfo[rules.length];
 		initFilterModules(repository, monitor);
 		for (int i = 0; i < rules.length; i++) {
 			symbolInfos[i] = fetchLabel(rules[i], theoryName, monitor);
-			if (symbolInfos[i] == null)
+			if (symbolInfos[i] == null) {
+				accurate = false;
 				continue;
+			}
 			if (!filterModules(rules[i], repository, monitor)) {
 				symbolInfos[i].setError();
+				accurate = false;
 			}
 		}
 		endFilterModules(repository, monitor);
+		if (!accurate)
+			accuracyInfo.setNotAccurate();
 		return symbolInfos;
 	}
 
@@ -93,9 +92,7 @@ public class InferenceRuleModule extends
 	}
 
 	@Override
-	protected void processRules(IInferenceRule[] rules,
-			ISCInferenceRule[] scRules, ISCStateRepository repository,
-			ILabelSymbolInfo[] infos, IProgressMonitor monitor)
+	protected void processRules(IInferenceRule[] rules, ISCInferenceRule[] scRules, ISCStateRepository repository, ILabelSymbolInfo[] infos, IProgressMonitor monitor)
 			throws CoreException {
 		for (int i = 0; i < rules.length; i++) {
 			if (infos[i] != null && !infos[i].hasError()) {
@@ -113,12 +110,8 @@ public class InferenceRuleModule extends
 					endProcessorModules(rule, repository, null);
 				}
 				inferenceIdentifiers.makeImmutable();
-				if (scRules[i] != null)
-					scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(),
-							monitor);
 				if (!inferenceIdentifiers.isRuleApplicable()) {
-					createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE,
-							TheoryGraphProblem.InferenceRuleNotApplicableError);
+					createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.InferenceRuleNotApplicableError);
 					ruleAccuracyInfo.setNotAccurate();
 				} else if (ruleAccuracyInfo.isAccurate()) {
 					ReasoningType reasoningType = null;
@@ -131,13 +124,15 @@ public class InferenceRuleModule extends
 					}
 					if (reasoningType != null) {
 						scRules[i].setReasoningType(reasoningType, monitor);
-						createProblemMarker(rule,
-								EventBAttributes.LABEL_ATTRIBUTE,
-								getInformationMessageFor(reasoningType), label);
+						createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, getInformationMessageFor(reasoningType), label);
 					}
 				}
-				if (scRules[i] != null)
+				if (scRules[i] != null) {
 					scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(), monitor);
+					if (!ruleAccuracyInfo.isAccurate()) {
+						accuracyInfo.setNotAccurate();
+					}
+				}
 			} else {
 				if (scRules[i] != null)
 					scRules[i].setAccuracy(false, monitor);

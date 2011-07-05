@@ -41,7 +41,6 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	
 	private TheoryAccuracyInfo theoryAccuracyInfo;
 
-	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -69,7 +68,6 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 				theoryAccuracyInfo.setNotAccurate();
 			}
 		}
-		
 	}
 	
 	private ISCTheorem createSCTheorem(ISCTheoryRoot targetRoot,
@@ -85,6 +83,7 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	protected ILabelSymbolInfo[] fetchTheorems(IRodinFile theoryFile,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		boolean accurate = true;
 		String theoryName = theoryFile.getElementName();
 		initFilterModules(repository, monitor);
 		ILabelSymbolInfo[] labelSymbolInfos = new ILabelSymbolInfo[formulaElements.length];
@@ -92,16 +91,18 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 			ITheorem thm = formulaElements[i];
 			labelSymbolInfos[i] = fetchLabel(thm, theoryName, monitor);
 			if(labelSymbolInfos[i] == null){
+				accurate = false;
 				continue;
 			}
 			if (!filterModules(thm, repository, null)) {
-
+				accurate = false;
 				labelSymbolInfos[i].setError();
-
 			}
 		}
 		endFilterModules(repository, null);
-
+		if(!accurate){
+			theoryAccuracyInfo.setNotAccurate();
+		}
 		return labelSymbolInfos;
 	}
 	
@@ -129,7 +130,6 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
-		// TODO Auto-generated method stub
 		return (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 	}
 
@@ -149,14 +149,12 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		// TODO Auto-generated method stub
 		return (TheoryLabelSymbolTable) repository.getState(TheoryLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		// TODO Auto-generated method stub
 		return TheorySymbolFactory.getInstance().makeLocalTheorem(symbol, true, element, component);
 	}
 

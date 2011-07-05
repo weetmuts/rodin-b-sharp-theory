@@ -86,7 +86,6 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 

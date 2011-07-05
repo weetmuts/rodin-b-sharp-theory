@@ -130,7 +130,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 		// clear to use differently
 		importedTheories.clear();
 		// filter imports
-		isAccurate = filterImports(importedTheories);
+		isAccurate &= filterImports(importedTheories);
 		patchFormulaFactory(importedTheories, repository);
 		if (!isAccurate){
 			accuracyInfo.setNotAccurate();

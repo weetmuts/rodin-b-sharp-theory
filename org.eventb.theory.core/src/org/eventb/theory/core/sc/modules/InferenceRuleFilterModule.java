@@ -32,13 +32,11 @@ public class InferenceRuleFilterModule extends RuleFilterModule<IInferenceRule> 
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
 	@Override
 	protected IInferenceRule getRule(IRodinElement element) {
-		// TODO Auto-generated method stub
 		return (IInferenceRule) element;
 	}
 

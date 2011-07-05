@@ -91,9 +91,6 @@ public class OperatorSyntacticPropertiesModule extends SCProcessorModule{
 				return false;
 			}
 		}
-		else {
-			
-		}
 		return true;
 	}
 
@@ -116,7 +113,6 @@ public class OperatorSyntacticPropertiesModule extends SCProcessorModule{
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 

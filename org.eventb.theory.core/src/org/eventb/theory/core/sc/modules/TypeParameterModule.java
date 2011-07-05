@@ -27,8 +27,7 @@ import org.rodinp.core.IRodinFile;
 @SuppressWarnings("restriction")
 public class TypeParameterModule extends IdentifierModule {
 
-	private final IModuleType<TypeParameterModule> MODULE_TYPE = SCCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID + ".typeParameterModule"); //$NON-NLS-1$
+	private final IModuleType<TypeParameterModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".typeParameterModule"); //$NON-NLS-1$
 
 	private TheoryAccuracyInfo theoryAccuracyInfo;
 
@@ -38,68 +37,63 @@ public class TypeParameterModule extends IdentifierModule {
 	}
 
 	@Override
-	public void process(IRodinElement element, IInternalElement target,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		IRodinFile file = (IRodinFile) element;
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
 
 		ITypeParameter[] typePars = root.getTypeParameters();
 
 		if (typePars.length != 0) {
-
+			// theory accuracy
+			boolean accurate = true;
 			monitor.subTask(Messages.bind(Messages.progress_TheoryTypeParameters));
 			fetchSymbols(typePars, target, repository, monitor);
+			// Added this to properly propagate accuracy
+			if(identifierSymbolTable.getSymbolInfosFromTop().size() != typePars.length){
+				accurate = false;
+			}
 			for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable.getSymbolInfosFromTop()) {
 				if (symbolInfo.isPersistent()) {
 					Type type = symbolInfo.getType();
 					if (type == null) { // identifier could not be typed
 						symbolInfo.createUntypedErrorMarker(this);
 						symbolInfo.setError();
+						accurate = false;
 					} else if (!symbolInfo.hasError()) {
 						symbolInfo.createSCElement(target, null);
 					}
 					symbolInfo.makeImmutable();
 				} else {
-					theoryAccuracyInfo.setNotAccurate();
+					accurate = false;
 				}
+			}
+			if (!accurate){
+				theoryAccuracyInfo.setNotAccurate();
 			}
 		}
 	}
 
 	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		theoryAccuracyInfo = (TheoryAccuracyInfo) repository
-				.getState(TheoryAccuracyInfo.STATE_TYPE);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 	}
 
 	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		theoryAccuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 
 	@Override
-	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
-			ITypeEnvironment environment) throws CoreException {
+	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, ITypeEnvironment environment) throws CoreException {
 		environment.addGivenSet(newSymbolInfo.getSymbol());
-
 		newSymbolInfo.setType(environment.getType(newSymbolInfo.getSymbol()));
 	}
 
 	@Override
-	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
-			IIdentifierElement element) {
-		return TheorySymbolFactory.getInstance().makeLocalTypeParameter(
-				name,
-				true,
-				element,
-				element.getAncestor(ITheoryRoot.ELEMENT_TYPE)
-						.getComponentName());
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+		return TheorySymbolFactory.getInstance().makeLocalTypeParameter(name, true, element, element.getAncestor(ITheoryRoot.ELEMENT_TYPE).getComponentName());
 	}
 
 }

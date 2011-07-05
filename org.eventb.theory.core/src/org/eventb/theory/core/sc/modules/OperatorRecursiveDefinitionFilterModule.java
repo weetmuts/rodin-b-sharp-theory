@@ -78,7 +78,6 @@ public class OperatorRecursiveDefinitionFilterModule extends SCFilterModule {
 						TheoryGraphProblem.NoRecCasesError);
 				return false;
 			}
-
 		}
 		return true;
 	}
@@ -103,7 +102,6 @@ public class OperatorRecursiveDefinitionFilterModule extends SCFilterModule {
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 }

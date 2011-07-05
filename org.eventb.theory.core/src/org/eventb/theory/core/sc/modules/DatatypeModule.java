@@ -152,9 +152,13 @@ public class DatatypeModule extends SCProcessorModule {
 								datatypeDefinition, targetRoot, monitor);
 				target.setSource(datatypeDefinition, monitor);
 				// process the type arguments
-				List<String> typeArgyments = processTypeArguments(datatypeDefinition, target, 
+				List<String> typeArgyments = new ArrayList<String>();
+				boolean faithful =processTypeArguments(datatypeDefinition, typeArgyments, target, 
 						factory, typeEnvironment, datatypeTable, monitor);
 				datatypeTable.addDatatype(name, typeArgyments.toArray(new String[typeArgyments.size()]));
+				if(!faithful){
+					datatypeTable.setErrorProne();
+				}
 				// create the decoy factory
 				FormulaFactory decoy = datatypeTable.augmentDecoyFormulaFactory();
 				// set the new factory and create an associated type environment
@@ -186,6 +190,7 @@ public class DatatypeModule extends SCProcessorModule {
 					typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 					repository.setTypeEnvironment(typeEnvironment);
 					target.setHasError(true, monitor);
+					theoryAccurate = false;
 					continue;
 				}
 				target.setHasError(false, monitor);
@@ -206,28 +211,28 @@ public class DatatypeModule extends SCProcessorModule {
 	/**
 	 * Processes the type arguments of the given datatype definition.
 	 * @param datatypeDefinition the datatype definition
+	 * @param toPopulate the list to populate with type arguments
 	 * @param target the SC target datatype definition
 	 * @param factory the formula factory
 	 * @param typeEnvironment the type environment
 	 * @param datatypeTable the datatype table
 	 * @param monitor the progress monitor
-	 * @return the list of type arguments
+	 * @return whether all type arguments have been processed faithfully
 	 * @throws CoreException
 	 */
-	protected List<String> processTypeArguments(IDatatypeDefinition datatypeDefinition,
+	protected boolean processTypeArguments(IDatatypeDefinition datatypeDefinition, List<String> toPopulate,
 			ISCDatatypeDefinition target, FormulaFactory factory, ITypeEnvironment typeEnvironment,
 			IDatatypeTable datatypeTable, IProgressMonitor monitor) throws CoreException{
 		ITypeArgument typeArgs[] = datatypeDefinition.getTypeArguments();
 		// needed to check for redundancies
-		ArrayList<String> argsList = new ArrayList<String>();
-		boolean hasError = false;
+		boolean faithful = true;
 		for (ITypeArgument typeArg : typeArgs) {
 			if (!typeArg.hasGivenType()) {
 				createProblemMarker(typeArg,
 						TheoryAttributes.GIVEN_TYPE_ATTRIBUTE,
 						TheoryGraphProblem.TypeArgMissingError,
 						target.getElementName());
-				hasError = true;
+				faithful = false;
 				continue;
 			}
 			String type = typeArg.getGivenType();
@@ -236,24 +241,21 @@ public class DatatypeModule extends SCProcessorModule {
 						TheoryAttributes.GIVEN_TYPE_ATTRIBUTE,
 						TheoryGraphProblem.TypeArgNotDefinedError,
 						typeArg.getGivenType());
-				hasError = true;
+				faithful = false;
 				continue;
 			}
-			if (argsList.contains(type)) {
+			if (toPopulate.contains(type)) {
 				createProblemMarker(typeArg,
 						TheoryAttributes.GIVEN_TYPE_ATTRIBUTE,
 						TheoryGraphProblem.TypeArgRedundWarn, type);
-				hasError = true;
+				faithful = false;
 				continue;
 			}
 			ISCTypeArgument scArg = target.getTypeArgument(type);
 			scArg.create(null, monitor);
 			scArg.setSCGivenType(factory.makeGivenType(type), monitor);
-			argsList.add(type);
+			toPopulate.add(type);
 		}
-		if (hasError) {
-			datatypeTable.setErrorProne();
-		}
-		return argsList;
+		return faithful;
 	}
 }
