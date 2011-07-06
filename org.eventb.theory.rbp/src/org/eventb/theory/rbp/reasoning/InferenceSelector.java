@@ -91,7 +91,7 @@ public class InferenceSelector {
 				}
 				apps.add(new InferenceTacticApplication(new InferenceInput(
 						rule.getTheoryName(), rule.getRuleName(), rule.getDescription(),
-						givenPredicate, true, context)));
+						predicate, true, context)));
 			}
 
 		}
