@@ -1,6 +1,5 @@
 package org.eventb.theory.core.maths.extensions;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -30,8 +29,7 @@ import org.rodinp.core.RodinCore;
  */
 public class WorkspaceExtensionsManager implements IElementChangedListener{
 	
-	final Set<IFormulaExtension> EMPTY_SET = Collections
-			.unmodifiableSet(new LinkedHashSet<IFormulaExtension>());
+	private final Set<IFormulaExtension> COND_EXTS;
 	
 	private ProjectManager globalProjectManager;
 	private Map<IRodinProject, ProjectManager> projectManagers;
@@ -41,57 +39,61 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 	
 	public WorkspaceExtensionsManager() {
 		RodinCore.addElementChangedListener(this);
+		COND_EXTS = MathExtensionsUtilities.singletonExtension(MathExtensionsUtilities.COND);
 		projectManagers = new HashMap<IRodinProject, ProjectManager>();
 		globalProjectManager = new ProjectManager(DatabaseUtilities.getDeploymentProject(null));
-		basicFactory = FormulaFactory.getInstance(MathExtensionsUtilities.singletonExtension(MathExtensionsUtilities.COND));
+		basicFactory = FormulaFactory.getInstance(COND_EXTS);
 		seedFactory = FormulaFactory.getInstance(basicFactory.getExtensions());
 		populate();
 	}
 
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root){
+		Set<IFormulaExtension> setOfExtensions= new LinkedHashSet<IFormulaExtension>();
+		// add cond extension
+		setOfExtensions.addAll(COND_EXTS);
 		IRodinProject project = root.getRodinProject();
 		boolean isMathExtensionsProject = project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT);
-		// case Theory in MathExtensions
+		// case Theory in MathExtensions : basic set
 		if (isMathExtensionsProject && root instanceof ITheoryRoot){
-			return EMPTY_SET;
+			return setOfExtensions;
 		}
-		// case Theory not in MathExtensions
+		// case Theory not in MathExtensions : basic set plus deployed in math extensions project
 		if (!isMathExtensionsProject && root instanceof ITheoryRoot){
-			return globalProjectManager.getAllDeployedExtensions();
+			setOfExtensions.addAll(globalProjectManager.getAllDeployedExtensions());
+			return setOfExtensions;
 		}
 		
-		// case SC Theory in MathExtensions
+		// case SC Theory in MathExtensions : basic set plus any needed theories
 		if (isMathExtensionsProject && root instanceof ISCTheoryRoot){
-			return globalProjectManager.getNeededTheories((ISCTheoryRoot) root);
+			setOfExtensions.addAll(globalProjectManager.getNeededTheories((ISCTheoryRoot) root));
+			return setOfExtensions;
 		}
-		// case SC Theory not in MathExtensions
+		// case SC Theory not in MathExtensions : basic set plus deployed in math extensions plus needed theories
 		if (!isMathExtensionsProject && root instanceof ISCTheoryRoot){
 			ProjectManager manager = projectManagers.get(project);
-			Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
-			extensions.addAll(globalProjectManager.getAllDeployedExtensions());
+			setOfExtensions.addAll(globalProjectManager.getAllDeployedExtensions());
 			if (manager != null)
-				extensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
-			return extensions;
+				setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
+			return setOfExtensions;
 		}
 		
-		// case Model 
+		// case Model : add all deployed 
 		if (!DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
 			ProjectManager manager = projectManagers.get(project);
-			Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
-			extensions.addAll(globalProjectManager.getAllDeployedExtensions());
+			setOfExtensions.addAll(globalProjectManager.getAllDeployedExtensions());
 			if (manager != null){
-				extensions.addAll(manager.getAllDeployedExtensions());
+				setOfExtensions.addAll(manager.getAllDeployedExtensions());
 			}
-			return extensions;
+			return setOfExtensions;
 		}
-		// case theory dependent roots (not ITheoryRoot)
+		// case theory dependent roots (not ITheoryRoot) : they get the SC theory root extensions
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(root.getComponentName(), project);
 			if (scRoot.exists()){
 				return getFormulaExtensions(scRoot);
 			}
 		}
-		return EMPTY_SET;
+		return setOfExtensions;
 	}
 
 	protected void processDelta(IRodinElementDelta delta) throws CoreException {

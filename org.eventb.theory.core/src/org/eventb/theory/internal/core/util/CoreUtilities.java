@@ -450,6 +450,8 @@ public class CoreUtilities {
 	 */
 	public static Map<String, Set<String>> getDeployedSyntaxSymbolsOfOtherHierarchies(ISCTheoryRoot hierarchyToIgnoreLeaf) throws CoreException {
 		Set<ISCTheoryRoot> hierarchyToIgnore = DatabaseUtilities.importClosure(hierarchyToIgnoreLeaf);
+		// ADD this leaf so that anything named like it will be ignored
+		hierarchyToIgnore.add(hierarchyToIgnoreLeaf);
 		Set<String> names = DatabaseUtilities.getNames(hierarchyToIgnore);
 		IRodinProject project = hierarchyToIgnoreLeaf.getRodinProject();
 		IDeployedTheoryRoot[] deployedRoots = 

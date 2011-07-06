@@ -113,7 +113,9 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
 						operatorInformation.addWDCondition(wdPredicate);
 					}
-					scNewOperatorDefinition.setWDCondition(getDWDPredicate(defFormula), monitor);
+					Predicate dwdPredicate = getDWDPredicate(defFormula);
+					operatorInformation.setD_WDCondition(dwdPredicate);
+					scNewOperatorDefinition.setWDCondition(dwdPredicate, monitor);
 				} else {
 					setError();
 					createProblemMarker(definition,
@@ -132,8 +134,9 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
 						operatorInformation.addWDCondition(wdPredicate);
 					}
-					operatorInformation.setD_WDCondition(getDWDPredicate(defFormula));
-					scNewOperatorDefinition.setWDCondition(getDWDPredicate(defFormula), monitor);
+					Predicate dwdPredicate = getDWDPredicate(defFormula);
+					operatorInformation.setD_WDCondition(dwdPredicate);
+					scNewOperatorDefinition.setWDCondition(dwdPredicate, monitor);
 
 				} else {
 					setError();
@@ -191,8 +194,8 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 			throws CoreException {
 		if (definition.hasFormula()) {
 			Formula<?> formula = ModulesUtils.parseFormula(definition, factory, this);
-			formula = ModulesUtils.checkFormula(definition, formula, typeEnvironment, this);
 			if (formula != null) {
+				formula = ModulesUtils.checkFormula(definition, formula, typeEnvironment, this);
 				FreeIdentifier[] idents = formula.getFreeIdentifiers();
 				List<String> notAllowed = new ArrayList<String>();
 				for (FreeIdentifier ident : idents) {
