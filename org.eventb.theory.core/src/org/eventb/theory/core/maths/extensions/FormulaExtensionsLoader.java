@@ -250,6 +250,7 @@ class OperatorTransformer extends
 			}
 			Predicate wdCondition = definition.getPredicate(factory,
 					tempTypeEnvironment);
+			Predicate dWdCondition = definition.getWDCondition(factory, tempTypeEnvironment);
 			IFormulaExtension extension = null;
 			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, groupID);
 			if (MathExtensionsUtilities.isExpressionOperator(definition.getFormulaType())) {
@@ -257,11 +258,11 @@ class OperatorTransformer extends
 						extensionsFactory.getTypingRule(
 								operatorArguments, 
 								definition.getType(factory), 
-								wdCondition, isAssociative), 
+								wdCondition, dWdCondition, isAssociative), 
 							definition);
 			} else {
 				extension = extensionsFactory.getFormulaExtension(properties, isCommutative, 
-						extensionsFactory.getTypingRule(operatorArguments, wdCondition), 
+						extensionsFactory.getTypingRule(operatorArguments, wdCondition, dWdCondition), 
 						definition);
 			}
 			return MathExtensionsUtilities.singletonExtension(extension);

@@ -120,6 +120,11 @@
             kind="integer"
             name="%orderAttr">
       </attributeType>
+      <attributeType
+            id="wd"
+            kind="string"
+            name="%wdAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">

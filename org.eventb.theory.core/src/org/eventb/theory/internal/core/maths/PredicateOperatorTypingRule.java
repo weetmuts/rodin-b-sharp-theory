@@ -33,8 +33,8 @@ implements IPredicateTypeChecker{
 	/**
 	 * @param extension
 	 */
-	public PredicateOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate) {
-		super(operatorArguments, wdPredicate);
+	public PredicateOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate) {
+		super(operatorArguments, wdPredicate, dWDPredicate);
 	}
 
 	@Override

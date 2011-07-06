@@ -15,14 +15,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.theory.core.wd.DComputer;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -41,14 +44,6 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 
 	protected FormulaFactory factory;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement
-	 * , org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void initModule(IRodinElement element,
 			IPOGStateRepository repository, IProgressMonitor monitor)
@@ -58,14 +53,6 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 		factory = repository.getFormulaFactory();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eventb.core.pog.ProcessorModule#endModule(org.rodinp.core.IRodinElement
-	 * , org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void endModule(IRodinElement element,
 			IPOGStateRepository repository, IProgressMonitor monitor)
@@ -111,5 +98,16 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 					typeEnvironment.getType(name)));
 		}
 		return vars;
+	}
+	
+	/**
+	 * Returns the D WD condition of the given formula.
+	 * @param formula the formula
+	 * @return the D WD condition
+	 */
+	protected Predicate getDWDCondition(Formula<?> formula){
+		assert formula != null && formula.isTypeChecked();
+		DComputer computer = new DComputer(factory);
+		return computer.getWDLemma(formula);
 	}
 }

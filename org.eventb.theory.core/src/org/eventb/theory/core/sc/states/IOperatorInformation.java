@@ -125,6 +125,18 @@ public interface IOperatorInformation extends ISCState{
 	 * @return the wdCondition
 	 */
 	public Predicate getWdCondition() ;
+	
+	/**
+	 * Returns the well-definedness condition based on the D operator.
+	 * @return the D WD condition
+	 */
+	public Predicate getD_WDCondition();
+	
+	/**
+	 * Sets the D WD condition of this operator.
+	 * @param dwdCondition the D WD condition
+	 */
+	public void setD_WDCondition(Predicate dWDCondition);
 
 	/**
 	 * @param wdCondition

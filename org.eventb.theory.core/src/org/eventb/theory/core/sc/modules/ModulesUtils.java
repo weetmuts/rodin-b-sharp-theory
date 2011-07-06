@@ -224,30 +224,48 @@ public class ModulesUtils {
 		}
 		return formula;
 	}
-
+	
 	/**
-	 * Parses and type checks the non-pattern formula occurring as an attribute
-	 * to the given formula element.
-	 * 
-	 * @param element
-	 *            the rodin element
-	 * @param ff
-	 *            the formula factory
-	 * @param typeEnvironment
-	 *            the type environment
-	 * @param display
-	 *            the marker display for error reporting
-	 * @return the parsed formula
+	 * Parses the formula stored in the given element.
+	 * @param element the formula element
+	 * @param ff the formula factory
+	 * @param typeEnvironment 
+	 * @param markerDisplay the marker display
+	 * @return the parsed formula, or <code>null</code>
 	 * @throws CoreException
 	 */
-	public static Formula<?> parseAndCheckFormula(IFormulaElement element,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment,
-			IMarkerDisplay markerDisplay) throws CoreException {
-		Formula<?> formula = parseAndCheckFormula(element, true, false, ff,
-				typeEnvironment, markerDisplay);
-		if (formula == null) {
-			formula = parseAndCheckFormula(element, false, true, ff,
-					typeEnvironment, markerDisplay);
+	public static Formula<?> parseFormula(IFormulaElement element,
+			FormulaFactory ff, IMarkerDisplay markerDisplay)throws CoreException {
+		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
+		String form = element.getFormula();
+		IParseResult result = ff.parseExpression(form, V2, null);
+		if(result.hasProblem()){
+			result = ff.parsePredicate(form, V2, null);
+			if (CoreUtilities.issueASTProblemMarkers(element,
+					attributeType, result, markerDisplay)){
+				return null;
+			}
+			return result.getParsedPredicate();
+		}
+		return result.getParsedExpression();
+	}
+	
+	/**
+	 * Type checks the formula.
+	 * @param element the formula element
+	 * @param formula the actual formula
+	 * @param typeEnvironment the type environment
+	 * @param markerDisplay the marker display
+	 * @return the type checked formula, or <code>null</code>
+	 * @throws CoreException
+	 */
+	public static Formula<?> checkFormula(IFormulaElement element, Formula<?> formula,
+			ITypeEnvironment typeEnvironment,
+			IMarkerDisplay markerDisplay)throws CoreException {
+		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
+		if(CoreUtilities.issueASTProblemMarkers(element,
+					TheoryAttributes.FORMULA_ATTRIBUTE, tcResult, markerDisplay)){
+			return null;
 		}
 		return formula;
 	}

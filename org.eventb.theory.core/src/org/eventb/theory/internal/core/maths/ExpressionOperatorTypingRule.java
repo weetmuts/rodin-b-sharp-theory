@@ -42,8 +42,8 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule imp
 	protected Type resultantType;
 	protected boolean isAssociative;
 
-	public ExpressionOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Type resultantType, boolean isAssociative) {
-		super(operatorArguments, wdPredicate);
+	public ExpressionOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate,Type resultantType, boolean isAssociative) {
+		super(operatorArguments, wdPredicate, dWDPredicate);
 		this.resultantType = resultantType;
 		this.isAssociative = isAssociative;
 		this.typeParameters.addAll(MathExtensionsUtilities.getGivenTypes(resultantType));

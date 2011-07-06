@@ -30,7 +30,7 @@ public interface ISCNewOperatorDefinition extends ILabeledElement,
 		IFormulaTypeElement, INotationTypeElement,
 		IAssociativeElement, ICommutativeElement, ITraceableElement,
 		IHasErrorElement, ISCPredicateElement, ISCTypeElement, IOperatorGroupElement,
-		IValidatedElement {
+		IValidatedElement, IWDElement {
 
 	IInternalElementType<ISCNewOperatorDefinition> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID

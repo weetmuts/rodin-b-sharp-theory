@@ -132,14 +132,12 @@ public class SCNewOperatorDefinition extends TheoryElement implements ISCNewOper
 	@Override
 	public ISCRecursiveOperatorDefinition getRecursiveOperatorDefinition(
 			String name) {
-		// TODO Auto-generated method stub
 		return getInternalElement(ISCRecursiveOperatorDefinition.ELEMENT_TYPE, name);
 	}
 
 	@Override
 	public ISCRecursiveOperatorDefinition[] getRecursiveOperatorDefinitions()
 			throws RodinDBException {
-		// TODO Auto-generated method stub
 		return getChildrenOfType(ISCRecursiveOperatorDefinition.ELEMENT_TYPE);
 	}
 }

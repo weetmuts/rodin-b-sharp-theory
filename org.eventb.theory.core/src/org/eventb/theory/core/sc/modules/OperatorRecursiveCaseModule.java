@@ -159,7 +159,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						operatorInformation.setHasError();
 						continue;
 					} else {
-						Formula<?> formula = ModulesUtils.parseAndCheckFormula(defCase, factory, caseEntry.getLocalTypeEnvironment(), this);
+						Formula<?> formula = ModulesUtils.parseFormula(defCase, factory, this);
 						if (formula != null) {
 							if (isExpression && !(formula instanceof Expression)) {
 								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotExpError, parent.getLabel());
@@ -169,6 +169,12 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 							}
 							if (!isExpression && !(formula instanceof Predicate)) {
 								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotPredError, parent.getLabel());
+								caseEntry.setErroneous();
+								operatorInformation.setHasError();
+								continue;
+							}
+							formula = ModulesUtils.checkFormula(defCase, formula, caseEntry.getLocalTypeEnvironment(), this);
+							if(formula == null){
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
 								continue;
@@ -187,7 +193,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 								} else {
 									recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
 								}
-							} else if (!isExpression) {
+							} else{
 								recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
 							}
 						}

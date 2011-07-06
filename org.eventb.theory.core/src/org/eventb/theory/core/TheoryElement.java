@@ -25,6 +25,7 @@ import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.WD_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -32,6 +33,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
@@ -55,7 +57,7 @@ public abstract class TheoryElement extends EventBElement implements
 		IInteractiveElement, IDefinitionalElement, ISCTypeElement,
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
 		IReasoningTypeElement, IValidatedElement, IOperatorGroupElement,
-		IImportTheoryElement, IInductiveArgumentElement {
+		IImportTheoryElement, IInductiveArgumentElement, IWDElement {
 
 	public static final String BACKWARD_REASONING_TYPE = "backward";
 	public static final String FORWARD_REASONING_TYPE = "forward";
@@ -401,6 +403,31 @@ public abstract class TheoryElement extends EventBElement implements
 	public void setInductiveArgument(String inductiveArgument, IProgressMonitor monitor)
 			throws RodinDBException{
 		setAttributeValue(INDUCTIVE_ARGUMENT_ATTRIBUTE, inductiveArgument, monitor);
+	}
+	
+	@Override
+	public boolean hasWDAttribute() throws RodinDBException {
+		return hasAttribute(WD_ATTRIBUTE);
+	}
+
+	@Override
+	public Predicate getWDCondition(FormulaFactory factory, ITypeEnvironment typeEnvironment) throws RodinDBException {
+		String wdStr = getAttributeValue(WD_ATTRIBUTE);
+		IParseResult result = factory.parsePredicate(wdStr, V2, null);
+		if(result.hasProblem()){
+			throw Util.newRodinDBException(Messages.database_SCPredicateParseFailure);
+		}
+		Predicate pred = result.getParsedPredicate();
+		ITypeCheckResult tcResult = pred.typeCheck(typeEnvironment);
+		if(tcResult.hasProblem()){
+			throw Util.newRodinDBException(Messages.database_SCPredicateTCFailure);
+		}
+		return pred;
+	}
+
+	@Override
+	public void setWDCondition(Predicate newWD, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(WD_ATTRIBUTE, newWD.toStringWithTypes(), monitor);
 	}
 
 	/**

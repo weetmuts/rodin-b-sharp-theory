@@ -90,7 +90,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 			if (lhs.hasPredicateVariable()) {
 				continue;
 			}
-			Predicate lhsWD = lhs.getWDPredicate(factory);
+			Predicate lhsWD = getDWDCondition(lhs);
 			
 			ArrayList<Predicate> allConditions = new ArrayList<Predicate>();
 			ArrayList<Predicate> wdAllConditions = new ArrayList<Predicate>();
@@ -105,13 +105,13 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				String rhsLabel = rhs.getLabel();
 				Formula<?> rhsForm = rhs
 						.getSCFormula(factory, typeEnvironment);
-				Predicate rhsWD = rhsForm.getWDPredicate(factory);
+				Predicate rhsWD = getDWDCondition(rhsForm);
 				Predicate condition = rhs
 						.getPredicate(factory, typeEnvironment);
 				// since we will make a disjunction, disregard bottom?
 				allConditions.add(condition);
 				
-				Predicate conditionWD = condition.getWDPredicate(factory);
+				Predicate conditionWD = getDWDCondition(condition);
 				
 				wdAllConditions.add(conditionWD);
 				

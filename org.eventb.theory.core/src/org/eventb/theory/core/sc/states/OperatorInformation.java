@@ -70,6 +70,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	private Type expressionType;
 	private List<GivenType> typeParameters;
 	private IDefinition definition;
+	
+	private Predicate dWDCondition;
 
 	private FormulaFactory factory;
 
@@ -180,6 +182,16 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	public Type getResultantType() {
 		return expressionType;
 	}
+	
+	@Override
+	public Predicate getD_WDCondition() {
+		return dWDCondition;
+	}
+
+	@Override
+	public void setD_WDCondition(Predicate dWDCondition) {
+		this.dWDCondition = dWDCondition;
+	}
 
 	@Override
 	public void addOperatorArgument(String ident, Type type) {
@@ -219,10 +231,11 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 			if (expressionType != null) {
 				ExpressionOperatorTypingRule typingRule = extensionsFactory.getTypingRule(new ArrayList<IOperatorArgument>(opArguments.values()), expressionType, getWdCondition(),
-						isAssociative);
+						dWDCondition, isAssociative);
 				formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, isAssociative, typingRule, sourceOfExtension);
 			} else {
-				PredicateOperatorTypingRule typingRule = extensionsFactory.getTypingRule(new ArrayList<IOperatorArgument>(opArguments.values()), getWdCondition());
+				PredicateOperatorTypingRule typingRule = extensionsFactory.getTypingRule(
+						new ArrayList<IOperatorArgument>(opArguments.values()), getWdCondition(), dWDCondition);
 				formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, typingRule, sourceOfExtension);
 
 			}
@@ -237,11 +250,13 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		IFormulaExtension formulaExtension = null;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 		if (expressionType != null) {
-			ExpressionOperatorTypingRule typingRule = extensionsFactory.getTypingRule(new ArrayList<IOperatorArgument>(opArguments.values()), expressionType,
-					MathExtensionsUtilities.BTRUE, isAssociative);
+			ExpressionOperatorTypingRule typingRule = extensionsFactory.getTypingRule(
+					new ArrayList<IOperatorArgument>(opArguments.values()), expressionType,
+					MathExtensionsUtilities.BTRUE, MathExtensionsUtilities.BTRUE, isAssociative);
 			formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, isAssociative, typingRule, null);
 		} else {
-			PredicateOperatorTypingRule typingRule = extensionsFactory.getTypingRule(new ArrayList<IOperatorArgument>(opArguments.values()), MathExtensionsUtilities.BTRUE);
+			PredicateOperatorTypingRule typingRule = extensionsFactory.getTypingRule(
+					new ArrayList<IOperatorArgument>(opArguments.values()), MathExtensionsUtilities.BTRUE, MathExtensionsUtilities.BTRUE);
 			formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, typingRule, null);
 
 		}

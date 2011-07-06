@@ -30,6 +30,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.wd.DComputer;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
@@ -112,6 +113,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
 						operatorInformation.addWDCondition(wdPredicate);
 					}
+					scNewOperatorDefinition.setWDCondition(getDWDPredicate(defFormula), monitor);
 				} else {
 					setError();
 					createProblemMarker(definition,
@@ -130,6 +132,8 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
 						operatorInformation.addWDCondition(wdPredicate);
 					}
+					operatorInformation.setD_WDCondition(getDWDPredicate(defFormula));
+					scNewOperatorDefinition.setWDCondition(getDWDPredicate(defFormula), monitor);
 
 				} else {
 					setError();
@@ -186,9 +190,8 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 			IDirectOperatorDefinition definition, ISCStateRepository repository)
 			throws CoreException {
 		if (definition.hasFormula()) {
-			Formula<?> formula = ModulesUtils.parseAndCheckFormula(definition,
-					factory,
-					typeEnvironment, this);
+			Formula<?> formula = ModulesUtils.parseFormula(definition, factory, this);
+			formula = ModulesUtils.checkFormula(definition, formula, typeEnvironment, this);
 			if (formula != null) {
 				FreeIdentifier[] idents = formula.getFreeIdentifiers();
 				List<String> notAllowed = new ArrayList<String>();
@@ -215,6 +218,11 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 
 	private void setError() throws CoreException{
 		operatorInformation.setHasError();
+	}
+	
+	private Predicate getDWDPredicate(Formula<?> formula){
+		DComputer computer = new DComputer(factory);
+		return computer.getWDLemma(formula);
 	}
 
 }

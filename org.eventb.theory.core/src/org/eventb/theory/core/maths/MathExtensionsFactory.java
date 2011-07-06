@@ -132,14 +132,14 @@ public final class MathExtensionsFactory {
 	 * @param operatorArguments the operator arguments
 	 * @param resultantType the resultant type
 	 * @param wdPredicate the WD condition
+	 * @param dWDPredicate the D WD predicate
 	 * @param isAssociative
-	 * @param factory 
 	 * @return the appropriate typing rule
 	 */
 	public ExpressionOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Type resultantType, 
-			Predicate wdPredicate, boolean isAssociative){
+			Predicate wdPredicate, Predicate dWDPredicate,boolean isAssociative){
 		ExpressionOperatorTypingRule typingRule  = 
-			new ExpressionOperatorTypingRule(operatorArguments, wdPredicate, resultantType, isAssociative);
+			new ExpressionOperatorTypingRule(operatorArguments, wdPredicate, dWDPredicate, resultantType, isAssociative);
 		
 		return typingRule;
 	}
@@ -149,12 +149,13 @@ public final class MathExtensionsFactory {
 	 * is deemed a predicate operator if <code>resultantType</code> is <code>null</code>.
 	 * @param operatorArguments the operator arguments
 	 * @param wdPredicate the WD condition
-	 * @param factory 
+	 * @param dWDPredicate the D WD predicate 
 	 * @return the appropriate typing rule
 	 */
-	public PredicateOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate){
+	public PredicateOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, 
+			Predicate dWDPredicate){
 		PredicateOperatorTypingRule typingRule  = 
-			new PredicateOperatorTypingRule(operatorArguments, wdPredicate);
+			new PredicateOperatorTypingRule(operatorArguments, wdPredicate, dWDPredicate);
 		return typingRule;
 	}
 	

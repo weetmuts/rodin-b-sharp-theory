@@ -89,7 +89,7 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 				Predicate pred = given.getPredicate(factory, typeEnvironment);
 				if (pred != null) {
 					givensPredicates.add(pred);
-					givensPredicatesWDs.add(pred.getWDPredicate(factory));
+					givensPredicatesWDs.add(getDWDCondition(pred));
 				}
 			}
 			ISCInfer infers[] = inferenceRule.getInfers();
@@ -99,7 +99,7 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 				Predicate pred = infer.getPredicate(factory, typeEnvironment);
 				if (pred != null) {
 					infersPredicates.add(pred);
-					infersPredicatesWDs.add(pred.getWDPredicate(factory));
+					infersPredicatesWDs.add(getDWDCondition(pred));
 				}
 			}
 			Predicate conj1 = MathExtensionsUtilities.conjunctPredicates(

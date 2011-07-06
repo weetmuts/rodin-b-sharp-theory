@@ -33,6 +33,7 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.theory.core.wd.DMediator;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
@@ -56,6 +57,10 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 	protected int arity = 0;
 	protected Set<GivenType> typeParameters;
 	protected Predicate wdPredicate;
+	/**
+	 * This is the D based WD predicate of this operator.
+	 */
+	protected Predicate dWDPredicate;
 	
 	/**
 	 * Creates a basic typing rule with the supplied arguments, the given well-definedness predicate.
@@ -64,9 +69,9 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 	 * type checking instances of the concerned operator.
 	 * @param operatorArguments the list of operator arguments, must not be <code>null</code>
 	 * @param wdPredicate the well-definedness predicate, must not be <code>null</code>
-	 * @param factory the formula factory
+	 * @param dWDPredicate the D well-definedness predicate, must not be <code>null</code>
 	 */
-	public AbstractOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate) {
+	public AbstractOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate) {
 		this.operatorArguments = operatorArguments;
 		this.arity = operatorArguments.size();
 		this.typeParameters = new HashSet<GivenType>();
@@ -74,6 +79,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 			addTypeParameters(MathExtensionsUtilities.getGivenTypes(operatorArgument.getArgumentType()));
 		}
 		this.wdPredicate = wdPredicate;
+		this.dWDPredicate = dWDPredicate;
 	}
 
 	@Override
@@ -91,7 +97,12 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 		if (allSubs == null) {
 			return null;
 		}
-		String rawWD = wdPredicate.toString();
+		Predicate wdToUse = wdPredicate;
+		// if the call is to generate a D WD condition
+		if(wdMediator instanceof DMediator){
+			wdToUse = dWDPredicate;
+		}
+		String rawWD = wdToUse.toString();
 		Predicate pred = factory
 				.parsePredicate(rawWD, LanguageVersion.V2, null)
 				.getParsedPredicate();
@@ -113,12 +124,14 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 		return operatorArguments.equals(rule.operatorArguments)
 				&& arity == rule.arity
 				&& typeParameters.equals(rule.typeParameters)
-				&& wdPredicate.equals(rule.wdPredicate);
+				&& wdPredicate.equals(rule.wdPredicate)
+				&& (dWDPredicate == null ? rule.dWDPredicate == null : dWDPredicate.equals(rule.dWDPredicate));
 	}
 
 	public int hashCode() {
 		return 97 * (operatorArguments.hashCode() + arity
-				+ typeParameters.hashCode() + wdPredicate.hashCode());
+				+ typeParameters.hashCode() + wdPredicate.hashCode()) + 
+				(dWDPredicate == null ? 0 : dWDPredicate.hashCode());
 	}
 
 	public String toString() {

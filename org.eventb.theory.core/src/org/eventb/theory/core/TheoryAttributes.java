@@ -79,4 +79,7 @@ public class TheoryAttributes {
 	public static IAttributeType.Integer ORDER_ATTRIBUTE = RodinCore
 		.getIntegerAttrType(TheoryPlugin.PLUGIN_ID + ".order");
 	
+	public static IAttributeType.String WD_ATTRIBUTE = RodinCore
+			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".wd");
+	
 }
