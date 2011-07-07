@@ -1,6 +1,5 @@
 package org.eventb.theory.core.sc.modules;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
 
 import org.eclipse.core.runtime.CoreException;
@@ -10,24 +9,16 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ParsedFormula;
-import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.ISCRewriteRule;
-import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -35,7 +26,6 @@ import org.eventb.theory.core.sc.states.RewriteRuleLabelSymbolTable;
 import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -137,26 +127,22 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 
 	@Override
 	protected String getMessage() {
-		// TODO Auto-generated method stub
 		return Messages.progress_TheoryRewriteRules;
 	}
 
 	@Override
 	protected ISCRewriteRule[] createSCRulesArray(int length) {
-		// TODO Auto-generated method stub
 		return new ISCRewriteRule[length];
 	}
 
 	@Override
 	protected ISCRewriteRule getSCRule(ILabeledElement scRule) {
-		// TODO Auto-generated method stub
 		return (ISCRewriteRule) scRule;
 	}
 
 	@Override
 	protected ILabelSymbolInfo makeLocalRule(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		// TODO Auto-generated method stub
 		return TheorySymbolFactory.getInstance().makeLocalRewriteRule(symbol, true, element, component);
 	}
 	
@@ -170,14 +156,16 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 			return null;
 		}
 		// parse the lhs
-		Formula<?> lhsForm = parseAndCheckPatternFormula(rule,
-				repository.getFormulaFactory(), repository.getTypeEnvironment());
-
+		Formula<?> lhsForm = ModulesUtils.parseFormula(rule, repository.getFormulaFactory(), this);
 		if (lhsForm == null) {
 			return null;
 		}
+		lhsForm = ModulesUtils.checkFormula(rule, lhsForm, repository.getTypeEnvironment(), this);
+		if(lhsForm == null){
+			return null;
+		}
 		// lhs is a free identifier or predicate variable
-		if (lhsForm instanceof FreeIdentifier  || (lhsForm instanceof PredicateVariable)) {
+		if (lhsForm instanceof FreeIdentifier) {
 			createProblemMarker(rule, FORMULA_ATTRIBUTE,
 					TheoryGraphProblem.LHSIsIdentErr);
 			return null;
@@ -196,55 +184,6 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 			return null;
 		}
 		return lhsForm;
-	}
-	
-	/**
-	 * Parses and type checks the formula occurring as an attribute to the given
-	 * element. The formula may contain predicate variables.
-	 * 
-	 * @param element
-	 *            the rodin element
-	 * @param ff
-	 *            the formula factory
-	 * @param typeEnvironment
-	 *            the type environment
-	 * @return the parsed formula
-	 * @throws CoreException
-	 */
-	protected Formula<?> parseAndCheckPatternFormula(IFormulaElement element,
-			FormulaFactory ff, ITypeEnvironment typeEnvironment)
-			throws CoreException {
-		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
-		String form = element.getFormula();
-		Formula<?> formula = null;
-		IParseResult result = ff.parsePredicatePattern(form, V2, null);
-		if (result.hasProblem()) {
-			result = ff.parseExpressionPattern(form, V2, null);
-			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
-					result, this)) {
-				return null;
-			} else {
-				formula = result.getParsedExpression();
-			}
-		} else {
-			formula = result.getParsedPredicate();
-		}
-
-		FreeIdentifier[] idents = formula.getFreeIdentifiers();
-		for (FreeIdentifier ident : idents) {
-			if (!typeEnvironment.contains(ident.getName())) {
-				createProblemMarker(element, attributeType,
-						GraphProblem.UndeclaredFreeIdentifierError,
-						ident.getName());
-				return null;
-			}
-		}
-		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
-		if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
-				tcResult, this)) {
-			return null;
-		}
-		return formula;
 	}
 	
 	static final class WDStrictChecker extends DefaultVisitor {

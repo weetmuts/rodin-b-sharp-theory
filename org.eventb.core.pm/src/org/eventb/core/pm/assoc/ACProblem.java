@@ -29,9 +29,9 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 		if (!isSolvable) {
 			return null;
 		}
-		IBinding initialBinding = matcher.getMatchingFactory().createBinding(acceptPartialMatch, matcher.getFactory());
+		IBinding initialBinding = existingBinding.clone();
 		boolean searchSpaceEmpty = searchSpace.size() == 0;
-		// used up formulae not empty only when searchSpaceEmpty is false
+		// trace consumed formulae
 		List<IndexedFormula<F>> usedUpFormulae = new ArrayList<IndexedFormula<F>>();
 		if (!searchSpaceEmpty) {
 			MatchEntry<F> matchEntry = searchSpace.get(0);
@@ -43,11 +43,10 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 					IBinding matchBinding = matchStack.getFinalBinding();
 					matchBinding.makeImmutable();
 					// if we cannot insert the match binding in the original binding
-					if(!existingBinding.isBindingInsertable(matchBinding)){
+					if(!initialBinding.isBindingInsertable(matchBinding)){
 						continue;
 					}
-					initialBinding.insertBinding(matchBinding);
-					solved = true;
+					solved = initialBinding.insertBinding(matchBinding);
 					usedUpFormulae = matchStack.getUsedUpFormulae();
 					break;
 				}
@@ -56,25 +55,15 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 				return null;
 			}
 		}
-		int sizeOfVariables = variables.size();
-		if (sizeOfVariables > 0) {
-			List<IndexedFormula<F>> allFormulae = new ArrayList<IndexedFormula<F>>();
-			allFormulae.addAll(indexedFormulae);
-			allFormulae.removeAll(usedUpFormulae);
-			if (allFormulae.size() < sizeOfVariables) {
-				return null;
-			}
-			for (int i = 0; i < sizeOfVariables - 1; i++) {
-				IndexedFormula<F> var = variables.get(i);
-				putVariableMapping(var, allFormulae.get(i), initialBinding);
-				usedUpFormulae.add(allFormulae.get(i));
-			}
-			putVariableMapping(variables.get(sizeOfVariables - 1), allFormulae.get(sizeOfVariables - 1), initialBinding);
+		if(!mapVariables(usedUpFormulae, initialBinding)){
+			return null;
 		}
-		
 		List<IndexedFormula<F>> leftFormulae = new ArrayList<IndexedFormula<F>>(indexedFormulae);
 		leftFormulae.removeAll(usedUpFormulae);
 		if (leftFormulae.size() > 0){
+			if(!acceptPartialMatch){
+				return null;
+			}
 			addAssociativeComplement(leftFormulae, initialBinding);
 		}
 		return initialBinding;
@@ -100,18 +89,14 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 		return explore(patternIndex - 1, matchStack);
 
 	}
-
+	
 	/**
-	 * Inserts the variable mapping into the given binding.
-	 * 
-	 * @param var
-	 *            the variable
-	 * @param indexedFormula
-	 *            the indexed formula
-	 * @param initialBinding
-	 *            the binding
+	 * Maps the rest of the variables to finish the mapping process.
+	 * @param usedUpFormulae the formulae not available to draw matches from
+	 * @param initialBinding the binding to fill
+	 * @return whether all variables have been mapped successfully
 	 */
-	protected abstract void putVariableMapping(IndexedFormula<F> var, IndexedFormula<F> indexedFormula, IBinding initialBinding);
+	protected abstract boolean mapVariables(List<IndexedFormula<F>> usedUpFormulae, IBinding initialBinding);
 	
 	/**
 	 * Sets the associative complement consisting of the given formulae.
@@ -119,5 +104,4 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 	 * @param binding the target binding
 	 */
 	protected abstract void addAssociativeComplement(List<IndexedFormula<F>> formulae, IBinding binding);
-
 }

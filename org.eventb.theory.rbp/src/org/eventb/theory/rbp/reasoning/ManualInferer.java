@@ -113,7 +113,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 		}
 		IDeployedGiven firstGiven = rule.getGivens().get(0);
 		Predicate givenPredicate = firstGiven.getGivenClause();
-		IBinding binding = finder.match(hypothesis, givenPredicate, false);
+		IBinding binding = finder.match(hypothesis, givenPredicate, true);
 		if(binding == null){
 			return null;
 		}
@@ -131,9 +131,9 @@ public class ManualInferer extends AbstractRulesApplyer{
 		}
 		ACProblem<Predicate> acProblem = new ACPredicateProblem(
 				Formula.LAND, otherHyps.toArray(new Predicate[otherHyps.size()]), 
-				otherGivens.toArray(new Predicate[otherGivens.size()]), context.getFormulaFactory());
+				otherGivens.toArray(new Predicate[otherGivens.size()]), binding);
 		IBinding finalBinding = acProblem.solve(true);
-		if (finalBinding==null || !finalBinding.insertBinding(binding)){
+		if (finalBinding==null){
 			return null;
 		}
 		finalBinding.makeImmutable();

@@ -138,6 +138,18 @@ public class Binding implements IBinding{
 		predicateBinding.put(variable, p);
 		return true;
 	}
+	
+	@Override
+	public Predicate getCurrentMapping(PredicateVariable variable) {
+		checkMutable();
+		return predicateBinding.get(variable);
+	}
+
+	@Override
+	public Expression getCurrentMapping(FreeIdentifier identifier) {
+		checkMutable();
+		return binding.get(identifier);
+	}
 
 	@Override
 	public boolean isBindingInsertable(IBinding binding) {
@@ -329,8 +341,8 @@ public class Binding implements IBinding{
 
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Expression binding : [" + binding + "]");
-		builder.append("Predicate binding : [" + predicateBinding + "]");
+		builder.append("Expression binding : [" + binding + "]  ");
+		builder.append("Predicate binding : [" + predicateBinding + "]  ");
 		builder.append((isPartialMatchAcceptable ? "": "Not ")+ "Accepting Partial Match.");
 		return builder.toString();
 	}

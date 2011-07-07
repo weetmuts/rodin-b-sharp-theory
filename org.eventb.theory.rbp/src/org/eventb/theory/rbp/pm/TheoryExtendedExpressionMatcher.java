@@ -40,21 +40,24 @@ public class TheoryExtendedExpressionMatcher extends ExtendedExpressionMatcher<E
 
 		if (AstUtilities.isAssociative(pattern)) {
 			AssociativityProblem<Expression> problem = null;
-			if (AstUtilities.isAC(pattern)){
-				problem = new ACExpressionProblem(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
+			if (AstUtilities.isAC(pattern)) {
+				problem = new ACExpressionProblem(form.getTag(), formChildren, patChildren, existingBinding);
+			} else {
+				problem = new AExpressionProblem(form.getTag(), formChildren, patChildren, existingBinding);
 			}
-			else {
-				problem = new AExpressionProblem(form.getTag(), formChildren, patChildren, existingBinding.getFormulaFactory());
-			}
-			IBinding binding = (IBinding) problem.solve(false);
-			if (binding != null){
+			boolean partialMatchAcceptable = existingBinding.isPartialMatchAcceptable();
+			IBinding binding = (IBinding) problem.solve(partialMatchAcceptable);
+			if (binding != null) {
 				binding.makeImmutable();
-				if (existingBinding.insertBinding(binding)){
+				if (existingBinding.insertBinding(binding)) {
+					if (partialMatchAcceptable) {
+						existingBinding.setAssociativeExpressionComplement(binding.getAssociativeExpressionComplement());
+					}
 					return true;
 				}
 			}
 			return false;
-		} else
+		} else{
 			for (int i = 0; i < patChildren.length; i++) {
 				Expression patChild = patChildren[i];
 				if (patChild instanceof FreeIdentifier) {
@@ -65,6 +68,7 @@ public class TheoryExtendedExpressionMatcher extends ExtendedExpressionMatcher<E
 					return false;
 				}
 			}
+		}
 		return true;
 	}
 }

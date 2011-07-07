@@ -21,6 +21,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.plugin.PMPlugin;
 
@@ -106,29 +108,15 @@ public class MatchingUtilities {
 		}
 		return form;
 	}
-
-	// to parse a Theory formula i.e. predicate or expression
-	public static Formula<?> parseFormulaPattern(String formula, FormulaFactory factory) {
-		IParseResult res = factory.parseExpressionPattern(formula, V2, null);
-		if (res.hasProblem()) {
-			res = factory.parsePredicatePattern(formula, V2, null);
-			if (res.hasProblem()) {
-				return null;
-			} else
-				return res.getParsedPredicate();
-		} else
-			return res.getParsedExpression();
-
-	}
 	
 	/**
-	 * Returns the associative expression that fit the given details.
+	 * Returns the associative (potentially extended) expression that fit the given details.
 	 * @param tag the tag
 	 * @param factory the formula factory
 	 * @param exps the expressions
 	 * @return the resultant expression
 	 */
-	public static Expression makeAssociativeExpression(int tag, FormulaFactory factory, Expression... exps) {
+	public static Expression makeAppropriateAssociativeExpression(int tag, FormulaFactory factory, Expression... exps){
 		List<Expression> es = new ArrayList<Expression>();
 		for (Expression e : exps) {
 			if (e != null) {
@@ -141,9 +129,16 @@ public class MatchingUtilities {
 		}
 		if (es.size() == 1)
 			return es.get(0);
+		IFormulaExtension extension = factory.getExtension(tag);
+		if(extension!=null){
+			return factory.makeExtendedExpression(
+					(IExpressionExtension)extension, 
+					es.toArray(new Expression[es.size()]), 
+					new Predicate[0], null);
+		}
 		else {
 			return factory.makeAssociativeExpression(tag,
-					es.toArray(new Expression[es.size()]), null);
+					 es.toArray(new Expression[es.size()]), null);
 		}
 	}
 	

@@ -12,8 +12,6 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
 
@@ -88,17 +86,7 @@ public final class ComplexBinder {
 				Expression e1 = comp.getToAppend();
 				Expression e2 = comp.getToPrepend();
 				int tag = comp.getTag();
-				// check here if we are dealing with extended expressions
-				IFormulaExtension extension = factory.getExtension(tag);
-				if (extension != null) {
-					// here we return an extended expression instead
-					return factory.makeExtendedExpression(
-							(IExpressionExtension) extension, 
-							MatchingUtilities.getExpressionArray(e1, (Expression) formula, e2), 
-							new Predicate[0],
-							null);
-				}
-				return MatchingUtilities.makeAssociativeExpression(tag, factory, e1, (Expression) formula, e2);
+				return MatchingUtilities.makeAppropriateAssociativeExpression(tag, factory, e1, (Expression) formula, e2);
 			}
 		} else {
 			AssociativePredicateComplement comp = binding.getAssociativePredicateComplement();

@@ -87,6 +87,20 @@ public interface IBinding extends Cloneable{
 	public boolean putPredicateMapping(PredicateVariable variable, Predicate p);
 	
 	/**
+	 * Returns the predicate mapped to the given variable.
+	 * @param variable the predicate variable
+	 * @return the mapped predicate, or <code>null</code> if not mapped
+	 */
+	public Predicate getCurrentMapping(PredicateVariable variable);
+	
+	/**
+	 * Returns the expression mapped to the given identifier.
+	 * @param identifier the free identifier
+	 * @return the mapped expression, or <code>null</code> if not mapped
+	 */
+	public Expression getCurrentMapping(FreeIdentifier identifier);
+	
+	/**
 	 * Returns whether the specified binding is insertable in this binding.
 	 * <p> The four conditions that must be checked in this case are :
 	 * 	<ol>

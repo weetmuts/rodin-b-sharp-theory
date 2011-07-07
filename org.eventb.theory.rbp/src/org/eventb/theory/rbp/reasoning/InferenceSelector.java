@@ -66,7 +66,7 @@ public class InferenceSelector {
 				}
 				IDeployedGiven firstGiven = rule.getGivens().get(0);
 				Predicate givenPredicate = firstGiven.getGivenClause();
-				IBinding binding = finder.match(predicate, givenPredicate, false);
+				IBinding binding = finder.match(predicate, givenPredicate, true);
 				if(binding == null){
 					continue;
 				}
@@ -84,9 +84,9 @@ public class InferenceSelector {
 				}
 				ACProblem<Predicate> acProblem = new ACPredicateProblem(
 						Formula.LAND, otherHyps.toArray(new Predicate[otherHyps.size()]), 
-						otherGivens.toArray(new Predicate[otherGivens.size()]), context.getFormulaFactory());
+						otherGivens.toArray(new Predicate[otherGivens.size()]), binding);
 				IBinding finalBinding = acProblem.solve(true);
-				if (finalBinding==null || !finalBinding.insertBinding(binding)){
+				if (finalBinding == null){
 					continue;
 				}
 				apps.add(new InferenceTacticApplication(new InferenceInput(

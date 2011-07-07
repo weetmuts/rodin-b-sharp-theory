@@ -26,12 +26,60 @@ public class ACPredicateProblem extends ACProblem<Predicate> {
 	public ACPredicateProblem(int tag, Predicate[] formulae, Predicate[] patterns, IBinding existingBinding) {
 		super(tag, formulae, patterns, existingBinding);
 	}
-
+	
 	@Override
-	protected void putVariableMapping(IndexedFormula<Predicate> var, IndexedFormula<Predicate> indexedFormula, IBinding initialBinding) {
-		initialBinding.putPredicateMapping((PredicateVariable) var.getFormula(), indexedFormula.getFormula());
+	protected boolean mapVariables(List<IndexedFormula<Predicate>> usedUpFormulae, IBinding initialBinding) {
+		int sizeOfVariables = variables.size();
+		if (sizeOfVariables > 0) {
+			List<IndexedFormula<Predicate>> availableFormulae = new ArrayList<IndexedFormula<Predicate>>();
+			availableFormulae.addAll(indexedFormulae);
+			availableFormulae.removeAll(usedUpFormulae);
+			// we cannot solve if not enough formulae to draw from
+			if (availableFormulae.size() < sizeOfVariables) {
+				return false;
+			}
+			List<IndexedFormula<Predicate>> remainingVars = new ArrayList<IndexedFormula<Predicate>>();
+			for (IndexedFormula<Predicate> indexedVariable : variables){
+				PredicateVariable predicateVariable = (PredicateVariable) indexedVariable.getFormula();
+				Predicate currentMapping = existingBinding.getCurrentMapping(predicateVariable);
+				if(currentMapping != null){
+					IndexedFormula<Predicate> indexedFormula = null;
+					if((indexedFormula = getMatch(availableFormulae, currentMapping)) == null){
+						return false;
+					}
+					usedUpFormulae.add(indexedFormula);
+				}
+				else {
+					remainingVars.add(indexedVariable);
+				}
+			}
+			// remove used up formulae again
+			availableFormulae.removeAll(usedUpFormulae);
+			if(remainingVars.size() > availableFormulae.size()){
+				return false;
+			}
+			if(remainingVars.isEmpty()){
+				return true;
+			}
+			int sizeOfRemainingVars = remainingVars.size();
+			for (int i = 0; i < sizeOfRemainingVars - 1; i++) {
+				IndexedFormula<Predicate> var = remainingVars.get(i);
+				Predicate formula = availableFormulae.get(i).getFormula();
+				initialBinding.putPredicateMapping((PredicateVariable) var.getFormula(), 
+						formula);
+				usedUpFormulae.add(availableFormulae.get(i));
+			}
+			// remove used up formulae again
+			availableFormulae.removeAll(usedUpFormulae);
+			IndexedFormula<Predicate> lastVar = remainingVars.get(sizeOfRemainingVars-1);
+			List<Predicate> remainingPreds = getFormulae(availableFormulae);
+			initialBinding.putPredicateMapping((PredicateVariable) lastVar.getFormula(), 
+					MatchingUtilities.makeAssociativePredicate(
+							tag, existingBinding.getFormulaFactory(), remainingPreds.toArray(new Predicate[remainingPreds.size()])));
+		}
+		return true;
 	}
-
+	
 	@Override
 	protected void addAssociativeComplement(List<IndexedFormula<Predicate>> formulae, IBinding binding) {
 		List<Predicate> list = new ArrayList<Predicate>();

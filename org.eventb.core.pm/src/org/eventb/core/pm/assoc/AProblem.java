@@ -40,12 +40,4 @@ public abstract class AProblem<F extends Formula<F>> extends AssociativityProble
 	protected boolean explore(int patternIndex, ACMatchStack<F> matchStack){
 		return false;
 	}
-	
-	/**
-	 * Inserts the variable mapping into the given binding.
-	 * @param var the variable
-	 * @param indexedFormula the indexed formula
-	 * @param initialBinding the binding
-	 */
-	protected abstract void putVariableMapping(IndexedFormula<F> var, IndexedFormula<F> indexedFormula, IBinding initialBinding);
 }

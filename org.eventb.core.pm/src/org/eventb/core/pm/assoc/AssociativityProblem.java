@@ -104,6 +104,70 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	}
 	
 	/**
+	 * Returns an indexed formula list based on the formulae supplied.
+	 * @param list the formulae list
+	 * @return list of indexed formulae
+	 */
+	protected List<IndexedFormula<F>> getIndexedFormulae(List<F> list) {
+		if (list == null) {
+			return null;
+		}
+		List<IndexedFormula<F>> indexedFormulae = new ArrayList<IndexedFormula<F>>();
+		int i = 0;
+		for (F formula : list) {
+			indexedFormulae.add(new IndexedFormula<F>(i++, formula));
+		}
+		return indexedFormulae;
+	}
+	
+	/**
+	 * Returns a formula list based on the indexed formulae supplied.
+	 * @param list the indexed formulae list
+	 * @return list of formulae
+	 */
+	protected List<F> getFormulae(IndexedFormula<F>... list) {
+		if (list == null) {
+			return null;
+		}
+		List<F> formulae = new ArrayList<F>();
+		for (IndexedFormula<F> indexedFormula : list) {
+			formulae.add(indexedFormula.getFormula());
+		}
+		return formulae;
+	}
+	
+	/**
+	 * Returns a formula list based on the indexed formulae supplied.
+	 * @param list the indexed formulae list
+	 * @return list of formulae
+	 */
+	protected List<F> getFormulae(List<IndexedFormula<F>> list) {
+		if (list == null) {
+			return null;
+		}
+		List<F> formulae = new ArrayList<F>();
+		for (IndexedFormula<F> indexedFormula : list) {
+			formulae.add(indexedFormula.getFormula());
+		}
+		return formulae;
+	}
+	
+	/**
+	 * Returns the indexed formula in the list whose formula equals the given formula.
+	 * @param formulae the indexed formulae
+	 * @param formula the formula
+	 * @return the matching indexed formula
+	 */ 
+	protected IndexedFormula<F> getMatch(List<IndexedFormula<F>> formulae, F formula){
+		for (IndexedFormula<F> indexedFormula : formulae){
+			if(indexedFormula.getFormula().equals(formula)){
+				return indexedFormula;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Generates the search space for this matching process.
 	 * 
 	 * <p> The search space includes all possible matches for every pattern.
