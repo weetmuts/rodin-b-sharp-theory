@@ -37,8 +37,8 @@ public final class AssociativeExpressionComplement implements IAssociativeComple
 	
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
-		builder.append("Tag : "+ tag +"\n");
-		builder.append("Expression to append : "+ toAppend + "\n");
+		builder.append("Tag : "+ tag +" | ");
+		builder.append("Expression to append : "+ toAppend + " | ");
 		builder.append("Expression to prepend : "+ toPrepend);
 		return builder.toString();
 	}

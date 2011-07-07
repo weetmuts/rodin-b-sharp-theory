@@ -8,7 +8,6 @@
 package org.eventb.core.pm.assoc;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pm.IBinding;
 
@@ -19,8 +18,8 @@ import org.eventb.core.pm.IBinding;
  */
 public class AExpressionProblem extends AProblem<Expression>{
 
-	public AExpressionProblem(int tag, Expression[] formulae, Expression[] patterns, FormulaFactory factory) {
-		super(tag, formulae, patterns, factory);
+	public AExpressionProblem(int tag, Expression[] formulae, Expression[] patterns, IBinding existingBinding) {
+		super(tag, formulae, patterns, existingBinding);
 	}
 
 	@Override

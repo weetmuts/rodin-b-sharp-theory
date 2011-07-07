@@ -2,9 +2,10 @@ package org.eventb.core.pm.matchers.pred;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.PredicateMatcher;
+import org.eventb.core.pm.assoc.ACPredicateProblem;
+import org.eventb.core.pm.assoc.ACProblem;
 
 /**
  * TODO better matching
@@ -26,37 +27,19 @@ public class AssociativePredicateMatcher extends PredicateMatcher<AssociativePre
 		// get the children
 		Predicate[] formChildren = form.getChildren();
 		Predicate[] patternChildren = pattern.getChildren();
-		// work with binary representations
-		if(formChildren.length != 2 || patternChildren.length != 2
-				|| formChildren.length != patternChildren.length){
-			return false;
-		}
-		Predicate formChild1 = formChildren[0];
-		Predicate patternChild1 = patternChildren[0];
-		Predicate formChild2 = formChildren[1];
-		Predicate patternChild2 = patternChildren[1];
-		
-		if(patternChild1 instanceof PredicateVariable){
-			if(!existingBinding.putPredicateMapping((PredicateVariable) patternChild1, formChild1)) {
-				return false;
+		ACProblem<Predicate> problem = new ACPredicateProblem(form.getTag(), formChildren, patternChildren, existingBinding);
+		boolean partialMatchAcceptable = existingBinding.isPartialMatchAcceptable();
+		IBinding solution = problem.solve(partialMatchAcceptable);
+		if(solution != null){
+			solution.makeImmutable();
+			if(existingBinding.insertBinding(solution)){
+				if(partialMatchAcceptable){
+					existingBinding.setAssociativePredicateComplement(solution.getAssociativePredicateComplement());
+				}
 			}
+			return true;
 		}
-		else {
-			if(!matchingFactory.match(formChild1, patternChild1, existingBinding)){
-				return false;
-			}
-		}
-		if(patternChild2 instanceof PredicateVariable){
-			if(!existingBinding.putPredicateMapping((PredicateVariable) patternChild2, formChild2)) {
-				return false;
-			}
-		}
-		else {
-			if(!matchingFactory.match(formChild2, patternChild2, existingBinding)){
-				return false;
-			}
-		}
-		return true;
+		return false;
 		
 	}
 

@@ -13,7 +13,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IBinding;
 import org.eventb.core.pm.Matcher;
 
@@ -32,7 +31,6 @@ import org.eventb.core.pm.Matcher;
  * applying it to the associative formula whose children are the patterns results in
  * the associative formula (or a sub-formula) whose children are the formulae.
  * <p>
- * TODO describe this more formally
  * 
  * @author maamria
  * @since 1.0
@@ -43,6 +41,9 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	protected int tag;
 	protected List<IndexedFormula<F>> indexedFormulae;
 	protected List<IndexedFormula<F>> indexedPatterns;
+	
+	protected IBinding existingBinding;
+	
 	protected Matcher matcher;
 
 	protected List<MatchEntry<F>> searchSpace;
@@ -59,14 +60,15 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	 *            the array of formula, must not be <code>null</code>
 	 * @param patterns
 	 *            the array of patterns, must not be <code>null</code>
-	 * @param factory
-	 *            the formula factory
+	 * @param existinBinding
+	 *            the existing binding
 	 */
-	protected AssociativityProblem(int tag, F[] formulae, F[] patterns, FormulaFactory factory) {
+	protected AssociativityProblem(int tag, F[] formulae, F[] patterns, IBinding existinBinding) {
 		this.tag = tag;
-		this.matcher = new Matcher(factory);
 		this.indexedFormulae = getIndexedFormulae(formulae);
 		this.indexedPatterns = getIndexedFormulae(patterns);
+		this.existingBinding = existinBinding;
+		this.matcher = new Matcher(existinBinding.getFormulaFactory());
 		this.variables = new ArrayList<IndexedFormula<F>>();
 		this.searchSpace = generateSearchSpace();
 		if (indexedFormulae.size() < indexedPatterns.size()) {
@@ -104,7 +106,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	/**
 	 * Generates the search space for this matching process.
 	 * 
-	 * <p> The search space is the collection of all matches for all patterns.
+	 * <p> The search space includes all possible matches for every pattern.
 	 * @return the search space
 	 */
 	protected List<MatchEntry<F>> generateSearchSpace() {
@@ -120,7 +122,8 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 				F formula = indexedFormula.getFormula();
 				IBinding binding = matcher.match(formula, pattern, false);
 				if (binding != null) {
-					matches.add(new Match<F>(indexedFormula, indexedPattern, binding));
+					if(existingBinding.isBindingInsertable(binding))
+						matches.add(new Match<F>(indexedFormula, indexedPattern, binding));
 				}
 			}
 			searchSpace.add(new MatchEntry<F>(indexedPattern, matches));
@@ -128,6 +131,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 				isSolvable = false;
 			}
 		}
+		// sort according to the number of matches, the entry with lowest number of matches comes first
 		Collections.sort(searchSpace, new Comparator<MatchEntry<F>>() {
 			@Override
 			public int compare(MatchEntry<F> o1, MatchEntry<F> o2) {
@@ -148,6 +152,6 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 
 	@Override
 	public String toString() {
-		return tag + " : \n Formulae : " + indexedFormulae + "\n Patterns : " + indexedPatterns;
+		return tag + " | Formulae is " + indexedFormulae + " | Patterns is " + indexedPatterns;
 	}
 }

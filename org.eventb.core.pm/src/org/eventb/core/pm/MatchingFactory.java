@@ -69,6 +69,8 @@ public final class MatchingFactory {
 	private static final Map<Class<? extends Expression>, IExpressionMatcher> EXPRESSION_MATCHERS = new LinkedHashMap<Class<? extends Expression>, IExpressionMatcher>();
 	private static final Map<Class<? extends Predicate>, IPredicateMatcher> PREDICATE_MATCHERS = new LinkedHashMap<Class<? extends Predicate>, IPredicateMatcher>();
 	
+	private boolean loadedRegistry = false;
+	
 	/**
 	 * Load expression matchers.
 	 */
@@ -119,9 +121,10 @@ public final class MatchingFactory {
 	 */
 	public final boolean match(Formula<?> formula, Formula<?> pattern, IBinding initialBinding){
 		// ensure existence of the registeries, DO NOT DO this in constructor
-		{
+		if(!loadedRegistry){
 			expressionPatternMatchersRegistry = ExpressionPatternMatchersRegistry.getMatchersRegistry();
 			predicatePatternMatchersRegistry = PredicatePatternMatchersRegistry.getMatchersRegistry();
+			loadedRegistry = true;
 		}
 		// initial binding cannot be null
 		if(initialBinding == null){
@@ -188,11 +191,12 @@ public final class MatchingFactory {
 	/**
 	 * Returns an empty binding that can be used to accumulate other bindings.
 	 * <p> This binding is independent of the formula and pattern it matches if any.
+	 * @param acceptPartialMatch whether to accept partial match
 	 * @param factory the formula factory
 	 * @return an empty binding
 	 */
-	public final IBinding createBinding(FormulaFactory factory){
-		return new Binding(factory);
+	public final IBinding createBinding(boolean acceptPartialMatch, FormulaFactory factory){
+		return new Binding(acceptPartialMatch, factory);
 	}
 	
 	private IExpressionMatcher getExpressionMatcher(Class<? extends Expression> clazz){

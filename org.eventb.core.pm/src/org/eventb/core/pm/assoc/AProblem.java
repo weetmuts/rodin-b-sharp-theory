@@ -7,11 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pm.assoc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IBinding;
 
 /**
@@ -23,8 +19,8 @@ import org.eventb.core.pm.IBinding;
  */
 public abstract class AProblem<F extends Formula<F>> extends AssociativityProblem<F>{
 
-	public AProblem(int tag, F[] formulae, F[] patterns, FormulaFactory factory) {
-		super(tag, formulae, patterns, factory);
+	public AProblem(int tag, F[] formulae, F[] patterns, IBinding existingBinding) {
+		super(tag, formulae, patterns, existingBinding);
 	}
 	
 	@Override
@@ -32,35 +28,7 @@ public abstract class AProblem<F extends Formula<F>> extends AssociativityProble
 		if (!isSolvable) {
 			return null;
 		}
-		IBinding initialBinding = matcher.getMatchingFactory().createBinding(matcher.getFactory());
-		MatchStack<F> matchStack = new MatchStack<F>(matcher);
-		if (searchSpace.size() > 0) {
-			MatchEntry<F> matchEntry = searchSpace.get(0);
-			List<Match<F>> matchesList = matchEntry.getMatches();
-			for (Match<F> match : matchesList) {
-				matchStack.push(match);
-				if (explore(1, matchStack)) {
-					IBinding matchBinding = matchStack.getFinalBinding();
-					matchBinding.makeImmutable();
-					initialBinding.insertBinding( matchBinding);
-					break;
-				}
-			}
-		}
-		List<IndexedFormula<F>> allFormulae = new ArrayList<IndexedFormula<F>>();
-		allFormulae.addAll(indexedFormulae);
-		allFormulae.removeAll(matchStack.getUsedUpFormulae());
-		if (allFormulae.size() < variables.size()){
-			return null;
-		}
-		int sizeOfVariables = variables.size();
-		for (int i = 0 ; i < sizeOfVariables-1; i++){
-			// this is a hook
-			IndexedFormula<F> var = variables.get(i);
-			putVariableMapping(var, allFormulae.get(i), initialBinding);
-		}
-		putVariableMapping(variables.get(sizeOfVariables-1), allFormulae.get(sizeOfVariables-1), initialBinding);
-		return initialBinding;
+		return null;
 	}
 	
 	/**
@@ -69,7 +37,7 @@ public abstract class AProblem<F extends Formula<F>> extends AssociativityProble
 	 * @param matchStack the match stack
 	 * @return whether exploring has succeeded
 	 */
-	protected boolean explore(int patternIndex, MatchStack<F> matchStack){
+	protected boolean explore(int patternIndex, ACMatchStack<F> matchStack){
 		return false;
 	}
 	

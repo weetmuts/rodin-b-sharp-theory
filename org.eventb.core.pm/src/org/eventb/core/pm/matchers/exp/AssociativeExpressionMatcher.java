@@ -30,15 +30,19 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 		Expression[] patternChildren = pattern.getChildren();
 		AssociativityProblem<Expression> problem = null;
 		if (isAC){
-			problem = new ACExpressionProblem(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
+			problem = new ACExpressionProblem(form.getTag(), formChildren, patternChildren, existingBinding); 
 		}
 		else {
-			problem = new AExpressionProblem(form.getTag(), formChildren, patternChildren, existingBinding.getFormulaFactory());
+			problem = new AExpressionProblem(form.getTag(), formChildren, patternChildren, existingBinding);
 		}
-		IBinding binding = (IBinding) problem.solve(false);
-		if (binding != null){
-			binding.makeImmutable();
-			if (existingBinding.insertBinding(binding)){
+		boolean partialMatchAcceptable = existingBinding.isPartialMatchAcceptable();
+		IBinding solution = (IBinding) problem.solve(partialMatchAcceptable);
+		if (solution != null){
+			solution.makeImmutable();
+			if (existingBinding.insertBinding(solution)){
+				if(partialMatchAcceptable){
+					existingBinding.setAssociativeExpressionComplement(solution.getAssociativeExpressionComplement());
+				}
 				return true;
 			}
 		}

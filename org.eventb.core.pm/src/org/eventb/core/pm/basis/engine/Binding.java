@@ -1,9 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2011 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.pm.basis.engine;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
@@ -24,40 +31,54 @@ import org.eventb.core.pm.AssociativePredicateComplement;
 import org.eventb.core.pm.IBinding;
 
 /**
- * <p>
- * An implementation of a binding.
- * </p>
- * 
- * <p>
- * In order to create a new binding object, call {@link MatchingFactory.createBinding()}.
- * </p>
+ * <p> An implementation of a binding.
+ * <p> Call {@link MatchingFactory.createBinding()} to create a fresh binding.
  * 
  * @see IBinding
- * 
  * @since 1.0
- * 
  * @author maamria
  * 
  */
-public final class Binding implements IBinding {
+public class Binding implements IBinding{
 
+	/**
+	 * The formula to match.
+	 */
 	private Formula<?> formula;
+	/**
+	 * The pattern to match against.
+	 */
 	private Formula<?> pattern;
-	// mappings stores
+	
+	/**
+	 * The mapping storage for identifiers, type and predicate variables.
+	 */
 	private Map<FreeIdentifier, Expression> binding;
 	private Map<FreeIdentifier, Type> typeParametersInstantiations;
-	private Map<PredicateVariable, Predicate> predBinding;
-	// factory used
-	final private FormulaFactory factory;
-	// state information
-	private boolean isImmutable = false;
-	// type environment generated if the matching process is a success
-	final private ITypeEnvironment typeEnvironment;
-	// matching information
+	private Map<PredicateVariable, Predicate> predicateBinding;
+	
+	/**
+	 * The formula factory used
+	 */
+	private FormulaFactory factory;
+	
+	/**
+	 * The type environment generated if the matching process is a success.
+	 */
+	private ITypeEnvironment typeEnvironment;
+	
+	/**
+	 * Other matching information.
+	 */
 	private boolean isPartialMatchAcceptable;
-	private AssociativeExpressionComplement expComplement;
-	private AssociativePredicateComplement predComplement;
-
+	private AssociativeExpressionComplement expressionComplement;
+	private AssociativePredicateComplement predicateComplement;
+	
+	/**
+	 * State of binding information.
+	 */
+	private boolean isImmutable = false;
+	
 	/**
 	 * Creates a binding that will contain match information between <code>formula</code> and
 	 * <code>pattern</code>. It is possible to specify whether a complete or partial match
@@ -75,20 +96,17 @@ public final class Binding implements IBinding {
 		this.factory = factory;
 		binding = new HashMap<FreeIdentifier, Expression>();
 		typeParametersInstantiations = new HashMap<FreeIdentifier, Type>();
-		predBinding = new HashMap<PredicateVariable, Predicate>();
+		predicateBinding = new HashMap<PredicateVariable, Predicate>();
 		typeEnvironment = factory.makeTypeEnvironment();
 	}
 	
 	/**
 	 * Creates a binding that can be used as an accumulator of other bindings.
+	 * @param acceptPartialMatch whether to accept partial match
 	 * @param factory the formula factory
 	 */
-	public Binding(FormulaFactory factory) {
-		this(null, null, false, factory);
-	}
-
-	public boolean isImmutable() {
-		return isImmutable;
+	public Binding(boolean acceptPartialMatch, FormulaFactory factory) {
+		this(null, null, acceptPartialMatch, factory);
 	}
 	
 	@Override
@@ -101,14 +119,27 @@ public final class Binding implements IBinding {
 		return pattern;
 	}
 
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Expression binding : " + binding + "\n");
-		builder.append("Predicate binding : " + predBinding + "\n");
-		builder.append((isPartialMatchAcceptable ? "": "Not ")+ "Accepting Partial Match.");
-		return builder.toString();
+	@Override
+	public boolean putExpressionMapping(FreeIdentifier identifier, Expression e) {
+		checkMutable();
+		if(!isMappingInsertable(identifier, e)){
+			return false;
+		}
+		binding.put(identifier, e);
+		return true;
 	}
 
+	@Override
+	public boolean putPredicateMapping(PredicateVariable variable, Predicate p) {
+		checkMutable();
+		if(!isPredicateMappingInsertable(variable, p)){
+			return false;
+		}
+		predicateBinding.put(variable, p);
+		return true;
+	}
+
+	@Override
 	public boolean isBindingInsertable(IBinding binding) {
 		// mutable binding are not insertable
 		if (!binding.isImmutable())
@@ -117,7 +148,7 @@ public final class Binding implements IBinding {
 		if (isImmutable)
 			return false;
 		Map<FreeIdentifier, Expression> identMap = ((Binding) binding).binding;
-		Map<PredicateVariable, Predicate> predMap = ((Binding) binding).predBinding;
+		Map<PredicateVariable, Predicate> predMap = ((Binding) binding).predicateBinding;
 		for (FreeIdentifier ident : identMap.keySet()) {
 			if (!isMappingInsertable(ident, identMap.get(ident))) {
 				return false;
@@ -131,122 +162,28 @@ public final class Binding implements IBinding {
 		return true;
 	}
 
-	public boolean putExpressionMapping(FreeIdentifier ident, Expression e) {
-		if (isImmutable)
-			throw new UnsupportedOperationException(
-					"Trying to add a mapping after the matching process finished.");
-		if (!condition1_CanUnifyTypes(e.getType(), ident.getType())
-				|| !condition2_IdentifierIsGivenType(e, ident)
-				|| (binding.get(ident) != null && !e.equals(binding.get(ident)))) {
-			return false;
-		}
-		binding.put(ident, e);
-		return true;
-	}
-
+	@Override
 	public boolean insertBinding(IBinding another) {
+		checkMutable();
 		if (!another.isImmutable())
-			throw new IllegalArgumentException(
-					"Trying to add mappings from a mutable binding.");
-		if (isImmutable)
-			throw new UnsupportedOperationException(
-					"Trying to add mappings after the matching process finished.");
+			throw new IllegalArgumentException("Trying to add mappings from a mutable binding.");
+		// add each of the mappings
 		Binding anotherBinding = (Binding) another;
 		for (FreeIdentifier ident : anotherBinding.binding.keySet()) {
 			if (!putExpressionMapping(ident, anotherBinding.binding.get(ident))) {
 				return false;
 			}
 		}
-		for (PredicateVariable var : anotherBinding.predBinding.keySet()) {
+		for (PredicateVariable var : anotherBinding.predicateBinding.keySet()) {
 			if (!putPredicateMapping(var,
-					anotherBinding.predBinding.get(var))) {
+					anotherBinding.predicateBinding.get(var))) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
-	@Override
-	public boolean isPartialMatchAcceptable() {
-		return isPartialMatchAcceptable;
-	}
-
-	public void makeImmutable() {
-		isImmutable = true;
-		for (FreeIdentifier ident : typeParametersInstantiations.keySet()) {
-			binding.put(ident, typeParametersInstantiations.get(ident)
-					.toExpression(factory));
-		}
-		for (FreeIdentifier ident : binding.keySet()) {
-			Type newType = binding.get(ident).getType();
-			typeEnvironment.addName(ident.getName(), newType);
-		}
-
-	}
-
-	public Map<FreeIdentifier, Expression> getExpressionMappings() {
-		if (!isImmutable)
-			throw new UnsupportedOperationException(
-					"Trying to access mappings while still calculating the binding.");
-		Map<FreeIdentifier, Expression> finalBinding = new HashMap<FreeIdentifier, Expression>();
-		for (FreeIdentifier ident : binding.keySet()) {
-			Expression exp = binding.get(ident);
-			Type newType = exp.getType();
-			FreeIdentifier newIdent = factory.makeFreeIdentifier(
-					ident.getName(), null, newType);
-			finalBinding.put(newIdent, exp);
-		}
-		return finalBinding;
-	}
-
-	public ITypeEnvironment getTypeEnvironment() {
-		if (!isImmutable)
-			throw new UnsupportedOperationException(
-					"Trying to access type environment while still calculating the binding.");
-		return typeEnvironment.clone();
-	}
-
-	public void setAssociativeExpressionComplement(
-			AssociativeExpressionComplement comp) {
-		this.expComplement = comp;
-	}
-
-	public AssociativeExpressionComplement getAssociativeExpressionComplement() {
-		return expComplement;
-	}
-
-	public Map<PredicateVariable, Predicate> getPredicateMappings() {
-		if (!isImmutable)
-			throw new UnsupportedOperationException(
-					"Trying to access mappings while still calculating the binding.");
-		return Collections.unmodifiableMap(predBinding);
-	}
-
-	public boolean putPredicateMapping(PredicateVariable var, Predicate p) {
-		if (isImmutable)
-			throw new UnsupportedOperationException(
-					"Trying to add a mapping after the matching process finished.");
-		if (predBinding.get(var) != null && !p.equals(predBinding.get(var))) {
-			return false;
-		}
-		predBinding.put(var, p);
-		return true;
-	}
-
-	public AssociativePredicateComplement getAssociativePredicateComplement() {
-		return predComplement;
-	}
-
-	public void setAssociativePredicateComplement(
-			AssociativePredicateComplement comp) {
-		this.predComplement = comp;
-	}
 
 	@Override
-	public FormulaFactory getFormulaFactory() {
-		return factory;
-	}
-
 	public boolean canUnifyTypes(Type expressionType, Type patternType) {
 		if (isImmutable) {
 			return false;
@@ -297,10 +234,125 @@ public final class Binding implements IBinding {
 				return true;
 			}
 		}
-		// unification not possible
 		return false;
 	}
 
+	@Override
+	public boolean isPartialMatchAcceptable() {
+		return isPartialMatchAcceptable;
+	}
+
+	@Override
+	public void setAssociativeExpressionComplement(AssociativeExpressionComplement comp) {
+		checkMutable();
+		this.expressionComplement = comp;
+	}
+
+	@Override
+	public void setAssociativePredicateComplement(AssociativePredicateComplement comp) {
+		checkMutable();
+		this.predicateComplement = comp;
+	}
+
+	@Override
+	public AssociativeExpressionComplement getAssociativeExpressionComplement() {
+		checkImmutable();
+		return expressionComplement;
+	}
+
+	@Override
+	public AssociativePredicateComplement getAssociativePredicateComplement() {
+		checkImmutable();
+		return predicateComplement;
+	}
+	
+	@Override
+	public IBinding clone(){
+		checkMutable();
+		// copy all state information
+		Binding newBinding = new Binding(formula, pattern, isPartialMatchAcceptable, factory);
+		newBinding.isImmutable = isImmutable;
+		newBinding.binding = new LinkedHashMap<FreeIdentifier, Expression>(binding);
+		newBinding.typeParametersInstantiations = new LinkedHashMap<FreeIdentifier, Type>(typeParametersInstantiations);
+		newBinding.predicateBinding = new LinkedHashMap<PredicateVariable, Predicate>(predicateBinding);
+		newBinding.expressionComplement = expressionComplement;
+		newBinding.predicateComplement = predicateComplement;
+		return newBinding;
+	}
+
+	@Override
+	public boolean isImmutable() {
+		return isImmutable;
+	}
+
+	@Override
+	public void makeImmutable() {
+		isImmutable = true;
+		for (FreeIdentifier ident : typeParametersInstantiations.keySet()) {
+			binding.put(ident, typeParametersInstantiations.get(ident).toExpression(factory));
+		}
+		for (FreeIdentifier ident : binding.keySet()) {
+			Type newType = binding.get(ident).getType();
+			typeEnvironment.addName(ident.getName(), newType);
+		}
+	}
+
+	@Override
+	public ITypeEnvironment getTypeEnvironment() {
+		checkImmutable();
+		return typeEnvironment.clone();
+	}
+
+	@Override
+	public Map<FreeIdentifier, Expression> getExpressionMappings() {
+		checkImmutable();
+		Map<FreeIdentifier, Expression> finalBinding = new HashMap<FreeIdentifier, Expression>();
+		for (FreeIdentifier ident : binding.keySet()) {
+			Expression exp = binding.get(ident);
+			Type newType = exp.getType();
+			FreeIdentifier newIdent = factory.makeFreeIdentifier(ident.getName(), null, newType);
+			finalBinding.put(newIdent, exp);
+		}
+		return finalBinding;
+	}
+
+	@Override
+	public Map<PredicateVariable, Predicate> getPredicateMappings() {
+		checkImmutable();
+		return Collections.unmodifiableMap(predicateBinding);
+	}
+
+	@Override
+	public FormulaFactory getFormulaFactory() {
+		return factory;
+	}
+
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Expression binding : [" + binding + "]");
+		builder.append("Predicate binding : [" + predicateBinding + "]");
+		builder.append((isPartialMatchAcceptable ? "": "Not ")+ "Accepting Partial Match.");
+		return builder.toString();
+	}
+	
+	/**
+	 * Utilities.
+	 */
+	
+	protected void checkMutable() throws UnsupportedOperationException{
+		if (isImmutable){
+			throw new UnsupportedOperationException(
+				"Cannot change binding that is immutable.");
+		}
+	}
+	
+	protected void checkImmutable() throws UnsupportedOperationException{
+		if (!isImmutable){
+			throw new UnsupportedOperationException(
+				"Matching process has not finished.");
+		}
+	}
+	
 	/**
 	 * Adds the mapping of the type specified by the given free identifier and
 	 * the supplied type.
@@ -321,18 +373,16 @@ public final class Binding implements IBinding {
 				&& !typeParametersInstantiations.get(ident).equals(type)) {
 			return false;
 		}
-		// all OK
+		// add mapping
 		typeParametersInstantiations.put(ident, type);
 		return true;
 	}
-
-	// ////////////////////////////////////////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////
-	// //// Conditions for inserting a new expression mapping
+	
 	/**
 	 * Returns whether the types of the expression and the identifier are
 	 * compatible.
+	 * 
+	 * <p> Corresponds to condition (2).
 	 * 
 	 * @param expressionType
 	 *            the type of the expression
@@ -340,7 +390,7 @@ public final class Binding implements IBinding {
 	 *            the type of the identifier pattern
 	 * @return whether the two types are compatible
 	 */
-	protected boolean condition1_CanUnifyTypes(Type expressionType,
+	protected boolean condition_CanUnifyTypes(Type expressionType,
 			Type identifierType) {
 		return canUnifyTypes(expressionType, identifierType);
 	}
@@ -349,42 +399,39 @@ public final class Binding implements IBinding {
 	 * Checks the condition when the identifier is a given type in which case
 	 * the expression has to be a type expression.
 	 * 
+	 * <p> Corresponds to condition (3).
+	 * 
 	 * @param expression
 	 * @param identifier
 	 *            the
 	 * @return whether the condition is met
 	 */
-	protected boolean condition2_IdentifierIsGivenType(Expression expression,
+	protected boolean condition_IdentifierIsGivenType(Expression expression,
 			FreeIdentifier identifier) {
-		Set<GivenType> allPGivenTypes = identifier.getGivenTypes();
-		if (isIdentAGivenType(identifier, allPGivenTypes)) {
+		if (isIdentAGivenType(identifier)) {
 			return expression.isATypeExpression();
 		}
 		return true;
 	}
-
-	// ////////////////////////////////////////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////
-	// ////////////////////////////////////////////////////////////////////////////////
-
+	
 	/**
 	 * Checks whether the identifier is a given type.
 	 * 
-	 * @param i
+	 * @param identifier
 	 *            the identifier
 	 * @param types
 	 *            the set of given types
 	 * @return whether the identifier is a given type
 	 */
-	protected boolean isIdentAGivenType(FreeIdentifier i, Set<GivenType> types) {
-		for (GivenType gt : types) {
-			if (i.equals(gt.toExpression(factory))) {
+	protected boolean isIdentAGivenType(FreeIdentifier identifier) {
+		for (GivenType gt : identifier.getGivenTypes()) {
+			if (identifier.equals(gt.toExpression(factory))) {
 				return true;
 			}
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Checks whether an individual mapping is insertable.
 	 * 
@@ -396,8 +443,8 @@ public final class Binding implements IBinding {
 	 */
 	protected boolean isMappingInsertable(FreeIdentifier ident, Expression e) {
 		if (isImmutable
-				|| !condition1_CanUnifyTypes(e.getType(), ident.getType())
-				|| !condition2_IdentifierIsGivenType(e, ident)
+				|| !condition_CanUnifyTypes(e.getType(), ident.getType())
+				|| !condition_IdentifierIsGivenType(e, ident)
 				|| (binding.get(ident) != null && !e.equals(binding.get(ident)))) {
 			return false;
 		}
@@ -405,11 +452,18 @@ public final class Binding implements IBinding {
 		return true;
 	}
 
-	protected boolean isPredicateMappingInsertable(PredicateVariable var,
-			Predicate p) {
+	/**
+	 * Checks whether an individual mapping is insertable.
+	 * 
+	 * @param var
+	 *            the predicate variable
+	 * @param p
+	 *            the predicate
+	 * @return whether an individual mapping is insertable
+	 */
+	protected boolean isPredicateMappingInsertable(PredicateVariable var, Predicate p) {
 		if (isImmutable
-				|| (predBinding.get(var) != null && !p.equals(predBinding
-						.get(var))))
+				|| (predicateBinding.get(var) != null && !p.equals(predicateBinding.get(var))))
 			return false;
 
 		return true;
