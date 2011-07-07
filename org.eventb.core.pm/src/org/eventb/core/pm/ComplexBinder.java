@@ -10,6 +10,7 @@ package org.eventb.core.pm;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
@@ -29,7 +30,11 @@ import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
  * 
  */
 public final class ComplexBinder {
-
+	/**
+	 * Helper variable name
+	 */
+	private static final String TEMP_IDENT = "z0_z1_z2_z3_z4_z123456789";
+	
 	FormulaFactory factory;
 	
 	public ComplexBinder(FormulaFactory factory) {
@@ -65,10 +70,11 @@ public final class ComplexBinder {
 			if (matchedFormula instanceof Expression){
 				// make a relational predicate with the formula = finalResultFormula to 
 				// facilitate type checking
+				FreeIdentifier identifier = factory.makeFreeIdentifier(TEMP_IDENT, null, ((Expression) matchedFormula).getType());
 				RelationalPredicate relationalPredicate = 
 					factory.makeRelationalPredicate(Formula.EQUAL, 
 							(Expression)finalResultFormula, 
-							(Expression)matchedFormula, null);
+							identifier, null);
 				// type check
 				relationalPredicate.typeCheck(binding.getTypeEnvironment());
 				// we should have a type-checked version of the final result

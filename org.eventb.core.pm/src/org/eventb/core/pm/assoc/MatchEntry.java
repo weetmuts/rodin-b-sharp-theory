@@ -7,13 +7,12 @@
  *******************************************************************************/
 package org.eventb.core.pm.assoc;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
 
 /**
- * Immutable match entry implementation.
+ * Match entry implementation.
  * 
  * <p> A match entry stores the list of matches for a particular indexed pattern.
  * 
@@ -51,7 +50,7 @@ public class MatchEntry<F extends Formula<F>> {
 	 * @return the list of matches
 	 */
 	public List<Match<F>> getMatches() {
-		return Collections.unmodifiableList(matches);
+		return matches;
 	}
 	
 	@Override
