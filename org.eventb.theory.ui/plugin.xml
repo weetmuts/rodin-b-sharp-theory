@@ -7,7 +7,7 @@
             category="org.eventb.ui.wizards"
             class="org.eventb.theory.ui.wizard.NewTheoryWizard"
             finalPerspective="org.eventb.ui.perspective.eventb"
-            icon="icons/thy.gif"
+            icon="icons/thy.png"
             id="org.eventb.theory.ui.newTheoryWizard"
             name="%newTheoryWizard"
             preferredPerspectives="org.eventb.ui.perspective.eventb,org.eventb.ui.perspective.proving"
@@ -24,7 +24,7 @@
             contributorClass="org.eventb.theory.ui.editor.TheoryEditorContributor"
             default="true"
             extensions="tuf"
-            icon="icons/thy.gif"
+            icon="icons/thy.png"
             id="org.eventb.theory.ui.theoryEditor"
             name="%theoryEditor">
          <contentTypeBinding
@@ -130,14 +130,14 @@
       </choiceAttribute>
       <element
             childrenSuffix="END"
-            imagePath="icons/thy.gif"
+            imagePath="icons/thy.png"
             prefix="THEORY"
             prettyPrinter="org.eventb.theory.ui.editor.html.ComponentPrettyPrinter"
             typeId="org.eventb.theory.core.theoryRoot">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/thy.gif"
+            imagePath="icons/thy.png"
             prefix="IMPORTS"
             prettyPrinter="org.eventb.theory.ui.editor.html.ImportPrettyPrinter"
             typeId="org.eventb.theory.core.importTheory">

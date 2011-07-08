@@ -34,11 +34,11 @@ public interface ITheoryImages extends IEventBSharedImages{
 	public static final String IMG_TYPEPAR_PATH = "icons/cst_obj.gif";
 	
 	public static final String IMG_THEORY = "Theory";
-	public static final String IMG_THEORY_PATH = "icons/thy.gif";
+	public static final String IMG_THEORY_PATH = "icons/thy.png";
 	
 	public static final String IMG_DTHEORY = "Deployed Theory";
-	public static final String IMG_DTHEORY_PATH = "icons/thyDep.gif";
+	public static final String IMG_DTHEORY_PATH = "icons/thyDep.png";
 	
 	public static final String IMG_OTHEORY = "Outdated Theory";
-	public static final String IMG_OTHEORY_PATH = "icons/thy-outdated.gif";
+	public static final String IMG_OTHEORY_PATH = "icons/thy-outdated.png";
 }

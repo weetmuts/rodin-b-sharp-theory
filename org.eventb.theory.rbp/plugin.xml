@@ -80,7 +80,7 @@
             tooltip="%applyRew">
       </tactic>
       <tactic
-            icon="icons/thyDep.gif"
+            icon="icons/pending.gif"
             id="RbP1"
             interrupt="true"
             name="%rbpInfTactics"
@@ -90,7 +90,7 @@
             tooltip="%applyInf">
       </tactic>
        <tactic
-             icon="icons/thyReduce.gif"
+             icon="icons/xdf.png"
              id="RbP2Classic"
              interrupt="true"
              name="%reduceToClassicTactic"
@@ -101,7 +101,7 @@
              tooltip="%reduceToClassicLang">
        </tactic>
        <tactic
-             icon="icons/thyDep.gif"
+             icon="icons/thf.png"
              id="RbPtheorems"
              interrupt="false"
              name="%insertTheoremTactic"
