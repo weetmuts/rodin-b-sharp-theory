@@ -181,7 +181,9 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 							scRoot);
 					scRoots.put(scRoot, entry);
 				}
-				toReturn.addAll(scRoots.get(scRoot).getInferenceRules(automatic, type, factory));
+				if (!root.getComponentName().equals(scRoot.getComponentName())){
+					toReturn.addAll(scRoots.get(scRoot).getInferenceRules(automatic, type, factory));
+				}
 			}
 		}
 		else {
