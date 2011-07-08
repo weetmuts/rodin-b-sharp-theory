@@ -39,7 +39,9 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	private List<IDeployedRewriteRule> rewriteRules;
 	private List<IDeployedInferenceRule> inferenceRules;
 	private List<IDeployedTheorem> theorems;
-
+	
+	private List<IDeployedRewriteRule> definitionalRules;
+	
 	/**
 	 * Mapped automatic rules by runtime class of formula.
 	 */
@@ -67,6 +69,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		this.autoTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IDeployedInferenceRule>>();
 		this.interTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IDeployedInferenceRule>>();
 		// set to true to initiate an reload
+		this.definitionalRules = new ArrayList<IDeployedRewriteRule>();
 		this.hasChanged = true;
 	}
 
@@ -84,6 +87,9 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		interTypedInferenceMap.clear();
 
 		for (IDeployedRewriteRule rule : rewriteRules) {
+			if(rule.isDefinitional()){
+				definitionalRules.add(rule);
+			}
 			// only automatic + unconditional rewrites
 			if (rule.isAutomatic() && !rule.isConditional()) {
 				Formula<?> leftHandSide = rule.getLeftHandSide();
@@ -193,6 +199,17 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		}
 		return new ArrayList<IDeployedRewriteRule>();
 	}
+	
+	@Override
+	public List<IDeployedTheorem> getDeployedTheorems(int order, FormulaFactory factory) {
+		List<IDeployedTheorem> deployedTheorems = new ArrayList<IDeployedTheorem>();
+		for (IDeployedTheorem deployedTheorem : theorems){
+			if (deployedTheorem.getOrder() < order){
+				deployedTheorems.add(deployedTheorem);
+			}
+		}
+		return deployedTheorems;
+	}
 
 	@Override
 	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, FormulaFactory factory) {
@@ -275,6 +292,29 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		}
 		return null;
 	}
+	
+	@Override
+	public List<IDeployedRewriteRule> getDefinitionalRules(FormulaFactory factory) {
+		checkStatus(factory);
+		return definitionalRules;
+	}
+
+	@Override
+	public List<IDeployedRewriteRule> getDefinitionalRules(boolean automatic, Class<? extends Formula<?>> clazz, FormulaFactory factory) {
+		checkStatus(factory);
+		if(automatic){
+			return new ArrayList<IDeployedRewriteRule>();
+		}
+		else {
+			List<IDeployedRewriteRule> deployedRewriteRules = new ArrayList<IDeployedRewriteRule>();
+			for (IDeployedRewriteRule rule : definitionalRules){
+				if(rule.getLeftHandSide().getClass().equals(clazz)){
+					deployedRewriteRules.add(rule);
+				}
+			}
+			return deployedRewriteRules;
+		}
+	}
 
 	/**
 	 * Returns a list with same element but different reference.
@@ -288,4 +328,5 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	private <E> List<E> getList(List<E> list) {
 		return new ArrayList<E>(list);
 	}
+
 }

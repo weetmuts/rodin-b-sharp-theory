@@ -49,7 +49,7 @@ public interface IProjectBaseEntry {
 	
 	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IEventBRoot root, FormulaFactory factory);
 	
-	public Map<IExtensionRulesSource, List<IDeployedTheorem>> getTheorems(IEventBRoot root, FormulaFactory factory);
+	public Map<IExtensionRulesSource, List<IDeployedTheorem>> getTheorems(IPOContext context, FormulaFactory factory);
 	
 	public boolean managingMathExtensionsProject();
 	

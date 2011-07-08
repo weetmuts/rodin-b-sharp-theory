@@ -173,10 +173,8 @@ public interface IBinding extends Cloneable{
 	
 	/**
 	 * Returns a deep clone of this binding.
-	 * <p> This binding must be immutable.
 	 * 
 	 * @return a deep clone
-	 * @throws UnsupportedOperationException
 	 */
 	public IBinding clone();
 	

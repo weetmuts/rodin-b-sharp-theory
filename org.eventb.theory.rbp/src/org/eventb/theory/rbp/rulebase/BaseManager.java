@@ -61,9 +61,9 @@ public class BaseManager implements IElementChangedListener {
 		Map<IRodinProject,Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new
 			LinkedHashMap<IRodinProject, Map<IExtensionRulesSource,List<IDeployedTheorem>>>();
 		map.put(DatabaseUtilities.getDeploymentProject(new NullProgressMonitor()), 
-				mathExtensionsProjectEntry.getTheorems(parentRoot, factory));
+				mathExtensionsProjectEntry.getTheorems(context, factory));
 		if (!context.inMathExtensions()){
-			map.put(rodinProject, projectEntries.get(rodinProject).getTheorems(parentRoot, factory));
+			map.put(rodinProject, projectEntries.get(rodinProject).getTheorems(context, factory));
 		}
 		return map;
 	}

@@ -24,6 +24,7 @@ import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.IProjectBaseEntry;
 import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
@@ -76,8 +77,12 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 							scRoot);
 					scRoots.put(scRoot, entry);
 				}
-				toReturn.addAll(scRoots.get(scRoot).getExpressionRewriteRules(
-						automatic, clazz, factory));
+				if (!root.getComponentName().equals(scRoot.getComponentName())){
+					toReturn.addAll(scRoots.get(scRoot).getExpressionRewriteRules(automatic, clazz, factory));
+				}
+				else {
+					toReturn.addAll(scRoots.get(scRoot).getDefinitionalRules(automatic, clazz, factory));
+				}
 			}
 		}
 		else {
@@ -104,8 +109,12 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 							scRoot);
 					scRoots.put(scRoot, entry);
 				}
-				toReturn.addAll(scRoots.get(scRoot).getPredicateRewriteRules(
-						automatic, clazz, factory));
+				if (!root.getComponentName().equals(scRoot.getComponentName())){
+					toReturn.addAll(scRoots.get(scRoot).getPredicateRewriteRules(automatic, clazz, factory));
+				}
+				else {
+					toReturn.addAll(scRoots.get(scRoot).getDefinitionalRules(automatic, clazz, factory));
+				}
 			}
 		}
 		else {
@@ -210,10 +219,12 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	
 
 	@Override
-	public Map<IExtensionRulesSource, List<IDeployedTheorem>> getTheorems(IEventBRoot root, FormulaFactory factory) {
+	public Map<IExtensionRulesSource, List<IDeployedTheorem>> getTheorems(IPOContext poContext, FormulaFactory factory) {
+		IEventBRoot root = poContext.getParentRoot();
 		String componentName = root.getComponentName();
 		Map<IExtensionRulesSource, List<IDeployedTheorem>> map = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
 		if (originatedFromTheory(root.getRodinFile(), project)){
+			int order = poContext.getOrder();
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(componentName, project);
 			List<ISCTheoryRoot> requiredRoots = getRequiredSCRoots(scRoot);
 			for (ISCTheoryRoot scTheoryRoot : requiredRoots){
@@ -221,7 +232,12 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scTheoryRoot);
 					scRoots.put(scTheoryRoot, entry);
 				} 
-				map.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
+				if(order != -1 && root.getComponentName().equals(scTheoryRoot.getComponentName())){
+					map.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(order, factory));
+				}
+				else {
+					map.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
+				}
 			}
 		}
 		else {

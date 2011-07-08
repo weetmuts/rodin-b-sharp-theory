@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.IExtensionRulesSource;
@@ -93,6 +94,12 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	 */
 	
 	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, Class<? extends Predicate> clazz, FormulaFactory factory);
+	
+	public List<IDeployedRewriteRule> getDefinitionalRules(FormulaFactory factory);
+	
+	public List<IDeployedRewriteRule> getDefinitionalRules(boolean automatic, Class<? extends Formula<?>> clazz, FormulaFactory factory);
+	
+	public List<IDeployedTheorem> getDeployedTheorems(int order, FormulaFactory factory);
 	
 	public List<IDeployedTheorem> getDeployedTheorems(FormulaFactory factory);
 	

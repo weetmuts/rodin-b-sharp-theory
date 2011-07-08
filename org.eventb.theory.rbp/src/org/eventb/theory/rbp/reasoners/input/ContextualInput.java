@@ -53,14 +53,15 @@ public class ContextualInput implements IReasonerInput{
 		// nothing to do
 	}
 	
-	public void serialise(IReasonerInputWriter writer, String key) throws SerializeException{
-		writer.putString(key, context.toString());
+	public void serialise(IReasonerInputWriter writer, String contextKey) throws SerializeException{
+		writer.putString(contextKey, context.toString());
 	}
 	
-	public static IPOContext deserialise(String serialisedForm){
-		IRodinElement element = RodinCore.valueOf(serialisedForm);
+	public static IPOContext deserialise(String handleStr){
+		IRodinElement element = RodinCore.valueOf(handleStr);
 		if (element instanceof IEventBRoot){
-			return new POContext((IEventBRoot) element);
+			IEventBRoot root = (IEventBRoot) element;
+			return new POContext(root);
 		}
 		return null;
 	}

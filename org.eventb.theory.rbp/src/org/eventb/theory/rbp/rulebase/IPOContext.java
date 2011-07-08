@@ -43,4 +43,11 @@ public interface IPOContext {
 	 */
 	public FormulaFactory getFormulaFactory();
 	
+	/**
+	 * Returns the order of the theorem if this context is for a proof obligation that corresponds to a theorem in
+	 * a theory. 
+	 * @return theorem order, or -1 if not relevant
+	 */
+	public int getOrder();
+	
 }

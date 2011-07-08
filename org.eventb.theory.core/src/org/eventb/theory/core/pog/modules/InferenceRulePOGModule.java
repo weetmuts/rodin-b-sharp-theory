@@ -81,7 +81,7 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 				continue;
 			}
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
-					IPOSource.DEFAULT_ROLE, inferenceRule.getSource()) };
+					IPOSource.DEFAULT_ROLE, inferenceRule) };
 			ISCGiven givens[] = inferenceRule.getGivens();
 			List<Predicate> givensPredicates = new ArrayList<Predicate>();
 			List<Predicate> givensPredicatesWDs = new ArrayList<Predicate>();

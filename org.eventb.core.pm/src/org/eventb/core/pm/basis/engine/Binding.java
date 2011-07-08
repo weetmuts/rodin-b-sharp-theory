@@ -280,10 +280,8 @@ public class Binding implements IBinding{
 	
 	@Override
 	public IBinding clone(){
-		checkMutable();
 		// copy all state information
 		Binding newBinding = new Binding(formula, pattern, isPartialMatchAcceptable, factory);
-		newBinding.isImmutable = isImmutable;
 		newBinding.binding = new LinkedHashMap<FreeIdentifier, Expression>(binding);
 		newBinding.typeParametersInstantiations = new LinkedHashMap<FreeIdentifier, Type>(typeParametersInstantiations);
 		newBinding.predicateBinding = new LinkedHashMap<PredicateVariable, Predicate>(predicateBinding);

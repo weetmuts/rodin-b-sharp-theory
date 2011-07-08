@@ -98,7 +98,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 			String ruleName = rule.getLabel();
 			
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
-					IPOSource.DEFAULT_ROLE, rule.getSource()) };
+					IPOSource.DEFAULT_ROLE, rule) };
 			
 			ISCRewriteRuleRightHandSide[] scRHSs = rule.getRuleRHSs();
 			for (ISCRewriteRuleRightHandSide rhs : scRHSs) {

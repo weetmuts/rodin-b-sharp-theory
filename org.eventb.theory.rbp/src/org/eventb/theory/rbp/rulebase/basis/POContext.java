@@ -20,9 +20,16 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 public class POContext implements IPOContext{
 	
 	private IEventBRoot root;
+	private int order;
 
 	public POContext(IEventBRoot root) {
 		this.root = root;
+		this.order = -1;
+	}
+	
+	public POContext(IEventBRoot root, int order) {
+		this.root = root;
+		this.order = order;
 	}
 
 	@Override
@@ -47,5 +54,10 @@ public class POContext implements IPOContext{
 	
 	public String toString(){
 		return root.getHandleIdentifier();
+	}
+
+	@Override
+	public int getOrder() {
+		return order;
 	}
 }

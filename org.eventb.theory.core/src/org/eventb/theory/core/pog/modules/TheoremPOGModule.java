@@ -66,7 +66,7 @@ public class TheoremPOGModule extends UtilityPOGModule {
 		for (ISCTheorem theorem : theorems) {
 			String name = theorem.getLabel();
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
-					IPOSource.DEFAULT_ROLE, theorem.getSource()) };
+					IPOSource.DEFAULT_ROLE, theorem) };
 			Predicate poPredicate = theorem.getPredicate(factory,
 					typeEnvironment);
 			if (!isTrivial(poPredicate)) {

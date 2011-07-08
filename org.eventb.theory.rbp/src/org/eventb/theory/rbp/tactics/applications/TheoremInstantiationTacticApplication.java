@@ -8,6 +8,7 @@
 package org.eventb.theory.rbp.tactics.applications;
 
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eventb.core.IPOSource;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -15,12 +16,15 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.InstantiateTheoremReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.POContext;
 import org.eventb.theory.rbp.tactics.ui.TheoremSelectorWizard;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.eventb.ui.prover.ITacticApplication;
+import org.rodinp.core.RodinDBException;
 
 /**
  * A tactic that enables instantiating and adding theorems.
@@ -45,7 +49,22 @@ public class TheoremInstantiationTacticApplication implements ITacticApplication
 					final Object origin = node.getProofTree().getOrigin();
 					if (origin instanceof IProofAttempt) {
 						final IProofAttempt pa = (IProofAttempt) origin;
-						final IPOContext context = new POContext(pa.getComponent().getPORoot());
+						int order = -1;
+						try {
+							IPOSource[] sources = pa.getStatus().getPOSequent().getSources();
+							for (IPOSource source : sources){
+								if (source.getSource() instanceof ISCTheorem){
+									ISCTheorem scTheorem = (ISCTheorem) source.getSource();
+									order = scTheorem.getOrder();
+									break;
+								}
+							}
+						} catch (RodinDBException e) {
+							ProverUtilities.log(e, "uanbale to check sources of PO");
+							return "Unable to continue";
+						}
+						
+						final IPOContext context = new POContext(pa.getComponent().getPORoot(), order);
 						// Show wizard
 						TheoremSelectorWizard wizard = new TheoremSelectorWizard(context);
 						WizardDialog dialog = new WizardDialog(wizard.getShell(), wizard);
