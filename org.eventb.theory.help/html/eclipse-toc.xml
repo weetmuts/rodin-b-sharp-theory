@@ -1,10 +1,8 @@
 <?xml version='1.0' encoding='ISO-8859-1' ?>
-<toc label="Theory Plug-in User Manual v1.0" topic="html/index.html">
-    <topic label="Motivation" href="html/sect0001.html" /><topic label="Capabilities" href="html/sect0002.html" /><topic label="Quick Start" href="html/sect0003.html">
-       <topic label="Install Theory Plug-in" href="html/sect0004.html" /><topic label="Create A New Theory" href="html/sect0005.html" /><topic label="Add a Type Parameter" href="html/sect0006.html" /><topic label="Create an Operator Definition" href="html/sect0007.html" ></topic><topic label="Create a Polymorphic Theorem" href="html/sect0008.html" /><topic label="Deploy Theory" href="html/sect0009.html" /><topic label="Use Theory" href="html/sect0010.html" />
-    </topic><topic label="Anatomy of Theories" href="html/sect0011.html">
-       <topic label="Type Parameters" href="html/sect0012.html" /><topic label="Datatype Definitions" href="html/sect0013.html" /><topic label="Operator Definitions" href="html/sect0014.html" /><topic label="Polymorphic Theorems" href="html/sect0015.html" /><topic label="Proof Rules" href="html/sect0016.html" /><topic label="Theory Relationships" href="html/sect0017.html" />
-    </topic><topic label="Scoping of Theories" href="html/sect0018.html">
-       <topic label="Workspace Scope" href="html/sect0019.html" /><topic label="Project Scope" href="html/sect0020.html" />
-    </topic><topic label="Examples" href="html/sect0021.html" />
+<toc label="Theory Plug-in User Manual" topic="html/index.html">
+    <topic label="Motivation" href="html/sect0001.html" /><topic label="Capabilities" href="html/sect0002.html" /><topic label="Quick Start" href="html/quickStart.html">
+       <topic label="Install Theory Plug-in" href="html/sect0003.html" /><topic label="Create A New Theory" href="html/explorerNTB.html" /><topic label="Add a Type Parameter" href="html/typePar.html" /><topic label="Create an Operator Definition" href="html/seqOP.html" /><topic label="Create a Polymorphic Theorem" href="html/theoremEx.html" /><topic label="Deploy Theory" href="html/sect0004.html" /><topic label="Use Theory" href="html/sect0005.html" />
+    </topic><topic label="Scoping of Theories" href="html/sect0006.html" /><topic label="Examples" href="html/sect0007.html">
+       <topic label="Sequence" href="html/Sequence.html" /><topic label="List" href="html/List.html" />
+    </topic>
 </toc>

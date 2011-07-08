@@ -7,20 +7,20 @@
 <link href="index.html" title="Theory Plug-in User Manual" rel="first" />
 <link href="index.html" rel="contents" title="Contents" />
 <link rel="index" title="Index" />
-<link href="sect0002.html" rel="next" />
-<link href="index.html" rel="prev" />
+<link href="sect0003.html" rel="next" />
+<link href="sect0002.html" rel="prev" />
 <link href="index.html" rel="parent" />
 <meta name="aesop" content="information" />
-<title>1 Motivation</title>
+<title>3 Quick Start</title>
 </head>
 <body>
 <div class="navigation">
 <div id="top-navigation-panel" xml:id="top-navigation-panel">
 <table align="center" width="100%" cellpadding="0" cellspacing="2">
 <tr>
-<td class="online-navigation"><a title="Theory Plug-in User Manual" href="index.html" rel="prev"><img src="icons/previous.png" border="0" height="32" alt="Previous Page" width="32" /></a></td>
+<td class="online-navigation"><a title="2 Capabilities" href="sect0002.html" rel="prev"><img src="icons/previous.png" border="0" height="32" alt="Previous Page" width="32" /></a></td>
 <td class="online-navigation"><a title="Theory Plug-in User Manual" href="index.html" rel="parent"><img src="icons/up.png" border="0" height="32" alt="Up One Level" width="32" /></a></td>
-<td class="online-navigation"><a title="Capabilities" href="sect0002.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
+<td class="online-navigation"><a title="Install Theory Plug-in" href="sect0003.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
 <td align="center" width="100%">Theory Plug-in User Manual</td>
 <td class="online-navigation"><a href="index.html" rel="contents" title="Table of Contents"><img src="icons/contents.png" border="0" height="32" alt="Contents" width="32" /></a></td>
 <td class="online-navigation"><img src="icons/blank.png" border="0" height="32" alt="" width="32" /></td>
@@ -28,19 +28,41 @@
 </tr></table>
 <div class="online-navigation">
 <span><b class="navlabel">Previous:</b>
-<a href="index.html" class="sectref" rel="prev">Theory Plug-in User Manual</a></span>
+<a href="sect0002.html" class="sectref" rel="prev">Capabilities</a></span>
 <span><b class="navlabel">Up:</b>
 <a href="index.html" class="sectref" rel="parent">Theory Plug-in User Manual</a></span>
 <span><b class="navlabel">Next:</b>
-<a href="sect0002.html" class="sectref" rel="next">Capabilities</a></span>
+<a href="sect0003.html" class="sectref" rel="next">Install Theory Plug-in</a></span>
 </div>
 <hr /></div>
 </div>
 
+<div class="contents section-contents"><strong>Subsections</strong>
+<ul>
+<li><a href="sect0003.html">3.1 Install Theory Plug-in</a>
+   
+</li><li><a href="explorerNTB.html">3.2 Create A New Theory</a>
+   
+</li><li><a href="typePar.html">3.3 Add a Type Parameter</a>
+   
+</li><li><a href="seqOP.html">3.4 Create an Operator Definition</a>
+   
+</li><li><a href="theoremEx.html">3.5 Create a Polymorphic Theorem</a>
+   
+</li><li><a href="sect0004.html">3.6 Deploy Theory</a>
+   
+</li><li><a href="sect0005.html">3.7 Use Theory</a>
+   
+</li>
 
 
-<div><h1 id="a0000000002">1 Motivation</h1>
-<p> Up to Rodin v2.0, the mathematical language used in Event-B has been fixed. As such, it was not possible to define reusable polymorphic operators. A workaround was to define any required operators as set constructs in contexts. Originally, contexts were supposed to provide a parametrization of machines. The aforementioned limitations of the Event-B language lead to users to use contexts for purposes for which they were not intentionally devised. Examples of operators that can be useful to users include the sequence operator (which was present in classical B mathematical language) and the bag operator. </p><p>In Rodin v2.0, support for customised syntactic symbols was introduced. The Theory plug-in, as a result, evolved from being just a component to define rewrite rules to a versatile platform to define and validate proof and language extensions. </p></div>
+
+</ul>
+<hr />
+</div>
+
+<div><h1 id="quickStart">3 Quick Start</h1>
+<p> In this section, we step through a simple tutorial on how to define and use a simple theory. Click on the links above to navigate through this tutorial. </p></div>
 
 
 
@@ -49,9 +71,9 @@
 <hr />
 <table align="center" width="100%" cellpadding="0" cellspacing="2">
 <tr>
-<td class="online-navigation"><a title="Theory Plug-in User Manual" href="index.html" rel="prev"><img src="icons/previous.png" border="0" height="32" alt="Previous Page" width="32" /></a></td>
+<td class="online-navigation"><a title="2 Capabilities" href="sect0002.html" rel="prev"><img src="icons/previous.png" border="0" height="32" alt="Previous Page" width="32" /></a></td>
 <td class="online-navigation"><a title="Theory Plug-in User Manual" href="index.html" rel="parent"><img src="icons/up.png" border="0" height="32" alt="Up One Level" width="32" /></a></td>
-<td class="online-navigation"><a title="Capabilities" href="sect0002.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
+<td class="online-navigation"><a title="Install Theory Plug-in" href="sect0003.html" rel="next"><img src="icons/next.png" border="0" height="32" alt="Next Page" width="32" /></a></td>
 <td align="center" width="100%">Theory Plug-in User Manual</td>
 <td class="online-navigation"><a href="index.html" rel="contents" title="Table of Contents"><img src="icons/contents.png" border="0" height="32" alt="Contents" width="32" /></a></td>
 <td class="online-navigation"><img src="icons/blank.png" border="0" height="32" alt="" width="32" /></td>
@@ -59,11 +81,11 @@
 </tr></table>
 <div class="online-navigation">
 <span><b class="navlabel">Previous:</b>
-<a href="index.html" class="sectref" rel="prev">Theory Plug-in User Manual</a></span>
+<a href="sect0002.html" class="sectref" rel="prev">Capabilities</a></span>
 <span><b class="navlabel">Up:</b>
 <a href="index.html" class="sectref" rel="parent">Theory Plug-in User Manual</a></span>
 <span><b class="navlabel">Next:</b>
-<a href="sect0002.html" class="sectref" rel="next">Capabilities</a></span>
+<a href="sect0003.html" class="sectref" rel="next">Install Theory Plug-in</a></span>
 </div>
 </div>
 <hr />

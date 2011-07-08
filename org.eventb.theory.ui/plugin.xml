@@ -55,7 +55,7 @@
             foregroundColor="P_REQUIRED_FIELD_BACKGROUND"
             id="org.eventb.theory.ui.type"
             isMath="true"
-            prefix=":"
+            prefix="Type"
             style="single"
             typeId="org.eventb.theory.core.type">
       </textAttribute>
@@ -75,6 +75,7 @@
             foregroundColor="P_REQUIRED_FIELD_BACKGROUND"
             id="org.eventb.theory.ui.formula"
             isMath="true"
+            prefix="Formula"
             style="single"
             typeId="org.eventb.theory.core.formula">
       </textAttribute>
