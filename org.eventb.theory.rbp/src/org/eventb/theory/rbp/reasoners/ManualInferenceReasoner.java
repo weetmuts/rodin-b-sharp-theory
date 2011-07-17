@@ -36,8 +36,8 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 	private static final String FORWARD_VAL = "forward";
 	private static final String BACKWARD_VAL = "backward";
 	private static final String DESC_KEY = "ruleDesc";
-	private static final String FORWARD_KEY = "pos";
-	private static final String RULE_KEY = "rewRule";
+	private static final String FORWARD_KEY = "isForward";
+	private static final String RULE_KEY = "inferenceRule";
 	private static final String THEORY_KEY = "theory";
 	
 	@Override
