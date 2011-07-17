@@ -67,7 +67,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 		this.tag = tag;
 		this.indexedFormulae = getIndexedFormulae(formulae);
 		this.indexedPatterns = getIndexedFormulae(patterns);
-		this.existingBinding = existinBinding;
+		this.existingBinding = existinBinding.clone();
 		this.matcher = new Matcher(existinBinding.getFormulaFactory());
 		this.variables = new ArrayList<IndexedFormula<F>>();
 		this.searchSpace = generateSearchSpace();
