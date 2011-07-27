@@ -85,6 +85,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		interPredRewRules.clear();
 		autoTypedInferenceMap.clear();
 		interTypedInferenceMap.clear();
+		definitionalRules.clear();
 
 		for (IDeployedRewriteRule rule : rewriteRules) {
 			if(rule.isDefinitional()){

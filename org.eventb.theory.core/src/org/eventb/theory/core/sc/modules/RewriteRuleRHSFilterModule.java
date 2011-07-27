@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -224,19 +226,20 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 			TheoryGraphProblem identsProblem, TheoryGraphProblem typesProblem,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		List<FreeIdentifier> lhsIdents = Arrays.asList(lhsFormula
-				.getFreeIdentifiers());
+		List<FreeIdentifier> lhsIdents = new ArrayList<FreeIdentifier>(Arrays.asList(lhsFormula.getFreeIdentifiers()));
 		Set<GivenType> lhsTypes = lhsFormula.getGivenTypes();
-		List<FreeIdentifier> formIdents = Arrays.asList(form
-				.getFreeIdentifiers());
+		List<FreeIdentifier> formIdents = new ArrayList<FreeIdentifier>(Arrays.asList(form
+				.getFreeIdentifiers()));
 		Set<GivenType> formTypes = form.getGivenTypes();
+		if (!lhsTypes.containsAll(formTypes)) {
+			createProblemMarker(element, type, typesProblem, element.getLabel());
+			return false;
+		}
+		lhsIdents.removeAll(getFreeIdentifiers(lhsTypes));
+		formIdents.removeAll(getFreeIdentifiers(formTypes));
 		if (!lhsIdents.containsAll(formIdents)) {
 			createProblemMarker(element, type, identsProblem,
 					element.getLabel());
-			return false;
-		}
-		if (!lhsTypes.containsAll(formTypes)) {
-			createProblemMarker(element, type, typesProblem, element.getLabel());
 			return false;
 		}
 		
@@ -290,4 +293,11 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 		return symbolInfo;
 	}
 
+	private Set<FreeIdentifier> getFreeIdentifiers(Set<GivenType> types){
+		Set<FreeIdentifier> set = new LinkedHashSet<FreeIdentifier>();
+		for (GivenType givenType : types){
+			set.add((FreeIdentifier)givenType.toExpression(factory));
+		}
+		return set;
+	}
 }
