@@ -2,6 +2,7 @@ package org.eventb.theory.ui.editor.html;
 
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
+import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IOperatorWDCondition;
@@ -29,7 +30,7 @@ public class OperatorWDconditionPrettyPrinter extends DefaultPrettyPrinter {
 			IOperatorWDCondition cond = (IOperatorWDCondition) elt;
 			try {
 				ps.appendString(
-						cond.getPredicateString(), 
+						wrapString(cond.getPredicateString()), 
 						getHTMLBeginForCSSClass(STYLE, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //

@@ -32,7 +32,7 @@ public class OperatorRecursiveCasePrettyPrinter extends DefaultPrettyPrinter {
 		if (elt instanceof IRecursiveDefinitionCase) {
 			IRecursiveDefinitionCase defCase = (IRecursiveDefinitionCase) elt;
 			String caseStr = getOperatorText(defCase, parent);
-			ps.appendString(caseStr,
+			ps.appendString(wrapString(caseStr),
 					getHTMLBeginForCSSClass(CASE_DETAILS, //
 							HorizontalAlignment.LEFT, //
 							VerticalAlignement.MIDDLE), //

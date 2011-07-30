@@ -44,7 +44,7 @@ public class RewriteRuleRHSPrettyPrinter extends DefaultPrettyPrinter {
 								VerticalAlignement.MIDDLE), 
 								RHS_IDENT_SEPARATOR_BEGIN, 
 								":");
-				ps.appendString(cond, 
+				ps.appendString(wrapString(cond), 
 						getHTMLBeginForCSSClass(RHS_COND, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //
@@ -53,7 +53,7 @@ public class RewriteRuleRHSPrettyPrinter extends DefaultPrettyPrinter {
 								VerticalAlignement.MIDDLE), 
 								RHS_IDENT_SEPARATOR_BEGIN, 
 								"\u25b6");
-				ps.appendString(rhsForm, 
+				ps.appendString(wrapString(rhsForm), 
 						getHTMLBeginForCSSClass(RHS_RHS, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //

@@ -10,7 +10,9 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -160,9 +162,18 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 		if (lhsForm == null) {
 			return null;
 		}
-		lhsForm = ModulesUtils.checkFormula(rule, lhsForm, repository.getTypeEnvironment(), this);
+		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
+		lhsForm = ModulesUtils.checkFormula(rule, lhsForm, typeEnvironment, this);
 		if(lhsForm == null){
 			return null;
+		}
+		// check all idents of the lhs formula were actually declared BUG FIXED.
+		for (FreeIdentifier identifier : lhsForm.getFreeIdentifiers()){
+			if (!typeEnvironment.contains(identifier.getName())){
+				createProblemMarker(rule, FORMULA_ATTRIBUTE, 
+						GraphProblem.UndeclaredFreeIdentifierError, identifier.getName());
+				return null;
+			}
 		}
 		// lhs is a free identifier or predicate variable
 		if (lhsForm instanceof FreeIdentifier) {
@@ -180,7 +191,7 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 		}
 		// final check against type parameters
 		if (!CoreUtilities.checkAgainstTypeParameters(rule, lhsForm,
-				repository.getTypeEnvironment(), this)) {
+				typeEnvironment, this)) {
 			return null;
 		}
 		return lhsForm;

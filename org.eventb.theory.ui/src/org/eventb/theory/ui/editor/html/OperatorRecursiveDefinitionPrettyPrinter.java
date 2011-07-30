@@ -2,6 +2,7 @@ package org.eventb.theory.ui.editor.html;
 
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
+import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IRecursiveOperatorDefinition;
@@ -49,7 +50,7 @@ public class OperatorRecursiveDefinitionPrettyPrinter extends DefaultPrettyPrint
 					"Cannot get the details for rec def "
 							+ nod.getElementName());
 		}
-		return str;
+		return wrapString(str);
 	}
 
 }

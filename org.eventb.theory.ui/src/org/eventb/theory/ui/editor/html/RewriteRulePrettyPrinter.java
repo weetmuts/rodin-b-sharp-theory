@@ -49,7 +49,8 @@ public class RewriteRulePrettyPrinter extends DefaultPrettyPrinter {
 								VerticalAlignement.MIDDLE), 
 						REW_IDENT_SEPARATOR_BEGIN, 
 						":");
-				ps.appendString(lhs, 
+				// added wrapping around the lhs
+				ps.appendString(wrapString(lhs), 
 						getHTMLBeginForCSSClass(REW_LHS, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //
@@ -67,15 +68,18 @@ public class RewriteRulePrettyPrinter extends DefaultPrettyPrinter {
 								VerticalAlignement.MIDDLE), 
 								REW_IDENT_SEPARATOR_BEGIN, 
 								"");
-				ps.appendString(desc, 
-						getHTMLBeginForCSSClass(REW_LHS, //
+				// only add description  if it is not the default one
+				if (!desc.trim().equals("Describe Me!")){
+					ps.appendString(desc, 
+							getHTMLBeginForCSSClass(REW_LHS, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //
-						getHTMLEndForCSSClass(REW_PROP, //
+							getHTMLEndForCSSClass(REW_PROP, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), 
 								REW_IDENT_SEPARATOR_BEGIN, 
 								REW_IDENT_SEPARATOR_END);
+				}
 				
 			} catch (RodinDBException e) {
 				EventBEditorUtils.debugAndLogError(

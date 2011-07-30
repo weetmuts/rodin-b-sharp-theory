@@ -65,17 +65,22 @@ public class ACExpressionProblem extends ACProblem<Expression> {
 			for (int i = 0; i < sizeOfRemainingVars - 1; i++) {
 				IndexedFormula<Expression> var = remainingVars.get(i);
 				Expression formula = availableFormulae.get(i).getFormula();
-				initialBinding.putExpressionMapping((FreeIdentifier) var.getFormula(), 
-						formula);
+				// TODO fix bug
+				if (!initialBinding.putExpressionMapping((FreeIdentifier) var.getFormula(), 
+						formula)){
+					return false;
+				}
 				usedUpFormulae.add(availableFormulae.get(i));
 			}
 			// remove used up formulae again
 			availableFormulae.removeAll(usedUpFormulae);
 			IndexedFormula<Expression> lastVar = remainingVars.get(sizeOfRemainingVars-1);
 			List<Expression> remainingExprs = getFormulae(availableFormulae);
-			initialBinding.putExpressionMapping((FreeIdentifier) lastVar.getFormula(), 
+			if(!initialBinding.putExpressionMapping((FreeIdentifier) lastVar.getFormula(), 
 					MatchingUtilities.makeAppropriateAssociativeExpression(
-							tag, existingBinding.getFormulaFactory(), remainingExprs.toArray(new Expression[remainingExprs.size()])));
+							tag, existingBinding.getFormulaFactory(), remainingExprs.toArray(new Expression[remainingExprs.size()])))){
+				return false;
+			}
 			usedUpFormulae.addAll(availableFormulae);
 		}
 		return true;
