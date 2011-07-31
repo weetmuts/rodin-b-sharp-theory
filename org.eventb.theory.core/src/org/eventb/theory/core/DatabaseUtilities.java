@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -60,6 +61,77 @@ public class DatabaseUtilities {
 	// The theory configuration for the SC and POG
 	public static final String THEORY_CONFIGURATION = TheoryPlugin.PLUGIN_ID + ".thy";
 
+	public static final String[] POSSIBLE_APPLICABILITY_TYPES = new String[] { 
+		"automatic", 
+		"interactive",
+		"both"};
+	
+	/**
+	 * Returns the {@link RuleApplicability} object corresponding to the given string.
+	 * @param str the string
+	 * @return the rule applicability object
+	 */
+	public static RuleApplicability getRuleApplicability(String str){
+		if (str.equalsIgnoreCase(POSSIBLE_APPLICABILITY_TYPES[0])) {
+			return RuleApplicability.AUTOMATIC;
+		} else if (str.equalsIgnoreCase(POSSIBLE_APPLICABILITY_TYPES[1])) {
+			return RuleApplicability.INTERACTIVE;
+		}
+		else if (str.equalsIgnoreCase(POSSIBLE_APPLICABILITY_TYPES[2])){
+			return RuleApplicability.AUTOMATIC_AND_INTERACTIVE;
+		}
+		return RuleApplicability.INTERACTIVE; 
+	}
+	
+	/**
+	 * Returns a user-friendly string representation of the rule applicability object.
+	 * @param app the rule applicability
+	 * @return the string view
+	 */
+	public static String getString(RuleApplicability app){
+		switch(app){
+		case AUTOMATIC : return POSSIBLE_APPLICABILITY_TYPES[0];
+		case INTERACTIVE : return POSSIBLE_APPLICABILITY_TYPES[1];
+		case AUTOMATIC_AND_INTERACTIVE : return POSSIBLE_APPLICABILITY_TYPES[2];
+		}
+		return POSSIBLE_APPLICABILITY_TYPES[1];
+	}
+	
+	/**
+	 * Returns the {@link RuleApplicability} object corresponding to the boolean modifiers for automated and interactive application.
+	 * @param isAutomatic whether the rule is automatic
+	 * @param isInteractive whether the rule is interactive
+	 * @return the rule applicability object
+	 */
+	public static RuleApplicability getRuleApplicability(boolean isAutomatic, boolean isInteractive){
+		if (isAutomatic && isInteractive)
+			return RuleApplicability.AUTOMATIC_AND_INTERACTIVE;
+		if (isAutomatic)
+			return RuleApplicability.AUTOMATIC;
+		else
+			return RuleApplicability.INTERACTIVE;
+	}
+	
+	/**
+	 * Returns whether the given applicability enables automatic application.
+	 * @param app the rule applicability
+	 * @return whether the given applicability enables automatic application
+	 */
+	public static boolean isAutomatic(RuleApplicability app){
+		return app.equals(RuleApplicability.AUTOMATIC) ||
+			app.equals(RuleApplicability.AUTOMATIC_AND_INTERACTIVE);
+	}
+	
+	/**
+	 * Returns whether the given applicability enables interactive application.
+	 * @param app the rule applicability
+	 * @return whether the given applicability enables interactive application
+	 */
+	public static boolean isInteractive(RuleApplicability app){
+		return app.equals(RuleApplicability.INTERACTIVE) ||
+			app.equals(RuleApplicability.AUTOMATIC_AND_INTERACTIVE);
+	}
+	
 	/**
 	 * Returns a SC theory that exists in the given project. If the theory does
 	 * not exist, <code>null</code> is returned.

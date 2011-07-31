@@ -7,9 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import static org.eventb.theory.core.DatabaseUtilities.*;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.AUTOMATIC_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMMUTATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMPLETE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.DEFINITIONAL_ATTRIBUTE;
@@ -20,12 +20,12 @@ import static org.eventb.theory.core.TheoryAttributes.GIVEN_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GROUP_ID_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.IMPORT_THEORY_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.INTERACTIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.WD_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.APPLICABILITY_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -53,11 +53,11 @@ import org.rodinp.core.RodinDBException;
 public abstract class TheoryElement extends EventBElement implements
 		IAssociativeElement, ICommutativeElement, IFormulaElement,
 		IFormulaTypeElement, INotationTypeElement, 
-		ITypeElement, IAutomaticElement, ICompleteElement, IDescriptionElement,
-		IInteractiveElement, IDefinitionalElement, ISCTypeElement,
+		ITypeElement, ICompleteElement, IDescriptionElement,
+		IDefinitionalElement, ISCTypeElement,
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
 		IReasoningTypeElement, IValidatedElement, IOperatorGroupElement,
-		IImportTheoryElement, IInductiveArgumentElement, IWDElement {
+		IImportTheoryElement, IInductiveArgumentElement, IWDElement, IApplicabilityElement {
 
 	public static final String BACKWARD_REASONING_TYPE = "backward";
 	public static final String FORWARD_REASONING_TYPE = "forward";
@@ -197,44 +197,17 @@ public abstract class TheoryElement extends EventBElement implements
 		setAttributeValue(TYPE_ATTRIBUTE, type, monitor);
 	}
 
-	public boolean hasAutomatic() throws RodinDBException {
-		return hasAttribute(AUTOMATIC_ATTRIBUTE);
-	}
-
 	public boolean hasComplete() throws RodinDBException {
 		return hasAttribute(COMPLETE_ATTRIBUTE);
-	}
-
-	public boolean hasInteractive() throws RodinDBException {
-		return hasAttribute(INTERACTIVE_ATTRIBUTE);
-	}
-
-	public boolean isAutomatic() throws RodinDBException {
-		return getAttributeValue(AUTOMATIC_ATTRIBUTE);
 	}
 
 	public boolean isComplete() throws RodinDBException {
 		return getAttributeValue(COMPLETE_ATTRIBUTE);
 	}
 
-	public boolean isInteractive() throws RodinDBException {
-		return getAttributeValue(INTERACTIVE_ATTRIBUTE);
-	}
-
-	public void setAutomatic(boolean auto, IProgressMonitor pm)
-			throws RodinDBException {
-		setAttributeValue(AUTOMATIC_ATTRIBUTE, auto, pm);
-	}
-
 	public void setComplete(boolean isComplete, IProgressMonitor pm)
 			throws RodinDBException {
 		setAttributeValue(COMPLETE_ATTRIBUTE, isComplete, pm);
-
-	}
-
-	public void setInteractive(boolean isInteractive, IProgressMonitor pm)
-			throws RodinDBException {
-		setAttributeValue(INTERACTIVE_ATTRIBUTE, isInteractive, pm);
 
 	}
 
@@ -428,6 +401,34 @@ public abstract class TheoryElement extends EventBElement implements
 	@Override
 	public void setWDCondition(Predicate newWD, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(WD_ATTRIBUTE, newWD.toStringWithTypes(), monitor);
+	}
+	
+	@Override
+	public boolean hasApplicabilityAttribute() throws RodinDBException {
+		return hasAttribute(APPLICABILITY_ATTRIBUTE);
+	}
+	
+	@Override
+	public RuleApplicability getApplicability() throws RodinDBException {
+		String value = getAttributeValue(APPLICABILITY_ATTRIBUTE);
+		return DatabaseUtilities.getRuleApplicability(value);
+	}
+	
+	@Override
+	public void setApplicability(RuleApplicability applicability, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(APPLICABILITY_ATTRIBUTE, getString(applicability), monitor);
+	}
+	
+	@Override
+	public boolean isAutomatic() throws RodinDBException {
+		String value = getAttributeValue(APPLICABILITY_ATTRIBUTE);
+		return DatabaseUtilities.isAutomatic(getRuleApplicability(value));
+	}
+	
+	@Override
+	public boolean isInteractive() throws RodinDBException {
+		String value = getAttributeValue(APPLICABILITY_ATTRIBUTE);
+		return DatabaseUtilities.isInteractive(getRuleApplicability(value));
 	}
 
 	/**

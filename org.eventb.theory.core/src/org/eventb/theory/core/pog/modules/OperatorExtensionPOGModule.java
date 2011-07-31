@@ -116,7 +116,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 				Formula<?> defFormula = directDefinitions[0].getSCFormula(
 						factory, localTypeEnvironment);
 				IPOGSource[] sources = new IPOGSource[] { makeSource(
-						IPOSource.DEFAULT_ROLE, definition) };
+						IPOSource.DEFAULT_ROLE, definition), makeSource(IPOSource.DEFAULT_ROLE, definition.getSource()) };
 				IPOPredicateSet hyp = target
 						.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
 				// ///////////////////////////////////

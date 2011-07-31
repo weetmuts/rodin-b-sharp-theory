@@ -37,12 +37,6 @@ public class TheoryAttributes {
 	public static IAttributeType.String TYPE_ATTRIBUTE = RodinCore
 			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".type");
 
-	public static IAttributeType.Boolean AUTOMATIC_ATTRIBUTE = RodinCore
-			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".auto");
-
-	public static IAttributeType.Boolean INTERACTIVE_ATTRIBUTE = RodinCore
-			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".interactive");
-
 	public static IAttributeType.Boolean COMPLETE_ATTRIBUTE = RodinCore
 			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".complete");
 
@@ -82,4 +76,6 @@ public class TheoryAttributes {
 	public static IAttributeType.String WD_ATTRIBUTE = RodinCore
 			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".wd");
 	
+	public static IAttributeType.String APPLICABILITY_ATTRIBUTE = RodinCore
+		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".applicability");
 }

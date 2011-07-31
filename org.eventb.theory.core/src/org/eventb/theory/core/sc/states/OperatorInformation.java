@@ -32,6 +32,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
+import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCProofRulesBlock;
@@ -355,8 +356,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		ISCRewriteRule rewRule = newRulesbBlock.getRewriteRule(name);
 		rewRule.create(null, null);
 		rewRule.setDefinitional(true, null);
-		rewRule.setAutomatic(false, null);
-		rewRule.setInteractive(true, null);
+		rewRule.setApplicability(RuleApplicability.INTERACTIVE, null);
 		rewRule.setComplete(true, null);
 		rewRule.setDescription(description, null);
 		rewRule.setLabel(name, null);

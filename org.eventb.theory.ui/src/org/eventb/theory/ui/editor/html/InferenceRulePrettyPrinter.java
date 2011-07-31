@@ -5,8 +5,8 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IInferenceRule;
-import org.eventb.theory.internal.ui.Messages;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.HorizontalAlignment;
@@ -31,10 +31,7 @@ public class InferenceRulePrettyPrinter extends DefaultPrettyPrinter {
 			IInferenceRule rule = (IInferenceRule) elt;
 			try {
 				String label = rule.getLabel();
-				String auto = rule.isAutomatic()?
-						Messages.rule_isAutomatic: Messages.rule_isNotAutomatic;
-				String inter = rule.isInteractive()?
-						Messages.rule_isInteractive: Messages.rule_isUnInteractive;
+				String app = DatabaseUtilities.getString(rule.getApplicability());
 				String desc = rule.getDescription();
 				ps.appendString(wrapString("\u2022"+label), 
 						getHTMLBeginForCSSClass(INF_LABEL, //
@@ -45,7 +42,7 @@ public class InferenceRulePrettyPrinter extends DefaultPrettyPrinter {
 								VerticalAlignement.MIDDLE), 
 						INF_IDENT_SEPARATOR_BEGIN, 
 						":");
-				ps.appendString("("+auto+", "+inter+")", 
+				ps.appendString("("+app+")", 
 						getHTMLBeginForCSSClass(INF_PROP, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //

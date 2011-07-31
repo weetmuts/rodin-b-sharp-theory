@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
+import static org.eventb.theory.core.DatabaseUtilities.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.SCFilterModule;
@@ -45,12 +47,8 @@ public abstract class RuleFilterModule<R extends IRule> extends SCFilterModule {
 		if (symbolInfo == null) {
 			throw new IllegalStateException("No defined symbol for: " + label);
 		}
-		// Check automatic attribute
-		if (!checkAutomaticAttribute(rule, symbolInfo, repository, monitor)) {
-			return false;
-		}
-		// Check interactive and description attribute
-		if (!checkInteractiveAttribute(rule, symbolInfo, repository, monitor)) {
+		// Check applicability attribute
+		if (!checkApplicabilityAttribute(rule, symbolInfo, repository, monitor)) {
 			return false;
 		}
 		if (!furtherCheck(rule, symbolInfo, repository, monitor)){
@@ -72,52 +70,35 @@ public abstract class RuleFilterModule<R extends IRule> extends SCFilterModule {
 			ILabelSymbolInfo symbolInfo, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 
-	private boolean checkInteractiveAttribute(R rule,
-			ILabelSymbolInfo symbolInfo, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
-		String desc = rule.getParent().getElementName() + "." + rule.getLabel();
-		boolean isInter = false;
-		// warning interactive status needs to be defined
-		if (!rule.hasInteractive()) {
-			createProblemMarker(rule, TheoryAttributes.INTERACTIVE_ATTRIBUTE,
-					TheoryGraphProblem.InterUndefWarning);
-			// default is interactive
-			isInter = true;
-		} else {
-			isInter = rule.isInteractive();
-		}
-		if (isInter) {
-			// check description
-			if (!rule.hasDescription()
-					|| (rule.hasDescription() && rule.getDescription().equals(
-							""))) {
-				createProblemMarker(rule, TheoryAttributes.DESC_ATTRIBUTE,
-						TheoryGraphProblem.DescNotSupplied, rule.getLabel());
-			} else {
-				desc = rule.getDescription();
-			}
-		}
-		symbolInfo.setAttributeValue(TheoryAttributes.INTERACTIVE_ATTRIBUTE,
-				isInter);
-		symbolInfo.setAttributeValue(TheoryAttributes.DESC_ATTRIBUTE, desc);
-		return true;
-	}
 
-	private boolean checkAutomaticAttribute(R rule,
+	private boolean checkApplicabilityAttribute(R rule,
 			ILabelSymbolInfo symbolInfo, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		boolean isAuto = false;
-		// warning auto status needs to be defined
-		if (!rule.hasAutomatic()) {
-			createProblemMarker(rule, TheoryAttributes.AUTOMATIC_ATTRIBUTE,
-					TheoryGraphProblem.AutoUndefWarning);
+		boolean isInter = true;
+		if (!rule.hasApplicabilityAttribute()) {
+			createProblemMarker(rule, TheoryAttributes.APPLICABILITY_ATTRIBUTE,
+					TheoryGraphProblem.AppUndefWarning);
 			// default is manual
 			isAuto = false;
+			isInter = true;
 		} else {
 			isAuto = rule.isAutomatic();
+			isInter = rule.isInteractive();
 		}
-		symbolInfo.setAttributeValue(TheoryAttributes.AUTOMATIC_ATTRIBUTE,
-				isAuto);
+		
+		symbolInfo.setAttributeValue(TheoryAttributes.APPLICABILITY_ATTRIBUTE,
+				getString(getRuleApplicability(isAuto, isInter)));
+		String desc = rule.getParent().getElementName() + "." + rule.getLabel();
+		if (!rule.hasDescription()
+				|| (rule.hasDescription() && rule.getDescription().equals(
+						""))) {
+			createProblemMarker(rule, TheoryAttributes.DESC_ATTRIBUTE,
+					TheoryGraphProblem.DescNotSupplied, rule.getLabel());
+		} else {
+			desc = rule.getDescription();
+		}
+		symbolInfo.setAttributeValue(TheoryAttributes.DESC_ATTRIBUTE, desc);
 		return true;
 	}
 }

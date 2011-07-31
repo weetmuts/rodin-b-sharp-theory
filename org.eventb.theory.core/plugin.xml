@@ -56,19 +56,9 @@
             name="%typeAttr">
       </attributeType>
       <attributeType
-            id="auto"
-            kind="boolean"
-            name="%eventBautoAttr">
-      </attributeType>
-      <attributeType
             id="complete"
             kind="boolean"
             name="%eventBcompleteAttr">
-      </attributeType>
-      <attributeType
-            id="interactive"
-            kind="boolean"
-            name="%eventBinteractiveAttr">
       </attributeType>
       <attributeType
             id="desc"
@@ -124,6 +114,11 @@
             id="wd"
             kind="string"
             name="%wdAttr">
+      </attributeType>
+      <attributeType
+            id="applicability"
+            kind="string"
+            name="%applicabilityAttr">
       </attributeType>
    </extension>
    <extension

@@ -229,6 +229,27 @@ public class TheoryImage {
 	 *            The image registry
 	 */
 	public static void initializeRegistry(ImageRegistry registry) {
+		
+		registerImage(registry, ITheoryImages.IMG_DATATYPE,
+				ITheoryImages.IMG_DATATYPE_PATH);
+		registerImage(registry, ITheoryImages.IMG_DATATYPE_CONS,
+				ITheoryImages.IMG_DATATYPE_CONS_PATH);
+		registerImage(registry, ITheoryImages.IMG_DATATYPE_DEST,
+				ITheoryImages.IMG_DATATYPE_DEST_PATH);
+		registerImage(registry, ITheoryImages.IMG_DDef,
+				ITheoryImages.IMG_DDef_PATH);
+		registerImage(registry, ITheoryImages.IMG_RDef,
+				ITheoryImages.IMG_RDef_PATH);
+		registerImage(registry, ITheoryImages.IMG_RDef_CASE,
+				ITheoryImages.IMG_RDef_CASE_PATH);
+		registerImage(registry, ITheoryImages.IMG_Given,
+				ITheoryImages.IMG_Given_PATH);
+		registerImage(registry, ITheoryImages.IMG_INFER,
+				ITheoryImages.IMG_INFER_PATH);
+		registerImage(registry, ITheoryImages.IMG_INFERENCE,
+				ITheoryImages.IMG_INFERENCE_PATH);
+		registerImage(registry, ITheoryImages.IMG_META_VAR,
+				ITheoryImages.IMG_META_VAR_PATH);
 		registerImage(registry, ITheoryImages.IMG_TTHEOREM,
 				ITheoryImages.IMG_TTHEOREM_PATH);
 		registerImage(registry, ITheoryImages.IMG_RULES_BLOCK,

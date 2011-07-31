@@ -16,12 +16,8 @@ public class Messages {
 	public static String deploy_deploySuccess;
 	public static String deploy_deployFailure;
 	
-	public static String rule_isAutomatic;
 	public static String rewriteRule_isComplete;
 	public static String rewriteRule_isIncomplete;
-	public static String rule_isInteractive;
-	public static String rule_isNotAutomatic;
-	public static String rule_isUnInteractive;
 	
 	public static String operator_isExpression;
 	public static String operator_isPredicate;

@@ -21,7 +21,7 @@ import org.eventb.core.ITraceableElement;
  * @author maamria
  *
  */
-public interface ISCRule extends ILabeledElement, IAutomaticElement, IInteractiveElement, 
+public interface ISCRule extends ILabeledElement, IApplicabilityElement,
 IDescriptionElement, ITraceableElement, IAccuracyElement, IDefinitionalElement,
 IValidatedElement{
 

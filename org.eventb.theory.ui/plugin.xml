@@ -39,23 +39,13 @@
             id="org.eventb.theory.ui.complete"
             typeId="org.eventb.theory.core.complete">
       </toggleAttribute>
-      <toggleAttribute
-            class="org.eventb.theory.internal.ui.attr.AutoAttributeManipulation"
-            id="org.eventb.theory.ui.auto"
-            typeId="org.eventb.theory.core.auto">
-      </toggleAttribute>
-      <toggleAttribute
-            class="org.eventb.theory.internal.ui.attr.InteractiveAttributeManipulation"
-            id="org.eventb.theory.ui.interactive"
-            typeId="org.eventb.theory.core.interactive">
-      </toggleAttribute>
       <textAttribute
             class="org.eventb.theory.internal.ui.attr.TypingAttributeManipulation"
             expandsHorizontally="false"
             foregroundColor="P_REQUIRED_FIELD_BACKGROUND"
             id="org.eventb.theory.ui.type"
             isMath="true"
-            prefix="Type"
+            prefix="Type: "
             style="single"
             typeId="org.eventb.theory.core.type">
       </textAttribute>
@@ -65,7 +55,7 @@
             foregroundColor="P_COMMENT_FOREGROUND"
             id="org.eventb.theory.ui.desc"
             isMath="false"
-            prefix="Description"
+            prefix="Description: "
             style="single"
             typeId="org.eventb.theory.core.desc">
       </textAttribute>
@@ -75,7 +65,7 @@
             foregroundColor="P_REQUIRED_FIELD_BACKGROUND"
             id="org.eventb.theory.ui.formula"
             isMath="true"
-            prefix="Formula"
+            prefix="Formula: "
             style="single"
             typeId="org.eventb.theory.core.formula">
       </textAttribute>
@@ -102,7 +92,7 @@
             class="org.eventb.theory.internal.ui.attr.AssociativeAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.theory.ui.associative"
-            prefix="Associativity"
+            prefix="Associativity: "
             required="true"
             typeId="org.eventb.theory.core.associative">
       </choiceAttribute>
@@ -110,7 +100,7 @@
             class="org.eventb.theory.internal.ui.attr.CommutativeAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.theory.ui.commutative"
-            prefix="Commutativity"
+            prefix="Commutativity: "
             required="true"
             typeId="org.eventb.theory.core.commutative">
       </choiceAttribute>
@@ -120,6 +110,14 @@
             id="org.eventb.theory.ui.givenType"
             required="true"
             typeId="org.eventb.theory.core.givenType">
+      </choiceAttribute>
+      <choiceAttribute
+            class="org.eventb.theory.internal.ui.attr.ApplicabilityAttributeManipulation"
+            expandsHorizontally="false"
+            id="org.eventb.theory.ui.applicability"
+            prefix="Applicability: "
+            required="true"
+            typeId="org.eventb.theory.core.applicability">
       </choiceAttribute>
       <choiceAttribute
             class="org.eventb.theory.internal.ui.attr.InductiveArgumentAttributeManipulation"
@@ -145,130 +143,130 @@
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/cst_obj.gif"
+            imagePath="icons/typePar.gif"
             prefix="TYPE PARAMETERS"
             prettyPrinter="org.eventb.theory.ui.editor.html.TypeParameterPrettyPrinter"
             typeId="org.eventb.theory.core.typeParameter">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/grd_obj.gif"
+            imagePath="icons/datatype.gif"
             prefix="DATATYPES"
             prettyPrinter="org.eventb.theory.ui.editor.html.DatatypeDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.datatypeDefinition">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/act_obj.gif"
+            imagePath="icons/typePar.gif"
             prefix="Type Arguments"
             typeId="org.eventb.theory.core.typeArgument">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/thm_obj.gif"
+            imagePath="icons/cons.gif"
             prefix="Constructors"
             prettyPrinter="org.eventb.theory.ui.editor.html.DatatypeConstructorPrettyPrinter"
             typeId="org.eventb.theory.core.datatypeConstructor">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/act_obj.gif"
+            imagePath="icons/dest.gif"
             prefix="Destructors"
             typeId="org.eventb.theory.core.constructorArgument">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/var_obj.gif"
+            imagePath="icons/op.gif"
             prefix="OPERATORS"
             prettyPrinter="org.eventb.theory.ui.editor.html.NewOperatorDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.newOperatorDefinition">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/act_obj.gif"
+            imagePath="icons/metaVar.gif"
             prefix="arguments"
             typeId="org.eventb.theory.core.operatorArgument">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/axm_obj.gif"
+            imagePath="icons/opWd.gif"
             prefix="well-definedness condition"
             prettyPrinter="org.eventb.theory.ui.editor.html.OperatorWDconditionPrettyPrinter"
             typeId="org.eventb.theory.core.operatorWDcondition">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/inv_obj.gif"
+            imagePath="icons/directDef.gif"
             prefix="direct definition"
             prettyPrinter="org.eventb.theory.ui.editor.html.OperatorDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.directOperatorDefinition">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/inv_obj.gif"
+            imagePath="icons/recDef.gif"
             prefix="recursive definition"
             prettyPrinter="org.eventb.theory.ui.editor.html.OperatorRecursiveDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.recursiveOperatorDefinition">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/act_obj.gif"
+            imagePath="icons/recCase.gif"
             prefix="cases"
             prettyPrinter="org.eventb.theory.ui.editor.html.OperatorRecursiveCasePrettyPrinter"
             typeId="org.eventb.theory.core.recursiveDefinitionCase">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/axms_obj.gif"
+            imagePath="icons/block.gif"
             prefix="PROOF RULES"
             prettyPrinter="org.eventb.theory.ui.editor.html.ProofRulesBlockPrettyPrinter"
             typeId="org.eventb.theory.core.proofRulesBlock">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/var_obj.gif"
+            imagePath="icons/metaVar.gif"
             prefix="Metavariables"
             prettyPrinter="org.eventb.theory.ui.editor.html.MetavariablesPrettyPrinter"
             typeId="org.eventb.theory.core.metaVariable">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/inv_obj.gif"
+            imagePath="icons/rew.gif"
             prefix="Rewrite Rules"
             prettyPrinter="org.eventb.theory.ui.editor.html.RewriteRulePrettyPrinter"
             typeId="org.eventb.theory.core.rewriteRule">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/grd_obj.gif"
+            imagePath="icons/rhs.gif"
             prefix="rewrites"
             prettyPrinter="org.eventb.theory.ui.editor.html.RewriteRuleRHSPrettyPrinter"
             typeId="org.eventb.theory.core.rewriteRuleRHS">
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/evt_obj.gif"
+            imagePath="icons/inference.gif"
             prefix="Inference Rules"
             prettyPrinter="org.eventb.theory.ui.editor.html.InferenceRulePrettyPrinter"
             typeId="org.eventb.theory.core.inferenceRule">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/act_obj.gif"
+            imagePath="icons/given.gif"
             prefix="Given"
             prettyPrinter="org.eventb.theory.ui.editor.html.GivenPrettyPrinter"
             typeId="org.eventb.theory.core.given">
       </element>
       <element
             defaultColumn="2"
-            imagePath="icons/grd_obj.gif"
+            imagePath="icons/infer.gif"
             prefix="Infer"
             prettyPrinter="org.eventb.theory.ui.editor.html.InferPrettyPrinter"
             typeId="org.eventb.theory.core.infer">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/thm_obj.gif"
+            imagePath="icons/theorem.gif"
             prefix="THEOREMS"
             prettyPrinter="org.eventb.theory.ui.editor.html.TheoremPrettyPrinter"
             typeId="org.eventb.theory.core.theorem">
@@ -537,14 +535,10 @@
          </attributeReference>
          <attributeReference
                column="3"
-               descriptionId="org.eventb.theory.ui.auto">
+               descriptionId="org.eventb.theory.ui.applicability">
          </attributeReference>
          <attributeReference
                column="4"
-               descriptionId="org.eventb.theory.ui.interactive">
-         </attributeReference>
-         <attributeReference
-               column="5"
                descriptionId="org.eventb.theory.ui.desc">
          </attributeReference>
          <attributeReference
@@ -577,14 +571,10 @@
          </attributeReference>
          <attributeReference
                column="1"
-               descriptionId="org.eventb.theory.ui.auto">
+               descriptionId="org.eventb.theory.ui.applicability">
          </attributeReference>
          <attributeReference
                column="2"
-               descriptionId="org.eventb.theory.ui.interactive">
-         </attributeReference>
-         <attributeReference
-               column="3"
                descriptionId="org.eventb.theory.ui.desc">
          </attributeReference>
          <attributeReference
@@ -1119,7 +1109,7 @@
          </menu>
          <action
                class="org.eventb.theory.ui.deploy.DeployActionDelegate"
-               icon="icons/deploy.gif"
+               icon="icons/thyDep.png"
                id="org.eventb.theory.ui.deployTheory"
                label="%deployTheoryAction"
                menubarPath="org.eventb.theory.ui.theoryMenu/deploy"

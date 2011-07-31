@@ -17,6 +17,6 @@ import org.eventb.core.ILabeledElement;
  *
  */
 public interface IRule extends 
-		ILabeledElement, IAutomaticElement, IInteractiveElement, IDescriptionElement,ICommentedElement{
+		ILabeledElement, IApplicabilityElement, IDescriptionElement,ICommentedElement{
 
 }

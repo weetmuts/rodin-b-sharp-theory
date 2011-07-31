@@ -149,6 +149,7 @@ public final class Messages {
 	public static String scuser_RecOpTypeNotConsistent;
 	public static String database_SCTypeParseFailure;
 	public static String scuser_OpArgExprNotSet;
+	public static String scuser_AppUndefWarning;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
