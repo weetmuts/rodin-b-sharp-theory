@@ -34,7 +34,6 @@ public final class Messages {
 	public static String progress_TheoryInferenceRules;
 	public static String progress_TheoryRewriteRules;
 	public static String progress_TheoryTheorems;
-	public static String scuser_AutoUndefWarning;
 	public static String scuser_IndRedundantImportWarn;
 	public static String scuser_LhsAndRhsNotSynClassMatching;
 	public static String scuser_LHSUndef;
@@ -49,10 +48,7 @@ public final class Messages {
 	public static String scuser_CondUndef;
 	public static String scuser_CondAttrUndef;
 	public static String scuser_RuleWithNoRHSs;
-	public static String scuser_InterUndefWarning;
 	public static String scuser_CompleteUndefWarning;
-	public static String scuser_ToolTipNotSupplied;
-	public static String scuser_NoToolTipWarning;
 	public static String scuser_NoRuleDescWarning;
 	public static String scuser_DescNotSupplied;
 	public static String scuser_LHSIsIdentErr;

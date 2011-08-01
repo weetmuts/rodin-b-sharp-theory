@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.theory.feature"
       label="%featureName"
-      version="1.0.1"
+      version="1.1.0"
       provider-name="%providerName">
 
    <description url="http://wiki.event-b.org/index.php/Theory_News_and_Support">
@@ -41,34 +41,34 @@
          id="org.eventb.theory.core"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="1.1.0"
          unpack="false"/>
 
    <plugin
          id="org.eventb.theory.rbp"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="1.1.0"
          unpack="false"/>
 
    <plugin
          id="org.eventb.theory.ui"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="1.1.0"
          unpack="false"/>
 
    <plugin
          id="org.eventb.theory.help"
          download-size="0"
          install-size="0"
-         version="1.0.0"/>
+         version="1.1.0"/>
 
    <plugin
          id="org.eventb.core.pm"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.0"
          unpack="false"/>
 
 </feature>

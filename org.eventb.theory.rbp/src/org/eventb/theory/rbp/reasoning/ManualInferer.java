@@ -86,11 +86,9 @@ public class ManualInferer extends AbstractRulesApplyer{
 		if (binding != null) {
 			List<IDeployedGiven> givens = rule.getGivens();
 			Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
-			int i = 0;
 			for (IDeployedGiven given : givens) {
 				Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), binding);
 				antecedents.add(ProverFactory.makeAntecedent(subGoal));
-				i++;
 			}
 			// add the well-definedness conditions where appropriate
 			Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();

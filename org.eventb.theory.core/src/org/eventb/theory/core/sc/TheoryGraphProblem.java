@@ -167,9 +167,6 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			TheoremLabelProblemWarning(
 			IMarker.SEVERITY_WARNING,
 			Messages.scuser_TheoremLabelProblemWarning), 
-			AutoUndefWarning(
-			IMarker.SEVERITY_WARNING, 
-			Messages.scuser_AutoUndefWarning), 
 			AppUndefWarning(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_AppUndefWarning),
@@ -190,13 +187,7 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			Messages.scuser_InferenceInferBTRUEPredErr),
 			UntypedMetavariableError(
 			IMarker.SEVERITY_ERROR, 
-			Messages.scuser_UntypedMetavariableError), 
-			InterUndefWarning(
-			IMarker.SEVERITY_WARNING, 
-			Messages.scuser_InterUndefWarning), 
-			ToolTipNotSupplied(
-			IMarker.SEVERITY_INFO, 
-			Messages.scuser_ToolTipNotSupplied), 
+			Messages.scuser_UntypedMetavariableError),
 			DescNotSupplied(
 			IMarker.SEVERITY_INFO, 
 			Messages.scuser_DescNotSupplied), 
@@ -277,9 +268,6 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			RuleNoInfersError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_RuleWithNoInfers),
-			NoToolTipWarning(
-			IMarker.SEVERITY_WARNING, 
-			Messages.scuser_NoToolTipWarning), 
 			NoRuleDescWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_NoRuleDescWarning), 
