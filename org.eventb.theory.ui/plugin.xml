@@ -7,7 +7,7 @@
             category="org.eventb.ui.wizards"
             class="org.eventb.theory.ui.wizard.NewTheoryWizard"
             finalPerspective="org.eventb.ui.perspective.eventb"
-            icon="icons/thy.png"
+            icon="icons/thy.gif"
             id="org.eventb.theory.ui.newTheoryWizard"
             name="%newTheoryWizard"
             preferredPerspectives="org.eventb.ui.perspective.eventb,org.eventb.ui.perspective.proving"
@@ -24,7 +24,7 @@
             contributorClass="org.eventb.theory.ui.editor.TheoryEditorContributor"
             default="true"
             extensions="tuf"
-            icon="icons/thy.png"
+            icon="icons/thy.gif"
             id="org.eventb.theory.ui.theoryEditor"
             name="%theoryEditor">
          <contentTypeBinding
@@ -129,14 +129,14 @@
       </choiceAttribute>
       <element
             childrenSuffix="END"
-            imagePath="icons/thy.png"
+            imagePath="icons/thy.gif"
             prefix="THEORY"
             prettyPrinter="org.eventb.theory.ui.editor.html.ComponentPrettyPrinter"
             typeId="org.eventb.theory.core.theoryRoot">
       </element>
       <element
             defaultColumn="0"
-            imagePath="icons/thy.png"
+            imagePath="icons/thy.gif"
             prefix="IMPORTS"
             prettyPrinter="org.eventb.theory.ui.editor.html.ImportPrettyPrinter"
             typeId="org.eventb.theory.core.importTheory">
@@ -717,7 +717,7 @@
             targetID="fr.systerel.explorer.navigator.view">
          <action
                class="org.eventb.theory.ui.explorer.actions.NewTheoryActionDelegate"
-               icon="icons/newThy.gif"
+               icon="icons/thyNew.gif"
                id="org.eventb.theory.ui.newTheory"
                label="%viewActions.newTheoryLabel"
                style="push"
@@ -1109,7 +1109,7 @@
          </menu>
          <action
                class="org.eventb.theory.ui.deploy.DeployActionDelegate"
-               icon="icons/thyDep.png"
+               icon="icons/thyDep.gif"
                id="org.eventb.theory.ui.deployTheory"
                label="%deployTheoryAction"
                menubarPath="org.eventb.theory.ui.theoryMenu/deploy"

@@ -22,7 +22,6 @@ import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoning.AutoRewriter;
 import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * 
@@ -95,10 +94,7 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 	
 	// can be overridden to provide alternative display name
 	protected String getDisplayName() {
-		String toDisplay = DISPLAY_NAME + ProverUtilities.printListedItems(usedAutoTheories);
-		// clear the list of used theories now
-		usedAutoTheories.clear();
-		return toDisplay;
+		return DISPLAY_NAME;
 	}
 	
 	// can be overridden to provide alternative rewriter

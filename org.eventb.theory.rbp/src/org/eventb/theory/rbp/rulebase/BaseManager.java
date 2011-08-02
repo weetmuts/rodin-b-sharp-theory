@@ -15,9 +15,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IEventBRoot;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
@@ -74,52 +72,24 @@ public class BaseManager implements IElementChangedListener {
 	 * @param context the proof obligation context
 	 * @return the list of rewrite rules
 	 */
-	public List<IDeployedRewriteRule> getDefinitionalExpressionRules(Class<? extends Expression> clazz, IPOContext context){
-		List<IDeployedRewriteRule> allExpRules = getExpressionRewriteRules(false, clazz, context);
-		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
-		for (IDeployedRewriteRule deployedRewriteRule : allExpRules){
-			if (deployedRewriteRule.isDefinitional() && !deployedRewriteRule.isConditional()){
-				toReturn.add(deployedRewriteRule);
-			}
-		}
-		return toReturn;
-	}
-	
-	/**
-	 * Returns the list of definitional rewrite rules for the given formula class under the given context.
-	 * @param clazz the formula runtime class
-	 * @param context the proof obligation context
-	 * @return the list of rewrite rules
-	 */
-	public List<IDeployedRewriteRule> getDefinitionalPredicateRules(Class<? extends Predicate> clazz, IPOContext context){
-		List<IDeployedRewriteRule> allExpRules = getPredicateRewriteRules(false, clazz, context);
-		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
-		for (IDeployedRewriteRule deployedRewriteRule : allExpRules){
-			if (deployedRewriteRule.isDefinitional() && !deployedRewriteRule.isConditional()){
-				toReturn.add(deployedRewriteRule);
-			}
-		}
-		return toReturn;
-	}
-
-	public List<IDeployedRewriteRule> getExpressionRewriteRules(boolean automatic, Class<? extends Expression> clazz, IPOContext context) {
+	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, IPOContext context){
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		rules.addAll(mathExtensionsProjectEntry.getExpressionRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
+		rules.addAll(mathExtensionsProjectEntry.getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
 		}
 		return rules;
 	}
 
-	public List<IDeployedRewriteRule> getPredicateRewriteRules(boolean automatic, Class<? extends Predicate> clazz, IPOContext context) {
+	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		rules.addAll(mathExtensionsProjectEntry.getPredicateRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
+		rules.addAll(mathExtensionsProjectEntry.getRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
 		if (!context.inMathExtensions()) {
-			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
+			rules.addAll(projectEntries.get(parentRoot.getRodinProject()).getRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
 		}
 		return rules;
 	}
@@ -132,30 +102,12 @@ public class BaseManager implements IElementChangedListener {
 	 * @param context the obligation context
 	 * @return the deployed rule, or <code>null</code> if not found
 	 */
-	public IDeployedRewriteRule getExpressionRewriteRule(String ruleName, String theoryName, Class<? extends Expression> clazz, IPOContext context) {
+	public IDeployedRewriteRule getRewriteRule(String ruleName, String theoryName, Class<?> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		check(parentRoot.getRodinProject());
-		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
+		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getRewriteRule(theoryName, ruleName, clazz, parentRoot, context.getFormulaFactory());
 		if (rule == null) {
-			return projectEntries.get(parentRoot.getRodinProject()).getExpressionRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
-		}
-		return rule;
-	}
-
-	/**
-	 * Returns the deployed predicate rewrite rule with the given parameters.
-	 * @param ruleName the name of the rule
-	 * @param theoryName the name of the parent theory
-	 * @param clazz the runtime class of the formula in its lhs
-	 * @param context the obligation context
-	 * @return the deployed rule, or <code>null</code> if not found
-	 */
-	public IDeployedRewriteRule getPredicateRewriteRule(String ruleName, String theoryName, Class<? extends Predicate> clazz, IPOContext context) {
-		IEventBRoot parentRoot = context.getParentRoot();
-		check(parentRoot.getRodinProject());
-		IDeployedRewriteRule rule = mathExtensionsProjectEntry.getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
-		if (rule == null) {
-			return projectEntries.get(parentRoot.getRodinProject()).getPredicateRewriteRule(ruleName, theoryName, clazz, parentRoot, context.getFormulaFactory());
+			return projectEntries.get(parentRoot.getRodinProject()).getRewriteRule(theoryName, ruleName, clazz, parentRoot, context.getFormulaFactory());
 		}
 		return rule;
 	}

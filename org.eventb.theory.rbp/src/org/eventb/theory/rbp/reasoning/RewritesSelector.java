@@ -17,7 +17,6 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
@@ -81,9 +80,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	 *            the accumulator
 	 */
 	protected void select(Formula<?> formula, IAccumulator<ITacticApplication> accum) {
-		List<IDeployedRewriteRule> rules = ((formula instanceof Expression ? 
-				manager.getExpressionRewriteRules(false, ((Expression) formula).getClass(), context) : 
-					manager.getPredicateRewriteRules(false, ((Predicate) formula).getClass(), context)));
+		List<IDeployedRewriteRule> rules = manager.getRewriteRules(false, formula.getClass(), context);
 		for (IDeployedRewriteRule rule : rules) {
 			if (canFindABinding(formula, rule.getLeftHandSide())) {
 				if (rule.isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {

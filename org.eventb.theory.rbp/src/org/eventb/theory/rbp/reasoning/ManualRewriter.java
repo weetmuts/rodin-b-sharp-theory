@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
@@ -58,9 +57,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 		}
 		FormulaFactory factory = context.getFormulaFactory();
 		// get the rule
-		IDeployedRewriteRule rule = ((formula instanceof Expression ? 
-				manager.getExpressionRewriteRule(ruleName, theoryName, ((Expression) formula).getClass(), context)
-				: manager.getPredicateRewriteRule(ruleName, theoryName, ((Predicate) formula).getClass(), context)));
+		IDeployedRewriteRule rule = manager.getRewriteRule(ruleName, theoryName, formula.getClass(), context);
 		if (rule == null) {
 			return null;
 		}

@@ -19,7 +19,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoning.AutoInferer;
-import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * @author maamria
@@ -59,9 +58,6 @@ public class AutoInferenceReasoner extends ContextAwareReasoner {
 	}
 
 	protected String getDisplayName() {
-		String toDisplay = DISPLAY_NAME + ProverUtilities.printListedItems(usedTheories);
-		// clear the list of used theories now
-		usedTheories.clear();
-		return toDisplay;
+		return DISPLAY_NAME;
 	}
 }

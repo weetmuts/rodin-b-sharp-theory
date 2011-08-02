@@ -9,9 +9,7 @@ package org.eventb.theory.rbp.reasoning;
 
 import java.util.List;
 
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.Predicate;
 import org.eventb.theory.rbp.reasoners.ReduceToClassicLanguageReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
@@ -23,9 +21,7 @@ public class ToClassicLanguageReducer extends AutoRewriter{
 	}
 	
 	protected List<IDeployedRewriteRule> getRules(Formula<?> original){
-		List<IDeployedRewriteRule> rules = (original instanceof Expression ? 
-				manager.getDefinitionalExpressionRules(((Expression)original).getClass(), context):
-				manager.getDefinitionalPredicateRules(((Predicate)original).getClass(), context));
+		List<IDeployedRewriteRule> rules = manager.getDefinitionalRules(original.getClass(), context);
 		return rules;
 	}
 	

@@ -111,9 +111,7 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @return
 	 */
 	protected List<IDeployedRewriteRule> getRules(Formula<?> original){
-		List<IDeployedRewriteRule> rules = (original instanceof Expression ? 
-				manager.getExpressionRewriteRules(true, ((Expression)original).getClass(), context):
-				manager.getPredicateRewriteRules(true, ((Predicate)original).getClass(), context));
+		List<IDeployedRewriteRule> rules = manager.getRewriteRules(true, original.getClass(), context);
 		return rules;
 	}
 	

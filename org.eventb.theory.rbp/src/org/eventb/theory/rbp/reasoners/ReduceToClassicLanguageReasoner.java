@@ -14,7 +14,6 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoning.ToClassicLanguageReducer;
 import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * 
@@ -40,10 +39,7 @@ public class ReduceToClassicLanguageReasoner extends AutoRewriteReasoner {
 	}
 	
 	protected String getDisplayName() {
-		String toDisplay = DISPLAY_NAME + ProverUtilities.printListedItems(usedReduceTheories);
-		// clear the list of used theories now
-		usedReduceTheories.clear();
-		return toDisplay;
+		return DISPLAY_NAME;
 	}
 	
 	protected IFormulaRewriter getRewriter(IPOContext context){
