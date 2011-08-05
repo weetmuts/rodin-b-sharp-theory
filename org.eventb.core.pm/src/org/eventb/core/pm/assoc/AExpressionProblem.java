@@ -167,7 +167,9 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 						return null;
 					} else {
 						Expression varMatch = getAssociativeExpression(beforeSublist);
-						initialBinding.putExpressionMapping(identifier, varMatch);
+						if(!initialBinding.putExpressionMapping(identifier, varMatch)){
+							return null;
+						}
 						List<Expression> afterSublist = getFormulae(getSublist(availableFormulae, axisIndex, false));
 						if (afterSublist.size() > 0) {
 							if (!acceptPartialMatch) {
@@ -186,7 +188,9 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 						return null;
 					} else {
 						Expression varMatch = getAssociativeExpression(afterSublist);
-						initialBinding.putExpressionMapping(identifier, varMatch);
+						if(!initialBinding.putExpressionMapping(identifier, varMatch)){
+							return null;
+						}
 						List<Expression> beforeSublist = getFormulae(getSublist(availableFormulae, axisIndex, true));
 						if (beforeSublist.size() > 0) {
 							if (!acceptPartialMatch) {
@@ -233,7 +237,9 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 					return null;
 				} else {
 					Expression varMatch = getAssociativeExpression(afterSublist);
-					initialBinding.putExpressionMapping(identifier2, varMatch);
+					if(!initialBinding.putExpressionMapping(identifier2, varMatch)){
+						return null;
+					}
 					List<Expression> beforeSublist = getFormulae(getSublist(availableFormulae, if1.getIndex(), true));
 					if (beforeSublist.size() > 0) {
 						if (!acceptPartialMatch) {
@@ -254,7 +260,9 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 					return null;
 				} else {
 					Expression varMatch = getAssociativeExpression(beforeSublist);
-					initialBinding.putExpressionMapping(identifier1, varMatch);
+					if(!initialBinding.putExpressionMapping(identifier1, varMatch)){
+						return null;
+					}
 					List<Expression> afterSublist = getFormulae(getSublist(availableFormulae, if2.getIndex(), false));
 					if (afterSublist.size() > 0) {
 						if (!acceptPartialMatch) {
@@ -266,9 +274,13 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 				}
 			} else {
 				IndexedFormula<Expression> var2Match = availableFormulae.get(availableFormulae.size() - 1);
-				initialBinding.putExpressionMapping(identifier2, var2Match.getFormula());
+				if(!initialBinding.putExpressionMapping(identifier2, var2Match.getFormula())){
+					return null;
+				}
 				List<Expression> beforeFormulae = getFormulae(getSublist(availableFormulae, availableFormulae.size() - 1, true));
-				initialBinding.putExpressionMapping(identifier1, getAssociativeExpression(beforeFormulae));
+				if(!initialBinding.putExpressionMapping(identifier1, getAssociativeExpression(beforeFormulae))){
+					return null;
+				}
 			}
 			return initialBinding;
 		}
