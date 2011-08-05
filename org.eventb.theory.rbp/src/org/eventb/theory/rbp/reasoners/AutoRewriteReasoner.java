@@ -34,8 +34,6 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 	
 	private static final String DISPLAY_NAME = "RbP0";
 	
-	public static List<String> usedAutoTheories = new ArrayList<String>();
-	
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

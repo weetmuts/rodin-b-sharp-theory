@@ -30,7 +30,6 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.pm.ComplexBinder;
 import org.eventb.core.pm.IBinding;
-import org.eventb.theory.rbp.reasoners.AutoRewriteReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 
@@ -97,7 +96,6 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 			if (boundRhs == null){
 				continue;
 			}
-			addUsedTheory(rule.getTheoryName());
 			result = boundRhs;
 		}
 		return result;
@@ -115,16 +113,6 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 		return rules;
 	}
 	
-	/**
-	 * Adds the given name as a used theory.
-	 * 
-	 * <p> Override this to use a different list for storage.
-	 * @param name
-	 */
-	protected void addUsedTheory(String name){
-		if(!AutoRewriteReasoner.usedAutoTheories.contains(name))
-			AutoRewriteReasoner.usedAutoTheories.add(name);
-	}
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 		return applyExpressionRewrites(expression);

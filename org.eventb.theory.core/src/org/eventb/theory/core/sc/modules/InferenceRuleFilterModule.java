@@ -46,8 +46,8 @@ public class InferenceRuleFilterModule extends RuleFilterModule<IInferenceRule> 
 			IProgressMonitor monitor) throws CoreException {
 		IInfer[] infers = rule.getInfers();
 		// Rule must have at least one infer clause
-		if (infers.length < 1){
-			createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.RuleNoInfersError, rule.getLabel());
+		if (infers.length != 1){
+			createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.RuleInfersError, rule.getLabel());
 			return false;
 		}
 		return true;

@@ -96,7 +96,8 @@ public class ManualInferer extends AbstractRulesApplyer{
 				Expression mappedExpression = expressionMappings.get(identifier);
 				Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
 				if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-					antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+					if (!sequent.containsHypothesis(wdPredicate))
+						antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
 				}
 			}
 			return antecedents.toArray(new IAntecedent[antecedents.size()]);
@@ -147,7 +148,8 @@ public class ManualInferer extends AbstractRulesApplyer{
 			Expression mappedExpression = mappedIdents.get(identifier);
 			Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
 			if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-				antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+				if (!sequent.containsHypothesis(wdPredicate))
+					antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
 			}
 		}
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);

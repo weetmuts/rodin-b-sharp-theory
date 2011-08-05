@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -29,8 +26,6 @@ public class AutoInferenceReasoner extends ContextAwareReasoner {
 	private static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".autoInferenceReasoner";
 	
 	private static final String DISPLAY_NAME = "RbP1";
-	
-	public static List<String> usedTheories = new ArrayList<String>();
 	
 	@Override
 	public String getReasonerID() {
