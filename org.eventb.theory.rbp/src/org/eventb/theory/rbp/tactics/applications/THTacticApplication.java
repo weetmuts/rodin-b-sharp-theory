@@ -18,7 +18,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.InstantiateTheoremReasoner;
+import org.eventb.theory.rbp.reasoners.THReasoner;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.POContext;
 import org.eventb.theory.rbp.tactics.ui.TheoremSelectorWizard;
@@ -31,9 +31,9 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  * 
  */
-public class TheoremInstantiationTacticApplication implements ITacticApplication {
+public class THTacticApplication implements ITacticApplication {
 
-	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbPtheorems";
+	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbPth";
 
 	@Override
 	public String getTacticID() {
@@ -75,7 +75,7 @@ public class TheoremInstantiationTacticApplication implements ITacticApplication
 						if (theorem == null) {
 							return "No theorem provided";
 						}
-						InstantiateTheoremReasoner reasoner = new InstantiateTheoremReasoner();
+						THReasoner reasoner = new THReasoner();
 						IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), 
 								new SingleStringInput(theorem), pm);
 						if (reasonerOutput == null) return "! Plugin returned null !";

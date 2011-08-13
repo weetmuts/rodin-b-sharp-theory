@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.theory.rbp.tactics.applications.ReduceToClassicLanguageTacticApplication;
+import org.eventb.theory.rbp.tactics.applications.XDTacticApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
 
@@ -23,12 +23,12 @@ import org.eventb.ui.prover.ITacticProvider;
  * @author maamria
  * @since 1.0
  */
-public class ReduceToClassicLanguageTactic implements ITacticProvider {
+public class XDTactic implements ITacticProvider {
 
 	@Override
 	public List<ITacticApplication> getPossibleApplications(IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node != null && node.isOpen()) {
-			ITacticApplication appli = new ReduceToClassicLanguageTacticApplication();
+			ITacticApplication appli = new XDTacticApplication();
 			return singletonList(appli);
 		}
 		return new ArrayList<ITacticApplication>();

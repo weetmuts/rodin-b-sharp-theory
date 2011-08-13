@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.ReduceToClassicLanguageReasoner;
+import org.eventb.theory.rbp.reasoners.XDReasoner;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.POContext;
@@ -25,9 +25,9 @@ import org.eventb.ui.prover.ITacticApplication;
  * @author maamria
  *
  */
-public class ReduceToClassicLanguageTacticApplication implements ITacticApplication {
+public class XDTacticApplication implements ITacticApplication {
 	
-	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbP2Classic";
+	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbPxd";
 
 	@Override
 	public String getTacticID() {
@@ -44,7 +44,7 @@ public class ReduceToClassicLanguageTacticApplication implements ITacticApplicat
 					if (origin instanceof IProofAttempt) {
 						final IProofAttempt pa = (IProofAttempt) origin;
 						final IPOContext context = new POContext(pa.getComponent().getPORoot());
-						ReduceToClassicLanguageReasoner reasoner = new ReduceToClassicLanguageReasoner();
+						XDReasoner reasoner = new XDReasoner();
 						IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), new ContextualInput(context), pm);
 						if (reasonerOutput == null) return "! Plugin returned null !";
 						if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;

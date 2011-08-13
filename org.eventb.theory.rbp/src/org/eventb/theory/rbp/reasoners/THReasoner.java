@@ -38,7 +38,7 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  * @author maamria
  *
  */
-public class InstantiateTheoremReasoner extends SingleStringInputReasoner implements ISignatureReasoner{
+public class THReasoner extends SingleStringInputReasoner implements ISignatureReasoner{
 	
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".instantiateTheoremReasoner";
 	
@@ -87,7 +87,7 @@ public class InstantiateTheoremReasoner extends SingleStringInputReasoner implem
 		}
 		// make the antecedent : no free idents / no hyp actions
 		IAntecedent antecedent = makeAntecedent(null, addedHyps, addWd ? Collections.singleton(wdPredicate): null, null, null);
-		return ProverFactory.makeProofRule(this, stringInput, null, DISPLAY_NAME, antecedent);
+		return ProverFactory.makeProofRule(this, stringInput, null, DISPLAY_NAME +" ("+theoremPredicate+")", antecedent);
 	}
 
 	@Override

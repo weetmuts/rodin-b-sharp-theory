@@ -7,12 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoning.ToClassicLanguageReducer;
+import org.eventb.theory.rbp.reasoning.XDAutoRewriter;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
@@ -20,13 +17,11 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  * 
  */
-public class ReduceToClassicLanguageReasoner extends AutoRewriteReasoner {
+public class XDReasoner extends AutoRewriteReasoner {
 
 	private static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".reduceToClassicLanguageReasoner";
 	
-	private static final String DISPLAY_NAME = "RbP2Classic";
-	
-	public static List<String> usedReduceTheories = new ArrayList<String>();
+	private static final String DISPLAY_NAME = "RbPxd";
 
 	@Override
 	public String getSignature() {
@@ -43,6 +38,6 @@ public class ReduceToClassicLanguageReasoner extends AutoRewriteReasoner {
 	}
 	
 	protected IFormulaRewriter getRewriter(IPOContext context){
-		 return new ToClassicLanguageReducer(context);
+		 return new XDAutoRewriter(context);
 	}
 }

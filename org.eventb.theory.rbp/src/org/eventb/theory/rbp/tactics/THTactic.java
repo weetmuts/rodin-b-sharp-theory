@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.theory.rbp.tactics.applications.TheoremInstantiationTacticApplication;
+import org.eventb.theory.rbp.tactics.applications.THTacticApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
 
@@ -23,12 +23,12 @@ import org.eventb.ui.prover.ITacticProvider;
  * @author maamria
  *
  */
-public class TheoremInstantiationTactic implements ITacticProvider{
+public class THTactic implements ITacticProvider{
 
 	@Override
 	public List<ITacticApplication> getPossibleApplications(IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node != null && node.isOpen()) {
-			ITacticApplication appli = new TheoremInstantiationTacticApplication();
+			ITacticApplication appli = new THTacticApplication();
 			return singletonList(appli);
 		}
 		return new ArrayList<ITacticApplication>();
