@@ -304,7 +304,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			FreeIdentifier inductiveIdent = recursiveDefinition.getOperatorArgument();
 			int index = 0;
 			for (Expression indCase : recursiveCases.keySet()) {
-				ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID + " case" + index++, syntax + " expansion");
+				ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID + " case " + index++, syntax + " expansion");
 				for (FreeIdentifier identifier : indCase.getFreeIdentifiers()) {
 					String name = identifier.getName();
 					Type type = identifier.getType();
@@ -324,14 +324,25 @@ public class OperatorInformation extends State implements IOperatorInformation {
 				}
 				Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution, enhancedFactory);
 				Map<FreeIdentifier, Expression> indSub = new HashMap<FreeIdentifier, Expression>();
-				indSub.put(inductiveIdent, indCase);
+				// substitute the free identifier for the inductive var so that it reflects the namings above
+				// FIXED BUG
+				FreeIdentifier newInductiveIdentifier = (FreeIdentifier) inductiveIdent.substituteFreeIdents(
+						possibleSubstitution, enhancedFactory);
+				indSub.put(newInductiveIdentifier, indCase);
+				// substitute the inductive ident if necessary
 				lhs = lhs.substituteFreeIdents(indSub, enhancedFactory);
+				// substitute the vars of the inductive case if necessary
+				lhs = lhs.substituteFreeIdents(possibleSubstitution, enhancedFactory);
 				rewRule.setSCFormula(lhs, null);
 				ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 				rhs.create(null, null);
 				rhs.setLabel(syntax + " rhs", null);
 				rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
-				rhs.setSCFormula(recursiveCases.get(indCase).substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
+				// get the rhs 
+				Formula<?> indCaseDefinitionFormula = recursiveCases.get(indCase);
+				// apply substitution if necessary
+				indCaseDefinitionFormula = indCaseDefinitionFormula.substituteFreeIdents(possibleSubstitution, enhancedFactory);
+				rhs.setSCFormula(indCaseDefinitionFormula, null);
 			}
 		}
 
