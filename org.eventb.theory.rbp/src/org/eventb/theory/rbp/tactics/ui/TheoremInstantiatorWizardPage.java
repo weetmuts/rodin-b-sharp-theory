@@ -30,17 +30,21 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 
 @SuppressWarnings("restriction")
 public class TheoremInstantiatorWizardPage extends WizardPage {
 
 	private List<IDeployedTheorem> deployedTheorems;
 	private FormulaFactory factory;
+	private ITypeEnvironment typeEnvironment;
 	
 	private GivenType[] givenTypes;
 	private StyledText[] texts;
@@ -49,13 +53,15 @@ public class TheoremInstantiatorWizardPage extends WizardPage {
 	/**
 	 * Create the wizard.
 	 */
-	public TheoremInstantiatorWizardPage(List<IDeployedTheorem> deployedTheorems, FormulaFactory factory) {
+	public TheoremInstantiatorWizardPage(List<IDeployedTheorem> deployedTheorems, 
+			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
 		super("instantiateTheorem");
 		setTitle("Instantiate theorem");
 		setDescription("Provide instantiations for type parameters");
 		
 		this.deployedTheorems = deployedTheorems;
 		this.factory = factory;
+		this.typeEnvironment = typeEnvironment;
 		Set<GivenType> givenTypesSet = getGivenTypes();
 		givenTypes = givenTypesSet.toArray(new GivenType[givenTypesSet.size()]);
 		texts = new StyledText[givenTypes.length];
@@ -93,11 +99,21 @@ public class TheoremInstantiatorWizardPage extends WizardPage {
 						dialogChanged();
 						return;
 					}
-					if (factory.parseType(textStr, LanguageVersion.V2).getParsedType() == null){
+					Type parsedType = factory.parseType(textStr, LanguageVersion.V2).getParsedType();
+					if (parsedType == null){
 						instantiations.remove(givenTypes[k]);
 						texts[k].setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 						dialogChanged();
 						return;
+					}
+					Expression typeExpression = parsedType.toExpression(factory);
+					for (GivenType ident : typeExpression.getGivenTypes()){
+						if (!ProverUtilities.isGivenSet(typeEnvironment, ident.getName())){
+							instantiations.remove(givenTypes[k]);
+							texts[k].setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+							dialogChanged();
+							return;
+						}
 					}
 					instantiations.put(givenTypes[k], textStr);
 					texts[k].setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));

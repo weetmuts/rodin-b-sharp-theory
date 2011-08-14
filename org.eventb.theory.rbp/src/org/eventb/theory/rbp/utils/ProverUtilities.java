@@ -12,8 +12,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRule;
 import org.rodinp.core.RodinDBException;
@@ -227,6 +230,29 @@ public class ProverUtilities {
 		IStatus status = new Status(IStatus.ERROR, RbPPlugin.PLUGIN_ID,
 				IStatus.ERROR, message, exc);
 		RbPPlugin.getDefault().getLog().log(status);
+	}
+	
+	/**
+	 * Checks whether the name <code>name</code> is a given set in the given
+	 * type environment.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param name
+	 *            the name
+	 * @return whether <code>name</code> is a given set
+	 */
+	public static boolean isGivenSet(ITypeEnvironment typeEnvironment, String name) {
+		Type type = typeEnvironment.getType(name);
+		if (type == null) {
+			return false;
+		}
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
 	}
 
 }

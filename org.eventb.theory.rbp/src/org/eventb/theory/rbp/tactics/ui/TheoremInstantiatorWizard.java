@@ -11,25 +11,29 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 
 public class TheoremInstantiatorWizard extends Wizard {
 
 	private List<IDeployedTheorem> deployedTheorems;
 	private FormulaFactory factory;
+	private ITypeEnvironment typeEnvironment;
 	private TheoremInstantiatorWizardPage page;
 	
 	private List<String> theoremStrs = null;
 	
-	public TheoremInstantiatorWizard(List<IDeployedTheorem> deployedTheorems, FormulaFactory factory) {
+	public TheoremInstantiatorWizard(List<IDeployedTheorem> deployedTheorems,
+			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
 		setWindowTitle("Instantiate theorem");
 		this.deployedTheorems =  deployedTheorems;
 		this.factory = factory;
+		this.typeEnvironment = typeEnvironment;
 	}
 
 	@Override
 	public void addPages() {
-		page = new TheoremInstantiatorWizardPage(deployedTheorems, factory);
+		page = new TheoremInstantiatorWizardPage(deployedTheorems, factory, typeEnvironment);
 		addPage(page);
 	}
 

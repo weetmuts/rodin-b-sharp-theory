@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 
@@ -19,12 +20,14 @@ public class TheoremSelectorWizard extends Wizard {
 
 	private TheoremSelectorWizardPage page;
 	private TheoremsRetriever retriever;
+	private ITypeEnvironment typeEnvironment;
 	
 	private List<String> theoremsToAdd = null;
 	
-	public TheoremSelectorWizard(IPOContext poContext) {
+	public TheoremSelectorWizard(IPOContext poContext, ITypeEnvironment typeEnvironment) {
 		setWindowTitle("Select theorem");
 		retriever = new TheoremsRetriever(poContext);
+		this.typeEnvironment = typeEnvironment;
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class TheoremSelectorWizard extends Wizard {
 				theoremsToAdd = getStrings(deployedTheorems);
 				return true;
 			}
-			TheoremInstantiatorWizard wizard = new TheoremInstantiatorWizard(deployedTheorems, retriever.getFactory());
+			TheoremInstantiatorWizard wizard = new TheoremInstantiatorWizard(deployedTheorems, retriever.getFactory(), typeEnvironment);
 			WizardDialog dialog = new WizardDialog(wizard.getShell(), wizard);
 			dialog.setTitle(wizard.getWindowTitle());
 			dialog.open();

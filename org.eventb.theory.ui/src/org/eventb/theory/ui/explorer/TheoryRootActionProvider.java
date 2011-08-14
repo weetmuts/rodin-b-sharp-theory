@@ -23,6 +23,7 @@ import org.eventb.internal.ui.YesToAllMessageDialog;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.ui.ITheoryImages;
+import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.deploy.SimpleDeployWizard;
 import org.eventb.theory.ui.internal.explorer.ActionProvider;
@@ -74,7 +75,7 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 		};
 		action.setText("&Deploy");
 		action.setToolTipText("Deploy theory");
-		action.setImageDescriptor(EventBImage.getImageDescriptor(ITheoryImages.IMG_DTHEORY_PATH));
+		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_DTHEORY_PATH));
 		return action;
 	}
 
@@ -97,7 +98,7 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 		};
 		action.setText("&Undeploy");
 		action.setToolTipText("Undeploy theory and its dependents");
-		action.setImageDescriptor(EventBImage.getImageDescriptor(ITheoryImages.IMG_THEORY_PATH));
+		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_THEORY_PATH));
 		return action;
 	}
 

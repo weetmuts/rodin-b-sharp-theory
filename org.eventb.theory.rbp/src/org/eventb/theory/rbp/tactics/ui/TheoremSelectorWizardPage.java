@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -103,7 +104,7 @@ public class TheoremSelectorWizardPage extends WizardPage {
 				for (IDeployedTheorem thy : retriever.getDeployedTheorems(selectedProject, selectedTheory)){
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(0, thy.getName());
-					item.setText(1, thy.getTheorem().toStringWithTypes());
+					item.setText(1, thy.getTheorem().toString());
 				}
 				dialogChanged();
 			}
@@ -120,6 +121,7 @@ public class TheoremSelectorWizardPage extends WizardPage {
 		table = new Table(scrolledComposite, SWT.BORDER | SWT.MULTI);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		table.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
 		table.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
@@ -134,7 +136,7 @@ public class TheoremSelectorWizardPage extends WizardPage {
 		nameColumn.setText(NAME_COL);
 		
 		theoremColumn = new TableColumn(table, SWT.LEFT);
-		theoremColumn.setWidth(500);
+		theoremColumn.setWidth(550);
 		theoremColumn.setText(THEOREM_COL);
 		scrolledComposite.setContent(table);
 		

@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eventb.core.IPOSource;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -65,10 +66,10 @@ public class THTacticApplication implements ITacticApplication {
 							ProverUtilities.log(e, "uanbale to check sources of PO");
 							return "Unable to continue";
 						}
-						
 						final IPOContext context = new POContext(pa.getComponent().getPORoot(), order);
+						ITypeEnvironment typeEnvironment = node.getSequent().typeEnvironment();
 						// Show wizard
-						TheoremSelectorWizard wizard = new TheoremSelectorWizard(context);
+						TheoremSelectorWizard wizard = new TheoremSelectorWizard(context, typeEnvironment);
 						WizardDialog dialog = new WizardDialog(wizard.getShell(), wizard);
 						dialog.setTitle(wizard.getWindowTitle());
 						dialog.open();
