@@ -109,6 +109,10 @@ public class DeployedObjectsFactory {
 			ISCInferenceRule rule, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {
 		try {
+			// BUG fix, if not accurate don't load
+			if (!rule.isAccurate()){
+				return null;
+			}
 			String ruleName = rule.getLabel();
 			String theoryName = rule.getRoot().getElementName();
 			boolean isAutomatic = rule.isAutomatic();
@@ -148,6 +152,9 @@ public class DeployedObjectsFactory {
 			ISCRewriteRule rule, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {
 		try {
+			if (!rule.isAccurate()){
+				return null;
+			}
 			String ruleName = rule.getLabel();
 			String theoryName = rule.getRoot().getElementName();
 			Formula<?> lhs = rule.getSCFormula(factory, typeEnvironment);

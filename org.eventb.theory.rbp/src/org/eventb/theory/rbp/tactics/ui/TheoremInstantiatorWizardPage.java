@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +39,7 @@ import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 @SuppressWarnings("restriction")
 public class TheoremInstantiatorWizardPage extends WizardPage {
 
-	private IDeployedTheorem deployedTheorem;
+	private List<IDeployedTheorem> deployedTheorems;
 	private FormulaFactory factory;
 	
 	private GivenType[] givenTypes;
@@ -46,14 +49,14 @@ public class TheoremInstantiatorWizardPage extends WizardPage {
 	/**
 	 * Create the wizard.
 	 */
-	public TheoremInstantiatorWizardPage(IDeployedTheorem deployedTheorem, FormulaFactory factory) {
+	public TheoremInstantiatorWizardPage(List<IDeployedTheorem> deployedTheorems, FormulaFactory factory) {
 		super("instantiateTheorem");
 		setTitle("Instantiate theorem");
 		setDescription("Provide instantiations for type parameters");
 		
-		this.deployedTheorem = deployedTheorem;
+		this.deployedTheorems = deployedTheorems;
 		this.factory = factory;
-		Set<GivenType> givenTypesSet = deployedTheorem.getTheorem().getGivenTypes();
+		Set<GivenType> givenTypesSet = getGivenTypes();
 		givenTypes = givenTypesSet.toArray(new GivenType[givenTypesSet.size()]);
 		texts = new StyledText[givenTypes.length];
 		instantiations = new LinkedHashMap<GivenType, String>();
@@ -66,18 +69,6 @@ public class TheoremInstantiatorWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout(4, false));
-		// 4 places
-		Label lblNewLabel = new Label(container, SWT.NONE);
-		lblNewLabel.setText("Theorem:");
-		StyledText styledText = new StyledText(container, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
-		styledText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 1));
-		styledText.setText(deployedTheorem.getTheorem().toStringWithTypes());
-		styledText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
-		new Label(container, SWT.NULL);
-		new Label(container, SWT.NULL);
-		new Label(container, SWT.NULL);
-		new Label(container, SWT.NULL);
-		
 		Label lblNewLabel_1 = new Label(container, SWT.NONE);
 		lblNewLabel_1.setText("Instantiations:");
 		new Label(container, SWT.NONE);
@@ -138,18 +129,22 @@ public class TheoremInstantiatorWizardPage extends WizardPage {
 
 	}
 	
-	public String getTheoremString(){
+	public List<String> getTheoremsStrings(){
 		if (instantiations.size() != givenTypes.length){
 			return null;
 		}
+		List<String> strings = new ArrayList<String>();
 		// do the subs here
 		Map<FreeIdentifier, String> subs = new LinkedHashMap<FreeIdentifier, String>();
 		for (GivenType gType : instantiations.keySet()){
 			subs.put(factory.makeFreeIdentifier(gType.getName(), null, factory.makePowerSetType(gType)), instantiations.get(gType));
 		}
-		Predicate theorem = deployedTheorem.getTheorem();
-		Predicate substitutedTheorem = (Predicate) subtitute(theorem.toString(), subs);
-		return substitutedTheorem.toString();
+		for (IDeployedTheorem deployedTheorem : deployedTheorems){
+			Predicate theorem = deployedTheorem.getTheorem();
+			Predicate substitutedTheorem = (Predicate) subtitute(theorem.toString(), subs);
+			strings.add(substitutedTheorem.toString());
+		}
+		return strings;
 	}
 
 	private Formula<?> subtitute(String srcStr, Map<FreeIdentifier, String> substs) {
@@ -175,5 +170,13 @@ public class TheoremInstantiatorWizardPage extends WizardPage {
 			result = DLib.mDLib(factory).parseExpression(formStr);
 		}
 		return result;
+	}
+	
+	private Set<GivenType> getGivenTypes (){
+		Set<GivenType> set = new LinkedHashSet<GivenType>();
+		for(IDeployedTheorem deployedTheorem : deployedTheorems){
+			set.addAll(deployedTheorem.getTheorem().getGivenTypes());
+		}
+		return set;
 	}
 }

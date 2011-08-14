@@ -9,8 +9,9 @@ package org.eventb.theory.rbp.reasoners;
 
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
@@ -22,82 +23,124 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ISignatureReasoner;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
-import org.eventb.core.seqprover.reasonerInputs.SingleStringInputReasoner;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
+import org.eventb.theory.rbp.reasoners.input.ContextualInput;
+import org.eventb.theory.rbp.reasoners.input.MultipleStringInput;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * 
  * @author maamria
- *
+ * 
  */
-public class THReasoner extends SingleStringInputReasoner implements ISignatureReasoner{
-	
+public class THReasoner extends ContextAwareReasoner {
+
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".instantiateTheoremReasoner";
-	
-	private static final String DISPLAY_NAME = "Instantiate Theorem";
-	
+
+	private static final String DISPLAY_NAME = "Instantiate Theorem(s)";
+
+	private static final String STR_KEY = "string";
+
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
-		SingleStringInput stringInput = (SingleStringInput) input;
-		String theoremStr = stringInput.getString();
-		if (theoremStr == null){
+		MultipleStringInput stringInput = (MultipleStringInput) input;
+		List<String> theoremsStrs = stringInput.strings;
+		if (theoremsStrs.isEmpty()) {
 			return ProverFactory.reasonerFailure(this, stringInput, "No theorem to add");
 		}
 		FormulaFactory factory = seq.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = seq.typeEnvironment();
-		// parse the string
-		IParseResult parseResult = factory.parsePredicate(theoremStr, LanguageVersion.V2, null);
-		if (parseResult.hasProblem()){
-			return ProverFactory.reasonerFailure(this, stringInput, "Cannot parse '"+theoremStr + "'");
-		}
-		// check the free identifiers
-		Predicate theoremPredicate = parseResult.getParsedPredicate();
-		for (FreeIdentifier identifier : theoremPredicate.getFreeIdentifiers()){
-			if (!typeEnvironment.contains(identifier.getName())){
-				return ProverFactory.reasonerFailure(this, stringInput, "Cannot type check '"+theoremStr + "'");
-			}
-		}
-		// type check the predicate
-		ITypeCheckResult tcResult = theoremPredicate.typeCheck(typeEnvironment);
-		if(tcResult.hasProblem()){
-			return ProverFactory.reasonerFailure(this, stringInput, "Cannot type check '"+theoremStr + "'");
-		}
-		// check given types
-		for (GivenType givenType : theoremPredicate.getGivenTypes()){
-			if (!typeEnvironment.contains(givenType.getName())){
-				return ProverFactory.reasonerFailure(this, stringInput, "Cannot type check '"+theoremStr + "'");
-			}
-		}
-		// make the forward inference step
 		Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
-		addedHyps.add(theoremPredicate);
-		Predicate wdPredicate = theoremPredicate.getWDPredicate(factory);
-		boolean addWd = false;
-		if(!wdPredicate.equals(ProverUtilities.BTRUE)){
-			addedHyps.add(wdPredicate);
-			addWd = true;
+		Set<Predicate> addedWDHyps = new LinkedHashSet<Predicate>();
+		for (String theoremStr : theoremsStrs) {
+			// parse the string
+			IParseResult parseResult = factory.parsePredicate(theoremStr, LanguageVersion.V2, null);
+			if (parseResult.hasProblem()) {
+				return ProverFactory.reasonerFailure(this, stringInput, "Cannot parse '" + theoremStr + "'");
+			}
+			// check the free identifiers
+			Predicate theoremPredicate = parseResult.getParsedPredicate();
+			for (FreeIdentifier identifier : theoremPredicate.getFreeIdentifiers()) {
+				if (!typeEnvironment.contains(identifier.getName())) {
+					return ProverFactory.reasonerFailure(this, stringInput, "Cannot type check '" + theoremStr + "'");
+				}
+			}
+			// type check the predicate
+			ITypeCheckResult tcResult = theoremPredicate.typeCheck(typeEnvironment);
+			if (tcResult.hasProblem()) {
+				return ProverFactory.reasonerFailure(this, stringInput, "Cannot type check '" + theoremStr + "'");
+			}
+			// check given types
+			for (GivenType givenType : theoremPredicate.getGivenTypes()) {
+				if (!typeEnvironment.contains(givenType.getName())) {
+					return ProverFactory.reasonerFailure(this, stringInput, "Cannot type check '" + theoremStr + "'");
+				}
+			}
+			// make the forward inference step
+
+			addedHyps.add(theoremPredicate);
+			Predicate wdPredicate = theoremPredicate.getWDPredicate(factory);
+			if (!wdPredicate.equals(ProverUtilities.BTRUE)) {
+				addedHyps.add(wdPredicate);
+				addedWDHyps.add(wdPredicate);
+			}
 		}
 		// make the antecedent : no free idents / no hyp actions
-		IAntecedent antecedent = makeAntecedent(null, addedHyps, addWd ? Collections.singleton(wdPredicate): null, null, null);
-		return ProverFactory.makeProofRule(this, stringInput, null, DISPLAY_NAME +" ("+theoremPredicate+")", antecedent);
+		IAntecedent antecedent = makeAntecedent(null, addedHyps, addedWDHyps, null, null);
+		return ProverFactory.makeProofRule(this, stringInput, null, DISPLAY_NAME, antecedent);
 	}
 
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
+
 	@Override
 	public String getSignature() {
 		return REASONER_ID;
+	}
+
+	@Override
+	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) throws SerializeException {
+		super.serializeInput(input, writer);
+		MultipleStringInput multipleStringInput = (MultipleStringInput) input;
+		int k = 0;
+		for (String str : multipleStringInput.strings) {
+			writer.putString(STR_KEY + k++, str);
+		}
+	}
+
+	@Override
+	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
+		final String contextStr = reader.getString(CONTEXT_INPUT_KEY);
+		IPOContext context = ContextualInput.deserialise(contextStr);
+		if (context == null) {
+			throw new SerializeException(new IllegalStateException("PO contextual information cannot be retrieved!"));
+		}
+		List<String> strings = new ArrayList<String>();
+		int k = 0;
+		String firstStr = reader.getString(STR_KEY + k++);
+		if (firstStr == null) {
+			throw new SerializeException(new IllegalStateException("Multiple strings were not serialised properly!"));
+		}
+		strings.add(firstStr);
+		try {
+			while ((firstStr = reader.getString(STR_KEY + k++)) != null) {
+				strings.add(firstStr);
+			}
+		} catch (Exception e) {
+			// do nothing
+		}
+		return new MultipleStringInput(context, strings);
 	}
 
 }

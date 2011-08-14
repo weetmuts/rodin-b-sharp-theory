@@ -111,6 +111,23 @@ public class TheoremsRetriever {
 	}
 	
 	/**
+	 * Returns the theorems defined by the given modifiers.
+	 * @param project the project name
+	 * @param theory the theory name
+	 * @param theorems the theorems names
+	 * @return the deployed theorems
+	 */
+	public List<IDeployedTheorem> getDeployedTheorems(String project, String theory, List<String> theorems){
+		List<IDeployedTheorem> list = new ArrayList<IDeployedTheorem>();
+		for (IDeployedTheorem deployedTheorem : getDeployedTheorems(project, theory)){
+			if (theorems.contains(deployedTheorem.getName())){
+				list.add(deployedTheorem);
+			}
+		}
+		return list;
+	}
+	
+	/**
 	 * Returns the formula factory suitable for the proof obligation context.
 	 * @return the formula factory
 	 */

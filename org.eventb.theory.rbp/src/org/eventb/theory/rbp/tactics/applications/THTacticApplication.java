@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.applications;
 
+import java.util.List;
+
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eventb.core.IPOSource;
 import org.eventb.core.pm.IProofAttempt;
@@ -15,10 +17,10 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.THReasoner;
+import org.eventb.theory.rbp.reasoners.input.MultipleStringInput;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.POContext;
 import org.eventb.theory.rbp.tactics.ui.TheoremSelectorWizard;
@@ -71,18 +73,18 @@ public class THTacticApplication implements ITacticApplication {
 						dialog.setTitle(wizard.getWindowTitle());
 						dialog.open();
 						// get the theorem if any
-						String theorem = wizard.getTheorem();
-						if (theorem == null) {
+						List<String> theorems = wizard.getTheorems();
+						if (theorems == null || theorems.isEmpty()) {
 							return "No theorem provided";
 						}
 						THReasoner reasoner = new THReasoner();
 						IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), 
-								new SingleStringInput(theorem), pm);
+								new MultipleStringInput(context, theorems), pm);
 						if (reasonerOutput == null) return "! Plugin returned null !";
 						if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
 						IProofRule rule = (IProofRule)reasonerOutput;
 						if (node.applyRule(rule)) return null;
-						else return "Theorem '"+theorem+"' cannot be added";
+						else return "Theorems cannot be added";
 					}
 				}
 				return "Root already has children";

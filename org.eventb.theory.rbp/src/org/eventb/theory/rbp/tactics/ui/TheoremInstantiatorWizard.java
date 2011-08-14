@@ -7,38 +7,40 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.ui;
 
+import java.util.List;
+
 import org.eclipse.jface.wizard.Wizard;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 
 public class TheoremInstantiatorWizard extends Wizard {
 
-	private IDeployedTheorem deployedTheorem;
+	private List<IDeployedTheorem> deployedTheorems;
 	private FormulaFactory factory;
 	private TheoremInstantiatorWizardPage page;
 	
-	private String theoremStr = null;
+	private List<String> theoremStrs = null;
 	
-	public TheoremInstantiatorWizard(IDeployedTheorem deployedTheorem, FormulaFactory factory) {
+	public TheoremInstantiatorWizard(List<IDeployedTheorem> deployedTheorems, FormulaFactory factory) {
 		setWindowTitle("Instantiate theorem");
-		this.deployedTheorem =  deployedTheorem;
+		this.deployedTheorems =  deployedTheorems;
 		this.factory = factory;
 	}
 
 	@Override
 	public void addPages() {
-		page = new TheoremInstantiatorWizardPage(deployedTheorem, factory);
+		page = new TheoremInstantiatorWizardPage(deployedTheorems, factory);
 		addPage(page);
 	}
 
 	@Override
 	public boolean performFinish() {
-		theoremStr = page.getTheoremString();
+		theoremStrs = page.getTheoremsStrings();
 		return true;
 	}
 	
-	public String getTheoremString(){
-		return theoremStr;
+	public List<String> getTheoremsStrings(){
+		return theoremStrs;
 	}
 
 }

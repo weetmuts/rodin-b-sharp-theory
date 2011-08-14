@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eventb.theory.rbp.rulebase.IPOContext;
@@ -17,7 +20,7 @@ public class TheoremSelectorWizard extends Wizard {
 	private TheoremSelectorWizardPage page;
 	private TheoremsRetriever retriever;
 	
-	private String theoremToAdd = null;
+	private List<String> theoremsToAdd = null;
 	
 	public TheoremSelectorWizard(IPOContext poContext) {
 		setWindowTitle("Select theorem");
@@ -32,27 +35,44 @@ public class TheoremSelectorWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		IDeployedTheorem deployedTheorem = retriever.getDeployedTheorem(page.getSelectedProject(),
+		List<IDeployedTheorem> deployedTheorems = retriever.getDeployedTheorems(page.getSelectedProject(),
 				page.getSelectedTheory(), page.getSelectedTheorem());
-		if (deployedTheorem != null){
-			if (!deployedTheorem.hasTypeParameters()){
-				theoremToAdd = deployedTheorem.getTheorem().toStringWithTypes();
+		if (!deployedTheorems.isEmpty()){
+			if (!hasTypeParameters(deployedTheorems)){
+				theoremsToAdd = getStrings(deployedTheorems);
 				return true;
 			}
-			TheoremInstantiatorWizard wizard = new TheoremInstantiatorWizard(deployedTheorem, retriever.getFactory());
+			TheoremInstantiatorWizard wizard = new TheoremInstantiatorWizard(deployedTheorems, retriever.getFactory());
 			WizardDialog dialog = new WizardDialog(wizard.getShell(), wizard);
 			dialog.setTitle(wizard.getWindowTitle());
 			dialog.open();
-			theoremToAdd = wizard.getTheoremString();
-			if(theoremToAdd == null){
+			theoremsToAdd = wizard.getTheoremsStrings();
+			if(theoremsToAdd == null || theoremsToAdd.isEmpty()){
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	public String getTheorem(){
-		return theoremToAdd;
+	public List<String> getTheorems(){
+		return theoremsToAdd;
+	}
+	
+	private boolean hasTypeParameters(List<IDeployedTheorem> list){
+		for (IDeployedTheorem thy : list){
+			if (thy.hasTypeParameters()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private List<String> getStrings(List<IDeployedTheorem> theorems){
+		List<String> strings = new ArrayList<String>();
+		for (IDeployedTheorem theorem : theorems){
+			strings.add(theorem.getTheorem().toStringWithTypes());
+		}
+		return strings;
 	}
 
 }

@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -36,7 +39,7 @@ public class TheoremSelectorWizardPage extends WizardPage {
 	private TheoremsRetriever retriever;
 	private String selectedProject = null;
 	private String selectedTheory = null;
-	private String selectedTheorem = null;
+	private List<String> selectedTheorem = null;
 
 	public TheoremSelectorWizardPage(TheoremsRetriever retriever) {
 		super("selectTheorem");
@@ -114,24 +117,24 @@ public class TheoremSelectorWizardPage extends WizardPage {
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 		
-		table = new Table(scrolledComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		table = new Table(scrolledComposite, SWT.BORDER | SWT.MULTI);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				selectedTheorem = table.getSelection()[0].getText(0);
+				selectedTheorem = getText(table.getSelection());
 				dialogChanged();
 			}
 		});
 		
 		nameColumn = new TableColumn(table, SWT.LEFT);
-		nameColumn.setWidth(100);
+		nameColumn.setWidth(150);
 		nameColumn.setText(NAME_COL);
 		
 		theoremColumn = new TableColumn(table, SWT.LEFT);
-		theoremColumn.setWidth(420);
+		theoremColumn.setWidth(500);
 		theoremColumn.setText(THEOREM_COL);
 		scrolledComposite.setContent(table);
 		
@@ -177,8 +180,16 @@ public class TheoremSelectorWizardPage extends WizardPage {
 		return selectedTheory;
 	}
 
-	public String getSelectedTheorem() {
+	public List<String> getSelectedTheorem() {
 		return selectedTheorem;
+	}
+	
+	private List<String> getText(TableItem[] items){
+		List<String> l = new ArrayList<String>();
+		for (TableItem item : items){
+			l.add(item.getText(0));
+		}
+		return l;
 	}
 	
 }
