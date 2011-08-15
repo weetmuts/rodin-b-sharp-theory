@@ -1197,4 +1197,13 @@
          </activeWhen>
       </handler>
    </extension>
+      <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.eventb.theory.ui.theoryEditor">
+         <propertyCategory
+               category="eventB">
+         </propertyCategory>
+      </propertyContributor>
+   </extension>
 </plugin>

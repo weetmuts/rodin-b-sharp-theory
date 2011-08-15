@@ -339,7 +339,8 @@ public class TheoryUIUtils {
 				"Confirm Undeployment",
 				"Confirm undeploying deployed theory '"
 						+ root.getComponentName() 
-						+ "'.\n If you confirm undeployment, project '"
+						+ "'.\n If you confirm undeployment, dependent theories will also be undeployed."
+						+ "\n If you confirm undeployment, project '"
 						+ root.getRodinProject().getElementName()
 						+"' will be rebuilt.");
 

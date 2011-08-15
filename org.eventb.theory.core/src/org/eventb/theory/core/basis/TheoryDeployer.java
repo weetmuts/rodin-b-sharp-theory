@@ -138,7 +138,7 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			if (importThy.hasImportTheory()) {
 				ISCTheoryRoot importedRoot = importThy.getImportTheory();
 				IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
-				if (deployedCounterpart.exists() && deployedCounterpart.hasOutdatedAttribute() && !deployedCounterpart.isOutdated()) {
+				if (deployedCounterpart.exists() ) {
 					IUseTheory use = target.getUsedTheory(deployedCounterpart.getComponentName());
 					use.create(null, null);
 					use.setUsedTheory(deployedCounterpart, null);
