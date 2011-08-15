@@ -66,6 +66,12 @@ public final class TheoryDeployer implements ITheoryDeployer {
 				return false;
 			}
 		}
+		// check for failed or outdated dependencies
+		{
+			if(!checkDeployedTheoryDependencies(theoryRoot)){
+				return false;
+			}
+		}
 		// need to check for conflicts between the theory to be deployed and any
 		// deployed theories
 		{
@@ -96,13 +102,9 @@ public final class TheoryDeployer implements ITheoryDeployer {
 		if (!deployedTheoryRoot.exists()) {
 			deployedTheoryRoot.create(null, monitor);
 		}
-		// check for failed dependencies and copy across the satisfied dependencies (use directives) 
+		// set dependencies
 		{
-			if (!setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot)) {
-				if(targetFile.exists())
-					targetFile.delete(true, monitor);
-				return false;
-			}
+			setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot);
 		}
 		// copy the elements across
 		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot, theoryRoot, monitor) && copyProverExtensions(deployedTheoryRoot, theoryRoot, monitor);
@@ -130,20 +132,41 @@ public final class TheoryDeployer implements ITheoryDeployer {
 		}
 	}
 
-	protected boolean setDeployedTheoryDependencies(ISCTheoryRoot source, IDeployedTheoryRoot target) throws CoreException {
+	protected void setDeployedTheoryDependencies(ISCTheoryRoot source, IDeployedTheoryRoot target) throws CoreException {
 		ISCImportTheory[] imports = source.getImportTheories();
 		for (ISCImportTheory importThy : imports) {
 			if (importThy.hasImportTheory()) {
 				ISCTheoryRoot importedRoot = importThy.getImportTheory();
+				IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
+				if (deployedCounterpart.exists() && deployedCounterpart.hasOutdatedAttribute() && !deployedCounterpart.isOutdated()) {
+					IUseTheory use = target.getUsedTheory(deployedCounterpart.getComponentName());
+					use.create(null, null);
+					use.setUsedTheory(deployedCounterpart, null);
+				}
+				
+			}
+		}
+	}
+	
+	protected boolean checkDeployedTheoryDependencies(ISCTheoryRoot source) throws CoreException {
+		ISCImportTheory[] imports = source.getImportTheories();
+		for (ISCImportTheory importThy : imports) {
+			if (importThy.hasImportTheory()) {
+				ISCTheoryRoot importedRoot = importThy.getImportTheory();
+				if(!checkDeployedTheoryDependencies(importedRoot)){
+					return false;
+				}
 				IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
 				if (!deployedCounterpart.exists()) {
 					deploymentResult = new DeploymentResult(false, "Failed dependencies : deployed theory '" + deployedCounterpart.getComponentName()
 							+ "' does not exist in the project '" + importedRoot.getRodinProject().getElementName() + "'.");
 					return false;
 				}
-				IUseTheory use = target.getUsedTheory(deployedCounterpart.getComponentName());
-				use.create(null, null);
-				use.setUsedTheory(deployedCounterpart, null);
+				if(deployedCounterpart.hasOutdatedAttribute() && deployedCounterpart.isOutdated()){
+					deploymentResult = new DeploymentResult(false, "Failed dependencies : deployed theory '" + deployedCounterpart.getComponentName()
+							+ "' is outdated in the project '" + importedRoot.getRodinProject().getElementName() + "'.");
+					return false;
+				}
 			}
 		}
 		return true;

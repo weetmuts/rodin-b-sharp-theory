@@ -26,7 +26,6 @@ import org.eventb.theory.core.sc.states.InferenceIdentifiers;
 import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 
 /**
  * @author maamria
@@ -97,7 +96,6 @@ public class InferenceRuleModule extends RuleModule<IInferenceRule, ISCInference
 		for (int i = 0; i < rules.length; i++) {
 			if (infos[i] != null && !infos[i].hasError()) {
 				IInferenceRule rule = rules[i];
-				String label = rule.getLabel();
 				// Needed states
 				RuleAccuracyInfo ruleAccuracyInfo = new RuleAccuracyInfo();
 				repository.setState(ruleAccuracyInfo);
@@ -124,7 +122,6 @@ public class InferenceRuleModule extends RuleModule<IInferenceRule, ISCInference
 					}
 					if (reasoningType != null) {
 						scRules[i].setReasoningType(reasoningType, monitor);
-						createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, getInformationMessageFor(reasoningType), label);
 					}
 				}
 				if (scRules[i] != null) {
@@ -141,25 +138,6 @@ public class InferenceRuleModule extends RuleModule<IInferenceRule, ISCInference
 		}
 		monitor.worked(1);
 
-	}
-
-	/**
-	 * Returns the information message appropriate for the given reasoning type.
-	 * 
-	 * @param type
-	 *            the reasoning type
-	 * @return the rodin problem
-	 */
-	protected final IRodinProblem getInformationMessageFor(ReasoningType type) {
-		switch (type) {
-		case BACKWARD:
-			return TheoryGraphProblem.InferenceRuleBackward;
-		case FORWARD:
-			return TheoryGraphProblem.InferenceRuleForward;
-		case BACKWARD_AND_FORWARD:
-			return TheoryGraphProblem.InferenceRuleBoth;
-		}
-		return null;
 	}
 
 }

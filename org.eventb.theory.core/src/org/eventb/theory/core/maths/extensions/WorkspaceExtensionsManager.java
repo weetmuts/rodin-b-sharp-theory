@@ -111,6 +111,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			if (manager != null){
 				manager.processDelta(delta);
 			}
+			else if (!proj.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT)){
+				projectManagers.put(proj, new ProjectManager(proj));
+			}
 		}
 	}
 	

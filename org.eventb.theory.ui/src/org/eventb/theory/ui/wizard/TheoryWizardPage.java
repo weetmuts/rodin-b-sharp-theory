@@ -22,11 +22,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IEventBProject;
 import org.eventb.internal.ui.RodinProjectSelectionDialog;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 
 /**
@@ -162,6 +165,19 @@ public class TheoryWizardPage extends WizardPage {
 		if (theoryFile.exists()) {
 			updateStatus("There is already a theory with this name");
 			return;
+		}
+		if (!DatabaseUtilities.isMathExtensionsProject(rodinProject)){
+			IRodinProject mathsProject = DatabaseUtilities.getDeploymentProject(null);
+			try {
+				for (ITheoryRoot root : mathsProject.getRootElementsOfType(ITheoryRoot.ELEMENT_TYPE)){
+					if (root.getElementName().equals(theoryName)){
+						updateStatus("There is already a theory with this name in 'MathExtensions' project");
+						return;
+					}
+				}
+			} catch (RodinDBException e) {
+				TheoryUIUtils.log(e, "unable to retrieve theories of maths project");
+			}
 		}
 		updateStatus(null);
 	}
