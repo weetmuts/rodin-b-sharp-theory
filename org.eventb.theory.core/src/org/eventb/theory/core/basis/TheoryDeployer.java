@@ -7,8 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import static org.eventb.theory.internal.core.util.DeployUtilities.copyMathematicalExtensions;
-import static org.eventb.theory.internal.core.util.DeployUtilities.copyProverExtensions;
+import static org.eventb.theory.internal.core.util.DeployUtilities.copyDeployedElements;
 
 import java.util.Collections;
 import java.util.Map;
@@ -16,13 +15,13 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
 import org.eventb.theory.core.IUseTheory;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -107,7 +106,9 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			setDeployedTheoryDependencies(theoryRoot, deployedTheoryRoot);
 		}
 		// copy the elements across
-		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot, theoryRoot, monitor) && copyProverExtensions(deployedTheoryRoot, theoryRoot, monitor);
+		
+		boolean accurate = copyDeployedElements(deployedTheoryRoot, theoryRoot, monitor);
+//		boolean accurate = copyMathematicalExtensions(deployedTheoryRoot, theoryRoot, monitor) && copyProverExtensions(deployedTheoryRoot, theoryRoot, monitor);
 		// miscellaneous information
 		deployedTheoryRoot.setAccuracy(accurate, monitor);
 		deployedTheoryRoot.setComment("GENERATED THEORY FILE: !DO NOT CHANGE!", monitor);
