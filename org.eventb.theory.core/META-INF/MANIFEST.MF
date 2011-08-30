@@ -12,5 +12,9 @@ Require-Bundle: org.rodinp.core;bundle-version="1.4.0",
 Export-Package: org.eventb.theory.core,
  org.eventb.theory.core.maths,
  org.eventb.theory.core.maths.extensions.dependencies,
- org.eventb.theory.internal.core.maths
+ org.eventb.theory.core.sc,
+ org.eventb.theory.core.sc.modules,
+ org.eventb.theory.core.sc.states,
+ org.eventb.theory.internal.core.maths,
+ org.eventb.theory.internal.core.util
 Bundle-ActivationPolicy: lazy
