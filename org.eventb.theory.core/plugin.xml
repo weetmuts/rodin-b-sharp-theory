@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.eventb.theory.core.deployedElements" name="Deployed Elements" schema="schema/org.eventb.theory.core.deployedElements.exsd"/>
+   <extension-point id="org.eventb.theory.core.deployedElements" name="%deployedElements" schema="schema/org.eventb.theory.core.deployedElements.exsd"/>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
@@ -902,88 +902,76 @@
   <extension
         point="org.eventb.theory.core.deployedElements">
      <deployedElement
-           name="SC Type Parameter"
+           name="%scTypeParameter"
            typeId="org.eventb.theory.core.scTypeParameter">
      </deployedElement>
      <deployedElement
-           name="SC DataType Definition"
+           name="%scDatatypeDefinition"
            typeId="org.eventb.theory.core.scDatatypeDefinition">
         <childElement
               childTypeId="org.eventb.theory.core.scTypeArgument"
-              name="SC Type Argument">
+              name="%scTypeArgument">
         </childElement>
         <deployedElement
-              name="SC DataType Constructor"
+              name="%scDatatypeConstructor"
               typeId="org.eventb.theory.core.scDatatypeConstructor">
            <childElement
                  childTypeId="org.eventb.theory.core.scConstructorArgument"
-                 name="SC Destructor">
+                 name="%scConstructorArgument">
            </childElement>
         </deployedElement>
      </deployedElement>
      <deployedElement
-           name="SC New Operator Definition"
+           name="%scNewOperatorDefinition"
            typeId="org.eventb.theory.core.scNewOperatorDefinition">
         <childElement
               childTypeId="org.eventb.theory.core.scOperatorArgument"
-              name="SC Operator Argument">
+              name="%scOperatorArgument">
         </childElement>
         <childElement
               childTypeId="org.eventb.theory.core.scDirectOperatorDefinition"
-              name="SC Direct Operator Definition">
+              name="%scDirectOperatorDefinition">
         </childElement>
         <deployedElement
-              name="SC Recursive Operator Definition"
+              name="%scRecursiveOperatorDefinition"
               typeId="org.eventb.theory.core.scRecursiveOperatorDefinition">
            <childElement
                  childTypeId="org.eventb.theory.core.scRecursiveDefinitionCase"
-                 name="SC Recursive Definition Case">
+                 name="%scRecursiveDefinitionCase">
            </childElement>
         </deployedElement>
      </deployedElement>
      <deployedElement
-           name="SC Theory Theorem"
+           name="%scTheorem"
            typeId="org.eventb.theory.core.scTheorem">
      </deployedElement>
      <deployedElement
-           name="SC Proof Rules"
+           name="%scProofRulesBlock"
            typeId="org.eventb.theory.core.scProofRulesBlock">
         <childElement
               childTypeId="org.eventb.theory.core.scMetavariable"
-              name="SC Proof Rule Metavariable">
+              name="%scMetavariable">
         </childElement>
         <deployedElement
-              name="SC Rewrite Rule"
+              name="%scRewriteRule"
               typeId="org.eventb.theory.core.scRewriteRule">
            <childElement
                  childTypeId="org.eventb.theory.core.scRewriteRuleRHS"
-                 name="SC Right Hand Side Rewrite Rule">
+                 name="%scRewriteRuleRHS">
            </childElement>
         </deployedElement>
         <deployedElement
-              name="SC Inference Rule"
+              name="%scInferenceRule"
               typeId="org.eventb.theory.core.scInferenceRule">
            <childElement
                  childTypeId="org.eventb.theory.core.scInfer"
-                 name="sc Infer Rule">
+                 name="%scInfer">
            </childElement>
            <childElement
                  childTypeId="org.eventb.theory.core.scGiven"
-                 name="sc Given Rule">
+                 name="%scGiven">
            </childElement>
         </deployedElement>
-     </deployedElement>
-     <deployedElement
-           name="SC Translator Element"
-           typeId="org.eventb.codegen.theory.translator.core.scTranslatorElement">
-        <childElement
-              childTypeId="org.eventb.theory.core.scMetavariable"
-              name="SC Translator Element Metavariable">
-        </childElement>
-        <childElement
-              childTypeId="org.eventb.codegen.theory.translator.core.scTranslatorRuleElement"
-              name="SC Translator Rule Element">
-        </childElement>
      </deployedElement>
   </extension> 
   
