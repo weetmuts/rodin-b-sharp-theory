@@ -8,6 +8,8 @@
 package org.eventb.theory.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCDatatypeDefinition;
@@ -112,5 +114,17 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 	@Override
 	public void setOutdated(boolean isOutdated, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(TheoryAttributes.OUTDATED_ATTRIBUTE, isOutdated, monitor);
+	}
+
+	@Override
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
+			throws RodinDBException {
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+
+		for (ISCTypeParameter par : getSCTypeParameters()) {
+			typeEnvironment.addGivenSet(par.getIdentifierString());
+		}
+
+		return typeEnvironment;
 	}
 }

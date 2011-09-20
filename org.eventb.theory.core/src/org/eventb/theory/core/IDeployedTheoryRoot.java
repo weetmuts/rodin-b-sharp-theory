@@ -10,6 +10,8 @@ package org.eventb.theory.core;
 import org.eventb.core.IAccuracyElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -51,5 +53,13 @@ ICommentedElement{
 	 * @throws RodinDBException
 	 */
 	IUseTheory[] getUsedTheories() throws RodinDBException;
+	
+	/**
+	 * <p>Returns the global type environment of this SC theory.</p>
+	 * @param factory
+	 * @return the type environment
+	 * @throws RodinDBException
+	 */
+	ITypeEnvironment getTypeEnvironment(FormulaFactory factory) throws RodinDBException;
 
 }
