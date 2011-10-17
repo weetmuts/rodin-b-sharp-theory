@@ -7,8 +7,13 @@
  *******************************************************************************/
 package org.eventb.core.pm;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 
 /**
  * An implementation of a matching engine.
@@ -18,7 +23,7 @@ import org.eventb.core.ast.FormulaFactory;
  * <p> This class is not intended to be sub-classed by clients.
  * @author maamria
  * @since 1.0
- * 
+ *
  */
 public final class Matcher {
 
@@ -39,9 +44,14 @@ public final class Matcher {
 	 * @param acceptPartialMatch whether to accept a partial match
 	 * @return the binding, or <code>null</code> if matching failed
 	 */
-	public IBinding match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch) {
+	public IBinding match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch, Map<FreeIdentifier,Expression>... initialMap) {
 		IBinding initialBinding = matchingFactory.createBinding(form, pattern,acceptPartialMatch, factory);
 		if (matchingFactory.match(form, pattern, initialBinding)){
+			for(int i=0;i<initialMap.length;i++){
+				for(Entry<FreeIdentifier,Expression> entry :initialMap[i].entrySet()) {
+					initialBinding.putExpressionMapping(entry.getKey(), entry.getValue());
+				}
+			}
 			initialBinding.makeImmutable();
 			return initialBinding;
 		}
