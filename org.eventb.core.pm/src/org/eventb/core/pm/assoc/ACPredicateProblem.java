@@ -65,17 +65,22 @@ public class ACPredicateProblem extends ACProblem<Predicate> {
 			for (int i = 0; i < sizeOfRemainingVars - 1; i++) {
 				IndexedFormula<Predicate> var = remainingVars.get(i);
 				Predicate formula = availableFormulae.get(i).getFormula();
-				initialBinding.putPredicateMapping((PredicateVariable) var.getFormula(), 
-						formula);
+				if (!initialBinding.putPredicateMapping((PredicateVariable) var.getFormula(), 
+						formula)){
+					return false;
+				}
 				usedUpFormulae.add(availableFormulae.get(i));
 			}
 			// remove used up formulae again
 			availableFormulae.removeAll(usedUpFormulae);
 			IndexedFormula<Predicate> lastVar = remainingVars.get(sizeOfRemainingVars-1);
 			List<Predicate> remainingPreds = getFormulae(availableFormulae);
-			initialBinding.putPredicateMapping((PredicateVariable) lastVar.getFormula(), 
+			if (!initialBinding.putPredicateMapping((PredicateVariable) lastVar.getFormula(), 
 					MatchingUtilities.makeAssociativePredicate(
-							tag, existingBinding.getFormulaFactory(), remainingPreds.toArray(new Predicate[remainingPreds.size()])));
+							tag, existingBinding.getFormulaFactory(), remainingPreds.toArray(new Predicate[remainingPreds.size()])))){
+				return false;
+			}
+			usedUpFormulae.addAll(availableFormulae);
 		}
 		return true;
 	}
