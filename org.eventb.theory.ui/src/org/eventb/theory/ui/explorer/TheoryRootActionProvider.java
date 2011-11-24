@@ -62,7 +62,7 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
 				if (!(sel.isEmpty())) {
 					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						if (TheoryUIUtils.createDeployEmptyTheoryDialog(site.getViewSite().getShell(), (ITheoryRoot) sel.getFirstElement())) {
+						if (TheoryUIUtils.createDeployTheoryErrorDialog(site.getViewSite().getShell(), (ITheoryRoot) sel.getFirstElement())) {
 							SimpleDeployWizard wizard = new SimpleDeployWizard(null, (ITheoryRoot) sel.getFirstElement());
 							WizardDialog wd = new WizardDialog(null, wizard);
 							wd.setTitle(wizard.getWindowTitle());
@@ -72,8 +72,22 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 					}
 				}
 			}
+			
+			@Override
+			public boolean isEnabled() {
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				if (!(sel.isEmpty())) {
+					if (sel.getFirstElement() instanceof ITheoryRoot) {
+						ITheoryRoot root = (ITheoryRoot) sel.getFirstElement();
+						if (DatabaseUtilities.isTheoryDeployable(root)){
+							return true;
+						}
+					}
+				}
+				return false;
+			}
 		};
-		action.setText("&Deploy");
+		action.setText("Deploy");
 		action.setToolTipText("Deploy theory");
 		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_DTHEORY_PATH));
 		return action;
@@ -95,8 +109,22 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 					}
 				}
 			}
+			
+			@Override
+			public boolean isEnabled() {
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				if (!(sel.isEmpty())) {
+					if (sel.getFirstElement() instanceof ITheoryRoot) {
+						ITheoryRoot theory = (ITheoryRoot) sel.getFirstElement();
+						if(theory.hasDeployedVersion()){
+							return true;
+						}
+					}
+				}
+				return false;
+			}
 		};
-		action.setText("&Undeploy");
+		action.setText("Undeploy");
 		action.setToolTipText("Undeploy theory and its dependents");
 		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_THEORY_PATH));
 		return action;

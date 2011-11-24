@@ -31,7 +31,9 @@ import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.DeployElementRegistry;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -235,14 +237,39 @@ public class DatabaseUtilities {
 		try {
 			if (root.exists()) {
 				if (!root.isAccurate()) {
-					return false;
+					return true;
 				}
 				l = root.getSCDatatypeDefinitions().length + root.getSCNewOperatorDefinitions().length + root.getProofRulesBlocks().length + root.getTheorems().length;
+				// need to check for contributed children
+				DeployElementRegistry registry = DeployElementRegistry.getDeployedElementsRegistry();
+				List<IInternalElementType<IInternalElement>> rootDeployedElements = registry.getRootDeployedElements();
+				for (IInternalElementType<IInternalElement> type : rootDeployedElements){
+					l += root.getChildrenOfType(type).length;
+				}
 			}
 		} catch (RodinDBException e) {
 			CoreUtilities.log(e, "Failed to retrieve details from theory.");
 		}
 		return l == 0;
+	}
+	
+	/**
+	 * Returns whether a theory is deployable i.e., that it is not empty and is accurate.
+	 * @param theoryRoot the theory
+	 * @return whether a theory is deployable
+	 */
+	public static boolean isTheoryDeployable(ITheoryRoot theoryRoot){
+		ISCTheoryRoot scRoot = theoryRoot.getSCTheoryRoot();
+		return isTheoryDeployable(scRoot);
+	}
+	
+	/**
+	 * Returns whether a theory is deployable i.e., that it is not empty and is accurate.
+	 * @param scRoot the theory
+	 * @return whether a theory is deployable
+	 */
+	public static boolean isTheoryDeployable(ISCTheoryRoot scRoot){
+		return scRoot.exists() && !isTheoryEmptyOrNotAccurate(scRoot);
 	}
 
 	/**
@@ -434,13 +461,24 @@ public class DatabaseUtilities {
 	 */
 	public static List<ISCTheoryRoot> getDeployableSCTheories(String projectName) throws CoreException {
 		IRodinProject project = RodinCore.getRodinDB().getRodinProject(projectName);
+		return getDeployableSCTheories(project);
+	}
+	
+	/**
+	 * Returns the list of SC theories that can be deployed i.e., theories that
+	 * are accurate and not empty.
+	 * 
+	 * @return list of deployable SC theories
+	 * @throws CoreException
+	 */
+	public static List<ISCTheoryRoot> getDeployableSCTheories(IRodinProject project) throws CoreException {
 		if (!project.exists()) {
 			return new ArrayList<ISCTheoryRoot>();
 		}
 		ISCTheoryRoot[] roots = project.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
 		List<ISCTheoryRoot> list = new ArrayList<ISCTheoryRoot>();
 		for (ISCTheoryRoot scRoot : roots) {
-			if (!isTheoryEmptyOrNotAccurate(scRoot)) {
+			if (isTheoryDeployable(scRoot)) {
 				list.add(scRoot);
 			}
 		}

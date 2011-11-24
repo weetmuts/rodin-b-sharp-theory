@@ -65,8 +65,7 @@ public class NewTheoryActionDelegate implements IViewActionDelegate {
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		// nothing to do
-
+		
 	}
 
 }

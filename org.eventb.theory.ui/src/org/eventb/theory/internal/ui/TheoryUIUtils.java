@@ -309,10 +309,13 @@ public class TheoryUIUtils {
 		public abstract T get(S s) throws CoreException;
 	}
 
-	public static boolean createDeployEmptyTheoryDialog(Shell shell,
+	/**
+	 * Not strictly needed as menu item to deploy may not be enabled.
+	 */
+	public static boolean createDeployTheoryErrorDialog(Shell shell,
 			ITheoryRoot root) {
 		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
-		if (!scRoot.exists() || DatabaseUtilities.isTheoryEmptyOrNotAccurate(scRoot)) {
+		if (!DatabaseUtilities.isTheoryDeployable(scRoot)) {
 			MessageDialog.openError(shell, "Error",
 					"Cannot deploy inaccurate or empty theory '" + root.getComponentName()
 							+ "'.");
@@ -321,10 +324,12 @@ public class TheoryUIUtils {
 		return true;
 	}
 
+	/**
+	 * Not strictly needed as menu item to undeploy may not be enabled.
+	 */
 	public static boolean createUndeployUndeployedTheoryDialog(Shell shell,
 			ITheoryRoot root) {
-		IDeployedTheoryRoot depRoot = root.getDeployedTheoryRoot();
-		if (!depRoot.exists()) {
+		if (!root.hasDeployedVersion()) {
 			MessageDialog.openError(shell, "Error",
 					"Theory '" + root.getComponentName()
 							+ "' has not been deployed.");
@@ -409,6 +414,28 @@ public class TheoryUIUtils {
 	 * @return the image
 	 */
 	public static Image getTheoryImage(ITheoryRoot root) {
+		if (root.hasDeployedVersion()) {
+			try {
+				IDeployedTheoryRoot deployedTheoryRoot = root.getDeployedTheoryRoot();
+				if (deployedTheoryRoot.hasOutdatedAttribute() && deployedTheoryRoot.isOutdated())
+					return TheoryImage.getImage(ITheoryImages.IMG_OTHEORY);
+				else {
+					return TheoryImage.getImage(ITheoryImages.IMG_DTHEORY);
+				}
+			} catch (RodinDBException e) {
+				log(e, "error while checking outdatedness of theory to get the appropriate image");
+			}
+		}
+		return TheoryImage.getImage(ITheoryImages.IMG_THEORY);
+	}
+	
+	/**
+	 * Returns the image for explorer display of the given theory.
+	 * <p> Theories that have deployed counterparts have a different icon.
+	 * @param root the theory root
+	 * @return the image
+	 */
+	public static Image getTheoryImage(ISCTheoryRoot root) {
 		if (root.hasDeployedVersion()) {
 			try {
 				IDeployedTheoryRoot deployedTheoryRoot = root.getDeployedTheoryRoot();
