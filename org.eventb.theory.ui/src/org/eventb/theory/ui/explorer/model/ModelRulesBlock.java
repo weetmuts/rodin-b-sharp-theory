@@ -12,6 +12,7 @@ import java.util.HashMap;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -93,8 +94,7 @@ public class ModelRulesBlock implements IModelElement{
 				addInferenceRule(rule);
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TheoryUIUtils.log(e, "error while processing children of rules block");
 		}
 		
 	}

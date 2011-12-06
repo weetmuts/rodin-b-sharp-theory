@@ -57,7 +57,6 @@ public class NewTheoryActionDelegate implements IViewActionDelegate {
 				WizardDialog dialog = new WizardDialog(EventBUIPlugin
 						.getActiveWorkbenchShell(), wizard);
 				dialog.create();
-				// SWTUtil.setDialogSize(dialog, 500, 500);
 				dialog.open();
 			}
 		});

@@ -1206,4 +1206,25 @@
          </propertyCategory>
       </propertyContributor>
    </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="org.eventb.theory.ui.explorer.POStatusDec"
+            id="org.eventb.theory.ui.poStatus"
+            label="%decorator.poStatus.label"
+            lightweight="true"
+            location="BOTTOM_RIGHT"
+            state="true">
+         <enablement>
+            <or>
+               <objectClass
+                     name="org.rodinp.core.IRodinElement">
+               </objectClass>
+               <objectClass
+                     name="fr.systerel.explorer.IElementNode">
+               </objectClass>
+            </or>
+         </enablement>
+      </decorator>
+    </extension>
 </plugin>

@@ -24,7 +24,7 @@ public abstract class NavigatorActionProvider extends CommonActionProvider {
 	
     protected ICommonActionExtensionSite site;
     
-    StructuredViewer viewer;
+    protected StructuredViewer viewer;
 
     @Override
     public void init(ICommonActionExtensionSite aSite) {

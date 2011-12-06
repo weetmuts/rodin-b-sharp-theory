@@ -19,58 +19,47 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class AssociativeAttributeManipulation extends AbstractAttributeManipulation{
+public class AssociativeAttributeManipulation extends
+		AbstractAttributeManipulation {
 
 	@Override
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor) throws RodinDBException {
 		asAssociativeElement(element).setAssociative(false, monitor);
 	}
 
 	@Override
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asAssociativeElement(element).hasAssociativeAttribute();
 	}
 
-	
 	@Override
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		return asAssociativeElement(element).isAssociative()
-			?operator_isAssociative
-					:operator_isNotAssociative;
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
+		return asAssociativeElement(element).isAssociative() ? operator_isAssociative: operator_isNotAssociative;
 	}
-	
+
 	@Override
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
-		if(value.equals(operator_isAssociative)){
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
+		if (value.equals(operator_isAssociative)) {
 			asAssociativeElement(element).setAssociative(true, monitor);
-		}
-		else
+		} else
 			asAssociativeElement(element).setAssociative(false, monitor);
 	}
 
 	@Override
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asAssociativeElement(element).removeAttribute(ASSOCIATIVE_ATTRIBUTE, monitor);
-		
+
 	}
 
 	@Override
-	public String[] getPossibleValues(IRodinElement element,
-			IProgressMonitor monitor) {
-		return new String[]{operator_isAssociative, operator_isNotAssociative};
+	public String[] getPossibleValues(IRodinElement element, IProgressMonitor monitor) {
+		return new String[] { operator_isAssociative, operator_isNotAssociative };
 	}
 
-	protected IAssociativeElement asAssociativeElement(IRodinElement element){
-		assert element instanceof IAssociativeElement;
+	protected IAssociativeElement asAssociativeElement(IRodinElement element) {
 		return (IAssociativeElement) element;
 	}
-		
 
 }

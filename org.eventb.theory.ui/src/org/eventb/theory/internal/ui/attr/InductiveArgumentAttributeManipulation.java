@@ -24,44 +24,33 @@ public class InductiveArgumentAttributeManipulation extends
 		AbstractAttributeManipulation {
 
 	@Override
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		// TODO Auto-generated method stub
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 
 	}
 
 	@Override
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		// TODO Auto-generated method stub
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asInductiveArgumentElement(element).hasInductiveArgument();
 	}
 
 	@Override
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		// TODO Auto-generated method stub
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asInductiveArgumentElement(element).getInductiveArgument();
 	}
 
 	@Override
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
-		// TODO Auto-generated method stub
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
 		asInductiveArgumentElement(element).setInductiveArgument(value, monitor);
 	}
 
 	@Override
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asInductiveArgumentElement(element).removeAttribute(TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE, monitor);
 
 	}
 
 	@Override
-	public String[] getPossibleValues(IRodinElement element,
-			IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
+	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
 		INewOperatorDefinition ancestor = element.getAncestor(INewOperatorDefinition.ELEMENT_TYPE);
 		if (ancestor.exists()){
 			try {

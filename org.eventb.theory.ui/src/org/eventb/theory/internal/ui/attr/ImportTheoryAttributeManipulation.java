@@ -39,28 +39,20 @@ public class ImportTheoryAttributeManipulation extends
 	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		// no default
-
 	}
 
 	@Override
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		// TODO Auto-generated method stub
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asImportTheoryElement(element).hasImportTheory();
 	}
 
 	@Override
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		// TODO Auto-generated method stub
-		return asImportTheoryElement(element).getImportTheory()
-				.getComponentName();
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
+		return asImportTheoryElement(element).getImportTheory().getComponentName();
 	}
 
 	@Override
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
 		IRodinProject proj = element.getRodinProject();
 		ISCTheoryRoot root = DatabaseUtilities.getSCTheory(value, proj);
 		if (root != null && root.exists())
@@ -69,10 +61,8 @@ public class ImportTheoryAttributeManipulation extends
 	}
 
 	@Override
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		asImportTheoryElement(element).removeAttribute(
-				TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, monitor);
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
+		asImportTheoryElement(element).removeAttribute(TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, monitor);
 
 	}
 
@@ -85,9 +75,6 @@ public class ImportTheoryAttributeManipulation extends
 			final Set<String> theoryNames = getTheoryNames(theoryElement);
 			final Set<String> usedTheoryNames = getUsedTheoryNames(theoryElement);
 			final String elementValue = getElementValue(theoryElement);
-
-			// result = contextRoot \ (usedContextNames \ { elementValue })
-			// then remove values that would introduce a cycle
 			final Set<String> valueToRemove = new HashSet<String>();
 			valueToRemove.addAll(usedTheoryNames);
 			valueToRemove.remove(elementValue);
@@ -106,8 +93,7 @@ public class ImportTheoryAttributeManipulation extends
 		return (IImportTheoryElement) element;
 	}
 
-	private Set<String> getTheoryNames(IInternalElement element)
-			throws CoreException {
+	private Set<String> getTheoryNames(IInternalElement element)throws CoreException {
 		final IRodinProject rodinProject = element.getRodinProject();
 		ISCTheoryRoot[] scTheoryRoots;
 		final HashSet<String> result = new HashSet<String>();
@@ -119,8 +105,7 @@ public class ImportTheoryAttributeManipulation extends
 		return result;
 	}
 
-	private String getElementValue(IImportTheoryElement element)
-			throws CoreException {
+	private String getElementValue(IImportTheoryElement element)throws CoreException {
 		if (element.exists() && hasValue(element, null))
 			return getValue(element, null);
 		else
@@ -128,8 +113,7 @@ public class ImportTheoryAttributeManipulation extends
 
 	}
 
-	public Set<String> getUsedTheoryNames(IImportTheoryElement element)
-			throws CoreException {
+	public Set<String> getUsedTheoryNames(IImportTheoryElement element)throws CoreException {
 		Set<String> usedNames = new HashSet<String>();
 		ITheoryRoot root = (ITheoryRoot) element.getRoot();
 		// First add myself
@@ -143,8 +127,7 @@ public class ImportTheoryAttributeManipulation extends
 		return usedNames;
 	}
 
-	protected void removeCycle(IImportTheoryElement element,
-			Set<String> theories) throws CoreException {
+	protected void removeCycle(IImportTheoryElement element,Set<String> theories) throws CoreException {
 		final ITheoryRoot root = (ITheoryRoot) element.getRoot();
 		final IRodinProject prj = root.getRodinProject();
 		final Iterator<String> iter = theories.iterator();
@@ -157,8 +140,7 @@ public class ImportTheoryAttributeManipulation extends
 		}
 	}
 
-	private boolean isImportedBy(ITheoryRoot abstractRoot, ITheoryRoot root)
-			throws CoreException {
+	private boolean isImportedBy(ITheoryRoot abstractRoot, ITheoryRoot root)throws CoreException {
 		for (ITheoryRoot thy : getImportedTheories(root)) {
 			if (thy.equals(abstractRoot) || isImportedBy(abstractRoot, thy))
 				return true;
@@ -166,15 +148,13 @@ public class ImportTheoryAttributeManipulation extends
 		return false;
 	}
 
-	private ITheoryRoot[] getImportedTheories(ITheoryRoot root)
-			throws CoreException {
+	private ITheoryRoot[] getImportedTheories(ITheoryRoot root)throws CoreException {
 		List<ITheoryRoot> list = new ArrayList<ITheoryRoot>();
 		IImportTheory[] imported = root.getImportTheories();
 		IRodinProject project = root.getRodinProject();
 		for (IImportTheory imp : imported) {
 			if (imp.hasImportTheory()) {
-				list.add(DatabaseUtilities.getTheory(imp.getImportTheory()
-						.getComponentName(), project));
+				list.add(DatabaseUtilities.getTheory(imp.getImportTheory().getComponentName(), project));
 			}
 		}
 		return list.toArray(new ITheoryRoot[list.size()]);

@@ -24,29 +24,23 @@ import org.rodinp.core.RodinDBException;
 public class CommutativeAttributeManipulation extends AbstractAttributeManipulation{
 
 	@Override
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asCommutativeElement(element).setCommutative(false, monitor);
 	}
 
 	@Override
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asCommutativeElement(element).hasCommutativeAttribute();
 	}
 
 	
 	@Override
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		return asCommutativeElement(element).isCommutative()
-			?operator_isCommutative
-					:operator_isNotCommutative;
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
+		return asCommutativeElement(element).isCommutative()?operator_isCommutative:operator_isNotCommutative;
 	}
 	
 	@Override
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
 		if(value.equals(operator_isCommutative)){
 			asCommutativeElement(element).setCommutative(true, monitor);
 		}
@@ -54,20 +48,17 @@ public class CommutativeAttributeManipulation extends AbstractAttributeManipulat
 	}
 
 	@Override
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asCommutativeElement(element).removeAttribute(COMMUTATIVE_ATTRIBUTE, monitor);
 		
 	}
 
 	@Override
-	public String[] getPossibleValues(IRodinElement element,
-			IProgressMonitor monitor) {
+	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
 		return new String[]{operator_isCommutative, operator_isNotCommutative};
 	}
 
 	protected ICommutativeElement asCommutativeElement(IRodinElement element){
-		assert element instanceof ICommutativeElement;
 		return (ICommutativeElement) element;
 	}
 

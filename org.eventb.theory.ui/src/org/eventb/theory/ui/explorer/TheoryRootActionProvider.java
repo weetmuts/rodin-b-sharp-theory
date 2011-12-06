@@ -10,7 +10,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
@@ -22,11 +21,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.internal.ui.ITheoryImages;
-import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
-import org.eventb.theory.ui.deploy.SimpleDeployWizard;
-import org.eventb.theory.ui.internal.explorer.ActionProvider;
 import org.eventb.theory.ui.internal.explorer.NavigatorActionProvider;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -37,99 +32,31 @@ import fr.systerel.internal.explorer.navigator.actionProviders.ActionCollection;
 
 @SuppressWarnings("restriction")
 public class TheoryRootActionProvider extends NavigatorActionProvider {
+    
+	@Override
+    public void fillActionBars(IActionBars actionBars) {
+        super.fillActionBars(actionBars);
+        // forward doubleClick to doubleClickAction
+        actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
+              ActionCollection.getOpenAction(site));
+        // forwards pressing the delete key to deleteAction
+        actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), getDeleteAction(site));
+    }
+	
 
-	public static String GROUP_META = "meta";
-
-	public void fillActionBars(IActionBars actionBars) {
-		// forward doubleClick to doubleClickAction
-		actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, ActionProvider.getOpenAction(site));
-		// forwards pressing the delete key to deleteAction
-		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), ActionCollection.getDeleteAction(site));
-	}
-
+    
+    @Override
 	public void fillContextMenu(IMenuManager menu) {
-		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionProvider.getOpenAction(site));
-		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH, buildOpenWithMenu());
-		menu.add(new Separator(GROUP_META));
-		menu.appendToGroup(GROUP_META, getDeployTheoryAction());
-		menu.appendToGroup(GROUP_META, getUndeployTheoryAction());
-		menu.appendToGroup(GROUP_META, getDeleteAction(site));
+		super.fillContextMenu(menu);
+		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionCollection
+				.getOpenAction(site));
+		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH,
+				buildOpenWithMenu());
+		menu.add(new Separator(GROUP_MODELLING));
+		menu.appendToGroup(GROUP_MODELLING, getDeleteAction(site));
 	}
 
-	private Action getDeployTheoryAction() {
-		Action action = new Action() {
-			public void run() {
-				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-				if (!(sel.isEmpty())) {
-					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						if (TheoryUIUtils.createDeployTheoryErrorDialog(site.getViewSite().getShell(), (ITheoryRoot) sel.getFirstElement())) {
-							SimpleDeployWizard wizard = new SimpleDeployWizard(null, (ITheoryRoot) sel.getFirstElement());
-							WizardDialog wd = new WizardDialog(null, wizard);
-							wd.setTitle(wizard.getWindowTitle());
-							wd.open();
-						}
-
-					}
-				}
-			}
-			
-			@Override
-			public boolean isEnabled() {
-				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-				if (!(sel.isEmpty())) {
-					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						ITheoryRoot root = (ITheoryRoot) sel.getFirstElement();
-						if (DatabaseUtilities.isTheoryDeployable(root)){
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-		};
-		action.setText("Deploy");
-		action.setToolTipText("Deploy theory");
-		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_DTHEORY_PATH));
-		return action;
-	}
-
-	private Action getUndeployTheoryAction() {
-		Action action = new Action() {
-			public void run() {
-				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-				if (!(sel.isEmpty())) {
-					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						ITheoryRoot theory = (ITheoryRoot) sel.getFirstElement();
-						if (TheoryUIUtils.createUndeployUndeployedTheoryDialog(site.getViewSite().getShell(), theory)
-								&& TheoryUIUtils.createConfirmUndeployTheoryDialog(site.getViewSite().getShell(), theory)) {
-
-							DatabaseUtilities.cleanUp(theory.getDeployedTheoryRoot());
-						}
-
-					}
-				}
-			}
-			
-			@Override
-			public boolean isEnabled() {
-				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-				if (!(sel.isEmpty())) {
-					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						ITheoryRoot theory = (ITheoryRoot) sel.getFirstElement();
-						if(theory.hasDeployedVersion()){
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-		};
-		action.setText("Undeploy");
-		action.setToolTipText("Undeploy theory and its dependents");
-		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_THEORY_PATH));
-		return action;
-	}
-
+	
 	private Action getDeleteAction(final ICommonActionExtensionSite site) {
 		Action deleteAction = new Action() {
 			@Override
@@ -169,7 +96,7 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 							// FIXED BUG here when u press the close button (X) it deletes the theory anyway
 							if (answer != YesToAllMessageDialog.NO && answer != -1) {
 								try {
-									TheoryUIUtils.closeOpenedEditor(rodinFile);
+									TheoryUIUtils.closeOpenedEditors(rodinFile);
 									// delete the deployed version
 									if(rodinFile.getRootElementType().equals(ITheoryRoot.ELEMENT_TYPE)){
 										ITheoryRoot theoryRoot = (ITheoryRoot) rodinFile.getRoot();
@@ -199,4 +126,5 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 		deleteAction.setImageDescriptor(EventBImage.getImageDescriptor(IEventBSharedImages.IMG_DELETE_PATH));
 		return deleteAction;
 	}
+	
 }

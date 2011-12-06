@@ -459,7 +459,7 @@ public class TheoryUIUtils {
 	 * @throws PartInitException
 	 *             Exception when closing the editor
 	 */
-	public static void closeOpenedEditor(IRodinFile file) throws PartInitException {
+	public static void closeOpenedEditors(IRodinFile file) throws PartInitException {
 		IEditorReference[] editorReferences = EventBUIPlugin.getActivePage().getEditorReferences();
 		for (int j = 0; j < editorReferences.length; j++) {
 			IFile inputFile = (IFile) editorReferences[j].getEditorInput().getAdapter(IFile.class);

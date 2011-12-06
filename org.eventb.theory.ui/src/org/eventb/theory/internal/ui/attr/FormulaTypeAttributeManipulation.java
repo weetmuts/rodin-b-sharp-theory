@@ -29,34 +29,29 @@ public class FormulaTypeAttributeManipulation extends AbstractBooleanManipulatio
 	}
 
 	
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return getText(asFormulaTypeElement(element).getAttributeValue(FORMULA_TYPE_ATTRIBUTE));
 	}
 
 	
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asFormulaTypeElement(element).hasFormulaType();
 	}
 
 	
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asFormulaTypeElement(element).removeAttribute(FORMULA_TYPE_ATTRIBUTE, monitor);
 
 	}
 
 	
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asFormulaTypeElement(element).setFormulaType(FormulaType.EXPRESSION, monitor);
 
 	}
 
 	
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
 		if(value.equals(TRUE)){
 			asFormulaTypeElement(element).setFormulaType(TheoryUIUtils.getFormulaType(true), monitor);
 		}
@@ -70,7 +65,6 @@ public class FormulaTypeAttributeManipulation extends AbstractBooleanManipulatio
 	}
 
 	IFormulaTypeElement asFormulaTypeElement(IRodinElement element){
-		assert element instanceof IFormulaTypeElement;
 		return (IFormulaTypeElement) element;
 	}
 	

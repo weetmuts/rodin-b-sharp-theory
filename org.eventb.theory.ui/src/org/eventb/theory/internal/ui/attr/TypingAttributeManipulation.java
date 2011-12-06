@@ -12,48 +12,38 @@ import org.rodinp.core.RodinDBException;
 public class TypingAttributeManipulation extends AbstractAttributeManipulation 
 implements IAttributeManipulation {
 
-	
-	public String[] getPossibleValues(IRodinElement element,
-			IProgressMonitor monitor) {
+	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
 		logCantGetPossibleValues(TYPE_ATTRIBUTE);
 		return null;
 	}
 
-	
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asTypingElmnt(element).getType();
 	}
 
 	
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asTypingElmnt(element).hasType();
 	}
 
 	
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		logCantRemove(TYPE_ATTRIBUTE);
 
 	}
 
 	
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asTypingElmnt(element).setType("", monitor);
 
 	}
 
-	
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
 		asTypingElmnt(element).setType(value, monitor) ;
 
 	}
 	
 	private ITypeElement asTypingElmnt(IRodinElement e){
-		assert e instanceof ITypeElement;
 		return (ITypeElement) e;
 	}
 

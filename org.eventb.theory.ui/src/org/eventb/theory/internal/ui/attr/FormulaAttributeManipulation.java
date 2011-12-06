@@ -21,40 +21,33 @@ import org.rodinp.core.RodinDBException;
  */
 public class FormulaAttributeManipulation extends AbstractAttributeManipulation{
 
-	public String[] getPossibleValues(IRodinElement element,
-			IProgressMonitor monitor) {
+	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
 		logCantGetPossibleValues(FORMULA_ATTRIBUTE);
 		return null;
 	}
 
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asFormula(element).getFormula();
 	}
 
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asFormula(element).hasFormula();
 
 	}
 
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		logCantRemove(FORMULA_ATTRIBUTE);
 	}
 
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asFormula(element).setFormula("", monitor);
 	}
 
-	public void setValue(IRodinElement element, String newValue,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setValue(IRodinElement element, String newValue,IProgressMonitor monitor) throws RodinDBException {
 		asFormula(element).setFormula(newValue, monitor);
 	}
 
 	private IFormulaElement asFormula(IRodinElement element) {
-		assert element instanceof IFormulaElement;
 		return (IFormulaElement) element;
 	}
 

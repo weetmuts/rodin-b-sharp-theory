@@ -12,53 +12,41 @@ import org.rodinp.core.RodinDBException;
 public class GivenTypeAttributeManipulation extends AbstractAttributeManipulation {
 
 	@Override
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		// no default
-		
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 	}
 
 	@Override
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asGivenTypeElement(element).hasGivenType();
 	}
 
 	@Override
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asGivenTypeElement(element).getGivenType();
 	}
 
 	@Override
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
 		asGivenTypeElement(element).setGivenType(value, monitor);
 	}
 
 	@Override
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asGivenTypeElement(element).removeAttribute(GIVEN_TYPE_ATTRIBUTE, monitor);
 		
 	}
 
 	@Override
-	public String[] getPossibleValues(IRodinElement element,
-			IProgressMonitor monitor) {
+	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
 		try {
 			return TheoryUIUtils.getUnusedTypeParameters(element);
 		} catch (RodinDBException e) {
-			e.printStackTrace();
+			TheoryUIUtils.log(e, "cannot get possible values for given type for element "+ element);
 		}
 		return new String[0];
 	}
 
 	private IGivenTypeElement asGivenTypeElement(IRodinElement element){
-		assert element instanceof IGivenTypeElement;
 		return (IGivenTypeElement) element;
 	}
-
-	
-
 }

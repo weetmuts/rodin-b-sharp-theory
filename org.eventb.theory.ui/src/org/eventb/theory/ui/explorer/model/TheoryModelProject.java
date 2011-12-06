@@ -154,19 +154,16 @@ public class TheoryModelProject implements IModelElement {
 
 	@Override
 	public IModelElement getModelParent() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IRodinElement getInternalElement() {
-		// TODO Auto-generated method stub
 		return internalProject;
 	}
 
 	@Override
 	public Object getParent(boolean complex) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

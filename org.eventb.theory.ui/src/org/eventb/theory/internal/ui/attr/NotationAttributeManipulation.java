@@ -23,47 +23,40 @@ import org.rodinp.core.RodinDBException;
  */
 public class NotationAttributeManipulation extends AbstractAttributeManipulation{
 
-	public String[] getPossibleValues(IRodinElement element,
-			IProgressMonitor monitor) {
+	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
 		return AstUtilities.POSSIBLE_NOTATION_TYPES;
 	}
 
 	
-	public String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		INotationTypeElement cat = asNotationTypeElement(element);
 		return cat.getNotationType().toString();
 	}
 
 	
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		return asNotationTypeElement(element).hasNotationType();
 	}
 
 	
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asNotationTypeElement(element).removeAttribute(NOTATION_TYPE_ATTRIBUTE, monitor);
 
 	}
 
 	
-	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
 		asNotationTypeElement(element).setNotationType(Notation.PREFIX.toString(), monitor);
 
 	}
 
 	
-	public void setValue(IRodinElement element, String value,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
 		asNotationTypeElement(element).setNotationType(value, monitor);
 
 	}
 
 	INotationTypeElement asNotationTypeElement(IRodinElement e){
-		assert e instanceof INotationTypeElement;
 		return (INotationTypeElement) e;
 	}
 }
