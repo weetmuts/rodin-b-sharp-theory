@@ -176,30 +176,22 @@ public class TheoryUIUtils {
 			if (component == null)
 				return;
 			try {
-				IEditorDescriptor desc = PlatformUI
-						.getWorkbench()
-						.getEditorRegistry()
-						.getDefaultEditor(
-								component.getCorrespondingResource().getName());
+				IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
+						.getDefaultEditor(component.getCorrespondingResource().getName());
 				IEditorPart editor = TheoryUIPlugIn.getActivePage().openEditor(
-						new FileEditorInput(component.getResource()),
-						desc.getId());
+						new FileEditorInput(component.getResource()), desc.getId());
 				if (editor instanceof TheoryEditor) {
-					((TheoryEditor) editor)
-							.setSelection(new StructuredSelection(obj));
+					((TheoryEditor) editor).setSelection(new StructuredSelection(obj));
 				}
 			} catch (PartInitException e) {
 				String errorMsg = "Error open Editor";
 				MessageDialog.openError(null, null, errorMsg);
-				TheoryUIPlugIn
-						.getDefault()
-						.getLog()
-						.log(new Status(IStatus.ERROR,
-								TheoryUIPlugIn.PLUGIN_ID, errorMsg, e));
+				TheoryUIPlugIn.getDefault().getLog()
+						.log(new Status(IStatus.ERROR, TheoryUIPlugIn.PLUGIN_ID, errorMsg, e));
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * Facility to log the given exception alongside the given message.
@@ -218,8 +210,7 @@ public class TheoryUIUtils {
 		if (message == null) {
 			message = "Unknown context"; //$NON-NLS-1$
 		}
-		IStatus status = new Status(IStatus.ERROR, TheoryUIPlugIn.PLUGIN_ID,
-				IStatus.ERROR, message, exc);
+		IStatus status = new Status(IStatus.ERROR, TheoryUIPlugIn.PLUGIN_ID, IStatus.ERROR, message, exc);
 		TheoryUIPlugIn.getDefault().getLog().log(status);
 	}
 
@@ -232,8 +223,7 @@ public class TheoryUIUtils {
 	 * @return the type parameters
 	 */
 
-	public static String[] getUnusedTypeParameters(final IRodinElement element)
-			throws RodinDBException {
+	public static String[] getUnusedTypeParameters(final IRodinElement element) throws RodinDBException {
 		if (!(element instanceof ITypeArgument)) {
 			return new String[0];
 		}
@@ -258,8 +248,7 @@ public class TheoryUIUtils {
 			log(e1, "error getting type parameter details");
 		}
 
-		IDatatypeDefinition def = element
-				.getAncestor(IDatatypeDefinition.ELEMENT_TYPE);
+		IDatatypeDefinition def = element.getAncestor(IDatatypeDefinition.ELEMENT_TYPE);
 		if (def == null) {
 			return new String[0];
 		}
@@ -270,8 +259,7 @@ public class TheoryUIUtils {
 
 				@Override
 				public String get(ITypeArgument s) throws CoreException {
-					if (s.getElementName().equals(element.getElementName())
-							|| !s.hasGivenType()) {
+					if (s.getElementName().equals(element.getElementName()) || !s.hasGivenType()) {
 						return null;
 					}
 					return s.getGivenType();
@@ -312,43 +300,14 @@ public class TheoryUIUtils {
 	/**
 	 * Not strictly needed as menu item to deploy may not be enabled.
 	 */
-	public static boolean createDeployTheoryErrorDialog(Shell shell,
-			ITheoryRoot root) {
+	public static boolean createDeployTheoryErrorDialog(Shell shell, ITheoryRoot root) {
 		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
 		if (!DatabaseUtilities.isTheoryDeployable(scRoot)) {
 			MessageDialog.openError(shell, "Error",
-					"Cannot deploy inaccurate or empty theory '" + root.getComponentName()
-							+ "'.");
+					"Cannot deploy inaccurate or empty theory '" + root.getComponentName() + "'.");
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Not strictly needed as menu item to undeploy may not be enabled.
-	 */
-	public static boolean createUndeployUndeployedTheoryDialog(Shell shell,
-			ITheoryRoot root) {
-		if (!root.hasDeployedVersion()) {
-			MessageDialog.openError(shell, "Error",
-					"Theory '" + root.getComponentName()
-							+ "' has not been deployed.");
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean createConfirmUndeployTheoryDialog(Shell shell,
-			ITheoryRoot root) {
-		return MessageDialog.openConfirm(shell,
-				"Confirm Undeployment",
-				"Confirm undeploying deployed theory '"
-						+ root.getComponentName() 
-						+ "'.\n If you confirm undeployment, dependent theories will also be undeployed."
-						+ "\n If you confirm undeployment, project '"
-						+ root.getRodinProject().getElementName()
-						+"' will be rebuilt.");
-
 	}
 
 	/**
@@ -358,10 +317,8 @@ public class TheoryUIUtils {
 	 *            a runnable operation
 	 * @since 1.3
 	 */
-	public static void runWithProgress(final IWorkspaceRunnable op,
-			final ISchedulingRule rule) {
-		final Shell shell = PlatformUI.getWorkbench().getDisplay()
-				.getActiveShell();
+	public static void runWithProgress(final IWorkspaceRunnable op, final ISchedulingRule rule) {
+		final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell) {
 			@Override
 			protected boolean isResizable() {
@@ -372,8 +329,7 @@ public class TheoryUIUtils {
 		final IRunnableWithProgress wrap = new IRunnableWithProgress() {
 
 			@Override
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					RodinCore.run(op, rule, monitor);
 				} catch (CoreException e) {
@@ -409,8 +365,11 @@ public class TheoryUIUtils {
 
 	/**
 	 * Returns the image for explorer display of the given theory.
-	 * <p> Theories that have deployed counterparts have a different icon.
-	 * @param root the theory root
+	 * <p>
+	 * Theories that have deployed counterparts have a different icon.
+	 * 
+	 * @param root
+	 *            the theory root
 	 * @return the image
 	 */
 	public static Image getTheoryImage(ITheoryRoot root) {
@@ -428,11 +387,14 @@ public class TheoryUIUtils {
 		}
 		return TheoryImage.getImage(ITheoryImages.IMG_THEORY);
 	}
-	
+
 	/**
 	 * Returns the image for explorer display of the given theory.
-	 * <p> Theories that have deployed counterparts have a different icon.
-	 * @param root the theory root
+	 * <p>
+	 * Theories that have deployed counterparts have a different icon.
+	 * 
+	 * @param root
+	 *            the theory root
 	 * @return the image
 	 */
 	public static Image getTheoryImage(ISCTheoryRoot root) {
@@ -450,7 +412,18 @@ public class TheoryUIUtils {
 		}
 		return TheoryImage.getImage(ITheoryImages.IMG_THEORY);
 	}
-	
+
+	public static Image getTheoryImage(IDeployedTheoryRoot root) {
+		try {
+			if (root.hasOutdatedAttribute() && root.isOutdated()) {
+				return TheoryImage.getImage(ITheoryImages.IMG_OTHEORY); 
+			}
+		} catch (RodinDBException e) {
+			log(e, "error while checking outdatedness of theory to get the appropriate image");
+		}
+		return TheoryImage.getImage(ITheoryImages.IMG_DTHEORY);
+	}
+
 	/**
 	 * Close the open editor for a particular Rodin File
 	 * 

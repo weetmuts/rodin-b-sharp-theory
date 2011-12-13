@@ -1,4 +1,4 @@
-package org.eventb.theory.ui.internal.explorer;
+package org.eventb.theory.ui.explorer;
 import static fr.systerel.internal.explorer.statistics.StatisticsUtil.getParentLabelOf;
 
 import org.eventb.theory.core.ITheoryRoot;

@@ -713,6 +713,19 @@
 	<extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
+            id="org.eventb.theory.ui.deployTheory"
+            targetID="fr.systerel.explorer.navigator.view">
+         <action
+               class="org.eventb.theory.ui.explorer.actions.DeployActionDelegate"
+               icon="icons/thyDep.gif"
+               id="org.eventb.theory.ui.deployTheory"
+               label="%viewActions.deployTheoryLabel"
+               style="push"
+               toolbarPath="new"
+               tooltip="%viewActions.deployTheoryTooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
             id="org.eventb.theory.ui.newTheory"
             targetID="fr.systerel.explorer.navigator.view">
          <action
@@ -750,11 +763,11 @@
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="org.eventb.theory.ui.internal.explorer.AntiSorter">
+               class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="org.eventb.theory.ui.explorer.TypeParameterContentProvider"
+            contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$TypeParameterContentProvider"
             id="org.eventb.theory.ui.explorer.typeParameter"
             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
             name="%navigatorContent.typeParameter"
@@ -779,11 +792,11 @@
             </or>
          </possibleChildren>
          <commonSorter
-               class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-         </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
       </navigatorContent>
        <navigatorContent
-            contentProvider="org.eventb.theory.ui.explorer.DatatypeContentProvider"
+            contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$DatatypeContentProvider"
             id="org.eventb.theory.ui.explorer.datatype"
             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
             name="%navigatorContent.datatype"
@@ -808,11 +821,11 @@
             </or>
          </possibleChildren>
          <commonSorter
-               class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-         </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="org.eventb.theory.ui.explorer.DatatypeConstructorContentProvider"
+            contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$DatatypeConstructorContentProvider"
             id="org.eventb.theory.ui.explorer.datatypeConstructor"
             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
             name="%navigatorContent.datatypeConstructor"
@@ -828,11 +841,11 @@
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-         </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
       </navigatorContent>
        <navigatorContent
-             contentProvider="org.eventb.theory.ui.explorer.OperatorContentProvider"
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$OperatorContentProvider"
              id="org.eventb.theory.ui.explorer.operator"
              labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
              name="%navigatorContent.operator"
@@ -858,11 +871,11 @@
              </or>
           </possibleChildren>
           <commonSorter
-                class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-          </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
        </navigatorContent>
       <navigatorContent
-             contentProvider="org.eventb.theory.ui.explorer.TheoremContentProvider"
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$TheoremContentProvider"
              id="org.eventb.theory.ui.explorer.theorem"
              labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
              name="%navigatorContent.theorem"
@@ -888,11 +901,11 @@
              </or>
           </possibleChildren>
           <commonSorter
-                class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-          </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
        </navigatorContent>
       <navigatorContent
-             contentProvider="org.eventb.theory.ui.explorer.RuleBlockContentProvider"
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$RuleBlockContentProvider"
              id="org.eventb.theory.ui.explorer.rulesBlock"
              labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
              name="%navigatorContent.rulesBlock"
@@ -918,11 +931,11 @@
              </or>
           </possibleChildren>
           <commonSorter
-                class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-          </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
        </navigatorContent>
        <navigatorContent
-             contentProvider="org.eventb.theory.ui.explorer.RewriteRuleContentProvider"
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$RewriteRuleContentProvider"
              id="org.eventb.theory.ui.explorer.rewriteRule"
              labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
              name="%navigatorContent.rewriteRule"
@@ -938,11 +951,11 @@
              </instanceof>
           </possibleChildren>
           <commonSorter
-                class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-          </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
        </navigatorContent>
        <navigatorContent
-             contentProvider="org.eventb.theory.ui.explorer.InferenceRuleContentProvider"
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$InferenceRuleContentProvider"
              id="org.eventb.theory.ui.explorer.inferenceRule"
              labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
              name="%navigatorContent.inferenceRule"
@@ -958,11 +971,11 @@
              </instanceof>
           </possibleChildren>
           <commonSorter
-                class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-          </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
        </navigatorContent>
       <navigatorContent
-            contentProvider="org.eventb.theory.ui.internal.explorer.POContentProvider"
+            contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$POContentProvider"
             id="org.eventb.theory.ui.explorer.poFile"
             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
             name="%navigatorContent.poFiles"
@@ -998,8 +1011,8 @@
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="org.eventb.theory.ui.internal.explorer.AntiSorter">
-         </commonSorter>
+				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
+		</commonSorter>
       </navigatorContent>
       <actionProvider
             class="org.eventb.theory.ui.explorer.TheoryRootActionProvider"
@@ -1092,32 +1105,6 @@
             </actionExtension>
          </includes>
       </viewerActionBinding>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            description="%theoryActionSet.desc"
-            id="org.eventb.theory.ui.theoryActionSet"
-            label="%theoryActionSet.label"
-            visible="true">
-         <menu
-               id="org.eventb.theory.ui.theoryMenu"
-               label="%theoryActionSet.label">
-            <groupMarker
-                  name="deploy">
-            </groupMarker>
-         </menu>
-         <action
-               class="org.eventb.theory.ui.deploy.DeployActionDelegate"
-               icon="icons/thyDep.gif"
-               id="org.eventb.theory.ui.deployTheory"
-               label="%deployTheoryAction"
-               menubarPath="org.eventb.theory.ui.theoryMenu/deploy"
-               style="push"
-               tooltip="%deployTheoryToolTip">
-         </action>
-       
-      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

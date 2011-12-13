@@ -19,7 +19,6 @@ import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.ITypeParameter;
 import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.ui.explorer.model.TheoryModelController;
-import org.eventb.theory.ui.internal.explorer.Statistics;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;

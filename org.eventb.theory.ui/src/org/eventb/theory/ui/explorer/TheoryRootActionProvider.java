@@ -3,16 +3,25 @@ package org.eventb.theory.ui.explorer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.OpenWithMenu;
+import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
@@ -20,10 +29,15 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.internal.ui.ITheoryImages;
+import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
-import org.eventb.theory.ui.internal.explorer.NavigatorActionProvider;
+import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
+import org.eventb.theory.ui.wizard.deploy.UndeployWizard;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -31,32 +45,79 @@ import org.rodinp.core.RodinDBException;
 import fr.systerel.internal.explorer.navigator.actionProviders.ActionCollection;
 
 @SuppressWarnings("restriction")
-public class TheoryRootActionProvider extends NavigatorActionProvider {
-    
-	@Override
-    public void fillActionBars(IActionBars actionBars) {
-        super.fillActionBars(actionBars);
-        // forward doubleClick to doubleClickAction
-        actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
-              ActionCollection.getOpenAction(site));
-        // forwards pressing the delete key to deleteAction
-        actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), getDeleteAction(site));
-    }
+public class TheoryRootActionProvider extends CommonActionProvider {
 	
-
+    protected ICommonActionExtensionSite site;
     
-    @Override
-	public void fillContextMenu(IMenuManager menu) {
-		super.fillContextMenu(menu);
-		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionCollection
-				.getOpenAction(site));
-		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH,
-				buildOpenWithMenu());
-		menu.add(new Separator(GROUP_MODELLING));
-		menu.appendToGroup(GROUP_MODELLING, getDeleteAction(site));
+    protected StructuredViewer viewer;
+	
+	private static String GROUP_META = "meta";
+	private String GROUP_DELETE = "delete";;
+
+	public void fillActionBars(IActionBars actionBars) {
+		// forward doubleClick to doubleClickAction
+		actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, ActionCollection.getOpenAction(site));
+		// forwards pressing the delete key to deleteAction
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), getDeleteAction(site));
 	}
 
-	
+	public void fillContextMenu(IMenuManager menu) {
+		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionCollection.getOpenAction(site));
+		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH, buildOpenWithMenu());
+		menu.add(new Separator(GROUP_META));
+		menu.appendToGroup(GROUP_META, getUndeployTheoryAction());
+		menu.add(new Separator(GROUP_DELETE ));
+		menu.appendToGroup(GROUP_DELETE, getDeleteAction(site));
+	}
+
+	private Action getUndeployTheoryAction() {
+		Action action = new Action() {
+			public void run() {
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				if (!(sel.isEmpty())) {
+					final Set<IDeployedTheoryRoot> toUndeploy = new LinkedHashSet<IDeployedTheoryRoot>();
+					for (Object obj : sel.toArray()){
+						if (obj instanceof ITheoryRoot){
+							ITheoryRoot theory = (ITheoryRoot) obj;
+							IDeployedTheoryRoot deployedRoot = theory.getDeployedTheoryRoot();
+							if(deployedRoot.exists()){
+								toUndeploy.add(deployedRoot);
+								toUndeploy.addAll(DatabaseUtilities.getAllTheoriesToUndeploy(deployedRoot));
+							}
+						}
+					}
+					BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
+						public void run() {
+							UndeployWizard wizard = new UndeployWizard(toUndeploy);
+							WizardDialog dialog = new WizardDialog(site.getViewSite().getShell(), wizard);
+							dialog.setTitle(wizard.getWindowTitle());
+							dialog.open();
+						}
+					});
+				}
+			}
+			
+			@Override
+			public boolean isEnabled() {
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				if (!(sel.isEmpty())) {
+					if (sel.getFirstElement() instanceof ITheoryRoot) {
+						ITheoryRoot theory = (ITheoryRoot) sel.getFirstElement();
+						if(theory.hasDeployedVersion()){
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+		};
+		action.setText("Undeploy");
+		action.setToolTipText("Undeploy theory and its dependents");
+		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_THEORY_PATH));
+		return action;
+	}
+
+	// customised to delete the deployed theory file as well
 	private Action getDeleteAction(final ICommonActionExtensionSite site) {
 		Action deleteAction = new Action() {
 			@Override
@@ -125,6 +186,27 @@ public class TheoryRootActionProvider extends NavigatorActionProvider {
 		deleteAction.setToolTipText("Delete theory");
 		deleteAction.setImageDescriptor(EventBImage.getImageDescriptor(IEventBSharedImages.IMG_DELETE_PATH));
 		return deleteAction;
+	}
+	
+	@Override
+    public void init(ICommonActionExtensionSite aSite) {
+        super.init(aSite);
+        site = aSite;
+		viewer = aSite.getStructuredViewer();
+	}
+
+    /**
+     * Builds an Open With menu.
+     * 
+     * @return the built menu
+     */
+	public MenuManager buildOpenWithMenu() {
+		MenuManager menu = new MenuManager("Open With", ICommonMenuConstants.GROUP_OPEN_WITH);
+		ISelection selection = site.getStructuredViewer().getSelection();
+		Object obj = ((IStructuredSelection) selection).getFirstElement();
+		menu.add(new OpenWithMenu(TheoryUIPlugIn.getActivePage(),
+				((IInternalElement) obj).getRodinFile().getResource()));
+		return menu;
 	}
 	
 }

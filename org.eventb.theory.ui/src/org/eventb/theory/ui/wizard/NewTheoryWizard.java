@@ -33,7 +33,7 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 			+ ".newTheoryWizard";
 	
 	private ISelection selection;
-	private TheoryWizardPage page;
+	private NewTheoryWizardPage page;
 
 	public NewTheoryWizard() {
 		super();
@@ -47,7 +47,7 @@ public class NewTheoryWizard extends Wizard implements INewWizard {
 	@Override
 	public void addPages() {
 		setWindowTitle("New Theory");
-		page = new TheoryWizardPage(selection);
+		page = new NewTheoryWizardPage(selection);
 		addPage(page);
 	}
 
