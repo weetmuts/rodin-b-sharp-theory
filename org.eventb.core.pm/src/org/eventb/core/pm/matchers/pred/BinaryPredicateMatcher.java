@@ -23,18 +23,22 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 		Predicate fLeft = bpForm.getLeft();
 		Predicate pLeft = bpPattern.getLeft();
 		if(pLeft instanceof PredicateVariable){
-			return existingBinding.putPredicateMapping((PredicateVariable)pLeft, fLeft);
+			if(!existingBinding.putPredicateMapping((PredicateVariable)pLeft, fLeft))
+				return false;
 		}
 		else if(!matchingFactory.match(fLeft, pLeft, existingBinding)){
 			return false;
 		}
-		
+
 		Predicate fRight = bpForm.getRight();
 		Predicate pRight = bpPattern.getRight();
 		if(pRight instanceof PredicateVariable){
-			return existingBinding.putPredicateMapping((PredicateVariable)pRight, fRight);
+			if(!existingBinding.putPredicateMapping((PredicateVariable)pRight, fRight))
+				return false;
 		}
-		return matchingFactory.match(fRight, pRight, existingBinding);
+		else
+			return matchingFactory.match(fRight, pRight, existingBinding);
+		return true;
 	}
 
 	@Override
