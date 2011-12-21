@@ -114,7 +114,7 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 					if (!errorTheories.isEmpty()) {
 						MessageDialog.openError(site.getViewSite().getShell(), "Deploy Error",
 								"Some of the theories you selected have errors: "+ DatabaseUtilities.getElementNames(errorTheories));
-					} else {
+					} else if (!toDeploy.isEmpty()) {
 						final IRodinProject rodinProject;
 						if (project != null) {
 							rodinProject = project;
