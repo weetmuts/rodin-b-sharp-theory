@@ -1,5 +1,6 @@
 package org.eventb.theory.ui.wizard.deploy;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -15,13 +16,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.rodinp.core.IRodinProject;
@@ -29,8 +30,6 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class DeployWizardPageOne extends WizardPage {
-
-	private Button rebuildCheckButton;
 	private TableViewer theoriesTableViewer;
 	private ComboViewer projectComboViewer;
 
@@ -74,10 +73,6 @@ public class DeployWizardPageOne extends WizardPage {
 		GridData gd_theoriesTable = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gd_theoriesTable.heightHint = 145;
 		theoriesTable.setLayoutData(gd_theoriesTable);
-
-		rebuildCheckButton = new Button(container, SWT.CHECK);
-		rebuildCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		rebuildCheckButton.setText("Rebuild project. Rebuild is recommended to check models against the new mathematical language.");
 		setup();
 		dialogChanged();
 		setControl(container);
@@ -157,24 +152,17 @@ public class DeployWizardPageOne extends WizardPage {
 
 	protected void dialogChanged() {
 		if (rodinProject == null) {
-			updateStatus("Project must be selected");
-			rebuildCheckButton.setSelection(false);
-			rebuildCheckButton.setEnabled(false);
+			updateStatus(Messages.wizard_errorProjMustBeSelected);
 			return;
 		}
-		rebuildCheckButton.setEnabled(false);
 		if (selectedTheories == null) {
-			updateStatus("Theories must be selected");
-			rebuildCheckButton.setSelection(false);
-			rebuildCheckButton.setEnabled(false);
+			updateStatus(Messages.wizard_errorTheoriesMustBeSelected);
 			return;
 		}
 		if (getSelectedTheories().size() == 0){
-			updateStatus("Theories are selected but deploying dependencies is required.");
-			rebuildCheckButton.setEnabled(false);
+			updateStatus(Messages.wizard_errorUndefined);
 			return;
 		}
-		rebuildCheckButton.setEnabled(true);
 		updateStatus(null);
 	}
 
@@ -202,11 +190,11 @@ public class DeployWizardPageOne extends WizardPage {
 	 * @return the set of selected theories and their dependencies
 	 */
 	public Set<ISCTheoryRoot> getSelectedTheories() {
-		return DatabaseUtilities.getAllTheoriesToDeploy(selectedTheories);
+		try {
+			return TheoryHierarchyHelper.getAllTheoriesToDeploy(selectedTheories);
+		} catch (CoreException e) {
+			TheoryUIUtils.log(e, "unable to calculate theories to deploy");
+			return new LinkedHashSet<ISCTheoryRoot>();
+		}
 	}
-
-	public boolean rebuildProject() {
-		return rebuildCheckButton.getSelection();
-	}
-
 }

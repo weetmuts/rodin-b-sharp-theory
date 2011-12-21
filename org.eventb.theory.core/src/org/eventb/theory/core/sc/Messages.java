@@ -87,7 +87,7 @@ public final class Messages {
 	public static String scuser_OperatorCannotBeAssosError;
 	public static String scuser_TheoremPredMissingError;
 	public static String scuser_WDPredUndefError;
-	public static String scuser_OpCannotReferToTheseTypes;
+	public static String scuser_OpCannotReferToTheseIdents;
 	public static String scuser_OperatorSynIsATypeParError;
 	public static String scuser_OperatorHasMoreThan1DefError;
 	public static String scuser_MissingFormulaAttrError;

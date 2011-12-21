@@ -8,11 +8,11 @@
 package org.eventb.theory.core.maths.extensions.dependencies;
 
 import java.util.Comparator;
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
 public class SCTheoriesGraph extends DependenciesGraph<ISCTheoryRoot>{
@@ -26,21 +26,7 @@ public class SCTheoriesGraph extends DependenciesGraph<ISCTheoryRoot>{
 					DependencyNode<ISCTheoryRoot> node2) {
 				ISCTheoryRoot root1 = node1.element;
 				ISCTheoryRoot root2 = node2.element;
-				try {
-					if (DatabaseUtilities.doesTheoryImportTheory(root1, root2)){
-						return 1;
-					}
-					else if(DatabaseUtilities.doesTheoryImportTheory(root2, root1)){
-						return -1;
-					}
-					else if(root1.getComponentName().equals(root2.getComponentName())){
-						return 0;
-					}
-				} catch (CoreException e) {
-					CoreUtilities.log(e, "Error comparing theories " + 
-							root1.getComponentName() + " and " + root2.getComponentName());
-				}
-				return 1;
+				return TheoryHierarchyHelper.getSCTheoryDependencyComparator().compare(root1, root2);
 			}
 			
 		};
@@ -48,13 +34,11 @@ public class SCTheoriesGraph extends DependenciesGraph<ISCTheoryRoot>{
 
 	@Override
 	protected ISCTheoryRoot[] getEdgesOut(ISCTheoryRoot element) {
-		// TODO Auto-generated method stub
-		List<ISCTheoryRoot> imported;
+		Set<ISCTheoryRoot> imported;
 		try {
-			imported = DatabaseUtilities.getImportedTheories(element);
+			imported = TheoryHierarchyHelper.getImportedTheories(element);
 			return imported.toArray(new ISCTheoryRoot[imported.size()]);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			CoreUtilities.log(e, "Error getting imported theories of " +element.getComponentName());
 		}
 		return new ISCTheoryRoot[0];

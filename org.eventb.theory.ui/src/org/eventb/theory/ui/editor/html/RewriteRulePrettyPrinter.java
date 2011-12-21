@@ -5,7 +5,6 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
@@ -35,7 +34,7 @@ public class RewriteRulePrettyPrinter extends DefaultPrettyPrinter {
 				String lhs = rule.getFormula();
 				String cc = rule.isComplete()? 
 						Messages.rewriteRule_isComplete: Messages.rewriteRule_isIncomplete;
-				String app = DatabaseUtilities.getString(rule.getApplicability());
+				String app = rule.getApplicability().toString();
 				String desc = rule.getDescription();
 				
 				ps.appendString(wrapString("\u2022"+label), 

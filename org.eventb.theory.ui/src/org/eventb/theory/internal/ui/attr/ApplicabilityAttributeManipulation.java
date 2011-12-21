@@ -11,7 +11,6 @@ import static org.eventb.theory.core.TheoryAttributes.APPLICABILITY_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IApplicabilityElement;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.rodinp.core.IRodinElement;
@@ -36,7 +35,7 @@ public class ApplicabilityAttributeManipulation extends AbstractAttributeManipul
 
 	@Override
 	public void setValue(IRodinElement element, String value, IProgressMonitor monitor) throws RodinDBException {
-		asApplicabilityElement(element).setApplicability(DatabaseUtilities.getRuleApplicability(value), monitor);
+		asApplicabilityElement(element).setApplicability(RuleApplicability.getRuleApplicability(value), monitor);
 	}
 
 	@Override
@@ -46,7 +45,7 @@ public class ApplicabilityAttributeManipulation extends AbstractAttributeManipul
 
 	@Override
 	public String[] getPossibleValues(IRodinElement element, IProgressMonitor monitor) {
-		return DatabaseUtilities.POSSIBLE_APPLICABILITY_TYPES;
+		return RuleApplicability.getPossibleApplicabilitiesAsStrings();
 	}
 
 	private IApplicabilityElement asApplicabilityElement(IRodinElement element){

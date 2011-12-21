@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import static org.eventb.theory.core.DatabaseUtilities.*;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMMUTATIVE_ATTRIBUTE;
@@ -58,10 +57,6 @@ public abstract class TheoryElement extends EventBElement implements
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
 		IReasoningTypeElement, IValidatedElement, IOperatorGroupElement,
 		IImportTheoryElement, IInductiveArgumentElement, IWDElement, IApplicabilityElement {
-
-	public static final String BACKWARD_REASONING_TYPE = "backward";
-	public static final String FORWARD_REASONING_TYPE = "forward";
-	public static final String BACKWARD_AND_FORWARD_REASONING_TYPE = "both";
 
 	public TheoryElement(String name, IRodinElement parent) {
 		super(name, parent);
@@ -311,20 +306,20 @@ public abstract class TheoryElement extends EventBElement implements
 	public boolean isSuitableForBackwardReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
 		return isSuitableForAllReasoning()
-				|| getReasoningTypeFor(type).equals(ReasoningType.BACKWARD);
+				|| ReasoningType.getReasoningType(type).equals(ReasoningType.BACKWARD);
 	}
 
 	@Override
 	public boolean isSuitableForForwardReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
 		return isSuitableForAllReasoning()
-				|| getReasoningTypeFor(type).equals(ReasoningType.FORWARD);
+				|| ReasoningType.getReasoningType(type).equals(ReasoningType.FORWARD);
 	}
 
 	@Override
 	public boolean isSuitableForAllReasoning() throws RodinDBException {
 		String type = getAttributeValue(REASONING_TYPE_ATTRIBUTE);
-		return getReasoningTypeFor(type).equals(
+		return ReasoningType.getReasoningType(type).equals(
 				ReasoningType.BACKWARD_AND_FORWARD);
 	}
 
@@ -332,7 +327,7 @@ public abstract class TheoryElement extends EventBElement implements
 	public void setReasoningType(ReasoningType type, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(REASONING_TYPE_ATTRIBUTE,
-				getStringReasoningType(type), monitor);
+				type.toString(), monitor);
 
 	}
 
@@ -411,24 +406,24 @@ public abstract class TheoryElement extends EventBElement implements
 	@Override
 	public RuleApplicability getApplicability() throws RodinDBException {
 		String value = getAttributeValue(APPLICABILITY_ATTRIBUTE);
-		return DatabaseUtilities.getRuleApplicability(value);
+		return RuleApplicability.getRuleApplicability(value);
 	}
 	
 	@Override
 	public void setApplicability(RuleApplicability applicability, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(APPLICABILITY_ATTRIBUTE, getString(applicability), monitor);
+		setAttributeValue(APPLICABILITY_ATTRIBUTE, applicability.toString(), monitor);
 	}
 	
 	@Override
 	public boolean isAutomatic() throws RodinDBException {
 		String value = getAttributeValue(APPLICABILITY_ATTRIBUTE);
-		return DatabaseUtilities.isAutomatic(getRuleApplicability(value));
+		return RuleApplicability.getRuleApplicability(value).isAutomatic();
 	}
 	
 	@Override
 	public boolean isInteractive() throws RodinDBException {
 		String value = getAttributeValue(APPLICABILITY_ATTRIBUTE);
-		return DatabaseUtilities.isInteractive(getRuleApplicability(value));
+		return RuleApplicability.getRuleApplicability(value).isInteractive();
 	}
 
 	/**
@@ -469,40 +464,5 @@ public abstract class TheoryElement extends EventBElement implements
 		}
 
 		return formula;
-	}
-
-	/**
-	 * Gets the string representation of the given reasoning type.
-	 * 
-	 * @param type
-	 *            the reasoning type
-	 * @return the string representation
-	 */
-	protected final String getStringReasoningType(ReasoningType type) {
-		switch (type) {
-		case BACKWARD:
-			return BACKWARD_REASONING_TYPE;
-		case FORWARD:
-			return FORWARD_REASONING_TYPE;
-		default:
-			return BACKWARD_AND_FORWARD_REASONING_TYPE;
-		}
-	}
-
-	/**
-	 * Returns the reasoning type corresponding to the type string.
-	 * 
-	 * @param type
-	 *            in string format
-	 * @return the reasoning type
-	 */
-	protected final ReasoningType getReasoningTypeFor(String type) {
-		if (type.equals(BACKWARD_REASONING_TYPE))
-			return ReasoningType.BACKWARD;
-		else if (type.equals(FORWARD_REASONING_TYPE))
-			return ReasoningType.FORWARD;
-		else if (type.equals(BACKWARD_AND_FORWARD_REASONING_TYPE))
-			return ReasoningType.BACKWARD_AND_FORWARD;
-		throw new IllegalArgumentException("unknown reasoning type " + type);
 	}
 }

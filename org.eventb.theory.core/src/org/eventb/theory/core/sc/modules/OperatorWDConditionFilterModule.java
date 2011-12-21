@@ -72,7 +72,7 @@ public class OperatorWDConditionFilterModule extends SCFilterModule{
 		}
 		if(notAllowed.size() != 0){
 			createProblemMarker(wdConditionElement, EventBAttributes.PREDICATE_ATTRIBUTE, 
-					TheoryGraphProblem.OpCannotReferToTheseTypes, GeneralUtilities.toString(notAllowed));
+					TheoryGraphProblem.OpCannotReferToTheseIdents, GeneralUtilities.toString(notAllowed));
 			return false;
 		}
 		return true;

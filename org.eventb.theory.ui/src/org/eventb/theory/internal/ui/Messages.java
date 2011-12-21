@@ -30,6 +30,25 @@ public class Messages {
 	public static String wizard_deployDescription;
 	public static String wizard_undeployTitle;
 	public static String wizard_undeployDescription;
+	public static String wizard_undeployPageMessage;
+	public static String wizard_deployPage2Message;
+	public static String wizard_errorProjMustBeSelected;
+	public static String wizard_errorTheoriesMustBeSelected;
+	public static String wizard_errorUndefined;
+	public static String wizard_deploySuccess;
+	
+	public static String wizard_errorProjMustBeValid; 
+	public static String wizard_errorProjMustBeWritable;
+	public static String wizard_errorTheoryNameMustBeSpecified;
+	public static String wizard_errorMachineNameClash;
+	public static String wizard_errorContextNameClash;
+	public static String wizard_errorTheoryNameClash;
+	public static String wizard_errorGlobalTheoryNameClash;
+	
+	public static String wizard_newTheoryDesc;
+	public static String wizard_newTheoryTitle;
+	
+	public static String wizard_rebuild;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.internal.ui.messages"; //$NON-NLS-1$
 

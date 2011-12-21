@@ -38,9 +38,9 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			OperatorWithSameSynJustBeenAdded(
 			IMarker.SEVERITY_ERROR,
 			Messages.scuser_OperatorWithSameSynJustBeenAdded), 
-			OpCannotReferToTheseTypes(
+			OpCannotReferToTheseIdents(
 			IMarker.SEVERITY_ERROR,
-			Messages.scuser_OpCannotReferToTheseTypes), 
+			Messages.scuser_OpCannotReferToTheseIdents), 
 			UntypedTheoryTypeParameterError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_UntypedTypeParameterError), 

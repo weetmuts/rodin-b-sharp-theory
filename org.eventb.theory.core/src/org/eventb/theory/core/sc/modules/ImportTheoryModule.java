@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,19 +21,19 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.TheoryHierarchyHelper;
+import org.eventb.theory.core.basis.SCTheoryDecorator;
 import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
 import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -112,7 +111,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 				continue;
 			}
 			// circularity
-			if (DatabaseUtilities.doesTheoryImportTheory(importRoot, targetRoot)) {
+			if (TheoryHierarchyHelper.doesTheoryImportTheory(importRoot, targetRoot)) {
 				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, TheoryGraphProblem.ImportDepCircularity,importRoot.getComponentName(),targetRoot.getComponentName());
 				isAccurate = false;
 				continue;
@@ -144,28 +143,24 @@ public class ImportTheoryModule extends SCProcessorModule {
 	 * @throws CoreException
 	 */
 	protected boolean filterImports(Set<ISCTheoryRoot> importedTheories) throws CoreException {
-		boolean isAccurate = true;;
+		boolean isAccurate = true;
+		// map imports with the theories closure
 		Map<IImportTheory, Set<ISCTheoryRoot>> importMap = new LinkedHashMap<IImportTheory, Set<ISCTheoryRoot>>();
 		// need to check for conflicts
-		Map<IImportTheory, Set<String>> contributedSymbols = new LinkedHashMap<IImportTheory, Set<String>>();
 		for (IImportTheory importTheory : importTheoriesDirectives) {
+			// TODO check if being temp affects things
 			ISCTheoryRoot referencedRoot = importTheory.getImportTheory();
-			Set<ISCTheoryRoot> allReferencedRoots = DatabaseUtilities
-					.importClosure(referencedRoot);
+			Set<ISCTheoryRoot> allReferencedRoots = TheoryHierarchyHelper.importClosure(referencedRoot);
 			allReferencedRoots.add(referencedRoot);
 			importMap.put(importTheory, allReferencedRoots);
-			contributedSymbols.put(importTheory, CoreUtilities.getSyntacticSymbolsOfHierarchy(referencedRoot));
 		}
 		// check redundant imports
-		IImportTheory[] importTheoriesArray = importTheoriesDirectives
-				.toArray(new IImportTheory[importTheoriesDirectives.size()]);
+		IImportTheory[] importTheoriesArray = importTheoriesDirectives.toArray(new IImportTheory[importTheoriesDirectives.size()]);
 		boolean[] redundancy = new boolean[importTheoriesArray.length];
 		for (int i = 0; i < redundancy.length - 1; i++) {
 			for (int k = i+1; k < redundancy.length; k++) {
-				Set<ISCTheoryRoot> importedRoots_i = importMap
-						.get(importTheoriesArray[i]);
-				Set<ISCTheoryRoot> importedRoots_k = importMap
-						.get(importTheoriesArray[k]);
+				Set<ISCTheoryRoot> importedRoots_i = importMap.get(importTheoriesArray[i]);
+				Set<ISCTheoryRoot> importedRoots_k = importMap.get(importTheoriesArray[k]);
 				if (importedRoots_i.containsAll(importedRoots_k)) {
 					redundancy[k] = true;
 				} else if (importedRoots_k.containsAll(importedRoots_i)) {
@@ -173,6 +168,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 				}
 			}
 		}
+		// we need this to issue all warnings to the user, we could have added it above!
 		for (int i = 0; i < redundancy.length; i++) {
 			IImportTheory currentImportTheory = importTheoriesArray[i];
 			if (redundancy[i]) {
@@ -181,24 +177,25 @@ public class ImportTheoryModule extends SCProcessorModule {
 						TheoryGraphProblem.IndRedundantImportWarn);
 				importTheoriesDirectives.remove(currentImportTheory);
 				importMap.remove(currentImportTheory);
-				contributedSymbols.remove(currentImportTheory);
 				continue;
 			}
 			importedTheories.add(currentImportTheory.getImportTheory());
 		}
-		// check for conflicts between hierarchies
+		// Now we have a clean list of imports
+		// need to check for mathematical language conflicts between them
 		importTheoriesArray = importTheoriesDirectives.toArray(new IImportTheory[importTheoriesDirectives.size()]);
 		for (int i = 0 ; i < importTheoriesArray.length - 1 ; i++){
-			Set<String> symbols_i = contributedSymbols.get(importTheoriesArray[i]);
+			ISCTheoryRoot theory = importTheoriesArray[i].getImportTheory();
+			SCTheoryDecorator hierarchy = new SCTheoryDecorator(theory);
 			for (int k = i+1 ; k < importTheoriesArray.length; k++){
-				Set<String> symbols_k = contributedSymbols.get(importTheoriesArray[k]);
-				if (!Collections.disjoint(symbols_i, symbols_k)){
+				ISCTheoryRoot otherTheory = importTheoriesArray[k].getImportTheory();
+				SCTheoryDecorator otherHierarchy = new SCTheoryDecorator(otherTheory);
+				if (hierarchy.isConflicting(otherHierarchy)){
 					// remove the theories causing conflict
 					importTheoriesDirectives.remove(importTheoriesArray[i]);
 					importTheoriesDirectives.remove(importTheoriesArray[k]);
 					importedTheories.remove(importTheoriesArray[i].getImportTheory());
 					importedTheories.remove(importTheoriesArray[k].getImportTheory());
-					
 					createProblemMarker(importTheoriesArray[i], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, 
 							TheoryGraphProblem.ImportConflict, importTheoriesArray[i].getImportTheory().getComponentName(),
 							importTheoriesArray[k].getImportTheory().getComponentName());

@@ -6,11 +6,13 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -21,7 +23,10 @@ import org.eventb.theory.internal.ui.TheoryUIUtils;
 public class DeployWizardPageTwo extends WizardPage {
 	
 	private TableViewer theoriesTableViewer;
-
+	private Button rebuildCheckButton;
+	
+	private Set<ISCTheoryRoot> theoryRoots;
+	
 	/**
 	 * Create the wizard.
 	 */
@@ -30,6 +35,13 @@ public class DeployWizardPageTwo extends WizardPage {
 		setTitle(Messages.wizard_deployTitle);
 		setDescription(Messages.wizard_deployDescription);
 	}
+	
+	public DeployWizardPageTwo(Set<ISCTheoryRoot> theoryRoots) {
+		super("deployWizardPage");
+		setTitle(Messages.wizard_deployTitle);
+		setDescription(Messages.wizard_deployDescription);
+		this.theoryRoots = theoryRoots;
+	}
 
 	/**
 	 * Create contents of the wizard.
@@ -37,17 +49,18 @@ public class DeployWizardPageTwo extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new GridLayout(2, false));
+		container.setLayout(new GridLayout(3, false));
 		Label label = new Label(container, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
-		label.setText("The following theories will be deployed:");
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1));
+		label.setText(Messages.wizard_deployPage2Message);
 		new Label(container, SWT.NONE);
 		
 		theoriesTableViewer = new TableViewer(container, SWT.BORDER);
 		Table table = theoriesTableViewer.getTable();
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 2));
+		rebuildCheckButton = new Button(container, SWT.CHECK);
+		rebuildCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+		rebuildCheckButton.setText(Messages.wizard_rebuild);
 		setup();
 		setControl(container);
 	}
@@ -55,8 +68,14 @@ public class DeployWizardPageTwo extends WizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible){
-			DeployWizardPageOne pageOne = (DeployWizardPageOne) getPreviousPage();
-			theoriesTableViewer.setInput(pageOne.getSelectedTheories());
+			IWizardPage previousPage = getPreviousPage();
+			if (previousPage == null){
+				theoriesTableViewer.setInput(theoryRoots);
+			}
+			else {
+				DeployWizardPageOne pageOne = (DeployWizardPageOne) previousPage;
+				theoriesTableViewer.setInput(pageOne.getSelectedTheories());
+			}
 		}
 		super.setVisible(visible);
 	}
@@ -91,6 +110,12 @@ public class DeployWizardPageTwo extends WizardPage {
 				return root.getElementName();
 			}
 		});
+		// default to selected 
+		rebuildCheckButton.setSelection(true);
+	}
+	
+	public boolean rebuildProject(){
+		return rebuildCheckButton.getSelection();
 	}
 
 }

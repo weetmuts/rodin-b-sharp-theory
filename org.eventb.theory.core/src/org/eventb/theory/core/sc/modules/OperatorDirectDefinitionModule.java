@@ -206,7 +206,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 				if (notAllowed.size() != 0) {
 					createProblemMarker(definition,
 							TheoryAttributes.FORMULA_ATTRIBUTE,
-							TheoryGraphProblem.OpCannotReferToTheseTypes,
+							TheoryGraphProblem.OpCannotReferToTheseIdents,
 							GeneralUtilities.toString(notAllowed));
 					return null;
 				}

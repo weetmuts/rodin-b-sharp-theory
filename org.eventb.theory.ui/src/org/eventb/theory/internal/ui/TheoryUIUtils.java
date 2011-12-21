@@ -37,7 +37,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -295,19 +294,6 @@ public class TheoryUIUtils {
 		}
 
 		public abstract T get(S s) throws CoreException;
-	}
-
-	/**
-	 * Not strictly needed as menu item to deploy may not be enabled.
-	 */
-	public static boolean createDeployTheoryErrorDialog(Shell shell, ITheoryRoot root) {
-		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
-		if (!DatabaseUtilities.isTheoryDeployable(scRoot)) {
-			MessageDialog.openError(shell, "Error",
-					"Cannot deploy inaccurate or empty theory '" + root.getComponentName() + "'.");
-			return false;
-		}
-		return true;
 	}
 
 	/**

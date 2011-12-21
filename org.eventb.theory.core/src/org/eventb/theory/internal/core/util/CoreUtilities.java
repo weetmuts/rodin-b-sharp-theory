@@ -9,10 +9,7 @@ package org.eventb.theory.internal.core.util;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -38,15 +35,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
-import org.eventb.theory.core.DatabaseUtilities;
-import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaElement;
-import org.eventb.theory.core.IFormulaExtensionsSource;
-import org.eventb.theory.core.ISCConstructorArgument;
-import org.eventb.theory.core.ISCDatatypeConstructor;
-import org.eventb.theory.core.ISCDatatypeDefinition;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -54,7 +43,6 @@ import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -388,84 +376,4 @@ public class CoreUtilities {
 
 		return errorIssued;
 	}
-
-	/**
-	 * Returns the set of all syntax symbols specified in the given source.
-	 * 
-	 * @param source
-	 *            the formula extensions source
-	 * @return the set of syntactic symbols
-	 * @throws CoreException
-	 */
-	public static Set<String> getSyntaxSymbols(IFormulaExtensionsSource source) throws CoreException {
-		Set<String> set = new TreeSet<String>();
-		// start by datatypes
-		ISCDatatypeDefinition[] datatypeDefinitions = source.getSCDatatypeDefinitions();
-		for (ISCDatatypeDefinition definition : datatypeDefinitions) {
-			set.add(definition.getIdentifierString());
-			ISCDatatypeConstructor[] constructors = definition.getConstructors();
-			for (ISCDatatypeConstructor constructor : constructors) {
-				set.add(constructor.getIdentifierString());
-				ISCConstructorArgument arguments[] = constructor.getConstructorArguments();
-				for (ISCConstructorArgument argument : arguments) {
-					set.add(argument.getIdentifierString());
-				}
-			}
-		}
-		// next operators
-		ISCNewOperatorDefinition[] operatorDefinitions = source.getSCNewOperatorDefinitions();
-		for (ISCNewOperatorDefinition definition : operatorDefinitions) {
-			set.add(definition.getLabel());
-		}
-		return set;
-	}
-
-	/**
-	 * Returns the syntactic symbols of the hierarchy up to the specified leaf theory.
-	 * 
-	 * @param leaf
-	 *            the leaf theory
-	 * @return all syntactic symbols
-	 * @throws CoreException
-	 */
-	public static Set<String> getSyntacticSymbolsOfHierarchy(ISCTheoryRoot leaf) throws CoreException {
-		Set<ISCTheoryRoot> imported = DatabaseUtilities.importClosure(leaf);
-		Set<String> set = new TreeSet<String>();
-		set.addAll(getSyntaxSymbols(leaf));
-		for (ISCTheoryRoot root : imported) {
-			Set<String> rootSet = getSyntaxSymbols(root);
-			if (rootSet != null)
-				set.addAll(rootSet);
-		}
-		return set;
-	}
-
-	/**
-	 * Returns the set of syntax symbols defined in other deployed hierarchies with respect to <code>hierarchyToIgnoreLeaf</code>.
-	 * <p> As an example, given a SC theory <code>T1</code> that import SC theory <code>T2</code>, and <code>T3</code> is a deployed theory.
-	 * From the standpoint of <code>T1</code>, this method returns the syntactic contributions of <code>T3</code> but not <code>T2</code>.
-	 * @param hierarchyToIgnoreLeaf the SC theory 
-	 * @return the set of syntax symbols from other deployed hierarchies
-	 * @throws CoreException
-	 */
-	public static Map<String, Set<String>> getDeployedSyntaxSymbolsOfOtherHierarchies(ISCTheoryRoot hierarchyToIgnoreLeaf) throws CoreException {
-		Set<ISCTheoryRoot> hierarchyToIgnore = DatabaseUtilities.importClosure(hierarchyToIgnoreLeaf);
-		// ADD this leaf so that anything named like it will be ignored
-		hierarchyToIgnore.add(hierarchyToIgnoreLeaf);
-		Set<String> names = DatabaseUtilities.getNames(hierarchyToIgnore);
-		IRodinProject project = hierarchyToIgnoreLeaf.getRodinProject();
-		IDeployedTheoryRoot[] deployedRoots = 
-			DatabaseUtilities.getDeployedTheories(project, 
-					DatabaseUtilities.getExistingDeployedTheoriesFilter());
-		
-		Map<String, Set<String>> deployedMap = new TreeMap<String, Set<String>>();
-		for (IDeployedTheoryRoot root : deployedRoots) {
-			if (!names.contains(root.getComponentName())) {
-				Set<String> contrib = getSyntaxSymbols(root);
-				deployedMap.put(root.getComponentName(), contrib);
-			}
-		}
-		return deployedMap;
-	}
-
 }

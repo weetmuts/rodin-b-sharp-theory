@@ -5,7 +5,6 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
@@ -31,7 +30,7 @@ public class InferenceRulePrettyPrinter extends DefaultPrettyPrinter {
 			IInferenceRule rule = (IInferenceRule) elt;
 			try {
 				String label = rule.getLabel();
-				String app = DatabaseUtilities.getString(rule.getApplicability());
+				String app = rule.getApplicability().toString();
 				String desc = rule.getDescription();
 				ps.appendString(wrapString("\u2022"+label), 
 						getHTMLBeginForCSSClass(INF_LABEL, //

@@ -72,7 +72,7 @@ public class TheoremsRetriever {
 		Map<IExtensionRulesSource, List<IDeployedTheorem>> theories = theorems.get(rodinProject);
 		if (theories != null){
 			Set<IExtensionRulesSource> keySet = theories.keySet();
-			return DatabaseUtilities.getNames(keySet).toArray(new String[keySet.size()]);
+			return DatabaseUtilities.getElementNames(keySet).toArray(new String[keySet.size()]);
 		}
 		return new String[0];
 	}

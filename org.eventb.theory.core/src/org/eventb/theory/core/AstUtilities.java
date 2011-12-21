@@ -27,6 +27,7 @@ import org.eventb.theory.core.maths.IOperatorExtension;
  */
 public class AstUtilities {
 
+	// the currently supported notations
 	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] { Notation.PREFIX.toString(), Notation.INFIX.toString() };
 
 	/**

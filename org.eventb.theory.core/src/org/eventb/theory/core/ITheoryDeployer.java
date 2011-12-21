@@ -12,9 +12,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Common protocol for a theory deployer.
+ * Common protocol for theories deployer.
  * 
- * <p> A theory deployer can deploy a statically checked theory file to a certain project.
+ * <p> A theory deployer can deploy statically checked theory files to a certain project.
  * <p> Information about the success of the deployment is also provided by the deployer.
  * 
  * <p> This interface is not intended to be implemented by clients.

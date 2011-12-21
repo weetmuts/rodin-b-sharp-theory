@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
-import static org.eventb.theory.core.DatabaseUtilities.*;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.SCFilterModule;
@@ -17,6 +15,7 @@ import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.theory.core.IRule;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.rodinp.core.IRodinElement;
@@ -88,7 +87,7 @@ public abstract class RuleFilterModule<R extends IRule> extends SCFilterModule {
 		}
 		
 		symbolInfo.setAttributeValue(TheoryAttributes.APPLICABILITY_ATTRIBUTE,
-				getString(getRuleApplicability(isAuto, isInter)));
+				RuleApplicability.getRuleApplicability(isAuto, isInter).toString());
 		String desc = rule.getParent().getElementName() + "." + rule.getLabel();
 		if (!rule.hasDescription()
 				|| (rule.hasDescription() && rule.getDescription().equals(

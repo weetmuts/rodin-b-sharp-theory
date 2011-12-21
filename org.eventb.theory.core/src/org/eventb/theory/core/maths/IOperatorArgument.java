@@ -58,7 +58,7 @@ public interface IOperatorArgument{
 	public FreeIdentifier toFreeIdentifier(FormulaFactory factory);
 	
 	/**
-	 * Returns a free identifier who mirrors this operator argument with a different name. 
+	 * Returns a free identifier which mirrors this operator argument with a different name. 
 	 * @param newName the new name
 	 * @param factory the formula factory
 	 * @return the substitute free identifier

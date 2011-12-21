@@ -23,6 +23,7 @@ import org.eventb.core.IEventBProject;
 import org.eventb.internal.ui.RodinProjectSelectionDialog;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IRodinElement;
@@ -49,8 +50,8 @@ public class NewTheoryWizardPage extends WizardPage {
 
 	public NewTheoryWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("New Event-B Theory");
-		setDescription("This wizard creates a new theory file with .but extension.");
+		setTitle(Messages.wizard_newTheoryTitle);
+		setDescription(Messages.wizard_newTheoryDesc);
 		this.selection = selection;
 	}
 
@@ -125,24 +126,24 @@ public class NewTheoryWizardPage extends WizardPage {
 		final String projectName = getProjectName();
 		String theoryName = getTheoryName();
 		if (projectName.length() == 0) {
-			updateStatus("Project must be specified");
+			updateStatus(Messages.wizard_errorProjMustBeSelected);
 			return;
 		}
 
 		IRodinProject rodinProject = RodinCore.getRodinDB()
 				.getRodinProject(projectName);
 		if (!rodinProject.exists()) {
-			updateStatus("Project name must be valid");
+			updateStatus(Messages.wizard_errorProjMustBeValid);
 			return;
 		}
 
 		if (rodinProject.isReadOnly()) {
-			updateStatus("Project must be writable");
+			updateStatus(Messages.wizard_errorProjMustBeWritable);
 			return;
 		}
 
 		if (theoryName.length() == 0) {
-			updateStatus("Theory name must be specified");
+			updateStatus(Messages.wizard_errorTheoryNameMustBeSpecified);
 			return;
 		}
 		final IEventBProject evbProject = (IEventBProject) rodinProject
@@ -150,20 +151,16 @@ public class NewTheoryWizardPage extends WizardPage {
 		final IRodinFile machineFile = evbProject.getMachineFile(theoryName);
 		final IRodinFile contextFile = evbProject.getContextFile(theoryName);
 		final IRodinFile theoryFile = getTheoryFile(rodinProject, theoryName);
-		if (machineFile == null || contextFile == null) {
-			updateStatus("Theory name must be valid");
-			return;
-		}
 		if (machineFile.exists()) {
-			updateStatus("There is already a machine with this name");
+			updateStatus(Messages.wizard_errorMachineNameClash);
 			return;
 		}
 		if (contextFile.exists()) {
-			updateStatus("There is already a context with this name");
+			updateStatus(Messages.wizard_errorContextNameClash);
 			return;
 		}
 		if (theoryFile.exists()) {
-			updateStatus("There is already a theory with this name");
+			updateStatus(Messages.wizard_errorTheoryNameClash);
 			return;
 		}
 		if (!DatabaseUtilities.isMathExtensionsProject(rodinProject)){
@@ -171,7 +168,7 @@ public class NewTheoryWizardPage extends WizardPage {
 			try {
 				for (ITheoryRoot root : mathsProject.getRootElementsOfType(ITheoryRoot.ELEMENT_TYPE)){
 					if (root.getElementName().equals(theoryName)){
-						updateStatus("There is already a theory with this name in 'MathExtensions' project");
+						updateStatus(Messages.wizard_errorGlobalTheoryNameClash);
 						return;
 					}
 				}

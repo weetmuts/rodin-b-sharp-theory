@@ -32,7 +32,33 @@ public interface IReasoningTypeElement extends IInternalElement{
 	 * @author maamria
 	 *
 	 */
-	public static enum ReasoningType {BACKWARD, FORWARD, BACKWARD_AND_FORWARD}
+	public static enum ReasoningType {BACKWARD, FORWARD, BACKWARD_AND_FORWARD;
+	
+		public String toString() {
+			switch (this) {
+			case BACKWARD:
+				return "backward";
+			case FORWARD:
+				return "forward";
+			default:
+				return "both";
+			}
+		};
+	
+		public static ReasoningType getReasoningType(String typeString){
+			if ("backward".equals(typeString)){
+				return BACKWARD;
+			}
+			if ("forward".equals(typeString)){
+				return FORWARD;
+			}
+			if ("both".equals(typeString)){
+				return BACKWARD_AND_FORWARD;
+			}
+			throw new IllegalArgumentException("unknown reasoning type " + typeString);
+		}
+		
+	}
 	
 	/**
 	 * Returns whether the attribute is present.

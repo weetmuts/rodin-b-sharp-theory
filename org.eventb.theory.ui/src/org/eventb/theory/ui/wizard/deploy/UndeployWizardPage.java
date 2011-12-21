@@ -17,13 +17,15 @@ import org.eclipse.swt.widgets.Table;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
+import org.eclipse.swt.widgets.Button;
 
 public class UndeployWizardPage extends WizardPage {
 
 	private TableViewer theoriesTableViewer;
+	private Button rebuildCheckButton;
 	
 	private Set<IDeployedTheoryRoot> deployedRoots;
-
+	
 	/**
 	 * Create the wizard.
 	 */
@@ -41,17 +43,19 @@ public class UndeployWizardPage extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new GridLayout(2, false));
+		container.setLayout(new GridLayout(4, false));
 		Label label = new Label(container, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
-		label.setText("The following theories will be undeployed:");
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 4, 1));
+		label.setText(Messages.wizard_undeployPageMessage);
 		new Label(container, SWT.NONE);
 
 		theoriesTableViewer = new TableViewer(container, SWT.BORDER);
 		Table table = theoriesTableViewer.getTable();
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+
+		rebuildCheckButton = new Button(container, SWT.CHECK);
+		rebuildCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
+		rebuildCheckButton.setText(Messages.wizard_rebuild);
 		setup();
 		setControl(container);
 	}
@@ -89,6 +93,11 @@ public class UndeployWizardPage extends WizardPage {
 			}
 		});
 		theoriesTableViewer.setInput(deployedRoots);
+		rebuildCheckButton.setSelection(true);
+	}
+	
+	public boolean rebuildProject(){
+		return rebuildCheckButton.getSelection();
 	}
 
 }

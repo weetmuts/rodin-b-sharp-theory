@@ -24,15 +24,64 @@ public interface IApplicabilityElement extends IInternalElement{
 	
 	/**
 	 * Enumeration for applicability types.
-	 * <p> Methods {@link DatabaseUtilities}.getString({@link RuleApplicability}),
-	 * {@link DatabaseUtilities}.getRuleApplicability({@link String}) and 
-	 * {@link DatabaseUtilities}.getRuleApplicability(boolean, boolean) provide a neat API for handling 
-	 * applicability objects.
 	 * @author maamria
 	 *
 	 */
 	public static enum RuleApplicability{
-		AUTOMATIC, INTERACTIVE, AUTOMATIC_AND_INTERACTIVE
+		AUTOMATIC, INTERACTIVE, AUTOMATIC_AND_INTERACTIVE;
+		
+		public String toString() {
+			switch (this) {
+			case AUTOMATIC:
+				return "automatic";
+			case INTERACTIVE:
+				return "interactive";
+			case AUTOMATIC_AND_INTERACTIVE:
+				return "both";
+			}
+			return null;
+		}
+		
+		public static String[] getPossibleApplicabilitiesAsStrings(){
+			return new String[]{"automatic", "interactive", "both"};
+		}
+		
+		public static RuleApplicability getRuleApplicability(String str) {
+			if (str.equalsIgnoreCase("automatic")) {
+				return AUTOMATIC;
+			} else if (str.equalsIgnoreCase("interactive")) {
+				return INTERACTIVE;
+			} else if (str.equalsIgnoreCase("both")) {
+				return AUTOMATIC_AND_INTERACTIVE;
+			}
+			return INTERACTIVE;
+		}
+		
+		public static RuleApplicability getRuleApplicability(boolean isAutomatic, boolean isInteractive) {
+			if (isAutomatic && isInteractive)
+				return AUTOMATIC_AND_INTERACTIVE;
+			if (isAutomatic)
+				return AUTOMATIC;
+			else
+				return INTERACTIVE;
+		}
+
+		/**
+		 * Returns whether this applicability enables automatic application.
+		 * @return whether this applicability enables automatic application
+		 */
+		public boolean isAutomatic() {
+			return equals(AUTOMATIC) || equals(AUTOMATIC_AND_INTERACTIVE);
+		}
+
+		/**
+		 * Returns whether this applicability enables interactive application.
+		 * @return whether this applicability enables interactive application
+		 */
+		public boolean isInteractive() {
+			return equals(INTERACTIVE) || equals(AUTOMATIC_AND_INTERACTIVE);
+		}
+		
 	}
 	
 	/**

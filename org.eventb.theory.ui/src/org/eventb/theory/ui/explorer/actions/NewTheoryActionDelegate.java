@@ -1,9 +1,7 @@
 package org.eventb.theory.ui.explorer.actions;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -17,7 +15,6 @@ import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.wizard.NewTheoryWizard;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 public class NewTheoryActionDelegate implements IViewActionDelegate {
 
@@ -30,15 +27,8 @@ public class NewTheoryActionDelegate implements IViewActionDelegate {
 
 	public void run(IAction action) {
 		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-				
-				@Override
-				public void run(IProgressMonitor arg0) throws CoreException {
-					DatabaseUtilities.ensureDeploymentProjectExists();
-					
-				}
-			}, null);
-		} catch (RodinDBException e) {
+			DatabaseUtilities.ensureDeploymentProjectExists();
+		} catch (CoreException e) {
 			TheoryUIUtils.log(e, "Error while ensuring existence of MathExtensions project");
 		}
 		BusyIndicator.showWhile(view.getViewSite().getShell().getDisplay(), new Runnable() {
@@ -52,11 +42,8 @@ public class NewTheoryActionDelegate implements IViewActionDelegate {
 					
 				}
 				NewTheoryWizard wizard = new NewTheoryWizard();
-				wizard.init(EventBUIPlugin.getDefault().getWorkbench(),
-						sel);
-				WizardDialog dialog = new WizardDialog(EventBUIPlugin
-						.getActiveWorkbenchShell(), wizard);
-				dialog.create();
+				wizard.init(EventBUIPlugin.getDefault().getWorkbench(),sel);
+				WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.open();
 			}
 		});

@@ -2,11 +2,11 @@ package org.eventb.theory.ui.wizard.deploy;
 
 import java.util.Set;
 
-import org.eclipse.jface.wizard.Wizard;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.internal.ui.Messages;
+import org.rodinp.core.IRodinProject;
 
-public class DeployWizard extends Wizard {
+public class DeployWizard extends AbstractDeployWizard {
 
 	private DeployWizardPageOne pageOne;
 	private DeployWizardPageTwo pageTwo;
@@ -23,17 +23,12 @@ public class DeployWizard extends Wizard {
 		addPage(pageTwo);
 	}
 
-	@Override
-	public boolean performFinish() {
-		return true;
-	}
-
 	public Set<ISCTheoryRoot> selectedTheories() {
 		return pageOne.getSelectedTheories();
 	}
 
 	public boolean rebuildProject() {
-		return pageOne.rebuildProject();
+		return pageTwo.rebuildProject();
 	}
 
 	@Override
@@ -43,6 +38,11 @@ public class DeployWizard extends Wizard {
 			return false;
 		else
 			return true;
+	}
+
+	@Override
+	public IRodinProject getRodinProject() {
+		return pageOne.getRodinProject();
 	}
 
 }

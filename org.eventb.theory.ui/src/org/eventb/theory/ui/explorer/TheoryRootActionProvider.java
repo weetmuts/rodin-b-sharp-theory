@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -30,27 +31,31 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.ui.ITheoryImages;
 import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
+import org.eventb.theory.ui.wizard.deploy.SimpleDeployWizard;
 import org.eventb.theory.ui.wizard.deploy.UndeployWizard;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.internal.explorer.navigator.actionProviders.ActionCollection;
 
 @SuppressWarnings("restriction")
 public class TheoryRootActionProvider extends CommonActionProvider {
-	
-    protected ICommonActionExtensionSite site;
-    
-    protected StructuredViewer viewer;
-	
+
+	protected ICommonActionExtensionSite site;
+
+	protected StructuredViewer viewer;
+
 	private static String GROUP_META = "meta";
 	private String GROUP_DELETE = "delete";;
 
@@ -65,9 +70,97 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionCollection.getOpenAction(site));
 		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH, buildOpenWithMenu());
 		menu.add(new Separator(GROUP_META));
+		menu.appendToGroup(GROUP_META, getDeployTheoryAction());
 		menu.appendToGroup(GROUP_META, getUndeployTheoryAction());
-		menu.add(new Separator(GROUP_DELETE ));
+		menu.add(new Separator(GROUP_DELETE));
 		menu.appendToGroup(GROUP_DELETE, getDeleteAction(site));
+	}
+
+	private Action getDeployTheoryAction() {
+		Action action = new Action() {
+			public void run() {
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				if (!(sel.isEmpty())) {
+					IRodinProject project = null;
+					final Set<ISCTheoryRoot> toDeploy = new LinkedHashSet<ISCTheoryRoot>();
+					Set<ISCTheoryRoot> errorTheories = new LinkedHashSet<ISCTheoryRoot>();
+					for (Object obj : sel.toArray()) {
+						if (obj instanceof ITheoryRoot) {
+							ITheoryRoot theory = (ITheoryRoot) obj;
+							project = theory.getRodinProject();
+							ISCTheoryRoot scRoot = theory.getSCTheoryRoot();
+							if (!DatabaseUtilities.doesTheoryHaveErrors(scRoot)) {
+								toDeploy.add(scRoot);
+								try {
+									Set<ISCTheoryRoot> allTheoriesToDeploy = TheoryHierarchyHelper.getAllTheoriesToDeploy(scRoot);
+									for (ISCTheoryRoot otherTheory : allTheoriesToDeploy) {
+										if (!DatabaseUtilities.doesTheoryHaveErrors(otherTheory)) {
+											toDeploy.add(otherTheory);
+										} else {
+											errorTheories.add(otherTheory);
+										}
+									}
+									toDeploy.addAll(allTheoriesToDeploy);
+								} catch (CoreException e) {
+									MessageDialog.openError(site.getViewSite().getShell(), "Deploy Error","Could not deploy theories.");
+									TheoryUIUtils.log(e, "unable to calculate set of theories to deploy");
+									return;
+								}
+							} else {
+								errorTheories.add(scRoot);
+							}
+						}
+					}
+					if (!errorTheories.isEmpty()) {
+						MessageDialog.openError(site.getViewSite().getShell(), "Deploy Error",
+								"Some of the theories you selected have errors: "+ DatabaseUtilities.getElementNames(errorTheories));
+					} else {
+						final IRodinProject rodinProject;
+						if (project != null) {
+							rodinProject = project;
+							BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
+								public void run() {
+									SimpleDeployWizard wizard = new SimpleDeployWizard(rodinProject, toDeploy);
+									WizardDialog dialog = new WizardDialog(site.getViewSite().getShell(), wizard);
+									dialog.setTitle(wizard.getWindowTitle());
+									dialog.open();
+								}
+							});
+						}
+					}
+				}
+			}
+
+			@Override
+			public boolean isEnabled() {
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				if (!(sel.isEmpty())) {
+					IRodinProject project = null;
+					for (Object obj : sel.toArray()) {
+						if (!(obj instanceof ITheoryRoot)) {
+							return false;
+						}
+						ITheoryRoot root = (ITheoryRoot) obj;
+						if (project == null) {
+							project = root.getRodinProject();
+						}
+						// from the same project
+						if (!root.getRodinProject().equals(project)) {
+							return false;
+						}
+						if (!(root.getSCTheoryRoot().exists())) {
+							return false;
+						}
+					}
+					return true;
+				} else
+					return false;
+			}
+		};
+		action.setText("Deploy");
+		action.setToolTipText("Deploy theory and its dependencies");
+		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_DTHEORY_PATH));
+		return action;
 	}
 
 	private Action getUndeployTheoryAction() {
@@ -75,40 +168,65 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
 				if (!(sel.isEmpty())) {
+					IRodinProject project = null;
 					final Set<IDeployedTheoryRoot> toUndeploy = new LinkedHashSet<IDeployedTheoryRoot>();
-					for (Object obj : sel.toArray()){
-						if (obj instanceof ITheoryRoot){
+					for (Object obj : sel.toArray()) {
+						if (obj instanceof ITheoryRoot) {
 							ITheoryRoot theory = (ITheoryRoot) obj;
+							project = theory.getRodinProject();
 							IDeployedTheoryRoot deployedRoot = theory.getDeployedTheoryRoot();
-							if(deployedRoot.exists()){
+							if (deployedRoot.exists()) {
 								toUndeploy.add(deployedRoot);
-								toUndeploy.addAll(DatabaseUtilities.getAllTheoriesToUndeploy(deployedRoot));
+								try {
+									toUndeploy.addAll(TheoryHierarchyHelper.getAllTheoriesToUndeploy(deployedRoot));
+								} catch (CoreException e) {
+									MessageDialog.openError(site.getViewSite().getShell(), "Undeploy Error", "Could not undeploy theories.");
+									TheoryUIUtils.log(e, "unable to calculate set of theories to undeploy");
+									return;
+								}
 							}
 						}
 					}
-					BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
-						public void run() {
-							UndeployWizard wizard = new UndeployWizard(toUndeploy);
-							WizardDialog dialog = new WizardDialog(site.getViewSite().getShell(), wizard);
-							dialog.setTitle(wizard.getWindowTitle());
-							dialog.open();
-						}
-					});
+					final IRodinProject rodinProject;
+					if (project != null) {
+						rodinProject = project;
+						BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
+							public void run() {
+								UndeployWizard wizard = new UndeployWizard(rodinProject, toUndeploy);
+								WizardDialog dialog = new WizardDialog(site.getViewSite().getShell(), wizard);
+								dialog.setTitle(wizard.getWindowTitle());
+								dialog.open();
+							}
+						});
+					}
+
 				}
 			}
-			
+
 			@Override
 			public boolean isEnabled() {
 				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
 				if (!(sel.isEmpty())) {
-					if (sel.getFirstElement() instanceof ITheoryRoot) {
-						ITheoryRoot theory = (ITheoryRoot) sel.getFirstElement();
-						if(theory.hasDeployedVersion()){
-							return true;
+					IRodinProject project = null;
+					for (Object obj : sel.toArray()) {
+						if (!(obj instanceof ITheoryRoot)) {
+							return false;
+						}
+						ITheoryRoot root = (ITheoryRoot) obj;
+						if (project == null) {
+							project = root.getRodinProject();
+						}
+						// from the same project
+						if (!root.getRodinProject().equals(project)) {
+							return false;
+						}
+						if (!(root.hasDeployedVersion())) {
+							return false;
 						}
 					}
-				}
-				return false;
+					return true;
+				} else
+					return false;
 			}
 		};
 		action.setText("Undeploy");
@@ -148,28 +266,31 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 						if (element instanceof IRodinFile) {
 							IRodinFile rodinFile = (IRodinFile) element;
 							if (answer != YesToAllMessageDialog.YES_TO_ALL) {
-								answer = YesToAllMessageDialog.openYesNoToAllQuestion(site.getViewSite().getShell(), "Confirm File Delete",
-										"Are you sure you want to delete file '" + rodinFile.getElementName() + "' in project '"
-												+ element.getParent().getElementName() + "' ?");
+								answer = YesToAllMessageDialog.openYesNoToAllQuestion(site.getViewSite().getShell(),
+										"Confirm File Delete",
+										"Are you sure you want to delete theory file '" + rodinFile.getElementName()
+												+ "' in project '" + element.getParent().getElementName() + "' ?");
 							}
 							if (answer == YesToAllMessageDialog.NO_TO_ALL)
 								break;
-							// FIXED BUG here when u press the close button (X) it deletes the theory anyway
+							// FIXED BUG here when u press the close button (X)
+							// it deletes the theory anyway
 							if (answer != YesToAllMessageDialog.NO && answer != -1) {
 								try {
 									TheoryUIUtils.closeOpenedEditors(rodinFile);
 									// delete the deployed version
-									if(rodinFile.getRootElementType().equals(ITheoryRoot.ELEMENT_TYPE)){
+									if (rodinFile.getRootElementType().equals(ITheoryRoot.ELEMENT_TYPE)) {
 										ITheoryRoot theoryRoot = (ITheoryRoot) rodinFile.getRoot();
-										
+
 										IRodinFile deployedFile = rodinFile.getRodinProject().getRodinFile(
-												DatabaseUtilities.getDeployedTheoryFullName(theoryRoot.getComponentName()));
-										if (deployedFile.exists()){
+												DatabaseUtilities.getDeployedTheoryFullName(theoryRoot
+														.getComponentName()));
+										if (deployedFile.exists()) {
 											deployedFile.delete(true, new NullProgressMonitor());
 										}
 									}
 									rodinFile.delete(true, new NullProgressMonitor());
-									
+
 								} catch (PartInitException e) {
 									MessageDialog.openError(null, "Error", "Could not delete file");
 								} catch (RodinDBException e) {
@@ -187,26 +308,24 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 		deleteAction.setImageDescriptor(EventBImage.getImageDescriptor(IEventBSharedImages.IMG_DELETE_PATH));
 		return deleteAction;
 	}
-	
+
 	@Override
-    public void init(ICommonActionExtensionSite aSite) {
-        super.init(aSite);
-        site = aSite;
+	public void init(ICommonActionExtensionSite aSite) {
+		super.init(aSite);
+		site = aSite;
 		viewer = aSite.getStructuredViewer();
 	}
 
-    /**
-     * Builds an Open With menu.
-     * 
-     * @return the built menu
-     */
+	/**
+	 * Builds an Open With menu.
+	 * 
+	 * @return the built menu
+	 */
 	public MenuManager buildOpenWithMenu() {
 		MenuManager menu = new MenuManager("Open With", ICommonMenuConstants.GROUP_OPEN_WITH);
 		ISelection selection = site.getStructuredViewer().getSelection();
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
-		menu.add(new OpenWithMenu(TheoryUIPlugIn.getActivePage(),
-				((IInternalElement) obj).getRodinFile().getResource()));
+		menu.add(new OpenWithMenu(TheoryUIPlugIn.getActivePage(), ((IInternalElement) obj).getRodinFile().getResource()));
 		return menu;
 	}
-	
 }
