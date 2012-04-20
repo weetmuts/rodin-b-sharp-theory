@@ -2,16 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eventb.theory.rbp;singleton:=true
-Bundle-Version: 1.3.1
+Bundle-Version: 1.3.2
 Bundle-Activator: org.eventb.theory.rbp.plugin.RbPPlugin
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eventb.core.ast;bundle-version="2.2.0",
  org.rodinp.core;bundle-version="1.4.0",
  org.eventb.core;bundle-version="2.2.0",
- org.eventb.theory.core;bundle-version="1.3.1",
+ org.eventb.theory.core;bundle-version="1.3.2",
  org.eventb.ui;bundle-version="2.0.2",
- org.eventb.core.pm;bundle-version="1.3.1"
+ org.eventb.core.pm;bundle-version="1.3.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.jface.resource,

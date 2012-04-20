@@ -20,7 +20,7 @@ import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
  * 
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractOperatorExtension implements IOperatorExtension {
+public abstract class AbstractOperatorExtension implements IOperatorExtension  {
 	
 	protected OperatorExtensionProperties properties;
 	private String operatorGroup;

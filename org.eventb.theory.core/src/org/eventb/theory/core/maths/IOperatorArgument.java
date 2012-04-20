@@ -25,7 +25,7 @@ import org.eventb.core.ast.Type;
  * @author maamria
  *
  */
-public interface IOperatorArgument{
+public interface IOperatorArgument {
 
 	/**
 	 * Returns the index of this operator argument.
