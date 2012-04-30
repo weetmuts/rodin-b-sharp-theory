@@ -25,7 +25,7 @@ import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.theory.core.wd.DComputer;
+import org.eventb.core.wd.DComputer;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;

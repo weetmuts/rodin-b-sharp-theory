@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eventb.core.pm;singleton:=true
-Bundle-Version: 1.3.2
+Bundle-Version: 2.0.0
 Bundle-Vendor: %Bundle-Vendor
-Require-Bundle: org.eclipse.core.runtime,
- org.eventb.core.ast;bundle-version="2.2.0"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
+ org.eventb.core.ast;bundle-version="2.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eventb.core.internal.pm;x-friends:="org.eventb.core.pm.tests",
  org.eventb.core.pm,

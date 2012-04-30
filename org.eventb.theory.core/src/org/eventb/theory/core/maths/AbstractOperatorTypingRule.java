@@ -33,7 +33,7 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.wd.DMediator;
+import org.eventb.core.wd.DMediator;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
