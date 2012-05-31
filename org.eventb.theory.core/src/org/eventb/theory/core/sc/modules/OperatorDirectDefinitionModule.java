@@ -30,7 +30,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
-import org.eventb.core.wd.DComputer;
+import org.eventb.core.wd.y.YComputer;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
@@ -224,7 +224,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 	}
 	
 	private Predicate getDWDPredicate(Formula<?> formula){
-		DComputer computer = new DComputer(factory);
+		YComputer computer = new YComputer(factory);
 		return computer.getWDLemma(formula);
 	}
 

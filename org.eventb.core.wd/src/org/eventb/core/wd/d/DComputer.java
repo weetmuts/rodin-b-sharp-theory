@@ -1,3 +1,5 @@
+package org.eventb.core.wd.d;
+
 /*******************************************************************************
  * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +11,6 @@
  *     Systerel - initial API and implementation
  *     University of Southampton - Adaptation for the D-library
  *******************************************************************************/
-package org.eventb.core.wd;
 
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DIV;
@@ -60,17 +61,22 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.wd.YMediator;
+import org.eventb.core.wd.FormulaBuilder;
 
 /**
  * An implementation of well-definedness conditions computer for the D operator.
  * 
- * <p> TODO For the future base implementation on paper : <q>Efficient Well-definedness Checking</q>.
+ * <p> This implementation is based on the rather cumbersome definition of D as found for example in
+ * 
+ * "On Using Conditional Definitions in Formal Theories" by J-R Abrial and L. Mussat.
+ * 
  * @author maamria, Laurent Voisin
  * @since 1.0
  */
 public class DComputer implements ISimpleVisitor2{
 	
-	private DFormulaBuilder fb;
+	private FormulaBuilder fb;
 
 	/**
 	 * This is the WD condition, it is the result of the last visit.
@@ -78,7 +84,7 @@ public class DComputer implements ISimpleVisitor2{
 	private Predicate lemma;
 
 	public DComputer(FormulaFactory formulaFactory) {
-		this.fb = new DFormulaBuilder(formulaFactory);
+		this.fb = new FormulaBuilder(formulaFactory);
 	}
 	
 	/**
@@ -309,7 +315,7 @@ public class DComputer implements ISimpleVisitor2{
 	@Override
 	public void visitExtendedPredicate(ExtendedPredicate predicate) {
 		IPredicateExtension extension = predicate.getExtension();
-		final DMediator wdMed = new DMediator(fb);
+		final YMediator wdMed = new YMediator(fb);
 		final Predicate extensionWD = extension.getWDPredicate(predicate, wdMed);
 		if (extension.conjoinChildrenWD()) {
 			lemma = addChildrenWD(extensionWD, predicate);
@@ -321,7 +327,7 @@ public class DComputer implements ISimpleVisitor2{
 	@Override
 	public void visitExtendedExpression(ExtendedExpression expression) {
 		IExpressionExtension extension = expression.getExtension();
-		final DMediator wdMed = new DMediator(fb);
+		final YMediator wdMed = new YMediator(fb);
 		final Predicate extensionWD = extension.getWDPredicate(expression, wdMed);
 		if (extension.conjoinChildrenWD()) {
 			lemma = addChildrenWD(extensionWD, expression);

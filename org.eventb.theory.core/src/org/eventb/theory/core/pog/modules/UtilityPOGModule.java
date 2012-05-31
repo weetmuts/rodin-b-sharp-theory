@@ -25,7 +25,7 @@ import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.wd.DComputer;
+import org.eventb.core.wd.y.YComputer;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -107,7 +107,7 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 	 */
 	protected Predicate getDWDCondition(Formula<?> formula){
 		assert formula != null && formula.isTypeChecked();
-		DComputer computer = new DComputer(factory);
+		YComputer computer = new YComputer(factory);
 		return computer.getWDLemma(formula);
 	}
 }

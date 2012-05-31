@@ -68,8 +68,7 @@ public class ProjectManager {
 			throws CoreException {
 		deployedExtensionsMap.clear();
 		allDeployedExtensions.clear();
-		IDeployedTheoryRoot[] deployedRoots = DatabaseUtilities
-				.getDeployedTheories(project);
+		IDeployedTheoryRoot[] deployedRoots = DatabaseUtilities.getDeployedTheories(project);
 		graph.setDeployedRoots(deployedRoots);
 
 		for (IDeployedTheoryRoot root : graph.getDeployedRoots()) {
@@ -77,10 +76,11 @@ public class ProjectManager {
 			Set<IFormulaExtension> extensions = loader.load();
 			deployedExtensionsMap.put(root.getComponentName(), extensions);
 			allDeployedExtensions.addAll(extensions);
+			seedFactory = seedFactory.withExtensions(extensions);
 		}
 	}
 
-	public synchronized void reloadDirtyExtensions(final FormulaFactory seedFactory)
+	public synchronized void reloadDirtyExtensions( FormulaFactory seedFactory)
 			throws CoreException {
 		scExtensionsMap.clear();
 		ISCTheoryRoot[] scRoots = DatabaseUtilities.getSCTheoryRoots(project, DatabaseUtilities.getExistingSCTheoriesFilter());
@@ -90,6 +90,7 @@ public class ProjectManager {
 			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root, seedFactory);
 			Set<IFormulaExtension> extensions = loader.load();
 			scExtensionsMap.put(root.getComponentName(), extensions);
+			seedFactory = seedFactory.withExtensions(extensions);
 		}
 	}
 

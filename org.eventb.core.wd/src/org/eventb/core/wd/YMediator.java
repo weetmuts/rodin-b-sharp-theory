@@ -16,16 +16,16 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IWDMediator;
 
 /**
- * An implementation of a well-definedness mediator.
+ * An implementation of a well-definedness mediator for Y.
  * 
  * @author Nicolas Beauger, maamria
  * 
  */
-public class DMediator implements IWDMediator {
+public class YMediator implements IWDMediator {
 
-	private final DFormulaBuilder fb;
+	private final FormulaBuilder fb;
 
-	public DMediator(DFormulaBuilder formulaBuilder) {
+	public YMediator(FormulaBuilder formulaBuilder) {
 		this.fb = formulaBuilder;
 	}
 

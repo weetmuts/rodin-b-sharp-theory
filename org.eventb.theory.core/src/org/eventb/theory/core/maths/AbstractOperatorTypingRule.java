@@ -33,7 +33,7 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.wd.DMediator;
+import org.eventb.core.wd.YMediator;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
@@ -99,7 +99,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 		}
 		Predicate wdToUse = wdPredicate;
 		// if the call is to generate a D WD condition
-		if(wdMediator instanceof DMediator){
+		if(wdMediator instanceof YMediator){
 			wdToUse = dWDPredicate;
 		}
 		String rawWD = wdToUse.toString();

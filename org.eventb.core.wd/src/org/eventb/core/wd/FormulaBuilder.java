@@ -40,15 +40,17 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryPredicate;
 
 /**
- * A formula builder based on the formula builder used for <code>WDComputer</code> in the main AST project.
+ * A formula builder based on the formula builder used for <code>WDComputer</code> 
+ * in the main AST project.
  * 
  * @author maamria, Laurent Voisin
  * @since 1.0
  *
  */
-public class DFormulaBuilder {
+public class FormulaBuilder {
 
 	public final FormulaFactory ff;
 	public final Predicate btrue;
@@ -66,7 +68,7 @@ public class DFormulaBuilder {
 	 */
 	private Type Z_cache;
 
-	public DFormulaBuilder(FormulaFactory ff) {
+	public FormulaBuilder(FormulaFactory ff) {
 		this.ff = ff;
 		this.btrue = ff.makeLiteralPredicate(BTRUE, null);
 		this.bfalse = ff.makeLiteralPredicate(BFALSE, null);
@@ -174,6 +176,9 @@ public class DFormulaBuilder {
 		}
 		if(predicate.getTag() == BFALSE){
 			return btrue;
+		}
+		if (predicate.getTag() == UnaryPredicate.NOT){
+			return ((UnaryPredicate) predicate).getChild();
 		}
 		return ff.makeUnaryPredicate(Formula.NOT, predicate, null);
 	}
