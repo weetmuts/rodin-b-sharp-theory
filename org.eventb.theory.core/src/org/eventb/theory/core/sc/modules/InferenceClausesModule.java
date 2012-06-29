@@ -45,8 +45,18 @@ extends SCProcessorModule{
 		IInferenceRule rule = (IInferenceRule) element;
 		ISCInferenceRule scRule = (ISCInferenceRule) target;
 		C[] clauses = getClauses(rule);
-		processClauses(clauses, rule, scRule, repository, monitor);
+		if (checkClauses(clauses, rule)){
+			processClauses(clauses, rule, scRule, repository, monitor);
+		}
 	}
+	
+	/**
+	 * Performs any necessary checks before processing the clauses.
+	 * @param clauses the clauses to check
+	 * @param rule the inference rule
+	 * @return whether checks are successful
+	 */
+	protected abstract boolean checkClauses(C[] clauses, IInferenceRule rule) throws CoreException;
 	
 	protected final void processClauses(C[] clauses, IInferenceRule rule,
 			ISCInferenceRule scRule, ISCStateRepository repository,
@@ -64,6 +74,8 @@ extends SCProcessorModule{
 				S scClause = createSCClause(predicate, clause, scRule, repository, monitor);
 				if(scClause != null){
 					scClause.setPredicate(predicate, monitor);
+					// fixed absence of source of clauses shown by test TestAccuracy.testAcc_012/4
+					scClause.setSource(clause, null);
 					addIdentifiers(predicate);
 				}
 				else {

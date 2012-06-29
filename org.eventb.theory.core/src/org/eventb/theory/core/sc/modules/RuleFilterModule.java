@@ -14,6 +14,7 @@ import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.theory.core.IRule;
+import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -46,11 +47,12 @@ public abstract class RuleFilterModule<R extends IRule> extends SCFilterModule {
 		if (symbolInfo == null) {
 			throw new IllegalStateException("No defined symbol for: " + label);
 		}
-		// Check applicability attribute
-		if (!checkApplicabilityAttribute(rule, symbolInfo, repository, monitor)) {
+		// apply further checks first
+		if (!furtherCheck(rule, symbolInfo, repository, monitor)){
 			return false;
 		}
-		if (!furtherCheck(rule, symbolInfo, repository, monitor)){
+		// Check applicability attribute
+		if (!checkApplicabilityAttribute(rule, symbolInfo, repository, monitor)) {
 			return false;
 		}
 		// all OK
@@ -77,7 +79,7 @@ public abstract class RuleFilterModule<R extends IRule> extends SCFilterModule {
 		boolean isInter = true;
 		if (!rule.hasApplicabilityAttribute()) {
 			createProblemMarker(rule, TheoryAttributes.APPLICABILITY_ATTRIBUTE,
-					TheoryGraphProblem.AppUndefWarning);
+					TheoryGraphProblem.ApplicabilityUndefError);
 			// default is manual
 			isAuto = false;
 			isInter = true;
@@ -88,10 +90,9 @@ public abstract class RuleFilterModule<R extends IRule> extends SCFilterModule {
 		
 		symbolInfo.setAttributeValue(TheoryAttributes.APPLICABILITY_ATTRIBUTE,
 				RuleApplicability.getRuleApplicability(isAuto, isInter).toString());
-		String desc = rule.getParent().getElementName() + "." + rule.getLabel();
-		if (!rule.hasDescription()
-				|| (rule.hasDescription() && rule.getDescription().equals(
-						""))) {
+		// use the name of theory see TestRewriteRules.testRewriteRules_013()
+		String desc = rule.getAncestor(ITheoryRoot.ELEMENT_TYPE).getComponentName() + "." + rule.getLabel();
+		if (!rule.hasDescription() || rule.getDescription().equals("")) {
 			createProblemMarker(rule, TheoryAttributes.DESC_ATTRIBUTE,
 					TheoryGraphProblem.DescNotSupplied, rule.getLabel());
 		} else {

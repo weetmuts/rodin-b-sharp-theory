@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Type;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -55,16 +54,9 @@ public class MetavariableModule extends IdentifierModule {
 		}
 		for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable.getSymbolInfosFromTop()) {
 			if (symbolInfo.getSymbolType() == ISCMetavariable.ELEMENT_TYPE
-					&& symbolInfo.isPersistent()) {
-				Type type = symbolInfo.getType();
-				if (type == null) { // identifier could not be typed
-					symbolInfo.createUntypedErrorMarker(this);
-					symbolInfo.setError();
-					accurate = false;
-				} else if (!symbolInfo.hasError()) {
-					if (target != null) {
-						symbolInfo.createSCElement(target, null);
-					}
+					&& symbolInfo.isPersistent() && !symbolInfo.hasError()) {
+				if (target != null) {
+					symbolInfo.createSCElement(target, null);
 				}
 			}
 			else {

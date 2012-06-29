@@ -21,12 +21,12 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.maths.IOperatorArgument;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**

@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -23,7 +24,6 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -66,7 +66,7 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 			}
 			else {
 				createProblemMarker((INewOperatorDefinition) element,EventBAttributes.LABEL_ATTRIBUTE, 
-						TheoryGraphProblem.OperatorWithSameSynJustBeenAdded, syntax);
+						TheoryGraphProblem.OperatorWithSameSynJustBeenAddedError, syntax);
 				operatorInformation.setHasError();
 			}
 		}

@@ -15,6 +15,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
@@ -27,7 +28,6 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -54,14 +54,17 @@ public class MetavariableFilterModule extends SCFilterModule {
 
 		if (!var.hasType() || var.getType().equals("")) {
 			createProblemMarker(var, TheoryAttributes.TYPE_ATTRIBUTE,
-					TheoryGraphProblem.TypeAttrMissingForOpArgError, name);
+					TheoryGraphProblem.TypeAttrMissingError, name);
+			symbolInfo.setError();
 			return false;
 		}
 		Type type = CoreUtilities.parseTypeExpression(var, repository.getFormulaFactory(), this);
 		if (type == null) {
+			symbolInfo.setError();
 			return false;
 		}
 		if (!checkTypeParameters(type, var, repository.getFormulaFactory(), repository.getTypeEnvironment())) {
+			symbolInfo.setError();
 			return false;
 		}
 		symbolInfo.setType(type);
@@ -84,13 +87,15 @@ public class MetavariableFilterModule extends SCFilterModule {
 		List<String> givenSets = MathExtensionsUtilities
 				.getGivenSetsNames(typeEnvironment);
 		for (FreeIdentifier ident : idents) {
-
+			// if not declared
 			if (!typeEnvironment.contains(ident.getName())) {
 				createProblemMarker(var, TheoryAttributes.TYPE_ATTRIBUTE,
 						GraphProblem.UndeclaredFreeIdentifierError,
 						ident.getName());
 				return false;
-			} else if (!givenSets.contains(ident.getName())) {
+			} 
+			// if declared but not a type par
+			if (!givenSets.contains(ident.getName())) {
 				createProblemMarker(var,
 
 				TheoryAttributes.TYPE_ATTRIBUTE,

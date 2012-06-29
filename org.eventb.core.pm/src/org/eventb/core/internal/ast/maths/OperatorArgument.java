@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.maths;
+package org.eventb.core.internal.ast.maths;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
+import org.eventb.core.ast.maths.IOperatorArgument;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 
 /**
  * @author maamria

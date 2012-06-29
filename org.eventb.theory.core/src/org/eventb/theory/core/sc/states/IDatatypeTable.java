@@ -70,6 +70,15 @@ public interface IDatatypeTable extends ISCState{
 	public boolean datatypeHasBaseConstructor();
 	
 	/**
+	 * Returns whether the datatype being defined is admissible.
+	 * 
+	 * <p> A fix to BUG inadmissible datatypes - ID: 3483255
+	 * 
+	 * @return whether the current datatype is admissible
+	 */
+	public boolean isAdmissible();
+	
+	/**
 	 * Checks if <code>name</code> is a different identifier to any 
 	 * existing entries including: datatype names, constructor names and destructor names.
 	 * @param name
@@ -95,8 +104,9 @@ public interface IDatatypeTable extends ISCState{
 	 * Adds a destructor with its type to the currently processed constructor of the currently processed datatype.
 	 * @param destName destructor name
 	 * @param type destructor type
+	 * @return whether the added destructor is admissible
 	 */
-	public void addDestructor(String destName, Type type);
+	public boolean addDestructor(String destName, Type type);
 	
 	
 	

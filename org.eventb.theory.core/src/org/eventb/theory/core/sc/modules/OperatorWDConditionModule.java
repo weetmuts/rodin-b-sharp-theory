@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -24,7 +25,6 @@ import org.eventb.theory.core.IOperatorWDCondition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.maths;
+package org.eventb.core.internal.ast.maths;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -21,10 +21,10 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.maths.AbstractOperatorExtension;
+import org.eventb.core.ast.maths.IOperatorTypingRule;
+import org.eventb.core.ast.maths.OperatorExtensionProperties;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
-import org.eventb.theory.core.maths.AbstractOperatorExtension;
-import org.eventb.theory.core.maths.IOperatorTypingRule;
-import org.eventb.theory.core.maths.OperatorExtensionProperties;
 
 /**
  * An implementation of an expression operator extension.

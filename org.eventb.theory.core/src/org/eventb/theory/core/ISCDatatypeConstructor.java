@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IInternalElementType;
@@ -24,7 +24,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface ISCDatatypeConstructor extends IIdentifierElement, ITraceableElement{
+public interface ISCDatatypeConstructor extends ISCIdentifierElement, ITraceableElement{
 	
 	IInternalElementType<ISCDatatypeConstructor> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scDatatypeConstructor");

@@ -14,6 +14,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IGiven;
@@ -22,7 +23,6 @@ import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -74,6 +74,12 @@ public class InferenceGivenClauseModule extends
 			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,
 					TheoryGraphProblem.InferenceGivenBTRUEPredWarn);
 		}
+		return true;
+	}
+
+	@Override
+	protected boolean checkClauses(IGiven[] clauses, IInferenceRule rule) throws CoreException {
+		// nothing to check
 		return true;
 	}
 

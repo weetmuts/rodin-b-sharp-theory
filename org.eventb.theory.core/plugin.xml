@@ -87,11 +87,6 @@
             name="%reasoningTypeAttr">
       </attributeType>
       <attributeType
-            id="validated"
-            kind="boolean"
-            name="%validatedAttr">
-      </attributeType>
-      <attributeType
             id="groupID"
             kind="string"
             name="%groupIDAttr">
@@ -228,6 +223,21 @@
             class="org.eventb.theory.core.basis.RecursiveOperatorDefinition"
             id="recursiveOperatorDefinition"
             name="%recursiveOperatorDefinition">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.AxiomaticDefinitionsBlock"
+            id="axiomaticDefinitionsBlock"
+            name="%axiomaticDefinitionsBlock">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.AxiomaticDefinitionAxiom"
+            id="axiomaticDefinitionAxiom"
+            name="%axiomaticDefinitionAxiom">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.AxiomaticOperatorDefinition"
+            id="axiomaticOperatorDefinition"
+            name="%axiomaticOperatorDefinition">
       </internalElementType>
    </extension>
    <extension

@@ -25,7 +25,7 @@ import org.rodinp.core.RodinCore;
  *
  */
 public interface ISCTheorem extends ILabeledElement, ISCPredicateElement, ITraceableElement,
-IValidatedElement, IOrderedElement{
+IOrderedElement{
 	
 	IInternalElementType<ISCTheorem> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheorem");

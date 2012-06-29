@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.basis.SCPredicateElement;
 import org.eventb.theory.core.ISCTheorem;
@@ -34,22 +32,6 @@ public class SCTheorem extends SCPredicateElement implements ISCTheorem{
 		return ELEMENT_TYPE;
 	}
 	
-	@Override
-	public boolean hasValidatedAttribute() throws RodinDBException{
-		return hasAttribute(VALIDATED_ATTRIBUTE);
-	}
-	
-	@Override
-	public boolean isValidated() throws RodinDBException{
-		return getAttributeValue(VALIDATED_ATTRIBUTE);
-	}
-	
-	@Override
-	public void setValidated(boolean isValidated, IProgressMonitor monitor) throws RodinDBException{
-		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
-	}
-	
-
 	@Override
 	public boolean hasOrderAttribute() throws RodinDBException {
 		return hasAttribute(TheoryAttributes.ORDER_ATTRIBUTE);

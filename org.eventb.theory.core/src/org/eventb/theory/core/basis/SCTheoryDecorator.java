@@ -22,7 +22,10 @@ import org.eventb.theory.core.TheoryHierarchyHelper;
  * <p> Objects of this class provide additional functionality on top of a 
  * statically checked theory object.
  * 
- * @author im06r
+ * <p> In this particular class, the decorator provides capabilities to check whether two theory hierarchies (theories
+ * and their dependencies) conflict in term of contributed mathematical extensions.
+ * 
+ * @author maamria
  *
  */
 public class SCTheoryDecorator {
@@ -103,6 +106,7 @@ public class SCTheoryDecorator {
 				contribs.put(req, new SCTheoryDecorator(req).getContributions());
 			}
 		}
+		contribs.put(scTheoryRoot, getContributions());
 		return contribs;
 	}
 	

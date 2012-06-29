@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -19,7 +20,6 @@ import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 

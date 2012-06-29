@@ -119,6 +119,7 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 			if (labelSymbolInfos[i] != null && !labelSymbolInfos[i].hasError()) {
 				scProofRulesBlocks[i] = createSCBlock(targetRoot, index++, labelSymbolInfos[i],
 						rulesBlocks[i], monitor);
+				scProofRulesBlocks[i].setSource(rulesBlocks[i], monitor);
 			}
 		}
 		

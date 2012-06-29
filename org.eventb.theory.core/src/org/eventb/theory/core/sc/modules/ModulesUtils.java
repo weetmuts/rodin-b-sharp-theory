@@ -12,6 +12,7 @@ import static org.eventb.core.ast.LanguageVersion.V2;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -119,7 +120,7 @@ public class ModulesUtils {
 	 * @return the statically checked identifier element
 	 * @throws CoreException
 	 */
-	public static <T extends IIdentifierElement> T createSCIdentifierElement(
+	public static <T extends ISCIdentifierElement> T createSCIdentifierElement(
 			IInternalElementType<T> type, IIdentifierElement source,
 			IInternalElement parent, IProgressMonitor monitor)
 			throws CoreException {
@@ -265,6 +266,33 @@ public class ModulesUtils {
 		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
 		if(CoreUtilities.issueASTProblemMarkers(element,
 					TheoryAttributes.FORMULA_ATTRIBUTE, tcResult, markerDisplay)){
+			return null;
+		}
+		return formula;
+	}
+	
+	/**
+	 * Attempts to parse and check the formula string.
+	 * @param form the formula string
+	 * @param ff the formula factory
+	 * @param env the type environment
+	 * @return the parsed formula or <code>null</code> if the passed string cannot be parsed, or if parsed cannot be typechecked 
+	 */
+	public static Formula<?> parseAndTypeCheckFormula(String form, FormulaFactory ff, ITypeEnvironment env){
+		Formula<?> formula = null;
+		IParseResult result = ff.parseExpression(form, V2, null);
+		if(result.hasProblem()){
+			result = ff.parsePredicate(form, V2, null);
+			if (result.hasProblem()){
+				return null;
+			}
+			formula = result.getParsedPredicate();
+		}
+		else {
+			formula = result.getParsedExpression();
+		}
+		ITypeCheckResult typeCheck = formula.typeCheck(env);
+		if (typeCheck.hasProblem()){
 			return null;
 		}
 		return formula;

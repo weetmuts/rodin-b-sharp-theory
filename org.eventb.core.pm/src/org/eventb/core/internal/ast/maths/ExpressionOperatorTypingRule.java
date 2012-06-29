@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.maths;
+package org.eventb.core.internal.ast.maths;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +26,12 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.theory.core.AstUtilities;
-import org.eventb.theory.core.maths.AbstractOperatorTypingRule;
-import org.eventb.theory.core.maths.IExpressionTypeChecker;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.core.maths.IOperatorExtension;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
+import org.eventb.core.ast.maths.AbstractOperatorTypingRule;
+import org.eventb.core.ast.maths.AstUtilities;
+import org.eventb.core.ast.maths.IExpressionTypeChecker;
+import org.eventb.core.ast.maths.IOperatorArgument;
+import org.eventb.core.ast.maths.IOperatorExtension;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 
 /**
  * @author maamria

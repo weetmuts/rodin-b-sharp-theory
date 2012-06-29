@@ -109,7 +109,7 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 			ISCStateRepository repository) throws CoreException {
 		if (!ruleRHS.hasFormula()) {
 			createProblemMarker(ruleRHS, TheoryAttributes.FORMULA_ATTRIBUTE,
-					TheoryGraphProblem.RHSUndefError);
+					TheoryGraphProblem.RHSFormulaMissingError);
 			return null;
 		}
 		Formula<?> lhsFormula = lhsParsedFormula.getFormula();
@@ -117,7 +117,7 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 		Formula<?> rhsFormula = null;
 		String rhsStr = ruleRHS.getFormula();
 		if (lhsFormula instanceof Expression) {
-			parseResult = factory.parseExpressionPattern(rhsStr,
+			parseResult = factory.parseExpression(rhsStr,
 					LanguageVersion.V2, ruleRHS);
 			if (CoreUtilities.issueASTProblemMarkers(ruleRHS,
 					TheoryAttributes.FORMULA_ATTRIBUTE, parseResult, this)) {
@@ -125,7 +125,7 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 			}
 			rhsFormula = parseResult.getParsedExpression();
 		} else if (lhsFormula instanceof Predicate) {
-			parseResult = factory.parsePredicatePattern(rhsStr,
+			parseResult = factory.parsePredicate(rhsStr,
 					LanguageVersion.V2, ruleRHS);
 			if (CoreUtilities.issueASTProblemMarkers(ruleRHS,
 					TheoryAttributes.FORMULA_ATTRIBUTE, parseResult, this)) {
@@ -150,7 +150,7 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 		if (!checkIdentsOccurInLhs(ruleRHS, rhsFormula, lhsFormula,
 				TheoryAttributes.FORMULA_ATTRIBUTE,
 				TheoryGraphProblem.RHSIdentsNotSubsetOfLHSIdents,
-				TheoryGraphProblem.RHSGivensNotSubsetOfLHSGivens, repository,
+				TheoryGraphProblem.RHSTypesNotSubsetOfLHSTypes, repository,
 				null)) {
 			return null;
 		}
@@ -199,7 +199,7 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 		if (!checkIdentsOccurInLhs(ruleRHS, condition, lhsFormula,
 				EventBAttributes.PREDICATE_ATTRIBUTE,
 				TheoryGraphProblem.CondIdentsNotSubsetOfLHSIdents,
-				TheoryGraphProblem.CondGivensNotSubsetOfLHSGivens, repository,
+				TheoryGraphProblem.CondTypesNotSubsetOfLHSTypes, repository,
 				null)) {
 			return null;
 		}

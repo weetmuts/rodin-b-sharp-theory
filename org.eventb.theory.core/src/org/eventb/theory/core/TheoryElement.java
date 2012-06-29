@@ -8,6 +8,7 @@
 package org.eventb.theory.core;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.theory.core.TheoryAttributes.APPLICABILITY_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMMUTATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMPLETE_ATTRIBUTE;
@@ -22,9 +23,7 @@ import static org.eventb.theory.core.TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBU
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.VALIDATED_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.WD_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.APPLICABILITY_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -36,6 +35,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.maths.AstUtilities;
 import org.eventb.core.basis.EventBElement;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
@@ -55,7 +55,7 @@ public abstract class TheoryElement extends EventBElement implements
 		ITypeElement, ICompleteElement, IDescriptionElement,
 		IDefinitionalElement, ISCTypeElement,
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
-		IReasoningTypeElement, IValidatedElement, IOperatorGroupElement,
+		IReasoningTypeElement, IOperatorGroupElement,
 		IImportTheoryElement, IInductiveArgumentElement, IWDElement, IApplicabilityElement {
 
 	public TheoryElement(String name, IRodinElement parent) {
@@ -329,22 +329,6 @@ public abstract class TheoryElement extends EventBElement implements
 		setAttributeValue(REASONING_TYPE_ATTRIBUTE,
 				type.toString(), monitor);
 
-	}
-
-	@Override
-	public boolean hasValidatedAttribute() throws RodinDBException {
-		return hasAttribute(VALIDATED_ATTRIBUTE);
-	}
-
-	@Override
-	public boolean isValidated() throws RodinDBException {
-		return getAttributeValue(VALIDATED_ATTRIBUTE);
-	}
-
-	@Override
-	public void setValidated(boolean isValidated, IProgressMonitor monitor)
-			throws RodinDBException {
-		setAttributeValue(VALIDATED_ATTRIBUTE, isValidated, monitor);
 	}
 
 	public boolean hasImportTheory() throws RodinDBException {

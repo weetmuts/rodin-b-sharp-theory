@@ -23,6 +23,11 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.maths.IOperatorArgument;
+import org.eventb.core.ast.maths.MathExtensionsFactory;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.maths.OperatorExtensionProperties;
+import org.eventb.core.internal.ast.maths.OperatorArgument;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCConstructorArgument;
@@ -33,11 +38,6 @@ import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.core.maths.MathExtensionsFactory;
-import org.eventb.theory.core.maths.OperatorExtensionProperties;
-import org.eventb.theory.internal.core.maths.OperatorArgument;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 
 /**

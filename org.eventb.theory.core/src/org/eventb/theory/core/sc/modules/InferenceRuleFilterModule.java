@@ -9,15 +9,12 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.IInfer;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -44,12 +41,6 @@ public class InferenceRuleFilterModule extends RuleFilterModule<IInferenceRule> 
 	protected boolean furtherCheck(IInferenceRule rule,
 			ILabelSymbolInfo symbolInfo, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		IInfer[] infers = rule.getInfers();
-		// Rule must have at least one infer clause
-		if (infers.length != 1){
-			createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.RuleInfersError, rule.getLabel());
-			return false;
-		}
 		return true;
 	}
 

@@ -18,6 +18,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -32,7 +33,6 @@ import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
 import org.eventb.core.wd.y.YComputer;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -214,7 +214,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 			}
 		} else {
 			createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE,
-					TheoryGraphProblem.MissingFormulaAttrError);
+					TheoryGraphProblem.MissingFormulaError);
 		}
 		return null;
 	}

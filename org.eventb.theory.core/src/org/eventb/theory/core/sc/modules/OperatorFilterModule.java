@@ -14,6 +14,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -27,7 +28,6 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorLabelSymbolTable;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -125,7 +125,7 @@ public class OperatorFilterModule extends SCFilterModule {
 				if (opDefs.length + recDefs.length == 0) {
 					createProblemMarker(opDef,
 							EventBAttributes.LABEL_ATTRIBUTE,
-							TheoryGraphProblem.OperatorNoDefError,
+							TheoryGraphProblem.OperatorHasNoDefError,
 							opDef.getLabel());
 				} else {
 					createProblemMarker(opDef,

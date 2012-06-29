@@ -22,7 +22,7 @@ import org.eventb.core.ITraceableElement;
  *
  */
 public interface ISCRule extends ILabeledElement, IApplicabilityElement,
-IDescriptionElement, ITraceableElement, IAccuracyElement, IDefinitionalElement,
-IValidatedElement{
+IDescriptionElement, ITraceableElement, IAccuracyElement, IDefinitionalElement
+{
 
 }

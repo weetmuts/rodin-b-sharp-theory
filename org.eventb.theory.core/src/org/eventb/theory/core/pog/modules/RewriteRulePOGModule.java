@@ -8,19 +8,17 @@
 package org.eventb.theory.core.pog.modules;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -33,7 +31,6 @@ import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -234,27 +231,4 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
-	
-	protected Predicate makeClosedPredicate(
-			Predicate predicate, 
-			ITypeEnvironment typeEnvironment){
-		List<FreeIdentifier> metavars = getMetavariables(typeEnvironment);
-		FreeIdentifier[] predicateIdents = predicate.getFreeIdentifiers();
-		List<FreeIdentifier> nonSetsIdents = new ArrayList<FreeIdentifier>();
-		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();
-		for(FreeIdentifier ident : predicateIdents){
-			if(metavars.contains(ident)){
-				nonSetsIdents.add(ident);
-				decls.add(factory.makeBoundIdentDecl(ident.getName(), null, ident.getType()));
-			}
-		}
-		
-		if(nonSetsIdents.size() == 0){
-			return predicate;
-		}
-		predicate = predicate.bindTheseIdents(nonSetsIdents, factory);
-		predicate = DLib.mDLib(factory).makeUnivQuant(decls.toArray(new BoundIdentDecl[decls.size()]), predicate);
-		return predicate;
-	}
-	
 }

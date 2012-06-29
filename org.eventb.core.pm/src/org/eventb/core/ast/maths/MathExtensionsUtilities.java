@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.util;
+package org.eventb.core.ast.maths;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +31,6 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.theory.core.maths.IOperatorArgument;
 
 /**
  * Facilities class for obtaining information related to grammars and operators
@@ -425,7 +424,7 @@ public class MathExtensionsUtilities {
 	 * @return a singleton set
 	 */
 	public static Set<IFormulaExtension> singletonExtension(IFormulaExtension element) {
-		return GeneralUtilities.singletonSet(element);
+		return Collections.singleton(element);
 	}
 
 	/**
@@ -475,5 +474,23 @@ public class MathExtensionsUtilities {
 			list.addAll(getGivenTypes(productType.getRight()));
 		}
 		return list;
+	}
+	
+	/**
+	 * Returns a string representation of the given list of objects.
+	 * 
+	 * @param list
+	 *            the list of strings
+	 * @return the representing string
+	 */
+	public static <E> String toString(List<E> list) {
+		String result = "";
+		for (int i = 0; i < list.size(); i++) {
+			result += list.get(i).toString();
+			if (i < list.size() - 1) {
+				result += ", ";
+			}
+		}
+		return result;
 	}
 }

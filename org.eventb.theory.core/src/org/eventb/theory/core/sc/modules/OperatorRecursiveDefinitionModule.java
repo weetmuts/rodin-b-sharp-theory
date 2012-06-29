@@ -9,6 +9,7 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -20,7 +21,6 @@ import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 

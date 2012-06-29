@@ -34,8 +34,6 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author maamria
  * 
- *         TODO more symbols needed here
- * 
  */
 @SuppressWarnings("restriction")
 public class TheorySymbolFactory {
@@ -140,16 +138,13 @@ public class TheorySymbolFactory {
 				IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.TheoryTypeParameterNameConflictError,
+					TheoryGraphProblem.TypeParameterNameConflictError,
 					symbolInfo.getSymbol());
 		}
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.TheoryTypeParameterNameConflictWarning,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 		}
 
 	}
@@ -165,16 +160,13 @@ public class TheorySymbolFactory {
 				IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.TheoryMetaVarNameConflict,
+					TheoryGraphProblem.MetavariableNameConflictError,
 					symbolInfo.getSymbol());
 		}
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.TheoryMetaVarNameConflict,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 		}
 
 	}
@@ -196,10 +188,7 @@ public class TheorySymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.OperatorArgumentNameConflictWarning,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 		}
 
 	}
@@ -221,10 +210,7 @@ public class TheorySymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.InferenceRuleLabelConflictWarning,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 
 		}
 	}
@@ -238,17 +224,14 @@ public class TheorySymbolFactory {
 				IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.TheoryLabelConflictError,
+					TheoryGraphProblem.RewriteRuleLabelConflictError,
 					symbolInfo.getSymbol());
 
 		}
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.TheoryLabelConflictWarning,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 
 		}
 
@@ -271,10 +254,7 @@ public class TheorySymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.RulesBlockLabelProblemWarning,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 
 		}
 
@@ -297,10 +277,7 @@ public class TheorySymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.TheoremLabelProblemWarning,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 
 		}
 
@@ -323,11 +300,7 @@ public class TheorySymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.OperatorIDConflictWarning,
-					symbolInfo.getSymbol());
-
+			// should not be needed, all such problems are error
 		}
 
 	}
@@ -340,7 +313,7 @@ public class TheorySymbolFactory {
 		}
 
 		public IRodinProblem getUntypedError() {
-			return TheoryGraphProblem.UntypedTheoryTypeParameterError;
+			return TheoryGraphProblem.UntypedTypeParameterError;
 		}
 
 	}
@@ -387,10 +360,7 @@ public class TheorySymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.RhsLabelConflictWarning,
-					symbolInfo.getSymbol());
+			// should not be needed, all such problems are error
 		}
 
 	}

@@ -5,13 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
+package org.eventb.core.ast.maths;
 
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * Basic implementation for an operator extension.
@@ -129,11 +127,6 @@ public abstract class AbstractOperatorExtension implements IOperatorExtension  {
 	@Override
 	public boolean isAssociative() {
 		return isAssociative;
-	}
-	
-	@Override
-	public Notation getNotation() {
-		return properties.getNotation();
 	}
 	
 	@Override

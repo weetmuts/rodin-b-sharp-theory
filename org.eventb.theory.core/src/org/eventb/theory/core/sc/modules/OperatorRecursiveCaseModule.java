@@ -18,6 +18,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
@@ -37,7 +38,6 @@ import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
 import org.eventb.theory.core.sc.states.IOperatorInformation.RecursiveDefinition;
 import org.eventb.theory.core.sc.states.IRecursiveDefinitionInfo.CaseEntry;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -154,7 +154,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				for (IRecursiveDefinitionCase defCase : baseEntries.keySet()) {
 					CaseEntry caseEntry = baseEntries.get(defCase);
 					if (!defCase.hasFormula()) {
-						createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaAttrError);
+						createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
 						caseEntry.setErroneous();
 						operatorInformation.setHasError();
 						continue;
@@ -209,7 +209,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 					for (IRecursiveDefinitionCase defCase : inductiveEntries.keySet()) {
 						CaseEntry caseEntry = inductiveEntries.get(defCase);
 						if (!defCase.hasFormula()) {
-							createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaAttrError);
+							createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
 							caseEntry.setErroneous();					
 							operatorInformation.setHasError();
 							continue;

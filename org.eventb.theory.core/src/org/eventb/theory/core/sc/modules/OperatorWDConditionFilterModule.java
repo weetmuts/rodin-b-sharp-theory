@@ -43,7 +43,7 @@ public class OperatorWDConditionFilterModule extends SCFilterModule{
 			IProgressMonitor monitor) throws CoreException {
 		IOperatorWDCondition wdCond = (IOperatorWDCondition) element;
 		if(!wdCond.hasPredicateString()){
-			createProblemMarker(wdCond, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.WDPredUndefError);
+			createProblemMarker(wdCond, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.WDPredMissingError);
 			return false;
 		}
 		Predicate wd = CoreUtilities.parseAndCheckPredicate(wdCond, repository.getFormulaFactory(), 

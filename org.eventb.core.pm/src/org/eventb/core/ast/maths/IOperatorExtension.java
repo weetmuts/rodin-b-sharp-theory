@@ -5,10 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
+package org.eventb.core.ast.maths;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 
 /**
  * Common protocol for an operator extension. Additional methods are added for convenience when
@@ -33,11 +32,4 @@ public interface IOperatorExtension extends IFormulaExtension{
 	 * @return operator commutativity
 	 */
 	public boolean isCommutative();
-	
-	/**
-	 * Returns the notation of this operator.
-	 * @return the notation
-	 */
-	public Notation getNotation();
-	
 }

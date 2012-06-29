@@ -9,6 +9,7 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -21,6 +22,7 @@ import org.eventb.theory.core.IRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.RewriteRuleLabelSymbolTable;
 import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
@@ -48,6 +50,12 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 		IRewriteRule rewriteRule = (IRewriteRule) element;
 		ISCRewriteRule scRewriteRule = (ISCRewriteRule) target;
 		IRewriteRuleRightHandSide[] ruleRHSs = rewriteRule.getRuleRHSs();
+		// Check rule right hand sides number
+		if (ruleRHSs.length < 1) {
+			createProblemMarker(rewriteRule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.RuleNoRhsError, rewriteRule.getLabel());
+			accuracyInfo.setNotAccurate();
+			return;
+		}
 		ILabelSymbolInfo[] symbolInfos = fetchRHSs(ruleRHSs, 
 				element.getParent().getParent().getElementName(), repository, monitor);
 		ISCRewriteRuleRightHandSide[] scRHSs = new ISCRewriteRuleRightHandSide[ruleRHSs.length];

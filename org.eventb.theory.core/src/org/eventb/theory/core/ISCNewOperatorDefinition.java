@@ -29,8 +29,7 @@ import org.rodinp.core.RodinDBException;
 public interface ISCNewOperatorDefinition extends ILabeledElement,
 		IFormulaTypeElement, INotationTypeElement,
 		IAssociativeElement, ICommutativeElement, ITraceableElement,
-		IHasErrorElement, ISCPredicateElement, ISCTypeElement, IOperatorGroupElement,
-		IValidatedElement, IWDElement {
+		IHasErrorElement, ISCPredicateElement, ISCTypeElement, IOperatorGroupElement, IWDElement {
 
 	IInternalElementType<ISCNewOperatorDefinition> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID

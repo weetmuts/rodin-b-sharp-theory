@@ -30,6 +30,13 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.maths.IOperatorArgument;
+import org.eventb.core.ast.maths.MathExtensionsFactory;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.maths.OperatorExtensionProperties;
+import org.eventb.core.internal.ast.maths.ExpressionOperatorTypingRule;
+import org.eventb.core.internal.ast.maths.OperatorArgument;
+import org.eventb.core.internal.ast.maths.PredicateOperatorTypingRule;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
@@ -39,13 +46,6 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.IOperatorArgument;
-import org.eventb.theory.core.maths.MathExtensionsFactory;
-import org.eventb.theory.core.maths.OperatorExtensionProperties;
-import org.eventb.theory.internal.core.maths.ExpressionOperatorTypingRule;
-import org.eventb.theory.internal.core.maths.OperatorArgument;
-import org.eventb.theory.internal.core.maths.PredicateOperatorTypingRule;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -274,6 +274,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		ISCProofRulesBlock newRulesbBlock = theoryRoot.getProofRulesBlock("generatedBlock");
 		if (!newRulesbBlock.exists()) {
 			newRulesbBlock.create(null, null);
+			newRulesbBlock.setSource(originDefinition, null);
 		}
 		Map<FreeIdentifier, Expression> possibleSubstitution = new HashMap<FreeIdentifier, Expression>();
 		for (IOperatorArgument arg : opArguments.values()) {
@@ -286,11 +287,13 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			if (!var.exists()) {
 				var.create(null, null);
 				var.setType(arg.getArgumentType(), null);
+				var.setSource(originDefinition, null);
 			}
 		}
 		// one rewrite rule
 		if (definition instanceof DirectDefintion) {
 			ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID, syntax + " expansion");
+			rewRule.setSource(originDefinition, null);
 			Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution, enhancedFactory);
 			rewRule.setSCFormula(lhs, null);
 			ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
@@ -298,6 +301,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			rhs.setLabel(syntax + " rhs", null);
 			rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
 			rhs.setSCFormula(((DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
+			rhs.setSource(originDefinition, null);
 		} else if (definition instanceof RecursiveDefinition) {
 			RecursiveDefinition recursiveDefinition = (RecursiveDefinition) definition;
 			Map<Expression, Formula<?>> recursiveCases = recursiveDefinition.getRecursiveCases();
@@ -305,6 +309,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			int index = 0;
 			for (Expression indCase : recursiveCases.keySet()) {
 				ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID + " case " + index++, syntax + " expansion");
+				rewRule.setSource(originDefinition, null);
 				for (FreeIdentifier identifier : indCase.getFreeIdentifiers()) {
 					String name = identifier.getName();
 					Type type = identifier.getType();
@@ -318,6 +323,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 						if (!scVar.exists()) {
 							scVar.create(null, null);
 							scVar.setType(type, null);
+							scVar.setSource(originDefinition, null);
 						}
 
 					}
@@ -336,6 +342,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 				rewRule.setSCFormula(lhs, null);
 				ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 				rhs.create(null, null);
+				rhs.setSource(originDefinition, null);
 				rhs.setLabel(syntax + " rhs", null);
 				rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
 				// get the rhs 
@@ -372,7 +379,6 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		rewRule.setDescription(description, null);
 		rewRule.setLabel(name, null);
 		rewRule.setAccuracy(true, null);
-		rewRule.setValidated(true, null);
 		return rewRule;
 	}
 

@@ -26,8 +26,6 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.internal.pm.ExpressionPatternMatchersRegistry;
-import org.eventb.core.internal.pm.PredicatePatternMatchersRegistry;
 import org.eventb.core.pm.basis.engine.Binding;
 import org.eventb.core.pm.basis.engine.MatchingUtilities;
 import org.eventb.core.pm.matchers.exp.AssociativeExpressionMatcher;
@@ -69,8 +67,6 @@ public final class MatchingFactory {
 	private static final Map<Class<? extends Expression>, IExpressionMatcher> EXPRESSION_MATCHERS = new LinkedHashMap<Class<? extends Expression>, IExpressionMatcher>();
 	private static final Map<Class<? extends Predicate>, IPredicateMatcher> PREDICATE_MATCHERS = new LinkedHashMap<Class<? extends Predicate>, IPredicateMatcher>();
 	
-	private boolean loadedRegistry = false;
-	
 	/**
 	 * Load expression matchers.
 	 */
@@ -104,9 +100,6 @@ public final class MatchingFactory {
 	
 	private static MatchingFactory instance;
 	
-	private ExpressionPatternMatchersRegistry expressionPatternMatchersRegistry;
-	private PredicatePatternMatchersRegistry predicatePatternMatchersRegistry;
-	
 	/**
 	 * Private constructor.
 	 */
@@ -120,12 +113,6 @@ public final class MatchingFactory {
 	 * @return whether the matching succeeded
 	 */
 	public final boolean match(Formula<?> formula, Formula<?> pattern, IBinding initialBinding){
-		// ensure existence of the registeries, DO NOT DO this in constructor
-		if(!loadedRegistry){
-			expressionPatternMatchersRegistry = ExpressionPatternMatchersRegistry.getMatchersRegistry();
-			predicatePatternMatchersRegistry = PredicatePatternMatchersRegistry.getMatchersRegistry();
-			loadedRegistry = true;
-		}
 		// initial binding cannot be null
 		if(initialBinding == null){
 			throw new IllegalArgumentException("Matching started without a binding object.");
@@ -138,15 +125,6 @@ public final class MatchingFactory {
 		if(formula instanceof Expression){
 			// get the matcher from the map
 			IExpressionMatcher expMatcher = getExpressionMatcher(((Expression)formula).getClass());
-			// override if an extended expression => get it from the registry
-			if (formula instanceof ExtendedExpression){
-				ExtendedExpression extendedExpression = (ExtendedExpression) formula;
-				IExpressionMatcher matcher = expressionPatternMatchersRegistry.getMatcher(extendedExpression.getExtension().getClass());
-				// if we have a suitable matcher
-				if (matcher != null){
-					expMatcher = matcher;
-				}
-			}
 			if (expMatcher == null){
 				return false;
 			}
@@ -157,15 +135,6 @@ public final class MatchingFactory {
 		else {
 			// get the matcher from the map
 			IPredicateMatcher predMatcher = getPredicateMatcher(((Predicate)formula).getClass());
-			// override if an extended predicate => get it from the registry
-			if (formula instanceof ExtendedPredicate){
-				ExtendedPredicate extendedPredicate = (ExtendedPredicate) formula;
-				IPredicateMatcher matcher = predicatePatternMatchersRegistry.getMatcher(extendedPredicate.getExtension().getClass());
-				// if we have a suitable matcher
-				if (matcher != null){
-					predMatcher = matcher;
-				}
-			}
 			if (predMatcher == null){
 				return false;
 			}

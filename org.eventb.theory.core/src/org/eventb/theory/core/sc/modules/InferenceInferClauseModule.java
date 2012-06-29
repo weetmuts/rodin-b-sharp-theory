@@ -14,6 +14,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IInfer;
@@ -22,14 +23,12 @@ import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
  * 
  */
-public class InferenceInferClauseModule extends
-		InferenceClausesModule<IInfer, ISCInfer> {
+public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, ISCInfer> {
 
 	public static final IModuleType<InferenceInferClauseModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".inferenceInferClauseModule");
@@ -47,18 +46,16 @@ public class InferenceInferClauseModule extends
 	}
 
 	@Override
-	protected void addIdentifiers(Predicate predicate) throws CoreException{
+	protected void addIdentifiers(Predicate predicate) throws CoreException {
 		Collection<GivenType> types = predicate.getGivenTypes();
 		FreeIdentifier iTypes[] = new FreeIdentifier[types.size()];
 		int i = 0;
 		for (GivenType type : types) {
-			iTypes[i] = factory.makeFreeIdentifier(type.getName(), null,
-					typeEnvironment.getType(type.getName()));
+			iTypes[i] = factory.makeFreeIdentifier(type.getName(), null, typeEnvironment.getType(type.getName()));
 			i++;
 		}
 		inferenceIdentifiers.addInferIdentifiers(iTypes);
-		inferenceIdentifiers
-				.addInferIdentifiers(predicate.getFreeIdentifiers());
+		inferenceIdentifiers.addInferIdentifiers(predicate.getFreeIdentifiers());
 
 	}
 
@@ -69,11 +66,21 @@ public class InferenceInferClauseModule extends
 	}
 
 	@Override
-	protected boolean checkPredicate(Predicate predicate, IInfer clause)
-			throws CoreException {
+	protected boolean checkPredicate(Predicate predicate, IInfer clause) throws CoreException {
 		if (predicate.equals(MathExtensionsUtilities.BTRUE)) {
 			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,
 					TheoryGraphProblem.InferenceInferBTRUEPredErr);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	protected boolean checkClauses(IInfer[] clauses, IInferenceRule rule) throws CoreException {
+		// Rule must have one infer clause
+		if (clauses.length != 1) {
+			createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.RuleInfersError,
+					rule.getLabel());
 			return false;
 		}
 		return true;

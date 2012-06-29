@@ -1,18 +1,9 @@
 package org.eventb.theory.core.sc.modules;
 
-import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -23,11 +14,9 @@ import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
-import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.RewriteRuleLabelSymbolTable;
 import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -87,32 +76,26 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 		for (int i = 0; i < rules.length; i++) {
 			IRewriteRule rule = rules[i];
 			if (infos[i] != null && !infos[i].hasError()) {
-				Formula<?> lhsForm = checkLeftHandSide(rule, infos[i], repository, monitor);
-				boolean ok = (lhsForm != null);
+				Formula<?> lhsForm = ModulesUtils.parseAndTypeCheckFormula(rule.getFormula(),
+						repository.getFormulaFactory(), repository.getTypeEnvironment());
+				boolean ok = (lhsForm != null) && scRules[i] != null;
 				if (ok) {
-					if(scRules[i] != null){
-						scRules[i].setSCFormula(lhsForm, monitor);
-						// states
-						RewriteRuleLabelSymbolTable labelTable = new RewriteRuleLabelSymbolTable(ModulesUtils.LABEL_SYMTAB_SIZE);
-						repository.setState(labelTable);
-						RuleAccuracyInfo ruleAccuracyInfo = new RuleAccuracyInfo();
-						repository.setState(ruleAccuracyInfo);
-						ParsedFormula lhsParsedFormula = new ParsedFormula();
-						lhsParsedFormula.setFormula(lhsForm);
-						repository.setState(lhsParsedFormula);
-						// call child processors
-						initProcessorModules(rule, repository, null);
-						processModules(rule, scRules[i], repository, monitor);
-						endProcessorModules(rule, repository, null);
-						// accuracy
-						scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(), monitor);
-						if(!ruleAccuracyInfo.isAccurate()){
-							accuracyInfo.setNotAccurate();
-						}
-					}
-					else {
-						ok = false;
-					}
+					scRules[i].setSCFormula(lhsForm, monitor);
+					// states
+					RewriteRuleLabelSymbolTable labelTable = new RewriteRuleLabelSymbolTable(
+							ModulesUtils.LABEL_SYMTAB_SIZE);
+					repository.setState(labelTable);
+					RuleAccuracyInfo ruleAccuracyInfo = new RuleAccuracyInfo();
+					repository.setState(ruleAccuracyInfo);
+					ParsedFormula lhsParsedFormula = new ParsedFormula();
+					lhsParsedFormula.setFormula(lhsForm);
+					repository.setState(lhsParsedFormula);
+					// call child processors
+					initProcessorModules(rule, repository, null);
+					processModules(rule, scRules[i], repository, monitor);
+					endProcessorModules(rule, repository, null);
+					// accuracy
+					scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(), monitor);
 				}
 				if (!ok) {
 					infos[i].setError();
@@ -147,106 +130,4 @@ public class RewriteRuleModule extends RuleModule<IRewriteRule, ISCRewriteRule>{
 			ILabeledElement element, String component) throws CoreException {
 		return TheorySymbolFactory.getInstance().makeLocalRewriteRule(symbol, true, element, component);
 	}
-	
-	private Formula<?> checkLeftHandSide(IRewriteRule rule, ILabelSymbolInfo symbolInfo,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
-		// lhs formula is set
-		if (!rule.hasFormula()) {
-			createProblemMarker(rule, FORMULA_ATTRIBUTE,
-					TheoryGraphProblem.LHSUndefError);
-			return null;
-		}
-		// parse the lhs
-		Formula<?> lhsForm = ModulesUtils.parseFormula(rule, repository.getFormulaFactory(), this);
-		if (lhsForm == null) {
-			return null;
-		}
-		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
-		lhsForm = ModulesUtils.checkFormula(rule, lhsForm, typeEnvironment, this);
-		if(lhsForm == null){
-			return null;
-		}
-		// check all idents of the lhs formula were actually declared BUG FIXED.
-		for (FreeIdentifier identifier : lhsForm.getFreeIdentifiers()){
-			if (!typeEnvironment.contains(identifier.getName())){
-				createProblemMarker(rule, FORMULA_ATTRIBUTE, 
-						GraphProblem.UndeclaredFreeIdentifierError, identifier.getName());
-				return null;
-			}
-		}
-		// lhs is a free identifier or predicate variable
-		if (lhsForm instanceof FreeIdentifier) {
-			createProblemMarker(rule, FORMULA_ATTRIBUTE,
-					TheoryGraphProblem.LHSIsIdentErr);
-			return null;
-		}
-		// lhs does not contain structured predicates
-		WDStrictChecker checker = new WDStrictChecker();
-		lhsForm.accept(checker);
-		if (!checker.wdStrict) {
-			createProblemMarker(rule, FORMULA_ATTRIBUTE,
-					TheoryGraphProblem.LHS_IsNotWDStrict);
-			return null;
-		}
-		// final check against type parameters
-		if (!CoreUtilities.checkAgainstTypeParameters(rule, lhsForm,
-				typeEnvironment, this)) {
-			return null;
-		}
-		return lhsForm;
-	}
-	
-	static final class WDStrictChecker extends DefaultVisitor {
-
-		private boolean wdStrict = true;
-
-		/**
-		 * Returns whether the check reached the conclusion that the visited
-		 * formula may not be WD strict.
-		 * 
-		 * @return whether the visited formula is WD strict
-		 */
-		public boolean isWdStrict() {
-			return wdStrict;
-		}
-
-		@Override
-		public boolean enterEXISTS(QuantifiedPredicate pred) {
-			wdStrict = false;
-			return false;
-		}
-
-		@Override
-		public boolean enterFORALL(QuantifiedPredicate pred) {
-			wdStrict = false;
-			return false;
-		}
-
-		@Override
-		public boolean enterLAND(AssociativePredicate pred) {
-			wdStrict = false;
-			return false;
-		}
-
-		@Override
-		public boolean enterLOR(AssociativePredicate pred) {
-			wdStrict = false;
-			return false;
-		}
-
-		@Override
-		public boolean enterLIMP(BinaryPredicate pred) {
-			wdStrict = false;
-			return false;
-		}
-
-		@Override
-		public boolean enterLEQV(BinaryPredicate pred) {
-			wdStrict = false;
-			return false;
-		}
-
-	}
-	
 }

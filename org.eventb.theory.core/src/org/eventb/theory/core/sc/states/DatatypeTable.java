@@ -19,11 +19,11 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.maths.MathExtensionsFactory;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
-import org.eventb.theory.core.maths.MathExtensionsFactory;
 import org.eventb.theory.core.sc.Messages;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -38,6 +38,7 @@ public class DatatypeTable extends State implements IDatatypeTable{
 	private List<String> referencedTypes;
 	private String currentDatatype = null;
 	private String currentConstructor = null;
+	private boolean isAdmissible = true;
 	
 	private FormulaFactory initialFactory;
 	private FormulaFactory decoyFactory;
@@ -60,7 +61,6 @@ public class DatatypeTable extends State implements IDatatypeTable{
 	
 	public FormulaFactory augmentDecoyFormulaFactory(){
 		DatatypeEntry entry = datatypes.get(currentDatatype);
-		// entry should not be null
 		Set<IFormulaExtension> extensions  = entry.generateTypeExpression();
 		if(extensions != null){
 			decoyFactory = decoyFactory.withExtensions(extensions);
@@ -84,6 +84,7 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		currentDatatype = null;
 		currentConstructor = null;
+		isAdmissible = true;
 		return initialFactory;
 	}
 	
@@ -110,6 +111,10 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		return datatypes.get(currentDatatype).hasBaseConstructor(typeExpression, decoyFactory);
 	}
 	
+	public boolean isAdmissible() {
+		return isAdmissible;
+	}
+	
 	public boolean isAllowedIdentifier(String identifier) {
 		return referencedTypes.contains(identifier);
 	}
@@ -133,8 +138,12 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		currentConstructor = consName;
 	}
 	
-	public void addDestructor(String destName, Type type){
-		datatypes.get(currentDatatype).addDestructor(currentConstructor, destName, type);
+	public boolean addDestructor(String destName, Type type){
+		boolean admissibility = datatypes.get(currentDatatype).addDestructor(currentConstructor, destName, type);
+		if (!admissibility){
+			isAdmissible = false;
+		}
+		return admissibility;
 	}
 	
 	private class DatatypeEntry{
@@ -188,8 +197,8 @@ public class DatatypeTable extends State implements IDatatypeTable{
 			return code;
 		}
 		
-		public void addDestructor(String constructor, String destructor, Type type){
-			constructors.get(constructor).addDestructor(destructor, type);
+		public boolean addDestructor(String constructor, String destructor, Type type){
+			return constructors.get(constructor).addDestructor(destructor, type);
 		}
 		
 		public Set<IFormulaExtension> generateTypeExpression(){
@@ -228,7 +237,7 @@ public class DatatypeTable extends State implements IDatatypeTable{
 			
 			public boolean isBase(Type typeExpression, FormulaFactory ff){
 				for(Type type : destructors.values()){
-					TypeVisitor typeVisitor = new TypeVisitor(typeExpression, ff);
+					BaseTypeVisitor typeVisitor = new BaseTypeVisitor(typeExpression, ff);
 					type.toExpression(ff).accept(typeVisitor);
 					if(!typeVisitor.isBaseType()){
 						return false;
@@ -237,17 +246,22 @@ public class DatatypeTable extends State implements IDatatypeTable{
 				return true;
 			}
 			
-			public void addDestructor(String name, Type type){
+			public boolean addDestructor(String name, Type type){
+				// check for admissibility before inserting
+				{
+					
+				}
 				destructors.put(name, type);
+				return true;
 			}
 		}
 		
-		public class TypeVisitor extends DefaultVisitor {
+		public class BaseTypeVisitor extends DefaultVisitor {
 
 			private Expression typeExpression;
 			private boolean isBase = true;
 			
-			public TypeVisitor(Type type, FormulaFactory ff){
+			public BaseTypeVisitor(Type type, FormulaFactory ff){
 				this.typeExpression = type.toExpression(ff);
 			}
 			

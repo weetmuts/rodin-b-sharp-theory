@@ -39,10 +39,10 @@ public final class Messages {
 	public static String scuser_LHSUndef;
 	public static String scuser_RewriteRuleLabelConflict;
 	public static String scuser_RHSIdentsNotSubsetOfLHSIdents;
-	public static String scuser_RHSUndef;
+	public static String scuser_RHSFormulaMissing;
 	public static String scuser_RuleSideNotTheoryFormula;
 	public static String scuser_RuleTypeMismatch;
-	public static String scuser_TheoryTypeParameterNameConflict;
+	public static String scuser_TypeParameterNameConflict;
 	public static String scuser_UntypedTypeParameterError;
 	public static String scuser_RhsLabelConflict;
 	public static String scuser_CondUndef;
@@ -70,7 +70,6 @@ public final class Messages {
 	public static String scuser_IdenIsADesNameError;
 	public static String scuser_DatatypeHasNoBaseConsError;
 	public static String scuser_MissingOpLabelIDError;
-	public static String scuser_OperatorIDConflictWarning;
 	public static String scuser_OperatorIDConflictError;
 	public static String scuser_OperatorIDExistsError;
 	public static String scuser_OperatorSynMissingError;
@@ -81,25 +80,25 @@ public final class Messages {
 	public static String scuser_OperatorCommutMissingWarning;
 	public static String scuser_UntypedOperatorArgumentError;
 	public static String scuser_OperatorArgumentNameConflict;
-	public static String scuser_TypeAttrMissingForOpArgError;
+	public static String scuser_TypeAttrMissingError;
 	public static String scuser_IdentIsNotTypeParError;
 	public static String scuser_OperatorCannotBeCommutError;
 	public static String scuser_OperatorCannotBeAssosError;
 	public static String scuser_TheoremPredMissingError;
-	public static String scuser_WDPredUndefError;
+	public static String scuser_WDPredMissingError;
 	public static String scuser_OpCannotReferToTheseIdents;
 	public static String scuser_OperatorSynIsATypeParError;
 	public static String scuser_OperatorHasMoreThan1DefError;
-	public static String scuser_MissingFormulaAttrError;
-	public static String scuser_OperatorNoDefError;
+	public static String scuser_MissingFormulaError;
+	public static String scuser_OperatorHasNoDefError;
 	public static String scuser_OperatorDefNotExpError;
 	public static String scuser_OperatorDefNotPredError;
-	public static String scuser_OperatorWithSameSynJustBeenAdded;
+	public static String scuser_OperatorWithSameSynJustBeenAddedError;
 	public static String scuser_OperatorInvalidSynError;
 	public static String scuser_RulesBlockLabelProblemError;
 	public static String scuser_RulesBlockLabelProblemWarning;
 	public static String scuser_UntypedMetavariableError;
-	public static String scuser_TheoryMetaVarNameConflict;
+	public static String scuser_MetavariableNameConflictError;
 	public static String scuser_TheoremLabelProblemError;
 	public static String scuser_TheoremLabelProblemWarning;
 	public static String scuser_NonTypeParOccurError;
@@ -118,11 +117,11 @@ public final class Messages {
 	public static String scuser_InferenceRuleForward;
 	public static String scuser_InferenceRuleBoth;
 	public static String scuser_CondIdentsNotSubsetOfLHSIdents;
-	public static String scuser_CondGivensNotSubsetOfLHSGivens;
-	public static String scuser_RHSGivensNotSubsetOfLHSGivens;
+	public static String scuser_CondTypesNotSubsetOfLHSTypes;
+	public static String scuser_RHSTypesNotSubsetOfLHSTypes;
 	public static String scuser_TheoryInImportMissing;
 	public static String scuser_ImportTheoryNotExist;
-	public static String scuser_RedundantImportWarn;
+	public static String scuser_RedundantImportWarning;
 	public static String scuser_LHS_IsNotWDStrict;
 	public static String scuser_ImportDepCircularity;
 	public static String scuser_ImportConflict;
@@ -145,7 +144,8 @@ public final class Messages {
 	public static String scuser_RecOpTypeNotConsistent;
 	public static String database_SCTypeParseFailure;
 	public static String scuser_OpArgExprNotSet;
-	public static String scuser_AppUndefWarning;
+	public static String scuser_ApplicabilityUndefError;
+	public static String scuser_InadmissibleDatatypeError;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

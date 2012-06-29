@@ -32,6 +32,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
@@ -203,9 +204,17 @@ public class CoreUtilities {
 				return null;
 			}
 		}
+		
 		ITypeCheckResult tcResult = predicate.typeCheck(typeEnvironment);
 		if (issueASTProblemMarkers(element, attributeType, tcResult, display)) {
 			return null;
+		}
+		Set<GivenType> givenTypes = predicate.getGivenTypes();
+		for (GivenType type : givenTypes){
+			if (!typeEnvironment.contains(type.getName())) {
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, type.getName());
+				return null;
+			}
 		}
 		return predicate;
 	}
@@ -240,9 +249,17 @@ public class CoreUtilities {
 				return null;
 			}
 		}
+		
 		ITypeCheckResult tcResult = expression.typeCheck(typeEnvironment);
 		if (issueASTProblemMarkers(element, attributeType, tcResult, display)) {
 			return null;
+		}
+		Set<GivenType> givenTypes = expression.getGivenTypes();
+		for (GivenType type : givenTypes){
+			if (!typeEnvironment.contains(type.getName())) {
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, type.getName());
+				return null;
+			}
 		}
 		return expression;
 	}

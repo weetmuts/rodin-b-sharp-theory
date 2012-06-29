@@ -55,9 +55,6 @@ public class TheoryAttributes {
 	public static IAttributeType.String REASONING_TYPE_ATTRIBUTE = RodinCore
 		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".reasoningType");
 	
-	public static IAttributeType.Boolean VALIDATED_ATTRIBUTE = RodinCore
- 		.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".validated");
-	
 	public static IAttributeType.String GROUP_ID_ATTRIBUTE = RodinCore
 		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".groupID");
 	

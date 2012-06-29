@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -34,7 +35,6 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -57,6 +57,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		// Most processing is done here in the initialisation 
+		// to ensure other module initialisation know about the available maths extensions
 		accuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		IRodinFile file = (IRodinFile) element;
 		ITheoryRoot root = (ITheoryRoot) file.getRoot();
@@ -99,7 +100,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 		for (IImportTheory importTheory : importTheories) {
 			// missing attribute
 			if (!importTheory.hasImportTheory()) {
-				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.ImportTheoryAttrMissing);
+				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.ImportTheoryMissing);
 				isAccurate = false;
 				continue;
 			}
@@ -110,15 +111,9 @@ public class ImportTheoryModule extends SCProcessorModule {
 				isAccurate = false;
 				continue;
 			}
-			// circularity
-			if (TheoryHierarchyHelper.doesTheoryImportTheory(importRoot, targetRoot)) {
-				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, TheoryGraphProblem.ImportDepCircularity,importRoot.getComponentName(),targetRoot.getComponentName());
-				isAccurate = false;
-				continue;
-			}
 			// direct redundancy
 			if (importedTheories.contains(importRoot)) {
-				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.RedundantImportWarn,importRoot.getComponentName(),targetRoot.getComponentName());
+				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.RedundantImportWarning,importRoot.getComponentName());
 				isAccurate = false;
 				continue;
 			}
@@ -148,7 +143,6 @@ public class ImportTheoryModule extends SCProcessorModule {
 		Map<IImportTheory, Set<ISCTheoryRoot>> importMap = new LinkedHashMap<IImportTheory, Set<ISCTheoryRoot>>();
 		// need to check for conflicts
 		for (IImportTheory importTheory : importTheoriesDirectives) {
-			// TODO check if being temp affects things
 			ISCTheoryRoot referencedRoot = importTheory.getImportTheory();
 			Set<ISCTheoryRoot> allReferencedRoots = TheoryHierarchyHelper.importClosure(referencedRoot);
 			allReferencedRoots.add(referencedRoot);
@@ -177,6 +171,9 @@ public class ImportTheoryModule extends SCProcessorModule {
 						TheoryGraphProblem.IndRedundantImportWarn);
 				importTheoriesDirectives.remove(currentImportTheory);
 				importMap.remove(currentImportTheory);
+				// shown by test TestImportTheories.testImportTheories_006()
+				// theory is not accurate in this case
+				isAccurate = false;
 				continue;
 			}
 			importedTheories.add(currentImportTheory.getImportTheory());
@@ -267,7 +264,6 @@ public class ImportTheoryModule extends SCProcessorModule {
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 

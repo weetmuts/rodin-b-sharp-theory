@@ -15,6 +15,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.maths.IOperatorArgument;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -22,7 +23,6 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.maths.IOperatorArgument;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
@@ -92,7 +92,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 						createProblemMarker(
 								operatorDefinition,
 								TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
-								TheoryGraphProblem.OperatorCannotBeAssosWarning,
+								TheoryGraphProblem.OperatorCannotBeAssosError,
 								opID);
 						return false;
 					}

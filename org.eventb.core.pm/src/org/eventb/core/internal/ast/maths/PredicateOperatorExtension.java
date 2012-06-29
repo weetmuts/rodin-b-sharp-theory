@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.internal.core.maths;
+package org.eventb.core.internal.ast.maths;
 
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Predicate;
@@ -15,9 +15,9 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.theory.core.maths.AbstractOperatorExtension;
-import org.eventb.theory.core.maths.IOperatorTypingRule;
-import org.eventb.theory.core.maths.OperatorExtensionProperties;
+import org.eventb.core.ast.maths.AbstractOperatorExtension;
+import org.eventb.core.ast.maths.IOperatorTypingRule;
+import org.eventb.core.ast.maths.OperatorExtensionProperties;
 
 /**
  * An implementation of a predicate operator extension.

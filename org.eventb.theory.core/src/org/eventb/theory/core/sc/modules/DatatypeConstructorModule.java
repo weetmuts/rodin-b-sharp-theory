@@ -34,97 +34,116 @@ import org.rodinp.core.IRodinElement;
  */
 public class DatatypeConstructorModule extends SCProcessorModule {
 
-	private final IModuleType<DatatypeConstructorModule> MODULE_TYPE = SCCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID
-					+ ".datatypeConstructorModule");
+	private final IModuleType<DatatypeConstructorModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
+			+ ".datatypeConstructorModule");
+
+	private IDatatypeTable datatypeTable;
 
 	@Override
-	public void process(IRodinElement element, IInternalElement target,
-			ISCStateRepository repository, IProgressMonitor monitor)
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		super.initModule(element, repository, monitor);
+		datatypeTable = (IDatatypeTable) repository.getState(IDatatypeTable.STATE_TYPE);
+	}
+
+	@Override
+	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
 		IDatatypeDefinition datatypeDefinition = (IDatatypeDefinition) element;
 		ISCDatatypeDefinition scDefinition = (ISCDatatypeDefinition) target;
-		IDatatypeConstructor[] constructors = datatypeDefinition
-				.getDatatypeConstructors();
-		processConstructors(constructors, datatypeDefinition, scDefinition,
-				repository, monitor);
+		IDatatypeConstructor[] constructors = datatypeDefinition.getDatatypeConstructors();
+		if (constructors.length < 1) {
+			createProblemMarker(datatypeDefinition, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					TheoryGraphProblem.DatatypeHasNoConsError, datatypeDefinition.getIdentifierString());
+			datatypeTable.setErrorProne();
+			return;
+		}
+		processConstructors(constructors, datatypeDefinition, scDefinition, repository, monitor);
 		monitor.worked(1);
 
 	}
 
 	@Override
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		datatypeTable = null;
+		super.endModule(element, repository, monitor);
+	}
+
+	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
 	/**
-	 * Processes the supplied constructors and creates their statically checked counterparts where appropriate.
-	 * <p> Potential issues that might arise include:
-	 * 	<li>Constructor name is missing;</li>
-	 * 	<li>Name clash exists.</li>
+	 * Processes the supplied constructors and creates their statically checked
+	 * counterparts where appropriate.
 	 * <p>
-	 * @param constructors the array of datatype constructors
-	 * @param datatypeDefinition the datatype definition
-	 * @param scDefinition the target SC datatype definition
-	 * @param repository the state repository
-	 * @param monitor the progress monitor
+	 * Potential issues that might arise include:
+	 * <li>Constructor name is missing;</li>
+	 * <li>Name clash exists.</li>
+	 * <p>
+	 * 
+	 * @param constructors
+	 *            the array of datatype constructors
+	 * @param datatypeDefinition
+	 *            the datatype definition
+	 * @param scDefinition
+	 *            the target SC datatype definition
+	 * @param repository
+	 *            the state repository
+	 * @param monitor
+	 *            the progress monitor
 	 * @throws CoreException
 	 */
-	protected void processConstructors(IDatatypeConstructor[] constructors,
-			IDatatypeDefinition datatypeDefinition,
-			ISCDatatypeDefinition scDefinition, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	protected void processConstructors(IDatatypeConstructor[] constructors, IDatatypeDefinition datatypeDefinition,
+			ISCDatatypeDefinition scDefinition, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		FormulaFactory factory = repository.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
-		IDatatypeTable datatypeTable = (IDatatypeTable) repository
-				.getState(IDatatypeTable.STATE_TYPE);
 		for (IDatatypeConstructor cons : constructors) {
-			if (!cons.hasIdentifierString()) {
-				createProblemMarker(cons,
-						EventBAttributes.IDENTIFIER_ATTRIBUTE,
-						TheoryGraphProblem.MissingConstructorNameError);
+			if (!checkConstructorName(cons, factory, typeEnvironment, datatypeTable)) {
 				datatypeTable.setErrorProne();
 				continue;
 			}
-			String name = cons.getIdentifierString();
-			String errorCode = datatypeTable.checkName(name);
-			if (errorCode != null) {
-				createProblemMarker(cons,
-						EventBAttributes.IDENTIFIER_ATTRIBUTE,
-						ModulesUtils.getAppropriateProblemForCode(errorCode),
-						name);
-				datatypeTable.setErrorProne();
-				continue;
+			ISCDatatypeConstructor scCons = ModulesUtils.createSCIdentifierElement(ISCDatatypeConstructor.ELEMENT_TYPE,
+					cons, scDefinition, monitor);
+			scCons.setSource(cons, monitor);
+			datatypeTable.addConstructor(cons.getIdentifierString());
+			// Run child modules
+			{
+				initProcessorModules(cons, repository, monitor);
+				processModules(cons, scCons, repository, monitor);
+				endProcessorModules(cons, repository, monitor);
 			}
-			FreeIdentifier ident = ModulesUtils.parseIdentifier(
-					cons.getIdentifierString(), cons,
-					EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, this);
-			if (ident != null) {
-				if (typeEnvironment.contains(ident.getName())) {
-					createProblemMarker(
-							cons,
-							EventBAttributes.IDENTIFIER_ATTRIBUTE,
-							TheoryGraphProblem.ConstructorNameAlreadyATypeParError,
-							ident.getName());
-					datatypeTable.setErrorProne();
-					continue;
-				}
-				ISCDatatypeConstructor scCons = ModulesUtils
-						.createSCIdentifierElement(
-								ISCDatatypeConstructor.ELEMENT_TYPE, cons,
-								scDefinition, monitor);
-				scCons.setSource(cons, monitor);
-				datatypeTable.addConstructor(name);
-				// Run child modules
-				{
-					initProcessorModules(cons, repository, monitor);
-					processModules(cons, scCons, repository, monitor);
-					endProcessorModules(cons, repository, monitor);
-				}
-			} else
-				datatypeTable.setErrorProne();
 		}
 
+	}
+	// check constructor name/identifier
+	private boolean checkConstructorName(IDatatypeConstructor constructor, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment, IDatatypeTable datatypeTable) throws CoreException {
+		if (!constructor.hasIdentifierString() || constructor.getIdentifierString().equals("")) {
+			createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					TheoryGraphProblem.MissingDatatypeNameError);
+			return false;
+		}
+		String name = constructor.getIdentifierString();
+		String error = datatypeTable.checkName(name);
+		if (error != null) {
+			createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					ModulesUtils.getAppropriateProblemForCode(error), name);
+			return false;
+		}
+		FreeIdentifier ident = ModulesUtils.parseIdentifier(name, constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+				factory, this);
+		if (ident != null && typeEnvironment.contains(ident.getName())) {
+			createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					TheoryGraphProblem.ConstructorNameAlreadyATypeParError, ident.getName());
+			return false;
+		}
+		else if (ident == null){
+			return false;
+		}
+		return true;
 	}
 }

@@ -15,18 +15,20 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.maths.MathExtensionsUtilities;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.wd.y.YComputer;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -98,6 +100,29 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 					typeEnvironment.getType(name)));
 		}
 		return vars;
+	}
+	
+	protected Predicate makeClosedPredicate(Predicate predicate,
+			ITypeEnvironment typeEnvironment) {
+		List<FreeIdentifier> metavars = getMetavariables(typeEnvironment);
+		FreeIdentifier[] predicateIdents = predicate.getFreeIdentifiers();
+		List<FreeIdentifier> nonSetsIdents = new ArrayList<FreeIdentifier>();
+		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();
+		for (FreeIdentifier ident : predicateIdents) {
+			if (metavars.contains(ident)) {
+				nonSetsIdents.add(ident);
+				decls.add(factory.makeBoundIdentDecl(ident.getName(), null,
+						ident.getType()));
+			}
+		}
+
+		if (nonSetsIdents.size() == 0) {
+			return predicate;
+		}
+		predicate = predicate.bindTheseIdents(nonSetsIdents, factory);
+		predicate = DLib.mDLib(factory).makeUnivQuant(
+				decls.toArray(new BoundIdentDecl[decls.size()]), predicate);
+		return predicate;
 	}
 	
 	/**

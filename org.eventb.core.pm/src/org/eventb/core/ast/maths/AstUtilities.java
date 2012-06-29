@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core;
+package org.eventb.core.ast.maths;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -15,7 +15,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.theory.core.maths.IOperatorExtension;
 
 /**
  * Utilities from the Theory Core that are mostly useful for the Rule-based
@@ -143,7 +142,7 @@ public class AstUtilities {
 		assert eexp.getExtension() instanceof IOperatorExtension;
 		PositionPoint point = null;
 		IOperatorExtension extension = (IOperatorExtension) eexp.getExtension();
-		Notation notation = extension.getNotation();
+		Notation notation = extension.getKind().getProperties().getNotation();
 
 		switch (notation) {
 		case INFIX:

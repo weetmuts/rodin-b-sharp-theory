@@ -126,9 +126,6 @@ public class InferenceRuleModule extends RuleModule<IInferenceRule, ISCInference
 				}
 				if (scRules[i] != null) {
 					scRules[i].setAccuracy(ruleAccuracyInfo.isAccurate(), monitor);
-					if (!ruleAccuracyInfo.isAccurate()) {
-						accuracyInfo.setNotAccurate();
-					}
 				}
 			} else {
 				if (scRules[i] != null)

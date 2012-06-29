@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.core.maths;
+package org.eventb.core.ast.maths;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,8 +34,6 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.wd.YMediator;
-import org.eventb.theory.internal.core.util.GeneralUtilities;
-import org.eventb.theory.internal.core.util.MathExtensionsUtilities;
 
 /**
  * 
@@ -135,7 +133,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 	}
 
 	public String toString() {
-		return GeneralUtilities.toString(operatorArguments);
+		return MathExtensionsUtilities.toString(operatorArguments);
 	}
 	
 	/**
