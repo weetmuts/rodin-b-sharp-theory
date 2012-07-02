@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.ast.maths;
+package org.eventb.core.internal.ast.maths;
 
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.extension.ITypeCheckMediator;

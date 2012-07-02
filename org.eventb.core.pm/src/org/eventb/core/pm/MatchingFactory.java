@@ -27,7 +27,6 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.pm.basis.engine.Binding;
-import org.eventb.core.pm.basis.engine.MatchingUtilities;
 import org.eventb.core.pm.matchers.exp.AssociativeExpressionMatcher;
 import org.eventb.core.pm.matchers.exp.AtomicExpressionMatcher;
 import org.eventb.core.pm.matchers.exp.BinaryExpressionMatcher;
@@ -51,7 +50,7 @@ import org.eventb.core.pm.matchers.pred.UnaryPredicateMatcher;
 /**
  * A matching factory that has the following capabilities:
  * <p>1- Return a matcher for a given formula class.
- * <p>2-Create a fresh binding when starting a matching process.
+ * <p>2- Create a fresh binding when starting a matching process.
  * 
  * <p> Clients need not use this class directly. 
  * An instance is available as part of the matchers hierarchy class definition.
@@ -64,13 +63,13 @@ public final class MatchingFactory {
 	/**
 	 * The matchers database
 	 */
-	private static final Map<Class<? extends Expression>, IExpressionMatcher> EXPRESSION_MATCHERS = new LinkedHashMap<Class<? extends Expression>, IExpressionMatcher>();
-	private static final Map<Class<? extends Predicate>, IPredicateMatcher> PREDICATE_MATCHERS = new LinkedHashMap<Class<? extends Predicate>, IPredicateMatcher>();
+	private final Map<Class<? extends Expression>, ExpressionMatcher<?>> EXPRESSION_MATCHERS = new LinkedHashMap<Class<? extends Expression>, ExpressionMatcher<?>>();
+	private final Map<Class<? extends Predicate>, PredicateMatcher<?>> PREDICATE_MATCHERS = new LinkedHashMap<Class<? extends Predicate>, PredicateMatcher<?>>();
 	
 	/**
 	 * Load expression matchers.
 	 */
-	static {
+	{
 		EXPRESSION_MATCHERS.put(AssociativeExpression.class, new AssociativeExpressionMatcher());
 		EXPRESSION_MATCHERS.put(AtomicExpression.class, new AtomicExpressionMatcher());
 		EXPRESSION_MATCHERS.put(BinaryExpression.class, new BinaryExpressionMatcher());
@@ -86,7 +85,7 @@ public final class MatchingFactory {
 	/**
 	 * Load predicate matchers.
 	 */
-	static {
+	{
 		PREDICATE_MATCHERS.put(AssociativePredicate.class, new AssociativePredicateMatcher());
 		PREDICATE_MATCHERS.put(BinaryPredicate.class, new BinaryPredicateMatcher());
 		PREDICATE_MATCHERS.put(LiteralPredicate.class, new LiteralPredicateMatcher());
@@ -118,13 +117,13 @@ public final class MatchingFactory {
 			throw new IllegalArgumentException("Matching started without a binding object.");
 		}
 		// if they are not of the same class, do not bother
-		if(!MatchingUtilities.sameClass(formula, pattern)){
+		if(formula.getClass().equals(pattern.getClass())){
 			return false;
 		}
 		// case Expression : use an expression matcher
 		if(formula instanceof Expression){
 			// get the matcher from the map
-			IExpressionMatcher expMatcher = getExpressionMatcher(((Expression)formula).getClass());
+			ExpressionMatcher<?> expMatcher = getExpressionMatcher(((Expression)formula).getClass());
 			if (expMatcher == null){
 				return false;
 			}
@@ -134,7 +133,7 @@ public final class MatchingFactory {
 		// case Predicate : use a predicate matcher
 		else {
 			// get the matcher from the map
-			IPredicateMatcher predMatcher = getPredicateMatcher(((Predicate)formula).getClass());
+			PredicateMatcher<?> predMatcher = getPredicateMatcher(((Predicate)formula).getClass());
 			if (predMatcher == null){
 				return false;
 			}
@@ -168,11 +167,11 @@ public final class MatchingFactory {
 		return new Binding(acceptPartialMatch, factory);
 	}
 	
-	private IExpressionMatcher getExpressionMatcher(Class<? extends Expression> clazz){
+	private ExpressionMatcher<?> getExpressionMatcher(Class<? extends Expression> clazz){
 		return EXPRESSION_MATCHERS.get(clazz);
 	}
 	
-	private IPredicateMatcher getPredicateMatcher(Class<? extends Predicate> clazz){
+	private PredicateMatcher<?> getPredicateMatcher(Class<? extends Predicate> clazz){
 		return PREDICATE_MATCHERS.get(clazz);
 	}
 	

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pm.assoc;
+package org.eventb.core.internal.pm.assoc;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

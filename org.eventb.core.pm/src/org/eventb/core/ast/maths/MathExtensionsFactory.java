@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.maths;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,13 +23,16 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.internal.ast.maths.CompleteDatatypeExtension;
 import org.eventb.core.internal.ast.maths.ExpressionOperatorExtension;
 import org.eventb.core.internal.ast.maths.ExpressionOperatorTypingRule;
+import org.eventb.core.internal.ast.maths.IOperatorArgument;
+import org.eventb.core.internal.ast.maths.IOperatorTypingRule;
+import org.eventb.core.internal.ast.maths.OperatorArgument;
 import org.eventb.core.internal.ast.maths.PredicateOperatorExtension;
 import org.eventb.core.internal.ast.maths.PredicateOperatorTypingRule;
 import org.eventb.core.internal.ast.maths.SimpleDatatypeExtension;
 
 /**
- * Factory class for the different mathematical extensions provided by the
- * Theory Core plug-in.
+ * Factory class for the different mathematical extensions contributed by the
+ * Theory plug-in.
  * 
  * @since 1.0
  * 
@@ -36,10 +40,6 @@ import org.eventb.core.internal.ast.maths.SimpleDatatypeExtension;
  * 
  */
 public final class MathExtensionsFactory {
-
-	private static MathExtensionsFactory instance;
-
-	private MathExtensionsFactory() {}
 
 	/**
 	 * Creates an operator extension properties with the passed parameters.
@@ -50,14 +50,14 @@ public final class MathExtensionsFactory {
 	 * @param groupID the operator group ID
 	 * @return the operator properties 
 	 */
-	public OperatorExtensionProperties getOperatorExtensionProperties(String operatorID, String syntax, 
+	public static OperatorExtensionProperties getOperatorExtensionProperties(String operatorID, String syntax, 
 			FormulaType formulaType, Notation notation, 
 			String groupID){
 		return new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, groupID);
 	}
 	
 	/**
-	 * Returns the formula extension with the given properties and the operator typing rule.
+	 * Returns the expression extension with the given properties and the operator typing rule.
 	 * @param properties the operator properties, must not be <code>null</code>
 	 * @param isCommutative whether the operator is commutative
 	 * @param isAssociative whether the operator is associative
@@ -65,26 +65,41 @@ public final class MathExtensionsFactory {
 	 * @param source the source of the extension
 	 * @return the expression operator extension
 	 */
-	public  IExpressionExtension getFormulaExtension(OperatorExtensionProperties properties,
-			boolean isCommutative, boolean isAssociative,
-			ExpressionOperatorTypingRule operatorTypingRule,
-			Object source) {
+	public static  IExpressionExtension getExpressionExtension(OperatorExtensionProperties properties,
+			boolean isCommutative, boolean isAssociative, Map<String, Type> operatorArguments, Type resultantType, 
+			Predicate wdPredicate, Predicate dWDPredicate, Object source) {
+		List<IOperatorArgument> opArgs = new ArrayList<IOperatorArgument>();
+		int index = 0;
+		for (String name : operatorArguments.keySet()){
+			opArgs.add(new OperatorArgument(index++, name, operatorArguments.get(name)));
+		}
+		IOperatorTypingRule operatorTypingRule = new ExpressionOperatorTypingRule(opArgs, wdPredicate, 
+				dWDPredicate, resultantType, isAssociative);
 		return new ExpressionOperatorExtension(properties, isCommutative, isAssociative, operatorTypingRule, 
 				source);
 	}
 	
 	/**
-	 * Returns the formula extension with the given properties and the operator typing rule.
-	 * @param properties the operator properties, must not be <code>null</code>
+	 * Returns the predicate extension with the given properties and the operator typing rule.
+	 * @param properties the operator syntactic properties
 	 * @param isCommutative whether the operator is commutative
-	 * @param operatorTypingRule the operator typing rule, must not be <code>null</code>
-	 * @param source the source of the extension
-	 * @return the predicate operator extension
+	 * @param operatorArguments the map of arguments, not that order is imported here
+	 * @param wdPredicate the WD predicate 
+	 * @param dWDPredicate the D-based WD predicate
+	 * @param source the source of this extension if any
+	 * @return the predicate extension
 	 */
-	public  IPredicateExtension getFormulaExtension(OperatorExtensionProperties properties,
-			boolean isCommutative, 
-			PredicateOperatorTypingRule operatorTypingRule,
-			Object source) {
+	
+	public static  IPredicateExtension getPredicateExtension(OperatorExtensionProperties properties,
+			boolean isCommutative, Map<String, Type> operatorArguments, Predicate wdPredicate, 
+			Predicate dWDPredicate, Object source) {
+		List<IOperatorArgument> opArgs = new ArrayList<IOperatorArgument>();
+		int index = 0;
+		for (String name : operatorArguments.keySet()){
+			opArgs.add(new OperatorArgument(index++, name, operatorArguments.get(name)));
+		}
+		IOperatorTypingRule operatorTypingRule = new PredicateOperatorTypingRule(opArgs,
+				wdPredicate, dWDPredicate);
 		return new PredicateOperatorExtension(properties, isCommutative, operatorTypingRule, source);
 	}
 	
@@ -99,7 +114,7 @@ public final class MathExtensionsFactory {
 	 *            the formula factory
 	 * @return the set of resulting extensions
 	 */
-	public Set<IFormulaExtension> getSimpleDatatypeExtensions(
+	public static Set<IFormulaExtension> getSimpleDatatypeExtensions(
 			String identifier, String[] typeArguments, FormulaFactory factory) {
 		return factory.makeDatatype(
 				new SimpleDatatypeExtension(identifier, typeArguments)).getExtensions();
@@ -118,51 +133,11 @@ public final class MathExtensionsFactory {
 	 *            the formula factory
 	 * @return the set of resulting extensions
 	 */
-	public Set<IFormulaExtension> getCompleteDatatypeExtensions(
+	public static Set<IFormulaExtension> getCompleteDatatypeExtensions(
 			String identifier, String[] typeArguments,
 			Map<String, Map<String, Type>> constructors, FormulaFactory factory) {
 		CompleteDatatypeExtension completeDtExt = new CompleteDatatypeExtension(identifier, 
 				typeArguments, constructors);
 		return factory.makeDatatype(completeDtExt).getExtensions();
-	}
-	
-	/**
-	 * Returns a typing rule with the operator that has the specified arguments. The operator
-	 * is deemed a predicate operator if <code>resultantType</code> is <code>null</code>.
-	 * @param operatorArguments the operator arguments
-	 * @param resultantType the resultant type
-	 * @param wdPredicate the WD condition
-	 * @param dWDPredicate the D WD predicate
-	 * @param isAssociative
-	 * @return the appropriate typing rule
-	 */
-	public ExpressionOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Type resultantType, 
-			Predicate wdPredicate, Predicate dWDPredicate,boolean isAssociative){
-		ExpressionOperatorTypingRule typingRule  = 
-			new ExpressionOperatorTypingRule(operatorArguments, wdPredicate, dWDPredicate, resultantType, isAssociative);
-		
-		return typingRule;
-	}
-	
-	/**
-	 * Returns a typing rule with the operator that has the specified arguments. The operator
-	 * is deemed a predicate operator if <code>resultantType</code> is <code>null</code>.
-	 * @param operatorArguments the operator arguments
-	 * @param wdPredicate the WD condition
-	 * @param dWDPredicate the D WD predicate 
-	 * @return the appropriate typing rule
-	 */
-	public PredicateOperatorTypingRule getTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, 
-			Predicate dWDPredicate){
-		PredicateOperatorTypingRule typingRule  = 
-			new PredicateOperatorTypingRule(operatorArguments, wdPredicate, dWDPredicate);
-		return typingRule;
-	}
-	
-	public static MathExtensionsFactory getDefault(){
-		if (instance == null){
-			instance = new MathExtensionsFactory();
-		}
-		return instance;
 	}
 }

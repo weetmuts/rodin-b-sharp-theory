@@ -5,13 +5,12 @@ import org.eventb.core.ast.Predicate;
 /**
  * An abstract implementation of a predicate matcher.
  * <p> This class is not intended to be extended by clients.
- * @see ExtendedPredicateMatcher
  * @since 1.0
  * @author maamria
  *
  * @param <E> the type of predicates this matcher works with
  */
-public abstract class PredicateMatcher<P extends Predicate> implements IPredicateMatcher {
+public abstract class PredicateMatcher<P extends Predicate> {
 	
 	protected MatchingFactory matchingFactory;
 	protected Class<P> type;

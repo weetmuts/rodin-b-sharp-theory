@@ -13,7 +13,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.pm.basis.engine.MatchingUtilities;
+import org.eventb.core.ast.maths.AstUtilities;
 import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
 
 /**
@@ -57,7 +57,7 @@ public final class ComplexBinder {
 		if (binding == null) {
 			return null;
 		}
-		Formula<?> resultFormula = MatchingUtilities.parseFormula(
+		Formula<?> resultFormula = AstUtilities.parseFormula(
 				pattern.toString(), pattern instanceof Expression, factory);
 		Formula<?> finalResultFormula = resultFormula.rewrite(
 				new PredicateVariableSubstituter(binding.getPredicateMappings(), factory));
@@ -92,7 +92,7 @@ public final class ComplexBinder {
 				Expression e1 = comp.getToAppend();
 				Expression e2 = comp.getToPrepend();
 				int tag = comp.getTag();
-				return MatchingUtilities.makeAppropriateAssociativeExpression(tag, factory, e1, (Expression) formula, e2);
+				return AstUtilities.makeAppropriateAssociativeExpression(tag, factory, e1, (Expression) formula, e2);
 			}
 		} else {
 			AssociativePredicateComplement comp = binding.getAssociativePredicateComplement();
@@ -100,7 +100,7 @@ public final class ComplexBinder {
 				Predicate e1 = comp.getToAppend();
 				Predicate e2 = comp.getToPrepend();
 				int tag = comp.getTag();
-				return MatchingUtilities.makeAssociativePredicate(tag, factory, e1, (Predicate) formula, e2);
+				return AstUtilities.makeAssociativePredicate(tag, factory, e1, (Predicate) formula, e2);
 			}
 		}
 		return formula;

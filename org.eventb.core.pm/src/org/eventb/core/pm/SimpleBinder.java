@@ -10,7 +10,7 @@ package org.eventb.core.pm;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pm.basis.engine.MatchingUtilities;
+import org.eventb.core.ast.maths.AstUtilities;
 import org.eventb.core.pm.basis.engine.PredicateVariableSubstituter;
 
 /**
@@ -50,7 +50,7 @@ public class SimpleBinder {
 		if (binding == null) {
 			return null;
 		}
-		Formula<?> resultFormula = MatchingUtilities.parseFormula(pattern.toString(), pattern instanceof Expression, factory);
+		Formula<?> resultFormula = AstUtilities.parseFormula(pattern.toString(), pattern instanceof Expression, factory);
 		Formula<?> finalResultFormula = resultFormula.rewrite(new PredicateVariableSubstituter(binding.getPredicateMappings(), factory));
 		finalResultFormula.typeCheck(binding.getTypeEnvironment());
 		Formula<?> formula = finalResultFormula.substituteFreeIdents(binding.getExpressionMappings(), factory);

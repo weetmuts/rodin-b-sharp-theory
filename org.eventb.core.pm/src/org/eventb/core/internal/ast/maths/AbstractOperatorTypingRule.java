@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.ast.maths;
+package org.eventb.core.internal.ast.maths;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +33,7 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.maths.AstUtilities;
 import org.eventb.core.wd.YMediator;
 
 /**
@@ -74,7 +75,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 		this.arity = operatorArguments.size();
 		this.typeParameters = new HashSet<GivenType>();
 		for (IOperatorArgument operatorArgument : operatorArguments){
-			addTypeParameters(MathExtensionsUtilities.getGivenTypes(operatorArgument.getArgumentType()));
+			addTypeParameters(AstUtilities.getGivenTypes(operatorArgument.getArgumentType()));
 		}
 		this.wdPredicate = wdPredicate;
 		this.dWDPredicate = dWDPredicate;
@@ -108,7 +109,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 		pred.typeCheck(typeEnvironment);
 		Predicate actWDPred = pred.substituteFreeIdents(allSubs, factory);
 		Predicate actWDPredWD = actWDPred.getWDPredicate(factory);
-		return MathExtensionsUtilities.conjunctPredicates(new Predicate[] {
+		return AstUtilities.conjunctPredicates(new Predicate[] {
 				actWDPredWD, actWDPred }, factory);
 	}
 
@@ -133,7 +134,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 	}
 
 	public String toString() {
-		return MathExtensionsUtilities.toString(operatorArguments);
+		return toString(operatorArguments);
 	}
 	
 	/**
@@ -229,7 +230,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 	}
 
 	protected Map<FreeIdentifier, Expression> getOverallSubstitutions(Expression[] childrenExpressions, FormulaFactory factory) {
-		Type[] childrenTypes = MathExtensionsUtilities
+		Type[] childrenTypes = AstUtilities
 				.getTypes(childrenExpressions);
 		Map<FreeIdentifier, Expression> initial = getTypeSubstitutions(childrenTypes, factory);
 		if (initial != null) {
@@ -338,6 +339,18 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 			}
 		}
 		return theoryType;
+	}
+	
+	// utility
+	private static <E> String toString(List<E> list) {
+		String result = "";
+		for (int i = 0; i < list.size(); i++) {
+			result += list.get(i).toString();
+			if (i < list.size() - 1) {
+				result += ", ";
+			}
+		}
+		return result;
 	}
 
 }

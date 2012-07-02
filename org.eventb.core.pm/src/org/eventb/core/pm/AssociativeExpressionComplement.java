@@ -10,7 +10,7 @@ import org.eventb.core.ast.Expression;
  * @since 1.0
  *
  */
-public final class AssociativeExpressionComplement implements IAssociativeComplement<Expression>{
+public final class AssociativeExpressionComplement{
 
 	private int tag;
 	private Expression toAppend;
@@ -41,5 +41,19 @@ public final class AssociativeExpressionComplement implements IAssociativeComple
 		builder.append("Expression to append : "+ toAppend + " | ");
 		builder.append("Expression to prepend : "+ toPrepend);
 		return builder.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AssociativeExpressionComplement){
+			AssociativeExpressionComplement other = (AssociativeExpressionComplement) obj;
+			return tag == other.tag && toAppend.equals(other.toAppend) && toPrepend.equals(other.toPrepend);
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return tag + 13*toAppend.hashCode() + 17*toPrepend.hashCode();
 	}
 }

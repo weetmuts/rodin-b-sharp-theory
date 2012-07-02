@@ -19,9 +19,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
-import org.eventb.core.ast.maths.AbstractOperatorTypingRule;
-import org.eventb.core.ast.maths.IOperatorArgument;
-import org.eventb.core.ast.maths.IPredicateTypeChecker;
 
 /**
  * @author maamria

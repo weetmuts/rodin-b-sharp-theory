@@ -5,10 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.ast.maths;
+package org.eventb.core.internal.ast.maths;
 
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.maths.AstUtilities;
+import org.eventb.core.ast.maths.IOperatorExtension;
+import org.eventb.core.ast.maths.OperatorExtensionProperties;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 
 /**
@@ -22,15 +25,7 @@ public abstract class AbstractOperatorExtension implements IOperatorExtension  {
 	
 	protected OperatorExtensionProperties properties;
 	private String operatorGroup;
-	
-	/**
-	 * Well-definedness condition
-	 */
 	protected IOperatorTypingRule operatorTypingRule;
-
-	/**
-	 * Operator properties
-	 */
 	protected boolean isCommutative = false;
 	protected boolean isAssociative = false;
 	/**
@@ -71,7 +66,7 @@ public abstract class AbstractOperatorExtension implements IOperatorExtension  {
 		this.isAssociative = isAssociative;
 		this.operatorTypingRule = operatorTypingRule;
 		this.source = source;
-		this.operatorGroup = properties.getGroupID() == null ? MathExtensionsUtilities
+		this.operatorGroup = properties.getGroupID() == null ? AstUtilities
 				.getGroupFor(properties.getFormulaType(), properties.getNotation(),
 						this.operatorTypingRule.getArity()) : properties.getGroupID();
 	}

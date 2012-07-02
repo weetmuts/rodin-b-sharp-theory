@@ -7,7 +7,9 @@ package org.eventb.core.pm.plugin;
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -46,8 +48,22 @@ public class PMPlugin extends Plugin implements BundleActivator {
 	 *
 	 * @return the shared instance
 	 */
-	public static PMPlugin getDefault() {
+	public static PMPlugin getPlugin() {
 		return plugin;
+	}
+	
+	/**
+	 * Logging facility
+	 * @param exc the exception
+	 * @param message the message
+	 */
+	public static void log(Throwable exc, String message) {
+		if (message == null) {
+			message = "Unknown context"; //$NON-NLS-1$
+		}
+		final IStatus status = new Status(IStatus.ERROR, PLUGIN_ID,
+				IStatus.ERROR, message, exc);
+		getPlugin().getLog().log(status);
 	}
 	
 }

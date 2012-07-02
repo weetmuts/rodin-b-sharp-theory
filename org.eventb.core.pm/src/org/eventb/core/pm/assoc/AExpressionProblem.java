@@ -14,9 +14,12 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.maths.AstUtilities;
+import org.eventb.core.internal.pm.assoc.IndexedFormula;
+import org.eventb.core.internal.pm.assoc.Match;
+import org.eventb.core.internal.pm.assoc.MatchEntry;
 import org.eventb.core.pm.AssociativeExpressionComplement;
 import org.eventb.core.pm.IBinding;
-import org.eventb.core.pm.basis.engine.MatchingUtilities;
 
 /**
  * A very tedious implementations that only accounts for three possible cases.
@@ -125,7 +128,7 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 		if (list.size() == 0) {
 			return null;
 		}
-		return MatchingUtilities.makeAppropriateAssociativeExpression(tag, existingBinding.getFormulaFactory(), list.toArray(new Expression[list.size()]));
+		return AstUtilities.makeAppropriateAssociativeExpression(tag, existingBinding.getFormulaFactory(), list.toArray(new Expression[list.size()]));
 	}
 
 	private IBinding oneVariableOneFormula(List<IndexedFormula<Expression>> availableFormulae, boolean acceptPartialMatch) {

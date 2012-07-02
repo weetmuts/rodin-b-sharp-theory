@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.internal.pm.assoc.ACMatchStack;
+import org.eventb.core.internal.pm.assoc.IndexedFormula;
+import org.eventb.core.internal.pm.assoc.Match;
+import org.eventb.core.internal.pm.assoc.MatchEntry;
 import org.eventb.core.pm.IBinding;
 
 /**

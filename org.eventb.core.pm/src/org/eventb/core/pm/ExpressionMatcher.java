@@ -5,13 +5,12 @@ import org.eventb.core.ast.Expression;
 /**
  * An abstract implementation of an expression matcher.
  * <p> This class is not intended to be extended by clients.
- * @see ExtendedExpressionMatcher
  * @since 1.0
  * @author maamria
  *
  * @param <E> the type of expressions this matcher works with
  */
-public abstract class ExpressionMatcher<E extends Expression> implements IExpressionMatcher {
+public abstract class ExpressionMatcher<E extends Expression>{
 
 	protected MatchingFactory matchingFactory;
 	protected Class<E> type;

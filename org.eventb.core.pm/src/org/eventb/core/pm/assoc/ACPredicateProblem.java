@@ -12,9 +12,10 @@ import java.util.List;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
+import org.eventb.core.ast.maths.AstUtilities;
+import org.eventb.core.internal.pm.assoc.IndexedFormula;
 import org.eventb.core.pm.AssociativePredicateComplement;
 import org.eventb.core.pm.IBinding;
-import org.eventb.core.pm.basis.engine.MatchingUtilities;
 
 /**
  * 
@@ -76,7 +77,7 @@ public class ACPredicateProblem extends ACProblem<Predicate> {
 			IndexedFormula<Predicate> lastVar = remainingVars.get(sizeOfRemainingVars-1);
 			List<Predicate> remainingPreds = getFormulae(availableFormulae);
 			if (!initialBinding.putPredicateMapping((PredicateVariable) lastVar.getFormula(), 
-					MatchingUtilities.makeAssociativePredicate(
+					AstUtilities.makeAssociativePredicate(
 							tag, existingBinding.getFormulaFactory(), remainingPreds.toArray(new Predicate[remainingPreds.size()])))){
 				return false;
 			}
@@ -91,7 +92,7 @@ public class ACPredicateProblem extends ACProblem<Predicate> {
 		for (IndexedFormula<Predicate> formula : formulae){
 			list.add(formula.getFormula());
 		}
-		Predicate comp = MatchingUtilities.makeAssociativePredicate(
+		Predicate comp = AstUtilities.makeAssociativePredicate(
 					tag, binding.getFormulaFactory(), list.toArray(new Predicate[list.size()]));
 		binding.setAssociativePredicateComplement(new AssociativePredicateComplement(tag, null, comp));
 	}

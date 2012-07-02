@@ -12,9 +12,10 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.maths.AstUtilities;
+import org.eventb.core.internal.pm.assoc.IndexedFormula;
 import org.eventb.core.pm.AssociativeExpressionComplement;
 import org.eventb.core.pm.IBinding;
-import org.eventb.core.pm.basis.engine.MatchingUtilities;
 
 /**
  * 
@@ -77,7 +78,7 @@ public class ACExpressionProblem extends ACProblem<Expression> {
 			IndexedFormula<Expression> lastVar = remainingVars.get(sizeOfRemainingVars-1);
 			List<Expression> remainingExprs = getFormulae(availableFormulae);
 			if(!initialBinding.putExpressionMapping((FreeIdentifier) lastVar.getFormula(), 
-					MatchingUtilities.makeAppropriateAssociativeExpression(
+					AstUtilities.makeAppropriateAssociativeExpression(
 							tag, existingBinding.getFormulaFactory(), remainingExprs.toArray(new Expression[remainingExprs.size()])))){
 				return false;
 			}
@@ -92,7 +93,7 @@ public class ACExpressionProblem extends ACProblem<Expression> {
 		for (IndexedFormula<Expression> formula : formulae) {
 			list.add(formula.getFormula());
 		}
-		Expression comp = MatchingUtilities.makeAppropriateAssociativeExpression(tag, binding.getFormulaFactory(), list.toArray(new Expression[list.size()]));
+		Expression comp = AstUtilities.makeAppropriateAssociativeExpression(tag, binding.getFormulaFactory(), list.toArray(new Expression[list.size()]));
 		binding.setAssociativeExpressionComplement(new AssociativeExpressionComplement(tag, null, comp));
 	}
 }

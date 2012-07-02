@@ -13,8 +13,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.maths.IOperatorArgument;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.maths.AstUtilities;
 
 /**
  * @author maamria
@@ -73,6 +72,6 @@ public class OperatorArgument implements IOperatorArgument{
 
 	@Override
 	public List<GivenType> getGivenTypes() {
-		return MathExtensionsUtilities.getGivenTypes(argumentType);
+		return AstUtilities.getGivenTypes(argumentType);
 	}
 }

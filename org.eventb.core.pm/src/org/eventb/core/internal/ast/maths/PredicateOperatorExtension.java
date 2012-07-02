@@ -15,8 +15,6 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.ast.maths.AbstractOperatorExtension;
-import org.eventb.core.ast.maths.IOperatorTypingRule;
 import org.eventb.core.ast.maths.OperatorExtensionProperties;
 
 /**

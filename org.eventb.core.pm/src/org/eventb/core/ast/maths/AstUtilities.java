@@ -7,13 +7,31 @@
  *******************************************************************************/
 package org.eventb.core.ast.maths;
 
+import static org.eventb.core.ast.LanguageVersion.V2;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IOperator;
+import org.eventb.core.ast.extension.IOperatorGroup;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 
 /**
@@ -26,8 +44,46 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
  */
 public class AstUtilities {
 
+	/**
+	 * Literal predicate true.
+	 */
+	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
+	/**
+	 * Cond extension
+	 */
+	public static final IFormulaExtension COND = FormulaFactory.getCond();
+	/**
+	 * Dummy theory group
+	 */
+	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
+
+	/**
+	 * Operator groups used in <link>BMath</link>.
+	 */
+	private static final String AST_PREFIX = "org.eventb.core.ast."; //$NON-NLS-1$
+	public static final String RELOP_PRED = AST_PREFIX + "relOp";
+	public static final String QUANTIFICATION = AST_PREFIX + "quantification";
+	public static final String PAIR = AST_PREFIX + "pair";
+	public static final String RELATION = AST_PREFIX + "relation";
+	public static final String BINOP = AST_PREFIX + "binOp";
+	public static final String INTERVAL = AST_PREFIX + "interval";
+	public static final String ARITHMETIC = AST_PREFIX + "arithmetic";
+	public static final String UNARY_RELATION = AST_PREFIX + "unaryRelation";
+	public static final String FUNCTIONAL = AST_PREFIX + "functional";
+	public static final String BRACE_SETS = AST_PREFIX + "braceSets";
+	public static final String QUANTIFIED_PRED = AST_PREFIX + "quantifiedPred";
+	public static final String LOGIC_PRED = AST_PREFIX + "logicPred";
+	public static final String INFIX_PRED = AST_PREFIX + "infixPred";
+	public static final String NOT_PRED = AST_PREFIX + "notPred";
+	public static final String ATOMIC_PRED = AST_PREFIX + "atomicPred";
+	public static final String ATOMIC_EXPR = AST_PREFIX + "atomicExpr";
+	public static final String CLOSED = AST_PREFIX + "closed";
+	public static final String BOOL_EXPR = AST_PREFIX + "boolExpr";
+	public static final String INFIX_SUBST = AST_PREFIX + "infixSubst";
+
 	// the currently supported notations
-	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] { Notation.PREFIX.toString(), Notation.INFIX.toString() };
+	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] { Notation.PREFIX.toString(),
+			Notation.INFIX.toString() };
 
 	/**
 	 * Converts a string (e.g., "POSTFIX") to the corresponding notation.
@@ -55,7 +111,8 @@ public class AstUtilities {
 	 * @return whether the given extended expression is associative
 	 */
 	public static boolean isAssociative(ExtendedExpression expression) {
-		return expression != null && expression.getExtension() instanceof IOperatorExtension && ((IOperatorExtension) expression.getExtension()).isAssociative();
+		return expression != null && expression.getExtension() instanceof IOperatorExtension
+				&& ((IOperatorExtension) expression.getExtension()).isAssociative();
 	}
 
 	/**
@@ -79,12 +136,15 @@ public class AstUtilities {
 	 *            the extended expression children
 	 * @param factory
 	 *            the formula factory
-	 * @return the non-flattened extended expression, the result is left-associative
+	 * @return the non-flattened extended expression, the result is
+	 *         left-associative
 	 */
-	public static ExtendedExpression unflatten(IFormulaExtension extension, Expression[] children, FormulaFactory factory) {
+	public static ExtendedExpression unflatten(IFormulaExtension extension, Expression[] children,
+			FormulaFactory factory) {
 		if (!isATheoryExtension(extension)) {
 			if (extension instanceof IExpressionExtension) {
-				return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0], null);
+				return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0],
+						null);
 			}
 		}
 		if (!isAnAssociativeExtension(extension)) {
@@ -98,14 +158,16 @@ public class AstUtilities {
 			return factory.makeExtendedExpression(expreExtension, children, new Predicate[0], null);
 		} else {
 			Expression[] toWorkWith = subChildren(length - 2, children);
-			return factory.makeExtendedExpression(expreExtension, new Expression[] {unflatten(extension, toWorkWith, factory), children[length - 1]}, new Predicate[0], null);
+			return factory.makeExtendedExpression(expreExtension,
+					new Expression[] { unflatten(extension, toWorkWith, factory), children[length - 1] },
+					new Predicate[0], null);
 		}
 	}
 
 	/**
 	 * This method returns the array resulting from taking the elements of
-	 * children in the same order ending at the (zero-based) given ending
-	 * index (inclusive).
+	 * children in the same order ending at the (zero-based) given ending index
+	 * (inclusive).
 	 * 
 	 * @param end
 	 *            the ending index (zero-based)
@@ -114,7 +176,7 @@ public class AstUtilities {
 	 * @return the sub-array
 	 */
 	static Expression[] subChildren(int end, Expression[] children) {
-		if (end > children.length - 1){
+		if (end > children.length - 1) {
 			return children;
 		}
 		if (end < 0) {
@@ -148,15 +210,18 @@ public class AstUtilities {
 		case INFIX:
 			Expression ie1 = eexp.getChildExpressions()[0];
 			Expression ie2 = eexp.getChildExpressions()[1];
-			point = getOperatorPosition(predStr, ie1.getSourceLocation().getEnd() + 1, ie2.getSourceLocation().getStart());
+			point = getOperatorPosition(predStr, ie1.getSourceLocation().getEnd() + 1, ie2.getSourceLocation()
+					.getStart());
 			break;
 
 		default:
 			if (eexp.getChildExpressions().length == 0) {
-				point = getOperatorPosition(predStr, eexp.getSourceLocation().getStart(), eexp.getSourceLocation().getEnd() + 1);
+				point = getOperatorPosition(predStr, eexp.getSourceLocation().getStart(), eexp.getSourceLocation()
+						.getEnd() + 1);
 			} else {
 				Expression pe1 = eexp.getChildExpressions()[0];
-				point = getOperatorPosition(predStr, eexp.getSourceLocation().getStart(), pe1.getSourceLocation().getStart());
+				point = getOperatorPosition(predStr, eexp.getSourceLocation().getStart(), pe1.getSourceLocation()
+						.getStart());
 			}
 			break;
 		}
@@ -198,12 +263,18 @@ public class AstUtilities {
 	 * @return whether the extension declares an associative operator
 	 */
 	public static boolean isAnAssociativeExtension(IFormulaExtension extension) {
-		if (isATheoryExtension(extension)) {
-			if (((IOperatorExtension) extension).isAssociative()) {
-				return true;
-			}
-		}
-		return false;
+		return isATheoryExtension(extension) && ((IOperatorExtension) extension).isAssociative();
+	}
+
+	/**
+	 * Returns whether the given extension is a commutative theory extension.
+	 * 
+	 * @param extension
+	 *            the theory extension
+	 * @return whether the extension declares a commutative operator
+	 */
+	public static boolean isACommutativeExtension(IFormulaExtension extension) {
+		return isATheoryExtension(extension) && ((IOperatorExtension) extension).isCommutative();
 	}
 
 	/**
@@ -282,4 +353,471 @@ public class AstUtilities {
 			return y;
 		}
 	}
+
+	/**
+	 * Returns whether the formula type is an expression type.
+	 * 
+	 * @param type
+	 *            the formula type
+	 * @return whether the type is an expression
+	 */
+	public static final boolean isExpressionOperator(FormulaType type) {
+		return type.equals(FormulaType.EXPRESSION);
+	}
+
+	/**
+	 * Returns the given types in <code>typeEnvironment</code>.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @return all given types
+	 */
+	public static List<String> getGivenSetsNames(ITypeEnvironment typeEnvironment) {
+		List<String> result = new ArrayList<String>();
+		for (String name : typeEnvironment.getNames()) {
+			if (isGivenSet(typeEnvironment, name)) {
+				result.add(name);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Checks whether the name <code>name</code> is a given set in the given
+	 * type environment.
+	 * 
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param name
+	 *            the name
+	 * @return whether <code>name</code> is a given set
+	 */
+	public static boolean isGivenSet(ITypeEnvironment typeEnvironment, String name) {
+		Type type = typeEnvironment.getType(name);
+		if (type == null) {
+			return false;
+		}
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a predicate resulting from conjuncting the given predicates.
+	 * 
+	 * <p>
+	 * Note that simplifications are performed before the resulting predicate is
+	 * produced.
+	 * 
+	 * @param preds
+	 *            the array of predicates
+	 * @param ff
+	 *            the formula factor
+	 * @return the predicate
+	 */
+	public static Predicate conjunctPredicates(Predicate[] preds, FormulaFactory ff) {
+		List<Predicate> pList = new ArrayList<Predicate>();
+		for (Predicate p : preds) {
+			if (!p.equals(BTRUE)) {
+				pList.add(p);
+			}
+		}
+		return AstUtilities.conjunctPredicates(pList, ff);
+	}
+
+	/**
+	 * Returns a predicate resulting from conjuncting the given predicates.
+	 * 
+	 * <p>
+	 * Note that simplifications are performed before the resulting predicate is
+	 * produced.
+	 * 
+	 * @param preds
+	 *            the list of predicates
+	 * @param ff
+	 *            the formula factor
+	 * @return the predicate
+	 */
+	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff) {
+		while (preds.contains(BTRUE)) {
+			preds.remove(BTRUE);
+		}
+		if (preds.size() == 0) {
+			return BTRUE;
+		}
+		if (preds.size() == 1) {
+			return preds.get(0);
+		}
+		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
+	}
+
+	/**
+	 * Returns the string type expression with the given name and type
+	 * parameters e.g., List(A), Tree(A).
+	 * 
+	 * @param identifierString
+	 *            the name of the type
+	 * @param typeArguments
+	 *            the list of type arguments
+	 * @param the
+	 *            formula factory that knows about this datatype
+	 * @return the type expression
+	 */
+	public static Type createTypeExpression(String identifierString, List<String> typeArguments, FormulaFactory ff) {
+		String result = identifierString;
+		if (typeArguments.size() != 0) {
+			result += "(";
+			for (int i = 0; i < typeArguments.size(); i++) {
+				result += typeArguments.get(i);
+				if (i < typeArguments.size() - 1) {
+					result += ",";
+				}
+			}
+			result += ")";
+
+		}
+		IParseResult parseResult = ff.parseType(result, LanguageVersion.V2);
+		if (parseResult.hasProblem())
+			return null;
+		return parseResult.getParsedType();
+
+	}
+
+	/**
+	 * Returns an appropriate group for the operator with the supplied
+	 * properties.
+	 * <p>
+	 * The group is guessed depending on the information passed to this method.
+	 * 
+	 * @param formulaType
+	 *            the formula type of the operator
+	 * @param notation
+	 *            the notation of the operator
+	 * @param arity
+	 *            the airty of the operator
+	 * @return the appropriate group
+	 */
+	public static String getGroupFor(FormulaType formulaType, Notation notation, int arity) {
+		String group = DUMMY_OPERATOR_GROUP;
+		switch (formulaType) {
+		case EXPRESSION: {
+			switch (notation) {
+			case INFIX: {
+				break;
+			}
+			case PREFIX: {
+				if (arity > 0) {
+					group = CLOSED;
+				} else {
+					group = ATOMIC_EXPR;
+				}
+				break;
+			}
+			case POSTFIX: {
+				// leave as part of the dummy group TODO check this
+			}
+			}
+			break;
+		}
+		case PREDICATE: {
+			switch (notation) {
+			case INFIX: {
+				if (arity == 0) {
+					group = ATOMIC_PRED;
+				}
+				// infix makes sense for ops with more than two args
+				if (arity > 1) {
+					group = INFIX_PRED;
+				}
+				break;
+			}
+			case PREFIX: {
+				if (arity > 0) {
+					group = CLOSED;
+				} else {
+					group = ATOMIC_PRED;
+				}
+				break;
+			}
+			case POSTFIX: {
+				// leave as part of the dummy group TODO check this
+			}
+			}
+		}
+		}
+		return group;
+	}
+
+	/**
+	 * Checks whether an operator with the given ID is already in the given
+	 * factory.
+	 * 
+	 * @param id
+	 *            the ID of the new operator
+	 * @param ff
+	 *            the formula factory
+	 * @return <code>true</code> if the operator ID does not exist in the
+	 *         formula factory
+	 */
+	public static boolean checkOperatorID(String id, FormulaFactory ff) {
+		return !AstUtilities.getOperatorIDs(ff).contains(id);
+	}
+
+	/**
+	 * Checks whether an operator with the given syntax symbol is already in the
+	 * given factory.
+	 * 
+	 * @param symbol
+	 *            the syntax symbol of the new operator
+	 * @param ff
+	 *            the formula factory
+	 * @return <code>true</code> if the symbol does not exist in the formula
+	 *         factory
+	 */
+	public static boolean checkOperatorSyntaxSymbol(String symbol, FormulaFactory ff) {
+		return !AstUtilities.getOperatorSyntaxSymbols(ff).contains(symbol);
+	}
+
+	/**
+	 * Checks whether a group with the given ID is already in the given factory.
+	 * 
+	 * @param id
+	 *            the ID of the new group
+	 * @param ff
+	 *            the formula factory
+	 * @return <code>true</code> if the group ID does not exists in the formula
+	 *         factory
+	 */
+	public static boolean checkGroupID(String id, FormulaFactory ff) {
+		return !AstUtilities.getOperatorGroups(ff).contains(id);
+	}
+
+	/**
+	 * Populates all syntax symbols of all operators recognised by the given
+	 * formula factory.
+	 * 
+	 * @param ff
+	 *            the formula factory
+	 * @return the list of all syntax symbols
+	 */
+	static List<String> getOperatorSyntaxSymbols(FormulaFactory ff) {
+		List<String> result = new ArrayList<String>();
+		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
+		for (IOperatorGroup g : groups) {
+			for (IOperator op : g.getOperators()) {
+				result.add(op.getSyntaxSymbol());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Populates all IDs of all operators recognised by the given formula
+	 * factory.
+	 * 
+	 * @param ff
+	 *            the formula factory
+	 * @return the list of all existing IDs
+	 */
+	static List<String> getOperatorIDs(FormulaFactory ff) {
+		List<String> result = new ArrayList<String>();
+		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
+		for (IOperatorGroup g : groups) {
+			for (IOperator op : g.getOperators()) {
+				result.add(op.getId());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Populates all groups of all operators recognised by the given formula
+	 * factory.
+	 * 
+	 * @param ff
+	 *            the formula factory
+	 * @return the list of all existing group IDs
+	 */
+	static List<String> getOperatorGroups(FormulaFactory ff) {
+		List<String> result = new ArrayList<String>();
+		Set<IOperatorGroup> groups = ff.getGrammarView().getGroups();
+		for (IOperatorGroup g : groups) {
+			result.add(g.getId());
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the array of types of the given expressions.
+	 * 
+	 * @param exps
+	 *            the expressions
+	 * @return the corresponding array of types
+	 */
+	public static Type[] getTypes(Expression[] exps) {
+		Type[] types = new Type[exps.length];
+		for (int i = 0; i < types.length; i++) {
+			types[i] = exps[i].getType();
+		}
+		return types;
+	}
+
+	/**
+	 * Returns an operator ID with the given details.
+	 * 
+	 * @param theoryName
+	 *            the parent theory
+	 * @param syntax
+	 *            the syntax of the operator
+	 * @return a suitable operator ID
+	 */
+	public static String makeOperatorID(String theoryName, String syntax) {
+		return theoryName + "." + syntax;
+	}
+
+	/**
+	 * Creates a type environment using the given factory with all the names
+	 * occurring in the given type environment.
+	 * 
+	 * <p>
+	 * Each type environment has a reference to a particular formula factory. As
+	 * such, it is always important to work with compatible type environment and
+	 * factory objects.
+	 * 
+	 * @param typeEnvironment
+	 *            the old type environment
+	 * @param factory
+	 *            the formula factory
+	 * @return the new type environment
+	 */
+	public static ITypeEnvironment getTypeEnvironmentForFactory(ITypeEnvironment typeEnvironment, FormulaFactory factory) {
+		ITypeEnvironment newTypeEnvironment = factory.makeTypeEnvironment();
+		for (String name : typeEnvironment.getNames()) {
+			newTypeEnvironment.addName(name, typeEnvironment.getType(name));
+		}
+		return newTypeEnvironment;
+	}
+
+	/**
+	 * Returns the given types occurring in <code>type</code>.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return all given types
+	 */
+	public static List<GivenType> getGivenTypes(Type type) {
+		List<GivenType> list = new ArrayList<GivenType>();
+		if (type instanceof GivenType) {
+			list.add((GivenType) type);
+		}
+		if (type instanceof ParametricType) {
+			ParametricType parametricType = (ParametricType) type;
+			for (Type t : parametricType.getTypeParameters()) {
+				list.addAll(getGivenTypes(t));
+			}
+		}
+		if (type instanceof PowerSetType) {
+			PowerSetType powerSetType = (PowerSetType) type;
+			list.addAll(getGivenTypes(powerSetType.getBaseType()));
+		}
+		if (type instanceof ProductType) {
+			ProductType productType = (ProductType) type;
+			list.addAll(getGivenTypes(productType.getLeft()));
+			list.addAll(getGivenTypes(productType.getRight()));
+		}
+		return list;
+	}
+
+	/**
+	 * <p>
+	 * Utility method to parse a string as a formula knowing beforehand whether
+	 * it is a an expression or predicate.
+	 * </p>
+	 * <p>
+	 * Use only for theory formulas. The resulting formula is not necessarily
+	 * type-checked.
+	 * </p>
+	 * 
+	 * @param formStr
+	 *            the formula string
+	 * @param isExpression
+	 *            whether to parse an expression or a predicate
+	 * @return the parsed formula or <code>null</code> if there was an error
+	 */
+	public static Formula<?> parseFormula(String formStr, boolean isExpression, FormulaFactory factory) {
+		Formula<?> form = null;
+		if (isExpression) {
+			IParseResult r = factory.parseExpressionPattern(formStr, V2, null);
+			form = r.getParsedExpression();
+		} else {
+			IParseResult r = factory.parsePredicatePattern(formStr, V2, null);
+			form = r.getParsedPredicate();
+		}
+		return form;
+	}
+
+	/**
+	 * Returns the associative (potentially extended) expression that fit the
+	 * given details.
+	 * 
+	 * @param tag
+	 *            the tag
+	 * @param factory
+	 *            the formula factory
+	 * @param exps
+	 *            the expressions
+	 * @return the resultant expression
+	 */
+	public static Expression makeAppropriateAssociativeExpression(int tag, FormulaFactory factory, Expression... exps) {
+		List<Expression> es = getListWithoutNulls(exps);
+		if (es.size() == 1)
+			return es.get(0);
+		IFormulaExtension extension = factory.getExtension(tag);
+		if (extension != null) {
+			return factory.makeExtendedExpression((IExpressionExtension) extension,
+					es.toArray(new Expression[es.size()]), new Predicate[0], null);
+		} else {
+			return factory.makeAssociativeExpression(tag, es.toArray(new Expression[es.size()]), null);
+		}
+	}
+
+	/**
+	 * Returns the associative predicate that fit the given details.
+	 * 
+	 * @param tag
+	 *            the tag
+	 * @param factory
+	 *            the formula factory
+	 * @param preds
+	 *            the predicates
+	 * @return the resultant predicate
+	 */
+	public static Predicate makeAssociativePredicate(int tag, FormulaFactory factory, Predicate... preds) {
+		List<Predicate> es = getListWithoutNulls(preds);
+		if (es.size() == 1)
+			return es.get(0);
+		else {
+			return factory.makeAssociativePredicate(tag, es.toArray(new Predicate[es.size()]), null);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param <E> the type of the objects
+	 * @param es the elements
+	 * @return the list of non-null elements
+	 */
+	public static <E> List<E> getListWithoutNulls(E... es){
+		List<E> list = new ArrayList<E>();
+		for (E e : es){
+			if (e != null){
+				list.add(e);
+			}
+		}
+		return list;
+	}
+
 }

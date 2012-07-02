@@ -10,7 +10,7 @@ import org.eventb.core.ast.Predicate;
  * @since 1.0
  *
  */
-public final class AssociativePredicateComplement implements IAssociativeComplement<Predicate>{
+public final class AssociativePredicateComplement{
 
 	private int tag;
 	private Predicate toAppend;
@@ -41,6 +41,20 @@ public final class AssociativePredicateComplement implements IAssociativeComplem
 		builder.append("Predicate to append : "+ toAppend + " | ");
 		builder.append("Predicate to prepend : "+ toPrepend);
 		return builder.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AssociativePredicateComplement){
+			AssociativePredicateComplement other = (AssociativePredicateComplement) obj;
+			return tag == other.tag && toAppend.equals(other.toAppend) && toPrepend.equals(other.toPrepend);
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return tag + 13*toAppend.hashCode() + 17*toPrepend.hashCode();
 	}
 
 }

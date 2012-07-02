@@ -26,12 +26,8 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.maths.AbstractOperatorTypingRule;
 import org.eventb.core.ast.maths.AstUtilities;
-import org.eventb.core.ast.maths.IExpressionTypeChecker;
-import org.eventb.core.ast.maths.IOperatorArgument;
 import org.eventb.core.ast.maths.IOperatorExtension;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
 
 /**
  * @author maamria
@@ -46,7 +42,7 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule imp
 		super(operatorArguments, wdPredicate, dWDPredicate);
 		this.resultantType = resultantType;
 		this.isAssociative = isAssociative;
-		this.typeParameters.addAll(MathExtensionsUtilities.getGivenTypes(resultantType));
+		this.typeParameters.addAll(AstUtilities.getGivenTypes(resultantType));
 	}
 
 	public String toString() {
@@ -125,7 +121,7 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule imp
 
 	@Override
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds, ITypeMediator mediator) {
-		Type[] types = MathExtensionsUtilities.getTypes(childExprs);
+		Type[] types = AstUtilities.getTypes(childExprs);
 		return synthesizeType(types, mediator.getFactory());
 	}
 

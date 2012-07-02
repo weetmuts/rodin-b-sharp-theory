@@ -11,7 +11,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 
 /**
- * 
+ * Convenient class for grouping operator properties.
  * @author maamria
  *
  */
@@ -67,7 +67,7 @@ public class OperatorExtensionProperties {
 			syntax.equals(other.getSyntax()) &&
 			formulaType.equals(other.getFormulaType()) &&
 			notation.equals(other.getNotation()) &&
-			(groupID == null ? true : groupID.equals(other.getGroupID()));
+			(groupID == null ? other.getGroupID() == null : groupID.equals(other.getGroupID()));
 	}
 	
 	public int hashCode(){

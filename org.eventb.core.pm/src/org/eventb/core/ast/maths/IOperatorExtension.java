@@ -13,6 +13,12 @@ import org.eventb.core.ast.extension.IFormulaExtension;
  * Common protocol for an operator extension. Additional methods are added for convenience when
  * checking the operator properties.
  * 
+ * <p> Note that despite the semantic nature of associativity and commutativity, they will be used to facilitate
+ * pattern matching. 
+ * 
+ * <p> This interface can be implemented by clients.
+ * <p> This interface can be extended by clients.
+ * 
  * @since 1.0
  * 
  * @author maamria
