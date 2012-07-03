@@ -8,7 +8,6 @@
 package org.eventb.core.internal.ast.maths;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.eventb.core.ast.Type;
@@ -64,20 +63,17 @@ public class CompleteDatatypeExtension extends SimpleDatatypeExtension{
 	}
 	
 	public boolean equals(Object o){
-		if(o == this){
+		if (o == this)
 			return true;
+		if (o instanceof CompleteDatatypeExtension){
+			CompleteDatatypeExtension other = (CompleteDatatypeExtension) o;
+			return super.equals(o) && constructors.equals(other.constructors);
 		}
-		if(o == null || !(o instanceof CompleteDatatypeExtension)){
-			return false;
-		}
-		CompleteDatatypeExtension other = (CompleteDatatypeExtension) o;
-		return identifier.equals(other.identifier) &&
-				Arrays.asList(typeArguments).equals(Arrays.asList(other.typeArguments)) &&
-				constructors.equals(other.constructors);
+		return false;
 	}
 	
 	public int hashCode(){
-		return identifier.hashCode()*3 + Arrays.asList(typeArguments).hashCode()* 2+constructors.hashCode();
+		return super.hashCode() + 23 * constructors.hashCode();
 	}
 
 }

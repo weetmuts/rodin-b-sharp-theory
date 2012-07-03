@@ -8,13 +8,8 @@
 package org.eventb.core.internal.ast.maths;
 
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.ICompatibilityMediator;
-import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
-import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.maths.OperatorExtensionProperties;
 
 /**
@@ -24,29 +19,14 @@ import org.eventb.core.ast.maths.OperatorExtensionProperties;
  * @author maamria
  * 
  */
-public class PredicateOperatorExtension extends AbstractOperatorExtension
+public class PredicateOperatorExtension extends OperatorExtension
 		implements IPredicateExtension {
 	
 	public PredicateOperatorExtension(OperatorExtensionProperties properties,
-			boolean isCommutative, IOperatorTypingRule typingRule,
+			boolean isCommutative, OperatorTypingRule typingRule,
 			Object source){
 		
 		super(properties, isCommutative, false, typingRule, source);
-	}
-
-	@Override
-	public void addPriorities(IPriorityMediator mediator) {
-		// Nothing to add ATM
-	}
-
-	@Override
-	public void addCompatibilities(ICompatibilityMediator mediator) {
-		// Nothing to add ATM
-	}
-
-	@Override
-	public boolean conjoinChildrenWD() {
-		return true;
 	}
 
 	@Override
@@ -54,11 +34,4 @@ public class PredicateOperatorExtension extends AbstractOperatorExtension
 			ITypeCheckMediator tcMediator) {
 		((PredicateOperatorTypingRule)operatorTypingRule).typeCheck(predicate, tcMediator);
 	}
-
-	@Override
-	public Predicate getWDPredicate(IExtendedFormula formula,
-			IWDMediator wdMediator) {
-		return operatorTypingRule.getWDPredicate(formula, wdMediator);
-	}
-	
 }

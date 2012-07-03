@@ -21,20 +21,20 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 
 /**
+ * Implementation for a predicate typing rule.
+ * <p> The typing rule must be able to type check an extended predicate.
  * @author maamria
  *
  */
-public class PredicateOperatorTypingRule extends AbstractOperatorTypingRule
-implements IPredicateTypeChecker{
+public class PredicateOperatorTypingRule extends OperatorTypingRule{
 
 	/**
 	 * @param extension
 	 */
-	public PredicateOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate) {
+	public PredicateOperatorTypingRule(List<OperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate) {
 		super(operatorArguments, wdPredicate, dWDPredicate);
 	}
 
-	@Override
 	public void typeCheck(ExtendedPredicate predicate,
 			ITypeCheckMediator mediator) {
 		Expression[] childExpressions = predicate.getChildExpressions();
@@ -55,7 +55,6 @@ implements IPredicateTypeChecker{
 		
 	}
 
-	@Override
 	protected Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory) {
 		return (Formula<?>) formula;
 	}

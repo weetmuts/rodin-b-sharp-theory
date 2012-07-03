@@ -14,13 +14,10 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.maths.OperatorExtensionProperties;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 
@@ -31,15 +28,15 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionOperatorExtension extends AbstractOperatorExtension
+public class ExpressionOperatorExtension extends OperatorExtension
 		implements IExpressionExtension {
 
 	public ExpressionOperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative,
-			IOperatorTypingRule typingRule,
+			OperatorTypingRule typingRule,
 			Object source) {
 
-		super(properties, isCommutative, isAssociative, typingRule,source);
+		super(properties, isCommutative, isAssociative, typingRule, source);
 	}
 
 	@Override
@@ -50,22 +47,6 @@ public class ExpressionOperatorExtension extends AbstractOperatorExtension
 		}
 		return super.getKind();
 
-	}
-
-	@Override
-	public Predicate getWDPredicate(IExtendedFormula formula,
-			IWDMediator wdMediator) {
-		return operatorTypingRule.getWDPredicate(formula, wdMediator);
-	}
-
-	@Override
-	public boolean conjoinChildrenWD() {
-		return true;
-	}
-
-	@Override
-	public void addPriorities(IPriorityMediator mediator) {
-		// Nothing to add ATM
 	}
 
 	@Override

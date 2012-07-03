@@ -33,6 +33,7 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extension.StandardGroup;
 
 /**
  * Utilities from the Theory Core that are mostly useful for the Rule-based
@@ -56,30 +57,6 @@ public class AstUtilities {
 	 * Dummy theory group
 	 */
 	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
-
-	/**
-	 * Operator groups used in <link>BMath</link>.
-	 */
-	private static final String AST_PREFIX = "org.eventb.core.ast."; //$NON-NLS-1$
-	public static final String RELOP_PRED = AST_PREFIX + "relOp";
-	public static final String QUANTIFICATION = AST_PREFIX + "quantification";
-	public static final String PAIR = AST_PREFIX + "pair";
-	public static final String RELATION = AST_PREFIX + "relation";
-	public static final String BINOP = AST_PREFIX + "binOp";
-	public static final String INTERVAL = AST_PREFIX + "interval";
-	public static final String ARITHMETIC = AST_PREFIX + "arithmetic";
-	public static final String UNARY_RELATION = AST_PREFIX + "unaryRelation";
-	public static final String FUNCTIONAL = AST_PREFIX + "functional";
-	public static final String BRACE_SETS = AST_PREFIX + "braceSets";
-	public static final String QUANTIFIED_PRED = AST_PREFIX + "quantifiedPred";
-	public static final String LOGIC_PRED = AST_PREFIX + "logicPred";
-	public static final String INFIX_PRED = AST_PREFIX + "infixPred";
-	public static final String NOT_PRED = AST_PREFIX + "notPred";
-	public static final String ATOMIC_PRED = AST_PREFIX + "atomicPred";
-	public static final String ATOMIC_EXPR = AST_PREFIX + "atomicExpr";
-	public static final String CLOSED = AST_PREFIX + "closed";
-	public static final String BOOL_EXPR = AST_PREFIX + "boolExpr";
-	public static final String INFIX_SUBST = AST_PREFIX + "infixSubst";
 
 	// the currently supported notations
 	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] { Notation.PREFIX.toString(),
@@ -510,9 +487,9 @@ public class AstUtilities {
 			}
 			case PREFIX: {
 				if (arity > 0) {
-					group = CLOSED;
+					group = StandardGroup.CLOSED.getId();
 				} else {
-					group = ATOMIC_EXPR;
+					group = StandardGroup.ATOMIC_EXPR.getId();
 				}
 				break;
 			}
@@ -526,19 +503,19 @@ public class AstUtilities {
 			switch (notation) {
 			case INFIX: {
 				if (arity == 0) {
-					group = ATOMIC_PRED;
+					group = StandardGroup.ATOMIC_PRED.getId();
 				}
 				// infix makes sense for ops with more than two args
 				if (arity > 1) {
-					group = INFIX_PRED;
+					group = StandardGroup.INFIX_PRED.getId();
 				}
 				break;
 			}
 			case PREFIX: {
 				if (arity > 0) {
-					group = CLOSED;
+					group = StandardGroup.CLOSED.getId();
 				} else {
-					group = ATOMIC_PRED;
+					group = StandardGroup.ATOMIC_PRED.getId();
 				}
 				break;
 			}

@@ -7,8 +7,13 @@
  *******************************************************************************/
 package org.eventb.core.internal.ast.maths;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.ExtensionFactory;
+import org.eventb.core.ast.extension.ICompatibilityMediator;
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.extension.IPriorityMediator;
+import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.maths.AstUtilities;
 import org.eventb.core.ast.maths.IOperatorExtension;
 import org.eventb.core.ast.maths.OperatorExtensionProperties;
@@ -21,11 +26,11 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * 
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractOperatorExtension implements IOperatorExtension  {
+public abstract class OperatorExtension implements IOperatorExtension  {
 	
 	protected OperatorExtensionProperties properties;
 	private String operatorGroup;
-	protected IOperatorTypingRule operatorTypingRule;
+	protected OperatorTypingRule operatorTypingRule;
 	protected boolean isCommutative = false;
 	protected boolean isAssociative = false;
 	/**
@@ -57,9 +62,9 @@ public abstract class AbstractOperatorExtension implements IOperatorExtension  {
 	 * @param source
 	 *            the origin
 	 */
-	protected AbstractOperatorExtension(OperatorExtensionProperties properties,
+	protected OperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative,
-			IOperatorTypingRule operatorTypingRule,
+			OperatorTypingRule operatorTypingRule,
 			Object source) {
 		this.properties = properties;
 		this.isCommutative = isCommutative;
@@ -90,23 +95,51 @@ public abstract class AbstractOperatorExtension implements IOperatorExtension  {
 	public Object getOrigin() {
 		return source;
 	}
+	
+	@Override
+	public boolean conjoinChildrenWD() {
+		return true;
+	}
+	
+	@Override
+	public Predicate getWDPredicate(IExtendedFormula formula,
+			IWDMediator wdMediator) {
+		return operatorTypingRule.getWDPredicate(formula, wdMediator);
+	}
+	
+	/**
+	 * Override to add priorities.
+	 */
+	@Override
+	public void addPriorities(IPriorityMediator mediator) {
+		// Nothing to add ATM
+	}
+
+	/**
+	 * Override to add compatibilities.
+	 */
+	@Override
+	public void addCompatibilities(ICompatibilityMediator mediator) {
+		// Nothing to add ATM
+	}
 
 	public boolean equals(Object o) {
 		if(o == this)
 			return true;
-		if (o == null || !(o instanceof AbstractOperatorExtension)) {
+		if (o == null || !(o instanceof OperatorExtension)) {
 			return false;
 		}
-		AbstractOperatorExtension abs = (AbstractOperatorExtension) o;
+		OperatorExtension abs = (OperatorExtension) o;
 		return abs.properties.equals(properties)
 				&& abs.isAssociative == isAssociative
 				&& abs.isCommutative == isCommutative
+				&& abs.operatorGroup.equals(operatorGroup)
 				&& abs.operatorTypingRule.equals(operatorTypingRule);
 		
 	}
 
 	public int hashCode() {
-		return 17 * properties.hashCode() + (new Boolean(isAssociative)).hashCode() 
+		return 17 * properties.hashCode() + 19 * operatorGroup.hashCode() +(new Boolean(isAssociative)).hashCode() 
 				+ (new Boolean(isCommutative)).hashCode() +
 				operatorTypingRule.hashCode();
 	}

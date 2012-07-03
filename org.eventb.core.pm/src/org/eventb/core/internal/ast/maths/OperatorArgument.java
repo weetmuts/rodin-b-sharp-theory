@@ -16,10 +16,17 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.maths.AstUtilities;
 
 /**
+ * Implementation of operator arguments.
+ * <p> An operator argument has an index, a name and a type.
+ * 
+ * <p> A type of an operator argument may contain type parameters. These will be the types on which 
+ * the concerned operator definition is polymorphic.
+ * 
+ * @since 1.0
  * @author maamria
  *
  */
-public class OperatorArgument implements IOperatorArgument{
+public class OperatorArgument{
 
 	private String argumentName;
 	private Type argumentType;
@@ -70,7 +77,6 @@ public class OperatorArgument implements IOperatorArgument{
 		return factory.makeFreeIdentifier(newName, null, argumentType);
 	}
 
-	@Override
 	public List<GivenType> getGivenTypes() {
 		return AstUtilities.getGivenTypes(argumentType);
 	}

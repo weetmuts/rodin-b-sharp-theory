@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.internal.ast.maths;
 
+import java.util.Arrays;
+
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
@@ -41,14 +43,12 @@ public class SimpleDatatypeExtension implements IDatatypeExtension{
 	
 	@Override
 	public String getTypeName() {
-		// TODO Auto-generated method stub
 		return identifier;
 	}
 
 	
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
 		return identifier + DATATYPE_ID;
 	}
 
@@ -57,14 +57,27 @@ public class SimpleDatatypeExtension implements IDatatypeExtension{
 		for(String arg : typeArguments){
 			mediator.addTypeParam(arg);
 		}
-		
 	}
-
 
 	@Override
 	public void addConstructors(IConstructorMediator mediator) {
 		// no constructors
-		
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof SimpleDatatypeExtension){
+			SimpleDatatypeExtension other = (SimpleDatatypeExtension) obj;
+			return identifier.equals(other.identifier) &&
+					Arrays.asList(typeArguments).equals(Arrays.asList(other.typeArguments));
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return identifier.hashCode()*13 + Arrays.asList(typeArguments).hashCode()*17;
+	}
 }

@@ -30,15 +30,23 @@ import org.eventb.core.ast.maths.AstUtilities;
 import org.eventb.core.ast.maths.IOperatorExtension;
 
 /**
- * @author maamria
+ * Implementation for an extended expression typing rule.
  * 
+ * <p> The typing rule must be able to synthesise a type of an extended expression based on the types
+ * of its children.
+ * <p> The typing rule must be able to verify if a proposed type is indeed an acceptable type for a given
+ * expression defined by its children.
+ * <p> The typing rule must be able to type check an extended expression.
+ * 
+ * @author maamria
+ *
  */
-public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule implements IExpressionTypeChecker {
+public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 
 	protected Type resultantType;
 	protected boolean isAssociative;
 
-	public ExpressionOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate,Type resultantType, boolean isAssociative) {
+	public ExpressionOperatorTypingRule(List<OperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate,Type resultantType, boolean isAssociative) {
 		super(operatorArguments, wdPredicate, dWDPredicate);
 		this.resultantType = resultantType;
 		this.isAssociative = isAssociative;
@@ -66,7 +74,6 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule imp
 		return super.hashCode() + 7 *resultantType.hashCode() + 11 * (new Boolean(isAssociative)).hashCode();
 	}
 
-	@Override
 	public boolean verifyType(Type proposedType, Expression[] childExprs, Predicate[] childPreds) {
 		if (childExprs.length != arity && !isAssociative)
 			return false;
@@ -90,24 +97,25 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule imp
 		return true;
 	}
 
-	@Override
 	public Type typeCheck(ExtendedExpression expression, ITypeCheckMediator mediator) {
 		Expression[] childExpressions = expression.getChildExpressions();
-		if (isAssociative) {
-			final Type t = mediator.newTypeVariable();
-			for (Expression child : childExpressions) {
-				mediator.sameType(child.getType(), t);
-			}
-			return t;
-		}
-		if (childExpressions.length != arity) {
-			return null;
-		}
 		Type[] argumentTypesAsVars = new Type[arity];
 		HashMap<GivenType, Type> parameterToTypeVarMap = new HashMap<GivenType, Type>();
 		for (GivenType givenType : typeParameters) {
 			parameterToTypeVarMap.put(givenType, mediator.newTypeVariable());
 		}
+		// Revealed by testExtensions_022_TC() and testExtensions_023_TC() in TestExtensions
+		Type pType = constructPatternType(resultantType, parameterToTypeVarMap, mediator);
+		if (isAssociative) {
+			for (Expression child : childExpressions) {
+				mediator.sameType(child.getType(), pType);
+			}
+			return pType;
+		}
+		if (childExpressions.length != arity) {
+			return null;
+		}
+		
 		for (int i = 0; i < argumentTypesAsVars.length; i++) {
 			argumentTypesAsVars[i] = constructPatternType(operatorArguments.get(i).getArgumentType(), parameterToTypeVarMap, mediator);
 		}
@@ -116,10 +124,9 @@ public class ExpressionOperatorTypingRule extends AbstractOperatorTypingRule imp
 			Type currentType = childExpressions[i].getType();
 			mediator.sameType(argumentTypesAsVars[i], currentType);
 		}
-		return constructPatternType(resultantType, parameterToTypeVarMap, mediator);
+		return pType;
 	}
 
-	@Override
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds, ITypeMediator mediator) {
 		Type[] types = AstUtilities.getTypes(childExprs);
 		return synthesizeType(types, mediator.getFactory());

@@ -50,9 +50,9 @@ import org.eventb.core.wd.YMediator;
  * @see IPredicateExtension
  * @see IExpressionExtension
  */
-public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule {
+public abstract class OperatorTypingRule {
 
-	protected List<IOperatorArgument> operatorArguments;
+	protected List<OperatorArgument> operatorArguments;
 	protected int arity = 0;
 	protected Set<GivenType> typeParameters;
 	protected Predicate wdPredicate;
@@ -70,23 +70,21 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 	 * @param wdPredicate the well-definedness predicate, must not be <code>null</code>
 	 * @param dWDPredicate the D well-definedness predicate, must not be <code>null</code>
 	 */
-	public AbstractOperatorTypingRule(List<IOperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate) {
+	public OperatorTypingRule(List<OperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate) {
 		this.operatorArguments = operatorArguments;
 		this.arity = operatorArguments.size();
 		this.typeParameters = new HashSet<GivenType>();
-		for (IOperatorArgument operatorArgument : operatorArguments){
+		for (OperatorArgument operatorArgument : operatorArguments){
 			addTypeParameters(AstUtilities.getGivenTypes(operatorArgument.getArgumentType()));
 		}
 		this.wdPredicate = wdPredicate;
 		this.dWDPredicate = dWDPredicate;
 	}
 
-	@Override
 	public int getArity() {
 		return arity;
 	}
 	
-	@Override
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
 		FormulaFactory factory = wdMediator.getFormulaFactory();
@@ -116,10 +114,10 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 	public boolean equals(Object o) {
 		if (o == this)
 			return true;
-		if (o == null || !(o instanceof AbstractOperatorTypingRule)) {
+		if (o == null || !(o instanceof OperatorTypingRule)) {
 			return false;
 		}
-		AbstractOperatorTypingRule rule = (AbstractOperatorTypingRule) o;
+		OperatorTypingRule rule = (OperatorTypingRule) o;
 		return operatorArguments.equals(rule.operatorArguments)
 				&& arity == rule.arity
 				&& typeParameters.equals(rule.typeParameters)
@@ -234,7 +232,7 @@ public abstract class AbstractOperatorTypingRule implements IOperatorTypingRule 
 				.getTypes(childrenExpressions);
 		Map<FreeIdentifier, Expression> initial = getTypeSubstitutions(childrenTypes, factory);
 		if (initial != null) {
-			for (IOperatorArgument arg : operatorArguments) {
+			for (OperatorArgument arg : operatorArguments) {
 				initial.put(factory.makeFreeIdentifier(arg.getArgumentName(),
 						null, childrenTypes[arg.getIndex()]),
 						childrenExpressions[arg.getIndex()]);

@@ -20,11 +20,11 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.internal.ast.maths.AxiomaticTypeExtension;
+import org.eventb.core.internal.ast.maths.OperatorTypingRule;
 import org.eventb.core.internal.ast.maths.CompleteDatatypeExtension;
 import org.eventb.core.internal.ast.maths.ExpressionOperatorExtension;
 import org.eventb.core.internal.ast.maths.ExpressionOperatorTypingRule;
-import org.eventb.core.internal.ast.maths.IOperatorArgument;
-import org.eventb.core.internal.ast.maths.IOperatorTypingRule;
 import org.eventb.core.internal.ast.maths.OperatorArgument;
 import org.eventb.core.internal.ast.maths.PredicateOperatorExtension;
 import org.eventb.core.internal.ast.maths.PredicateOperatorTypingRule;
@@ -68,12 +68,12 @@ public final class MathExtensionsFactory {
 	public static  IExpressionExtension getExpressionExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative, Map<String, Type> operatorArguments, Type resultantType, 
 			Predicate wdPredicate, Predicate dWDPredicate, Object source) {
-		List<IOperatorArgument> opArgs = new ArrayList<IOperatorArgument>();
+		List<OperatorArgument> opArgs = new ArrayList<OperatorArgument>();
 		int index = 0;
 		for (String name : operatorArguments.keySet()){
 			opArgs.add(new OperatorArgument(index++, name, operatorArguments.get(name)));
 		}
-		IOperatorTypingRule operatorTypingRule = new ExpressionOperatorTypingRule(opArgs, wdPredicate, 
+		OperatorTypingRule operatorTypingRule = new ExpressionOperatorTypingRule(opArgs, wdPredicate, 
 				dWDPredicate, resultantType, isAssociative);
 		return new ExpressionOperatorExtension(properties, isCommutative, isAssociative, operatorTypingRule, 
 				source);
@@ -93,12 +93,12 @@ public final class MathExtensionsFactory {
 	public static  IPredicateExtension getPredicateExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, Map<String, Type> operatorArguments, Predicate wdPredicate, 
 			Predicate dWDPredicate, Object source) {
-		List<IOperatorArgument> opArgs = new ArrayList<IOperatorArgument>();
+		List<OperatorArgument> opArgs = new ArrayList<OperatorArgument>();
 		int index = 0;
 		for (String name : operatorArguments.keySet()){
 			opArgs.add(new OperatorArgument(index++, name, operatorArguments.get(name)));
 		}
-		IOperatorTypingRule operatorTypingRule = new PredicateOperatorTypingRule(opArgs,
+		OperatorTypingRule operatorTypingRule = new PredicateOperatorTypingRule(opArgs,
 				wdPredicate, dWDPredicate);
 		return new PredicateOperatorExtension(properties, isCommutative, operatorTypingRule, source);
 	}
@@ -139,5 +139,16 @@ public final class MathExtensionsFactory {
 		CompleteDatatypeExtension completeDtExt = new CompleteDatatypeExtension(identifier, 
 				typeArguments, constructors);
 		return factory.makeDatatype(completeDtExt).getExtensions();
+	}
+	
+	/**
+	 * Returns the axiomatic type extension with the name <code>typeName</code>.
+	 * @param typeName the name of the type, e.g., REAL
+	 * @param id the id of the operator
+	 * @param origin the origin of the extension
+	 * @return the axiomatic type extension
+	 */
+	public static IExpressionExtension getAxiomaticTypeExtension(String typeName, String id, Object origin){
+		return new AxiomaticTypeExtension(typeName, id, origin);
 	}
 }
