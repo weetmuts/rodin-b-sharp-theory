@@ -387,7 +387,7 @@ public class AstUtilities {
 	 * 
 	 * <p>
 	 * Note that simplifications are performed before the resulting predicate is
-	 * produced.
+	 * produced. Also flattening is performed.
 	 * 
 	 * @param preds
 	 *            the array of predicates
@@ -402,7 +402,7 @@ public class AstUtilities {
 				pList.add(p);
 			}
 		}
-		return AstUtilities.conjunctPredicates(pList, ff);
+		return AstUtilities.conjunctPredicates(pList, ff).flatten(ff);
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class AstUtilities {
 	 * produced.
 	 * 
 	 * @param preds
-	 *            the list of predicates
+	 *            the list of predicates, should be modifiable
 	 * @param ff
 	 *            the formula factor
 	 * @return the predicate
@@ -631,7 +631,7 @@ public class AstUtilities {
 	 * Returns the array of types of the given expressions.
 	 * 
 	 * @param exps
-	 *            the expressions
+	 *            the expressions, each of which should not be <code>null</code>
 	 * @return the corresponding array of types
 	 */
 	public static Type[] getTypes(Expression[] exps) {
@@ -782,7 +782,7 @@ public class AstUtilities {
 	}
 	
 	/**
-	 * 
+	 * Returns a list of the non-null elements in the passed array.
 	 * @param <E> the type of the objects
 	 * @param es the elements
 	 * @return the list of non-null elements

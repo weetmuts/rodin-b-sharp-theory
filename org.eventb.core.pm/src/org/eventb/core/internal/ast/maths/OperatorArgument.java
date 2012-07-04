@@ -7,13 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.internal.ast.maths;
 
-import java.util.List;
-
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.maths.AstUtilities;
 
 /**
  * Implementation of operator arguments.
@@ -50,7 +44,7 @@ public class OperatorArgument{
 	}
 	
 	public int hashCode(){
-		return index*argumentType.hashCode() + argumentName.hashCode();
+		return 13*index*argumentType.hashCode() + 23 * argumentName.hashCode();
 	}
 	
 	public String toString(){
@@ -67,17 +61,5 @@ public class OperatorArgument{
 
 	public Type getArgumentType() {
 		return argumentType;
-	}
-	
-	public FreeIdentifier toFreeIdentifier(FormulaFactory factory){
-		return factory.makeFreeIdentifier(argumentName, null, argumentType);
-	}
-
-	public FreeIdentifier makeSubstituter(String newName, FormulaFactory factory){
-		return factory.makeFreeIdentifier(newName, null, argumentType);
-	}
-
-	public List<GivenType> getGivenTypes() {
-		return AstUtilities.getGivenTypes(argumentType);
 	}
 }
