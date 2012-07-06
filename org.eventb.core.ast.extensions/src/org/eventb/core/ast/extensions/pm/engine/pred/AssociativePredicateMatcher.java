@@ -1,4 +1,4 @@
-package org.eventb.core.ast.extensions.pm.matchers.pred;
+package org.eventb.core.ast.extensions.pm.engine.pred;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Predicate;

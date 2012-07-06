@@ -1,4 +1,4 @@
-package org.eventb.core.ast.extensions.pm.matchers.exp;
+package org.eventb.core.ast.extensions.pm.engine.exp;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Expression;
