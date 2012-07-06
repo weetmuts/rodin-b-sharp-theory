@@ -3,8 +3,8 @@ package org.eventb.core.ast.extensions.pm.matchers.exp;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.extensions.pm.ExpressionMatcher;
 import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
  * Simple matcher, expected to work only with singleton sets.

@@ -2,8 +2,8 @@ package org.eventb.core.ast.extensions.pm.matchers.exp;
 
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.extensions.pm.ExpressionMatcher;
 import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
  * TODO FIXME check only the index and type, could be more intricate?
@@ -24,7 +24,7 @@ public class BoundIdentifierMatcher extends ExpressionMatcher<BoundIdentifier> {
 		if(biForm.getBoundIndex() != biPattern.getBoundIndex()){
 			return false;
 		}
-		return existingBinding.canUnifyTypes(biForm.getType(), biPattern.getType());
+		return existingBinding.unifyTypes(biForm.getType(), biPattern.getType(), true);
 	}
 	
 	@Override

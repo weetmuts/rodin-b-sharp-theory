@@ -3,9 +3,9 @@ package org.eventb.core.ast.extensions.pm.matchers.pred;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
-import org.eventb.core.ast.extensions.pm.PredicateMatcher;
 import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
 import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
+import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
  * TODO better matching

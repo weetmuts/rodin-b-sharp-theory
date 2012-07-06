@@ -3,7 +3,7 @@ package org.eventb.core.ast.extensions.pm.matchers.pred;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
-import org.eventb.core.ast.extensions.pm.PredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
  * TODO FIXME finish this

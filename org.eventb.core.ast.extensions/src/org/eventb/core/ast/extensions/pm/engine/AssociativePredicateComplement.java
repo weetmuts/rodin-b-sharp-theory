@@ -1,4 +1,4 @@
-package org.eventb.core.ast.extensions.pm;
+package org.eventb.core.ast.extensions.pm.engine;
 
 import org.eventb.core.ast.Predicate;
 
@@ -21,6 +21,12 @@ public final class AssociativePredicateComplement{
 		this.tag = tag;
 		this.toAppend = toAppend;
 		this.toPrepend = toPrepend;
+	}
+	
+	public AssociativePredicateComplement(AssociativePredicateComplement complement){
+		this.tag = complement.tag;
+		this.toAppend = complement.toAppend;
+		this.toPrepend = complement.toPrepend;
 	}
 	
 	public int getTag() {

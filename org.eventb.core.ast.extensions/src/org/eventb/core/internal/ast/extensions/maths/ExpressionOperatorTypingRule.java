@@ -13,7 +13,6 @@ import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -22,12 +21,9 @@ import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 
 /**
  * Implementation for an extended expression typing rule.
@@ -177,14 +173,4 @@ public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 		}
 		return subs;
 	}
-
-	@Override
-	protected Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory) {
-		 IFormulaExtension extension = formula.getExtension();
-		 if (((IOperatorExtension) extension).isAssociative())
-			 return AstUtilities.unflatten(extension,formula.getChildExpressions(), factory);
-		 else 
-			 return (Formula<?>) formula;
-	}
-
 }

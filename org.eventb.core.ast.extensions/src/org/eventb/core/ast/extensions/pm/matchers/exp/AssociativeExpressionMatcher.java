@@ -2,15 +2,14 @@ package org.eventb.core.ast.extensions.pm.matchers.exp;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.extensions.pm.ExpressionMatcher;
 import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.assoc.ACExpressionProblem;
 import org.eventb.core.ast.extensions.pm.assoc.AExpressionProblem;
 import org.eventb.core.ast.extensions.pm.assoc.AssociativityProblem;
-import org.eventb.core.ast.extensions.pm.basis.engine.MatchingUtilities;
+import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
- * TODO better matching
+ * 
  * @since 1.0
  * @author maamria
  *
@@ -24,7 +23,7 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 	@Override
 	protected boolean gatherBindings(AssociativeExpression form,
 			AssociativeExpression pattern, IBinding existingBinding){
-		boolean isAC = MatchingUtilities.isAssociativeCommutative(form.getTag());
+		boolean isAC = isAssociativeCommutative(form.getTag());
 		// get the children
 		Expression[] formChildren = form.getChildren();
 		Expression[] patternChildren = pattern.getChildren();
@@ -52,6 +51,22 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 	@Override
 	protected AssociativeExpression getExpression(Expression e) {
 		return (AssociativeExpression) e;
+	}
+	
+	/**
+	 * Make sure tag is for an associative expression.
+	 * <p>
+	 * This method checks whether the operator is AC.
+	 * 
+	 * @param tag
+	 * @return
+	 */
+	protected static boolean isAssociativeCommutative(int tag) {
+		if (tag == AssociativeExpression.BCOMP
+				|| tag == AssociativeExpression.FCOMP) {
+			return false;
+		}
+		return true;
 	}
 	
 }

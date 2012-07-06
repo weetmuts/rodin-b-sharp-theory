@@ -11,7 +11,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.pm.basis.engine.PredicateVariableSubstituter;
+import org.eventb.core.ast.extensions.pm.engine.PredicateVariableSubstituter;
 
 /**
  * An implementation of a simple binder.

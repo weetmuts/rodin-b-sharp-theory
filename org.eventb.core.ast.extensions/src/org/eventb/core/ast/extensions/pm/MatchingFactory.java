@@ -26,7 +26,9 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.extensions.pm.basis.engine.Binding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
+import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 import org.eventb.core.ast.extensions.pm.matchers.exp.AssociativeExpressionMatcher;
 import org.eventb.core.ast.extensions.pm.matchers.exp.AtomicExpressionMatcher;
 import org.eventb.core.ast.extensions.pm.matchers.exp.BinaryExpressionMatcher;
@@ -63,13 +65,13 @@ public final class MatchingFactory {
 	/**
 	 * The matchers database
 	 */
-	private final Map<Class<? extends Expression>, ExpressionMatcher<?>> EXPRESSION_MATCHERS = new LinkedHashMap<Class<? extends Expression>, ExpressionMatcher<?>>();
-	private final Map<Class<? extends Predicate>, PredicateMatcher<?>> PREDICATE_MATCHERS = new LinkedHashMap<Class<? extends Predicate>, PredicateMatcher<?>>();
+	private static final Map<Class<? extends Expression>, ExpressionMatcher<?>> EXPRESSION_MATCHERS = new LinkedHashMap<Class<? extends Expression>, ExpressionMatcher<?>>();
+	private static final Map<Class<? extends Predicate>, PredicateMatcher<?>> PREDICATE_MATCHERS = new LinkedHashMap<Class<? extends Predicate>, PredicateMatcher<?>>();
 	
 	/**
 	 * Load expression matchers.
 	 */
-	{
+	static{
 		EXPRESSION_MATCHERS.put(AssociativeExpression.class, new AssociativeExpressionMatcher());
 		EXPRESSION_MATCHERS.put(AtomicExpression.class, new AtomicExpressionMatcher());
 		EXPRESSION_MATCHERS.put(BinaryExpression.class, new BinaryExpressionMatcher());
@@ -85,7 +87,7 @@ public final class MatchingFactory {
 	/**
 	 * Load predicate matchers.
 	 */
-	{
+	static{
 		PREDICATE_MATCHERS.put(AssociativePredicate.class, new AssociativePredicateMatcher());
 		PREDICATE_MATCHERS.put(BinaryPredicate.class, new BinaryPredicateMatcher());
 		PREDICATE_MATCHERS.put(LiteralPredicate.class, new LiteralPredicateMatcher());

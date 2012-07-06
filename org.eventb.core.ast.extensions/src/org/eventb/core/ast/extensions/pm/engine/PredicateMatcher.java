@@ -1,6 +1,8 @@
-package org.eventb.core.ast.extensions.pm;
+package org.eventb.core.ast.extensions.pm.engine;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.MatchingFactory;
 
 /**
  * An abstract implementation of a predicate matcher.

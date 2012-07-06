@@ -42,8 +42,21 @@ public class CompleteDatatypeExtension extends SimpleDatatypeExtension{
 			Map<String, Map<String, Type>> constructors) {
 		super(identifier, typeArguments);
 		this.constructors = constructors;
+		sanityCheck();
 	}
 	
+	// typically needed for inductive datatypes
+	private void sanityCheck() {
+		for (String cons : constructors.keySet()){
+			Map<String, Type> dests = constructors.get(cons);
+			for (String dest : dests.keySet()){
+				if (dests.get(dest) == null){
+					throw new IllegalArgumentException("destructor " + dest + " type cannot be null");
+				}
+			}
+		}
+	}
+
 	@Override
 	public void addConstructors(IConstructorMediator mediator) {
 		for (String cons : constructors.keySet()){

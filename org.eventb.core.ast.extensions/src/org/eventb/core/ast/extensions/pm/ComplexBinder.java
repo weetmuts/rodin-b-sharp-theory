@@ -14,7 +14,9 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.pm.basis.engine.PredicateVariableSubstituter;
+import org.eventb.core.ast.extensions.pm.engine.AssociativeExpressionComplement;
+import org.eventb.core.ast.extensions.pm.engine.AssociativePredicateComplement;
+import org.eventb.core.ast.extensions.pm.engine.PredicateVariableSubstituter;
 
 /**
  * An implementation of a more structured binder that can be used when

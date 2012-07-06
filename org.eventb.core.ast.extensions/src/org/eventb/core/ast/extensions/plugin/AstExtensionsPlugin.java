@@ -18,18 +18,18 @@ import org.osgi.framework.BundleContext;
  * @author maamria
  *
  */
-public class PMPlugin extends Plugin implements BundleActivator {
+public class AstExtensionsPlugin extends Plugin implements BundleActivator {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eventb.core.pm";
+	public static final String PLUGIN_ID = "org.eventb.core.ast.extensions";
 
 	// The shared instance
-	private static PMPlugin plugin;
+	private static AstExtensionsPlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public PMPlugin() {
+	public AstExtensionsPlugin() {
 	}
 	
 	public void start(BundleContext context) throws Exception {
@@ -48,7 +48,7 @@ public class PMPlugin extends Plugin implements BundleActivator {
 	 *
 	 * @return the shared instance
 	 */
-	public static PMPlugin getPlugin() {
+	public static AstExtensionsPlugin getPlugin() {
 		return plugin;
 	}
 	

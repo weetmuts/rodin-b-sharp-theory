@@ -17,6 +17,8 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extensions.pm.engine.AssociativeExpressionComplement;
+import org.eventb.core.ast.extensions.pm.engine.AssociativePredicateComplement;
 
 /**
  * Common protocol for a binding responsible for collecting all information accumulated during a single matching process.
@@ -26,6 +28,23 @@ import org.eventb.core.ast.Type;
  * <p>
  * Bindings can be mutable or immutable. A mutable binding can be augmented with new matching information, whereas an immutable binding
  * cannot. A binding should be kept mutable for as long as the matching process. After matching finishes, it should be made immutable.
+ * <p>
+ * The following functionalities should be available before the binding is made immutable:
+ * 	<ol>
+ * 		<li>Check insertability of a particular mapping/binding.
+ * 		<li>Obtain the current mapping for a particular identifier/ predicate variable.
+ * 		<li>Insert a predicate or an expression mapping.
+ * 		<li>Set associative complements (predicate or expression).
+ * 		<li>Make the binding immutable signalling the end of the matching process.
+ * 	</ol>
+ * <p>
+ * The following functionalities should be available after the binding is make immutable:
+ * <ol>
+ * 		<li>Obtain the expression and predicate mappings stored in the binding.
+ * 		<li>Obtain any stored associative complement.
+ * 		<li>Obtain the type environment the contains the free identifiers/given types of the pattern mapped to the types
+ * 	of their corresponding mapping.
+ * </ol>
  * <p>
  * Two types of mappings are stored in a binding. Expression mappings are mappings between free identifiers in the pattern and expressions
  * in the formula. Predicate mappings are mappings between predicate variables in the pattern and predicates in the formula. 
@@ -68,6 +87,8 @@ public interface IBinding extends Cloneable{
 	 * @param identifier the free identifier
 	 * @param e the expression
 	 * @return whether the mapping has been added
+	 * @throws IllegalArgumentException if <code>identifier</code> or <code>e</code> are not type checked
+	 * @throws UnsupportedOperationException if this binding is immutable
 	 */
 	public boolean putExpressionMapping(FreeIdentifier identifier, Expression e);
 	
@@ -83,6 +104,8 @@ public interface IBinding extends Cloneable{
 	 * @param variable the predicate variable
 	 * @param p the predicate
 	 * @return whether the mapping has been added
+	 * @throws IllegalArgumentException if <code>p</code> is not type checked
+	 * @throws UnsupportedOperationException if this binding is immutable
 	 */
 	public boolean putPredicateMapping(PredicateVariable variable, Predicate p);
 	
@@ -90,6 +113,7 @@ public interface IBinding extends Cloneable{
 	 * Returns the predicate mapped to the given variable.
 	 * @param variable the predicate variable
 	 * @return the mapped predicate, or <code>null</code> if not mapped
+	 * @throws UnsupportedOperationException if this binding is immutable
 	 */
 	public Predicate getCurrentMapping(PredicateVariable variable);
 	
@@ -97,6 +121,7 @@ public interface IBinding extends Cloneable{
 	 * Returns the expression mapped to the given identifier.
 	 * @param identifier the free identifier
 	 * @return the mapped expression, or <code>null</code> if not mapped
+	 * @throws UnsupportedOperationException if this binding is immutable
 	 */
 	public Expression getCurrentMapping(FreeIdentifier identifier);
 	
@@ -123,18 +148,20 @@ public interface IBinding extends Cloneable{
 	 * to the current binding</p>
 	 * @param another the other binding
 	 * @return whether the binding <code>another</code> has been inserted
+	 * @throws UnsupportedOperationException if this binding is immutable or <code>another</code> is mutable
 	 */
 	public boolean insertBinding(IBinding another);
 	
 	/**
 	 * Checks whether two types (an instance and a pattern) can be considered as matchable.
-	 * <p> If the two types are matchable, the binding will be augmented with any inferred information 
-	 * (i.e., mappings between type parameters and type expressions).
+	 * <p> If the two types are matchable and <code>augmentBinding</code> is set to <code>true</code>, 
+	 * the binding will be augmented with any inferred information (i.e., mappings between type parameters and type expressions).
 	 * @param expressionType the type of the instance
 	 * @param patternType the type of the pattern
+	 * @param augmentBinding whether to add any type unification data to the binding (e.g., given type to a type expression mapping)
 	 * @return whether the two types are unifyable
 	 */
-	public boolean canUnifyTypes(Type expressionType, Type patternType);
+	public boolean unifyTypes(Type expressionType, Type patternType, boolean augmentBinding);
 	
 	/**
 	 * Returns whether a partial match is acceptable.
@@ -149,6 +176,7 @@ public interface IBinding extends Cloneable{
 	 * Keeps track of the expressions that are unmatched in the case where a partial match is acceptable.
 	 * <p> The binding must be mutable.
 	 * @param comp the associative complement object
+	 * @throws UnsupportedOperationException if this binding is immutable
 	 */
 	public void setAssociativeExpressionComplement(AssociativeExpressionComplement comp);
 	
@@ -156,18 +184,21 @@ public interface IBinding extends Cloneable{
 	 * Keeps track of the predicates that are unmatched in the case where a partial match is acceptable.
 	 * <p> The binding must be mutable.
 	 * @param comp the associative complement object
+	 * @throws UnsupportedOperationException if this binding is immutable
 	 */
 	public void setAssociativePredicateComplement(AssociativePredicateComplement comp);
 	
 	/**
 	 * Returns an object containing information about unmatched expressions.
 	 * @return the associative complement
+	 * @throws UnsupportedOperationException if this binding is mutable
 	 */
 	public AssociativeExpressionComplement getAssociativeExpressionComplement();
 	
 	/**
 	 * Returns an object containing information about unmatched predicates.
 	 * @return the associative complement
+	 * @throws UnsupportedOperationException if this binding is mutable
 	 */
 	public AssociativePredicateComplement getAssociativePredicateComplement();
 	
@@ -224,5 +255,10 @@ public interface IBinding extends Cloneable{
 	 * @return the formula factory
 	 */
 	public FormulaFactory getFormulaFactory();
+	
+	/**
+	 * This should reset any state held as part of the binding.
+	 */
+	public void reset();
 	
 }

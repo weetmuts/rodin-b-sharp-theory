@@ -88,7 +88,7 @@ public abstract class OperatorTypingRule {
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
 		FormulaFactory factory = wdMediator.getFormulaFactory();
-		Formula<?> unflattened = unflatten(formula, factory);
+		Formula<?> unflattened = AstUtilities.unflatten(formula, factory);
 		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(
 				((IExtendedFormula) unflattened).getChildExpressions(), factory);
 		if (allSubs == null) {
@@ -134,14 +134,6 @@ public abstract class OperatorTypingRule {
 	public String toString() {
 		return toString(operatorArguments);
 	}
-	
-	/**
-	 * Unflattening may be necessary to compute well-definedness condition of a flattened associative extended expression.
-	 * @param formula the formula to unflatten
-	 * @param factory the formula factory to use
-	 * @return the unflattened formula
-	 */
-	protected abstract Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory);
 
 	private void addTypeParameters(List<GivenType> types) {
 		for (GivenType type : types) {

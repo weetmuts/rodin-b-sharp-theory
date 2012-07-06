@@ -28,6 +28,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
@@ -104,11 +105,28 @@ public class AstUtilities {
 	}
 
 	/**
+	 * Return the unflattened version of the given formula if it comes from a theory extensions (i.e., 
+	 * is an instance of {@link IOperatorExtension}).
+	 * @param formula the formula to unflatten
+	 * @param factory the formula factory that knows about the extension of the formula
+	 * @return the unflattened formula
+	 */
+	public static Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory) {
+		IFormulaExtension extension = formula.getExtension();
+		if (extension instanceof IOperatorExtension){
+			IOperatorExtension operatorExtension = (IOperatorExtension) extension;
+			if (operatorExtension.isAssociative())
+				return unflattenExpression(operatorExtension,formula.getChildExpressions(), factory);
+		}
+		return (Formula<?>) formula;
+	}
+	
+	/**
 	 * Returns the non-flattened version of the the extended expression with the
 	 * given children.
 	 * 
 	 * @param extension
-	 *            the formula extension
+	 *            the formula extension which should also be an expression extension
 	 * @param children
 	 *            the extended expression children
 	 * @param factory
@@ -116,27 +134,27 @@ public class AstUtilities {
 	 * @return the non-flattened extended expression, the result is
 	 *         left-associative
 	 */
-	public static ExtendedExpression unflatten(IFormulaExtension extension, Expression[] children,
+	public static ExtendedExpression unflattenExpression(IOperatorExtension extension, Expression[] children,
 			FormulaFactory factory) {
-		if (!isATheoryExtension(extension)) {
-			if (extension instanceof IExpressionExtension) {
-				return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0],
-						null);
-			}
+		// do not handle predicate extensions, maybe even throw an illegal arg exception
+		if (!(extension instanceof IExpressionExtension)){
+			return null;
 		}
+		// not associative ... return as is
 		if (!isAnAssociativeExtension(extension)) {
 			return factory.makeExtendedExpression((IExpressionExtension) extension, children, new Predicate[0], null);
 		}
-		// only works for extended expressions resulting from theory extensions
+		// only works for associative extended expressions resulting from theory extensions
 		// children length has to be 2 or more
 		IExpressionExtension expreExtension = (IExpressionExtension) extension;
 		int length = children.length;
+		// return as is if number of children is 2
 		if (length == 2) {
 			return factory.makeExtendedExpression(expreExtension, children, new Predicate[0], null);
 		} else {
 			Expression[] toWorkWith = subChildren(length - 2, children);
 			return factory.makeExtendedExpression(expreExtension,
-					new Expression[] { unflatten(extension, toWorkWith, factory), children[length - 1] },
+					new Expression[] { unflattenExpression(extension, toWorkWith, factory), children[length - 1] },
 					new Predicate[0], null);
 		}
 	}
@@ -152,7 +170,7 @@ public class AstUtilities {
 	 *            the original array
 	 * @return the sub-array
 	 */
-	static Expression[] subChildren(int end, Expression[] children) {
+	public static Expression[] subChildren(int end, Expression[] children) {
 		if (end > children.length - 1) {
 			return children;
 		}

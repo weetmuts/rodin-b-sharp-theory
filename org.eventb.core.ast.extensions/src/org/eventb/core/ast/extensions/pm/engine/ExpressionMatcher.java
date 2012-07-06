@@ -1,6 +1,8 @@
-package org.eventb.core.ast.extensions.pm;
+package org.eventb.core.ast.extensions.pm.engine;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.MatchingFactory;
 
 /**
  * An abstract implementation of an expression matcher.
@@ -27,7 +29,8 @@ public abstract class ExpressionMatcher<E extends Expression>{
 		if (eForm.getTag() != ePattern.getTag()){
 			return false;
 		}
-		if (!existingBinding.canUnifyTypes(eForm.getType(), ePattern.getType())){
+		// unify types and add unification data
+		if (!existingBinding.unifyTypes(eForm.getType(), ePattern.getType(), true)){
 			return false;
 		}
 		// by this point the expression have the same tag and types are unifyable

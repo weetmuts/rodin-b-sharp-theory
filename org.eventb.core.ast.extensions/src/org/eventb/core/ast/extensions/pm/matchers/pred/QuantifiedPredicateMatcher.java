@@ -5,8 +5,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
-import org.eventb.core.ast.extensions.pm.PredicateMatcher;
-import org.eventb.core.ast.extensions.pm.basis.engine.MatchingUtilities;
+import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
  * TODO FIXME this is good when we only have one quantifier variable.
@@ -25,7 +25,7 @@ public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredi
 			QuantifiedPredicate qpPattern, IBinding existingBinding) {
 		BoundIdentDecl[] fDec = qpForm.getBoundIdentDecls();
 		BoundIdentDecl[] pDec = qpPattern.getBoundIdentDecls();
-		if (!MatchingUtilities.boundIdentDecsMatch(fDec, pDec, existingBinding)) {
+		if (!Matcher.boundIdentDecsMatch(fDec, pDec, existingBinding)) {
 			return false;
 		}
 

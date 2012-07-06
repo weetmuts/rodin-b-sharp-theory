@@ -13,8 +13,8 @@ import java.util.List;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.pm.AssociativePredicateComplement;
 import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.AssociativePredicateComplement;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
 
 /**

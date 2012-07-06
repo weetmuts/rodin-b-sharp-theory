@@ -13,7 +13,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.extensions.pm.IBinding;
-import org.eventb.core.ast.extensions.pm.PredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
  * 

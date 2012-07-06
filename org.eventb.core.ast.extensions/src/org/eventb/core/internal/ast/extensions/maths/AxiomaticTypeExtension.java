@@ -120,7 +120,7 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 			return false;
 		}
 		final ParametricType genType = (ParametricType) baseType;
-		if (genType.getExprExtension() != this) {
+		if (!genType.getExprExtension().equals(this)) {
 			return false;
 		}
 		final Type[] typeParameters = genType.getTypeParameters();

@@ -3,7 +3,7 @@ package org.eventb.core.ast.extensions.pm.matchers.pred;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
-import org.eventb.core.ast.extensions.pm.PredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
  * @since 1.0

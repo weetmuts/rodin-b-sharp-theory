@@ -7,9 +7,9 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.extensions.pm.ExpressionMatcher;
 import org.eventb.core.ast.extensions.pm.IBinding;
-import org.eventb.core.ast.extensions.pm.basis.engine.MatchingUtilities;
+import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
  * TODO FIXME this is good when we only have one quantifier variable.
@@ -33,7 +33,7 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 		}
 		BoundIdentDecl[] fDec = qeForm.getBoundIdentDecls();
 		BoundIdentDecl[] pDec = qePattern.getBoundIdentDecls();
-		if(!MatchingUtilities.boundIdentDecsMatch(fDec, pDec, existingBinding)){
+		if(!Matcher.boundIdentDecsMatch(fDec, pDec, existingBinding)){
 			return false;
 		}
 		Expression fExp = qeForm.getExpression();

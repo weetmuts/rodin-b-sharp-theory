@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extensions.pm;
 
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 
@@ -62,6 +63,31 @@ public final class Matcher {
 	 */
 	public MatchingFactory getMatchingFactory() {
 		return matchingFactory;
+	}
+	
+	/**
+	 * Returns whether the two arrays of declarations match (simple implementation).
+	 * @param formulaDecs the formula declarations
+	 * @param patternDecs the pattern declarations
+	 * @param existingBinding the existing binding
+	 * @return whether the declarations match
+	 */
+	public static boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, 
+			BoundIdentDecl[] patternDecs, IBinding existingBinding){
+		if(formulaDecs.length == patternDecs.length){
+			int index = 0;
+			for(BoundIdentDecl pDec: patternDecs){
+				BoundIdentDecl fDec = formulaDecs[index];
+				// type unification should gather any new information and put it in binding
+				if(!existingBinding.unifyTypes(fDec.getType(), pDec.getType(), true)){
+					return false;
+				}
+				index++;
+			}
+			return true;
+		}
+		else 
+			return false;
 	}
 
 }
