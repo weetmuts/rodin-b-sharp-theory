@@ -12,10 +12,10 @@ import java.util.List;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pm.IBinding;
-import org.eventb.core.pm.Matcher;
-import org.eventb.core.pm.assoc.ACPredicateProblem;
-import org.eventb.core.pm.assoc.ACProblem;
+import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
+import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;

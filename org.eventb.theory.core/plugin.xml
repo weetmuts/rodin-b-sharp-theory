@@ -239,6 +239,11 @@
             id="axiomaticOperatorDefinition"
             name="%axiomaticOperatorDefinition">
       </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.AxiomaticTypeDefinition"
+            id="axiomaticTypeDefinition"
+            name="%axiomaticTypeDefinition">
+      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -346,6 +351,26 @@
             class="org.eventb.theory.core.basis.SCRecursiveOperatorDefinition"
             id="scRecursiveOperatorDefinition"
             name="%scRecursiveOperatorDefinition">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCAxiomaticDefinitionAxiom"
+            id="scAxiomaticDefinitionAxiom"
+            name="%scAxiomaticDefinitionAxiom">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCAxiomaticTypeDefinition"
+            id="scAxiomaticTypeDefinition"
+            name="%scAxiomaticTypeDefinition">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCAxiomaticDefinitionsBlock"
+            id="scAxiomaticDefinitionsBlock"
+            name="%scAxiomaticDefinitionsBlock">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCAxiomaticOperatorDefinition"
+            id="scAxiomaticOperatorDefinition"
+            name="%scAxiomaticOperatorDefinition">
       </internalElementType>
    </extension>
    <extension

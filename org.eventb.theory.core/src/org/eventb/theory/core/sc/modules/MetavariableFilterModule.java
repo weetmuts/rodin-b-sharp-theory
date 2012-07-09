@@ -15,7 +15,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
@@ -84,7 +84,7 @@ public class MetavariableFilterModule extends SCFilterModule {
 			throws RodinDBException {
 		FreeIdentifier[] idents = type.toExpression(factory)
 				.getSyntacticallyFreeIdentifiers();
-		List<String> givenSets = MathExtensionsUtilities
+		List<String> givenSets = AstUtilities
 				.getGivenSetsNames(typeEnvironment);
 		for (FreeIdentifier ident : idents) {
 			// if not declared

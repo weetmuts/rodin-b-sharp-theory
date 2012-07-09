@@ -13,13 +13,16 @@ import org.eventb.core.ast.FormulaFactory;
 
 /**
  * An implementation of a matching engine.
- * <p> All matching processes are initiated from within a matcher. Each matcher works with
- * a an instance of a <code>FormulaFactory</code> to ensure consistency of mathematical
- * extensions used throughout a matching process.
- * <p> This class is not intended to be sub-classed by clients.
+ * <p>
+ * All matching processes are initiated from within a matcher. Each matcher
+ * works with a an instance of a <code>FormulaFactory</code> to ensure
+ * consistency of mathematical extensions used throughout a matching process.
+ * <p>
+ * This class is not intended to be sub-classed by clients.
+ * 
  * @author maamria
  * @since 1.0
- *
+ * 
  */
 public final class Matcher {
 
@@ -33,16 +36,25 @@ public final class Matcher {
 
 	/**
 	 * Matches the formula and the pattern and produces a matching result.
-	 * <p> The matching process can be instructed to produce partial matches. This is relevant when matching
-	 * two associative expressions (or predicates).
-	 * @param form the formula
-	 * @param pattern the pattern
-	 * @param acceptPartialMatch whether to accept a partial match
+	 * <p>
+	 * The matching process can be instructed to produce partial matches. This
+	 * is relevant when matching two associative expressions (or predicates).
+	 * 
+	 * @param form
+	 *            the formula
+	 * @param pattern
+	 *            the pattern
+	 * @param acceptPartialMatch
+	 *            whether to accept a partial match
 	 * @return the binding, or <code>null</code> if matching failed
 	 */
 	public IBinding match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch) {
-		IBinding initialBinding = matchingFactory.createBinding(form, pattern,acceptPartialMatch, factory);
-		if (matchingFactory.match(form, pattern, initialBinding)){
+		// if they are not of the same class, do not bother
+		if (!form.getClass().equals(pattern.getClass())) {
+			return null;
+		}
+		IBinding initialBinding = matchingFactory.createBinding(form, pattern, acceptPartialMatch, factory);
+		if (matchingFactory.match(form, pattern, initialBinding)) {
 			initialBinding.makeImmutable();
 			return initialBinding;
 		}
@@ -51,6 +63,7 @@ public final class Matcher {
 
 	/**
 	 * Returns the formula factory with which this matcher is working.
+	 * 
 	 * @return the formula factory
 	 */
 	public FormulaFactory getFactory() {
@@ -59,34 +72,40 @@ public final class Matcher {
 
 	/**
 	 * Returns the matching factory used by this matcher.
+	 * 
 	 * @return the matching factory
 	 */
 	public MatchingFactory getMatchingFactory() {
 		return matchingFactory;
 	}
-	
+
 	/**
-	 * Returns whether the two arrays of declarations match (simple implementation).
-	 * @param formulaDecs the formula declarations
-	 * @param patternDecs the pattern declarations
-	 * @param existingBinding the existing binding
+	 * Returns whether the two arrays of declarations match (simple
+	 * implementation).
+	 * 
+	 * @param formulaDecs
+	 *            the formula declarations
+	 * @param patternDecs
+	 *            the pattern declarations
+	 * @param existingBinding
+	 *            the existing binding
 	 * @return whether the declarations match
 	 */
-	public static boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, 
-			BoundIdentDecl[] patternDecs, IBinding existingBinding){
-		if(formulaDecs.length == patternDecs.length){
+	public static boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, BoundIdentDecl[] patternDecs,
+			IBinding existingBinding) {
+		if (formulaDecs.length == patternDecs.length) {
 			int index = 0;
-			for(BoundIdentDecl pDec: patternDecs){
+			for (BoundIdentDecl pDec : patternDecs) {
 				BoundIdentDecl fDec = formulaDecs[index];
-				// type unification should gather any new information and put it in binding
-				if(!existingBinding.unifyTypes(fDec.getType(), pDec.getType(), true)){
+				// type unification should gather any new information and put it
+				// in binding
+				if (!existingBinding.unifyTypes(fDec.getType(), pDec.getType(), true)) {
 					return false;
 				}
 				index++;
 			}
 			return true;
-		}
-		else 
+		} else
 			return false;
 	}
 

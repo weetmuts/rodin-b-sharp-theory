@@ -135,7 +135,7 @@ public final class MathExtensionsFactory {
 	 */
 	public static Set<IFormulaExtension> getCompleteDatatypeExtensions(
 			String identifier, String[] typeArguments,
-			Map<String, Map<String, Type>> constructors, FormulaFactory factory) {
+			Map<String, Map<String, String>> constructors, FormulaFactory factory) {
 		CompleteDatatypeExtension completeDtExt = new CompleteDatatypeExtension(identifier, 
 				typeArguments, constructors);
 		return factory.makeDatatype(completeDtExt).getExtensions();

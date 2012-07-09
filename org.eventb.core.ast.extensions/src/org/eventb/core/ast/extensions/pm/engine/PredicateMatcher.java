@@ -26,6 +26,7 @@ public abstract class PredicateMatcher<P extends Predicate> {
 			IBinding existingBinding) {
 		P pForm = getPredicate(form);
 		P pPattern = getPredicate(pattern);
+		// check same tag
 		if (pForm.getTag() != pPattern.getTag()){
 			return false;
 		}

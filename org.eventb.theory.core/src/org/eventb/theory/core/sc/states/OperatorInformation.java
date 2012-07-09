@@ -29,14 +29,10 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
+import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.ast.maths.IOperatorArgument;
-import org.eventb.core.ast.maths.MathExtensionsFactory;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
-import org.eventb.core.ast.maths.OperatorExtensionProperties;
-import org.eventb.core.internal.ast.maths.ExpressionOperatorTypingRule;
-import org.eventb.core.internal.ast.maths.OperatorArgument;
-import org.eventb.core.internal.ast.maths.PredicateOperatorTypingRule;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
@@ -67,7 +63,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	private boolean isCommutative = false;
 	private List<Predicate> wdConditions;
 	private List<String> allowedIdentifiers;
-	private Map<String, IOperatorArgument> opArguments;
+	private Map<String, Type> opArguments;
 	private Type expressionType;
 	private List<GivenType> typeParameters;
 	private IDefinition definition;
@@ -76,11 +72,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	private FormulaFactory factory;
 
-	private final MathExtensionsFactory extensionsFactory;
-
 	private IFormulaExtension formulaExtension = null;
-
-	private int currentArgumentIndex = 0;
 
 	private boolean hasError = false;
 
@@ -89,12 +81,11 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	public OperatorInformation(String operatorID, FormulaFactory factory) {
 		this.operatorID = operatorID;
 		this.allowedIdentifiers = new ArrayList<String>();
-		this.opArguments = new LinkedHashMap<String, IOperatorArgument>();
+		this.opArguments = new LinkedHashMap<String, Type>();
 		this.typeParameters = new ArrayList<GivenType>();
 		this.wdConditions = new ArrayList<Predicate>();
 		this.factory = factory;
 		this.typeEnvironment = this.factory.makeTypeEnvironment();
-		this.extensionsFactory = MathExtensionsFactory.getDefault();
 	}
 
 	public boolean isAllowedIdentifier(FreeIdentifier ident) {
@@ -169,7 +160,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		if (wdConditions.size() == 1) {
 			return wdConditions.get(0);
 		}
-		return MathExtensionsUtilities.conjunctPredicates(wdConditions, factory);
+		return AstUtilities.conjunctPredicates(wdConditions, factory);
 	}
 
 	/**
@@ -197,7 +188,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	@Override
 	public void addOperatorArgument(String ident, Type type) {
 		if (!opArguments.containsKey(ident)) {
-			for (GivenType gtype : MathExtensionsUtilities.getGivenTypes(type)) {
+			for (GivenType gtype : AstUtilities.getGivenTypes(type)) {
 				if (!typeParameters.contains(gtype)) {
 					typeParameters.add(gtype);
 					typeEnvironment.addGivenSet(gtype.getName());
@@ -207,7 +198,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 				}
 			}
 			typeEnvironment.addName(ident, type);
-			opArguments.put(ident, new OperatorArgument(currentArgumentIndex++, ident, type));
+			opArguments.put(ident, type);
 			allowedIdentifiers.add(ident);
 
 		}
@@ -231,14 +222,11 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		if (!hasError) {
 			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 			if (expressionType != null) {
-				ExpressionOperatorTypingRule typingRule = extensionsFactory.getTypingRule(new ArrayList<IOperatorArgument>(opArguments.values()), expressionType, getWdCondition(),
-						dWDCondition, isAssociative);
-				formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, isAssociative, typingRule, sourceOfExtension);
+				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
+						opArguments, expressionType, getWdCondition(), dWDCondition, sourceOfExtension);
 			} else {
-				PredicateOperatorTypingRule typingRule = extensionsFactory.getTypingRule(
-						new ArrayList<IOperatorArgument>(opArguments.values()), getWdCondition(), dWDCondition);
-				formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, typingRule, sourceOfExtension);
-
+				formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
+						getWdCondition(), dWDCondition, sourceOfExtension);
 			}
 			return formulaExtension;
 		} else
@@ -251,15 +239,11 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		IFormulaExtension formulaExtension = null;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 		if (expressionType != null) {
-			ExpressionOperatorTypingRule typingRule = extensionsFactory.getTypingRule(
-					new ArrayList<IOperatorArgument>(opArguments.values()), expressionType,
-					MathExtensionsUtilities.BTRUE, MathExtensionsUtilities.BTRUE, isAssociative);
-			formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, isAssociative, typingRule, null);
+			formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
+					opArguments, expressionType, getWdCondition(), dWDCondition, null);
 		} else {
-			PredicateOperatorTypingRule typingRule = extensionsFactory.getTypingRule(
-					new ArrayList<IOperatorArgument>(opArguments.values()), MathExtensionsUtilities.BTRUE, MathExtensionsUtilities.BTRUE);
-			formulaExtension = extensionsFactory.getFormulaExtension(properties, isCommutative, typingRule, null);
-
+			formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
+					getWdCondition(), dWDCondition, null);
 		}
 		return formulaExtension;
 	}
@@ -277,16 +261,18 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			newRulesbBlock.setSource(originDefinition, null);
 		}
 		Map<FreeIdentifier, Expression> possibleSubstitution = new HashMap<FreeIdentifier, Expression>();
-		for (IOperatorArgument arg : opArguments.values()) {
-			ISCMetavariable var = newRulesbBlock.getMetavariable(arg.getArgumentName());
-			while (var.exists() && !var.getType(enhancedFactory).equals(arg.getArgumentType())) {
+		for (String arg : opArguments.keySet()) {
+			Type argType = opArguments.get(arg);
+			FreeIdentifier argIdent = enhancedFactory.makeFreeIdentifier(arg, null, argType);
+			ISCMetavariable var = newRulesbBlock.getMetavariable(arg);
+			while (var.exists() && !var.getType(enhancedFactory).equals(argType)) {
 				String newName = var.getIdentifierString() + "_";
-				var = newRulesbBlock.getMetavariable(newName);
-				possibleSubstitution.put(arg.toFreeIdentifier(enhancedFactory), arg.makeSubstituter(newName, enhancedFactory));
+				var = newRulesbBlock.getMetavariable(newName);	
 			}
+			possibleSubstitution.put(argIdent, enhancedFactory.makeFreeIdentifier(arg, null, argType));
 			if (!var.exists()) {
 				var.create(null, null);
-				var.setType(arg.getArgumentType(), null);
+				var.setType(argType, null);
 				var.setSource(originDefinition, null);
 			}
 		}
@@ -299,7 +285,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 			rhs.create(null, null);
 			rhs.setLabel(syntax + " rhs", null);
-			rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
+			rhs.setPredicate(AstUtilities.BTRUE, null);
 			rhs.setSCFormula(((DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
 			rhs.setSource(originDefinition, null);
 		} else if (definition instanceof RecursiveDefinition) {
@@ -313,7 +299,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 				for (FreeIdentifier identifier : indCase.getFreeIdentifiers()) {
 					String name = identifier.getName();
 					Type type = identifier.getType();
-					if (!MathExtensionsUtilities.isGivenSet(typeEnvironment, name)) {
+					if (!AstUtilities.isGivenSet(typeEnvironment, name)) {
 						ISCMetavariable scVar = newRulesbBlock.getMetavariable(name);
 						while (scVar.exists() && !scVar.getType(enhancedFactory).equals(type)) {
 							String newName = scVar.getIdentifierString() + "_";
@@ -344,7 +330,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 				rhs.create(null, null);
 				rhs.setSource(originDefinition, null);
 				rhs.setLabel(syntax + " rhs", null);
-				rhs.setPredicate(MathExtensionsUtilities.BTRUE, null);
+				rhs.setPredicate(AstUtilities.BTRUE, null);
 				// get the rhs 
 				Formula<?> indCaseDefinitionFormula = recursiveCases.get(indCase);
 				// apply substitution if necessary
@@ -356,8 +342,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	}
 
 	@Override
-	public List<IOperatorArgument> getOperatorArguments() {
-		return Collections.unmodifiableList(new ArrayList<IOperatorArgument>(opArguments.values()));
+	public Map<String, Type> getOperatorArguments() {
+		return Collections.unmodifiableMap(opArguments);
 	}
 
 	@Override
@@ -422,10 +408,11 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	 * @return the child expressions
 	 */
 	protected Expression[] getChildExpressionsForLhs(FormulaFactory ff) {
-		IOperatorArgument[] opArgsArray = (MathExtensionsUtilities.sortOperatorArguments(opArguments.values())).toArray(new IOperatorArgument[opArguments.size()]);
 		Expression[] exps = new Expression[opArguments.size()];
-		for (int i = 0; i < exps.length; i++) {
-			exps[i] = ff.makeFreeIdentifier(opArgsArray[i].getArgumentName(), null, opArgsArray[i].getArgumentType());
+		int i = 0;
+		for (String name : opArguments.keySet()){
+			exps[i] = ff.makeFreeIdentifier(name, null, opArguments.get(name));
+			i ++;
 		}
 		return exps;
 	}

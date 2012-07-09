@@ -16,7 +16,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -137,7 +137,7 @@ public class DatatypeModule extends SCProcessorModule {
 			// set the new factory and create an associated type environment
 			repository.setFormulaFactory(decoy);
 			factory = decoy;
-			typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			repository.setTypeEnvironment(typeEnvironment);
 
 			// Run the child modules
@@ -155,7 +155,7 @@ public class DatatypeModule extends SCProcessorModule {
 			if (datatypeTable.isErrorProne()) {
 				repository.setFormulaFactory(datatypeTable.reset());
 				factory = repository.getFormulaFactory();
-				typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+				typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 				repository.setTypeEnvironment(typeEnvironment);
 				target.setHasError(true, monitor);
 				continue;
@@ -165,7 +165,7 @@ public class DatatypeModule extends SCProcessorModule {
 			// corresponding type environment
 			repository.setFormulaFactory(datatypeTable.augmentFormulaFactory());
 			factory = repository.getFormulaFactory();
-			typeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			repository.setTypeEnvironment(typeEnvironment);
 
 		}

@@ -26,6 +26,7 @@ public abstract class ExpressionMatcher<E extends Expression>{
 			IBinding existingBinding) {
 		E eForm = getExpression(form);
 		E ePattern = getExpression(pattern);
+		// check same tags
 		if (eForm.getTag() != ePattern.getTag()){
 			return false;
 		}

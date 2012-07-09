@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
-import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -15,7 +15,6 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.maths.IOperatorArgument;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -43,7 +42,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 			throws CoreException {
 		INewOperatorDefinition operatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scOperatorDefinition = (ISCNewOperatorDefinition) target;
-		List<IOperatorArgument> operatorArguments = operatorInformation
+		Map<String, Type> operatorArguments = operatorInformation
 				.getOperatorArguments();
 		Notation notation = operatorDefinition.getNotationType();
 		FormulaType formType = operatorDefinition.getFormulaType();
@@ -68,7 +67,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 
 	protected boolean checkSemanticProperties(
 			INewOperatorDefinition operatorDefinition, FormulaType formType,
-			Notation notation, List<IOperatorArgument> operatorArguments,
+			Notation notation, Map<String, Type> operatorArguments,
 			boolean isAssociative, boolean isCommutative) throws CoreException {
 		String opID = operatorDefinition.getLabel();
 		// Issues with associativity
@@ -142,17 +141,18 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 	 *            the operator arguments
 	 * @return whether this operator can be associative
 	 */
-	protected boolean checkAssociativity(List<IOperatorArgument> args)
+	protected boolean checkAssociativity(Map<String, Type> args)
 			throws CoreException {
 		if (!operatorInformation.isExpressionOperator() || (args.size() != 2)) {
 			return false;
 		}
 		Type type = null;
-		for (IOperatorArgument arg : args) {
+		for (String arg : args.keySet()) {
+			Type currentArgType = args.get(arg);
 			if (type == null) {
-				type = arg.getArgumentType();
+				type = currentArgType;
 			}
-			if (!type.equals(arg.getArgumentType())) {
+			if (!type.equals(currentArgType)) {
 				return false;
 			}
 		}
@@ -170,16 +170,17 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 	 *            the operator arguments
 	 * @return whether this operator can be commutative
 	 */
-	protected boolean checkCommutativity(List<IOperatorArgument> args) {
+	protected boolean checkCommutativity(Map<String, Type> args) {
 		if (args.size() != 2) {
 			return false;
 		}
 		Type type = null;
-		for (IOperatorArgument arg : args) {
+		for (String arg : args.keySet()) {
+			Type currentArgType = args.get(arg);
 			if (type == null) {
-				type = arg.getArgumentType();
+				type = currentArgType;
 			}
-			if (!(type.equals(arg.getArgumentType())))
+			if (!(type.equals(currentArgType)))
 				return false;
 		}
 		return true;

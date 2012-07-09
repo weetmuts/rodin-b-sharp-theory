@@ -9,8 +9,7 @@ Bundle-Activator: org.eventb.theory.core.plugin.TheoryPlugin
 Require-Bundle: org.rodinp.core;bundle-version="1.5.0",
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eventb.core;bundle-version="2.5.0",
- org.eventb.core.wd;bundle-version="2.0.0",
- org.eventb.core.pm;bundle-version="2.0.0"
+ org.eventb.core.ast.extensions;bundle-version="2.0.0"
 Export-Package: org.eventb.theory.core,
  org.eventb.theory.core.maths.extensions.dependencies,
  org.eventb.theory.core.sc,

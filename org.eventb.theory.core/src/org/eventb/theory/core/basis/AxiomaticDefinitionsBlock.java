@@ -3,6 +3,7 @@ package org.eventb.theory.core.basis;
 import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.IAxiomaticOperatorDefinition;
+import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -18,6 +19,16 @@ public class AxiomaticDefinitionsBlock extends TheoryElement implements IAxiomat
 
 	public AxiomaticDefinitionsBlock(String name, IRodinElement parent) {
 		super(name, parent);
+	}
+	
+	@Override
+	public IAxiomaticTypeDefinition getAxiomaticTypeDefinition(String name) {
+		return getInternalElement(IAxiomaticTypeDefinition.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public IAxiomaticTypeDefinition[] getAxiomaticTypeDefinitions() throws RodinDBException {
+		return getChildrenOfType(IAxiomaticTypeDefinition.ELEMENT_TYPE);
 	}
 
 	@Override
@@ -44,5 +55,4 @@ public class AxiomaticDefinitionsBlock extends TheoryElement implements IAxiomat
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return ELEMENT_TYPE;
 	}
-
 }

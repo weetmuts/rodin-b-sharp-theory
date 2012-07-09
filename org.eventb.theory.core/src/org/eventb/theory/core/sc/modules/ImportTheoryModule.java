@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -226,7 +226,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 					factory);
 			Set<IFormulaExtension> exts = loader.load();
 			factory = factory.withExtensions(exts);
-			typeEnvironment = MathExtensionsUtilities
+			typeEnvironment = AstUtilities
 					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 		}
 		repository.setFormulaFactory(factory);

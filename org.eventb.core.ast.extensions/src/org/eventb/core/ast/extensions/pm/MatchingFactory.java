@@ -118,10 +118,6 @@ public final class MatchingFactory {
 		if(initialBinding == null){
 			throw new IllegalArgumentException("Matching started without a binding object.");
 		}
-		// if they are not of the same class, do not bother
-		if(formula.getClass().equals(pattern.getClass())){
-			return false;
-		}
 		// case Expression : use an expression matcher
 		if(formula instanceof Expression){
 			// get the matcher from the map

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoning;
 
-import org.eventb.core.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 

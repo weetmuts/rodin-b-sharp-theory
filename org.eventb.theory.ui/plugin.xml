@@ -289,6 +289,12 @@
             prefix="AXIOMS"
             typeId="org.eventb.theory.core.axiomaticDefinitionAxiom">
       </element>
+      <element
+            defaultColumn="1"
+            imagePath="icons/datatype.gif"
+            prefix="TYPES"
+            typeId="org.eventb.theory.core.axiomaticTypeDefinition">
+      </element>
       <childRelation
             parentTypeId="org.eventb.theory.core.inferenceRule">
          <childType
@@ -399,6 +405,10 @@
       </childRelation>
       <childRelation
             parentTypeId="org.eventb.theory.core.axiomaticDefinitionsBlock">
+         <childType
+               priority="5"
+               typeId="org.eventb.theory.core.axiomaticTypeDefinition">
+         </childType>
          <childType
                priority="10"
                typeId="org.eventb.theory.core.axiomaticOperatorDefinition">
@@ -715,6 +725,14 @@
          </attributeReference>
          <attributeReference
                column="3"
+               descriptionId="org.eventb.theory.ui.associative">
+         </attributeReference>
+         <attributeReference
+               column="4"
+               descriptionId="org.eventb.theory.ui.commutative">
+         </attributeReference>
+         <attributeReference
+               column="5"
                descriptionId="org.eventb.theory.ui.type">
          </attributeReference>
          <attributeReference
@@ -730,6 +748,16 @@
          <attributeReference
                column="1"
                descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.theory.core.axiomaticTypeDefinition">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.identifier">
          </attributeReference>
          <attributeReference
                descriptionId="org.eventb.ui.comment">

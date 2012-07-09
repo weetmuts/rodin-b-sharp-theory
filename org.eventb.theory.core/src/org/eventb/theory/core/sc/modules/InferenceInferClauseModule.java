@@ -14,7 +14,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IInfer;
@@ -67,7 +67,7 @@ public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, I
 
 	@Override
 	protected boolean checkPredicate(Predicate predicate, IInfer clause) throws CoreException {
-		if (predicate.equals(MathExtensionsUtilities.BTRUE)) {
+		if (predicate.equals(AstUtilities.BTRUE)) {
 			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,
 					TheoryGraphProblem.InferenceInferBTRUEPredErr);
 			return false;

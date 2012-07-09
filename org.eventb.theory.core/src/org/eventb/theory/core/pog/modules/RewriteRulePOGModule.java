@@ -18,7 +18,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -144,7 +144,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				// -------------------------------------------------------
 				// lhsWD & conditionWD & condition => rhsWD
 				if (!isTrivial(rhsWD)) {
-					Predicate poPredicate = MathExtensionsUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition}, factory);
+					Predicate poPredicate = AstUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition}, factory);
 					if(poPredicate.equals(library.True())){
 						poPredicate = rhsWD;
 					}
@@ -167,7 +167,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				// -------------------------------------------------------
 				// lhsWD & conditionWD & condition & rhsWD => lhs = rhs
 				if (!isTrivial(soundnessPredicate)) {
-					Predicate poPredicate = MathExtensionsUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition, rhsWD}, factory);
+					Predicate poPredicate = AstUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition, rhsWD}, factory);
 					if(poPredicate.equals(library.True())){
 						poPredicate = soundnessPredicate;
 					}
@@ -202,7 +202,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 						allConditions, null);
 			
 				if(!isTrivial(goal)){
-					Predicate hyps = MathExtensionsUtilities.conjunctPredicates(wdAllConditions, factory);
+					Predicate hyps = AstUtilities.conjunctPredicates(wdAllConditions, factory);
 					Predicate poPredicate = library.makeImp(hyps, goal);
 					createPO(target, poName,
 							natureFactory.getNature(RULE_COMPLETENESS_DESC),

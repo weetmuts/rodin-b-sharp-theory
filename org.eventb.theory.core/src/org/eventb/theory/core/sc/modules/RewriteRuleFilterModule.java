@@ -19,7 +19,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -91,7 +91,7 @@ public class RewriteRuleFilterModule extends RuleFilterModule<IRewriteRule> {
 		}
 		// tested by TestRewriteRules.testRewriteRules_010()
 		for (GivenType type : lhsForm.getGivenTypes()){
-			if (!typeEnvironment.contains(type.getName()) || !MathExtensionsUtilities.isGivenSet(typeEnvironment, type.getName())){
+			if (!typeEnvironment.contains(type.getName()) || !AstUtilities.isGivenSet(typeEnvironment, type.getName())){
 				createProblemMarker(rule, FORMULA_ATTRIBUTE, 
 						TheoryGraphProblem.NonTypeParOccurError, type.getName());
 				return false;

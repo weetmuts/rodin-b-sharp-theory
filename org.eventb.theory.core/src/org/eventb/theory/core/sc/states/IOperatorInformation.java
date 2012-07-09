@@ -8,7 +8,6 @@
 package org.eventb.theory.core.sc.states;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +20,6 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.maths.IOperatorArgument;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
@@ -68,7 +66,7 @@ public interface IOperatorInformation extends ISCState{
 	 * Returns the operator arguments of this operator
 	 * @return operator arguments
 	 */
-	public List<IOperatorArgument> getOperatorArguments();
+	public Map<String, Type> getOperatorArguments();
 	
 	/**
 	 * @return the syntax

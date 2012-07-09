@@ -9,7 +9,7 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -86,8 +86,8 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 				operatorInformation.setHasError();
 			} 
 			else {
-				target.setWDCondition(MathExtensionsUtilities.BTRUE, monitor);
-				operatorInformation.setD_WDCondition(MathExtensionsUtilities.BTRUE);
+				target.setWDCondition(AstUtilities.BTRUE, monitor);
+				operatorInformation.setD_WDCondition(AstUtilities.BTRUE);
 			}
 		}
 	}

@@ -17,7 +17,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -100,13 +100,13 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 					infersPredicatesWDs.add(getDWDCondition(pred));
 				}
 			}
-			Predicate conj1 = MathExtensionsUtilities.conjunctPredicates(
+			Predicate conj1 = AstUtilities.conjunctPredicates(
 					givensPredicates, factory);
-			Predicate conj1WD = MathExtensionsUtilities.conjunctPredicates(
+			Predicate conj1WD = AstUtilities.conjunctPredicates(
 					givensPredicatesWDs, factory);
-			Predicate conj2 = MathExtensionsUtilities.conjunctPredicates(
+			Predicate conj2 = AstUtilities.conjunctPredicates(
 					infersPredicates, factory);
-			Predicate conj2WD = MathExtensionsUtilities.conjunctPredicates(
+			Predicate conj2WD = AstUtilities.conjunctPredicates(
 					infersPredicatesWDs, factory);
 			Predicate poPredicate = library.makeImp(conj1, conj2);
 			if (!isTrivial(poPredicate)) {

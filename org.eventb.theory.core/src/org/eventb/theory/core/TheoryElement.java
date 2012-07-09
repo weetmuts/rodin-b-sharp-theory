@@ -35,7 +35,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.basis.EventBElement;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;

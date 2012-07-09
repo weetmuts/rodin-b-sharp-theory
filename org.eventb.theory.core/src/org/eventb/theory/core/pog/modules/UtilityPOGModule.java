@@ -21,14 +21,14 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.wd.YComputer;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
-import org.eventb.core.wd.y.YComputer;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -93,7 +93,7 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 			ITypeEnvironment typeEnvironment) {
 		FormulaFactory factory = typeEnvironment.getFormulaFactory();
 		Set<String> all = typeEnvironment.clone().getNames();
-		all.removeAll(MathExtensionsUtilities.getGivenSetsNames(typeEnvironment));
+		all.removeAll(AstUtilities.getGivenSetsNames(typeEnvironment));
 		List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
 		for (String name : all) {
 			vars.add(factory.makeFreeIdentifier(name, null,

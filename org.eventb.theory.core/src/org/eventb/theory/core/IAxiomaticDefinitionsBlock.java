@@ -18,6 +18,10 @@ public interface IAxiomaticDefinitionsBlock extends ICommentedElement, ILabeledE
 			RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".axiomaticDefinitionsBlock");
 	
 	
+	public IAxiomaticTypeDefinition getAxiomaticTypeDefinition(String name);
+	
+	public IAxiomaticTypeDefinition[] getAxiomaticTypeDefinitions() throws RodinDBException;
+	
 	public IAxiomaticOperatorDefinition getAxiomaticOperatorDefinition(String name);
 	
 	public IAxiomaticOperatorDefinition[] getAxiomaticOperatorDefinitions() throws RodinDBException;

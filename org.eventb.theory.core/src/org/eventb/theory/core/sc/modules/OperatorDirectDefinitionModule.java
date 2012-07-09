@@ -18,7 +18,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.wd.YComputer;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -31,7 +32,6 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.IOperatorInformation;
-import org.eventb.core.wd.y.YComputer;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -101,7 +101,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 				repository);
 		String label = newOperatorDefinition.getLabel();
 		if (defFormula != null) {
-			if (MathExtensionsUtilities.isExpressionOperator(operatorInformation.getFormulaType())) {
+			if (AstUtilities.isExpressionOperator(operatorInformation.getFormulaType())) {
 				if (defFormula instanceof Expression) {
 					createSCDirectDefinition(defFormula, scNewOperatorDefinition,
 							definition, repository, monitor);

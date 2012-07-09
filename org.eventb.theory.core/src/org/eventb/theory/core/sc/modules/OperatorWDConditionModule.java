@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -50,10 +50,10 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 		
 		if(wdConds != null && wdConds.length > 0){
 			Predicate wdPred  = processWdConditions(wdConds, repository, monitor);
-			if(wdPred != null && !wdPred.equals(MathExtensionsUtilities.BTRUE)){
+			if(wdPred != null && !wdPred.equals(AstUtilities.BTRUE)){
 				if(target != null){
 					Predicate wdPredWD = wdPred.getWDPredicate(factory);
-					wdPred = MathExtensionsUtilities.conjunctPredicates(new Predicate[]{wdPredWD, wdPred}, factory);
+					wdPred = AstUtilities.conjunctPredicates(new Predicate[]{wdPredWD, wdPred}, factory);
 					operatorInformation.addWDCondition(wdPred);
 				}
 				else{
@@ -74,12 +74,12 @@ public class OperatorWDConditionModule extends SCProcessorModule{
 			}
 			else {
 				Predicate pred = CoreUtilities.parseAndCheckPredicate(wd, factory, typeEnvironment, this);
-				if(!pred.equals(MathExtensionsUtilities.BTRUE))
+				if(!pred.equals(AstUtilities.BTRUE))
 					wdPredicates.add(pred);
 			}
 		}
 		endFilterModules(repository, monitor);
-		return MathExtensionsUtilities.conjunctPredicates(wdPredicates, factory);
+		return AstUtilities.conjunctPredicates(wdPredicates, factory);
 	}
 	
 	@Override

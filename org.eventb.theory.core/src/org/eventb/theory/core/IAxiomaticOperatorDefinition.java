@@ -13,7 +13,7 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public interface IAxiomaticOperatorDefinition extends ICommentedElement, ILabeledElement, IFormulaTypeElement,
-		INotationTypeElement, ITypeElement {
+		INotationTypeElement, ITypeElement, IAssociativeElement, ICommutativeElement {
 
 	IInternalElementType<IAxiomaticOperatorDefinition> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".axiomaticOperatorDefinition");

@@ -11,7 +11,7 @@ import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
 import org.eventb.theory.core.INotationTypeElement;
 import org.rodinp.core.IRodinElement;

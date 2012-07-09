@@ -14,7 +14,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -58,8 +58,8 @@ public class OperatorFilterModule extends SCFilterModule {
 			return false;
 		}
 		// check ID is unique
-		String operatorId = MathExtensionsUtilities.makeOperatorID(theoryRoot.getComponentName(), opLabel);
-		if (!MathExtensionsUtilities.checkOperatorID(operatorId, factory)) {
+		String operatorId = AstUtilities.makeOperatorID(theoryRoot.getComponentName(), opLabel);
+		if (!AstUtilities.checkOperatorID(operatorId, factory)) {
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorIDExistsError, opLabel);
 			return false;
@@ -72,7 +72,7 @@ public class OperatorFilterModule extends SCFilterModule {
 					TheoryGraphProblem.OperatorSynIsATypeParError, syntax);
 			return false;
 		}
-		if (!MathExtensionsUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
+		if (!AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
 			createProblemMarker(opDef,
 					EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorSynExistsError, syntax);
@@ -91,7 +91,7 @@ public class OperatorFilterModule extends SCFilterModule {
 		}
 		FormulaType formType = opDef.getFormulaType();
 		symbolInfo.setAttributeValue(TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
-				MathExtensionsUtilities.isExpressionOperator(formType));
+				AstUtilities.isExpressionOperator(formType));
 		if (!opDef.hasNotationType()) {
 			createProblemMarker(opDef,
 					TheoryAttributes.NOTATION_TYPE_ATTRIBUTE,

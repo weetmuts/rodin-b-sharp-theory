@@ -8,9 +8,14 @@
 package org.eventb.core.internal.ast.extensions.maths;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 
@@ -31,43 +36,32 @@ import org.eventb.core.ast.extension.datatype.IConstructorMediator;
  */
 public class CompleteDatatypeExtension extends SimpleDatatypeExtension{
 
-	private Map<String, Map<String, Type>> constructors;
+	private Map<String, Map<String, String>> constructors;
 	
-	/**
-	 * @param identifier
-	 * @param typeArguments
-	 */
 	public CompleteDatatypeExtension(String identifier, 
 			String[] typeArguments,
-			Map<String, Map<String, Type>> constructors) {
+			Map<String, Map<String, String>> constructors) {
 		super(identifier, typeArguments);
 		this.constructors = constructors;
-		sanityCheck();
-	}
-	
-	// typically needed for inductive datatypes
-	private void sanityCheck() {
-		for (String cons : constructors.keySet()){
-			Map<String, Type> dests = constructors.get(cons);
-			for (String dest : dests.keySet()){
-				if (dests.get(dest) == null){
-					throw new IllegalArgumentException("destructor " + dest + " type cannot be null");
-				}
-			}
-		}
 	}
 
 	@Override
 	public void addConstructors(IConstructorMediator mediator) {
+		// add the type constructor just in case we deal with inductive dt
+		FormulaFactory factory = mediator.getFactory();
+		factory = factory.withExtensions(Collections.singleton((IFormulaExtension)
+						mediator.getTypeConstructor()));
 		for (String cons : constructors.keySet()){
-			Map<String, Type> destructors = constructors.get(cons);
+			Map<String, String> destructors = constructors.get(cons);
 			if(destructors.size() == 0 ){
 				mediator.addConstructor(cons, cons + CONS_ID);
 			}
 			else{
-				ArrayList<IArgument> arguments = new ArrayList<IArgument>();
+				List<IArgument> arguments = new ArrayList<IArgument>();
 				for (String dest : destructors.keySet()){
-					arguments.add(mediator.newArgument(dest,mediator.newArgumentType(destructors.get(dest))));
+					String typeStr = destructors.get(dest);
+					Type argumentType = factory.parseType(typeStr, LanguageVersion.V2).getParsedType();
+					arguments.add(mediator.newArgument(dest,mediator.newArgumentType(argumentType)));
 				}
 				mediator.addConstructor(cons, cons + CONS_ID, arguments );
 			}

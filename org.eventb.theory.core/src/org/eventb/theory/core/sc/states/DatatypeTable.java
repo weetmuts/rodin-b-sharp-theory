@@ -19,8 +19,8 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.maths.MathExtensionsFactory;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.sc.Messages;
@@ -42,15 +42,11 @@ public class DatatypeTable extends State implements IDatatypeTable{
 	
 	private FormulaFactory initialFactory;
 	private FormulaFactory decoyFactory;
-	
-	private final MathExtensionsFactory extensionsFactory;
 
-	
 	public DatatypeTable(FormulaFactory initialFactory){
 		this.initialFactory = initialFactory;
 		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		datatypes = new LinkedHashMap<String, DatatypeTable.DatatypeEntry>();
-		extensionsFactory = MathExtensionsFactory.getDefault();
 	}
 	
 	@Override
@@ -65,7 +61,7 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		if(extensions != null){
 			decoyFactory = decoyFactory.withExtensions(extensions);
 		}
-		typeExpression = MathExtensionsUtilities.
+		typeExpression = AstUtilities.
 				createTypeExpression(currentDatatype, Arrays.asList(entry.typeArguments), decoyFactory);
 		return decoyFactory;
 	}
@@ -202,22 +198,22 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		}
 		
 		public Set<IFormulaExtension> generateTypeExpression(){
-			return extensionsFactory.getSimpleDatatypeExtensions(identifier, typeArguments, decoyFactory);
+			return MathExtensionsFactory.getSimpleDatatypeExtensions(identifier, typeArguments, decoyFactory);
 		}
 		
 		public Set<IFormulaExtension> generateDatatypeExtensions(){
 			if(isErrorProne)
 				return null;
-			Map<String, Map<String, Type>> consMap = new LinkedHashMap<String, Map<String,Type>>();
+			Map<String, Map<String, String>> consMap = new LinkedHashMap<String, Map<String,String>>();
 			for(String entry : constructors.keySet()){
-				Map<String, Type> destMap = new LinkedHashMap<String, Type>();
+				Map<String, String> destMap = new LinkedHashMap<String, String>();
 				ConstructorEntry consEntry = constructors.get(entry);
 				for(String destEntry : consEntry.destructors.keySet()){
-					destMap.put(destEntry, consEntry.destructors.get(destEntry));
+					destMap.put(destEntry, consEntry.destructors.get(destEntry).toString());
 				}
 				consMap.put(entry, destMap);
 			}
-			return extensionsFactory.getCompleteDatatypeExtensions(identifier, typeArguments, consMap, initialFactory);
+			return MathExtensionsFactory.getCompleteDatatypeExtensions(identifier, typeArguments, consMap, initialFactory);
 		}
 		
 		public class ConstructorEntry{

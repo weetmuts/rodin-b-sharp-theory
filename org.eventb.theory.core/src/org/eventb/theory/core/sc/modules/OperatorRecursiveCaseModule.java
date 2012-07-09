@@ -1,5 +1,6 @@
 package org.eventb.theory.core.sc.modules;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,7 +19,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
@@ -147,7 +148,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				createProblemMarker(definition, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE, TheoryGraphProblem.NoCoverageAllRecCase);
 				operatorInformation.setHasError();
 			} else {
-				boolean isExpression = MathExtensionsUtilities.isExpressionOperator(operatorInformation.getFormulaType());
+				boolean isExpression = AstUtilities.isExpressionOperator(operatorInformation.getFormulaType());
 				Type resultantType = null;
 				RecursiveDefinition recursiveDefinition = new RecursiveDefinition(recursiveDefinitionInfo.getInductiveArgument());
 				// process base cases
@@ -204,7 +205,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 					}
 				}
 				if (!operatorInformation.hasError()) {
-					FormulaFactory localFactory = factory.withExtensions(MathExtensionsUtilities.singletonExtension(operatorInformation.getInterimExtension()));
+					FormulaFactory localFactory = factory.withExtensions(Collections.singleton(operatorInformation.getInterimExtension()));
 					// process inductive cases
 					for (IRecursiveDefinitionCase defCase : inductiveEntries.keySet()) {
 						CaseEntry caseEntry = inductiveEntries.get(defCase);
@@ -239,8 +240,8 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 					if (!operatorInformation.hasError()){
 						operatorInformation.setDefinition(recursiveDefinition);
 						if (operatorInformation.getWdCondition() == null) {
-							operatorInformation.addWDCondition(MathExtensionsUtilities.BTRUE);
-							scParent.setPredicate(MathExtensionsUtilities.BTRUE, monitor);
+							operatorInformation.addWDCondition(AstUtilities.BTRUE);
+							scParent.setPredicate(AstUtilities.BTRUE, monitor);
 							for (IRecursiveDefinitionCase defCase : baseEntries.keySet()) {
 								if (!baseEntries.get(defCase).isErroneous())
 									createSCCase(defCase, scDefinition, recursiveDefinition, baseEntries, monitor);

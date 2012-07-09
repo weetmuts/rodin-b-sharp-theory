@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -50,7 +50,7 @@ public class RulesBlockPOGModule extends POGProcessorModule {
 		ISCTheoryRoot root = (ISCTheoryRoot) scTheoryFile.getRoot();
 		ISCProofRulesBlock[] rulesBlocks = root.getProofRulesBlocks();
 		for (ISCProofRulesBlock rulesBlock : rulesBlocks) {
-			ITypeEnvironment localEnvironment = MathExtensionsUtilities
+			ITypeEnvironment localEnvironment = AstUtilities
 					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			ISCMetavariable[] metavariables = rulesBlock.getMetavariables();
 			for (ISCMetavariable var : metavariables) {

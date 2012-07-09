@@ -1,5 +1,6 @@
 package org.eventb.theory.core.maths.extensions;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -9,7 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
@@ -39,7 +40,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 	
 	public WorkspaceExtensionsManager() {
 		RodinCore.addElementChangedListener(this);
-		COND_EXTS = MathExtensionsUtilities.singletonExtension(MathExtensionsUtilities.COND);
+		COND_EXTS = Collections.singleton(AstUtilities.COND);
 		projectManagers = new HashMap<IRodinProject, ProjectManager>();
 		globalProjectManager = new ProjectManager(DatabaseUtilities.getDeploymentProject(null));
 		basicFactory = FormulaFactory.getInstance(COND_EXTS);

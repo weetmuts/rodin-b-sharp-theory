@@ -7,14 +7,14 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
-import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.maths.IOperatorArgument;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -43,7 +43,7 @@ public class OperatorSyntacticPropertiesModule extends SCProcessorModule{
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		INewOperatorDefinition operatorDefinition = (INewOperatorDefinition) element;
-		List<IOperatorArgument> operatorArguments = operatorInformation.getOperatorArguments();
+		Map<String, Type> operatorArguments = operatorInformation.getOperatorArguments();
 		Notation notation = operatorDefinition.getNotationType();
 		FormulaType formType = operatorDefinition.getFormulaType();
 		if (!checkSyntacticProperties(operatorDefinition, formType, notation,
@@ -54,7 +54,7 @@ public class OperatorSyntacticPropertiesModule extends SCProcessorModule{
 	
 	protected boolean checkSyntacticProperties(
 			INewOperatorDefinition operatorDefinition, FormulaType formType,
-			Notation notation, List<IOperatorArgument> operatorArguments) throws CoreException{
+			Notation notation, Map<String, Type> operatorArguments) throws CoreException{
 		int arity = operatorArguments.size();
 		// Check notation
 		// 1- Postfix not supported

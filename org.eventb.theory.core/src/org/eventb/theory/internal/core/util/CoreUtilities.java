@@ -32,7 +32,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ParseProblem;
@@ -142,7 +142,7 @@ public class CoreUtilities {
 		Set<GivenType> types = formula.getGivenTypes();
 		boolean ok = true;
 		for (GivenType type : types) {
-			if (!MathExtensionsUtilities.isGivenSet(typeEnvironment, type.getName())) {
+			if (!AstUtilities.isGivenSet(typeEnvironment, type.getName())) {
 				display.createProblemMarker(element, attrType, TheoryGraphProblem.NonTypeParOccurError, type.getName());
 				ok = false;
 			}

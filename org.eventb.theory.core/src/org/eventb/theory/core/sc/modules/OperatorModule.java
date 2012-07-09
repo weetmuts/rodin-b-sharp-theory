@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -232,7 +232,7 @@ public class OperatorModule extends LabeledElementModule{
 				// update the factory
 				if(!operatorInformation.hasError()){
 					factory = repository.getFormulaFactory();
-					globalTypeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+					globalTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 					repository.setTypeEnvironment(globalTypeEnvironment);
 				}
 				else {
@@ -244,7 +244,7 @@ public class OperatorModule extends LabeledElementModule{
 		}
 		// get the new type environment corresponding to the factory
 		// TODO test if another update of variable factory is needed
-		globalTypeEnvironment = MathExtensionsUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+		globalTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 		repository.setTypeEnvironment(globalTypeEnvironment);
 	}
 	

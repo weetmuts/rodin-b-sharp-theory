@@ -8,6 +8,7 @@
 package org.eventb.theory.core.maths.extensions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,11 +24,9 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.maths.IOperatorArgument;
-import org.eventb.core.ast.maths.MathExtensionsFactory;
-import org.eventb.core.ast.maths.MathExtensionsUtilities;
-import org.eventb.core.ast.maths.OperatorExtensionProperties;
-import org.eventb.core.internal.ast.maths.OperatorArgument;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
+import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCConstructorArgument;
@@ -43,7 +42,8 @@ import org.rodinp.core.IInternalElement;
 /**
  * An implementation of formula extensions loader from an extensions source.
  * 
- * <p>Currently, possible sources of extensions include:
+ * <p>
+ * Currently, possible sources of extensions include:
  * <li> {@link ISCTheoryRoot}</li>
  * <li> {@link IDeployedTheoryRoot}</li>
  * 
@@ -55,17 +55,17 @@ import org.rodinp.core.IInternalElement;
 public class FormulaExtensionsLoader {
 
 	private static final Set<IFormulaExtension> EMPTY_EXT = new LinkedHashSet<IFormulaExtension>();
-	
+
 	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
 	private IFormulaExtensionsSource source;
-	
-	public FormulaExtensionsLoader(IFormulaExtensionsSource source, FormulaFactory factory){
+
+	public FormulaExtensionsLoader(IFormulaExtensionsSource source, FormulaFactory factory) {
 		this.source = source;
 		this.factory = factory;
 		this.typeEnvironment = factory.makeTypeEnvironment();
 	}
-	
+
 	public Set<IFormulaExtension> load() {
 
 		if (source == null || !source.exists()) {
@@ -79,26 +79,22 @@ public class FormulaExtensionsLoader {
 
 			for (ISCDatatypeDefinition definition : datatypeDefinitions) {
 				DatatypeTransformer transformer = new DatatypeTransformer();
-				Set<IFormulaExtension> addedExtensions = transformer.transform(
-						definition, factory, typeEnvironment);
+				Set<IFormulaExtension> addedExtensions = transformer.transform(definition, factory, typeEnvironment);
 				if (addedExtensions != null) {
 					extensions.addAll(addedExtensions);
 				}
 				factory = factory.withExtensions(extensions);
-				typeEnvironment = MathExtensionsUtilities
-						.getTypeEnvironmentForFactory(typeEnvironment, factory);
+				typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			}
 			ISCNewOperatorDefinition operatorDefinitions[] = getOperators(source);
 			for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 				OperatorTransformer transformer = new OperatorTransformer();
-				Set<IFormulaExtension> addedExtensions = transformer.transform(
-						definition, factory, typeEnvironment);
+				Set<IFormulaExtension> addedExtensions = transformer.transform(definition, factory, typeEnvironment);
 				if (addedExtensions != null) {
 					extensions.addAll(addedExtensions);
 				}
 				factory = factory.withExtensions(extensions);
-				typeEnvironment = MathExtensionsUtilities
-						.getTypeEnvironmentForFactory(typeEnvironment, factory);
+				typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 
 			}
 			return extensions;
@@ -114,18 +110,15 @@ public class FormulaExtensionsLoader {
 		}
 	}
 
-	private ISCNewOperatorDefinition[] getOperators(
-			IFormulaExtensionsSource source) throws CoreException {
+	private ISCNewOperatorDefinition[] getOperators(IFormulaExtensionsSource source) throws CoreException {
 		return source.getSCNewOperatorDefinitions();
 	}
 
-	private ISCDatatypeDefinition[] getDatatypes(
-			IFormulaExtensionsSource source) throws CoreException {
+	private ISCDatatypeDefinition[] getDatatypes(IFormulaExtensionsSource source) throws CoreException {
 		return source.getSCDatatypeDefinitions();
 	}
 
-	private ISCTypeParameter[] getTypeParameters(
-			IFormulaExtensionsSource source) throws CoreException {
+	private ISCTypeParameter[] getTypeParameters(IFormulaExtensionsSource source) throws CoreException {
 		return source.getSCTypeParameters();
 	}
 }
@@ -142,9 +135,8 @@ public class FormulaExtensionsLoader {
 class DatatypeTransformer extends DefinitionTransformer<ISCDatatypeDefinition> {
 
 	@Override
-	public Set<IFormulaExtension> transform(
-			final ISCDatatypeDefinition definition,
-			final FormulaFactory factory, ITypeEnvironment typeEnvironment) {
+	public Set<IFormulaExtension> transform(final ISCDatatypeDefinition definition, final FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
 		if (definition == null || !definition.exists()) {
 			return EMPTY_EXT;
 		}
@@ -157,36 +149,28 @@ class DatatypeTransformer extends DefinitionTransformer<ISCDatatypeDefinition> {
 			ISCTypeArgument[] scTypeArguments = definition.getTypeArguments();
 			final String[] typeArguments = new String[scTypeArguments.length];
 			for (int i = 0; i < typeArguments.length; i++) {
-				typeArguments[i] = scTypeArguments[i].getSCGivenType(factory)
-						.toString();
+				typeArguments[i] = scTypeArguments[i].getSCGivenType(factory).toString();
 			}
-			FormulaFactory tempFactory = factory
-					.withExtensions(extensionsFactory
-							.getSimpleDatatypeExtensions(typeName,
-									typeArguments, factory));
+			FormulaFactory tempFactory = factory.withExtensions(MathExtensionsFactory.getSimpleDatatypeExtensions(
+					typeName, typeArguments, factory));
 
-			ISCDatatypeConstructor[] constructors = definition
-					.getConstructors();
-			final Map<String, Map<String, Type>> datatypeCons = new LinkedHashMap<String, Map<String, Type>>();
+			ISCDatatypeConstructor[] constructors = definition.getConstructors();
+			final Map<String, Map<String, String>> datatypeCons = new LinkedHashMap<String, Map<String, String>>();
 			for (ISCDatatypeConstructor cons : constructors) {
 				String consIdent = cons.getIdentifierString();
-				ISCConstructorArgument[] destructors = cons
-						.getConstructorArguments();
+				ISCConstructorArgument[] destructors = cons.getConstructorArguments();
 				if (destructors.length == 0) {
-					datatypeCons.put(consIdent,
-							new LinkedHashMap<String, Type>());
+					datatypeCons.put(consIdent, new LinkedHashMap<String, String>());
 				} else {
-					Map<String, Type> datatypeDes = new LinkedHashMap<String, Type>();
+					Map<String, String> datatypeDes = new LinkedHashMap<String, String>();
 					for (ISCConstructorArgument dest : destructors) {
-						datatypeDes.put(dest.getIdentifierString(),
-								dest.getType(tempFactory));
+						datatypeDes.put(dest.getIdentifierString(), dest.getType(tempFactory).toString());
 					}
 					datatypeCons.put(consIdent, datatypeDes);
 				}
 
 			}
-			return extensionsFactory.getCompleteDatatypeExtensions(typeName,
-					typeArguments, datatypeCons, factory);
+			return MathExtensionsFactory.getCompleteDatatypeExtensions(typeName, typeArguments, datatypeCons, factory);
 		} catch (CoreException exception) {
 			return EMPTY_EXT;
 		}
@@ -204,12 +188,10 @@ class DatatypeTransformer extends DefinitionTransformer<ISCDatatypeDefinition> {
  * @author maamria
  * 
  */
-class OperatorTransformer extends
-		DefinitionTransformer<ISCNewOperatorDefinition> {
+class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition> {
 
 	@Override
-	public Set<IFormulaExtension> transform(
-			ISCNewOperatorDefinition definition, FormulaFactory factory,
+	public Set<IFormulaExtension> transform(ISCNewOperatorDefinition definition, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {
 		if (definition == null || !definition.exists()) {
 			return EMPTY_EXT;
@@ -220,52 +202,43 @@ class OperatorTransformer extends
 			}
 			String theoryName = definition.getParent().getElementName();
 			String syntax = definition.getLabel();
-			String operatorID = MathExtensionsUtilities.makeOperatorID(theoryName, syntax);
+			String operatorID = AstUtilities.makeOperatorID(theoryName, syntax);
 			FormulaType formulaType = definition.getFormulaType();
 			Notation notation = definition.getNotationType();
 			String groupID = definition.getOperatorGroup();
 			boolean isAssociative = definition.isAssociative();
 			boolean isCommutative = definition.isCommutative();
 
-			ISCOperatorArgument[] scOperatorArguments = definition
-					.getOperatorArguments();
-			List<IOperatorArgument> operatorArguments = new ArrayList<IOperatorArgument>();
+			ISCOperatorArgument[] scOperatorArguments = definition.getOperatorArguments();
+			Map<String, Type> operatorArguments = new LinkedHashMap<String, Type>();
 			List<GivenType> typeParameters = new ArrayList<GivenType>();
-			int index = 0;
 			for (ISCOperatorArgument arg : scOperatorArguments) {
-				OperatorArgument opArg = new OperatorArgument(index++,
-						arg.getIdentifierString(), arg.getType(factory));
-				operatorArguments.add(opArg);
-				for (GivenType t : opArg.getGivenTypes()) {
+				Type type = arg.getType(factory);
+				operatorArguments.put(arg.getIdentifierString(), type);
+				for (GivenType t : AstUtilities.getGivenTypes(type)) {
 					if (!typeParameters.contains(t)) {
 						typeParameters.add(t);
 					}
 				}
 			}
-			ITypeEnvironment tempTypeEnvironment = MathExtensionsUtilities
-					.getTypeEnvironmentForFactory(typeEnvironment, factory);
-			for (IOperatorArgument arg : operatorArguments) {
-				tempTypeEnvironment.addName(arg.getArgumentName(),
-						arg.getArgumentType());
+			ITypeEnvironment tempTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(
+					typeEnvironment, factory);
+			for (String arg : operatorArguments.keySet()) {
+				tempTypeEnvironment.addName(arg, operatorArguments.get(arg));
 			}
-			Predicate wdCondition = definition.getPredicate(factory,
-					tempTypeEnvironment);
+			Predicate wdCondition = definition.getPredicate(factory, tempTypeEnvironment);
 			Predicate dWdCondition = definition.getWDCondition(factory, tempTypeEnvironment);
 			IFormulaExtension extension = null;
-			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, groupID);
-			if (MathExtensionsUtilities.isExpressionOperator(definition.getFormulaType())) {
-				extension = extensionsFactory.getFormulaExtension(properties, isCommutative, isAssociative, 
-						extensionsFactory.getTypingRule(
-								operatorArguments, 
-								definition.getType(factory), 
-								wdCondition, dWdCondition, isAssociative), 
-							definition);
+			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType,
+					notation, groupID);
+			if (AstUtilities.isExpressionOperator(definition.getFormulaType())) {
+				extension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
+						operatorArguments, definition.getType(factory), wdCondition, dWdCondition, definition);
 			} else {
-				extension = extensionsFactory.getFormulaExtension(properties, isCommutative, 
-						extensionsFactory.getTypingRule(operatorArguments, wdCondition, dWdCondition), 
-						definition);
+				extension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, operatorArguments,
+						wdCondition, dWdCondition, definition);
 			}
-			return MathExtensionsUtilities.singletonExtension(extension);
+			return Collections.singleton(extension);
 		} catch (CoreException exception) {
 			return EMPTY_EXT;
 		}
@@ -294,13 +267,7 @@ class OperatorTransformer extends
  */
 abstract class DefinitionTransformer<E extends IInternalElement> {
 
-	protected MathExtensionsFactory extensionsFactory;
-
 	protected final Set<IFormulaExtension> EMPTY_EXT = new LinkedHashSet<IFormulaExtension>();
-
-	protected DefinitionTransformer() {
-		extensionsFactory = MathExtensionsFactory.getDefault();
-	}
 
 	/**
 	 * Returns the set of mathematical extensions contained in the definition
@@ -315,7 +282,7 @@ abstract class DefinitionTransformer<E extends IInternalElement> {
 	 * @return the formula extensions, should not be <code>null</code>
 	 * @throws CoreException
 	 */
-	public abstract Set<IFormulaExtension> transform(E definition,
-			final FormulaFactory factory, ITypeEnvironment typeEnvironment);
+	public abstract Set<IFormulaExtension> transform(E definition, final FormulaFactory factory,
+			ITypeEnvironment typeEnvironment);
 
 }

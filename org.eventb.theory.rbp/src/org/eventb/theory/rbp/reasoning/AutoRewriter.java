@@ -28,8 +28,8 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.pm.ComplexBinder;
-import org.eventb.core.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.ComplexBinder;
+import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 
