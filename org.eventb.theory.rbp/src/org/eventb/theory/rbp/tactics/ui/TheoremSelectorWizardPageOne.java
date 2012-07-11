@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 
-public class TheoremSelectorWizardPage extends WizardPage {
+public class TheoremSelectorWizardPageOne extends WizardPage {
 	
 	private static final String THEOREM_COL = "Theorem";
 	private static final String NAME_COL = "Name";
@@ -40,12 +40,12 @@ public class TheoremSelectorWizardPage extends WizardPage {
 	private TheoremsRetriever retriever;
 	private String selectedProject = null;
 	private String selectedTheory = null;
-	private List<String> selectedTheorem = null;
+	private List<IDeployedTheorem> selectedTheorems = null;
 
-	public TheoremSelectorWizardPage(TheoremsRetriever retriever) {
-		super("selectTheorem");
-		setTitle("Select theorem");
-		setDescription("Select polymorphic theorem to instantiate");
+	public TheoremSelectorWizardPageOne(TheoremsRetriever retriever) {
+		super("selectTheorems");
+		setTitle("Select theorems");
+		setDescription("Select polymorphic theorems to instantiate");
 		this.retriever = retriever;
 	}
 
@@ -76,7 +76,7 @@ public class TheoremSelectorWizardPage extends WizardPage {
 					return;
 				}
 				selectedProject = value;
-				selectedTheorem = null;
+				selectedTheorems = null;
 				selectedTheory = null;
 				theoryCombo.setItems(retriever.getTheories(selectedProject));
 				dialogChanged();
@@ -93,13 +93,12 @@ public class TheoremSelectorWizardPage extends WizardPage {
 		theoryCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String value = theoryCombo.getItem(theoryCombo
-						.getSelectionIndex());
+				String value = theoryCombo.getItem(theoryCombo.getSelectionIndex());
 				if (selectedTheory != null && selectedTheory.equals(value)) {
 					return;
 				}
 				selectedTheory = value;
-				selectedTheorem = null;
+				selectedTheorems = null;
 				table.removeAll();
 				for (IDeployedTheorem thy : retriever.getDeployedTheorems(selectedProject, selectedTheory)){
 					TableItem item = new TableItem(table, SWT.NONE);
@@ -126,7 +125,7 @@ public class TheoremSelectorWizardPage extends WizardPage {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				selectedTheorem = getText(table.getSelection());
+				selectedTheorems = getTheorems(table.getSelection());
 				dialogChanged();
 			}
 		});
@@ -161,7 +160,7 @@ public class TheoremSelectorWizardPage extends WizardPage {
 			return;
 		}
 		table.setEnabled(true);
-		if(selectedTheorem == null){
+		if(selectedTheorems == null){
 			updateStatus("Theorem must be specified");
 			return;
 		}
@@ -182,16 +181,24 @@ public class TheoremSelectorWizardPage extends WizardPage {
 		return selectedTheory;
 	}
 
-	public List<String> getSelectedTheorem() {
-		return selectedTheorem;
+	public List<IDeployedTheorem> getSelectedTheorem() {
+		return selectedTheorems;
 	}
 	
-	private List<String> getText(TableItem[] items){
-		List<String> l = new ArrayList<String>();
+	private List<IDeployedTheorem> getTheorems(TableItem[] items){
+		List<IDeployedTheorem> l = new ArrayList<IDeployedTheorem>();
 		for (TableItem item : items){
-			l.add(item.getText(0));
+			String name = item.getText(0);
+			IDeployedTheorem deployedTheorem = retriever.getDeployedTheorem(selectedProject, selectedTheory, name);
+			if (deployedTheorem != null)
+				l.add(deployedTheorem);
 		}
 		return l;
+	}
+	
+	@Override
+	public TheoremSelectorWizard getWizard() {
+		return (TheoremSelectorWizard) super.getWizard();
 	}
 	
 }
