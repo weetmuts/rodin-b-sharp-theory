@@ -66,6 +66,7 @@ public abstract class OperatorExtension implements IOperatorExtension  {
 			boolean isCommutative, boolean isAssociative,
 			OperatorTypingRule operatorTypingRule,
 			Object source) {
+		AstUtilities.ensureNotNull(properties, operatorTypingRule);
 		this.properties = properties;
 		this.isCommutative = isCommutative;
 		this.isAssociative = isAssociative;

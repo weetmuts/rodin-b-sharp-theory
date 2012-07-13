@@ -71,6 +71,7 @@ public abstract class OperatorTypingRule {
 	 * @param dWDPredicate the D well-definedness predicate, must not be <code>null</code>
 	 */
 	public OperatorTypingRule(List<OperatorArgument> operatorArguments, Predicate wdPredicate, Predicate dWDPredicate) {
+		AstUtilities.ensureNotNull(operatorArguments, wdPredicate, dWDPredicate);
 		this.operatorArguments = operatorArguments;
 		this.arity = operatorArguments.size();
 		this.typeParameters = new HashSet<GivenType>();

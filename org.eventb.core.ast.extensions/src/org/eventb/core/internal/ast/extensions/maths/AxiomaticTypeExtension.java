@@ -18,6 +18,7 @@ import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.StandardGroup;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 
 /**
  * An implementation of an axiomatic type extension.
@@ -33,6 +34,7 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 	private final Object origin;
 
 	public AxiomaticTypeExtension(String typeName, String id, Object origin) {
+		AstUtilities.ensureNotNull(typeName, id);
 		this.typeName = typeName;
 		this.id = id;
 		this.origin = origin;

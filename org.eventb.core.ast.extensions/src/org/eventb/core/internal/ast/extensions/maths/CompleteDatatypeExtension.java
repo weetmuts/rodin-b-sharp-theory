@@ -18,6 +18,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 
 /**
  * An implementation of a datatype definition extension.
@@ -42,6 +43,7 @@ public class CompleteDatatypeExtension extends SimpleDatatypeExtension{
 			String[] typeArguments,
 			Map<String, Map<String, String>> constructors) {
 		super(identifier, typeArguments);
+		AstUtilities.ensureNotNull(constructors);
 		this.constructors = constructors;
 	}
 

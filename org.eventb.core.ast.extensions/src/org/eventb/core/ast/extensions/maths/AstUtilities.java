@@ -34,6 +34,7 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
 import org.eventb.core.ast.extension.StandardGroup;
 
 /**
@@ -814,5 +815,18 @@ public class AstUtilities {
 		}
 		return list;
 	}
-
+	
+	/**
+	 * Throws an exception if any of the passed objects is <code>null</code>.
+	 * @param os the array of objects
+	 * @throws IllegalArgumentException if any of the passed object is <code>null</code>
+	 */
+	public static void ensureNotNull(Object... os){
+		for (Object o : os)
+			if (o == null){
+				IllegalArgumentException exc = new IllegalArgumentException("null objects not allowed, but passed as argument");
+				AstExtensionsPlugin.log(exc, "null objects not allowed, but passed as argument");
+				throw exc;
+			}
+	}
 }

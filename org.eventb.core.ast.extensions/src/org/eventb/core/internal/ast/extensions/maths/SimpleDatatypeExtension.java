@@ -12,6 +12,7 @@ import java.util.Arrays;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 
 /**
  * An implementation of a datatype type expression extension. This requires the name of
@@ -37,6 +38,7 @@ public class SimpleDatatypeExtension implements IDatatypeExtension{
 	protected String[] typeArguments;
 	
 	public SimpleDatatypeExtension(String identifier, String[] typeArguments){
+		AstUtilities.ensureNotNull(identifier, typeArguments);
 		this.identifier = identifier;
 		this.typeArguments = typeArguments;
 	}
