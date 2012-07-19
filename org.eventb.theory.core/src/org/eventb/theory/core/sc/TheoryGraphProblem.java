@@ -120,7 +120,15 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			NoCoverageAllRecCase(IMarker.SEVERITY_ERROR, Messages.scuser_NoCoverageAllRecCase), 
 			RecOpTypeNotConsistent(IMarker.SEVERITY_ERROR, Messages.scuser_RecOpTypeNotConsistent), 
 			OpArgExprNotSet(IMarker.SEVERITY_ERROR, Messages.scuser_OpArgExprNotSet),
-			InadmissibleDatatypeError(IMarker.SEVERITY_ERROR, Messages.scuser_InadmissibleDatatypeError)
+			InadmissibleDatatypeError(IMarker.SEVERITY_ERROR, Messages.scuser_InadmissibleDatatypeError),
+			NoTheoryProjectClausesError(IMarker.SEVERITY_ERROR, Messages.scuser_NoTheoryProjectError),
+			DuplicatedTheoryProjectError(IMarker.SEVERITY_ERROR, Messages.scuser_DuplicatedTheoryProjectError),
+			NoSelectedTheoriesError(IMarker.SEVERITY_ERROR, Messages.scuser_NoSelectedTheoriesError),
+			DuplicatedTheoryError(IMarker.SEVERITY_ERROR, Messages.scuser_DuplicatedTheoryError),
+			DeployedTheoryNotExistError(IMarker.SEVERITY_ERROR, Messages.scuser_DeployedTheoryNotExistError),
+			NoTheoryClausesError(IMarker.SEVERITY_ERROR, Messages.scuser_NoTheorySelectedError),
+			RedundantDeployedTheoryWarning(IMarker.SEVERITY_WARNING, Messages.scuser_DeployedTheoryRedudantWarning),
+			TheoriesConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_DeployedTheoriesConflictError)
 	;
 
 	private int arity;

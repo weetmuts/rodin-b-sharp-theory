@@ -146,6 +146,16 @@ public final class Messages {
 	public static String scuser_OpArgExprNotSet;
 	public static String scuser_ApplicabilityUndefError;
 	public static String scuser_InadmissibleDatatypeError;
+	public static String progress_TheoryProjects;
+	public static String scuser_NoTheoryProjectError;
+	public static String scuser_DuplicatedTheoryProjectError;
+	public static String scuser_NoSelectedTheoriesError;
+	public static String progress_TheoryPathTheories;
+	public static String scuser_DuplicatedTheoryError;
+	public static String scuser_DeployedTheoryNotExistError;
+	public static String scuser_NoTheorySelectedError;
+	public static String scuser_DeployedTheoryRedudantWarning;
+	public static String scuser_DeployedTheoriesConflictError;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
