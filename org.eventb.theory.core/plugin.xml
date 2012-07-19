@@ -1008,6 +1008,190 @@
            </childElement>
         </deployedElement>
      </deployedElement>
-  </extension> 
+  </extension>
+  <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tul"
+            id="theoryLanguageFile"
+            name="Event-B Theory Path File"
+            priority="normal">
+      </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tcl, tcl_tmp"
+            id="scTheoryLanguageFile"
+            name="Event-B Statically Checked Theory Path File "
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.eventb.theory.core.basis.TheoryPathRoot"
+            id="theoryLanguageRoot"
+            name="Event-B Theory Path Root">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.AvailableTheoryProject"
+            id="availableTheoryProject"
+            name="Event-B Available Theory Project">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.AvailableTheory"
+            id="availableTheory"
+            name="Event-B Theory Available Theory">
+      </internalElementType>
+   </extension>
+   <extension
+         point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCTheoryLanguageRoot"
+            id="scTheoryLanguageRoot"
+            name="Event-B Statically Checked Theory Path Root">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCAvailableTheoryProject"
+            id="scAvailableTheoryProject"
+            name="Event-B Statically Checked Available Theory Project">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCAvailableTheory"
+            id="scAvailableTheory"
+            name="Event-B Statically Checked Theory Available Theory">
+      </internalElementType>
+   </extension> 
+   <extension
+         point="org.rodinp.core.fileAssociations">
+      <fileAssociation
+            content-type-id="org.eventb.theory.core.theoryLanguageFile"
+            root-element-type="org.eventb.theory.core.theoryLanguageRoot">
+      </fileAssociation>
+      <fileAssociation
+            content-type-id="org.eventb.theory.core.scTheoryLanguageFile"
+            root-element-type="org.eventb.theory.core.scTheoryLanguageRoot">
+      </fileAssociation>
+   </extension>
+   <extension
+         point="org.rodinp.core.attributeTypes">
+      <attributeType
+            id="availableTheory"
+            kind="handle"
+            name="Event-B Available Theory Attribute">
+      </attributeType>
+      <attributeType
+            id="availableTheoryProject"
+            kind="handle"
+            name="Event-B Theory Available Project Attribute">
+      </attributeType>
+      <attributeType
+            id="scAvailableTheoryProject"
+            kind="string"
+            name="Event-B Theory SC Available Project Attribute">
+      </attributeType>
+   </extension>
+   <extension
+         point="org.rodinp.core.autoTools">
+      <tool
+            class="org.eventb.theory.language.core.sc.TheoryPathStaticChecker"
+            id="theoryPathSC"
+            name="Theory Path Static Check">
+         <extractor
+               class="org.eventb.theory.language.core.sc.TheoryPathStaticChecker"
+               name="TheoryPath Extractor of Static Checker">
+            <inputType
+                  id="org.eventb.theory.core.theoryLanguageRoot">
+            </inputType>
+         </extractor>
+      </tool>
+   </extension>
+   <extension
+         point="org.eventb.core.scStateTypes">
+      <stateType
+            class="org.eventb.theory.core.sc.states.TheoryPathAccuracyInfo"
+            id="theoryPathAccuracyInfo"
+            name="TheoryPath Accuracy Information">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.ITheoryPathTable"
+            id="theoryPathTable"
+            name="Theory Path Table">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.ITheoryPathProjectTable"
+            id="theoryPathProjectTable"
+            name="Theory Path Project Table">
+      </stateType>
+   </extension>
+   <extension
+         point="org.eventb.core.configurations">
+      <configuration
+            id="tulSC"
+            name="Theorypath static checker root module">
+         <scModule
+               id="org.eventb.theory.core.theoryPathModule">
+         </scModule>
+      </configuration>
+      <configuration
+            id="tul"
+            name="Theorypath Configuration">
+         <config
+               id="org.eventb.theory.core.tulBaseSC">
+         </config>
+      </configuration>
+      <configuration
+            id="tulBaseSC"
+            name="Theorypath static checker base module">
+         <config
+               id="org.eventb.theory.core.tulSC">
+         </config>
+         <scModule
+               id="org.eventb.theory.core.availableTheoryProjectModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.availableTheoryProjectFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.availableTheoryModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.availableTheoryFilterModule">
+         </scModule>
+      </configuration>
+   </extension>
+   <extension
+         point="org.eventb.core.scModuleTypes">
+      <rootType
+            class="org.eventb.theory.core.sc.modules.TheoryPathModule"
+            id="theoryPathModule"
+            input="org.eventb.theory.core.theoryLanguageRoot"
+            name="Theorypath Root Module">
+      </rootType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.TheoryPathProjectModule"
+            id="availableTheoryProjectModule"
+            name="Theorypath Project Module"
+            parent="org.eventb.theory.core.theoryPathModule">
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.TheoryPathProjectFilterModule"
+            id="availableTheoryProjectFilterModule"
+            name="Theorypath Project Filter Module"
+            parent="org.eventb.theory.core.availableTheoryProjectModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.TheoryPathAvailableTheoryModule"
+            id="availableTheoryModule"
+            name="Theorypath Available Theory Module"
+            parent="org.eventb.theory.core.availableTheoryProjectModule">
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.TheoryPathAvailableTheoryFilterModule"
+            id="availableTheoryFilterModule"
+            name="Theorypath Available Theory Filter Module"
+            parent="org.eventb.theory.core.availableTheoryModule">
+      </filterType>
+   </extension>
   
 </plugin>
