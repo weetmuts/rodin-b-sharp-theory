@@ -119,10 +119,7 @@ public class SCTheoryDecorator {
 	 */
 	public boolean isConflicting(ISCTheoryRoot otherRoot) throws CoreException {
 		SCTheoryDecorator otherHierarchy = new SCTheoryDecorator(otherRoot);
-		if (!Collections.disjoint(getContributions(), otherHierarchy.getContributions())) {
-			return true;
-		}
-		return false;
+		return this.isConflicting(otherHierarchy);
 	}
 	
 	/**

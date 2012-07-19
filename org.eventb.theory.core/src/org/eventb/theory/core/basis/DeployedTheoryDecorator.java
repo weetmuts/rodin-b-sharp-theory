@@ -1,6 +1,8 @@
 package org.eventb.theory.core.basis;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -101,7 +103,57 @@ public class DeployedTheoryDecorator {
 				contribs.put(req, new DeployedTheoryDecorator(req).getContributions());
 			}
 		}
+		contribs.put(deployedRoot, getContributions());
 		return contribs;
 	}
+	
+	/**
+	 * Returns whether this theory conflicts with the given theory.
+	 * 
+	 * @param otherRoot
+	 *            the other theory
+	 * @return whether a conflict may be caused
+	 */
+	public boolean isConflicting(IDeployedTheoryRoot otherRoot) throws CoreException {
+		DeployedTheoryDecorator otherHierarchy = new DeployedTheoryDecorator(otherRoot);
+		return this.isConflicting(otherHierarchy);
+	}
+	
+	/**
+	 * Returns whether this theory hierarchy conflicts with the other
+	 * hierarchy.
+	 * <p>
+	 * A conflict is defined by the presence of equal symbols in the two
+	 * hierarchies excluding the symbols coming from theories shared between
+	 * the two hierarchies.
+	 * 
+	 * @param otherDecorator
+	 *            the other hierarchy
+	 * @return whether a conflict exists
+	 * @throws CoreException
+	 */
+	public boolean isConflicting(DeployedTheoryDecorator otherDecorator) throws CoreException {
+		Map<IDeployedTheoryRoot, Set<String>> ohc = otherDecorator.getHierarchyContributions(true);
+		Map<IDeployedTheoryRoot, Set<String>> hc = getHierarchyContributions(true);
+		// need to remove shared dependencies first
+		Set<String> ohcNoShared = new LinkedHashSet<String>();
+		Set<String> hcNoShared = new LinkedHashSet<String>();
+		for (IDeployedTheoryRoot oKey : ohc.keySet()) {
+			if (!hc.containsKey(oKey)) {
+				ohcNoShared.addAll(ohc.get(oKey));
+			}
+		}
+		for (IDeployedTheoryRoot key : hc.keySet()) {
+			if (!ohc.containsKey(key)) {
+				hcNoShared.addAll(hc.get(key));
+			}
+		}
+		// now check for conflicts in the remaining dependencies
+		if (Collections.disjoint(hcNoShared, ohcNoShared)) {
+			return false;
+		}
+		return true;
+	}
+	
 
 }
