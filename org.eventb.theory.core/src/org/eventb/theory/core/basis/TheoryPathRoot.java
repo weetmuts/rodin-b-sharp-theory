@@ -18,7 +18,7 @@ import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryLanguageRoot;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -30,7 +30,7 @@ import org.rodinp.core.RodinDBException;
  * @author Renato Silva
  *
  */
-public class TheoryPathRoot extends EventBRoot implements ITheoryLanguageRoot {
+public class TheoryPathRoot extends EventBRoot implements ITheoryPathRoot {
 
 	public TheoryPathRoot(String name, IRodinElement parent) {
 		super(name, parent);

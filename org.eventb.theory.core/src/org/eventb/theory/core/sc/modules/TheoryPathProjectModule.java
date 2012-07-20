@@ -12,7 +12,7 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.ISCAvailableTheoryProject;
 import org.eventb.theory.core.ISCTheoryLanguageRoot;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
@@ -32,7 +32,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 	private final IModuleType<TheoryPathProjectModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".availableTheoryProjectModule"); //$NON-NLS-1$
 	
-	private ITheoryLanguageRoot root;
+	private ITheoryPathRoot root;
 	private ITheoryPathProjectTable projectTable;
 	private static final String THEORY_PROJECT_NAME = "THPRJ";
 	
@@ -41,7 +41,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		IRodinFile file = (IRodinFile) element;
-		root = (ITheoryLanguageRoot) file.getRoot();
+		root = (ITheoryPathRoot) file.getRoot();
 		projectTable = (ITheoryPathProjectTable) repository.getState(ITheoryPathProjectTable.STATE_TYPE);
 		repository.setState(projectTable);
 	}

@@ -17,17 +17,17 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * TheoryLanguageRoot (or TheoryPath) contains the theories that are available for each rodin project. 
- * Children are of type {@link IAvailableTheory}. 
+ * ITheoryPathRoot (or TheoryPath) contains the theories that are available for each rodin project. 
+ * Children are of type {@link IAvailableTheoryProject}. 
  * 
  * 
  * @author Renato Silva
  *
  */
-public interface ITheoryLanguageRoot extends IEventBRoot, ICommentedElement,
+public interface ITheoryPathRoot extends IEventBRoot, ICommentedElement,
 		IConfigurationElement {
 	
-	IInternalElementType<ITheoryLanguageRoot> ELEMENT_TYPE = RodinCore
+	IInternalElementType<ITheoryPathRoot> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".theoryLanguageRoot");
 	
 //	/**
@@ -37,6 +37,12 @@ public interface ITheoryLanguageRoot extends IEventBRoot, ICommentedElement,
 //	 */
 //	public IAvailableTheory getAvailableTheory(String name);
 	
+	/**
+	 * Return a map containing {@link IRodinProject}s and each available {@link IDeployedTheoryRoot}.
+	 * 
+	 * @return map containing IRodinProjects and IDeployedTheoryRoots
+	 * @throws RodinDBException
+	 */
 	public Map<IRodinProject,Set<IDeployedTheoryRoot>> getTheories() throws RodinDBException;
 	
 	/**
