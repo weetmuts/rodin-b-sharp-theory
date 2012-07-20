@@ -10,7 +10,7 @@ import java.util.List;
 import org.eclipse.core.runtime.ListenerList;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPSRoot;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.rodinp.core.ElementChangedEvent;
@@ -95,12 +95,12 @@ public class TheoryPathModelController implements IElementChangedListener {
 					project.needsProcessing = true;
 					processProject((IRodinProject) element);
 				}
-				if (element instanceof ITheoryLanguageRoot) {
-					project.processTheoryPath((ITheoryLanguageRoot) element);
+				if (element instanceof ITheoryPathRoot) {
+					project.processTheoryPath((ITheoryPathRoot) element);
 				}
 				if (element instanceof IPORoot) {
 					IPORoot root = (IPORoot) element;
-					ITheoryLanguageRoot thyRoot = getTheoryPathRoot(root.getElementName(),
+					ITheoryPathRoot thyRoot = getTheoryPathRoot(root.getElementName(),
 							root.getRodinProject());
 					if (thyRoot == null) {
 						return;
@@ -116,7 +116,7 @@ public class TheoryPathModelController implements IElementChangedListener {
 				}
 				if (element instanceof IPSRoot) {
 					IPSRoot root = (IPSRoot) element;
-					ITheoryLanguageRoot thyRoot = getTheoryPathRoot(root.getElementName(),
+					ITheoryPathRoot thyRoot = getTheoryPathRoot(root.getElementName(),
 							root.getRodinProject());
 					if (thyRoot == null) {
 						return;
@@ -143,7 +143,7 @@ public class TheoryPathModelController implements IElementChangedListener {
 		return projects.get(project);
 	}
 
-	public static ModelTheoryPath getTheoryPath(ITheoryLanguageRoot theoryPathRoot) {
+	public static ModelTheoryPath getTheoryPath(ITheoryPathRoot theoryPathRoot) {
 		TheoryPathModelProject project = projects.get(theoryPathRoot.getRodinProject());
 		if (project != null) {
 			return project.getTheoryPath(theoryPathRoot);
@@ -169,8 +169,8 @@ public class TheoryPathModelController implements IElementChangedListener {
 			prj = projects.get(project);
 			// only process if really needed
 			if (prj.needsProcessing) {
-				ITheoryLanguageRoot[] theories = getRootTheoryPathChildren(project);
-				for (ITheoryLanguageRoot theory : theories) {
+				ITheoryPathRoot[] theories = getRootTheoryPathChildren(project);
+				for (ITheoryPathRoot theory : theories) {
 					prj.processTheoryPath(theory);
 				}
 				prj.needsProcessing = false;
@@ -180,15 +180,15 @@ public class TheoryPathModelController implements IElementChangedListener {
 		}
 	}
 	
-	private ITheoryLanguageRoot getTheoryPathRoot(String name, IRodinProject proj) {
-		ITheoryLanguageRoot[] roots = null;
+	private ITheoryPathRoot getTheoryPathRoot(String name, IRodinProject proj) {
+		ITheoryPathRoot[] roots = null;
 		try {
-			roots = proj.getRootElementsOfType(ITheoryLanguageRoot.ELEMENT_TYPE);
+			roots = proj.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 			return null;
 		}
-		for (ITheoryLanguageRoot root : roots) {
+		for (ITheoryPathRoot root : roots) {
 			if (root.getElementName().equals(name)) {
 				return root;
 			}
@@ -219,7 +219,7 @@ public class TheoryPathModelController implements IElementChangedListener {
 	public void cleanUpModel(ArrayList<IRodinElement> toRemove) {
 		for (IRodinElement element : toRemove) {
 			if (element instanceof ITheoryRoot) {
-				removeTheoryPath((ITheoryLanguageRoot) element);
+				removeTheoryPath((ITheoryPathRoot) element);
 			}
 			if (element instanceof IRodinProject) {
 				removeProject((IRodinProject) element);
@@ -243,16 +243,16 @@ public class TheoryPathModelController implements IElementChangedListener {
 	 * @param contextRoot
 	 *            The ContextRoot to remove
 	 */
-	public static void removeTheoryPath(ITheoryLanguageRoot element) {
+	public static void removeTheoryPath(ITheoryPathRoot element) {
 		TheoryPathModelProject project = projects.get(element.getRodinProject());
 		if (project != null) {
 			project.removeTheoryPath(element);
 		}
 	}
 	
-	private static ITheoryLanguageRoot[] getRootTheoryPathChildren(IRodinProject project)
+	private static ITheoryPathRoot[] getRootTheoryPathChildren(IRodinProject project)
 			throws RodinDBException {
-		return project.getRootElementsOfType(ITheoryLanguageRoot.ELEMENT_TYPE);
+		return project.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
 	}
 
 }

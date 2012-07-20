@@ -7,11 +7,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IEventBRoot;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.language.ui.explorer.model.TheoryPathModelController;
-import org.eventb.theory.ui.explorer.model.TheoryModelController;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -29,7 +28,7 @@ public class TheoryPathContentProvider implements ITreeContentProvider {
 	protected final IInternalElementType<? extends IEventBRoot> rootType;
 	
 	public TheoryPathContentProvider() {
-		rootType = ITheoryLanguageRoot.ELEMENT_TYPE;
+		rootType = ITheoryPathRoot.ELEMENT_TYPE;
 	}
 
 	/* (non-Javadoc)
@@ -85,8 +84,8 @@ public class TheoryPathContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof ITheoryLanguageRoot) {
-			return ((ITheoryLanguageRoot) element).getParent().getParent();
+		if (element instanceof ITheoryPathRoot) {
+			return ((ITheoryPathRoot) element).getParent().getParent();
 		}
 		return null;
 	}
@@ -111,12 +110,12 @@ public class TheoryPathContentProvider implements ITreeContentProvider {
 	
 	protected IEventBRoot[] getRootChildren(IRodinProject project)
 			throws RodinDBException {
-		return (ITheoryLanguageRoot[]) getTheoryLanguageChildren(project);
+		return (ITheoryPathRoot[]) getTheoryLanguageChildren(project);
 	}
 	
 	private IRodinElement[] getTheoryLanguageChildren(IRodinProject proj) {
 		try {
-			return proj.getRootElementsOfType(ITheoryLanguageRoot.ELEMENT_TYPE);
+			return proj.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			TheoryUIUtils.log(e, "Error while retrieving "
 					+ ITheoryRoot.ELEMENT_TYPE + " from " + proj);

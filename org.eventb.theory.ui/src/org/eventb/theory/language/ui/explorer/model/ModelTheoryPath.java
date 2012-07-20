@@ -8,7 +8,7 @@ import java.util.HashMap;
 import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IAvailableTheoryProject;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -28,7 +28,7 @@ public class ModelTheoryPath implements IModelElement {
 	 */
 	public final TheoryPathModelElementNode availableTheoryProject_node;
 	
-	private ITheoryLanguageRoot theoryPathRoot;
+	private ITheoryPathRoot theoryPathRoot;
 
 	//indicate whether the poRoot or the psRoot should be processed freshly
 	public boolean psNeedsProcessing = true;
@@ -40,7 +40,7 @@ public class ModelTheoryPath implements IModelElement {
 	 * Creates a ModelContext from a given IContextRoot
 	 * @param root	The ContextRoot that this ModelContext is based on.
 	 */
-	public ModelTheoryPath(ITheoryLanguageRoot root){
+	public ModelTheoryPath(ITheoryPathRoot root){
 		this.theoryPathRoot = root;
 		availableTheoryProject_node = new TheoryPathModelElementNode(IAvailableTheoryProject.ELEMENT_TYPE, this);
 	}

@@ -9,7 +9,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
@@ -19,7 +19,7 @@ import org.eventb.ui.eventbeditor.EventBEditorPage;
  *
  */
 @SuppressWarnings("restriction")
-public class TheoryLanguageEditor extends EventBEditor<ITheoryLanguageRoot> {
+public class TheoryLanguageEditor extends EventBEditor<ITheoryPathRoot> {
 	
 	public static final String EDITOR_ID = TheoryUIPlugIn.PLUGIN_ID
 			+ ".theoryLanguageEditor";

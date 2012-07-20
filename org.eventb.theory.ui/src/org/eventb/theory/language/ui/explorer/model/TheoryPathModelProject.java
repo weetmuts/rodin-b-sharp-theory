@@ -6,7 +6,7 @@ package org.eventb.theory.language.ui.explorer.model;
 import java.util.HashMap;
 
 import org.eventb.core.IEventBRoot;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -21,7 +21,7 @@ import fr.systerel.internal.explorer.model.IModelElement;
 public class TheoryPathModelProject implements IModelElement {
 	
 	private IRodinProject internalProject;
-	private HashMap<ITheoryLanguageRoot, ModelTheoryPath> theories = new HashMap<ITheoryLanguageRoot, ModelTheoryPath>();
+	private HashMap<ITheoryPathRoot, ModelTheoryPath> theories = new HashMap<ITheoryPathRoot, ModelTheoryPath>();
 	
 	//indicates whether to projects needs to be processed freshly (process Machines etc.)
 	public boolean needsProcessing =  true;
@@ -66,11 +66,11 @@ public class TheoryPathModelProject implements IModelElement {
 		return null;
 	}
 	
-	public ModelTheoryPath getTheoryPath(ITheoryLanguageRoot theory) {
+	public ModelTheoryPath getTheoryPath(ITheoryPathRoot theory) {
 		return theories.get(theory);
 	}
 	
-	public void processTheoryPath(ITheoryLanguageRoot theory) {
+	public void processTheoryPath(ITheoryPathRoot theory) {
 		ModelTheoryPath thy;
 		if (!theories.containsKey(theory)) {
 			thy = new ModelTheoryPath(theory);
@@ -84,7 +84,7 @@ public class TheoryPathModelProject implements IModelElement {
 	}
 	
 	
-	public void removeTheoryPath(ITheoryLanguageRoot theoryPathRoot) {
+	public void removeTheoryPath(ITheoryPathRoot theoryPathRoot) {
 		ModelTheoryPath theory = theories.get(theoryPathRoot);
 		if (theory != null) {
 			theories.remove(theoryPathRoot);
@@ -93,8 +93,8 @@ public class TheoryPathModelProject implements IModelElement {
 
 	public IModelElement getModelElement(IRodinElement element) {
 		
-		if (element instanceof ITheoryLanguageRoot) {
-			return getTheoryPath((ITheoryLanguageRoot) element);
+		if (element instanceof ITheoryPathRoot) {
+			return getTheoryPath((ITheoryPathRoot) element);
 		}
 		IEventBRoot parent= element.getAncestor(ITheoryRoot.ELEMENT_TYPE);
 		ModelTheoryPath theory = theories.get(parent);

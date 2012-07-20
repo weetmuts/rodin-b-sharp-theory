@@ -15,7 +15,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.internal.ui.TheoryImage;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.language.internal.ui.ITheoryPathImages;
@@ -49,8 +49,8 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 //				if(status.exists())
 //					return TheoryImage.getPRSequentImage(status);
 //			}
-			if (element instanceof ITheoryLanguageRoot){
-				return TheoryUIUtils.getTheoryImage((ITheoryLanguageRoot) element);
+			if (element instanceof ITheoryPathRoot){
+				return TheoryUIUtils.getTheoryImage((ITheoryPathRoot) element);
 			}
 			if (element instanceof IRodinElement) {
 				return TheoryImage.getRodinImage((IRodinElement) element);

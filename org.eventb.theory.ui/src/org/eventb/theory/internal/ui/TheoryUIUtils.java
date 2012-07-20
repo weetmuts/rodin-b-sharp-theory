@@ -40,7 +40,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.ITheoryLanguageRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.ITypeParameter;
@@ -481,7 +481,7 @@ public class TheoryUIUtils {
 	 *            the theory root
 	 * @return the image
 	 */
-	public static Image getTheoryImage(ITheoryLanguageRoot root) {
+	public static Image getTheoryImage(ITheoryPathRoot root) {
 //		if (root.hasDeployedVersion()) {
 //			try {
 //				IDeployedTheoryRoot deployedTheoryRoot = root.getDeployedTheoryRoot();

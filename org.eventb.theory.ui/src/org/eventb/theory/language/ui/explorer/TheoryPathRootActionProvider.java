@@ -27,10 +27,8 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.DatabaseUtilitiesTheoryPath;
-import org.eventb.theory.core.ITheoryLanguageRoot;
-import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.eventb.ui.IEventBSharedImages;
@@ -275,8 +273,8 @@ public class TheoryPathRootActionProvider extends CommonActionProvider {
 								try {
 									TheoryUIUtils.closeOpenedEditors(rodinFile);
 									// delete the deployed version
-									if (rodinFile.getRootElementType().equals(ITheoryLanguageRoot.ELEMENT_TYPE)) {
-										ITheoryLanguageRoot theoryRoot = (ITheoryLanguageRoot) rodinFile.getRoot();
+									if (rodinFile.getRootElementType().equals(ITheoryPathRoot.ELEMENT_TYPE)) {
+										ITheoryPathRoot theoryRoot = (ITheoryPathRoot) rodinFile.getRoot();
 
 										IRodinFile theoryPathFile = rodinFile.getRodinProject().getRodinFile(
 												DatabaseUtilitiesTheoryPath.getTheoryPathFullName(theoryRoot.getComponentName()));
