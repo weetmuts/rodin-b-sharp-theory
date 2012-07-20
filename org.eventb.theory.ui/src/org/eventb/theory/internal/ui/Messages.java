@@ -44,11 +44,13 @@ public class Messages {
 	public static String wizard_errorContextNameClash;
 	public static String wizard_errorTheoryNameClash;
 	public static String wizard_errorGlobalTheoryNameClash;
+	public static String wizard_errorFileClash;
 	
 	public static String wizard_newTheoryDesc;
 	public static String wizard_newTheoryTitle;
 	
 	public static String wizard_rebuild;
+	public static String wizard_newTheoryPathTitle;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.internal.ui.messages"; //$NON-NLS-1$
 

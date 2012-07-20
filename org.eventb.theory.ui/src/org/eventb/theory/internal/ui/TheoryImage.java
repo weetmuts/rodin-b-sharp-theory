@@ -18,6 +18,7 @@ import org.eventb.internal.ui.OverlayIcon;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
+import org.eventb.theory.language.internal.ui.ITheoryPathImages;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -279,6 +280,14 @@ public class TheoryImage {
 				"icons/discharged.gif");
 		registerImage(registry, ITheoryImages.IMG_REVIEWED,
 				"icons/reviewed.gif");
+		//TheoryPath images
+		registerImage(registry, ITheoryPathImages.IMG_THEORYPATH,
+				ITheoryPathImages.IMG_THEORYPATH_PATH);
+		registerImage(registry, ITheoryPathImages.IMG_AVAILABLE_THEORY,
+				ITheoryPathImages.IMG_AVAILABLE_THEORY_PATH);
+		registerImage(registry, ITheoryPathImages.IMG_AVAILABLE_THEORY_PROJECT,
+				ITheoryPathImages.IMG_AVAILABLE_THEORY_PROJECT_PATH);
+		
 	}
 	
 	public static Image getPRSequentImage(IPSStatus status) {

@@ -40,9 +40,12 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ITheoryLanguageRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.ITypeParameter;
+import org.eventb.theory.language.internal.ui.ITheoryPathImages;
+import org.eventb.theory.language.ui.editor.TheoryLanguageEditor;
 import org.eventb.theory.ui.editor.TheoryEditor;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.eventb.ui.EventBUIPlugin;
@@ -430,4 +433,68 @@ public class TheoryUIUtils {
 			}
 		}
 	}
+	
+	
+	public static String getAvailableTheoryString(IRodinProject project, IDeployedTheoryRoot root){
+		return 
+				//project.getElementName() + "." + 
+				root.getComponentName();
+	}
+	
+	/**
+	 * <p>
+	 * Links to the Event-B editor configured to work with the specified rodin
+	 * file.
+	 * </p>
+	 * 
+	 * @param rodinFile
+	 *            the file
+	 */
+	public static void linkToTheoryPathEventBEditor(Object obj) {
+		IRodinFile component;
+		if (!(obj instanceof IRodinProject)) {
+			component = (IRodinFile) getOpenable(obj);
+			if (component == null)
+				return;
+			try {
+				IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
+						.getDefaultEditor(component.getCorrespondingResource().getName());
+				IEditorPart editor = TheoryUIPlugIn.getActivePage().openEditor(
+						new FileEditorInput(component.getResource()), desc.getId());
+				if (editor instanceof TheoryLanguageEditor) {
+					((TheoryLanguageEditor) editor).setSelection(new StructuredSelection(obj));
+				}
+			} catch (PartInitException e) {
+				String errorMsg = "Error opening Editor";
+				MessageDialog.openError(null, null, errorMsg);
+				TheoryUIPlugIn.getDefault().getLog().log(new Status(IStatus.ERROR, TheoryUIPlugIn.PLUGIN_ID, errorMsg, e));
+			}
+		}
+	}
+	
+	/**
+	 * Returns the image for explorer display of the given theory.
+	 * <p>
+	 * Theories that have deployed counterparts have a different icon.
+	 * 
+	 * @param root
+	 *            the theory root
+	 * @return the image
+	 */
+	public static Image getTheoryImage(ITheoryLanguageRoot root) {
+//		if (root.hasDeployedVersion()) {
+//			try {
+//				IDeployedTheoryRoot deployedTheoryRoot = root.getDeployedTheoryRoot();
+//				if (deployedTheoryRoot.hasOutdatedAttribute() && deployedTheoryRoot.isOutdated())
+//					return TheoryImage.getImage(ITheoryImages.IMG_OTHEORY);
+//				else {
+//					return TheoryImage.getImage(ITheoryImages.IMG_DTHEORY);
+//				}
+//			} catch (RodinDBException e) {
+//				log(e, "error while checking outdatedness of theory to get the appropriate image");
+//			}
+//		}
+		return TheoryImage.getImage(ITheoryPathImages.IMG_THEORYPATH);
+	}
+	
 }
