@@ -10,7 +10,7 @@ import java.util.List;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.ISCAvailableTheory;
 import org.eventb.theory.core.ISCAvailableTheoryProject;
-import org.eventb.theory.core.ISCTheoryLanguageRoot;
+import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -20,13 +20,13 @@ import org.rodinp.core.RodinDBException;
  * @author renatosilva
  *
  */
-public class SCTheoryLanguageRoot extends EventBRoot implements ISCTheoryLanguageRoot {
+public class SCTheoryPathRoot extends EventBRoot implements ISCTheoryPathRoot {
 
 	/**
 	 * @param name
 	 * @param parent
 	 */
-	public SCTheoryLanguageRoot(String name, IRodinElement parent) {
+	public SCTheoryPathRoot(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 

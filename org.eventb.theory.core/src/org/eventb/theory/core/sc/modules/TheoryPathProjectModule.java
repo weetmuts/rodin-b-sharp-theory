@@ -11,7 +11,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.ISCAvailableTheoryProject;
-import org.eventb.theory.core.ISCTheoryLanguageRoot;
+import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -158,7 +158,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 							TheoryGraphProblem.NoTheoryProjectClausesError);
 				}
 				else if(filterModules(theoryProject, repository, monitor)){
-					ISCAvailableTheoryProject scTheoryProject = saveSCTheoryProject((ISCTheoryLanguageRoot) target, theoryProject, index++, monitor);
+					ISCAvailableTheoryProject scTheoryProject = saveSCTheoryProject((ISCTheoryPathRoot) target, theoryProject, index++, monitor);
 					projectTable.addTheoryProject(theoryProject);
 					
 					//process Theories for this project
@@ -179,7 +179,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 		endProcessorModules(theoryProject, repository, monitor);
 	}
 
-	private ISCAvailableTheoryProject saveSCTheoryProject(ISCTheoryLanguageRoot target,
+	private ISCAvailableTheoryProject saveSCTheoryProject(ISCTheoryPathRoot target,
 			IAvailableTheoryProject theoryProject, int index,
 			IProgressMonitor monitor) throws RodinDBException {
 		ISCAvailableTheoryProject scTheoryProject = target.getSCAvailableTheoryProject(THEORY_PROJECT_NAME+"_"+index);

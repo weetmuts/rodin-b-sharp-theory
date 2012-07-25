@@ -68,5 +68,12 @@ public class AvailableTheory extends EventBElement implements IAvailableTheory {
 		
 		return null;
 	}
+	
+	@Override
+	public String getLabel() throws RodinDBException {
+		if(hasAvailableTheory())
+			return getDeployedTheory().getComponentName();
+		return "";
+	}
 
 }

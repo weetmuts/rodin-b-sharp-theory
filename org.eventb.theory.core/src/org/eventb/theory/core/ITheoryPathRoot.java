@@ -71,14 +71,14 @@ public interface ITheoryPathRoot extends IEventBRoot, ICommentedElement,
 	 * <p>This is handle-only method.</p>
 	 * @return the SC theoryPath root
 	 */
-	public ISCTheoryLanguageRoot getSCTheoryPathRoot();
+	public ISCTheoryPathRoot getSCTheoryPathRoot();
 	
 	/**
 	 * Returns the SC theorypath root corresponding to bareName
 	 * @param bareName
 	 * @return the SC theorypath root
 	 */
-	public ISCTheoryLanguageRoot getSCTheoryPathRoot(String bareName);
+	public ISCTheoryPathRoot getSCTheoryPathRoot(String bareName);
 
 	/**
 	 * Retuens the SC theorypath file corresponding to bareName

@@ -1047,7 +1047,7 @@
    <extension
          point="org.rodinp.core.internalElementTypes">
       <internalElementType
-            class="org.eventb.theory.core.basis.SCTheoryLanguageRoot"
+            class="org.eventb.theory.core.basis.SCTheoryPathRoot"
             id="scTheoryLanguageRoot"
             name="Event-B Statically Checked Theory Path Root">
       </internalElementType>

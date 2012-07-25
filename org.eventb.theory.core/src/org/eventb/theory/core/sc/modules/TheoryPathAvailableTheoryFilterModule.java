@@ -83,12 +83,12 @@ public class TheoryPathAvailableTheoryFilterModule extends SCFilterModule {
 					newDeployedTheory.getElementName());
 		}
 		else if(!newDeployedTheory.exists()){
-			valid = false;
 			//deployed theory does not exist 
 			createProblemMarker(availableTheoryClause,
 					TheoryAttributes.AVAILABLE_THEORY_ATTRIBUTE,
 					TheoryGraphProblem.DeployedTheoryNotExistError,
 					newDeployedTheory.getElementName());
+			return false;
 		} 
 		
 		for(IDeployedTheoryRoot deployedTheory: theoryTable.getAllTheories()){

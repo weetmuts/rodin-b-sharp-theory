@@ -1434,21 +1434,21 @@
             contentProvider="org.eventb.theory.language.ui.explorer.TheoryPathContentProvider"
             id="org.eventb.theory.language.ui.explorer.theoryLanguage"
             labelProvider="org.eventb.theory.language.ui.explorer.RodinLabelProvider"
-            name="Theory Language"
-            priority="normal">
+            name="Theory Path"
+            priority="highest">
          <triggerPoints>
             <or>
                <instanceof
                      value="org.eclipse.core.resources.IProject">
                </instanceof>
                <instanceof
-                     value="org.eventb.theory.core.ITheoryLanguageRoot">
+                     value="org.eventb.theory.core.ITheoryPathRoot">
                </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
             <instanceof
-                  value="org.eventb.theory.core.ITheoryLanguageRoot">
+                  value="org.eventb.theory.core.ITheoryPathRoot">
             </instanceof>
          </possibleChildren>
          <commonSorter
@@ -1464,7 +1464,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.theory.core.ITheoryLanguageRoot">
+                     value="org.eventb.theory.core.ITheoryPathRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.IElementNode">
@@ -1514,7 +1514,7 @@
             id="org.eventb.theory.language.ui.explorer.theoryPathActionProvider">
          <enablement>
             <instanceof
-                  value="org.eventb.theory.core.ITheoryLanguageRoot">
+                  value="org.eventb.theory.core.ITheoryPathRoot">
             </instanceof>
          </enablement>
       </actionProvider>
@@ -1573,5 +1573,21 @@
             </actionExtension>
          </includes>
       </viewerActionBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eventb.theory.language.ui.createTheoryPath"
+            targetID="fr.systerel.explorer.navigator.view">
+         <action
+               class="org.eventb.theory.language.ui.explorer.actions.CreateTheoryPathActionDelegate"
+               icon="icons/thyPath.gif"
+               id="org.eventb.theory.language.ui.createTheoryPath"
+               label="TheoryPath"
+               style="push"
+               toolbarPath="new"
+               tooltip="Create TheoryPath file">
+         </action>
+      </viewContribution>
    </extension>
 </plugin>

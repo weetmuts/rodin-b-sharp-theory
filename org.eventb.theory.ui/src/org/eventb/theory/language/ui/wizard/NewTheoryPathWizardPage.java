@@ -22,15 +22,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.internal.ui.RodinProjectSelectionDialog;
-import org.eventb.theory.core.DatabaseUtilities;
-import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 
 /**
@@ -132,8 +130,7 @@ public class NewTheoryPathWizardPage extends WizardPage {
 			return;
 		}
 
-		IRodinProject rodinProject = RodinCore.getRodinDB()
-				.getRodinProject(projectName);
+		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(projectName);
 		if (!rodinProject.exists()) {
 			updateStatus(Messages.wizard_errorProjMustBeValid);
 			return;
@@ -150,6 +147,11 @@ public class NewTheoryPathWizardPage extends WizardPage {
 		}
 		
 		try {
+			if(rodinProject.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE).length!=0){
+				updateStatus(Messages.wizard_multipleTheoryPathError);
+				return;
+			}
+			
 			for(IResource resource: rodinProject.getProject().members()){
 				if(resource.getName().startsWith(theoryName)){
 					updateStatus(Messages.wizard_errorFileClash);
@@ -160,36 +162,20 @@ public class NewTheoryPathWizardPage extends WizardPage {
 			TheoryUIUtils.log(e1, "Unable to retrieve file from project " + rodinProject.getElementName());
 		}
 		
-//		final IEventBProject evbProject = (IEventBProject) rodinProject
-//				.getAdapter(IEventBProject.class);
-//		
-//		final IRodinFile machineFile = evbProject.getMachineFile(theoryName);
-//		final IRodinFile contextFile = evbProject.getContextFile(theoryName);
-//		final IRodinFile theoryFile = getTheoryFile(rodinProject, theoryName);
-//		if (machineFile.exists()) {
-//			updateStatus(Messages.wizard_errorMachineNameClash);
-//			return;
+		
+//		if (!DatabaseUtilities.isMathExtensionsProject(rodinProject)){
+//			IRodinProject mathsProject = DatabaseUtilities.getDeploymentProject(null);
+//			try {
+//				for (ITheoryRoot root : mathsProject.getRootElementsOfType(ITheoryRoot.ELEMENT_TYPE)){
+//					if (root.getElementName().equals(theoryName)){
+//						updateStatus(Messages.bind(Messages.wizard_errorGlobalTheoryNameClash,rodinProject.getElementName()));
+//						return;
+//					}
+//				}
+//			} catch (RodinDBException e) {
+//				TheoryUIUtils.log(e, "unable to retrieve theories of maths project");
+//			}
 //		}
-//		if (contextFile.exists()) {
-//			updateStatus(Messages.wizard_errorContextNameClash);
-//			return;
-//		}
-//		if (theoryFile.exists()) {
-//			
-//		}
-		if (!DatabaseUtilities.isMathExtensionsProject(rodinProject)){
-			IRodinProject mathsProject = DatabaseUtilities.getDeploymentProject(null);
-			try {
-				for (ITheoryRoot root : mathsProject.getRootElementsOfType(ITheoryRoot.ELEMENT_TYPE)){
-					if (root.getElementName().equals(theoryName)){
-						updateStatus(Messages.bind(Messages.wizard_errorGlobalTheoryNameClash,rodinProject.getElementName()));
-						return;
-					}
-				}
-			} catch (RodinDBException e) {
-				TheoryUIUtils.log(e, "unable to retrieve theories of maths project");
-			}
-		}
 		updateStatus(null);
 	}
 

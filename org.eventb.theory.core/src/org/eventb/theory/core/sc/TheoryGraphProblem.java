@@ -128,7 +128,8 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			DeployedTheoryNotExistError(IMarker.SEVERITY_ERROR, Messages.scuser_DeployedTheoryNotExistError),
 			NoTheoryClausesError(IMarker.SEVERITY_ERROR, Messages.scuser_NoTheorySelectedError),
 			RedundantDeployedTheoryWarning(IMarker.SEVERITY_WARNING, Messages.scuser_DeployedTheoryRedudantWarning),
-			TheoriesConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_DeployedTheoriesConflictError)
+			TheoriesConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_DeployedTheoriesConflictError),
+			MultipleTheoryPathProjectError(IMarker.SEVERITY_ERROR, Messages.scuser_MultipleTheoryPathProjectError)
 	;
 
 	private int arity;

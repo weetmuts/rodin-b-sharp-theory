@@ -17,7 +17,7 @@ import org.eventb.theory.core.DatabaseUtilitiesTheoryPath;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.IDeployedTheoryRoot;
-import org.eventb.theory.core.ISCTheoryLanguageRoot;
+import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -74,12 +74,12 @@ public class TheoryPathRoot extends EventBRoot implements ITheoryPathRoot {
 	}
 
 	@Override
-	public ISCTheoryLanguageRoot getSCTheoryPathRoot() {
+	public ISCTheoryPathRoot getSCTheoryPathRoot() {
 		return getSCTheoryPathRoot(getElementName());
 	}
 	
-	public ISCTheoryLanguageRoot getSCTheoryPathRoot(String bareName) {
-		ISCTheoryLanguageRoot root = (ISCTheoryLanguageRoot) getSCTheoryPathFile(bareName).getRoot();
+	public ISCTheoryPathRoot getSCTheoryPathRoot(String bareName) {
+		ISCTheoryPathRoot root = (ISCTheoryPathRoot) getSCTheoryPathFile(bareName).getRoot();
 		return root;
 	}
 

@@ -16,9 +16,9 @@ import org.rodinp.core.RodinDBException;
  * @author renatosilva
  *
  */
-public interface ISCTheoryLanguageRoot extends IEventBRoot, IAccuracyElement, IConfigurationElement, ITraceableElement{
+public interface ISCTheoryPathRoot extends IEventBRoot, IAccuracyElement, IConfigurationElement, ITraceableElement{
 	
-	IInternalElementType<ISCTheoryLanguageRoot> ELEMENT_TYPE = RodinCore
+	IInternalElementType<ISCTheoryPathRoot> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheoryLanguageRoot");
 	
 	/**

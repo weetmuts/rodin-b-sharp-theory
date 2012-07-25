@@ -156,6 +156,7 @@ public final class Messages {
 	public static String scuser_NoTheorySelectedError;
 	public static String scuser_DeployedTheoryRedudantWarning;
 	public static String scuser_DeployedTheoriesConflictError;
+	public static String scuser_MultipleTheoryPathProjectError;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
