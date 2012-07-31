@@ -16,7 +16,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ICommentedElement;
+import org.eventb.core.EventBAttributes;
+import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinProject;
@@ -71,7 +72,7 @@ public class DatabaseUtilitiesTheoryPath{
 	 * @param root
 	 * @param resourceChangeKind
 	 */
-	public static <T extends ICommentedElement> void addListener(final List<IPath> files, final T root, int resourceChangeKind){
+	public static <T extends IEventBRoot> void addListener(final List<IPath> files, final T root, int resourceChangeKind){
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IResourceChangeListener listener = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
@@ -106,13 +107,13 @@ public class DatabaseUtilitiesTheoryPath{
 	 * @param root
 	 * @param builderKind
 	 */
-	private static void buildDependencyProject(final ICommentedElement root) {
+	private static void buildDependencyProject(final IEventBRoot root) {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 				@Override
 				public void run(IProgressMonitor monitor) throws RodinDBException {
 					try {
-						root.setComment(root.getComment(), monitor);
+						root.setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE,root.hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE) ? root.getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE): "", monitor);
 						root.getRodinFile().save(monitor, true);
 						root.getRodinProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 					} catch (CoreException e) {
