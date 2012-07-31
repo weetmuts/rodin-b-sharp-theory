@@ -28,6 +28,7 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
  * @author RenatoSilva
  *
  */
+@SuppressWarnings("restriction")
 public class TheoryPathModelController implements IElementChangedListener {
 	
 	private static TheoryPathModelController instance;
@@ -75,7 +76,7 @@ public class TheoryPathModelController implements IElementChangedListener {
 			}
 		}
 		if (ExplorerUtils.DEBUG) {
-			System.out.println("Element not found by ModelController: "
+			System.out.println("Element not found by TheoryPathModelController: "
 					+ element);
 		}
 		return null;
@@ -253,6 +254,11 @@ public class TheoryPathModelController implements IElementChangedListener {
 	private static ITheoryPathRoot[] getRootTheoryPathChildren(IRodinProject project)
 			throws RodinDBException {
 		return project.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
+	}
+
+	public static ModelAvailableTheoryProject getAvailableTheoryProject(
+			ITheoryPathRoot root, IRodinProject availableTheoryProject) {
+		return (ModelAvailableTheoryProject) getTheoryPath(root).getModelElement(availableTheoryProject);
 	}
 
 }

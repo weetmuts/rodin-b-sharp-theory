@@ -17,32 +17,36 @@ import org.rodinp.core.IInternalElement;
  * @author Renato Silva
  *
  */
-public class ComponentPrettyPrinter extends DefaultPrettyPrinter {
+public class RootPrettyPrinter extends DefaultPrettyPrinter {
 
 	/**
 	 * 
 	 */
-	public ComponentPrettyPrinter() {
+	public RootPrettyPrinter() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	private static final String STYLE = "componentName";
-	private static final String COMPONENT_NAME_SEPARATOR_BEGIN = null;
-	private static final String COMPONENT_NAME_SEPARATOR_END = null;
+	private static final String ROOT_FILE_NAME = "componentName";
+	private static final String ROOT_FILE_SEPARATOR_BEGIN = null;
+	private static final String ROOT_FILE_SEPARATOR_END = null;
 
 	@Override
 	public void prettyPrint(IInternalElement elt, IInternalElement parent,
 			IPrettyPrintStream ps) {
 		final String bareName = elt.getRodinFile().getBareName();
-		appendComponentName(ps, wrapString(bareName));
+		appendElementName(ps, wrapString(bareName));
 	}
 
-	protected static void appendComponentName(IPrettyPrintStream ps, String label) {
-		ps.appendString(label, 
-				getHTMLBeginForCSSClass(STYLE, HorizontalAlignment.LEFT, VerticalAlignement.MIDDLE), 
-				getHTMLEndForCSSClass(STYLE, HorizontalAlignment.LEFT, VerticalAlignement.MIDDLE), 
-				COMPONENT_NAME_SEPARATOR_BEGIN, 
-				COMPONENT_NAME_SEPARATOR_END);
+	protected static void appendElementName(IPrettyPrintStream ps, String label) {
+		ps.appendString(label, //
+				getHTMLBeginForCSSClass(ROOT_FILE_NAME,
+						HorizontalAlignment.LEFT, //
+						VerticalAlignement.MIDDLE), //
+				getHTMLEndForCSSClass(ROOT_FILE_NAME, //
+						HorizontalAlignment.LEFT, //
+						VerticalAlignement.MIDDLE), //
+						ROOT_FILE_SEPARATOR_BEGIN, //
+						ROOT_FILE_SEPARATOR_END);
 	}
 
 }
