@@ -69,8 +69,7 @@ public final class Messages {
 	public static String scuser_IdenIsAConsNameError;
 	public static String scuser_IdenIsADesNameError;
 	public static String scuser_DatatypeHasNoBaseConsError;
-	public static String scuser_MissingOpLabelIDError;
-	public static String scuser_OperatorIDConflictError;
+	public static String scuser_OperatorSynConflictError;
 	public static String scuser_OperatorIDExistsError;
 	public static String scuser_OperatorSynMissingError;
 	public static String scuser_OperatorSynExistsError;
