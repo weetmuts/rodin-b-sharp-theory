@@ -36,13 +36,11 @@ public class InferenceGivenClauseModule extends
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
 	@Override
 	protected IGiven[] getClauses(IInferenceRule rule) throws CoreException {
-		// TODO Auto-generated method stub
 		return rule.getGivens();
 	}
 
@@ -79,8 +77,12 @@ public class InferenceGivenClauseModule extends
 
 	@Override
 	protected boolean checkClauses(IGiven[] clauses, IInferenceRule rule) throws CoreException {
-		// nothing to check
 		return true;
+	}
+
+	@Override
+	protected void processSCClause(ISCGiven scClause, IGiven clause) throws CoreException{
+		scClause.setHyp(clause.hasHypAttribute() && clause.isHyp(), null);
 	}
 
 }

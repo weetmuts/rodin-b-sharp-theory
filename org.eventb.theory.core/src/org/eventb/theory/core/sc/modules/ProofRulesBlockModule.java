@@ -26,8 +26,8 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
+import org.eventb.theory.core.sc.states.RulesBlocksLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -187,10 +187,10 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 	}
 	
 	@Override
-	protected TheoryLabelSymbolTable getLabelSymbolTableFromRepository(
+	protected RulesBlocksLabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (TheoryLabelSymbolTable) 
-				repository.getState(TheoryLabelSymbolTable.STATE_TYPE);
+		return (RulesBlocksLabelSymbolTable) 
+				repository.getState(RulesBlocksLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override

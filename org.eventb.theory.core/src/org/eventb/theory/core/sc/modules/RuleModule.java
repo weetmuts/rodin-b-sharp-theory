@@ -19,8 +19,8 @@ import org.eventb.theory.core.IRule;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRule;
 import org.eventb.theory.core.sc.Messages;
+import org.eventb.theory.core.sc.states.ProofRulesLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -74,7 +74,7 @@ public abstract class RuleModule<R extends IRule, S extends ISCRule>
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository
-				.getState(TheoryLabelSymbolTable.STATE_TYPE);
+				.getState(ProofRulesLabelSymbolTable.STATE_TYPE);
 	}
 	
 	/**

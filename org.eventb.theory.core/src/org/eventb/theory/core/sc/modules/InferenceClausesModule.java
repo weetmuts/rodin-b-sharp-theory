@@ -30,6 +30,7 @@ import org.rodinp.core.IRodinElement;
  * @author maamria
  *
  */
+@SuppressWarnings("restriction")
 public abstract class InferenceClausesModule<C extends IInferenceClause, S extends ISCInferenceClause> 
 extends SCProcessorModule{
 
@@ -48,6 +49,9 @@ extends SCProcessorModule{
 		if (checkClauses(clauses, rule)){
 			processClauses(clauses, rule, scRule, repository, monitor);
 		}
+		else {
+			ruleAccuracyInfo.setNotAccurate();
+		}
 	}
 	
 	/**
@@ -64,7 +68,7 @@ extends SCProcessorModule{
 		boolean accurate= true;
 		for(int i = 0 ; i < clauses.length; i++){
 			C clause = clauses[i];
-			if(!clause.hasPredicateString()){
+			if(!clause.hasPredicateString() || "".equals(clause.getPredicateString())){
 				createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE, GraphProblem.PredicateUndefError);
 				accurate = false;
 				continue;
@@ -76,6 +80,7 @@ extends SCProcessorModule{
 					scClause.setPredicate(predicate, monitor);
 					// fixed absence of source of clauses shown by test TestAccuracy.testAcc_012/4
 					scClause.setSource(clause, null);
+					processSCClause(scClause, clause);
 					addIdentifiers(predicate);
 				}
 				else {
@@ -91,12 +96,44 @@ extends SCProcessorModule{
 		
 	}
 
+	/**
+	 * Performs any last ditch processing on the SC clause.
+	 * @param scClause the SC clause
+	 * @param clause the clause
+	 */
+	protected abstract  void processSCClause(S scClause, C clause) throws CoreException;
+
+	/**
+	 * Checks the predicate for any restrictions placed on the predicate of the clause.
+	 * @param predicate the predicate of the clause
+	 * @param clause the inference clause
+	 * @return whether the predicate passes the checks
+	 * @throws CoreException
+	 */
 	protected abstract boolean checkPredicate(Predicate predicate, C clause) throws CoreException;
 
+	/**
+	 * Adds the free identifiers of the predicate to the appropriate collection (i.e., given identifiers or infer identifiers).
+	 * @param predicate the clause predicate
+	 * @throws CoreException
+	 */
 	protected abstract void addIdentifiers(Predicate predicate) throws CoreException;
 	
+	/**
+	 * Returns a handle to the SC clause whose parent is <code>parent</code> and name is <code>name</code>.
+	 * @param parent the parent SC inference rule
+	 * @param name the name of the clause
+	 * @return the SC clause
+	 * @throws CoreException
+	 */
 	protected abstract S getSCClause(ISCInferenceRule parent, String name) throws CoreException;
 	
+	/**
+	 * Returns the required clauses of the inference rule.
+	 * @param rule the inference rule
+	 * @return the required clauses
+	 * @throws CoreException
+	 */
 	protected abstract C[] getClauses(IInferenceRule rule) throws CoreException;
 	
 	@Override

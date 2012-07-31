@@ -31,7 +31,7 @@ import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -45,40 +45,35 @@ import org.rodinp.core.RodinDBException;
 public class OperatorDirectDefinitionModule extends SCProcessorModule {
 
 	private static final IModuleType<OperatorDirectDefinitionModule> MODULE_TYPE = SCCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID
-					+ ".operatorDirectDefinitionModule");
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorDirectDefinitionModule");
 
-	private IOperatorInformation operatorInformation;
+	private OperatorInformation operatorInformation;
 	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
 
 	@Override
-	public void process(IRodinElement element, IInternalElement target,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
 		INewOperatorDefinition newOperatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
 		IDirectOperatorDefinition[] definitions = newOperatorDefinition.getDirectOperatorDefinitions();
-		if (definitions.length == 1 && !operatorInformation.hasError()){
+		if (definitions.length == 1 && !operatorInformation.hasError()) {
 			processDirectDefinitions(definitions, newOperatorDefinition, scNewOperatorDefinition, repository, monitor);
 		}
-
 	}
-	
+
 	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		operatorInformation = (IOperatorInformation) repository
-				.getState(IOperatorInformation.STATE_TYPE);
+		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
 	}
 
 	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		operatorInformation = null;
 		factory = null;
 		typeEnvironment = null;
@@ -90,60 +85,29 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 		return MODULE_TYPE;
 	}
 
-	protected void processDirectDefinitions(
-			IDirectOperatorDefinition[] definitions,
-			INewOperatorDefinition newOperatorDefinition,
-			ISCNewOperatorDefinition scNewOperatorDefinition,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException, RodinDBException {
+	private void processDirectDefinitions(IDirectOperatorDefinition[] definitions,
+			INewOperatorDefinition newOperatorDefinition, ISCNewOperatorDefinition scNewOperatorDefinition,
+			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException, RodinDBException {
 		IDirectOperatorDefinition definition = definitions[0];
-		Formula<?> defFormula = processDirectDefinition(definition,
-				repository);
+		Formula<?> defFormula = processDirectDefinition(definition, repository);
 		String label = newOperatorDefinition.getLabel();
 		if (defFormula != null) {
 			if (AstUtilities.isExpressionOperator(operatorInformation.getFormulaType())) {
 				if (defFormula instanceof Expression) {
-					createSCDirectDefinition(defFormula, scNewOperatorDefinition,
-							definition, repository, monitor);
-					operatorInformation.setResultantType(((Expression) defFormula)
-									.getType());
-					operatorInformation.setDefinition(new IOperatorInformation.DirectDefintion(defFormula));
-					if (operatorInformation.getWdCondition() == null) {
-						Predicate wdPredicate = defFormula.getWDPredicate(factory);
-						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
-						operatorInformation.addWDCondition(wdPredicate);
-					}
-					Predicate dwdPredicate = getDWDPredicate(defFormula);
-					operatorInformation.setD_WDCondition(dwdPredicate);
-					scNewOperatorDefinition.setWDCondition(dwdPredicate, monitor);
+					commitDirectDefinition(defFormula, definition, scNewOperatorDefinition, repository, monitor);
 				} else {
 					setError();
-					createProblemMarker(definition,
-							TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
-							TheoryGraphProblem.OperatorDefNotExpError,
-							label);
+					createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE,
+							TheoryGraphProblem.OperatorDefNotExpError, label);
 				}
 			} else {
 				if (defFormula instanceof Predicate) {
-					createSCDirectDefinition(defFormula, scNewOperatorDefinition,
-							definition, repository, monitor);
-					operatorInformation.setDefinition(new IOperatorInformation.DirectDefintion(defFormula));
-					if (operatorInformation.getWdCondition() == null) {
-						Predicate wdPredicate = defFormula
-								.getWDPredicate(factory);
-						scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
-						operatorInformation.addWDCondition(wdPredicate);
-					}
-					Predicate dwdPredicate = getDWDPredicate(defFormula);
-					operatorInformation.setD_WDCondition(dwdPredicate);
-					scNewOperatorDefinition.setWDCondition(dwdPredicate, monitor);
+					commitDirectDefinition(defFormula, definition, scNewOperatorDefinition, repository, monitor);
 
 				} else {
 					setError();
-					createProblemMarker(definition,
-							TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
-							TheoryGraphProblem.OperatorDefNotPredError,
-							label);
+					createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE,
+							TheoryGraphProblem.OperatorDefNotPredError, label);
 				}
 			}
 		} else {
@@ -151,81 +115,68 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 		}
 	}
 
-	/**
-	 * Create the statically checked direct definition corresponding to the
-	 * given direct definition.
-	 * 
-	 * @param definitionFormula
-	 *            the direct definition formula
-	 * @param scOperatorDefinition
-	 *            the SC operator definition
-	 * @param definition
-	 *            the direct definition
-	 * @param repository
-	 *            the state repository
-	 * @param monitor
-	 *            the progress monitor
-	 * @throws CoreException
-	 */
-	protected void createSCDirectDefinition(Formula<?> definitionFormula,
-			ISCNewOperatorDefinition scOperatorDefinition,
-			IDirectOperatorDefinition definition,
-			ISCStateRepository repository, IProgressMonitor monitor)
+	private void commitDirectDefinition(Formula<?> defFormula, IDirectOperatorDefinition definition,
+			ISCNewOperatorDefinition scNewOperatorDefinition, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException, RodinDBException {
+		createSCDirectDefinition(defFormula, scNewOperatorDefinition, definition, repository, monitor);
+		if (defFormula instanceof Expression)
+			operatorInformation.setResultantType(((Expression) defFormula).getType());
+		operatorInformation.setDefinition(new OperatorInformation.DirectDefintion(defFormula));
+		if (operatorInformation.getWdCondition() == null) {
+			Predicate wdPredicate = defFormula.getWDPredicate(factory);
+			scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
+			operatorInformation.addWDCondition(wdPredicate);
+		}
+		Predicate dwdPredicate = getDWDPredicate(defFormula);
+		operatorInformation.setD_WDCondition(dwdPredicate);
+		scNewOperatorDefinition.setWDCondition(dwdPredicate, monitor);
+	}
+
+	private void createSCDirectDefinition(Formula<?> definitionFormula, ISCNewOperatorDefinition scOperatorDefinition,
+			IDirectOperatorDefinition definition, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		ISCDirectOperatorDefinition scDef = scOperatorDefinition
-				.getDirectOperatorDefinition(definition.getElementName());
+		ISCDirectOperatorDefinition scDef = scOperatorDefinition.getDirectOperatorDefinition(definition
+				.getElementName());
 		scDef.create(null, monitor);
 		scDef.setSCFormula(definitionFormula, monitor);
 		scDef.setSource(definition, monitor);
 	}
 
-	/**
-	 * Processes the given direct definition.
-	 * 
-	 * @param definition
-	 *            the direct definition
-	 * @param repository
-	 *            the state repository
-	 * @return the formula contained in the direct definition
-	 * @throws CoreException
-	 */
-	protected Formula<?> processDirectDefinition(
-			IDirectOperatorDefinition definition, ISCStateRepository repository)
+	private Formula<?> processDirectDefinition(IDirectOperatorDefinition definition, ISCStateRepository repository)
 			throws CoreException {
+		if(!definition.hasFormula() || "".equals(definition.getFormula())){
+			createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
+		}
 		if (definition.hasFormula()) {
 			Formula<?> formula = ModulesUtils.parseFormula(definition, factory, this);
 			if (formula != null) {
 				formula = ModulesUtils.checkFormula(definition, formula, typeEnvironment, this);
-				FreeIdentifier[] idents = formula.getFreeIdentifiers();
-				List<String> notAllowed = new ArrayList<String>();
-				for (FreeIdentifier ident : idents) {
-					if (!operatorInformation.isAllowedIdentifier(ident)) {
-						notAllowed.add(ident.getName());
+				if (formula != null) {
+					FreeIdentifier[] idents = formula.getFreeIdentifiers();
+					List<String> notAllowed = new ArrayList<String>();
+					for (FreeIdentifier ident : idents) {
+						if (!operatorInformation.isAllowedIdentifier(ident)) {
+							notAllowed.add(ident.getName());
+						}
 					}
+					if (notAllowed.size() != 0) {
+						createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE,
+								TheoryGraphProblem.OpCannotReferToTheseIdents, GeneralUtilities.toString(notAllowed));
+						return null;
+					}
+					return formula;
 				}
-				if (notAllowed.size() != 0) {
-					createProblemMarker(definition,
-							TheoryAttributes.FORMULA_ATTRIBUTE,
-							TheoryGraphProblem.OpCannotReferToTheseIdents,
-							GeneralUtilities.toString(notAllowed));
-					return null;
-				}
-				return formula;
 			}
-		} else {
-			createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE,
-					TheoryGraphProblem.MissingFormulaError);
-		}
+		} 
 		return null;
 	}
 
-	private void setError() throws CoreException{
+	private void setError() throws CoreException {
 		operatorInformation.setHasError();
 	}
-	
-	private Predicate getDWDPredicate(Formula<?> formula){
+
+	private Predicate getDWDPredicate(Formula<?> formula) {
 		YComputer computer = new YComputer(factory);
 		return computer.getWDLemma(formula);
 	}
-
 }

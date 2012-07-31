@@ -21,7 +21,7 @@ import org.rodinp.core.RodinCore;
  * @author maamria
  *
  */
-public interface ISCGiven extends ISCInferenceClause{
+public interface ISCGiven extends ISCInferenceClause, IHypElement{
 
 	IInternalElementType<ISCGiven> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scGiven");

@@ -18,7 +18,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
+import org.eventb.theory.core.sc.states.ProofRulesLabelSymbolTable;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -33,8 +33,8 @@ public abstract class RuleFilterModule<R extends IRule> extends SCFilterModule {
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		labelSymbolTable = (TheoryLabelSymbolTable) repository
-				.getState(TheoryLabelSymbolTable.STATE_TYPE);
+		labelSymbolTable = (ProofRulesLabelSymbolTable) repository
+				.getState(ProofRulesLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override

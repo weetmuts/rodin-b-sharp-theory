@@ -41,7 +41,7 @@ public class TheorySymbolFactory {
 	private static TheorySymbolFactory factory = new TheorySymbolFactory();
 
 	private static LocalTypeParameterSymbolProblem localTypeParameterSymbolProblem = new LocalTypeParameterSymbolProblem();
-	private static OperatorIDSymbolProblem operatorIDSymbolProblem = new OperatorIDSymbolProblem();
+	private static OperatorSynSymbolProblem operatorSynProblem = new OperatorSynSymbolProblem();
 	private static LocalOperatorArgumentSymbolProblem operatorArgumentSymbolProblem = new LocalOperatorArgumentSymbolProblem();
 	private static RulesBlockSymbolProblem rulesBlockSymbolProblem = new RulesBlockSymbolProblem();
 	private static TheoremSymbolProblem theoremSymbolProblem = new TheoremSymbolProblem();
@@ -94,7 +94,7 @@ public class TheorySymbolFactory {
 		return new LabelSymbolInfo(symbol,
 				ISCNewOperatorDefinition.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
-				operatorIDSymbolProblem);
+				operatorSynProblem);
 	}
 
 	public IIdentifierSymbolInfo makeLocalTypeParameter(String symbol,
@@ -283,9 +283,9 @@ public class TheorySymbolFactory {
 
 	}
 
-	private static class OperatorIDSymbolProblem implements ISymbolProblem {
+	private static class OperatorSynSymbolProblem implements ISymbolProblem {
 
-		public OperatorIDSymbolProblem() {
+		public OperatorSynSymbolProblem() {
 			// public constructor
 		}
 
@@ -293,7 +293,7 @@ public class TheorySymbolFactory {
 				IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
-					TheoryGraphProblem.OperatorIDConflictError,
+					TheoryGraphProblem.OperatorSynConflictError,
 					symbolInfo.getSymbol());
 
 		}

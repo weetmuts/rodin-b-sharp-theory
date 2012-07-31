@@ -6,6 +6,10 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eventb.core.IPSStatus;
+import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
+import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.IAxiomaticOperatorDefinition;
+import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IInferenceRule;
@@ -40,9 +44,6 @@ public class TheoryChildrenContentProviders {
 			super(collator);
 		}
 
-		/**
-		 * No need for sorting.
-		 */
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return -1;
@@ -59,9 +60,6 @@ public class TheoryChildrenContentProviders {
 	
 	public static class DatatypeConstructorContentProvider extends AbstractContentProvider {
 
-		/**
-		 * @param type
-		 */
 		public DatatypeConstructorContentProvider() {
 			super(IDatatypeConstructor.ELEMENT_TYPE);
 		}
@@ -69,9 +67,6 @@ public class TheoryChildrenContentProviders {
 
 	public static class DatatypeContentProvider extends AbstractContentProvider {
 
-		/**
-		 * @param type
-		 */
 		public DatatypeContentProvider() {
 			super(IDatatypeDefinition.ELEMENT_TYPE);
 		}
@@ -96,19 +91,38 @@ public class TheoryChildrenContentProviders {
 
 	public static class InferenceRuleContentProvider extends AbstractContentProvider {
 
-		/**
-		 * @param type
-		 */
 		public InferenceRuleContentProvider() {
 			super(IInferenceRule.ELEMENT_TYPE);
 		}
 	}
 
+	public static class AxiomaticBlockContentProvider extends AbstractContentProvider {
+
+		public AxiomaticBlockContentProvider() {
+			super(IAxiomaticDefinitionsBlock.ELEMENT_TYPE);
+		}
+
+		@Override
+		public Object getParent(Object element) {
+
+			if (element instanceof IAxiomaticDefinitionsBlock) {
+				IAxiomaticDefinitionsBlock carr = (IAxiomaticDefinitionsBlock) element;
+				ITheoryRoot root = (ITheoryRoot) carr.getRoot();
+				ModelTheory thy = TheoryModelController.getTheory(root);
+				if (thy != null) {
+					return thy.axb_node;
+				}
+			}
+			if (element instanceof IElementNode) {
+				return ((IElementNode) element).getParent();
+			}
+			return null;
+		}
+
+	}
+	
 	public static class OperatorContentProvider extends AbstractContentProvider {
 
-		/**
-		 * @param type
-		 */
 		public OperatorContentProvider() {
 			super(INewOperatorDefinition.ELEMENT_TYPE);
 		}
@@ -134,19 +148,35 @@ public class TheoryChildrenContentProviders {
 	
 	public static class RewriteRuleContentProvider extends AbstractContentProvider {
 
-		/**
-		 * @param type
-		 */
 		public RewriteRuleContentProvider() {
 			super(IRewriteRule.ELEMENT_TYPE);
 		}
 	}
 	
+	public static class AxiomaticOperatorContentProvider extends AbstractContentProvider{
+
+		public AxiomaticOperatorContentProvider() {
+			super(IAxiomaticOperatorDefinition.ELEMENT_TYPE);
+		}
+	}
+	
+	public static class AxiomaticAxiomContentProvider extends AbstractContentProvider{
+		
+		public AxiomaticAxiomContentProvider() {
+			super(IAxiomaticDefinitionAxiom.ELEMENT_TYPE);
+		}
+	}
+	
+	public static class AxiomaticTypeContentProvider extends AbstractContentProvider{
+		
+		public AxiomaticTypeContentProvider() {
+			super(IAxiomaticTypeDefinition.ELEMENT_TYPE);
+		}
+		
+	}
+	
 	public static class RuleBlockContentProvider extends AbstractContentProvider {
 
-		/**
-		 * @param type
-		 */
 		public RuleBlockContentProvider() {
 			super(IProofRulesBlock.ELEMENT_TYPE);
 		}
@@ -171,9 +201,6 @@ public class TheoryChildrenContentProviders {
 	
 	public static class TheoremContentProvider extends AbstractContentProvider {
 
-		/**
-		 * @param type
-		 */
 		public TheoremContentProvider() {
 			super(ITheorem.ELEMENT_TYPE);
 		}

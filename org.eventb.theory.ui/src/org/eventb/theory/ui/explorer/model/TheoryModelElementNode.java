@@ -3,6 +3,7 @@ package org.eventb.theory.ui.explorer.model;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IProofRulesBlock;
@@ -62,6 +63,9 @@ public class TheoryModelElementNode extends ModelElementNode{
 		if (type.equals(ITheorem.ELEMENT_TYPE)) {
 			return THEOREM_TYPE;
 		}
+		if (type.equals(IAxiomaticDefinitionsBlock.ELEMENT_TYPE)) {
+			return AXIOM_BLOCK_TYPE;
+		}
 		if(type.equals(IPSStatus.ELEMENT_TYPE))
 			return PO_TYPE;
 		return null;
@@ -72,6 +76,7 @@ public class TheoryModelElementNode extends ModelElementNode{
 	private static String PRULES_TYPE = "Proof Rules";
 	private static String THEOREM_TYPE = "Theorems";
 	private static String TPAR_TYPE = "Type Parameters";
+	private static String AXIOM_BLOCK_TYPE = "Axiomatic Definitions";
 	private static String PO_TYPE = "Proof Obligations";
 
 

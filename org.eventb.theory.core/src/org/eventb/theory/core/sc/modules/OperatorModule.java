@@ -9,6 +9,7 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -21,15 +22,17 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.modules.LabeledElementModule;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
+import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.INewOperatorDefinition;
+import org.eventb.theory.core.IRecursiveOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
-import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
-import org.eventb.theory.core.sc.states.OperatorLabelSymbolTable;
+import org.eventb.theory.core.sc.states.OperatorsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
@@ -102,7 +105,7 @@ public class OperatorModule extends LabeledElementModule{
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (OperatorLabelSymbolTable) repository.getState(OperatorLabelSymbolTable.STATE_TYPE);
+		return (OperatorsLabelSymbolTable) repository.getState(OperatorsLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
@@ -112,16 +115,7 @@ public class OperatorModule extends LabeledElementModule{
 				component);
 	}
 	
-	/**
-	 * Fetches the operators provided.
-	 * @param newOpDefs the operator definitions
-	 * @param theoryName the theory name
-	 * @param repository the state repository
-	 * @param monitor the progress monitor
-	 * @return the symbol infos
-	 * @throws CoreException
-	 */
-	protected ILabelSymbolInfo[] fetchOperators(INewOperatorDefinition[] newOpDefs, String theoryName,
+	private ILabelSymbolInfo[] fetchOperators(INewOperatorDefinition[] newOpDefs, String theoryName,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		boolean accurate = true;
@@ -146,16 +140,7 @@ public class OperatorModule extends LabeledElementModule{
 		return labelSymbolInfos;
 	}
 	
-	/**
-	 * Creates the statically checked counterparts of the given operator definitions
-	 * @param newOpDefs the operator definitions
-	 * @param targetRoot the target root
-	 * @param scNewOpDefs the SC operator definitions
-	 * @param labelSymbolInfos the symbol info
-	 * @param monitor the progress monitor
-	 * @throws CoreException
-	 */
-	protected void commitOperators(INewOperatorDefinition[] newOpDefs, ISCTheoryRoot targetRoot,
+	private void commitOperators(INewOperatorDefinition[] newOpDefs, ISCTheoryRoot targetRoot,
 			ISCNewOperatorDefinition[] scNewOpDefs,
 			ILabelSymbolInfo[] labelSymbolInfos, IProgressMonitor monitor) 
 	throws CoreException{
@@ -170,16 +155,7 @@ public class OperatorModule extends LabeledElementModule{
 		}
 	}
 	
-	/**
-	 * Create a statically checked operator definition corresponding to the given operator definition.
-	 * @param targetRoot the target root
-	 * @param symbolInfo the symbol info
-	 * @param newOpDef the operator definition
-	 * @param monitor the progress monitor
-	 * @return the SC new operator definition
-	 * @throws CoreException
-	 */
-	protected ISCNewOperatorDefinition createSCNewOperatorDefinition(ISCTheoryRoot targetRoot,
+	private ISCNewOperatorDefinition createSCNewOperatorDefinition(ISCTheoryRoot targetRoot,
 			ILabelSymbolInfo symbolInfo,
 			INewOperatorDefinition newOpDef,
 			IProgressMonitor monitor) throws CoreException {
@@ -189,21 +165,12 @@ public class OperatorModule extends LabeledElementModule{
 		return (ISCNewOperatorDefinition) scNewOpDef;
 	}
 	
-	/**
-	 * Processes the given operator definitions and accumulates information on the operator being defined.
-	 * @param newOpDefs the operator definitions
-	 * @param theoryName the name of the theory
-	 * @param scNewOpDefs the SC operator definitions
-	 * @param repository the state repository
-	 * @param operators the symbol infos
-	 * @param monitor the progress monitor
-	 * @throws CoreException
-	 */
-	protected void processOperators(INewOperatorDefinition[] newOpDefs, String theoryName, ISCNewOperatorDefinition[] scNewOpDefs,
+	private void processOperators(INewOperatorDefinition[] newOpDefs, String theoryName, ISCNewOperatorDefinition[] scNewOpDefs,
 			ISCStateRepository repository, ILabelSymbolInfo[] operators,
 			IProgressMonitor monitor) throws CoreException{
 		for (int i = 0; i < newOpDefs.length; i++) {
 			if (operators[i] != null && !operators[i].hasError()) {
+				INewOperatorDefinition opDef = newOpDefs[i];
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
 				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
@@ -214,20 +181,38 @@ public class OperatorModule extends LabeledElementModule{
 						identifierSymbolTable, ModulesUtils.IDENT_SYMTAB_SIZE,
 						factory));
 				String opID = theoryName + "." + operators[i].getSymbol();
-				IOperatorInformation operatorInformation = new OperatorInformation(opID, factory);
+				OperatorInformation operatorInformation = new OperatorInformation(opID, factory);
 				repository.setState(operatorInformation);
 				// copying of information
-				operatorInformation.setFormulaType(newOpDefs[i].getFormulaType());
-				operatorInformation.setNotation(newOpDefs[i].getNotationType());
-				operatorInformation.setSyntax(newOpDefs[i].getLabel());
-				operatorInformation.setAssociative(newOpDefs[i].isAssociative());
-				operatorInformation.setCommutative(newOpDefs[i].isCommutative());
-				
+				operatorInformation.setFormulaType(opDef.getFormulaType());
+				operatorInformation.setNotation(opDef.getNotationType());
+				operatorInformation.setSyntax(opDef.getLabel());
+				operatorInformation.setAssociative(opDef.isAssociative());
+				operatorInformation.setCommutative(opDef.isCommutative());
+				// Check number of definitions
+				{
+					IDirectOperatorDefinition[] opDefs = opDef.getDirectOperatorDefinitions();
+					IRecursiveOperatorDefinition[] recDefs = opDef.getRecursiveOperatorDefinitions();
+					if (opDefs.length + recDefs.length != 1) {
+						if (opDefs.length + recDefs.length == 0) {
+							createProblemMarker(opDef,
+									EventBAttributes.LABEL_ATTRIBUTE,
+									TheoryGraphProblem.OperatorHasNoDefError,
+									opDef.getLabel());
+						} else {
+							createProblemMarker(opDef,
+									EventBAttributes.LABEL_ATTRIBUTE,
+									TheoryGraphProblem.OperatorHasMoreThan1DefError,
+									opDef.getLabel());
+						}
+						operatorInformation.setHasError();
+					}
+				}
 				// children processors
 				{
-					initProcessorModules(newOpDefs[i], repository, null);
-					processModules(newOpDefs[i], scNewOpDefs[i], repository, monitor);
-					endProcessorModules(newOpDefs[i], repository, null);
+					initProcessorModules(opDef, repository, null);
+					processModules(opDef, scNewOpDefs[i], repository, monitor);
+					endProcessorModules(opDef, repository, null);
 				}
 				// update the factory
 				if(!operatorInformation.hasError()){
@@ -237,15 +222,12 @@ public class OperatorModule extends LabeledElementModule{
 				}
 				else {
 					scNewOpDefs[i].setHasError(true, monitor);
-					theoryAccuracyInfo.setNotAccurate();
 				}
 			}
 			monitor.worked(1);
 		}
 		// get the new type environment corresponding to the factory
-		// TODO test if another update of variable factory is needed
 		globalTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 		repository.setTypeEnvironment(globalTypeEnvironment);
 	}
-	
 }

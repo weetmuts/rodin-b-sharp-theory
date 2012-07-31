@@ -33,6 +33,8 @@ import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
@@ -42,6 +44,7 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -51,7 +54,80 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 @SuppressWarnings("restriction")
-public class OperatorInformation extends State implements IOperatorInformation {
+public class OperatorInformation extends State implements ISCState{
+
+	/**
+	 * 
+	 * A direct definition
+	 * @author maamria
+	 *
+	 */
+	public static class DirectDefintion implements IDefinition{
+		private Formula<?> directDefintion;
+		
+		public DirectDefintion(Formula<?> directDefinition){
+			this.directDefintion = directDefinition;
+		}
+		
+		public Formula<?> getDefinition(){
+			return directDefintion;
+		}
+	}
+	
+	/**
+	 * An axiomatic definition
+	 * @author maamria
+	 *
+	 */
+	public static class AxiomaticDefinition implements IDefinition{
+		private List<Predicate> axioms;
+		
+		public AxiomaticDefinition(List<Predicate> axioms){
+			this.axioms = axioms;
+		}
+		
+		public List<Predicate> getAxioms(){
+			return Collections.unmodifiableList(axioms);
+		}
+	}
+
+	/**
+	 * A recursive definition
+	 * @author maamria
+	 *
+	 */
+	public static class RecursiveDefinition implements IDefinition{
+		
+		private FreeIdentifier operatorArgument;
+		
+		private Map<Expression, Formula<?>> recursiveCases;
+		
+		public RecursiveDefinition(FreeIdentifier operatorArgument){
+			this.operatorArgument = operatorArgument;
+			this.recursiveCases = new LinkedHashMap<Expression, Formula<?>>();
+		}
+		
+		public FreeIdentifier getOperatorArgument(){
+			return operatorArgument;
+		}
+		
+		public Map<Expression, Formula<?>> getRecursiveCases(){
+			return Collections.unmodifiableMap(recursiveCases);
+		}
+		
+		public void addRecursiveCase(Expression inductiveCase, Formula<?> definition){
+			recursiveCases.put(inductiveCase, definition);
+		}
+	}
+
+	/**
+	 * Marker interface.
+	 * @author maamria
+	 *
+	 */
+	public static interface IDefinition{
+		
+	}
 
 	private static final Predicate[] NO_PREDICATES = new Predicate[0];
 
@@ -66,7 +142,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	private Map<String, Type> opArguments;
 	private Type expressionType;
 	private List<GivenType> typeParameters;
-	private IDefinition definition;
+	private OperatorInformation.IDefinition definition;
 	
 	private Predicate dWDCondition;
 
@@ -78,6 +154,9 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	private ITypeEnvironment typeEnvironment;
 
+	public final static IStateType<OperatorInformation> STATE_TYPE = SCCore
+			.getToolStateType(TheoryPlugin.PLUGIN_ID + ".operatorInformation");
+
 	public OperatorInformation(String operatorID, FormulaFactory factory) {
 		this.operatorID = operatorID;
 		this.allowedIdentifiers = new ArrayList<String>();
@@ -87,8 +166,18 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		this.factory = factory;
 		this.typeEnvironment = this.factory.makeTypeEnvironment();
 	}
+	
+	@Override
+	public void makeImmutable() {
+		allowedIdentifiers = Collections.unmodifiableList(allowedIdentifiers);
+		opArguments = Collections.unmodifiableMap(opArguments);
+		wdConditions = Collections.unmodifiableList(wdConditions);
+		typeParameters = Collections.unmodifiableList(typeParameters);
+		super.makeImmutable();
+	}
 
-	public boolean isAllowedIdentifier(FreeIdentifier ident) {
+	public boolean isAllowedIdentifier(FreeIdentifier ident) throws CoreException {
+		assertMutable();
 		return allowedIdentifiers.contains(ident.getName());
 	}
 
@@ -106,8 +195,10 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	/**
 	 * @param syntax
 	 *            the syntax to set
+	 * @throws CoreException 
 	 */
-	public void setSyntax(String syntax) {
+	public void setSyntax(String syntax) throws CoreException {
+		assertMutable();
 		this.syntax = syntax;
 	}
 
@@ -121,32 +212,40 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	/**
 	 * @param formulaType
 	 *            the formulaType to set
+	 * @throws CoreException 
 	 */
-	public void setFormulaType(FormulaType formulaType) {
+	public void setFormulaType(FormulaType formulaType) throws CoreException {
+		assertMutable();
 		this.formulaType = formulaType;
 	}
 
 	/**
 	 * @param notation
 	 *            the notation to set
+	 * @throws CoreException 
 	 */
-	public void setNotation(Notation notation) {
+	public void setNotation(Notation notation) throws CoreException {
+		assertMutable();
 		this.notation = notation;
 	}
 
 	/**
 	 * @param isAssociative
 	 *            the isAssociative to set
+	 * @throws CoreException 
 	 */
-	public void setAssociative(boolean isAssociative) {
+	public void setAssociative(boolean isAssociative) throws CoreException {
+		assertMutable();
 		this.isAssociative = isAssociative;
 	}
 
 	/**
 	 * @param isCommutative
 	 *            the isCommutative to set
+	 * @throws CoreException 
 	 */
-	public void setCommutative(boolean isCommutative) {
+	public void setCommutative(boolean isCommutative) throws CoreException {
+		assertMutable();
 		this.isCommutative = isCommutative;
 	}
 
@@ -154,20 +253,16 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	 * @return the wdCondition
 	 */
 	public Predicate getWdCondition() {
-		if (wdConditions.size() == 0) {
-			return null;
-		}
-		if (wdConditions.size() == 1) {
-			return wdConditions.get(0);
-		}
 		return AstUtilities.conjunctPredicates(wdConditions, factory);
 	}
 
 	/**
 	 * @param wdCondition
 	 *            the wdCondition to set
+	 * @throws CoreException 
 	 */
-	public void addWDCondition(Predicate wdCondition) {
+	public void addWDCondition(Predicate wdCondition) throws CoreException {
+		assertMutable();
 		wdConditions.add(wdCondition);
 	}
 
@@ -175,18 +270,17 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		return expressionType;
 	}
 	
-	@Override
 	public Predicate getD_WDCondition() {
 		return dWDCondition;
 	}
 
-	@Override
-	public void setD_WDCondition(Predicate dWDCondition) {
+	public void setD_WDCondition(Predicate dWDCondition) throws CoreException {
+		assertMutable();
 		this.dWDCondition = dWDCondition;
 	}
 
-	@Override
-	public void addOperatorArgument(String ident, Type type) {
+	public void addOperatorArgument(String ident, Type type) throws CoreException {
+		assertMutable();
 		if (!opArguments.containsKey(ident)) {
 			for (GivenType gtype : AstUtilities.getGivenTypes(type)) {
 				if (!typeParameters.contains(gtype)) {
@@ -205,7 +299,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	}
 
-	public void setHasError() {
+	public void setHasError() throws CoreException {
+		assertMutable();
 		this.hasError = true;
 	}
 
@@ -213,15 +308,16 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		return hasError;
 	}
 
-	@Override
-	public void setDefinition(IDefinition definition) {
+	public void setDefinition(OperatorInformation.IDefinition definition) throws CoreException {
+		assertMutable();
 		this.definition = definition;
 	}
 
-	public IFormulaExtension getExtension(Object sourceOfExtension) {
+	public IFormulaExtension getExtension(Object sourceOfExtension) throws CoreException {
+		assertImmutable();
 		if (!hasError) {
 			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
-			if (expressionType != null) {
+			if (formulaType.equals(FormulaType.EXPRESSION)) {
 				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
 						opArguments, expressionType, getWdCondition(), dWDCondition, sourceOfExtension);
 			} else {
@@ -234,8 +330,8 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	}
 
-	@Override
-	public IFormulaExtension getInterimExtension() {
+	public IFormulaExtension getInterimExtension() throws CoreException {
+		assertMutable();
 		IFormulaExtension formulaExtension = null;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 		if (expressionType != null) {
@@ -248,12 +344,13 @@ public class OperatorInformation extends State implements IOperatorInformation {
 		return formulaExtension;
 	}
 
-	@Override
-	public void setResultantType(Type resultantType) {
+	public void setResultantType(Type resultantType) throws CoreException {
+		assertMutable();
 		this.expressionType = resultantType;
 	}
 
 	public void generateDefinitionalRule(INewOperatorDefinition originDefinition, ISCTheoryRoot theoryRoot, FormulaFactory enhancedFactory) throws CoreException {
+		assertImmutable();
 		// a rule block
 		ISCProofRulesBlock newRulesbBlock = theoryRoot.getProofRulesBlock("generatedBlock");
 		if (!newRulesbBlock.exists()) {
@@ -277,7 +374,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			}
 		}
 		// one rewrite rule
-		if (definition instanceof DirectDefintion) {
+		if (definition instanceof OperatorInformation.DirectDefintion) {
 			ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID, syntax + " expansion");
 			rewRule.setSource(originDefinition, null);
 			Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution, enhancedFactory);
@@ -286,10 +383,10 @@ public class OperatorInformation extends State implements IOperatorInformation {
 			rhs.create(null, null);
 			rhs.setLabel(syntax + " rhs", null);
 			rhs.setPredicate(AstUtilities.BTRUE, null);
-			rhs.setSCFormula(((DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
+			rhs.setSCFormula(((OperatorInformation.DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
 			rhs.setSource(originDefinition, null);
-		} else if (definition instanceof RecursiveDefinition) {
-			RecursiveDefinition recursiveDefinition = (RecursiveDefinition) definition;
+		} else if (definition instanceof OperatorInformation.RecursiveDefinition) {
+			OperatorInformation.RecursiveDefinition recursiveDefinition = (OperatorInformation.RecursiveDefinition) definition;
 			Map<Expression, Formula<?>> recursiveCases = recursiveDefinition.getRecursiveCases();
 			FreeIdentifier inductiveIdent = recursiveDefinition.getOperatorArgument();
 			int index = 0;
@@ -341,22 +438,20 @@ public class OperatorInformation extends State implements IOperatorInformation {
 
 	}
 
-	@Override
 	public Map<String, Type> getOperatorArguments() {
 		return Collections.unmodifiableMap(opArguments);
 	}
 
-	@Override
 	public Notation getNotation() {
 		return notation;
 	}
 
 	@Override
 	public IStateType<?> getStateType() {
-		return STATE_TYPE;
+		return OperatorInformation.STATE_TYPE;
 	}
 
-	protected ISCRewriteRule createRewriteRule(ISCProofRulesBlock newRulesbBlock, String name, String description) throws RodinDBException {
+	private ISCRewriteRule createRewriteRule(ISCProofRulesBlock newRulesbBlock, String name, String description) throws RodinDBException {
 		ISCRewriteRule rewRule = newRulesbBlock.getRewriteRule(name);
 		rewRule.create(null, null);
 		rewRule.setDefinitional(true, null);
@@ -376,15 +471,15 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	 *            the formula factory with <code>formulaExtension</code> added
 	 * @return the lhs formula
 	 */
-	protected Formula<?> makeLhs(FormulaFactory ff) {
+	private Formula<?> makeLhs(FormulaFactory ff) {
 		Formula<?> lhs = null;
 		Expression[] childExpressionsForLhs = getChildExpressionsForLhs(ff);
 		if (isExpressionOperator()) {
 			lhs = ff.makeExtendedExpression((IExpressionExtension) formulaExtension, childExpressionsForLhs, NO_PREDICATES, null);
 			// FIXED Bug in case of generic operator (e.g., {}), this is done to
 			// type check the left hand side
-			if (definition instanceof DirectDefintion && childExpressionsForLhs.length == 0) {
-				DirectDefintion directDefintion = (DirectDefintion) definition;
+			if (definition instanceof OperatorInformation.DirectDefintion && childExpressionsForLhs.length == 0) {
+				OperatorInformation.DirectDefintion directDefintion = (OperatorInformation.DirectDefintion) definition;
 				Expression expressionDefinition = (Expression) directDefintion.getDefinition();
 				RelationalPredicate typeCheckPredicate = ff.makeRelationalPredicate(Formula.EQUAL, (Expression) lhs, expressionDefinition, null);
 				ITypeCheckResult typeCheckResult = typeCheckPredicate.typeCheck(typeEnvironment);
@@ -407,7 +502,7 @@ public class OperatorInformation extends State implements IOperatorInformation {
 	 *            the formula factory with <code>formulaExtension</code> added
 	 * @return the child expressions
 	 */
-	protected Expression[] getChildExpressionsForLhs(FormulaFactory ff) {
+	private Expression[] getChildExpressionsForLhs(FormulaFactory ff) {
 		Expression[] exps = new Expression[opArguments.size()];
 		int i = 0;
 		for (String name : opArguments.keySet()){

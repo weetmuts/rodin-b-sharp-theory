@@ -18,11 +18,13 @@ import org.eventb.core.ast.PredicateVariable;
  * <p>This is particularly useful when dealing with many formulae in an associative formula that are equal 
  * (by a call to the <code>Object.equals(Object)</code>), in which case it is necessary to differentiate between them.
  * 
+ * <p> Indexed formulae are immutable after creation.
+ * 
  * @since 1.0
  * @author maamria
  *
  */
-public class IndexedFormula<F extends Formula<F>>{
+public final class IndexedFormula<F extends Formula<F>>{
 
 	private F formula;
 	private int index;
@@ -76,6 +78,6 @@ public class IndexedFormula<F extends Formula<F>>{
 	
 	@Override
 	public String toString() {
-		return "IndexedFormula{" + index + ":" + formula + "}";
+		return "IndexedFormula{" + formula + " @ " + index + "}";
 	}
 }

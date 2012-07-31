@@ -24,6 +24,7 @@ import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.WD_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.HYP_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -56,7 +57,8 @@ public abstract class TheoryElement extends EventBElement implements
 		IDefinitionalElement, ISCTypeElement,
 		IGivenTypeElement, ISCGivenTypeElement, ISCFormulaElement,
 		IReasoningTypeElement, IOperatorGroupElement,
-		IImportTheoryElement, IInductiveArgumentElement, IWDElement, IApplicabilityElement {
+		IImportTheoryElement, IInductiveArgumentElement, IWDElement, IApplicabilityElement, 
+		IHypElement{
 
 	public TheoryElement(String name, IRodinElement parent) {
 		super(name, parent);
@@ -344,6 +346,21 @@ public abstract class TheoryElement extends EventBElement implements
 		setAttributeValue(IMPORT_THEORY_ATTRIBUTE, root, monitor);
 	}
 
+	@Override
+	public boolean hasHypAttribute() throws RodinDBException {
+		return hasAttribute(HYP_ATTRIBUTE);
+	}
+	
+	@Override
+	public boolean isHyp() throws RodinDBException {
+		return getAttributeValue(HYP_ATTRIBUTE);
+	}
+	
+	@Override
+	public void setHyp(boolean isHyp, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(HYP_ATTRIBUTE, isHyp, monitor);
+	}
+	
 	public boolean hasInductiveArgument() throws RodinDBException{
 		return hasAttribute(INDUCTIVE_ARGUMENT_ATTRIBUTE);
 	}

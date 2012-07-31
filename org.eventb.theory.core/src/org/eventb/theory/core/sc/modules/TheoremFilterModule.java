@@ -20,7 +20,7 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.ITheorem;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
+import org.eventb.theory.core.sc.states.TheoremsLabelSymbolTable;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
 
@@ -66,7 +66,7 @@ public class TheoremFilterModule extends SCFilterModule{
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		labelSymbolTable =(ILabelSymbolTable) repository.getState(TheoryLabelSymbolTable.STATE_TYPE);
+		labelSymbolTable =(ILabelSymbolTable) repository.getState(TheoremsLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override

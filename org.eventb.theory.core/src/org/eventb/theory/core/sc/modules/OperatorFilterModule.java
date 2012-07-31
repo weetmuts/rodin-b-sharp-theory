@@ -20,14 +20,12 @@ import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.INewOperatorDefinition;
-import org.eventb.theory.core.IRecursiveOperatorDefinition;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.OperatorLabelSymbolTable;
+import org.eventb.theory.core.sc.states.OperatorsLabelSymbolTable;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -51,8 +49,8 @@ public class OperatorFilterModule extends SCFilterModule {
 		ITheoryRoot theoryRoot = opDef.getAncestor(ITheoryRoot.ELEMENT_TYPE);
 		String opLabel = opDef.getLabel();
 		// check against the symbol table for operator labels
-		OperatorLabelSymbolTable labelSymbolTable = (OperatorLabelSymbolTable) repository
-				.getState(OperatorLabelSymbolTable.STATE_TYPE);
+		OperatorsLabelSymbolTable labelSymbolTable = (OperatorsLabelSymbolTable) repository
+				.getState(OperatorsLabelSymbolTable.STATE_TYPE);
 		ILabelSymbolInfo symbolInfo = labelSymbolTable.getSymbolInfo(opLabel);
 		if (symbolInfo == null) {
 			return false;
@@ -72,16 +70,16 @@ public class OperatorFilterModule extends SCFilterModule {
 					TheoryGraphProblem.OperatorSynIsATypeParError, syntax);
 			return false;
 		}
-		if (!AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
-			createProblemMarker(opDef,
-					EventBAttributes.LABEL_ATTRIBUTE,
-					TheoryGraphProblem.OperatorSynExistsError, syntax);
-			return false;
-		}
 		if (!FormulaFactory.checkSymbol(syntax) || syntax.contains(" ")) {
 			createProblemMarker(opDef,
 					EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorInvalidSynError, syntax);
+			return false;
+		}
+		if (!AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
+			createProblemMarker(opDef,
+					EventBAttributes.LABEL_ATTRIBUTE,
+					TheoryGraphProblem.OperatorSynExistsError, syntax);
 			return false;
 		}
 		if (!opDef.hasFormulaType()) {
@@ -101,7 +99,21 @@ public class OperatorFilterModule extends SCFilterModule {
 		Notation notation = opDef.getNotationType();
 		symbolInfo.setAttributeValue(TheoryAttributes.NOTATION_TYPE_ATTRIBUTE,
 				notation.toString());
-
+		// check against use of POSTFIX as it is not supported yet
+		if (notation.equals(Notation.POSTFIX)) {
+			createProblemMarker(opDef,
+					TheoryAttributes.NOTATION_TYPE_ATTRIBUTE,
+					TheoryGraphProblem.OperatorCannotBePostfix);
+			return false;
+		}
+		// Infix predicates not supported
+		if (formType.equals(FormulaType.PREDICATE)
+				&& notation.equals(Notation.INFIX)) {
+			createProblemMarker(opDef,
+					EventBAttributes.LABEL_ATTRIBUTE,
+					TheoryGraphProblem.OperatorPredOnlyPrefix);
+			return false;	
+		}
 		if (!opDef.hasAssociativeAttribute()) {
 			createProblemMarker(opDef, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
 					TheoryGraphProblem.OperatorAssocMissingError, opLabel);
@@ -116,26 +128,6 @@ public class OperatorFilterModule extends SCFilterModule {
 		}
 		symbolInfo.setAttributeValue(TheoryAttributes.COMMUTATIVE_ATTRIBUTE,
 				opDef.isCommutative());
-
-		// Check number of definitions
-		{
-			IDirectOperatorDefinition[] opDefs = opDef.getDirectOperatorDefinitions();
-			IRecursiveOperatorDefinition[] recDefs = opDef.getRecursiveOperatorDefinitions();
-			if (opDefs.length + recDefs.length != 1) {
-				if (opDefs.length + recDefs.length == 0) {
-					createProblemMarker(opDef,
-							EventBAttributes.LABEL_ATTRIBUTE,
-							TheoryGraphProblem.OperatorHasNoDefError,
-							opDef.getLabel());
-				} else {
-					createProblemMarker(opDef,
-							EventBAttributes.LABEL_ATTRIBUTE,
-							TheoryGraphProblem.OperatorHasMoreThan1DefError,
-							opDef.getLabel());
-				}
-				return false;
-			}
-		}
 		return true;
 	}
 

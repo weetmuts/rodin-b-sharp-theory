@@ -28,11 +28,6 @@ public class ModelInferenceRule extends TheoryModelPOContainer{
 	}
 
 	private IInferenceRule internalRule;
-	
-	
-	public IInferenceRule getInternalTheorem() {
-		return internalRule;
-	}
 
 	@Override
 	public IRodinElement getInternalElement() {

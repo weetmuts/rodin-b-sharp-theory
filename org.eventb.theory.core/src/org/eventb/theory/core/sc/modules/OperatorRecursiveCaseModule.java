@@ -34,10 +34,8 @@ import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
-import org.eventb.theory.core.sc.states.IOperatorInformation.RecursiveDefinition;
-import org.eventb.theory.core.sc.states.IRecursiveDefinitionInfo.CaseEntry;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -50,19 +48,28 @@ import org.rodinp.core.RodinDBException;
  */
 public class OperatorRecursiveCaseModule extends SCProcessorModule {
 
-	private static final IModuleType<OperatorRecursiveCaseModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorRecursiveCaseModule");
+	private static final IModuleType<OperatorRecursiveCaseModule> MODULE_TYPE = SCCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorRecursiveCaseModule");
 
 	private FormulaFactory factory;
 	private RecursiveDefinitionInfo recursiveDefinitionInfo;
 	private ITypeEnvironment typeEnvironment;
-	private IOperatorInformation operatorInformation;
+	private OperatorInformation operatorInformation;
 
 	@Override
-	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
 		IRecursiveOperatorDefinition definition = (IRecursiveOperatorDefinition) element;
 		ISCRecursiveOperatorDefinition scDefinition = (ISCRecursiveOperatorDefinition) target;
 		IRecursiveDefinitionCase[] recursiveDefinitionCases = definition.getRecursiveDefinitionCases();
-		if (recursiveDefinitionCases.length > 0 && !operatorInformation.hasError()) {
+		int numberOfCases = recursiveDefinitionCases.length;
+		if (numberOfCases < 1) {
+			createProblemMarker(definition, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
+					TheoryGraphProblem.NoRecCasesError);
+			operatorInformation.setHasError();
+			recursiveDefinitionInfo.makeImmutable();
+		}
+		if (numberOfCases > 0 && !operatorInformation.hasError()) {
 			processCases(recursiveDefinitionCases, scDefinition, repository, monitor);
 			recursiveDefinitionInfo.makeImmutable();
 			if (!recursiveDefinitionInfo.isAccurate()) {
@@ -73,89 +80,100 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 		}
 	}
 
-	protected void processCases(IRecursiveDefinitionCase[] origins, ISCRecursiveOperatorDefinition target, ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	protected void processCases(IRecursiveDefinitionCase[] origins, ISCRecursiveOperatorDefinition target,
+			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		for (IRecursiveDefinitionCase definitionCase : origins) {
-			if (!definitionCase.hasExpressionString()) {
-				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE, GraphProblem.ExpressionUndefError);
+			if (!definitionCase.hasExpressionString() || "".equals(definitionCase.getExpressionString())) {
+				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+						GraphProblem.ExpressionUndefError);
 				recursiveDefinitionInfo.setNotAccurate();
 				continue;
-			} else {
-				String caseString = definitionCase.getExpressionString();
-				IParseResult parseResult = factory.parseExpression(caseString, LanguageVersion.V2, null);
-				if (CoreUtilities.issueASTProblemMarkers(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE, parseResult, this)) {
+			}
+			String caseString = definitionCase.getExpressionString();
+			IParseResult parseResult = factory.parseExpression(caseString, LanguageVersion.V2, null);
+			if (CoreUtilities.issueASTProblemMarkers(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+					parseResult, this)) {
+				recursiveDefinitionInfo.setNotAccurate();
+				continue;
+			}
+			Expression caseExpression = parseResult.getParsedExpression();
+			if (!(caseExpression instanceof ExtendedExpression)
+					|| !(recursiveDefinitionInfo.isConstructor(((ExtendedExpression) caseExpression).getExtension()))) {
+				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+						TheoryGraphProblem.InductiveCaseNotAppropriateExp, caseExpression.toString());
+				recursiveDefinitionInfo.setNotAccurate();
+				continue;
+			}
+			ExtendedExpression constructorExp = (ExtendedExpression) caseExpression;
+			Expression[] childExpressions = constructorExp.getChildExpressions();
+			boolean illegalConsArg = false;
+			for (Expression childExpression : childExpressions) {
+				if (!(childExpression instanceof FreeIdentifier)) {
+					illegalConsArg = true;
 					recursiveDefinitionInfo.setNotAccurate();
-					continue;
-				} else {
-					Expression caseExpression = parseResult.getParsedExpression();
-					if (!(caseExpression instanceof ExtendedExpression) || !(recursiveDefinitionInfo.isConstructor(((ExtendedExpression) caseExpression).getExtension()))) {
-						createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.InductiveCaseNotAppropriateExp, caseExpression.toString());
-						recursiveDefinitionInfo.setNotAccurate();
-						continue;
-					} else {
-						ExtendedExpression constructorExp = (ExtendedExpression) caseExpression;
-						Expression[] childExpressions = constructorExp.getChildExpressions();
-						for (Expression childExpression : childExpressions) {
-							if (!(childExpression instanceof FreeIdentifier)) {
-								recursiveDefinitionInfo.setNotAccurate();
-								createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.ConsArgNotIdentInCase, childExpression.toString());
-								continue;
-							} else {
-								// identifier is used before
-								if (typeEnvironment.contains(((FreeIdentifier) childExpression).getName())) {
-									recursiveDefinitionInfo.setNotAccurate();
-									createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.IdentCannotBeUsedAsConsArg,
-											((FreeIdentifier) childExpression).toString());
-									continue;
-								}
-							}
-						}
-						IExpressionExtension extension = ((ExtendedExpression) caseExpression).getExtension();
-						FreeIdentifier inductiveArg = recursiveDefinitionInfo.getInductiveArgument();
-						Predicate predicate = factory.makeRelationalPredicate(Formula.EQUAL, inductiveArg, constructorExp, null);
-						ITypeCheckResult tcResult = predicate.typeCheck(typeEnvironment);
-						if (tcResult.hasProblem()) {
-							createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.UnableToTypeCase);
-							continue;
-						} else {
-							if (recursiveDefinitionInfo.isCoveredConstuctor(extension)) {
-								recursiveDefinitionInfo.setNotAccurate();
-								createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.RecCaseAlreadyCovered);
-								continue;
-							} else {
-								ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
-								localTypeEnvironment.addAll(tcResult.getInferredEnvironment());
-								// we do this because it's type checked
-								constructorExp = (ExtendedExpression) ((RelationalPredicate) predicate).getRight();
-								recursiveDefinitionInfo.addEntry(definitionCase, constructorExp, localTypeEnvironment);
-							}
-						}
-
-					}
+					createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+							TheoryGraphProblem.ConsArgNotIdentInCase, childExpression.toString());
+				} else if (typeEnvironment.contains(((FreeIdentifier) childExpression).getName())) {
+					illegalConsArg = true;
+					recursiveDefinitionInfo.setNotAccurate();
+					createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+							TheoryGraphProblem.IdentCannotBeUsedAsConsArg,
+							((FreeIdentifier) childExpression).toString());
 				}
+			}
+			if (illegalConsArg) {
+				continue;
+			}
+			IExpressionExtension extension = ((ExtendedExpression) caseExpression).getExtension();
+			if (recursiveDefinitionInfo.isCoveredConstuctor(extension)) {
+				recursiveDefinitionInfo.setNotAccurate();
+				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+						TheoryGraphProblem.RecCaseAlreadyCovered);
+				continue;
+			}
+			FreeIdentifier inductiveArg = recursiveDefinitionInfo.getInductiveArgument();
+			Predicate predicate = factory.makeRelationalPredicate(Formula.EQUAL, inductiveArg, constructorExp, null);
+			ITypeCheckResult tcResult = predicate.typeCheck(typeEnvironment);
+			// TODO this passage may not be tested
+			if (tcResult.hasProblem()) {
+				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+						TheoryGraphProblem.UnableToTypeCase);
+				continue;
+			} else {
+				ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
+				localTypeEnvironment.addAll(tcResult.getInferredEnvironment());
+				// we do this because it's type checked
+				constructorExp = (ExtendedExpression) ((RelationalPredicate) predicate).getRight();
+				recursiveDefinitionInfo.addEntry(definitionCase, constructorExp, localTypeEnvironment);
 			}
 		}
 	}
 
-	public void processCasesFormulae(IRecursiveOperatorDefinition definition, ISCRecursiveOperatorDefinition scDefinition, ISCStateRepository repository, IProgressMonitor monitor)
+	public void processCasesFormulae(IRecursiveOperatorDefinition definition,
+			ISCRecursiveOperatorDefinition scDefinition, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		Map<IRecursiveDefinitionCase, CaseEntry> baseEntries = recursiveDefinitionInfo.getBaseEntries();
-		Map<IRecursiveDefinitionCase, CaseEntry> inductiveEntries = recursiveDefinitionInfo.getInductiveEntries();
+		Map<IRecursiveDefinitionCase, RecursiveDefinitionInfo.CaseEntry> baseEntries = recursiveDefinitionInfo
+				.getBaseEntries();
+		Map<IRecursiveDefinitionCase, RecursiveDefinitionInfo.CaseEntry> inductiveEntries = recursiveDefinitionInfo
+				.getInductiveEntries();
 		if (!baseEntries.isEmpty() || !inductiveEntries.isEmpty()) {
 			ISCNewOperatorDefinition scParent = scDefinition.getAncestor(ISCNewOperatorDefinition.ELEMENT_TYPE);
 			INewOperatorDefinition parent = definition.getAncestor(INewOperatorDefinition.ELEMENT_TYPE);
 			if (!recursiveDefinitionInfo.coveredAllConstructors()) {
-				createProblemMarker(definition, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE, TheoryGraphProblem.NoCoverageAllRecCase);
+				createProblemMarker(definition, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
+						TheoryGraphProblem.NoCoverageAllRecCase);
 				operatorInformation.setHasError();
 			} else {
 				boolean isExpression = AstUtilities.isExpressionOperator(operatorInformation.getFormulaType());
 				Type resultantType = null;
-				RecursiveDefinition recursiveDefinition = new RecursiveDefinition(recursiveDefinitionInfo.getInductiveArgument());
+				OperatorInformation.RecursiveDefinition recursiveDefinition = new OperatorInformation.RecursiveDefinition(
+						recursiveDefinitionInfo.getInductiveArgument());
 				// process base cases
 				for (IRecursiveDefinitionCase defCase : baseEntries.keySet()) {
-					CaseEntry caseEntry = baseEntries.get(defCase);
+					RecursiveDefinitionInfo.CaseEntry caseEntry = baseEntries.get(defCase);
 					if (!defCase.hasFormula()) {
-						createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
+						createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE,
+								TheoryGraphProblem.MissingFormulaError);
 						caseEntry.setErroneous();
 						operatorInformation.setHasError();
 						continue;
@@ -163,19 +181,22 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						Formula<?> formula = ModulesUtils.parseFormula(defCase, factory, this);
 						if (formula != null) {
 							if (isExpression && !(formula instanceof Expression)) {
-								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotExpError, parent.getLabel());
+								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
+										TheoryGraphProblem.OperatorDefNotExpError, parent.getLabel());
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
 								continue;
 							}
 							if (!isExpression && !(formula instanceof Predicate)) {
-								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotPredError, parent.getLabel());
+								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
+										TheoryGraphProblem.OperatorDefNotPredError, parent.getLabel());
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
 								continue;
 							}
-							formula = ModulesUtils.checkFormula(defCase, formula, caseEntry.getLocalTypeEnvironment(), this);
-							if(formula == null){
+							formula = ModulesUtils.checkFormula(defCase, formula, caseEntry.getLocalTypeEnvironment(),
+									this);
+							if (formula == null) {
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
 								continue;
@@ -187,42 +208,47 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 									operatorInformation.setResultantType(resultantType);
 								}
 								if (!expression.getType().equals(resultantType)) {
-									createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.RecOpTypeNotConsistent, resultantType, expression.getType());
+									createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE,
+											TheoryGraphProblem.RecOpTypeNotConsistent, resultantType,
+											expression.getType());
 									caseEntry.setErroneous();
 									operatorInformation.setHasError();
 									continue;
 								} else {
 									recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
 								}
-							} else{
+							} else {
 								recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
 							}
-						}
-						else {
+						} else {
 							caseEntry.setErroneous();
 							operatorInformation.setHasError();
 						}
 					}
 				}
 				if (!operatorInformation.hasError()) {
-					FormulaFactory localFactory = factory.withExtensions(Collections.singleton(operatorInformation.getInterimExtension()));
+					FormulaFactory localFactory = factory.withExtensions(Collections.singleton(operatorInformation
+							.getInterimExtension()));
 					// process inductive cases
 					for (IRecursiveDefinitionCase defCase : inductiveEntries.keySet()) {
-						CaseEntry caseEntry = inductiveEntries.get(defCase);
+						RecursiveDefinitionInfo.CaseEntry caseEntry = inductiveEntries.get(defCase);
 						if (!defCase.hasFormula()) {
-							createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
-							caseEntry.setErroneous();					
+							createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE,
+									TheoryGraphProblem.MissingFormulaError);
+							caseEntry.setErroneous();
 							operatorInformation.setHasError();
 							continue;
 						} else {
-							Formula<?> formula = ModulesUtils.parseAndCheckFormula(defCase, resultantType != null, true, localFactory, caseEntry.getLocalTypeEnvironment(), this);
+							Formula<?> formula = ModulesUtils.parseAndCheckFormula(defCase, resultantType != null,
+									true, localFactory, caseEntry.getLocalTypeEnvironment(), this);
 							if (formula != null) {
 								if (resultantType != null) {
 									Expression expression = (Expression) formula;
 									if (!expression.getType().equals(resultantType)) {
-										createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.RecOpTypeNotConsistent, resultantType,
+										createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE,
+												TheoryGraphProblem.RecOpTypeNotConsistent, resultantType,
 												expression.getType());
-										caseEntry.setErroneous();					
+										caseEntry.setErroneous();
 										operatorInformation.setHasError();
 									} else {
 										recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
@@ -230,14 +256,13 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 								} else {
 									recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
 								}
-							}
-							else {
+							} else {
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
 							}
 						}
 					}
-					if (!operatorInformation.hasError()){
+					if (!operatorInformation.hasError()) {
 						operatorInformation.setDefinition(recursiveDefinition);
 						if (operatorInformation.getWdCondition() == null) {
 							operatorInformation.addWDCondition(AstUtilities.BTRUE);
@@ -259,16 +284,18 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 	}
 
 	@Override
-	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
 		recursiveDefinitionInfo = (RecursiveDefinitionInfo) repository.getState(RecursiveDefinitionInfo.STATE_TYPE);
-		operatorInformation = (IOperatorInformation) repository.getState(IOperatorInformation.STATE_TYPE);
+		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 	}
 
 	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		operatorInformation = null;
 		factory = null;
 		typeEnvironment = null;
@@ -296,11 +323,13 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 	 *            the progress monitor
 	 * @throws RodinDBException
 	 */
-	protected void createSCCase(IRecursiveDefinitionCase origin, ISCRecursiveOperatorDefinition parent, RecursiveDefinition recursiveDefinition,
-			Map<IRecursiveDefinitionCase, CaseEntry> entries, IProgressMonitor monitor) throws RodinDBException {
+	private void createSCCase(IRecursiveDefinitionCase origin, ISCRecursiveOperatorDefinition parent,
+			OperatorInformation.RecursiveDefinition recursiveDefinition,
+			Map<IRecursiveDefinitionCase, RecursiveDefinitionInfo.CaseEntry> entries, IProgressMonitor monitor)
+			throws RodinDBException {
 		ISCRecursiveDefinitionCase scDefCase = parent.getRecursiveDefinitionCase(origin.getElementName());
 		scDefCase.create(null, monitor);
-		CaseEntry entry = entries.get(origin);
+		RecursiveDefinitionInfo.CaseEntry entry = entries.get(origin);
 		scDefCase.setExpression(entry.getCaseExpression(), monitor);
 		scDefCase.setSCFormula(recursiveDefinition.getRecursiveCases().get(entry.getCaseExpression()), monitor);
 		scDefCase.setSource(origin, monitor);

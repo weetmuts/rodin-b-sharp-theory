@@ -91,6 +91,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 	 *            the progress monitor
 	 * @throws CoreException
 	 */
+	@SuppressWarnings("restriction")
 	protected void processImports(IImportTheory[] importTheories,
 			ISCTheoryRoot targetRoot, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {

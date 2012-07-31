@@ -22,52 +22,51 @@ import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author maamria
- *
+ * 
  */
-public class OperatorGrammarPatcherModule extends SCProcessorModule{
+public class OperatorGrammarPatcherModule extends SCProcessorModule {
 
-	IModuleType<OperatorGrammarPatcherModule> MODULE_TYPE = 
-			SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorGrammarPatcherModule");
-	
+	IModuleType<OperatorGrammarPatcherModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
+			+ ".operatorGrammarPatcherModule");
+
 	private FormulaFactory factory;
-	private IOperatorInformation operatorInformation;
-	
+	private OperatorInformation operatorInformation;
+
 	@Override
-	public void process(IRodinElement element, IInternalElement target,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
 		INewOperatorDefinition newOperatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
-		ISCTheoryRoot theoryRoot = scNewOperatorDefinition.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);;
-		if(!operatorInformation.hasError()){
+		ISCTheoryRoot theoryRoot = scNewOperatorDefinition.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
+		
+		if (!operatorInformation.hasError()) {
 			String syntax = operatorInformation.getSyntax();
-			if(AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)){
+			if (AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
+				operatorInformation.makeImmutable();
 				IFormulaExtension formulaExtension = operatorInformation.getExtension(scNewOperatorDefinition);
-				FormulaFactory newFactory = factory.withExtensions(
-						GeneralUtilities.singletonSet(formulaExtension));
+				FormulaFactory newFactory = factory.withExtensions(GeneralUtilities.singletonSet(formulaExtension));
 				repository.setFormulaFactory(newFactory);
-				repository.setTypeEnvironment(
-						AstUtilities.getTypeEnvironmentForFactory(
-								repository.getTypeEnvironment(), newFactory));
+				repository.setTypeEnvironment(AstUtilities.getTypeEnvironmentForFactory(
+						repository.getTypeEnvironment(), newFactory));
 				factory = repository.getFormulaFactory();
 				scNewOperatorDefinition.setHasError(false, monitor);
 				scNewOperatorDefinition.setOperatorGroup(formulaExtension.getGroupId(), monitor);
-				if (operatorInformation.isExpressionOperator()){
+				if (operatorInformation.isExpressionOperator()) {
 					scNewOperatorDefinition.setType(operatorInformation.getResultantType(), monitor);
 				}
 				operatorInformation.generateDefinitionalRule(newOperatorDefinition, theoryRoot, factory);
-			}
-			else {
-				createProblemMarker((INewOperatorDefinition) element,EventBAttributes.LABEL_ATTRIBUTE, 
+			} else {
+				createProblemMarker((INewOperatorDefinition) element, EventBAttributes.LABEL_ATTRIBUTE,
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAddedError, syntax);
 				operatorInformation.setHasError();
+				operatorInformation.makeImmutable();
 			}
 		}
 	}
@@ -76,20 +75,18 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule{
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
-	
+
 	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
-		operatorInformation = (IOperatorInformation) repository
-				.getState(IOperatorInformation.STATE_TYPE);
+		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 	}
 
 	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		factory = null;
 		operatorInformation = null;
 		super.endModule(element, repository, monitor);

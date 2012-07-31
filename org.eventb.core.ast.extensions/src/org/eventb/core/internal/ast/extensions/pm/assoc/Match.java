@@ -18,7 +18,7 @@ import org.eventb.core.ast.extensions.pm.IBinding;
  * @author maamria
  *
  */
-public class Match<F extends Formula<F>> {
+public final class Match<F extends Formula<F>> {
 
 	private IndexedFormula<F> indexedFormula;
 	private IndexedFormula<F> indexedPattern;
@@ -64,9 +64,9 @@ public class Match<F extends Formula<F>> {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Match{");
-		builder.append("Formula : " + indexedFormula + ",");
-		builder.append("Pattern : " + indexedPattern + ",");
-		builder.append("Binding : "+binding+"}");
+		builder.append("Formula : " + indexedFormula + " , ");
+		builder.append("Pattern : " + indexedPattern + " , ");
+		builder.append("Binding : "+binding+" }");
 		return builder.toString();
 	}
 	

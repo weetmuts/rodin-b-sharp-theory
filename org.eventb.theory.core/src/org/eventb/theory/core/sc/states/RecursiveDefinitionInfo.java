@@ -14,9 +14,12 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.IRecursiveDefinitionCase;
+import org.eventb.theory.core.plugin.TheoryPlugin;
 
 /**
  * 
@@ -24,8 +27,11 @@ import org.eventb.theory.core.IRecursiveDefinitionCase;
  * 
  */
 @SuppressWarnings("restriction")
-public class RecursiveDefinitionInfo extends State implements IRecursiveDefinitionInfo {
+public class RecursiveDefinitionInfo extends State implements ISCState{
 
+	public final static IStateType<RecursiveDefinitionInfo> STATE_TYPE = SCCore
+			.getToolStateType(TheoryPlugin.PLUGIN_ID + ".recursiveDefinitionInfo");
+	
 	private Map<IRecursiveDefinitionCase, CaseEntry> baseEntries;
 	private Map<IRecursiveDefinitionCase, CaseEntry> inductiveEntries;
 	private FreeIdentifier inductiveArgument;
@@ -74,7 +80,7 @@ public class RecursiveDefinitionInfo extends State implements IRecursiveDefiniti
 	public void addEntry(IRecursiveDefinitionCase defCase, 
 			ExtendedExpression exp, ITypeEnvironment typeEnvironment) throws CoreException{
 		assertMutable();
-		CaseEntry caseEntry = new CaseEntry(exp, typeEnvironment);
+		RecursiveDefinitionInfo.CaseEntry caseEntry = new CaseEntry(exp, typeEnvironment);
 		if (caseEntry.isBaseCase()){
 			baseEntries.put(defCase, caseEntry);
 		}
@@ -116,7 +122,52 @@ public class RecursiveDefinitionInfo extends State implements IRecursiveDefiniti
 		return STATE_TYPE;
 	}
 	
+	/**
+	 * A simple implementation for a recursive definition case.
+	 * 
+	 * <p> Example : cons(x, l0) => 1 + listSize(l0)
+	 * @author maamria
+	 *
+	 */
+	public static class CaseEntry {
+		ExtendedExpression caseExpression;
+		ITypeEnvironment localTypeEnvironment;
+		private boolean erroneous;
 	
+		// expression must be type checked
+		public CaseEntry(ExtendedExpression caseExpression,
+				ITypeEnvironment localTypeEnvironment) {
+			this.caseExpression = caseExpression;
+			this.localTypeEnvironment = localTypeEnvironment;
+		}
+	
+		public ExtendedExpression getCaseExpression() {
+			return caseExpression;
+		}
+	
+		public ITypeEnvironment getLocalTypeEnvironment() {
+			return localTypeEnvironment;
+		}
+		
+		public boolean isErroneous() {
+			return erroneous;
+		}
+	
+		public void setErroneous() {
+			this.erroneous = true;
+		}
+	
+		public boolean isBaseCase(){
+			boolean isBase = true;
+			for (FreeIdentifier ident : caseExpression.getFreeIdentifiers()) {
+				if (ident.getType().equals(caseExpression.getType())) {
+					isBase = false;
+					break;
+				}
+			}
+			return isBase;
+		}
+	}
 
 }
 

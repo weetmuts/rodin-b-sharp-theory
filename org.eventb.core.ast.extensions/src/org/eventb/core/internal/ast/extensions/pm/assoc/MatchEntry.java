@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.pm.assoc;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
@@ -16,10 +18,12 @@ import org.eventb.core.ast.Formula;
  * 
  * <p> A match entry stores the list of matches for a particular indexed pattern.
  * 
+ * <p> Immutable implementation.
+ * 
  * @author maamria
  *
  */
-public class MatchEntry<F extends Formula<F>> {
+public final class MatchEntry<F extends Formula<F>>{
 
 	private IndexedFormula<F> indexedPattern;
 	private List<Match<F>> matches;
@@ -50,11 +54,34 @@ public class MatchEntry<F extends Formula<F>> {
 	 * @return the list of matches
 	 */
 	public List<Match<F>> getMatches() {
-		return matches;
+		return Collections.unmodifiableList(matches);
 	}
 	
 	@Override
 	public String toString() {
-		return "MatchEntry{" + indexedPattern.toString() + "=>" + matches+"}";
+		return "MatchEntry{  " + indexedPattern.toString() + "  =>  " + matches+"  }";
+	}
+
+	/**
+	 * Returns the rank comparator for match entries.
+	 * 
+	 * @return rank comparator
+	 */
+	public static <F extends Formula<F>> Comparator<MatchEntry<F>> getRankComparator(){
+		return new Comparator<MatchEntry<F>>() {
+			@Override
+			public int compare(MatchEntry<F> o1, MatchEntry<F> o2) {
+				if (o1.equals(o2)) {
+					return 0;
+				}
+				if (o1.getRank() > o2.getRank()) {
+					return 1;
+				}
+				if (o1.getRank() < o2.getRank()) {
+					return -1;
+				}
+				return 1;
+			}
+		};
 	}
 }

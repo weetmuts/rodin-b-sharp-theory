@@ -8,7 +8,8 @@
 package org.eventb.theory.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IInternalElement;
+import org.eventb.core.IExpressionElement;
+import org.eventb.core.IPredicateElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -19,7 +20,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface IFormulaElement extends IInternalElement{
+public interface IFormulaElement extends IExpressionElement, IPredicateElement{
 
 	/**
 	 * Returns whether the formula attribute is set or not.

@@ -10,6 +10,7 @@ package org.eventb.theory.core.basis;
 
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
@@ -141,5 +142,15 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 	@Override
 	public boolean hasDeployedVersion() {
 		return getDeployedTheoryRoot().exists();
+	}
+
+	@Override
+	public IAxiomaticDefinitionsBlock getAxiomaticDefinitionsBlock(String name) {
+		return getInternalElement(IAxiomaticDefinitionsBlock.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public IAxiomaticDefinitionsBlock[] getAxiomaticDefinitionsBlocks() throws RodinDBException {
+		return getChildrenOfType(IAxiomaticDefinitionsBlock.ELEMENT_TYPE);
 	}
 }

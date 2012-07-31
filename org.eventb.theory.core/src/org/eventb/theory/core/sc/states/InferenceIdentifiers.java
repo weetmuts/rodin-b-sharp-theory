@@ -93,7 +93,6 @@ public class InferenceIdentifiers extends State implements ISCState{
 	
 	@Override
 	public IStateType<?> getStateType() {
-		// TODO Auto-generated method stub
 		return STATE_TYPE;
 	}
 

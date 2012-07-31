@@ -22,8 +22,8 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheorem;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.states.TheoremsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -149,7 +149,7 @@ public class TheoremModule extends PredicateModule<ITheorem>{
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (TheoryLabelSymbolTable) repository.getState(TheoryLabelSymbolTable.STATE_TYPE);
+		return (TheoremsLabelSymbolTable) repository.getState(TheoremsLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override

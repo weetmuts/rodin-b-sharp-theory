@@ -36,6 +36,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
 import org.eventb.core.ast.extension.StandardGroup;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 
 /**
  * Utilities from the Theory Core that are mostly useful for the Rule-based
@@ -828,5 +829,18 @@ public class AstUtilities {
 				AstExtensionsPlugin.log(exc, "null objects not allowed, but passed as argument");
 				throw exc;
 			}
+	}
+	
+	/**
+	 * Returns whether the given type is a datatype type  (as opposed to for example an axiomatic type).
+	 * @param type the type to check
+	 * @return whether <code>type</code> is a datatype type
+	 */
+	public static boolean isDatatypeType(Type type){
+		if (!(type instanceof ParametricType)){
+			return false;
+		}
+		ParametricType parametricType = (ParametricType) type;
+		return parametricType.getExprExtension().getOrigin() instanceof IDatatype;
 	}
 }

@@ -9,6 +9,9 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
+import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.IAxiomaticOperatorDefinition;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.INewOperatorDefinition;
@@ -38,11 +41,15 @@ public class ModelTheory extends TheoryModelPOContainer{
 	public final TheoryModelElementNode op_node;
 	public final TheoryModelElementNode pb_node;
 	public final TheoryModelElementNode thm_node;
+	public final TheoryModelElementNode axb_node;
 	
 	private HashMap<IDatatypeDefinition, ModelDatatype> datatypes = new HashMap<IDatatypeDefinition, ModelDatatype>();
 	public HashMap<IProofRulesBlock, ModelRulesBlock> blocks = new HashMap<IProofRulesBlock, ModelRulesBlock>();
 	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
 	private HashMap<INewOperatorDefinition, ModelOperator> operators = new HashMap<INewOperatorDefinition, ModelOperator>();
+	private HashMap<IAxiomaticDefinitionsBlock, ModelAxiomaticBlock> axBlocks =
+			new HashMap<IAxiomaticDefinitionsBlock, ModelAxiomaticBlock>();
+
 	
 	private ITheoryRoot theoryRoot;
 
@@ -63,6 +70,7 @@ public class ModelTheory extends TheoryModelPOContainer{
 		op_node = new TheoryModelElementNode(INewOperatorDefinition.ELEMENT_TYPE, this);
 		thm_node = new TheoryModelElementNode(ITheorem.ELEMENT_TYPE, this);
 		pb_node = new TheoryModelElementNode(IProofRulesBlock.ELEMENT_TYPE, this);
+		axb_node = new TheoryModelElementNode(IAxiomaticDefinitionsBlock.ELEMENT_TYPE, this);
 	}
 
 
@@ -78,6 +86,7 @@ public class ModelTheory extends TheoryModelPOContainer{
 		blocks.clear();
 		theorems.clear();
 		operators.clear();
+		axBlocks.clear();
 		try {
 			for (IDatatypeDefinition dtd : theoryRoot.getDatatypeDefinitions()) {
 				addDatatype(dtd);
@@ -92,28 +101,37 @@ public class ModelTheory extends TheoryModelPOContainer{
 			for(INewOperatorDefinition def: theoryRoot.getNewOperatorDefinitions()){
 				addOp(def);
 			}
+			for (IAxiomaticDefinitionsBlock block : theoryRoot.getAxiomaticDefinitionsBlocks()){
+				addAxBlock(block);
+				processBlock(block);
+			}
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when accessing datatypes of "+theoryRoot);
 		}
 	}
 	
-	
-	/**
-	 * @param block
-	 */
-	public void processBlock(IProofRulesBlock block) {
-		ModelRulesBlock blockModel;
-		if (!blocks.containsKey(block)) {
+	private void processBlock(IAxiomaticDefinitionsBlock block) {
+		ModelAxiomaticBlock blockModel = axBlocks.get(block);
+		if (blockModel == null){
+			blockModel = new ModelAxiomaticBlock(block, this);
+			axBlocks.put(block, blockModel);
+		}
+		blockModel.processChildren();
+	}
+
+	private void processBlock(IProofRulesBlock block) {
+		ModelRulesBlock blockModel = blocks.get(block);
+		if (blockModel == null) {
 			blockModel = new ModelRulesBlock(block, this);
 			blocks.put(block, blockModel);
-		} else {
-			blockModel = blocks.get(block);
 		}
 		blockModel.processChildren();
 		
 	}
 
-
+	public void addAxBlock(IAxiomaticDefinitionsBlock block) {
+		axBlocks.put(block, new ModelAxiomaticBlock(block, this));
+	}
 
 	public void addDatatype(IDatatypeDefinition def) {
 		datatypes.put(def, new ModelDatatype(def, this));
@@ -296,6 +314,29 @@ public class ModelTheory extends TheoryModelPOContainer{
 				}
 			}
 		}
+		if (source instanceof IAxiomaticDefinitionAxiom){
+			IAxiomaticDefinitionsBlock parent = (IAxiomaticDefinitionsBlock) source.getParent();
+			if (axBlocks.containsKey(parent)){
+				ModelAxiomaticBlock modelBlock = axBlocks.get(parent);
+				if (modelBlock.axAxioms.containsKey(source)){
+					ModelAxiomaticDefinitionAxiom modelAxiom = modelBlock.axAxioms.get(source);
+					po.addAxiomaticAxiom(modelAxiom);
+					modelAxiom.addProofObligation(po);
+				}
+			}
+		}
+		
+		if (source instanceof IAxiomaticOperatorDefinition){
+			IAxiomaticDefinitionsBlock parent = (IAxiomaticDefinitionsBlock) source.getParent();
+			if (axBlocks.containsKey(parent)){
+				ModelAxiomaticBlock modelBlock = axBlocks.get(parent);
+				if (modelBlock.axOps.containsKey(source)){
+					ModelAxiomaticOperator modelAxOp = modelBlock.axOps.get(source);
+					po.addAxiomaticOperator(modelAxOp);
+					modelAxOp.addProofObligation(po);
+				}
+			}
+		}
 		
 	}
 	
@@ -309,6 +350,9 @@ public class ModelTheory extends TheoryModelPOContainer{
 		else if(element instanceof INewOperatorDefinition){
 			return operators.get(element);
 		}
+		else if (element instanceof IAxiomaticDefinitionsBlock){
+			return axBlocks.get(element);
+		}
 		else if(element instanceof IRewriteRule){
 			IProofRulesBlock parent = (IProofRulesBlock) element.getParent();
 			ModelRulesBlock model = blocks.get(parent);
@@ -318,6 +362,16 @@ public class ModelTheory extends TheoryModelPOContainer{
 			IProofRulesBlock parent = (IProofRulesBlock) element.getParent();
 			ModelRulesBlock model = blocks.get(parent);
 			return model.infRules.get(element);
+		}
+		else if (element instanceof IAxiomaticDefinitionAxiom){
+			IAxiomaticDefinitionsBlock parent = (IAxiomaticDefinitionsBlock) element.getParent();
+			ModelAxiomaticBlock model = axBlocks.get(parent);
+			return model.axAxioms.get(element);
+		}
+		else if (element instanceof IAxiomaticOperatorDefinition){
+			IAxiomaticDefinitionsBlock parent = (IAxiomaticDefinitionsBlock) element.getParent();
+			ModelAxiomaticBlock model = axBlocks.get(parent);
+			return model.axOps.get(element);
 		}
 		return null;
 	}
@@ -341,7 +395,9 @@ public class ModelTheory extends TheoryModelPOContainer{
 			processPORoot();
 			processPSRoot();
 		}
-		
+		if (type == IAxiomaticDefinitionsBlock.ELEMENT_TYPE){
+			return new Object[]{axb_node};
+		}
 		if (type == IDatatypeDefinition.ELEMENT_TYPE) {
 			return new Object[]{datatype_node};
 		}
@@ -353,23 +409,20 @@ public class ModelTheory extends TheoryModelPOContainer{
 		}
 		if(type == INewOperatorDefinition.ELEMENT_TYPE)
 			return new Object[]{op_node};
+		
 		if(type == IProofRulesBlock.ELEMENT_TYPE)
 			return new Object[]{pb_node};
+		
 		if(type == ITheorem.ELEMENT_TYPE)
 			return new Object[]{thm_node};
+		
 		if (ExplorerUtils.DEBUG) {
 			System.out.println("Unsupported children type for theory: " +type);
 		}
 		return new Object[0];
 	}
 
-
-
-	/**
-	 * @return
-	 */
 	public IEventBRoot getTheoryRoot() {
-		// TODO Auto-generated method stub
 		return theoryRoot;
 	}
 	

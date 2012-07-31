@@ -26,7 +26,7 @@ import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.IDatatypeTable;
+import org.eventb.theory.core.sc.states.DatatypeTable;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -84,7 +84,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 			throws CoreException {
 		FormulaFactory factory = repository.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
-		IDatatypeTable datatypeTable = (IDatatypeTable) repository.getState(IDatatypeTable.STATE_TYPE);
+		DatatypeTable datatypeTable = (DatatypeTable) repository.getState(DatatypeTable.STATE_TYPE);
 		for (IConstructorArgument consArg : constructorArguments) {
 			if (!checkDestructorName(consArg, factory, typeEnvironment, datatypeTable)) {
 				datatypeTable.setErrorProne();
@@ -129,7 +129,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 	 * @throws CoreException
 	 */
 	protected boolean checkTypeParameters(Type type, IConstructorArgument consArg, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment, IDatatypeTable datatypeTable) throws CoreException {
+			ITypeEnvironment typeEnvironment, DatatypeTable datatypeTable) throws CoreException {
 		FreeIdentifier[] idents = type.toExpression(factory).getSyntacticallyFreeIdentifiers();
 		boolean result = true;
 		for (FreeIdentifier ident : idents) {
@@ -152,7 +152,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 
 	// check constructor name/identifier
 	private boolean checkDestructorName(IConstructorArgument destructor, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment, IDatatypeTable datatypeTable) throws CoreException {
+			ITypeEnvironment typeEnvironment, DatatypeTable datatypeTable) throws CoreException {
 		if (!destructor.hasIdentifierString() || destructor.getIdentifierString().equals("")) {
 			createProblemMarker(destructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
 					TheoryGraphProblem.MissingDatatypeNameError);

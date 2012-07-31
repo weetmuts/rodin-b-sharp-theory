@@ -23,6 +23,10 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
+import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.IAxiomaticOperatorDefinition;
+import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IProofRulesBlock;
@@ -80,7 +84,9 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 				if(node.getChildrenType()==IDatatypeDefinition.ELEMENT_TYPE){
 					return TheoryImage.getImage(ITheoryImages.IMG_DATATYPE);
 				}
-				
+				if (node.getChildrenType() == IAxiomaticDefinitionsBlock.ELEMENT_TYPE){
+					return TheoryImage.getImage(ITheoryImages.IMG_RULES_BLOCK);
+				}
 				if(node.getChildrenType()==INewOperatorDefinition.ELEMENT_TYPE){
 					return TheoryImage.getImage(ITheoryImages.IMG_OPERATOR);
 				}
@@ -89,6 +95,15 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 				
 				if(node.getChildrenType() == ITheorem.ELEMENT_TYPE)
 					return TheoryImage.getImage(ITheoryImages.IMG_TTHEOREM);
+				
+				if(node.getChildrenType() == IAxiomaticOperatorDefinition.ELEMENT_TYPE)
+					return TheoryImage.getImage(ITheoryImages.IMG_OPERATOR);
+				
+				if(node.getChildrenType() == IAxiomaticDefinitionAxiom.ELEMENT_TYPE)
+					return TheoryImage.getImage(ITheoryImages.IMG_TTHEOREM);
+				
+				if(node.getChildrenType() == IAxiomaticTypeDefinition.ELEMENT_TYPE)
+					return TheoryImage.getImage(ITheoryImages.IMG_DATATYPE);
 				
 				if (node.getChildrenType()==IPSStatus.ELEMENT_TYPE) {
 					if(node.getParent().getElementType()!=ITheoryRoot.ELEMENT_TYPE)

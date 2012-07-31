@@ -9,6 +9,9 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
@@ -18,8 +21,10 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IRecursiveOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
+import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -32,76 +37,79 @@ import org.rodinp.core.IRodinElement;
 public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 
 	private static final IModuleType<OperatorRecursiveDefinitionModule> MODULE_TYPE = SCCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID
-					+ ".operatorRecursiveDefinitionModule");
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorRecursiveDefinitionModule");
 
-	private IOperatorInformation operatorInformation;
-	
+	private OperatorInformation operatorInformation;
+	private ITypeEnvironment typeEnvironment;
+	private FormulaFactory factory;
+
 	@Override
-	public void process(IRodinElement element, IInternalElement target,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
 		INewOperatorDefinition newOperatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scNewOperatorDefinition = (ISCNewOperatorDefinition) target;
-		IRecursiveOperatorDefinition[] definitions = newOperatorDefinition
-				.getRecursiveOperatorDefinitions();
+		IRecursiveOperatorDefinition[] definitions = newOperatorDefinition.getRecursiveOperatorDefinitions();
 		if (definitions.length == 1 && !operatorInformation.hasError()) {
 			RecursiveDefinitionInfo recursiveDefinitionInfo = new RecursiveDefinitionInfo();
 			repository.setState(recursiveDefinitionInfo);
 			IRecursiveOperatorDefinition recursiveOperatorDefinition = definitions[0];
-			process(recursiveOperatorDefinition, newOperatorDefinition,
-					scNewOperatorDefinition, recursiveDefinitionInfo,
-					repository, monitor);
+			process(recursiveOperatorDefinition, newOperatorDefinition, scNewOperatorDefinition,
+					recursiveDefinitionInfo, repository, monitor);
 			repository.removeState(RecursiveDefinitionInfo.STATE_TYPE);
 		}
 	}
 
-	protected void process(
-			IRecursiveOperatorDefinition recursiveOperatorDefinition,
-			INewOperatorDefinition parent, ISCNewOperatorDefinition target,
-			RecursiveDefinitionInfo recursiveDefinitionInfo,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	private void process(IRecursiveOperatorDefinition recursiveOperatorDefinition, INewOperatorDefinition parent,
+			ISCNewOperatorDefinition target, RecursiveDefinitionInfo recursiveDefinitionInfo,
+			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		boolean error = false;
-		initFilterModules(repository, monitor);
-		if (!filterModules(recursiveOperatorDefinition, repository, monitor)) {
-			operatorInformation.setHasError();
+
+		if (!recursiveOperatorDefinition.hasInductiveArgument() ||
+				recursiveOperatorDefinition.getInductiveArgument().equals("")) {
+			createProblemMarker(recursiveOperatorDefinition, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
+					TheoryGraphProblem.InductiveArgMissing);
 			error = true;
+			operatorInformation.setHasError();
+		} else {
+			String inductiveArgument = recursiveOperatorDefinition.getInductiveArgument();
+			if (!typeEnvironment.contains(inductiveArgument)
+					|| !AstUtilities.isDatatypeType(typeEnvironment.getType(inductiveArgument))) {
+				createProblemMarker(recursiveOperatorDefinition, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
+						TheoryGraphProblem.ArgumentNotExistOrNotParametric, inductiveArgument);
+				error = true;
+				operatorInformation.setHasError();
+			}
+			else {
+				FreeIdentifier ident = factory.makeFreeIdentifier(inductiveArgument, null,
+						typeEnvironment.getType(inductiveArgument));
+				recursiveDefinitionInfo.setInductiveArgument(ident, factory);
+			}
 		}
-		endFilterModules(repository, monitor);
 		if (!error) {
-			ISCRecursiveOperatorDefinition scDefinition = createSCDefinition(
-					recursiveOperatorDefinition, target,
+			ISCRecursiveOperatorDefinition scDefinition = createSCDefinition(recursiveOperatorDefinition, target,
 					recursiveDefinitionInfo, monitor);
 			// processor modules
 			{
-				initProcessorModules(recursiveOperatorDefinition, repository,
-						monitor);
-				processModules(recursiveOperatorDefinition, scDefinition,
-						repository, monitor);
-				endProcessorModules(recursiveOperatorDefinition, repository,
-						monitor);
+				initProcessorModules(recursiveOperatorDefinition, repository, monitor);
+				processModules(recursiveOperatorDefinition, scDefinition, repository, monitor);
+				endProcessorModules(recursiveOperatorDefinition, repository, monitor);
 			}
 			if (!recursiveDefinitionInfo.isAccurate()) {
 				operatorInformation.setHasError();
-			} 
-			else {
+			} else {
 				target.setWDCondition(AstUtilities.BTRUE, monitor);
 				operatorInformation.setD_WDCondition(AstUtilities.BTRUE);
 			}
 		}
 	}
 
-	protected ISCRecursiveOperatorDefinition createSCDefinition(
-			IRecursiveOperatorDefinition source,
-			ISCNewOperatorDefinition target, RecursiveDefinitionInfo info,
-			IProgressMonitor monitor) throws CoreException {
-		ISCRecursiveOperatorDefinition scDefinition = target
-				.getRecursiveOperatorDefinition(source.getElementName());
+	private ISCRecursiveOperatorDefinition createSCDefinition(IRecursiveOperatorDefinition source,
+			ISCNewOperatorDefinition target, RecursiveDefinitionInfo info, IProgressMonitor monitor)
+			throws CoreException {
+		ISCRecursiveOperatorDefinition scDefinition = target.getRecursiveOperatorDefinition(source.getElementName());
 		scDefinition.create(null, monitor);
 		scDefinition.setSource(source, monitor);
-		scDefinition.setInductiveArgument(
-				info.getInductiveArgument().getName(), monitor);
+		scDefinition.setInductiveArgument(info.getInductiveArgument().getName(), monitor);
 		return scDefinition;
 	}
 
@@ -111,18 +119,20 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 	}
 
 	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		operatorInformation = (IOperatorInformation) repository
-				.getState(IOperatorInformation.STATE_TYPE);
+		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
+		typeEnvironment = repository.getTypeEnvironment();
+		factory = repository.getFormulaFactory();
 	}
 
 	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		operatorInformation = null;
+		typeEnvironment = null;
+		factory = null;
 		super.endModule(element, repository, monitor);
 	}
 }

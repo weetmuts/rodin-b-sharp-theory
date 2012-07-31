@@ -14,6 +14,7 @@ import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.sc.symbolTable.SymbolTable;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.modules.TheoryModule;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -23,16 +24,16 @@ import org.rodinp.core.IInternalElementType;
  * 
  */
 @SuppressWarnings("restriction")
-public class OperatorLabelSymbolTable extends 
+public class OperatorsLabelSymbolTable extends 
 SymbolTable<ILabeledElement, IInternalElementType<? extends ILabeledElement>, ILabelSymbolInfo>
 implements ILabelSymbolTable{
 
-	public final static IStateType<OperatorLabelSymbolTable> STATE_TYPE = SCCore
+	public final static IStateType<OperatorsLabelSymbolTable> STATE_TYPE = SCCore
 			.getToolStateType(TheoryPlugin.PLUGIN_ID
-					+ ".operatorLabelSymbolTable");
+					+ ".operatorsLabelSymbolTable");
 
-	public OperatorLabelSymbolTable(int size) {
-		super(size);
+	public OperatorsLabelSymbolTable() {
+		super(TheoryModule.LABEL_SYMTAB_SIZE);
 	}
 
 	public IStateType<?> getStateType() {

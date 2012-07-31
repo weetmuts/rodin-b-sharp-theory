@@ -23,7 +23,7 @@ import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.IDatatypeTable;
+import org.eventb.theory.core.sc.states.DatatypeTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -37,13 +37,13 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 	private final IModuleType<DatatypeConstructorModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".datatypeConstructorModule");
 
-	private IDatatypeTable datatypeTable;
+	private DatatypeTable datatypeTable;
 
 	@Override
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		datatypeTable = (IDatatypeTable) repository.getState(IDatatypeTable.STATE_TYPE);
+		datatypeTable = (DatatypeTable) repository.getState(DatatypeTable.STATE_TYPE);
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 	}
 	// check constructor name/identifier
 	private boolean checkConstructorName(IDatatypeConstructor constructor, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment, IDatatypeTable datatypeTable) throws CoreException {
+			ITypeEnvironment typeEnvironment, DatatypeTable datatypeTable) throws CoreException {
 		if (!constructor.hasIdentifierString() || constructor.getIdentifierString().equals("")) {
 			createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
 					TheoryGraphProblem.MissingDatatypeNameError);

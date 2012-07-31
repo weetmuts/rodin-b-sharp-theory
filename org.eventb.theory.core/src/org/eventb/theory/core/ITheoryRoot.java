@@ -100,6 +100,10 @@ public interface ITheoryRoot extends
 	
 	public IProofRulesBlock[] getProofRulesBlocks() throws RodinDBException;
 	
+	public IAxiomaticDefinitionsBlock getAxiomaticDefinitionsBlock(String name);
+	
+	public IAxiomaticDefinitionsBlock[] getAxiomaticDefinitionsBlocks() throws RodinDBException;
+	
 	/**
 	 * Returns a handle to the theorem with the given element.
 	 * @param name the name of the theorem

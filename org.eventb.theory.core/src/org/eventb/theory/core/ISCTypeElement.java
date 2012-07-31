@@ -10,6 +10,7 @@ package org.eventb.theory.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -17,7 +18,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface ISCTypeElement {
+public interface ISCTypeElement extends IInternalElement{
 
 	/**
 	 * Returns whether the type attribute is set.

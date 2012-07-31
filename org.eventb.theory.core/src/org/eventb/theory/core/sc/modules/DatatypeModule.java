@@ -32,7 +32,6 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.DatatypeTable;
-import org.eventb.theory.core.sc.states.IDatatypeTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -61,7 +60,7 @@ public class DatatypeModule extends SCProcessorModule {
 			monitor.subTask(Messages.progress_TheoryDatatypes);
 			monitor.worked(1);
 			// set the datatype table state
-			IDatatypeTable datatypeTable = new DatatypeTable(repository.getFormulaFactory());
+			DatatypeTable datatypeTable = new DatatypeTable(repository.getFormulaFactory());
 			repository.setState(datatypeTable);
 			processDatatypes(dtdef, targetRoot, datatypeTable, repository, monitor);
 			monitor.worked(2);
@@ -108,8 +107,9 @@ public class DatatypeModule extends SCProcessorModule {
 	 *            the progress monitor
 	 * @throws CoreException
 	 */
+	@SuppressWarnings("restriction")
 	protected void processDatatypes(IDatatypeDefinition[] datatypeDefinitions, ISCTheoryRoot targetRoot,
-			IDatatypeTable datatypeTable, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
+			DatatypeTable datatypeTable, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		boolean theoryAccurate = true;
 		// get the ff and type env here as they will most likely change after
 		// each iteration of the following loop
@@ -171,10 +171,11 @@ public class DatatypeModule extends SCProcessorModule {
 		}
 		if (!theoryAccurate)
 			theoryAccuracyInfo.setNotAccurate();
+		datatypeTable.makeImmutable();
 	}
 	// checks the datatype name/identifier
 	private boolean checkDatatypeName(IDatatypeDefinition datatypeDefinition, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment, IDatatypeTable datatypeTable) throws CoreException {
+			ITypeEnvironment typeEnvironment, DatatypeTable datatypeTable) throws CoreException {
 		if (!datatypeDefinition.hasIdentifierString() || datatypeDefinition.getIdentifierString().equals("")) {
 			createProblemMarker(datatypeDefinition, EventBAttributes.IDENTIFIER_ATTRIBUTE,
 					TheoryGraphProblem.MissingDatatypeNameError);
@@ -223,7 +224,7 @@ public class DatatypeModule extends SCProcessorModule {
 	 */
 	private boolean processTypeArguments(IDatatypeDefinition datatypeDefinition, List<String> toPopulate,
 			ISCDatatypeDefinition target, FormulaFactory factory, ITypeEnvironment typeEnvironment,
-			IDatatypeTable datatypeTable, IProgressMonitor monitor) throws CoreException {
+			DatatypeTable datatypeTable, IProgressMonitor monitor) throws CoreException {
 		ITypeArgument typeArgs[] = datatypeDefinition.getTypeArguments();
 		// needed to check for redundancies
 		boolean faithful = true;

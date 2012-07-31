@@ -9,9 +9,11 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.core.sc.states.OperatorLabelSymbolTable;
+import org.eventb.theory.core.sc.states.OperatorsLabelSymbolTable;
+import org.eventb.theory.core.sc.states.ProofRulesLabelSymbolTable;
+import org.eventb.theory.core.sc.states.RulesBlocksLabelSymbolTable;
+import org.eventb.theory.core.sc.states.TheoremsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.core.sc.states.TheoryLabelSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -25,8 +27,8 @@ public class TheoryModule extends SCProcessorModule {
 
 	private final IModuleType<TheoryModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoryModule");
 
-	private final static int LABEL_SYMTAB_SIZE = 2047;
-	private final static int IDENT_SYMTAB_SIZE = 2047;
+	public final static int LABEL_SYMTAB_SIZE = 2047;
+	public final static int IDENT_SYMTAB_SIZE = 2047;
 
 	private TheoryAccuracyInfo accuracyInfo;
 	private ISCTheoryRoot theoryRoot;
@@ -51,12 +53,19 @@ public class TheoryModule extends SCProcessorModule {
 	@Override
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		accuracyInfo = new TheoryAccuracyInfo();
-		final TheoryLabelSymbolTable labelSymbolTable = new TheoryLabelSymbolTable(LABEL_SYMTAB_SIZE);
-		final OperatorLabelSymbolTable opLabelSymbolTable = new OperatorLabelSymbolTable(LABEL_SYMTAB_SIZE);
+		
+		final TheoremsLabelSymbolTable thmSymbolTable = new TheoremsLabelSymbolTable();
+		final RulesBlocksLabelSymbolTable blocksSymbolTable = new RulesBlocksLabelSymbolTable();
+		final ProofRulesLabelSymbolTable rulesSymbolTable = new ProofRulesLabelSymbolTable();
+		final OperatorsLabelSymbolTable opLabelSymbolTable = new OperatorsLabelSymbolTable();
 		final IdentifierSymbolTable identSymbolTable = new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, repository.getFormulaFactory());
+		
 		repository.setState(identSymbolTable);
-		repository.setState(labelSymbolTable);
+		repository.setState(thmSymbolTable);
+		repository.setState(blocksSymbolTable);
+		repository.setState(rulesSymbolTable);
 		repository.setState(opLabelSymbolTable);
+		
 		repository.setState(accuracyInfo);
 		initProcessorModules(element, repository, monitor);
 	}

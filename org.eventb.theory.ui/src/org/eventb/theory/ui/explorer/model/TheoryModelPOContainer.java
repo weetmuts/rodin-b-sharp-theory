@@ -19,6 +19,8 @@ import java.util.List;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
+import org.eventb.theory.core.IAxiomaticOperatorDefinition;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IRewriteRule;
@@ -169,6 +171,20 @@ public abstract class TheoryModelPOContainer extends ModelPOContainer implements
 				}
 			}
 		}
+		if (aType == IAxiomaticOperatorDefinition.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (po.getAxiomaticOperators().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiomaticDefinitionAxiom.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (po.getAxiomaticAxioms().length > 0) {
+					result++;
+				}
+			}
+		}
 		// return all proof obligations.
 		if (aType == IPSStatus.ELEMENT_TYPE) {
 			result = getPOcount();
@@ -212,6 +228,20 @@ public abstract class TheoryModelPOContainer extends ModelPOContainer implements
 		if (aType == IInferenceRule.ELEMENT_TYPE) {
 			for (TheoryModelProofObligation po : proofObligations.values()) {
 				if (!po.isDischarged() && po.getInfRules().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiomaticOperatorDefinition.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (!po.isDischarged() && po.getAxiomaticOperators().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiomaticDefinitionAxiom.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (!po.isDischarged() && po.getAxiomaticAxioms().length > 0) {
 					result++;
 				}
 			}
@@ -312,6 +342,22 @@ public abstract class TheoryModelPOContainer extends ModelPOContainer implements
 				}
 			}
 		}
+		if (aType == IAxiomaticOperatorDefinition.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (po.isManual() && po.isDischarged()
+						&& po.getAxiomaticOperators().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiomaticDefinitionAxiom.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (po.isManual() && po.isDischarged()
+						&& po.getAxiomaticAxioms().length > 0) {
+					result++;
+				}
+			}
+		}
 		// return all manually discharged proof obligations.
 		if (aType == IPSStatus.ELEMENT_TYPE) {
 			result = getManuallyDischargedPOcount();
@@ -368,6 +414,20 @@ public abstract class TheoryModelPOContainer extends ModelPOContainer implements
 		if (aType == IInferenceRule.ELEMENT_TYPE) {
 			for (TheoryModelProofObligation po : proofObligations.values()) {
 				if (po.isReviewed() && po.getInfRules().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiomaticOperatorDefinition.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (po.isReviewed() && po.getAxiomaticOperators().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiomaticDefinitionAxiom.ELEMENT_TYPE) {
+			for (TheoryModelProofObligation po : proofObligations.values()) {
+				if (po.isReviewed() && po.getAxiomaticAxioms().length > 0) {
 					result++;
 				}
 			}

@@ -35,13 +35,11 @@ public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, I
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
 	@Override
 	protected IInfer[] getClauses(IInferenceRule rule) throws CoreException {
-		// TODO Auto-generated method stub
 		return rule.getInfers();
 	}
 
@@ -85,5 +83,8 @@ public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, I
 		}
 		return true;
 	}
+
+	@Override
+	protected void processSCClause(ISCInfer scClause, IInfer clause) throws CoreException {}
 
 }

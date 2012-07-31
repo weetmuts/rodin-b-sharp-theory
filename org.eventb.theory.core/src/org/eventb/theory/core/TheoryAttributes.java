@@ -75,6 +75,11 @@ public class TheoryAttributes {
 	
 	public static IAttributeType.String APPLICABILITY_ATTRIBUTE = RodinCore
 		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".applicability");
+
+	
+	public static IAttributeType.Boolean HYP_ATTRIBUTE = RodinCore
+			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".hyp");
+
 	
 	public static IAttributeType.Handle AVAILABLE_THEORY_ATTRIBUTE = RodinCore
 			.getHandleAttrType(TheoryPlugin.PLUGIN_ID + ".availableTheory");
@@ -84,4 +89,5 @@ public class TheoryAttributes {
 	
 	public static IAttributeType.String SCTHEORY_PROJECT_ATTRIBUTE = RodinCore
 			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".scAvailableTheoryProject");
+
 }

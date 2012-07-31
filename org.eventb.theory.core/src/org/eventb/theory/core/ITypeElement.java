@@ -8,7 +8,7 @@
 package org.eventb.theory.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IInternalElement;
+import org.eventb.core.IExpressionElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -21,7 +21,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public interface ITypeElement extends IInternalElement{
+public interface ITypeElement extends IExpressionElement{
 
 	/**
 	 * Returns whether the type attribute is set.

@@ -116,6 +116,11 @@
             kind="string"
             name="%applicabilityAttr">
       </attributeType>
+      <attributeType
+            id="hyp"
+            kind="boolean"
+            name="%hypAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -182,7 +187,7 @@
       <internalElementType
             class="org.eventb.theory.core.basis.Metavariable"
             id="metaVariable"
-            name="%metaVariable">
+            name="%metavariable">
       </internalElementType>
       <internalElementType
             class="org.eventb.theory.core.basis.RewriteRule"
@@ -197,12 +202,12 @@
       <internalElementType
             class="org.eventb.theory.core.basis.Given"
             id="given"
-            name="%given">
+            name="%givenClause">
       </internalElementType>
       <internalElementType
             class="org.eventb.theory.core.basis.Infer"
             id="infer"
-            name="%infer">
+            name="%inferClause">
       </internalElementType>
       <internalElementType
             class="org.eventb.theory.core.basis.InferenceRule"
@@ -414,27 +419,42 @@
    <extension
          point="org.eventb.core.scStateTypes">
       <stateType
-            class="org.eventb.theory.core.sc.states.TheoryLabelSymbolTable"
-            id="theoryLabelSymbolTable"
-            name="%theoryLabelSymbolTable">
-      </stateType>
-      <stateType
             class="org.eventb.theory.core.sc.states.TheoryAccuracyInfo"
             id="theoryAccuracyInfo"
             name="%theoryAccuracyInfo">
       </stateType>
       <stateType
-            class="org.eventb.theory.core.sc.states.IDatatypeTable"
+            class="org.eventb.theory.core.sc.states.DatatypeTable"
             id="datatypeTable"
             name="%datatypeTable">
       </stateType>
       <stateType
-            class="org.eventb.theory.core.sc.states.OperatorLabelSymbolTable"
-            id="operatorLabelSymbolTable"
-            name="%operatorLabelSymbolTable">
+            class="org.eventb.theory.core.sc.states.OperatorsLabelSymbolTable"
+            id="operatorsLabelSymbolTable"
+            name="%operatorsLabelSymbolTable">
       </stateType>
       <stateType
-            class="org.eventb.theory.core.sc.states.IOperatorInformation"
+            class="org.eventb.theory.core.sc.states.ProofRulesLabelSymbolTable"
+            id="proofRulesLabelSymbolTable"
+            name="%proofRulesLabelSymbolTable">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.RulesBlocksLabelSymbolTable"
+            id="rulesBlocksLabelSymbolTable"
+            name="%rulesBlocksLabelSymbolTable">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.TheoremsLabelSymbolTable"
+            id="theoremsLabelSymbolTable"
+            name="%theoremsLabelSymbolTable">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.AxiomsLabelSymbolTable"
+            id="axiomsLabelSymbolTable"
+            name="%axiomsLabelSymbolTable">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.OperatorInformation"
             id="operatorInformation"
             name="%operatorInformation">
       </stateType>
@@ -454,7 +474,7 @@
             name="%inferenceIdentifiers">
       </stateType>
       <stateType
-            class="org.eventb.theory.core.sc.states.IRecursiveDefinitionInfo"
+            class="org.eventb.theory.core.sc.states.RecursiveDefinitionInfo"
             id="recursiveDefinitionInfo"
             name="%recursiveDefinitionInfo">
       </stateType>
@@ -534,28 +554,13 @@
                id="org.eventb.theory.core.operatorArgumentModule">
          </prereq>
       </processorType>
-      <filterType
-            class="org.eventb.theory.core.sc.modules.OperatorWDConditionFilterModule"
-            id="operatorWDConditionFilterModule"
-            name="%scOperatorWDConditionFilterModule"
-            parent="org.eventb.theory.core.operatorWDConditionModule">
-      </filterType>
-      <processorType
-            class="org.eventb.theory.core.sc.modules.OperatorSyntacticPropertiesModule"
-            id="operatorSyntacticPropertiesModule"
-            name="%scOperatorSyntacticPropertiesModule"
-            parent="org.eventb.theory.core.operatorModule">
-         <prereq
-               id="org.eventb.theory.core.operatorWDConditionModule">
-         </prereq>
-      </processorType>
       <processorType
             class="org.eventb.theory.core.sc.modules.OperatorDirectDefinitionModule"
             id="operatorDirectDefinitionModule"
             name="%scOperatorDirectDefinitionModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
-               id="org.eventb.theory.core.operatorSyntacticPropertiesModule">
+               id="org.eventb.theory.core.operatorWDConditionModule">
          </prereq>
       </processorType>
       <processorType
@@ -564,15 +569,9 @@
             name="%scOperatorRecursiveDefinitionModule"
             parent="org.eventb.theory.core.operatorModule">
          <prereq
-               id="org.eventb.theory.core.operatorSyntacticPropertiesModule">
+               id="org.eventb.theory.core.operatorWDConditionModule">
          </prereq>
       </processorType>
-      <filterType
-            class="org.eventb.theory.core.sc.modules.OperatorRecursiveDefinitionFilterModule"
-            id="operatorRecursiveDefinitionFilterModule"
-            name="%scOperatorRecursiveDefinitionFilterModule"
-            parent="org.eventb.theory.core.operatorRecursiveDefinitionModule">
-      </filterType>
       <processorType
             class="org.eventb.theory.core.sc.modules.OperatorRecursiveCaseModule"
             id="operatorRecursiveCaseModule"
@@ -795,9 +794,6 @@
                id="org.eventb.theory.core.operatorWDConditionModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.operatorWDConditionFilterModule">
-         </scModule>
-         <scModule
                id="org.eventb.theory.core.operatorDirectDefinitionModule">
          </scModule>
          <scModule
@@ -849,13 +845,7 @@
                id="org.eventb.theory.core.operatorRecursiveDefinitionModule">
          </scModule>
          <scModule
-               id="org.eventb.theory.core.operatorRecursiveDefinitionFilterModule">
-         </scModule>
-         <scModule
                id="org.eventb.theory.core.operatorRecursiveCaseModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.operatorSyntacticPropertiesModule">
          </scModule>
       </configuration>
       <configuration

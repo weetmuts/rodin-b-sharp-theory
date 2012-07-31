@@ -24,75 +24,63 @@ import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.IOperatorInformation;
+import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 
 	private final IModuleType<OperatorSemanticPropertiesModule> MODULE_TYPE = SCCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID
-					+ ".operatorSemanticPropertiesModule");
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorSemanticPropertiesModule");
 
-	private IOperatorInformation operatorInformation;
+	private OperatorInformation operatorInformation;
 
 	@Override
-	public void process(IRodinElement element, IInternalElement target,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
 		INewOperatorDefinition operatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scOperatorDefinition = (ISCNewOperatorDefinition) target;
-		Map<String, Type> operatorArguments = operatorInformation
-				.getOperatorArguments();
+		Map<String, Type> operatorArguments = operatorInformation.getOperatorArguments();
 		Notation notation = operatorDefinition.getNotationType();
 		FormulaType formType = operatorDefinition.getFormulaType();
 		boolean isCommutative = operatorDefinition.isCommutative();
 		boolean isAssos = operatorDefinition.isAssociative();
 
-		if (!checkSemanticProperties(operatorDefinition, formType, notation,
-				operatorArguments, isAssos, isCommutative)) {
+		if (!checkSemanticProperties(operatorDefinition, formType, notation, operatorArguments, isAssos, isCommutative)) {
 			operatorInformation.setHasError();
-		}
-		else {
+		} else {
 			operatorInformation.setAssociative(isAssos);
 			operatorInformation.setCommutative(isCommutative);
 		}
 		if (operatorInformation.getWdCondition() == null) {
 			operatorInformation.setHasError();
-		}
-		else {
+		} else {
 			scOperatorDefinition.setPredicate(operatorInformation.getWdCondition(), monitor);
 		}
 	}
 
-	protected boolean checkSemanticProperties(
-			INewOperatorDefinition operatorDefinition, FormulaType formType,
-			Notation notation, Map<String, Type> operatorArguments,
-			boolean isAssociative, boolean isCommutative) throws CoreException {
+	protected boolean checkSemanticProperties(INewOperatorDefinition operatorDefinition, FormulaType formType,
+			Notation notation, Map<String, Type> operatorArguments, boolean isAssociative, boolean isCommutative)
+			throws CoreException {
 		String opID = operatorDefinition.getLabel();
 		// Issues with associativity
 		if (isAssociative) {
 			// 4- Predicate operators cannot be associative
 			if (formType.equals(FormulaType.PREDICATE)) {
-				createProblemMarker(operatorDefinition,
-						EventBAttributes.LABEL_ATTRIBUTE,
+				createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE,
 						TheoryGraphProblem.OperatorPredCannotBeAssos);
 				return false;
 			} else {
 				// 5- Associative and prefix not supported
 				if (notation.equals(Notation.PREFIX)) {
-					createProblemMarker(operatorDefinition,
-							TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
+					createProblemMarker(operatorDefinition, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
 							TheoryGraphProblem.OperatorExpPrefixCannotBeAssos);
 					return false;
 				} else if (notation.equals(Notation.INFIX)) {
 					// 6- Check actual associativity
 					if (!checkAssociativity(operatorArguments)) {
-						createProblemMarker(
-								operatorDefinition,
-								TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
-								TheoryGraphProblem.OperatorCannotBeAssosError,
-								opID);
+						createProblemMarker(operatorDefinition, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
+								TheoryGraphProblem.OperatorCannotBeAssosError, opID);
 						return false;
 					}
 				}
@@ -102,8 +90,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 		if (isCommutative) {
 			// 7- Check actual commutativity
 			if (!checkCommutativity(operatorArguments)) {
-				createProblemMarker(operatorDefinition,
-						TheoryAttributes.COMMUTATIVE_ATTRIBUTE,
+				createProblemMarker(operatorDefinition, TheoryAttributes.COMMUTATIVE_ATTRIBUTE,
 						TheoryGraphProblem.OperatorCannotBeCommutError, opID);
 				return false;
 			}
@@ -112,18 +99,16 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 	}
 
 	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		operatorInformation = (IOperatorInformation) repository
-				.getState(IOperatorInformation.STATE_TYPE);
+		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 
 	}
 
 	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		operatorInformation = null;
 		super.endModule(element, repository, monitor);
 	}
@@ -141,8 +126,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 	 *            the operator arguments
 	 * @return whether this operator can be associative
 	 */
-	protected boolean checkAssociativity(Map<String, Type> args)
-			throws CoreException {
+	protected boolean checkAssociativity(Map<String, Type> args) throws CoreException {
 		if (!operatorInformation.isExpressionOperator() || (args.size() != 2)) {
 			return false;
 		}

@@ -7,11 +7,15 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import static org.eventb.theory.core.TheoryAttributes.HYP_ATTRIBUTE;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.basis.SCPredicateElement;
 import org.eventb.theory.core.ISCGiven;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria
@@ -25,8 +29,22 @@ public class SCGiven extends SCPredicateElement implements ISCGiven {
 
 	@Override
 	public IInternalElementType<? extends IInternalElement> getElementType() {
-		// TODO Auto-generated method stub
 		return ELEMENT_TYPE;
+	}
+
+	@Override
+	public boolean hasHypAttribute() throws RodinDBException {
+		return hasAttribute(HYP_ATTRIBUTE);
+	}
+	
+	@Override
+	public boolean isHyp() throws RodinDBException {
+		return getAttributeValue(HYP_ATTRIBUTE);
+	}
+	
+	@Override
+	public void setHyp(boolean isHyp, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(HYP_ATTRIBUTE, isHyp, monitor);
 	}
 
 }

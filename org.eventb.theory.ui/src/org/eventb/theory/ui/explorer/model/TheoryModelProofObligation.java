@@ -28,6 +28,8 @@ public class TheoryModelProofObligation extends ModelProofObligation{
 	private boolean reviewed = false;
 	private ModelTheory theory;
 	
+	private List<ModelAxiomaticOperator> axOperators = new LinkedList<ModelAxiomaticOperator>();
+	private List<ModelAxiomaticDefinitionAxiom> axAxioms = new LinkedList<ModelAxiomaticDefinitionAxiom>();
 	private List<ModelTheorem> theorems = new LinkedList<ModelTheorem>();
 	private List<ModelOperator> operators = new LinkedList<ModelOperator>();
 	private List<ModelRewriteRule> rewRules = new LinkedList<ModelRewriteRule>();
@@ -171,4 +173,27 @@ public class TheoryModelProofObligation extends ModelProofObligation{
 		infRules.remove(rule);
 	}
 	
+	public ModelAxiomaticOperator[] getAxiomaticOperators(){
+		return axOperators.toArray(new ModelAxiomaticOperator[axOperators.size()]);
+	}
+	
+	public void addAxiomaticOperator(ModelAxiomaticOperator op) {
+		axOperators.add(op);
+	}
+
+	public void removeAxiomaticOperator(ModelAxiomaticOperator op) {
+		axOperators.remove(op);
+	}
+	
+	public ModelAxiomaticDefinitionAxiom[] getAxiomaticAxioms(){
+		return axAxioms.toArray(new ModelAxiomaticDefinitionAxiom[axAxioms.size()]);
+	}
+	
+	public void addAxiomaticAxiom(ModelAxiomaticDefinitionAxiom ax) {
+		axAxioms.add(ax);
+	}
+
+	public void removeAxiomaticAxiom(ModelAxiomaticDefinitionAxiom ax) {
+		axAxioms.remove(ax);
+	}
 }

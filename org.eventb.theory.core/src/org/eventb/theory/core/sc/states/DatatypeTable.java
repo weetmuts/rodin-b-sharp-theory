@@ -8,11 +8,13 @@
 package org.eventb.theory.core.sc.states;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -21,8 +23,11 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
+import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 
 /**
@@ -30,12 +35,14 @@ import org.eventb.theory.core.sc.Messages;
  *
  */
 @SuppressWarnings("restriction")
-public class DatatypeTable extends State implements IDatatypeTable{
+public class DatatypeTable extends State implements ISCState {
+	
+	public static final IStateType<DatatypeTable> STATE_TYPE = SCCore.getToolStateType(TheoryPlugin.PLUGIN_ID + ".datatypeTable");
 	
 	private Map<String, DatatypeEntry> datatypes;
 	// current datatype details
 	private Type typeExpression;
-	private List<String> referencedTypes;
+	//private List<String> referencedTypes;
 	private String currentDatatype = null;
 	private String currentConstructor = null;
 	private boolean isAdmissible = true;
@@ -54,8 +61,8 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		return STATE_TYPE;
 	}
 	
-	
-	public FormulaFactory augmentDecoyFormulaFactory(){
+	public FormulaFactory augmentDecoyFormulaFactory() throws CoreException{
+		assertMutable();
 		DatatypeEntry entry = datatypes.get(currentDatatype);
 		Set<IFormulaExtension> extensions  = entry.generateTypeExpression();
 		if(extensions != null){
@@ -66,7 +73,8 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		return decoyFactory;
 	}
 	
-	public FormulaFactory augmentFormulaFactory(){
+	public FormulaFactory augmentFormulaFactory() throws CoreException{
+		assertMutable();
 		DatatypeEntry entry = datatypes.get(currentDatatype);
 		Set<IFormulaExtension> extensions  = entry.generateDatatypeExtensions();
 		if(extensions != null){
@@ -76,7 +84,8 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		return initialFactory;
 	}
 	
-	public FormulaFactory reset(){
+	public FormulaFactory reset() throws CoreException{
+		assertMutable();
 		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		currentDatatype = null;
 		currentConstructor = null;
@@ -84,26 +93,29 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		return initialFactory;
 	}
 	
-	public void setErrorProne(){
+	public void setErrorProne() throws CoreException{
+		assertMutable();
 		DatatypeEntry entry = datatypes.get(currentDatatype);
 		if(entry != null)
 			entry.setErrorProne();
 	}
 	
-	public boolean isErrorProne(){
+	public boolean isErrorProne() throws CoreException{
+		assertMutable();
 		DatatypeEntry entry = datatypes.get(currentDatatype);
 		if(entry != null)
 			return entry.isErrorProne();
 		return true;
 	}
 	
-	public void addDatatype(String name, String[] typeArgs){
+	public void addDatatype(String name, String[] typeArgs) throws CoreException{
+		assertMutable();
 		datatypes.put(name, new DatatypeEntry(name, typeArgs));
 		currentDatatype = name;
-		referencedTypes = Arrays.asList(typeArgs);
 	}
 	
-	public boolean datatypeHasBaseConstructor(){
+	public boolean datatypeHasBaseConstructor() throws CoreException{
+		assertMutable();
 		return datatypes.get(currentDatatype).hasBaseConstructor(typeExpression, decoyFactory);
 	}
 	
@@ -111,11 +123,19 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		return isAdmissible;
 	}
 	
-	public boolean isAllowedIdentifier(String identifier) {
-		return referencedTypes.contains(identifier);
+	public boolean isAllowedIdentifier(String identifier) throws CoreException {
+		assertMutable();
+		return datatypes.get(currentDatatype).isAllowedIdentifier(identifier);
 	}
 	
-	public String checkName(String name){
+	@Override
+	public void makeImmutable() {
+		datatypes = Collections.unmodifiableMap(datatypes);
+		super.makeImmutable();
+	}
+	
+	public String checkName(String name) throws CoreException{
+		assertMutable();
 		if(datatypes.containsKey(name)){
 			return Messages.scuser_IdenIsADatatypeNameError;
 		}
@@ -129,12 +149,14 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		return code;
 	}
 
-	public void addConstructor(String consName){
+	public void addConstructor(String consName) throws CoreException{
+		assertMutable();
 		datatypes.get(currentDatatype).addConstructor(consName);
 		currentConstructor = consName;
 	}
 	
-	public boolean addDestructor(String destName, Type type){
+	public boolean addDestructor(String destName, Type type) throws CoreException{
+		assertMutable();
 		boolean admissibility = datatypes.get(currentDatatype).addDestructor(currentConstructor, destName, type);
 		if (!admissibility){
 			isAdmissible = false;
@@ -146,13 +168,19 @@ public class DatatypeTable extends State implements IDatatypeTable{
 		
 		String identifier;
 		String[] typeArguments;
+		List<String> listTypeArguments;
 		LinkedHashMap<String, ConstructorEntry> constructors;
 		boolean isErrorProne = false;
 		
 		public DatatypeEntry(String identifier, String[] typeArguments){
 			this.identifier = identifier;
 			this.typeArguments = typeArguments;
+			this.listTypeArguments = Arrays.asList(typeArguments);
 			this.constructors = new LinkedHashMap<String, DatatypeTable.DatatypeEntry.ConstructorEntry>();
+		}
+		
+		public boolean isAllowedIdentifier(String identifier) throws CoreException {
+			return listTypeArguments.contains(identifier);
 		}
 		
 		public void setErrorProne(){

@@ -19,7 +19,7 @@ import org.rodinp.core.RodinCore;
  * @author maamria
  *
  */
-public interface IGiven extends IInferenceClause{
+public interface IGiven extends IInferenceClause, IHypElement{
 	
 	IInternalElementType<IGiven> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".given");

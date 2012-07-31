@@ -80,9 +80,6 @@ public class ModelRulesBlock implements IModelElement{
 		return new Object[0];
 	}
 
-	/**
-	 * 
-	 */
 	public void processChildren() {
 		rewRules.clear();
 		infRules.clear();
@@ -99,22 +96,12 @@ public class ModelRulesBlock implements IModelElement{
 		
 	}
 
-	/**
-	 * @param rule
-	 */
 	private void addRewriteRule(IRewriteRule rule) {
 			rewRules.put(rule, new ModelRewriteRule(rule, this));
-		
-		
 	}
 	
-	/**
-	 * @param rule
-	 */
 	private void addInferenceRule(IInferenceRule rule) {
 			infRules.put(rule, new ModelInferenceRule(rule, this));
-		
-		
 	}
 
 }
