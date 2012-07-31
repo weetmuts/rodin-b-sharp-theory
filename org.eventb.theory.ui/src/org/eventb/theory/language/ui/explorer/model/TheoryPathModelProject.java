@@ -6,23 +6,18 @@ package org.eventb.theory.language.ui.explorer.model;
 import java.util.HashMap;
 
 import org.eventb.core.IEventBRoot;
-import org.eventb.internal.ui.UIUtils;
-import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
 import fr.systerel.internal.explorer.model.IModelElement;
-import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 
 /**
  * @author RenatoSilva
  *
  */
-@SuppressWarnings("restriction")
 public class TheoryPathModelProject implements IModelElement {
 	
 	private IRodinProject internalProject;
@@ -40,6 +35,7 @@ public class TheoryPathModelProject implements IModelElement {
 	 */
 	@Override
 	public IModelElement getModelParent() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -48,7 +44,8 @@ public class TheoryPathModelProject implements IModelElement {
 	 */
 	@Override
 	public IRodinElement getInternalElement() {
-		return internalProject;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -56,6 +53,7 @@ public class TheoryPathModelProject implements IModelElement {
 	 */
 	@Override
 	public Object getParent(boolean complex) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -64,18 +62,8 @@ public class TheoryPathModelProject implements IModelElement {
 	 */
 	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
-		try {
-			if (type == ITheoryPathRoot.ELEMENT_TYPE) {
-				return internalProject.getRootElementsOfType(type);
-			}
-			} catch (RodinDBException e) {
-				UIUtils.log(e, "when getting " + ITheoryPathRoot.ELEMENT_TYPE + " of " +internalProject);
-			}
-		
-		if (ExplorerUtils.DEBUG) {
-			System.out.println("Did not find children of type: "+type +"for project " +internalProject);
-		}
-		return new Object[0];
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public ModelTheoryPath getTheoryPath(ITheoryPathRoot theory) {
@@ -108,11 +96,11 @@ public class TheoryPathModelProject implements IModelElement {
 		if (element instanceof ITheoryPathRoot) {
 			return getTheoryPath((ITheoryPathRoot) element);
 		}
-		IEventBRoot parent= element.getAncestor(ITheoryPathRoot.ELEMENT_TYPE);
+		IEventBRoot parent= element.getAncestor(ITheoryRoot.ELEMENT_TYPE);
 		ModelTheoryPath theory = theories.get(parent);
 		if (theory != null) {
 			return theory.getModelElement(element);
-		} 
+		}
 		return null;
 	}
 

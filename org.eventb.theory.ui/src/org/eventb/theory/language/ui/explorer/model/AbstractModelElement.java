@@ -23,6 +23,13 @@ public abstract class AbstractModelElement<E extends IRodinElement> implements I
 	}
 
 	/* (non-Javadoc)
+	 * @see fr.systerel.internal.explorer.model.IModelElement#getChildren(org.rodinp.core.IInternalElementType, boolean)
+	 */
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
+		return new Object[0];
+	}
+
+	/* (non-Javadoc)
 	 * @see fr.systerel.internal.explorer.model.IModelElement#getInternalElement()
 	 */
 	public IRodinElement getInternalElement() {

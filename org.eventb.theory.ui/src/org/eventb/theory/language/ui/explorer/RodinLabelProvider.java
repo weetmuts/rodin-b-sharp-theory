@@ -87,14 +87,7 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 				} catch (RodinDBException e) {
 					UIUtils.log(e, "when getting identifier for " + obj);
 				}
-			} else if (obj instanceof IAvailableTheoryProject){
-				try {
-					return ((IAvailableTheoryProject)obj).getTheoryProject().getElementName();
-				} catch (RodinDBException e) {
-					UIUtils.log(e, "when getting IAvailableTheoryProject for " + obj);
-				}
-			}
-			else if (obj instanceof IRodinElement) {
+			} else if (obj instanceof IRodinElement) {
 				return ((IRodinElement) obj).getElementName();
 
 			} else if (obj instanceof TheoryModelPOContainer) {

@@ -8,17 +8,12 @@ import java.text.Collator;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
-import org.eventb.theory.core.ITheoryPathRoot;
-import org.eventb.theory.language.ui.explorer.model.ModelAvailableTheoryProject;
 import org.eventb.theory.language.ui.explorer.model.TheoryPathModelController;
 import org.eventb.theory.ui.explorer.model.TheoryModelController;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.IElementNode;
 import fr.systerel.internal.explorer.model.IModelElement;
 
 /**
@@ -60,28 +55,6 @@ public class TheoryPathChildrenContentProviders {
 		 */
 		public AvailableTheoryContentProvider() {
 			super(IAvailableTheory.ELEMENT_TYPE);
-		}
-		
-		@Override
-		public Object getParent(Object element) {
-
-			if (element instanceof IAvailableTheory) {
-				IAvailableTheory availableTheory = (IAvailableTheory) element;
-				ITheoryPathRoot root = (ITheoryPathRoot) availableTheory.getRoot();
-				ModelAvailableTheoryProject availableTheoryProjectModel;
-				try {
-					availableTheoryProjectModel = TheoryPathModelController.getAvailableTheoryProject(root,availableTheory.getAvailableTheoryProject());
-					if (availableTheoryProjectModel != null) {
-						return availableTheoryProjectModel.availableTheory_node;
-					}
-				} catch (RodinDBException e) {
-					UIUtils.log(e, "Exception occurred when retrieving availableTheoryProject for " +  availableTheory);
-				}
-			}
-			if (element instanceof IElementNode) {
-				return ((IElementNode) element).getParent();
-			}
-			return null;
 		}
 	}
 	
@@ -131,6 +104,7 @@ public class TheoryPathChildrenContentProviders {
 	 */
 	@Override
 	public Object getParent(Object element) {
+
 		IModelElement model = TheoryModelController.getModelElement(element);
 		if (model != null) {
 			return model.getParent(true);

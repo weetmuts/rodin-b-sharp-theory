@@ -20,7 +20,6 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
  * @author RenatoSilva
  *
  */
-@SuppressWarnings("restriction")
 public class ModelTheoryPath implements IModelElement {
 	
 	/**
@@ -149,6 +148,9 @@ public class ModelTheoryPath implements IModelElement {
 		if (type == IAvailableTheoryProject.ELEMENT_TYPE) {
 			return new Object[]{availableTheoryProject_node};
 		}
+//		if (type == IAvailableTheory.ELEMENT_TYPE) {
+//			return new Object[]{availableTheories};
+//		}
 		if (ExplorerUtils.DEBUG) {
 			System.out.println("Unsupported children type for theory: " +type);
 		}
@@ -161,11 +163,16 @@ public class ModelTheoryPath implements IModelElement {
 	 * Adds all axioms and theorems found in the internalContext root.
 	 */
 	public void processChildren(){
+		// TODO children which have proof obligations needs to be processed
 		availableTheoryProjects.clear();
+//		availableTheories.clear();
 		try {
 			for (IAvailableTheoryProject avt : theoryPathRoot.getAvailableTheoryProjects()) {
 				addAvailableTheoryProject(avt);
 			}
+//			for (IAvailableTheory avt : theoryPathRoot.getAvailableTheories()) {
+//				addAvailableTheory(avt);
+//			}
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when accessing datatypes of "+theoryPathRoot);
 		}
@@ -175,6 +182,11 @@ public class ModelTheoryPath implements IModelElement {
 		availableTheoryProjects.put(avt, new ModelAvailableTheoryProject(avt, this));
 	}
 
+
+//	public void addAvailableTheory(IAvailableTheory avTheory) {
+//		availableTheories.put(avTheory, new ModelAvailableTheory(avTheory, this));
+//	}
+	
 	/**
 	 * @return
 	 */
@@ -184,15 +196,11 @@ public class ModelTheoryPath implements IModelElement {
 
 
 	public IModelElement getModelElement(IRodinElement element) {
+//		if(element instanceof IAvailableTheory)
+//			return availableTheories.get(element);
 		if (element instanceof IAvailableTheoryProject)
 			return availableTheoryProjects.get(element);
 		
-		return null;
-	}
-
-
-	public Object[] getIPSStatuses() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

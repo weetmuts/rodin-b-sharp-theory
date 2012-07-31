@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
+import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.language.ui.explorer.model.TheoryPathModelController;
 import org.rodinp.core.IInternalElementType;
@@ -35,6 +36,8 @@ public class TheoryPathContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public void dispose() {
+		// TODO Auto-generated method stub
+
 	}
 
 	/* (non-Javadoc)
@@ -42,6 +45,8 @@ public class TheoryPathContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/* (non-Javadoc)
@@ -113,7 +118,7 @@ public class TheoryPathContentProvider implements ITreeContentProvider {
 			return proj.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			TheoryUIUtils.log(e, "Error while retrieving "
-					+ ITheoryPathRoot.ELEMENT_TYPE + " from " + proj);
+					+ ITheoryRoot.ELEMENT_TYPE + " from " + proj);
 			e.printStackTrace();
 			return null;
 		}

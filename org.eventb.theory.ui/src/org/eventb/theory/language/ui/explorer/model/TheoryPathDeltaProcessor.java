@@ -6,7 +6,6 @@ package org.eventb.theory.language.ui.explorer.model;
 import java.util.ArrayList;
 
 import org.eventb.core.IEventBRoot;
-import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -52,14 +51,14 @@ public class TheoryPathDeltaProcessor {
 				if (element instanceof IRodinFile)  {
 					IRodinFile file = (IRodinFile) element;
 					//remove the context from the model
-					if (file.getRoot() instanceof ITheoryPathRoot) {
+					if (file.getRoot() instanceof ITheoryRoot) {
 						addToRemove(file.getRoot());
 						addToRefresh(element.getRodinProject());
 					}
 					
 				}
 				//remove the context from the model
-				if (element instanceof ITheoryPathRoot) {
+				if (element instanceof ITheoryRoot) {
 					addToRemove(element);
 				}
 
