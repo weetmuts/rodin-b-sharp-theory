@@ -19,9 +19,6 @@ public class Messages {
 	public static String rewriteRule_isComplete;
 	public static String rewriteRule_isIncomplete;
 	
-	public static String inferenceRule_given_isHyp;
-	public static String inferenceRule_given_isNotHyp;
-	
 	public static String operator_isExpression;
 	public static String operator_isPredicate;
 	public static String operator_isAssociative;
