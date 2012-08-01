@@ -41,11 +41,11 @@ public class TheoryPathStaticChecker extends StaticChecker{
 			
 			IAvailableTheoryProject[] availableTheoryProjects = root.getAvailableTheoryProjects();
 			for(IAvailableTheoryProject theoryProj: availableTheoryProjects){
-				List<IPath> files = new ArrayList<IPath>();
+				List<IRodinFile> files = new ArrayList<IRodinFile>();
 				for(IAvailableTheory availableTheory: theoryProj.getTheories()){
 					if(availableTheory.hasAvailableTheory()){
 						IRodinFile rodinFile = availableTheory.getDeployedTheory().getRodinFile();
-						files.add(rodinFile.getResource().getFullPath());
+						files.add(rodinFile);
 						graph.addUserDependency(
 								source.getResource(),
 								rodinFile.getResource(),
@@ -53,9 +53,9 @@ public class TheoryPathStaticChecker extends StaticChecker{
 					}
 				}
 				
-				if(!theoryProj.getTheoryProject().equals(root.getRodinProject())){
-					DatabaseUtilitiesTheoryPath.addListener(files,root, IResourceChangeEvent.POST_BUILD);
-				}
+//				if(!theoryProj.getTheoryProject().equals(root.getRodinProject())){
+					DatabaseUtilitiesTheoryPath.addListener(files,root);
+//				}
 			}
 			
 		} finally {

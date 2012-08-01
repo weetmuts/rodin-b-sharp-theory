@@ -5,24 +5,25 @@ package org.eventb.theory.core;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author RenatoSilva
@@ -72,34 +73,26 @@ public class DatabaseUtilitiesTheoryPath{
 	 * @param root
 	 * @param resourceChangeKind
 	 */
-	public static <T extends IEventBRoot> void addListener(final List<IPath> files, final T root, int resourceChangeKind){
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				Object source = event.getSource();
-
-				if(source instanceof IProject){
-					IProject project = (IProject) source;
-					if(project.equals(root.getRodinProject().getProject()))
-						return;
-				}
-				
-				IResourceDelta delta = event.getDelta();
-				IResourceDelta[] affectedProjects = delta.getAffectedChildren();
-				for(IResourceDelta affectedProject: affectedProjects){
-					if(!affectedProject.getFullPath().equals(root.getRodinProject().getResource().getFullPath())){
-						for(IResourceDelta affectedFile: affectedProject.getAffectedChildren()){
-							if(files.contains(affectedFile.getFullPath())){
-								buildDependencyProject(root);
+	public static <T extends IEventBRoot> void addListener(final List<IRodinFile> files, final T root){
+		IElementChangedListener listener = new IElementChangedListener() {
+			@Override
+			public void elementChanged(ElementChangedEvent event) {
+				IRodinElementDelta delta = event.getDelta();
+				IRodinElementDelta[] affectedProjects = delta.getAffectedChildren();
+				for(IRodinElementDelta affectedProject: affectedProjects){
+//					if(!affectedProject.getElement().equals(root.getRodinProject())){
+						for(IRodinElementDelta affectedFile: affectedProject.getAffectedChildren()){
+							if(files.contains(affectedFile.getElement())){
+								notifyDependency(root);
 								break;
 							}
 						}
-					}
+//					}
 				}
 			}
 		};
-
-		workspace.addResourceChangeListener(listener, resourceChangeKind);
+		
+		RodinCore.addElementChangedListener(listener, ElementChangedEvent.POST_CHANGE);
 	}
 	
 	/**
@@ -107,23 +100,34 @@ public class DatabaseUtilitiesTheoryPath{
 	 * @param root
 	 * @param builderKind
 	 */
-	private static void buildDependencyProject(final IEventBRoot root) {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws RodinDBException {
-					try {
-						root.setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE,root.hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE) ? root.getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE): "", monitor);
-						root.getRodinFile().save(monitor, true);
-						root.getRodinProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
-					} catch (CoreException e) {
-						CoreUtilities.log(e, "when trying to build project " + root.getElementName());
-					}
+	private static void notifyDependency(final IEventBRoot root) {
+		IJobManager jobManager = Job.getJobManager();
+		ISchedulingRule currentRule = jobManager.currentRule();
+		
+		jobManager.beginRule(currentRule, null);
+		
+		Job job = new Job(Messages.progress_notifyTheoryPath) {
+			
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					root.setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE,root.hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE) ? root.getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE): "", monitor);
+					root.getRodinFile().save(monitor, true);
+					root.getRodinProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+				} catch (CoreException e) {
+					CoreUtilities.log(e, "when trying to build project " + root.getElementName() + " after notifying file "+ root.getComponentName());
+					return Status.CANCEL_STATUS;
 				}
-			}, null);
-		} catch (RodinDBException e) {
-			CoreUtilities.log(e, "when trying to build project " + root.getElementName());
-		}
+				
+				return Status.OK_STATUS;
+
+			}
+		};
+		
+		job.setUser(false);
+		job.schedule(); // start as soon as possible
+		
+		jobManager.endRule(currentRule);
 	}
 
 }
