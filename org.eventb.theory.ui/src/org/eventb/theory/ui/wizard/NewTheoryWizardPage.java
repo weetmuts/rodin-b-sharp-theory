@@ -146,8 +146,7 @@ public class NewTheoryWizardPage extends WizardPage {
 			updateStatus(Messages.wizard_errorTheoryNameMustBeSpecified);
 			return;
 		}
-		final IEventBProject evbProject = (IEventBProject) rodinProject
-				.getAdapter(IEventBProject.class);
+		final IEventBProject evbProject = (IEventBProject) rodinProject.getAdapter(IEventBProject.class);
 		final IRodinFile machineFile = evbProject.getMachineFile(theoryName);
 		final IRodinFile contextFile = evbProject.getContextFile(theoryName);
 		final IRodinFile theoryFile = getTheoryFile(rodinProject, theoryName);
