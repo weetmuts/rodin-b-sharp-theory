@@ -1590,4 +1590,19 @@
          </action>
       </viewContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.eventb.theory.language.ui.TheoryPathFileRename"
+            objectClass="org.eventb.theory.core.ITheoryPathRoot">
+         <action
+               class="org.eventb.theory.language.ui.explorer.actions.RenameAction"
+               id="org.eventb.theory.language.ui.Rename"
+               label="&amp;Rename"
+               menubarPath="modelling"
+               tooltip="Rename theoryPath file">
+         </action>
+      </objectContribution>
+   </extension>
 </plugin>
