@@ -63,7 +63,7 @@ public abstract class BuilderTest extends TestCase {
 		return result;
 	}
 	
-	private void createRodinFileOf(IInternalElement result)
+	protected void createRodinFileOf(IInternalElement result)
 			throws RodinDBException {
 		result.getRodinFile().create(true, null);
 	}
