@@ -20,6 +20,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.ITheoryPathTable;
+import org.eventb.theory.core.sc.states.TheoryPathAccuracyInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -35,6 +36,7 @@ public class TheoryPathAvailableTheoryModule extends SCProcessorModule {
 	private IAvailableTheoryProject theoryProj;
 	private ITheoryPathTable theoryTable;
 	private static final String THEORY_NAME = "THYPH";
+	private TheoryPathAccuracyInfo accuracyInfo;
 
 	/**
 	 * 
@@ -49,6 +51,7 @@ public class TheoryPathAvailableTheoryModule extends SCProcessorModule {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		theoryTable = (ITheoryPathTable) repository.getState(ITheoryPathTable.STATE_TYPE);
+		accuracyInfo = (TheoryPathAccuracyInfo) repository.getState(TheoryPathAccuracyInfo.STATE_TYPE);
 		repository.setState(theoryTable);
 	}
 	
@@ -56,6 +59,7 @@ public class TheoryPathAvailableTheoryModule extends SCProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		accuracyInfo = null;
 		theoryTable = null;
 		super.endModule(element, repository, monitor);
 	}
@@ -69,6 +73,7 @@ public class TheoryPathAvailableTheoryModule extends SCProcessorModule {
 					throws CoreException {
 		theoryProj = (IAvailableTheoryProject) element;
 		IAvailableTheory[] theories = theoryProj.getTheories();
+		boolean valid = false;
 
 		monitor.subTask(Messages.bind(Messages.progress_TheoryPathTheories));
 		initFilterModules(repository, monitor);
@@ -81,8 +86,10 @@ public class TheoryPathAvailableTheoryModule extends SCProcessorModule {
 						TheoryGraphProblem.NoTheoryClausesError);
 			} else if(filterModules(theory, repository, monitor)){
 				IDeployedTheoryRoot conflictingTheory = theoryTable.addTheory(theory);
-				if(conflictingTheory==null)
+				if(conflictingTheory==null){
+					valid = true;
 					saveSCTheory((ISCAvailableTheoryProject) target, theory, index++, monitor);
+				}
 				else {
 					createProblemMarker(theory,
 							TheoryAttributes.AVAILABLE_THEORY_ATTRIBUTE,
@@ -91,6 +98,10 @@ public class TheoryPathAvailableTheoryModule extends SCProcessorModule {
 				}
 			}
 			monitor.worked(1);
+		}
+		
+		if(!valid){
+			accuracyInfo.setNotAccurate();
 		}
 
 		monitor.done();

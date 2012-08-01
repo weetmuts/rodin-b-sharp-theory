@@ -66,7 +66,16 @@ public class TheoryPathProjectFilterModule extends SCFilterModule {
 			IAvailableTheoryProject availableTheoryProjectClause) throws RodinDBException {
 		boolean valid = true;
 		
-		if(projectTable.containsTheoryProject(availableTheoryProjectClause.getTheoryProject().getElementName())){
+		
+		if(!availableTheoryProjectClause.getTheoryProject().exists()){
+			valid = false;
+			//theory project does not exist 
+			createProblemMarker(availableTheoryProjectClause,
+					TheoryAttributes.THEORY_PROJECT_ATTRIBUTE,
+					TheoryGraphProblem.TheoryProjectDoesNotExistError,
+					availableTheoryProjectClause.getTheoryProject());
+		}
+		else if(projectTable.containsTheoryProject(availableTheoryProjectClause.getTheoryProject().getElementName())){
 			valid = false;
 			//duplicated theory project 
 			createProblemMarker(availableTheoryProjectClause,

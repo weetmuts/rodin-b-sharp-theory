@@ -34,6 +34,7 @@ public final class Messages {
 	public static String progress_TheoryInferenceRules;
 	public static String progress_TheoryRewriteRules;
 	public static String progress_TheoryTheorems;
+	public static String progress_notifyTheoryPath;
 	public static String scuser_IndRedundantImportWarn;
 	public static String scuser_LhsAndRhsNotSynClassMatching;
 	public static String scuser_LHSUndef;
@@ -156,7 +157,7 @@ public final class Messages {
 	public static String scuser_DeployedTheoryRedudantWarning;
 	public static String scuser_DeployedTheoriesConflictError;
 	public static String scuser_MultipleTheoryPathProjectError;
-	public static String progress_notifyTheoryPath;
+	public static String scuser_TheoryPathProjectNotExistError;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

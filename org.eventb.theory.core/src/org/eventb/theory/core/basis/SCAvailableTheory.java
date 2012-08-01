@@ -6,7 +6,6 @@ package org.eventb.theory.core.basis;
 import static org.eventb.theory.core.TheoryAttributes.AVAILABLE_THEORY_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.basis.EventBElement;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
@@ -65,7 +64,7 @@ public class SCAvailableTheory extends EventBElement implements
 
 	@Override
 	public void setSCTheory(IAvailableTheory theory, IProgressMonitor monitor) throws RodinDBException{
-		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE ,theory.getDeployedTheory().getComponentName(), monitor);
+		setAttributeValue(AVAILABLE_THEORY_ATTRIBUTE ,theory.getDeployedTheory(), monitor);
 	}
 	
 	

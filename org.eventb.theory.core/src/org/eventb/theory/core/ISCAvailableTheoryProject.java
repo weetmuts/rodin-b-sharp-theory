@@ -6,7 +6,6 @@ package org.eventb.theory.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ITraceableElement;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -27,7 +26,7 @@ public interface ISCAvailableTheoryProject extends ITraceableElement {
 	
 	public IRodinProject getSCAvailableTheoryProject() throws RodinDBException;
 	
-	public void setSCTheoryProject(IInternalElement theoryProject,
+	public void setSCTheoryProject(IRodinProject iRodinProject,
 			IProgressMonitor monitor) throws RodinDBException;
 	
 	public ISCAvailableTheory getSCAvailableTheory(String name) throws RodinDBException;

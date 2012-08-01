@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.StaticChecker;
 import org.eventb.theory.core.DatabaseUtilitiesTheoryPath;
@@ -35,10 +33,10 @@ public class TheoryPathStaticChecker extends StaticChecker{
 			ITheoryPathRoot root = (ITheoryPathRoot) source.getRoot();
 			final ISCTheoryPathRoot targetRoot = root.getSCTheoryPathRoot();
 			IRodinFile target = targetRoot.getRodinFile();
-			
+
 			graph.addTarget(target.getResource());
 			graph.addToolDependency(source.getResource(), target.getResource(), true);
-			
+
 			IAvailableTheoryProject[] availableTheoryProjects = root.getAvailableTheoryProjects();
 			for(IAvailableTheoryProject theoryProj: availableTheoryProjects){
 				List<IRodinFile> files = new ArrayList<IRodinFile>();
@@ -52,12 +50,10 @@ public class TheoryPathStaticChecker extends StaticChecker{
 								target.getResource(), false);
 					}
 				}
-				
-//				if(!theoryProj.getTheoryProject().equals(root.getRodinProject())){
-					DatabaseUtilitiesTheoryPath.addListener(files,root);
-//				}
+
+				DatabaseUtilitiesTheoryPath.addListener(files,root);
 			}
-			
+
 		} finally {
 			monitor.done();
 		}

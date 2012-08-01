@@ -86,8 +86,5 @@ public class TheoryAttributes {
 	
 	public static IAttributeType.Handle THEORY_PROJECT_ATTRIBUTE = RodinCore
 			.getHandleAttrType(TheoryPlugin.PLUGIN_ID + ".availableTheoryProject");
-	
-	public static IAttributeType.String SCTHEORY_PROJECT_ATTRIBUTE = RodinCore
-			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".scAvailableTheoryProject");
 
 }

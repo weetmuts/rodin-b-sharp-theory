@@ -1075,11 +1075,6 @@
             kind="handle"
             name="Event-B Theory Available Project Attribute">
       </attributeType>
-      <attributeType
-            id="scAvailableTheoryProject"
-            kind="string"
-            name="Event-B Theory SC Available Project Attribute">
-      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">

@@ -66,6 +66,18 @@ public class DatabaseUtilitiesTheoryPath{
 	}
 	
 	/**
+	 * Returns a handle to the theory with the given name.
+	 * 
+	 * @param name
+	 * @param project
+	 * @return a handle to the theory
+	 */
+	public static ITheoryPathRoot getTheoryPath(String name, IRodinProject project) {
+		IRodinFile file = project.getRodinFile(getTheoryPathFullName(name));
+		return (ITheoryPathRoot) file.getRoot();
+	}
+	
+	/**
 	 * Adds a listener to the workspace that it is triggered when any of the <code>files</code> are modified. 
 	 * The listener action is applied to <code>root</code> for <code>resourceChangeKind</code>.
 	 * 
@@ -80,14 +92,22 @@ public class DatabaseUtilitiesTheoryPath{
 				IRodinElementDelta delta = event.getDelta();
 				IRodinElementDelta[] affectedProjects = delta.getAffectedChildren();
 				for(IRodinElementDelta affectedProject: affectedProjects){
-//					if(!affectedProject.getElement().equals(root.getRodinProject())){
+					//In case the project is deleted or it is closed
+					if(affectedProject.getAffectedChildren().length==0){
+						for(IRodinFile file: files){
+							if(file.getRodinProject().equals(affectedProject.getElement()))
+								notifyDependency(root);
+							break;
+						}
+					}
+					else {
 						for(IRodinElementDelta affectedFile: affectedProject.getAffectedChildren()){
 							if(files.contains(affectedFile.getElement())){
 								notifyDependency(root);
 								break;
 							}
 						}
-//					}
+					}
 				}
 			}
 		};

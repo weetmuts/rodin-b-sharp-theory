@@ -168,7 +168,6 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 			}
 		}
 		
-//		theoryTable.makeImmutable();
 		projectTable.makeImmutable();
 		monitor.done();
 	}
@@ -184,7 +183,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 			IProgressMonitor monitor) throws RodinDBException {
 		ISCAvailableTheoryProject scTheoryProject = target.getSCAvailableTheoryProject(THEORY_PROJECT_NAME+"_"+index);
 		scTheoryProject.create(null, monitor);
-		scTheoryProject.setSCTheoryProject(theoryProject, monitor); 
+		scTheoryProject.setSCTheoryProject(theoryProject.getTheoryProject(), monitor); 
 		scTheoryProject.setSource(theoryProject, monitor);
 		
 		return scTheoryProject;

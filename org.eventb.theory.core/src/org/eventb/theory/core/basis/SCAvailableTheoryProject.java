@@ -56,9 +56,9 @@ public class SCAvailableTheoryProject extends EventBElement implements ISCAvaila
 	}
 
 	@Override
-	public void setSCTheoryProject(IInternalElement theoryProject,
+	public void setSCTheoryProject(IRodinProject theoryProject,
 			IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(TheoryAttributes.SCTHEORY_PROJECT_ATTRIBUTE ,theoryProject.getElementName(), monitor);
+		setAttributeValue(TheoryAttributes.THEORY_PROJECT_ATTRIBUTE ,theoryProject, monitor);
 	}
 
 	@Override
