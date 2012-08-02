@@ -2,6 +2,7 @@ package org.eventb.theory.core.tests.sc;
 
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ITheoryRoot;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -24,6 +25,13 @@ public abstract class BasicTheorySCTestWithThyConfig extends BasicTheorySCTest {
 	@Override
 	protected ITheoryRoot createTheory(String bareName) throws RodinDBException {
 		ITheoryRoot theory = super.createTheory(bareName);
+		theory.setConfiguration(DatabaseUtilities.THEORY_CONFIGURATION, null);
+		return theory;
+	}
+	
+	@Override
+	protected ITheoryRoot createTheory(String bareName, IRodinProject rodinProject) throws RodinDBException {
+		ITheoryRoot theory = super.createTheory(bareName,rodinProject);
 		theory.setConfiguration(DatabaseUtilities.THEORY_CONFIGURATION, null);
 		return theory;
 	}

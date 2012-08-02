@@ -10,7 +10,7 @@ import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
-import org.eventb.theory.core.tests.BuilderTest;
+import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -18,16 +18,9 @@ import org.rodinp.core.RodinDBException;
  * @author renatosilva
  *
  */
-public abstract class BuilderTestTheoryPath extends BuilderTest {
+public abstract class BuilderTestTheoryPath extends BasicTheorySCTestWithThyConfig {
 	
-	/**
-	 * @param name
-	 */
-	public BuilderTestTheoryPath(String name) {
-		super(name);
-	}
-	
-	protected ITheoryPathRoot createTheoryPath(String bareName) throws RodinDBException {
+	protected ITheoryPathRoot createTheoryPath(String bareName, IRodinProject rodinProject) throws RodinDBException {
 		final ITheoryPathRoot result = DatabaseUtilitiesTheoryPath.getTheoryPath(bareName, rodinProject);
 		createRodinFileOf(result);
 		return result;

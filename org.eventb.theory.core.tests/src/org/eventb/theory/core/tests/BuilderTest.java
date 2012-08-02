@@ -45,6 +45,12 @@ public abstract class BuilderTest extends TestCase {
 		super(name);
 	}
 	
+	protected ITheoryRoot createTheory(String bareName, IRodinProject rodinProject) throws RodinDBException {
+		final ITheoryRoot result = DatabaseUtilities.getTheory(bareName, rodinProject);
+		createRodinFileOf(result);
+		return result;
+	}
+	
 	protected ITheoryRoot createTheory(String bareName) throws RodinDBException {
 		final ITheoryRoot result = DatabaseUtilities.getTheory(bareName, rodinProject);
 		createRodinFileOf(result);
