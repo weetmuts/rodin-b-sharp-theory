@@ -152,7 +152,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			globalProjectManager.populate(basicFactory);
 			seedFactory = seedFactory.withExtensions(globalProjectManager.getAllDeployedExtensions());
 			for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
-				if(!project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT) && project.isOpen()){
+				if(!project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT)){
 					ProjectManager manager = new ProjectManager(project);
 					manager.populate(seedFactory);
 					projectManagers.put(project, manager);
