@@ -275,24 +275,28 @@
             defaultColumn="0"
             imagePath="icons/block.gif"
             prefix="AXIOMATIC DEFINITIONS"
+            prettyPrinter="org.eventb.theory.ui.editor.html.AxiomaticDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.axiomaticDefinitionsBlock">
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/op.gif"
             prefix="OPERATORS"
+            prettyPrinter="org.eventb.theory.ui.editor.html.AxiomaticOperatorDefinitionPrettyPrinter"
             typeId="org.eventb.theory.core.axiomaticOperatorDefinition">
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/theorem.gif"
             prefix="AXIOMS"
+            prettyPrinter="org.eventb.theory.ui.editor.html.AxiomaticDefinitionAxiomPrettyPrinter"
             typeId="org.eventb.theory.core.axiomaticDefinitionAxiom">
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/datatype.gif"
             prefix="TYPES"
+            prettyPrinter="org.eventb.theory.ui.editor.html.AxiomaticTypeDefinition"
             typeId="org.eventb.theory.core.axiomaticTypeDefinition">
       </element>
       <childRelation

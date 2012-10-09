@@ -35,8 +35,7 @@ public class NewOperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 	private static final String OP_IDENT_SEPARATOR_BEGIN = null;
 	private static final String OP_IDENT_SEPARATOR_END = null;
 	private static final String TWO_SPACES = "  ";
-
-	private static final String ONE_SPACES = " ";
+	private static final String ONE_SPACE = " ";
 
 	@Override
 	public void prettyPrint(IInternalElement elt, IInternalElement parent,
@@ -139,11 +138,11 @@ public class NewOperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 					int i = 0;
 					for (IOperatorArgument arg : args) {
 						builder.append("(" + arg.getIdentifierString()
-								+ ONE_SPACES + ":" + ONE_SPACES + arg.getExpressionString()
+								+ ONE_SPACE + ":" + ONE_SPACE + arg.getExpressionString()
 								+ ")");
 						if (i < args.length - 1) {
-							builder.append(ONE_SPACES + opDef.getLabel()
-									+ ONE_SPACES);
+							builder.append(ONE_SPACE + opDef.getLabel()
+									+ ONE_SPACE);
 						}
 						i++;
 					}
@@ -157,8 +156,8 @@ public class NewOperatorDefinitionPrettyPrinter extends DefaultPrettyPrinter {
 					builder.append("(");
 					int i = 0;
 					for (IOperatorArgument arg : args) {
-						builder.append(arg.getIdentifierString() + ONE_SPACES
-								+ ":" + ONE_SPACES + arg.getExpressionString());
+						builder.append(arg.getIdentifierString() + ONE_SPACE
+								+ ":" + ONE_SPACE + arg.getExpressionString());
 						if (i < args.length - 1) {
 							builder.append(", ");
 						}
