@@ -54,77 +54,6 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 		super.endModule(element, repository, monitor);
 	}
 	
-//	/**
-//	 * Processes the theory projects.
-//	 * 
-//	 * @param theoryProjects
-//	 *            the theoryProjects
-//	 * @param targetRoot
-//	 *            the SC theorypath target
-//	 * @param repository
-//	 *            the state repository
-//	 * @param monitor
-//	 *            the progress monitor
-//	 * @throws CoreException
-//	 */
-//	protected void processTheoryProjects(IAvailableTheoryProject theoryProject,
-//			ISCTheoryLanguageRoot targetRoot, ISCStateRepository repository,
-//			IProgressMonitor monitor) throws CoreException {
-//		
-//		
-//		
-//		
-//		
-//		
-//		boolean isAccurate = true;
-//		// variable used to check against direct and indirect redundancy
-//		Set<ISCTheoryRoot> importedTheories = new HashSet<ISCTheoryRoot>();
-//		
-//		
-//		initFilterModules(repository, monitor);
-//		if(filterModules(includeClause, repository, monitor)){
-//			monitor.worked(1);
-//		}
-//		
-//		endFilterModules(repository, monitor);
-//		
-//		monitor.worked(1);
-//		
-//		
-////		for (IImportTheory importTheory : importTheories) {
-////			// missing attribute
-////			if (!importTheory.hasImportTheory()) {
-////				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.ImportTheoryMissing);
-////				isAccurate = false;
-////				continue;
-////			}
-////			ISCTheoryRoot importRoot = importTheory.getImportTheory();
-////			// target does not exist
-////			if (!importRoot.exists()) {
-////				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.ImportTheoryNotExist, importRoot.getComponentName());
-////				isAccurate = false;
-////				continue;
-////			}
-////			// direct redundancy
-////			if (importedTheories.contains(importRoot)) {
-////				createProblemMarker(importTheory,TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,TheoryGraphProblem.RedundantImportWarning,importRoot.getComponentName());
-////				isAccurate = false;
-////				continue;
-////			}
-////			// add to the sets
-////			importedTheories.add(importRoot);
-////			importTheoriesDirectives.add(importTheory);
-////		}
-////		// clear to use differently
-////		importedTheories.clear();
-////		// filter imports
-////		isAccurate &= filterImports(importedTheories);
-////		patchFormulaFactory(importedTheories, repository);
-////		if (!isAccurate){
-////			accuracyInfo.setNotAccurate();
-////		}
-//	}
-	
 	/**
 	 * 
 	 */
@@ -135,6 +64,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.tool.types.ISCProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalElement, org.eventb.core.sc.state.ISCStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@SuppressWarnings("restriction")
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
