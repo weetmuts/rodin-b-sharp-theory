@@ -18,12 +18,12 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 @SuppressWarnings("restriction")
 public class ModelAvailableTheoryProject extends AbstractModelElement<IAvailableTheoryProject> {
 
-	public AvailableTheoryProjectElementNode availableTheory_node;
+	public AvailableTheoryProjectElementNode availableTheoryProject_node;
 
 	public ModelAvailableTheoryProject(IAvailableTheoryProject avt,
 			IModelElement modelTheoryPath) {
 		super(avt, modelTheoryPath);
-		availableTheory_node = new AvailableTheoryProjectElementNode(IAvailableTheory.ELEMENT_TYPE, this);
+		availableTheoryProject_node = new AvailableTheoryProjectElementNode(IAvailableTheory.ELEMENT_TYPE, this);
 	}
 
 	public Object getParent(boolean complex) {
@@ -31,7 +31,7 @@ public class ModelAvailableTheoryProject extends AbstractModelElement<IAvailable
 			return ((ModelTheoryPath) parent).availableTheoryProject_node;
 		}
 		if (parent instanceof ModelAvailableTheoryProject) {
-			return ((ModelAvailableTheoryProject) parent).availableTheory_node;
+			return ((ModelAvailableTheoryProject) parent).availableTheoryProject_node;
 		}
 		return parent;
 	}

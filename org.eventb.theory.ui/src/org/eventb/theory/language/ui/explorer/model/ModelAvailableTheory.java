@@ -12,9 +12,9 @@ import fr.systerel.internal.explorer.model.IModelElement;
  * @author RenatoSilva
  *
  */
+@SuppressWarnings("restriction")
 public class ModelAvailableTheory extends AbstractModelElement<IAvailableTheory>{
 	
-	@SuppressWarnings("restriction")
 	public ModelAvailableTheory(IAvailableTheory element, IModelElement parent) {
 		super(element, parent);
 	}
@@ -28,13 +28,7 @@ public class ModelAvailableTheory extends AbstractModelElement<IAvailableTheory>
 
 	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
-//		if (type != IPSStatus.ELEMENT_TYPE) {
-//			if (ExplorerUtils.DEBUG) {
-//				System.out.println("Unsupported children type for rule: " +type);
-//			}
-			return new Object[0];
-//		}
-//		return getIPSStatuses();
+		return new Object[0];
 	}
 
 }

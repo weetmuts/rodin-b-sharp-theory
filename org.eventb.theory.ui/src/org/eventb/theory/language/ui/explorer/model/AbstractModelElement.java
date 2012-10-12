@@ -3,7 +3,6 @@
  */
 package org.eventb.theory.language.ui.explorer.model;
 
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 import fr.systerel.internal.explorer.model.IModelElement;
@@ -12,6 +11,7 @@ import fr.systerel.internal.explorer.model.IModelElement;
  * @author renatosilva
  *
  */
+@SuppressWarnings("restriction")
 public abstract class AbstractModelElement<E extends IRodinElement> implements IModelElement {
 	
 	protected IModelElement parent;

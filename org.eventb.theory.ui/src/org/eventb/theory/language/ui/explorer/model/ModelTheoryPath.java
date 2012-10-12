@@ -156,9 +156,7 @@ public class ModelTheoryPath implements IModelElement {
 	}
 	
 	/**
-	 * Processes the children of this Context:
-	 * Clears existing axioms and theorems.
-	 * Adds all axioms and theorems found in the internalContext root.
+	 * Processes the children of this element:
 	 */
 	public void processChildren(){
 		availableTheoryProjects.clear();

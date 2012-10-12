@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.eventb.theory.language.ui.explorer;
 
@@ -43,6 +43,7 @@ import fr.systerel.internal.explorer.navigator.actionProviders.ActionCollection;
  * @author renatosilva
  *
  */
+@SuppressWarnings("restriction")
 public class TheoryPathRootActionProvider extends CommonActionProvider {
 
 	protected ICommonActionExtensionSite site;
@@ -63,175 +64,13 @@ public class TheoryPathRootActionProvider extends CommonActionProvider {
 		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionCollection.getOpenAction(site));
 		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH, buildOpenWithMenu());
 		menu.add(new Separator(GROUP_META));
-//		menu.appendToGroup(GROUP_META, getDeployTheoryAction());
-//		menu.appendToGroup(GROUP_META, getUndeployTheoryAction());
 		menu.add(new Separator(GROUP_DELETE));
 		menu.appendToGroup(GROUP_DELETE, getDeleteAction(site));
 	}
 
-//	private Action getDeployTheoryAction() {
-//		Action action = new Action() {
-//			public void run() {
-//				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-//				if (!(sel.isEmpty())) {
-//					IRodinProject project = null;
-//					final Set<ISCTheoryRoot> toDeploy = new LinkedHashSet<ISCTheoryRoot>();
-//					Set<ISCTheoryRoot> errorTheories = new LinkedHashSet<ISCTheoryRoot>();
-//					for (Object obj : sel.toArray()) {
-//						if (obj instanceof ITheoryRoot) {
-//							ITheoryRoot theory = (ITheoryRoot) obj;
-//							project = theory.getRodinProject();
-//							ISCTheoryRoot scRoot = theory.getSCTheoryRoot();
-//							if (!DatabaseUtilities.doesTheoryHaveErrors(scRoot)) {
-//								toDeploy.add(scRoot);
-//								try {
-//									Set<ISCTheoryRoot> allTheoriesToDeploy = TheoryHierarchyHelper.getAllTheoriesToDeploy(scRoot);
-//									for (ISCTheoryRoot otherTheory : allTheoriesToDeploy) {
-//										if (!DatabaseUtilities.doesTheoryHaveErrors(otherTheory)) {
-//											toDeploy.add(otherTheory);
-//										} else {
-//											errorTheories.add(otherTheory);
-//										}
-//									}
-//									toDeploy.addAll(allTheoriesToDeploy);
-//								} catch (CoreException e) {
-//									MessageDialog.openError(site.getViewSite().getShell(), "Deploy Error","Could not deploy theories.");
-//									TheoryUIUtils.log(e, "unable to calculate set of theories to deploy");
-//									return;
-//								}
-//							} else {
-//								errorTheories.add(scRoot);
-//							}
-//						}
-//					}
-//					if (!errorTheories.isEmpty()) {
-//						MessageDialog.openError(site.getViewSite().getShell(), "Deploy Error",
-//								"Some of the theories you selected have errors: "+ DatabaseUtilities.getElementNames(errorTheories));
-//					} else if (!toDeploy.isEmpty()) {
-//						final IRodinProject rodinProject;
-//						if (project != null) {
-//							rodinProject = project;
-//							BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
-//								public void run() {
-//									SimpleDeployWizard wizard = new SimpleDeployWizard(rodinProject, toDeploy);
-//									WizardDialog dialog = new WizardDialog(site.getViewSite().getShell(), wizard);
-//									dialog.setTitle(wizard.getWindowTitle());
-//									dialog.open();
-//								}
-//							});
-//						}
-//					}
-//				}
-//			}
-//
-//			@Override
-//			public boolean isEnabled() {
-//				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-//				if (!(sel.isEmpty())) {
-//					IRodinProject project = null;
-//					for (Object obj : sel.toArray()) {
-//						if (!(obj instanceof ITheoryRoot)) {
-//							return false;
-//						}
-//						ITheoryRoot root = (ITheoryRoot) obj;
-//						if (project == null) {
-//							project = root.getRodinProject();
-//						}
-//						// from the same project
-//						if (!root.getRodinProject().equals(project)) {
-//							return false;
-//						}
-//						if (!(root.getSCTheoryRoot().exists())) {
-//							return false;
-//						}
-//					}
-//					return true;
-//				} else
-//					return false;
-//			}
-//		};
-//		action.setText("Deploy");
-//		action.setToolTipText("Deploy theory and its dependencies");
-//		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_DTHEORY_PATH));
-//		return action;
-//	}
-
-//	private Action getUndeployTheoryAction() {
-//		Action action = new Action() {
-//			public void run() {
-//				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-//				if (!(sel.isEmpty())) {
-//					IRodinProject project = null;
-//					final Set<IDeployedTheoryRoot> toUndeploy = new LinkedHashSet<IDeployedTheoryRoot>();
-//					for (Object obj : sel.toArray()) {
-//						if (obj instanceof ITheoryRoot) {
-//							ITheoryRoot theory = (ITheoryRoot) obj;
-//							project = theory.getRodinProject();
-//							IDeployedTheoryRoot deployedRoot = theory.getDeployedTheoryRoot();
-//							if (deployedRoot.exists()) {
-//								toUndeploy.add(deployedRoot);
-//								try {
-//									toUndeploy.addAll(TheoryHierarchyHelper.getAllTheoriesToUndeploy(deployedRoot));
-//								} catch (CoreException e) {
-//									MessageDialog.openError(site.getViewSite().getShell(), "Undeploy Error", "Could not undeploy theories.");
-//									TheoryUIUtils.log(e, "unable to calculate set of theories to undeploy");
-//									return;
-//								}
-//							}
-//						}
-//					}
-//					final IRodinProject rodinProject;
-//					if (project != null) {
-//						rodinProject = project;
-//						BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
-//							public void run() {
-//								UndeployWizard wizard = new UndeployWizard(rodinProject, toUndeploy);
-//								WizardDialog dialog = new WizardDialog(site.getViewSite().getShell(), wizard);
-//								dialog.setTitle(wizard.getWindowTitle());
-//								dialog.open();
-//							}
-//						});
-//					}
-//
-//				}
-//			}
-//
-//			@Override
-//			public boolean isEnabled() {
-//				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-//				if (!(sel.isEmpty())) {
-//					IRodinProject project = null;
-//					for (Object obj : sel.toArray()) {
-//						if (!(obj instanceof ITheoryRoot)) {
-//							return false;
-//						}
-//						ITheoryRoot root = (ITheoryRoot) obj;
-//						if (project == null) {
-//							project = root.getRodinProject();
-//						}
-//						// from the same project
-//						if (!root.getRodinProject().equals(project)) {
-//							return false;
-//						}
-//						if (!(root.hasDeployedVersion())) {
-//							return false;
-//						}
-//					}
-//					return true;
-//				} else
-//					return false;
-//			}
-//		};
-//		action.setText("Undeploy");
-//		action.setToolTipText("Undeploy theory and its dependents");
-//		action.setImageDescriptor(TheoryImage.getImageDescriptor(ITheoryImages.IMG_THEORY_PATH));
-//		return action;
-//	}
-
 	// customised to delete the deployed theory file as well
 	private Action getDeleteAction(final ICommonActionExtensionSite site) {
 		Action deleteAction = new Action() {
-			@SuppressWarnings("restriction")
 			@Override
 			public void run() {
 				if (!(site.getStructuredViewer().getSelection().isEmpty())) {
@@ -311,7 +150,7 @@ public class TheoryPathRootActionProvider extends CommonActionProvider {
 
 	/**
 	 * Builds an Open With menu.
-	 * 
+	 *
 	 * @return the built menu
 	 */
 	public MenuManager buildOpenWithMenu() {

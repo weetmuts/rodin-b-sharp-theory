@@ -8,10 +8,10 @@ import java.text.Collator;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.ITheoryPathRoot;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.theory.language.ui.explorer.model.ModelAvailableTheoryProject;
 import org.eventb.theory.language.ui.explorer.model.TheoryPathModelController;
 import org.eventb.theory.ui.explorer.model.TheoryModelController;
@@ -50,7 +50,6 @@ public class TheoryPathChildrenContentProviders {
 	 * 
 	 */
 	public TheoryPathChildrenContentProviders() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static class AvailableTheoryContentProvider extends AbstractContentProvider {
@@ -72,10 +71,10 @@ public class TheoryPathChildrenContentProviders {
 				try {
 					availableTheoryProjectModel = TheoryPathModelController.getAvailableTheoryProject(root,availableTheory.getAvailableTheoryProject());
 					if (availableTheoryProjectModel != null) {
-						return availableTheoryProjectModel.availableTheory_node;
+						return availableTheoryProjectModel.availableTheoryProject_node;
 					}
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "Exception occurred when retrieving availableTheoryProject for " +  availableTheory);
+					TheoryUIUtils.log(e, "Exception occurred when retrieving availableTheoryProject for " +  availableTheory);
 				}
 			}
 			if (element instanceof IElementNode) {
@@ -86,7 +85,7 @@ public class TheoryPathChildrenContentProviders {
 	}
 	
 	public static class AvailableTheoryProjectContentProvider extends AbstractContentProvider {
-		
+
 		/**
 		 * @param type
 		 */

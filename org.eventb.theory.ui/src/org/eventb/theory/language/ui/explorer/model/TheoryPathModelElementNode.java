@@ -75,7 +75,7 @@ public class TheoryPathModelElementNode implements IModelElement, IElementNode {
 
 	@Override
 	public Object[] getChildren(IInternalElementType<?> element_type, boolean complex) {
-		if (type != element_type) {
+	if (type != element_type) {
 			return new Object[0];
 		} 
 		else {
@@ -89,7 +89,7 @@ public class TheoryPathModelElementNode implements IModelElement, IElementNode {
 				}
 			}
 		}
-		return new Object[0];
+		return new Object[0];	
 	}
 
 }
