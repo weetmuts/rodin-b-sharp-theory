@@ -1112,18 +1112,18 @@
    <extension
          point="org.eventb.core.configurations">
       <configuration
-            id="tulSC"
-            name="Theorypath static checker root module">
-         <scModule
-               id="org.eventb.theory.core.theoryPathModule">
-         </scModule>
-      </configuration>
-      <configuration
             id="tul"
             name="Theorypath Configuration">
          <config
                id="org.eventb.theory.core.tulBaseSC">
          </config>
+      </configuration>
+      <configuration
+            id="tulSC"
+            name="Theorypath static checker root module">
+         <scModule
+               id="org.eventb.theory.core.theoryPathModule">
+         </scModule>
       </configuration>
       <configuration
             id="tulBaseSC"
