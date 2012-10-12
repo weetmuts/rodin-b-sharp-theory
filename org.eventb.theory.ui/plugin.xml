@@ -1540,7 +1540,7 @@
             category="org.eventb.ui.wizards"
             class="org.eventb.theory.language.ui.wizard.NewTheoryPathWizard"
             finalPerspective="org.eventb.ui.perspective.eventb"
-            icon="icons/thy.gif"
+            icon="icons/thyPath.gif"
             id="org.eventb.theory.ui.newTheoryPathWizard"
             name="Event-B TheoryPath Wizard"
             preferredPerspectives="org.eventb.ui.perspective.eventb"
