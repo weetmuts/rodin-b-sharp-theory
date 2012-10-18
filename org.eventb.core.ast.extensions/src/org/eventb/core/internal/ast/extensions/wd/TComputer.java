@@ -94,17 +94,17 @@ public class TComputer extends AbstractComputer {
 
 	@Override
 	public void visitMultiplePredicate(MultiplePredicate predicate) {
-		lemma = fb.land(predicate, dComputer.getWDLemma(predicate));
+		lemma = fb.land(dComputer.getWDLemma(predicate),predicate);
 	}
 
 	@Override
 	public void visitRelationalPredicate(RelationalPredicate predicate) {
-		lemma = fb.land(predicate, dComputer.getWDLemma(predicate));
+		lemma = fb.land(dComputer.getWDLemma(predicate) ,predicate);
 	}
 
 	@Override
 	public void visitSimplePredicate(SimplePredicate predicate) {
-		lemma = fb.land(predicate, dComputer.getWDLemma(predicate));
+		lemma = fb.land(dComputer.getWDLemma(predicate),predicate);
 	}
 
 	@Override
@@ -114,6 +114,6 @@ public class TComputer extends AbstractComputer {
 
 	@Override
 	public void visitExtendedPredicate(ExtendedPredicate predicate) {
-		lemma = fb.land(predicate, dComputer.getWDLemma(predicate));
+		lemma = fb.land(dComputer.getWDLemma(predicate),predicate);
 	}
 }
