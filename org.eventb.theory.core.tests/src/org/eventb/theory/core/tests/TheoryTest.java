@@ -13,6 +13,8 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.tests.EventBTest.DeltaListener;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
+import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.IConstructorArgument;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
@@ -30,6 +32,8 @@ import org.eventb.theory.core.IRecursiveDefinitionCase;
 import org.eventb.theory.core.IRecursiveOperatorDefinition;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.IRewriteRuleRightHandSide;
+import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.ISCAxiomaticTypeDefinition;
 import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
@@ -122,6 +126,41 @@ public abstract class TheoryTest extends BuilderTest {
 		addTheorems(root, strings);
 	}
 
+	public IAxiomaticDefinitionsBlock addAxiomaticDefinitionsBlock(ITheoryRoot root, 
+			String label) throws RodinDBException{
+		IAxiomaticDefinitionsBlock block = root.createChild(IAxiomaticDefinitionsBlock.ELEMENT_TYPE, null, null);
+		block.setLabel(label, null);
+		return block;
+	}
+	
+	public ISCAxiomaticDefinitionsBlock getSCAxiomaticDefinitionsBlock(ISCTheoryRoot scRoot, IAxiomaticDefinitionsBlock block)
+	throws RodinDBException{
+		for (ISCAxiomaticDefinitionsBlock scBlock : scRoot.getSCAxiomaticDefinitionsBlocks()){
+			if (scBlock.getSource().equals(block)){
+				return scBlock;
+			}
+		}
+		fail("found no sc axiomatic block with source "+block);
+		return null;
+	}
+	
+	public ISCAxiomaticTypeDefinition getSCAxiomaticTypeDefinition(ISCAxiomaticDefinitionsBlock parent, String identifier)
+	throws RodinDBException{
+		for (ISCAxiomaticTypeDefinition scType : parent.getAxiomaticTypeDefinitions()){
+			if (scType.getIdentifierString().equals(identifier)){
+				return scType;
+			}
+		}
+		fail("found no type definitions with name "+identifier);
+		return null;
+	}
+	
+	public IAxiomaticTypeDefinition addAxiomaticTypeDefinition(IAxiomaticDefinitionsBlock block, String identifier) throws RodinDBException{
+		IAxiomaticTypeDefinition def = block.createChild(IAxiomaticTypeDefinition.ELEMENT_TYPE, null, null);
+		def.setIdentifierString(identifier, null);
+		return def;
+	}
+	
 	public IDatatypeDefinition addDatatypeDefinition(ITheoryRoot root, String identifier, String[] givenTypes,
 			String[] constructors, String[][] destructors, String[][] destructorTypes) throws RodinDBException {
 		IDatatypeDefinition datatypeDefinition = root.createChild(IDatatypeDefinition.ELEMENT_TYPE, null, null);

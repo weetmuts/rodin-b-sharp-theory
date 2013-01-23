@@ -27,6 +27,7 @@ import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.theory.core.IApplicabilityElement;
 import org.eventb.theory.core.ICompleteElement;
 import org.eventb.theory.core.IHasErrorElement;
+import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCInferenceRule;
@@ -242,6 +243,17 @@ public abstract class BasicTheorySCTest extends TheoryTest {
 			}
 		}
 		fail("no datatype " + name + " found in theory " + scRoot.getRodinFile());
+		return null;
+	}
+	
+	public ISCAxiomaticDefinitionsBlock getAxiomaticDefinitionsBlock(ISCTheoryRoot scRoot, String name) throws RodinDBException{
+		ISCAxiomaticDefinitionsBlock[] adbs = scRoot.getSCAxiomaticDefinitionsBlocks();
+		for (ISCAxiomaticDefinitionsBlock adb : adbs) {
+			if (adb.getLabel().equals(name)) {
+				return adb;
+			}
+		}
+		fail("no axiomatic block " + name + " found in theory " + scRoot.getRodinFile());
 		return null;
 	}
 	

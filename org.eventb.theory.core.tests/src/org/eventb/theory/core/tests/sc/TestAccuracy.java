@@ -227,4 +227,16 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		// theory inaccurate
 		isNotAccurate(root.getSCTheoryRoot());
 	}
+	
+	public void testAcc_020_AxmBlockConflict() throws Exception{
+		ITheoryRoot root = createTheory(THEORY_NAME);
+		addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);
+		addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);
+		saveRodinFileOf(root);
+		runBuilder();
+		// theory inaccurate
+		isNotAccurate(root.getSCTheoryRoot());
+		
+		
+	}
 }

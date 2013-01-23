@@ -173,7 +173,9 @@ public class GraphProblemTest extends TestCase{
 		spec(TheoryGraphProblem.NoCoverageAllRecCase, 0),
 		spec(TheoryGraphProblem.RecOpTypeNotConsistent, 2),
 		spec(TheoryGraphProblem.OpArgExprNotSet, 1),
-		spec(TheoryGraphProblem.InadmissibleDatatypeError, 1)
+		spec(TheoryGraphProblem.InadmissibleDatatypeError, 1),
+		spec(TheoryGraphProblem.AxiomaticBlockLabelProblemError, 1),
+		spec(TheoryGraphProblem.AxiomaticTypeNameAlreadyATypeParError, 1)
 	};
 	
 	private static Map<TheoryGraphProblem, Spec> specMap = 
