@@ -67,4 +67,8 @@ public interface IFormulaExtensionsSource extends IInternalElement{
 	 * @throws RodinDBException
 	 */
 	public ISCNewOperatorDefinition[] getSCNewOperatorDefinitions() throws RodinDBException;
+	
+	public ISCAxiomaticDefinitionsBlock getSCAxiomaticDefinitionsBlock(String name);
+	
+	public ISCAxiomaticDefinitionsBlock[] getSCAxiomaticDefinitionsBlocks() throws RodinDBException;
 }

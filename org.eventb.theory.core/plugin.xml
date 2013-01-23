@@ -478,6 +478,11 @@
             id="recursiveDefinitionInfo"
             name="%recursiveDefinitionInfo">
       </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.AxiomaticDefinitionsLabelSymbolTable"
+            id="axiomaticDefinitionsLabelSymbolTable"
+            name="%axiomaticDefinitionsLabelSymbolTable">
+      </stateType>
       
    </extension>
    <extension
@@ -605,7 +610,7 @@
             name="%scTheoremModule"
             parent="org.eventb.theory.core.theoryModule">
          <prereq
-               id="org.eventb.theory.core.operatorModule">
+               id="org.eventb.theory.core.axiomaticDefinitionsBlockModule">
          </prereq>
       </processorType>
       <filterType
@@ -691,6 +696,21 @@
          <prereq
                id="org.eventb.theory.core.inferenceGivenClauseModule">
          </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticDefinitionsBlockModule"
+            id="axiomaticDefinitionsBlockModule"
+            name="%axiomaticDefinitionsBlockModule"
+            parent="org.eventb.theory.core.theoryModule">
+         <prereq
+               id="org.eventb.theory.core.operatorModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticTypeModule"
+            id="axiomaticTypeModule"
+            name="%axiomaticTypeModule"
+            parent="org.eventb.theory.core.axiomaticDefinitionsBlockModule">
       </processorType>
       
    </extension>
@@ -846,6 +866,12 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorRecursiveCaseModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticDefinitionsBlockModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticTypeModule">
          </scModule>
       </configuration>
       <configuration

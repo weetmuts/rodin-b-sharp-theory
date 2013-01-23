@@ -56,6 +56,7 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			OperatorDefNotPredError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorDefNotPredError), 
 			OperatorInvalidSynError(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorInvalidSynError), 
 			RulesBlockLabelProblemError(IMarker.SEVERITY_ERROR, Messages.scuser_RulesBlockLabelProblemError), 
+			AxiomaticBlockLabelProblemError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomaticBlockLabelProblemError),
 			TheoremPredMissingError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremPredMissingError), 
 			TheoremLabelProblemError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremLabelProblemError), 
 			ApplicabilityUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_ApplicabilityUndefError),
@@ -129,7 +130,8 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			RedundantDeployedTheoryWarning(IMarker.SEVERITY_WARNING, Messages.scuser_DeployedTheoryRedudantWarning),
 			TheoriesConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_DeployedTheoriesConflictError),
 			MultipleTheoryPathProjectError(IMarker.SEVERITY_ERROR, Messages.scuser_MultipleTheoryPathProjectError),
-			TheoryProjectDoesNotExistError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoryPathProjectNotExistError)
+			TheoryProjectDoesNotExistError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoryPathProjectNotExistError),
+			AxiomaticTypeNameAlreadyATypeParError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomaticTypeNameAlreadyATypeParError)
 	;
 
 	private int arity;

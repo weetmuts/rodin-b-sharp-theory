@@ -9,6 +9,7 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.states.AxiomaticDefinitionsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.OperatorsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.ProofRulesLabelSymbolTable;
 import org.eventb.theory.core.sc.states.RulesBlocksLabelSymbolTable;
@@ -59,12 +60,13 @@ public class TheoryModule extends SCProcessorModule {
 		final ProofRulesLabelSymbolTable rulesSymbolTable = new ProofRulesLabelSymbolTable();
 		final OperatorsLabelSymbolTable opLabelSymbolTable = new OperatorsLabelSymbolTable();
 		final IdentifierSymbolTable identSymbolTable = new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, repository.getFormulaFactory());
-		
+		final AxiomaticDefinitionsLabelSymbolTable axmBlocksSymbolTable = new AxiomaticDefinitionsLabelSymbolTable();
 		repository.setState(identSymbolTable);
 		repository.setState(thmSymbolTable);
 		repository.setState(blocksSymbolTable);
 		repository.setState(rulesSymbolTable);
 		repository.setState(opLabelSymbolTable);
+		repository.setState(axmBlocksSymbolTable);
 		
 		repository.setState(accuracyInfo);
 		initProcessorModules(element, repository, monitor);

@@ -49,6 +49,8 @@ public class ModulesUtils {
 	public static final String THM_NAME_PREFIX = "Thm";
 
 	public static final String PRB_NAME_PREFIX = "PRB";
+	
+	public static final String ADB_NAME_PREFIX = "ADB";
 
 	/**
 	 * Makes a free identifier from the given name.

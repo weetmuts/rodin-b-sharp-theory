@@ -11,6 +11,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
@@ -155,5 +156,17 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 	public ITheoryRoot getTheoryRoot(String bareName) {
 		ITheoryRoot root = (ITheoryRoot) getTheoryFile(bareName).getRoot();
 		return root;
+	}
+	
+	@Override
+	public ISCAxiomaticDefinitionsBlock getSCAxiomaticDefinitionsBlock(
+			String name) {
+		return getInternalElement(ISCAxiomaticDefinitionsBlock.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public ISCAxiomaticDefinitionsBlock[] getSCAxiomaticDefinitionsBlocks()
+			throws RodinDBException {
+		return getChildrenOfType(ISCAxiomaticDefinitionsBlock.ELEMENT_TYPE);
 	}
 }

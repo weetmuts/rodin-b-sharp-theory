@@ -17,6 +17,7 @@ import org.eventb.internal.core.sc.symbolTable.ISymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.ITypedSymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo;
+import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
@@ -44,6 +45,7 @@ public class TheorySymbolFactory {
 	private static OperatorSynSymbolProblem operatorSynProblem = new OperatorSynSymbolProblem();
 	private static LocalOperatorArgumentSymbolProblem operatorArgumentSymbolProblem = new LocalOperatorArgumentSymbolProblem();
 	private static RulesBlockSymbolProblem rulesBlockSymbolProblem = new RulesBlockSymbolProblem();
+	private static AxiomaticBlockSymbolProblem axiomaticBlockSymbolProblem = new AxiomaticBlockSymbolProblem();
 	private static TheoremSymbolProblem theoremSymbolProblem = new TheoremSymbolProblem();
 	private static LocalMetavariableSymbolProblem localMetavariableSymbolProblem = new LocalMetavariableSymbolProblem();
 	private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new RewriteRuleSymbolProblem();
@@ -72,6 +74,14 @@ public class TheorySymbolFactory {
 		return new LabelSymbolInfo(symbol, ISCProofRulesBlock.ELEMENT_TYPE,
 				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
 				component, rulesBlockSymbolProblem);
+	}
+	
+	public ILabelSymbolInfo makeLocalAxiomaticBlock(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			String component){
+		return new LabelSymbolInfo(symbol, ISCAxiomaticDefinitionsBlock.ELEMENT_TYPE,
+				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+				axiomaticBlockSymbolProblem);
 	}
 
 	public ILabelSymbolInfo makeLocalTheorem(String symbol, boolean persistent,
@@ -248,6 +258,29 @@ public class TheorySymbolFactory {
 			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					TheoryGraphProblem.RulesBlockLabelProblemError,
+					symbolInfo.getSymbol());
+
+		}
+
+		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			// should not be needed, all such problems are error
+
+		}
+
+	}
+	
+	private static class AxiomaticBlockSymbolProblem implements ISymbolProblem {
+
+		public AxiomaticBlockSymbolProblem() {
+			// public constructor
+		}
+
+		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.AxiomaticBlockLabelProblemError,
 					symbolInfo.getSymbol());
 
 		}

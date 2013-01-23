@@ -12,6 +12,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
@@ -126,5 +127,17 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 		}
 
 		return typeEnvironment;
+	}
+
+	@Override
+	public ISCAxiomaticDefinitionsBlock getSCAxiomaticDefinitionsBlock(
+			String name) {
+		return getInternalElement(ISCAxiomaticDefinitionsBlock.ELEMENT_TYPE, name);
+	}
+
+	@Override
+	public ISCAxiomaticDefinitionsBlock[] getSCAxiomaticDefinitionsBlocks()
+			throws RodinDBException {
+		return getChildrenOfType(ISCAxiomaticDefinitionsBlock.ELEMENT_TYPE);
 	}
 }

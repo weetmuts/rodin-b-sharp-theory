@@ -31,6 +31,7 @@ public final class Messages {
 	public static String progress_TheoryOperators;
 	public static String progress_TheoryDatatypes;
 	public static String progress_TheoryProofRules;
+	public static String progress_TheoryAxiomaticBlocks;
 	public static String progress_TheoryInferenceRules;
 	public static String progress_TheoryRewriteRules;
 	public static String progress_TheoryTheorems;
@@ -96,6 +97,7 @@ public final class Messages {
 	public static String scuser_OperatorWithSameSynJustBeenAddedError;
 	public static String scuser_OperatorInvalidSynError;
 	public static String scuser_RulesBlockLabelProblemError;
+	public static String scuser_AxiomaticBlockLabelProblemError;
 	public static String scuser_RulesBlockLabelProblemWarning;
 	public static String scuser_UntypedMetavariableError;
 	public static String scuser_MetavariableNameConflictError;
@@ -158,6 +160,7 @@ public final class Messages {
 	public static String scuser_DeployedTheoriesConflictError;
 	public static String scuser_MultipleTheoryPathProjectError;
 	public static String scuser_TheoryPathProjectNotExistError;
+	public static String scuser_AxiomaticTypeNameAlreadyATypeParError;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 
