@@ -164,6 +164,7 @@ public final class Messages {
 	public static String scuser_AxiomaticPredicateOpDoesNotReqTypeWarn;
 	public static String scuser_AxiomLabelProblemError;
 	public static String scuser_AxiomPredMissingError;
+	public static String scuser_TheoryPathProjectIsThisProject;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

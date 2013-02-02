@@ -65,9 +65,13 @@ public class TheoryPathProjectFilterModule extends SCFilterModule {
 	private boolean validateTheoryProject(
 			IAvailableTheoryProject availableTheoryProjectClause) throws RodinDBException {
 		boolean valid = true;
+		if (availableTheoryProjectClause.getTheoryProject().equals(availableTheoryProjectClause.getRodinProject())){
+			valid = false;
+			createProblemMarker(availableTheoryProjectClause, TheoryAttributes.THEORY_PROJECT_ATTRIBUTE,
+					TheoryGraphProblem.TheoryPathProjectIsThisProject, availableTheoryProjectClause.getTheoryProject().getElementName());
+		}
 		
-		
-		if(!availableTheoryProjectClause.getTheoryProject().exists()){
+		else if(!availableTheoryProjectClause.getTheoryProject().exists()){
 			valid = false;
 			//theory project does not exist 
 			createProblemMarker(availableTheoryProjectClause,
@@ -90,7 +94,6 @@ public class TheoryPathProjectFilterModule extends SCFilterModule {
 					TheoryGraphProblem.NoSelectedTheoriesError,
 					availableTheoryProjectClause.getTheoryProject().getElementName());
 		}
-		
 		if(!valid){
 			accuracyInfo.setNotAccurate();
 		}

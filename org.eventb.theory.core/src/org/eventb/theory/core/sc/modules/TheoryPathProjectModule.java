@@ -73,8 +73,9 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 		IAvailableTheoryProject[] theoryProjects = root.getAvailableTheoryProjects();
 		
 		if (theoryProjects.length == 0) {
-			createProblemMarker(root,
-					TheoryGraphProblem.NoTheoryProjectClausesError);
+			// commented this out as this should be ok
+			//createProblemMarker(root,
+					//TheoryGraphProblem.NoTheoryProjectClausesError);
 		}
 		else {
 			monitor.subTask(Messages.bind(Messages.progress_TheoryProjects));
@@ -96,6 +97,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 				}
 				monitor.worked(1);
 			}
+			endFilterModules(repository, monitor);
 		}
 		
 		projectTable.makeImmutable();

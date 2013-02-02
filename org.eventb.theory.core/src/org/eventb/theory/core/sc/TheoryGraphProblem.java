@@ -126,6 +126,7 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			NoTheoryProjectClausesError(IMarker.SEVERITY_ERROR, Messages.scuser_NoTheoryProjectError),
 			DuplicatedTheoryProjectError(IMarker.SEVERITY_ERROR, Messages.scuser_DuplicatedTheoryProjectError),
 			NoSelectedTheoriesError(IMarker.SEVERITY_ERROR, Messages.scuser_NoSelectedTheoriesError),
+			TheoryPathProjectIsThisProject(IMarker.SEVERITY_ERROR, Messages.scuser_TheoryPathProjectIsThisProject),
 			DuplicatedTheoryError(IMarker.SEVERITY_ERROR, Messages.scuser_DuplicatedTheoryError),
 			DeployedTheoryNotExistError(IMarker.SEVERITY_ERROR, Messages.scuser_DeployedTheoryNotExistError),
 			NoTheoryClausesError(IMarker.SEVERITY_ERROR, Messages.scuser_NoTheorySelectedError),
