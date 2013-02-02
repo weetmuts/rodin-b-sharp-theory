@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -104,7 +105,7 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
 		return TheorySymbolFactory.getInstance().makeLocalOperator(symbol, true, element,
-				component);
+				component, true);
 	}
 	
 	private ILabelSymbolInfo[] fetchOperators(IAxiomaticOperatorDefinition[] newOpDefs, String theoryName,
@@ -182,8 +183,10 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 				operatorInformation.setSyntax(opDef.getLabel());
 				operatorInformation.setAssociative(opDef.isAssociative());
 				operatorInformation.setCommutative(opDef.isCommutative());
+				operatorInformation.setResultantType(factory.parseType(opDef.getType(), LanguageVersion.V2).getParsedType());
 				// children processors
 				{
+					
 					initProcessorModules(opDef, repository, null);
 					processModules(opDef, scNewOpDefs[i], repository, monitor);
 					endProcessorModules(opDef, repository, null);

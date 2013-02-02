@@ -15,6 +15,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.states.AxiomaticDefinitionsLabelSymbolTable;
+import org.eventb.theory.core.sc.states.AxiomsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
@@ -54,7 +55,7 @@ public class AxiomaticDefinitionsBlockModule extends LabeledElementModule {
 	private void processBlocks(ISCAxiomaticDefinitionsBlock[] scAxmBlocks, ISCStateRepository repository,
 			ILabelSymbolInfo[] blocks, IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < axmDefsBlocks.length; i++) {
-
+			repository.setState(new AxiomsLabelSymbolTable());
 			if (blocks[i] != null && !blocks[i].hasError()) {
 				initProcessorModules(axmDefsBlocks[i], repository, null);
 				processModules(axmDefsBlocks[i], scAxmBlocks[i], repository, monitor);

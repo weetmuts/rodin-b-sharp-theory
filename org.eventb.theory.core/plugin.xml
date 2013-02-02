@@ -712,6 +712,66 @@
             name="%axiomaticTypeModule"
             parent="org.eventb.theory.core.axiomaticDefinitionsBlockModule">
       </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticOperatorModule"
+            id="axiomaticOperatorModule"
+            name="%axiomaticOperatorModule"
+            parent="org.eventb.theory.core.axiomaticDefinitionsBlockModule">
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.AxiomaticOperatorFilterModule"
+            id="axiomaticOperatorFilterModule"
+            name="%axiomaticOperatorFilterModule"
+            parent="org.eventb.theory.core.axiomaticOperatorModule">
+      </filterType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticOperatorArgumentModule"
+            id="axiomaticOperatorArgumentModule"
+            name="%axiomaticOperatorArgumentModule"
+            parent="org.eventb.theory.core.axiomaticOperatorModule">
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticOperatorWDConditionModule"
+            id="axiomaticOperatorWDConditionModule"
+            name="%axiomaticOperatorWDConditionModule"
+            parent="org.eventb.theory.core.axiomaticOperatorModule">
+         <prereq
+               id="org.eventb.theory.core.axiomaticOperatorArgumentModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticOperatorSemanticPropertiesModule"
+            id="axiomaticOperatorSemanticPropertiesModule"
+            name="%axiomaticOperatorSemanticPropertiesModule"
+            parent="org.eventb.theory.core.axiomaticOperatorModule">
+         <prereq
+               id="org.eventb.theory.core.axiomaticOperatorWDConditionModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticOperatorGrammarPatcherModule"
+            id="axiomaticOperatorGrammarPatcherModule"
+            name="%axiomaticOperatorGrammarPatcherModule"
+            parent="org.eventb.theory.core.axiomaticOperatorModule">
+         <prereq
+               id="org.eventb.theory.core.axiomaticOperatorSemanticPropertiesModule">
+         </prereq>
+      </processorType>
+      <processorType
+            class="org.eventb.theory.core.sc.modules.AxiomaticBlockAxiomsModule"
+            id="axiomaticBlockAxiomsModule"
+            name="%axiomaticBlockAxiomsModule"
+            parent="org.eventb.theory.core.axiomaticDefinitionsBlockModule">
+         <prereq
+               id="org.eventb.theory.core.axiomaticOperatorModule">
+         </prereq>
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.AxiomaticBlockAxiomsFilterModule"
+            id="axiomaticBlockAxiomsFilterModule"
+            name="%axiomaticBlockAxiomsFilterModule"
+            parent="org.eventb.theory.core.axiomaticBlockAxiomsModule">
+      </filterType>
       
    </extension>
    <extension
@@ -872,6 +932,30 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.axiomaticTypeModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticOperatorModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticOperatorFilterModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticOperatorArgumentModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticOperatorWDConditionModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticOperatorSemanticPropertiesModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticOperatorGrammarPatcherModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticBlockAxiomsModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.axiomaticBlockAxiomsFilterModule">
          </scModule>
       </configuration>
       <configuration

@@ -17,7 +17,9 @@ import org.eventb.internal.core.sc.symbolTable.ISymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.ITypedSymbolProblem;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo;
+import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.ISCAxiomaticOperatorDefinition;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
@@ -47,6 +49,7 @@ public class TheorySymbolFactory {
 	private static RulesBlockSymbolProblem rulesBlockSymbolProblem = new RulesBlockSymbolProblem();
 	private static AxiomaticBlockSymbolProblem axiomaticBlockSymbolProblem = new AxiomaticBlockSymbolProblem();
 	private static TheoremSymbolProblem theoremSymbolProblem = new TheoremSymbolProblem();
+	private static AxiomSymbolProblem axmSymbolProblem = new AxiomSymbolProblem();
 	private static LocalMetavariableSymbolProblem localMetavariableSymbolProblem = new LocalMetavariableSymbolProblem();
 	private static RewriteRuleSymbolProblem rewriteRuleSymbolProblem = new RewriteRuleSymbolProblem();
 	private static InferenceRuleSymbolProblem inferenceRuleSymbolProblem = new InferenceRuleSymbolProblem();
@@ -90,6 +93,13 @@ public class TheorySymbolFactory {
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				theoremSymbolProblem);
 	}
+	
+	public ILabelSymbolInfo makeLocalAxiom(String symbol, boolean persistent,
+			IInternalElement problemElement, String component) {
+		return new LabelSymbolInfo(symbol, ISCAxiomaticDefinitionAxiom.ELEMENT_TYPE, persistent,
+				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+				axmSymbolProblem);
+	}
 
 	public IIdentifierSymbolInfo makeLocalOperatorArgument(String name,
 			boolean persistent, IIdentifierElement element, String parentName) {
@@ -100,7 +110,14 @@ public class TheorySymbolFactory {
 
 	public ILabelSymbolInfo makeLocalOperator(String symbol,
 			boolean persistent, IInternalElement problemElement,
-			String component) {
+			String component, boolean isAxiomatic) {
+		if (isAxiomatic)
+		{
+			return new LabelSymbolInfo(symbol,
+					ISCAxiomaticOperatorDefinition.ELEMENT_TYPE, persistent,
+					problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
+					operatorSynProblem); 
+		}
 		return new LabelSymbolInfo(symbol,
 				ISCNewOperatorDefinition.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
@@ -316,6 +333,29 @@ public class TheorySymbolFactory {
 
 	}
 
+	private static class AxiomSymbolProblem implements ISymbolProblem {
+
+		public AxiomSymbolProblem() {
+			// public constructor
+		}
+
+		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					TheoryGraphProblem.AxiomLabelProblemError,
+					symbolInfo.getSymbol());
+
+		}
+
+		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
+				IMarkerDisplay markerDisplay) throws RodinDBException {
+			// should not be needed, all such problems are error
+
+		}
+
+	}
+	
 	private static class OperatorSynSymbolProblem implements ISymbolProblem {
 
 		public OperatorSynSymbolProblem() {

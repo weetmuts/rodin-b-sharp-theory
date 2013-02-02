@@ -161,6 +161,9 @@ public final class Messages {
 	public static String scuser_MultipleTheoryPathProjectError;
 	public static String scuser_TheoryPathProjectNotExistError;
 	public static String scuser_AxiomaticTypeNameAlreadyATypeParError;
+	public static String scuser_AxiomaticPredicateOpDoesNotReqTypeWarn;
+	public static String scuser_AxiomLabelProblemError;
+	public static String scuser_AxiomPredMissingError;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

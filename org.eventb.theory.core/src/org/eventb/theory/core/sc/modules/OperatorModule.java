@@ -112,7 +112,7 @@ public class OperatorModule extends LabeledElementModule{
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
 		return TheorySymbolFactory.getInstance().makeLocalOperator(symbol, true, element,
-				component);
+				component, false);
 	}
 	
 	private ILabelSymbolInfo[] fetchOperators(INewOperatorDefinition[] newOpDefs, String theoryName,

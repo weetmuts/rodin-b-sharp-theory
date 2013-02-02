@@ -317,6 +317,9 @@ public class OperatorInformation extends State implements ISCState{
 		assertImmutable();
 		if (!hasError) {
 			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
+			if(dWDCondition == null){
+				dWDCondition = getWdCondition();
+			}
 			if (formulaType.equals(FormulaType.EXPRESSION)) {
 				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
 						opArguments, expressionType, getWdCondition(), dWDCondition, sourceOfExtension);
