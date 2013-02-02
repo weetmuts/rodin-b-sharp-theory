@@ -12,8 +12,10 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.modules.PredicateModule;
 import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.states.AxiomsLabelSymbolTable;
@@ -50,6 +52,16 @@ public class AxiomaticBlockAxiomsModule extends PredicateModule<IAxiomaticDefini
 			if (labelSymbolInfos[i] != null && !labelSymbolInfos[i].hasError()) {
 				scAxioms[i] = createSCAxiom(scBlock, index++, labelSymbolInfos[i],
 						formulaElements[i], monitor);
+				if (scBlock.getParent() instanceof IExtensionRulesSource){
+					IExtensionRulesSource extSrc = (IExtensionRulesSource) scBlock.getParent();
+					ISCTheorem theorem = extSrc.getTheorem(scAxioms[i].getLabel());
+					theorem.create(null, monitor);
+					theorem.setLabel(scAxioms[i].getLabel(), monitor);
+					theorem.setSource(scAxioms[i], monitor);
+					theorem.setGenerated(true, monitor);
+					theorem.setOrder(-1, monitor);
+					theorem.setPredicateString(scAxioms[i].getPredicateString(), monitor);
+				}
 			}
 			else {
 				theoryAccuracyInfo.setNotAccurate();

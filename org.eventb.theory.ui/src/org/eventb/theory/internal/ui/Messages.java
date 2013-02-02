@@ -56,6 +56,7 @@ public class Messages {
 	public static String wizard_newTheoryPathTitle;
 	public static String wizard_multipleTheoryPathError;
 	public static String wizardRenameFileExists;
+	public static String wizard_newTheoryPathDesc;
 	
 	private static final String BUNDLE_NAME = "org.eventb.theory.internal.ui.messages"; //$NON-NLS-1$
 

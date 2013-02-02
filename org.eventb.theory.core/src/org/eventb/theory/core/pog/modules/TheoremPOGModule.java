@@ -64,6 +64,9 @@ public class TheoremPOGModule extends UtilityPOGModule {
 		IPOPredicateSet hyp = target
 				.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
 		for (ISCTheorem theorem : theorems) {
+			if(theorem.hasGenerated() && theorem.isGenerated()){
+				continue;
+			}
 			String name = theorem.getLabel();
 			IPOGSource[] sources = new IPOGSource[] { makeSource(
 					IPOSource.DEFAULT_ROLE, theorem), makeSource(IPOSource.DEFAULT_ROLE, theorem.getSource()) };

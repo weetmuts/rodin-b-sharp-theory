@@ -49,6 +49,7 @@ public class AxiomaticOperatorSemanticPropertiesModule extends SCProcessorModule
 			operatorInformation.setHasError();
 		} else {
 			scOperatorDefinition.setPredicate(operatorInformation.getWdCondition(), monitor);
+			scOperatorDefinition.setWDCondition(operatorInformation.getWdCondition(), monitor);
 		}
 	}
 

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eventb.core.IGeneratedElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
@@ -25,7 +26,7 @@ import org.rodinp.core.RodinCore;
  *
  */
 public interface ISCTheorem extends ILabeledElement, ISCPredicateElement, ITraceableElement,
-IOrderedElement{
+IOrderedElement, IGeneratedElement{
 	
 	IInternalElementType<ISCTheorem> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheorem");

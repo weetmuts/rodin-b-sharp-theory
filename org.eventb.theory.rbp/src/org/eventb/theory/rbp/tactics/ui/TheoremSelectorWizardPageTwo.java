@@ -71,6 +71,9 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 			container.setLayout(new GridLayout(4, false));
 			Label lblNewLabel_1 = new Label(container, SWT.NONE);
 			lblNewLabel_1.setText("Instantiations:");
+			if (givenTypes.length < 1){
+				lblNewLabel_1.setText("No type instantiations required, press the Finish button to proceed.");
+			}
 			new Label(container, SWT.NONE);
 			new Label(container, SWT.NONE);
 			new Label(container, SWT.NONE);
@@ -177,7 +180,7 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 		for (IDeployedTheorem deployedTheorem : deployedTheorems){
 			Predicate theorem = deployedTheorem.getTheorem();
 			Predicate substitutedTheorem = (Predicate) subtitute(theorem.toString(), subs);
-			strings.add(substitutedTheorem.toStringWithTypes());
+			strings.add(substitutedTheorem.toString());
 		}
 		return strings;
 	}

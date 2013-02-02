@@ -43,6 +43,13 @@ public class TheoremSelectorWizard extends Wizard {
 		return true;
 	}
 	
+	@Override
+	public boolean performCancel() {
+		if (theoremsToAdd != null)
+			theoremsToAdd.clear();
+		return super.performCancel();
+	}
+	
 	public List<String> getTheorems(){
 		return theoremsToAdd;
 	}

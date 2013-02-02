@@ -29,6 +29,9 @@ import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaExtensionsSource;
+import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.ISCAxiomaticOperatorDefinition;
+import org.eventb.theory.core.ISCAxiomaticTypeDefinition;
 import org.eventb.theory.core.ISCConstructorArgument;
 import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
@@ -97,6 +100,27 @@ public class FormulaExtensionsLoader {
 				typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 
 			}
+			ISCAxiomaticDefinitionsBlock blocks[] = getBlocks(source);
+			for(ISCAxiomaticDefinitionsBlock block : blocks){
+				for (ISCAxiomaticTypeDefinition def : block.getAxiomaticTypeDefinitions()){
+					AxiomaticTypeTransformer trans = new AxiomaticTypeTransformer();
+					Set<IFormulaExtension> addedExtensions = trans.transform(def, factory, typeEnvironment);
+					if (addedExtensions != null) {
+						extensions.addAll(addedExtensions);
+					}
+					factory = factory.withExtensions(extensions);
+					typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+				}
+				for (ISCAxiomaticOperatorDefinition def : block.getAxiomaticOperatorDefinitions()){
+					AxiomaticOperatorTransformer trans = new AxiomaticOperatorTransformer();
+					Set<IFormulaExtension> addedExtensions = trans.transform(def, factory, typeEnvironment);
+					if (addedExtensions != null) {
+						extensions.addAll(addedExtensions);
+					}
+					factory = factory.withExtensions(extensions);
+					typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+				}
+			}
 			return extensions;
 		} catch (CoreException exception) {
 			return EMPTY_EXT;
@@ -120,6 +144,10 @@ public class FormulaExtensionsLoader {
 
 	private ISCTypeParameter[] getTypeParameters(IFormulaExtensionsSource source) throws CoreException {
 		return source.getSCTypeParameters();
+	}
+	
+	private ISCAxiomaticDefinitionsBlock[] getBlocks(IFormulaExtensionsSource source) throws CoreException{
+		return source.getSCAxiomaticDefinitionsBlocks();
 	}
 }
 
@@ -177,6 +205,80 @@ class DatatypeTransformer extends DefinitionTransformer<ISCDatatypeDefinition> {
 
 	}
 
+}
+
+class AxiomaticTypeTransformer extends DefinitionTransformer<ISCAxiomaticTypeDefinition>{
+
+	@Override
+	public Set<IFormulaExtension> transform(ISCAxiomaticTypeDefinition definition, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		try{
+		return Collections.singleton((IFormulaExtension)
+				MathExtensionsFactory.getAxiomaticTypeExtension(definition.getIdentifierString(), 
+						definition.getIdentifierString() + " Axiomatic Type", definition));
+		} catch(CoreException exception){
+			return EMPTY_EXT;
+		}
+	}
+	
+}
+
+class AxiomaticOperatorTransformer extends DefinitionTransformer<ISCAxiomaticOperatorDefinition>{
+	
+	@Override
+	public Set<IFormulaExtension> transform(ISCAxiomaticOperatorDefinition definition, FormulaFactory factory,
+			ITypeEnvironment typeEnvironment) {
+		if (definition == null || !definition.exists()) {
+			return EMPTY_EXT;
+		}
+		try {
+			if (definition.hasHasErrorAttribute() && definition.hasError()) {
+				return EMPTY_EXT;
+			}
+			String theoryName = definition.getParent().getParent().getElementName();
+			String syntax = definition.getLabel();
+			String operatorID = AstUtilities.makeOperatorID(theoryName, syntax);
+			FormulaType formulaType = definition.getFormulaType();
+			Notation notation = definition.getNotationType();
+			String groupID = definition.getOperatorGroup();
+			boolean isAssociative = definition.isAssociative();
+			boolean isCommutative = definition.isCommutative();
+
+			ISCOperatorArgument[] scOperatorArguments = definition.getOperatorArguments();
+			Map<String, Type> operatorArguments = new LinkedHashMap<String, Type>();
+			List<GivenType> typeParameters = new ArrayList<GivenType>();
+			for (ISCOperatorArgument arg : scOperatorArguments) {
+				Type type = arg.getType(factory);
+				operatorArguments.put(arg.getIdentifierString(), type);
+				for (GivenType t : AstUtilities.getGivenTypes(type)) {
+					if (!typeParameters.contains(t)) {
+						typeParameters.add(t);
+					}
+				}
+			}
+			ITypeEnvironment tempTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(
+					typeEnvironment, factory);
+			for (String arg : operatorArguments.keySet()) {
+				tempTypeEnvironment.addName(arg, operatorArguments.get(arg));
+			}
+			Predicate wdCondition = definition.getPredicate(factory, tempTypeEnvironment);
+			Predicate dWdCondition = definition.getWDCondition(factory, tempTypeEnvironment);
+			IFormulaExtension extension = null;
+			OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType,
+					notation, groupID);
+			if (AstUtilities.isExpressionOperator(definition.getFormulaType())) {
+				extension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
+						operatorArguments, definition.getType(factory), wdCondition, dWdCondition, definition);
+			} else {
+				extension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, operatorArguments,
+						wdCondition, dWdCondition, definition);
+			}
+			return Collections.singleton(extension);
+		} catch (CoreException exception) {
+			return EMPTY_EXT;
+		}
+	}
+	
 }
 
 /**

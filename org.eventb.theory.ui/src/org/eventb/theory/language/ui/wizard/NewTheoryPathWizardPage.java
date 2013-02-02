@@ -46,12 +46,12 @@ public class NewTheoryPathWizardPage extends WizardPage {
 	private ISelection selection;
 	private Text theoryText;
 	
-	private final String DEFAULT_THEORY_PATH_NAME = "MyTheoryPath";
+	private final String DEFAULT_THEORY_PATH_NAME = "TheoryPath";
 
 	public NewTheoryPathWizardPage(ISelection selection) {
 		super("wizardPage");
 		setTitle(Messages.wizard_newTheoryPathTitle);
-		setDescription(Messages.wizard_newTheoryDesc);
+		setDescription(Messages.wizard_newTheoryPathDesc);
 		this.selection = selection;
 	}
 
@@ -89,7 +89,6 @@ public class NewTheoryPathWizardPage extends WizardPage {
 		});
 		label = new Label(container, SWT.NULL);
 		label.setText("&TheoryPath Name:");
-
 		theoryText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		theoryText.setLayoutData(gd);
@@ -98,7 +97,7 @@ public class NewTheoryPathWizardPage extends WizardPage {
 				dialogChanged();
 			}
 		});
-		
+		theoryText.setEnabled(false);
 		initialize();
 		dialogChanged();
 		setControl(container);

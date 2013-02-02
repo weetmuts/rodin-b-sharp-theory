@@ -1077,6 +1077,26 @@
         </deployedElement>
      </deployedElement>
      <deployedElement
+           name="%scAxiomaticDefinitionsBlock"
+           typeId="org.eventb.theory.core.scAxiomaticDefinitionsBlock">
+        <childElement
+              childTypeId="org.eventb.theory.core.scAxiomaticTypeDefinition"
+              name="%scAxiomaticTypeDefinition">
+        </childElement>
+        <deployedElement
+              name="%scAxiomaticOperatorDefinition"
+              typeId="org.eventb.theory.core.scAxiomaticOperatorDefinition">
+           <childElement
+                 childTypeId="org.eventb.theory.core.scOperatorArgument"
+                 name="%scOperatorArgument">
+           </childElement>
+        </deployedElement>
+        <childElement
+              childTypeId="org.eventb.theory.core.scAxiomaticDefinitionAxiom"
+              name="%scAxiomaticDefinitionAxiom">
+        </childElement>
+     </deployedElement>
+     <deployedElement
            name="%scTheorem"
            typeId="org.eventb.theory.core.scTheorem">
      </deployedElement>
