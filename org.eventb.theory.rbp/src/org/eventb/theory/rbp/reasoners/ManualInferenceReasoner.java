@@ -39,6 +39,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 	private static final String FORWARD_KEY = "isForward";
 	private static final String RULE_KEY = "inferenceRule";
 	private static final String THEORY_KEY = "theory";
+	private static final String PROJECT_KEY = "project";
 	
 	@Override
 	public String getReasonerID() {
@@ -52,6 +53,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		final Predicate pred = input.predicate;
 		final boolean forward = input.forward;
 		final String theoryName = input.theoryName;
+		final String projectName = input.projectName;
 		final String ruleName = input.ruleName;
 		final String displayName = input.description;
 		final IPOContext context = input.context;
@@ -60,7 +62,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		
 		final Predicate goal = sequent.goal();
 		if (pred == null) {
-			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, theoryName, ruleName);
+			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, projectName, theoryName, ruleName);
 			if(antecedents == null){
 				return ProverFactory.reasonerFailure(this, input, 
 						"Rule "+ruleName+" is not applicable to "+goal +".");
@@ -73,7 +75,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 				return ProverFactory.reasonerFailure(this, input,
 						"Nonexistent hypothesis: " + pred);
 			}
-			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, theoryName, ruleName);
+			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, projectName, theoryName, ruleName);
 			if(antecedents == null){
 				return ProverFactory.reasonerFailure(this, input, 
 						"Rule "+ruleName+" is not applicable to "+pred +".");
@@ -97,6 +99,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 			throws SerializeException {
 		final String forString = reader.getString(FORWARD_KEY);
 		final String theoryString = reader.getString(THEORY_KEY);
+		final String projectString = reader.getString(PROJECT_KEY);
 		final String ruleString = reader.getString(RULE_KEY);
 		final String ruleDesc = reader.getString(DESC_KEY);
 		final String poContextStr = reader.getString(CONTEXT_INPUT_KEY);
@@ -110,7 +113,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		final int length = neededHyps.size();
 		if (length == 0) {
 			// backward
-			return new InferenceInput(theoryString, ruleString, ruleDesc, null, forward, context);
+			return new InferenceInput(projectString, theoryString, ruleString, ruleDesc, null, forward, context);
 		}
 		// forward
 		if (length != 1) {
@@ -121,7 +124,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		for (Predicate hyp : neededHyps) {
 			pred = hyp;
 		}
-		return new InferenceInput(theoryString, ruleString, ruleDesc,pred, forward, context);
+		return new InferenceInput(projectString, theoryString, ruleString, ruleDesc,pred, forward, context);
 	}
 
 	@Override

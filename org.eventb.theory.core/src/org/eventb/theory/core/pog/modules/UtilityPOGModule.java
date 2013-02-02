@@ -8,6 +8,7 @@
 package org.eventb.theory.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -92,7 +93,7 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 	protected List<FreeIdentifier> getMetavariables(
 			ITypeEnvironment typeEnvironment) {
 		FormulaFactory factory = typeEnvironment.getFormulaFactory();
-		Set<String> all = typeEnvironment.clone().getNames();
+		Set<String> all = new LinkedHashSet<String>(typeEnvironment.clone().getNames());
 		all.removeAll(AstUtilities.getGivenSetsNames(typeEnvironment));
 		List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
 		for (String name : all) {

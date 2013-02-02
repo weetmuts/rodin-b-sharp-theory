@@ -25,6 +25,7 @@ public class InferenceInput extends ContextualInput {
 	public String description;
 	public String ruleName;
 	public String theoryName;
+	public String projectName;
 	public Predicate predicate;
 
 	/**
@@ -43,8 +44,9 @@ public class InferenceInput extends ContextualInput {
 	 * @param context
 	 *            the PO context
 	 */
-	public InferenceInput(String theoryName, String ruleName, String ruleDesc, Predicate predicate, boolean forward, IPOContext context) {
+	public InferenceInput(String projectName,String theoryName, String ruleName, String ruleDesc, Predicate predicate, boolean forward, IPOContext context) {
 		super(context);
+		this.projectName = projectName;
 		this.forward = forward;
 		this.description = ruleDesc;
 		this.ruleName = ruleName;

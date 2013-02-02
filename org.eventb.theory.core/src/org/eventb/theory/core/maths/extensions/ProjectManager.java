@@ -63,6 +63,16 @@ public class ProjectManager {
 		}
 		return extensions;
 	}
+	
+	public synchronized Set<IFormulaExtension> getNeededTheories(IDeployedTheoryRoot depRoot){
+		Set<IDeployedTheoryRoot> needed = graph.getNeededTheories(depRoot);
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
+		for (IDeployedTheoryRoot root : needed){
+			extensions.addAll(deployedExtensionsMap.get(root.getComponentName()));
+		}
+		extensions.addAll(deployedExtensionsMap.get(depRoot.getComponentName()));
+		return extensions;	
+	}
 
 	public synchronized void reloadDeployedExtensions(FormulaFactory seedFactory)
 			throws CoreException {
@@ -117,17 +127,6 @@ public class ProjectManager {
 				scChanged = true;
 			}
 		}
-	}
-
-	/**
-	 * Returns whether this manager is managing the <code>MathExtensions</code>
-	 * project.
-	 * 
-	 * @return whether this manager is managing the <code>MathExtensions</code>
-	 *         project
-	 */
-	public boolean managingMathExtensionsProject() {
-		return project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT);
 	}
 
 	public boolean hasDeployedChanged() {

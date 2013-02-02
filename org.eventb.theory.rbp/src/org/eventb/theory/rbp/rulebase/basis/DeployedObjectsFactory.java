@@ -135,7 +135,7 @@ public class DeployedObjectsFactory {
 				return null;
 			}
 
-			IDeployedInferenceRule infRule = new DeployedInferenceRule(
+			IDeployedInferenceRule infRule = new DeployedInferenceRule(rule.getRodinProject().getElementName(),
 					ruleName, theoryName, isAutomatic, isInteractive, true,
 					toolTip, description,
 					rule.isSuitableForBackwardReasoning(),
@@ -177,7 +177,7 @@ public class DeployedObjectsFactory {
 			String toolTip = rule.getDescription();
 			String description = rule.getDescription();
 
-			IDeployedRewriteRule depRule = new DeployedRewriteRule(ruleName,
+			IDeployedRewriteRule depRule = new DeployedRewriteRule(rule.getRodinProject().getElementName(), ruleName,
 					theoryName, lhs, ruleRHSs, isAutomatic, isInteractive,
 					isComplete, isDefinitional,true, toolTip, description, typeEnvironment);
 			return depRule;

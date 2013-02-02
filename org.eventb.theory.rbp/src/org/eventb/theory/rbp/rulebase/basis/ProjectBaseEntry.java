@@ -259,10 +259,6 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		}
 		return toReturn;
 	}
-
-	public boolean managingMathExtensionsProject() {
-		return DatabaseUtilities.isMathExtensionsProject(project);
-	}
 	
 	private IDeployedTheoryRoot[] getDeployedRoots (){
 		try {
@@ -297,5 +293,31 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 			ProverUtilities.log(e, "error while getting sc theory roots of "+ project.getElementName());
 		}
 		return new ISCTheoryRoot[0];
+	}
+
+	@Override
+	public ITheoryBaseEntry<ISCTheoryRoot> getTheoryBaseEntry(ISCTheoryRoot root) {
+		if (!root.getRodinProject().equals(project)){
+			return null;
+		}
+		ITheoryBaseEntry<ISCTheoryRoot> entry = scRoots.get(root);
+		if (entry == null){
+			entry = new TheoryBaseEntry<ISCTheoryRoot>(root);
+		}
+		scRoots.put(root, entry);
+		return entry;
+	}
+
+	@Override
+	public ITheoryBaseEntry<IDeployedTheoryRoot> getTheoryBaseEntry(IDeployedTheoryRoot root) {
+		if (!root.getRodinProject().equals(project)){
+			return null;
+		}
+		ITheoryBaseEntry<IDeployedTheoryRoot> entry = deployedRoots.get(root);
+		if (entry == null){
+			entry = new TheoryBaseEntry<IDeployedTheoryRoot>(root);
+		}
+		deployedRoots.put(root, entry);
+		return entry;
 	}
 }

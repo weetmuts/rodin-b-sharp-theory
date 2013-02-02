@@ -29,12 +29,12 @@ public final class DeployedRewriteRule extends AbstractDeployedRule implements I
 	private Formula<?> lhs;
 	private List<IDeployedRuleRHS> ruleRHSs;
 	
-	public DeployedRewriteRule(String ruleName, String theoryName,
+	public DeployedRewriteRule(String projectName,String ruleName, String theoryName,
 			Formula<?> lhs, List<IDeployedRuleRHS> ruleRHSs,
 			boolean isAutomatic, boolean isInteractive, boolean isComplete, 
 			boolean isDefinitional, boolean isSound, String toolTip, 
 			String description, ITypeEnvironment typeEnv){
-		super(ruleName, theoryName, isAutomatic, isInteractive, isSound, toolTip, description, typeEnv);
+		super(ruleName, theoryName, projectName, isAutomatic, isInteractive, isSound, toolTip, description, typeEnv);
 		this.lhs = lhs;
 		this.ruleRHSs = unmodifiableList(ruleRHSs);
 		this.isComplete = isComplete;

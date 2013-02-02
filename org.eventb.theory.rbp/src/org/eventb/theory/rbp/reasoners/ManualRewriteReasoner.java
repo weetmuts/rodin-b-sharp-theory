@@ -36,12 +36,14 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 	private static final String POSITION_KEY = "pos";
 	private static final String RULE_KEY = "rewRule";
 	private static final String THEORY_KEY = "theory";
+	private static final String PROJECT_KEY = "project";
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm) {
 		final RewriteInput input = (RewriteInput) reasonerInput;
 		final Predicate hyp = input.predicate;
 		final IPosition position = input.position;
 		final String theoryName = input.theoryName;
+		final String projectName = input.projectName;
 		final String ruleName = input.ruleName;
 		final String displayName = input.description;
 		final IPOContext context = input.context;
@@ -50,7 +52,7 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 
 		final Predicate goal = seq.goal();
 		if (hyp == null) {
-			IAntecedent[] antecedents = rewriter.getAntecedents(goal, position, true, theoryName, ruleName);
+			IAntecedent[] antecedents = rewriter.getAntecedents(goal, position, true, projectName, theoryName, ruleName);
 			if (antecedents == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rule " + ruleName + " is not applicable to " + goal + " at position " + position);
 			}
@@ -60,7 +62,7 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 			if (!seq.containsHypothesis(hyp)) {
 				return ProverFactory.reasonerFailure(this, input, "Nonexistent hypothesis: " + hyp);
 			}
-			IAntecedent[] antecedents = rewriter.getAntecedents(hyp, position, false, theoryName, ruleName);
+			IAntecedent[] antecedents = rewriter.getAntecedents(hyp, position, false, projectName, theoryName, ruleName);
 			if (antecedents == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rule " + ruleName + " is not applicable to " + hyp + " at position " + position);
 			}
@@ -79,6 +81,7 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
 		final String posString = reader.getString(POSITION_KEY);
 		final String theoryString = reader.getString(THEORY_KEY);
+		final String projectString = reader.getString(PROJECT_KEY);
 		final String ruleString = reader.getString(RULE_KEY);
 		final String ruleDesc = reader.getString(DESC_KEY);
 		final String poContextStr = reader.getString(CONTEXT_INPUT_KEY);
@@ -93,7 +96,7 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 		final int length = neededHyps.size();
 		if (length == 0) {
 			// Goal rewriting
-			return new RewriteInput(theoryString, ruleString, ruleDesc, null, position, context);
+			return new RewriteInput(projectString, theoryString, ruleString, ruleDesc, null, position, context);
 		}
 		// Hypothesis rewriting
 		if (length != 1) {
@@ -103,7 +106,7 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 		for (Predicate hyp : neededHyps) {
 			pred = hyp;
 		}
-		return new RewriteInput(theoryString, ruleString, ruleDesc, pred, position, context);
+		return new RewriteInput(projectString, theoryString, ruleString, ruleDesc, pred, position, context);
 	}
 
 	public String getReasonerID() {

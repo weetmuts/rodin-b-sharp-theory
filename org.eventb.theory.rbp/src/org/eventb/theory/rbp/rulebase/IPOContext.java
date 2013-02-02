@@ -32,12 +32,6 @@ public interface IPOContext {
 	public boolean isTheoryRelated();
 	
 	/**
-	 * Returns whether the proof obligation corresponds to a component in the <code>MathExtensions</code> project.
-	 * @return  whether the proof obligation corresponds to a component in the <code>MathExtensions</code> project
-	 */
-	public boolean inMathExtensions();
-	
-	/**
 	 * Returns the formula factory suitable for this context.
 	 * @return the suitable formula factory
 	 */

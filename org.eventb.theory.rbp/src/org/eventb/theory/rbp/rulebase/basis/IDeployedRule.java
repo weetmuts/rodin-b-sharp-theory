@@ -33,6 +33,8 @@ public interface IDeployedRule {
 	 */
 	public String getTheoryName();
 	
+	public String getProjectName();
+	
 	/**
 	 * <p>Returns the tool tip associated with this rule.</p>
 	 * @return the tool tip

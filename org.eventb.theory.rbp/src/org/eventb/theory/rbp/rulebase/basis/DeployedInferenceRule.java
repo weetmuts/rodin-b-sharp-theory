@@ -26,11 +26,11 @@ public final class DeployedInferenceRule extends AbstractDeployedRule implements
 	private boolean backward;
 	private boolean forward;
 	
-	public DeployedInferenceRule(String ruleName, String theoryName,
+	public DeployedInferenceRule(String projectName, String ruleName, String theoryName,
 			boolean isAutomatic, boolean isInteractive, boolean isSound,
 			String toolTip, String description, boolean backward, boolean forward, 
 			List<IDeployedGiven> givens, IDeployedInfer infer, ITypeEnvironment typeEnv) {
-		super(ruleName, theoryName, isAutomatic, isInteractive, isSound, toolTip,
+		super(ruleName, theoryName,projectName, isAutomatic, isInteractive, isSound, toolTip,
 				description, typeEnv);
 		this.backward = backward;
 		this.forward = forward;

@@ -52,7 +52,7 @@ public class InferenceSelector {
 				IBinding binding = finder.match(goal, rule.getInfer().getInferClause(), false);
 				if (binding != null) {
 					apps.add(new InferenceTacticApplication(
-							new InferenceInput(rule.getTheoryName(), rule.getRuleName(), rule.getDescription(), null, false, context)));
+							new InferenceInput(rule.getProjectName(), rule.getTheoryName(), rule.getRuleName(), rule.getDescription(), null, false, context)));
 
 				}
 			}
@@ -89,7 +89,7 @@ public class InferenceSelector {
 				if (finalBinding == null){
 					continue;
 				}
-				apps.add(new InferenceTacticApplication(new InferenceInput(
+				apps.add(new InferenceTacticApplication(new InferenceInput(rule.getProjectName(),
 						rule.getTheoryName(), rule.getRuleName(), rule.getDescription(),
 						predicate, true, context)));
 			}

@@ -17,6 +17,7 @@ public class RewriteInput extends ContextualInput{
 	public String description;
 	public String ruleName;
 	public String theoryName;
+	public String projectName;
 	public Predicate predicate;
 	
 	/**
@@ -28,9 +29,10 @@ public class RewriteInput extends ContextualInput{
 	 * @param position the position
 	 * @param context the context
 	 */
-	public RewriteInput(String theoryName, String ruleName, String ruleDesc,
+	public RewriteInput(String projectName, String theoryName, String ruleName, String ruleDesc,
 			Predicate predicate, IPosition position, IPOContext context){
 		super(context);
+		this.projectName = projectName;
 		this.position = position;
 		this.description = ruleDesc;
 		this.ruleName = ruleName;

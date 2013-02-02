@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.StaticChecker;
 import org.eventb.theory.core.IImportTheory;
+import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -39,7 +40,10 @@ public class TheoryStaticChecker extends StaticChecker {
 					graph.addUserDependency(source.getResource(), importedTheory.getResource(), target.getResource(), false);
 				}
 			}
-
+			ISCTheoryPathRoot[] paths = root.getRodinProject().getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
+			if (paths.length == 1){
+				graph.addUserDependency(source.getResource(), paths[0].getResource(), target.getResource(), false);
+			}
 		} finally {
 			monitor.done();
 		}

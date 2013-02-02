@@ -328,8 +328,10 @@ public class Binding implements IBinding {
 		newBinding.binding = new LinkedHashMap<FreeIdentifier, Expression>(binding);
 		newBinding.typeParametersInstantiations = new LinkedHashMap<FreeIdentifier, Type>(typeParametersInstantiations);
 		newBinding.predicateBinding = new LinkedHashMap<PredicateVariable, Predicate>(predicateBinding);
-		newBinding.expressionComplement = new AssociativeExpressionComplement(expressionComplement);
-		newBinding.predicateComplement = new AssociativePredicateComplement(predicateComplement);
+		if (expressionComplement != null)
+			newBinding.expressionComplement = new AssociativeExpressionComplement(expressionComplement);
+		if (predicateComplement != null)
+			newBinding.predicateComplement = new AssociativePredicateComplement(predicateComplement);
 		return newBinding;
 	}
 

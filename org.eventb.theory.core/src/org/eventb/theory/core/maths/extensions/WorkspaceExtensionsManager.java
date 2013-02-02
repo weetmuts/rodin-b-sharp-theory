@@ -12,6 +12,10 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.ISCAvailableTheory;
+import org.eventb.theory.core.ISCAvailableTheoryProject;
+import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -32,7 +36,6 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 	
 	private final Set<IFormulaExtension> COND_EXTS;
 	
-	private ProjectManager globalProjectManager;
 	private Map<IRodinProject, ProjectManager> projectManagers;
 	
 	protected FormulaFactory basicFactory;
@@ -42,7 +45,6 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		RodinCore.addElementChangedListener(this);
 		COND_EXTS = Collections.singleton(AstUtilities.COND);
 		projectManagers = new HashMap<IRodinProject, ProjectManager>();
-		globalProjectManager = new ProjectManager(DatabaseUtilities.getDeploymentProject(null));
 		basicFactory = FormulaFactory.getInstance(COND_EXTS);
 		seedFactory = FormulaFactory.getInstance(basicFactory.getExtensions());
 		populate();
@@ -53,26 +55,34 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		// add cond extension
 		setOfExtensions.addAll(COND_EXTS);
 		IRodinProject project = root.getRodinProject();
-		boolean isMathExtensionsProject = project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT);
-		// case Theory in MathExtensions : basic set
-		if (isMathExtensionsProject && root instanceof ITheoryRoot){
-			return setOfExtensions;
+		try{
+			ISCTheoryPathRoot[] paths = project.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
+			if (paths.length == 1){
+				for (ISCAvailableTheoryProject availProj: paths[0].getSCAvailableTheoryProjects()){
+					IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
+					ProjectManager projectManager = projectManagers.get(rodinProj);
+					if(projectManager != null){
+						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()){
+							IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
+							setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
+						}
+					}
+				}
+					
+			}
+			// else ignore paths
+		} catch(CoreException e){
+			CoreUtilities.log(e, "Error while processing theory path for project "+project);
 		}
-		// case Theory not in MathExtensions : basic set plus deployed in math extensions project
-		if (!isMathExtensionsProject && root instanceof ITheoryRoot){
-			setOfExtensions.addAll(globalProjectManager.getAllDeployedExtensions());
+		
+		// case Theory
+		if (root instanceof ITheoryRoot){
 			return setOfExtensions;
 		}
 		
-		// case SC Theory in MathExtensions : basic set plus any needed theories
-		if (isMathExtensionsProject && root instanceof ISCTheoryRoot){
-			setOfExtensions.addAll(globalProjectManager.getNeededTheories((ISCTheoryRoot) root));
-			return setOfExtensions;
-		}
 		// case SC Theory not in MathExtensions : basic set plus deployed in math extensions plus needed theories
-		if (!isMathExtensionsProject && root instanceof ISCTheoryRoot){
+		if (root instanceof ISCTheoryRoot){
 			ProjectManager manager = projectManagers.get(project);
-			setOfExtensions.addAll(globalProjectManager.getAllDeployedExtensions());
 			if (manager != null)
 				setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
 			return setOfExtensions;
@@ -81,7 +91,6 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		// case Model : add all deployed 
 		if (!DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
 			ProjectManager manager = projectManagers.get(project);
-			setOfExtensions.addAll(globalProjectManager.getAllDeployedExtensions());
 			if (manager != null){
 				setOfExtensions.addAll(manager.getAllDeployedExtensions());
 			}
@@ -107,12 +116,11 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		}
 		if (element instanceof IRodinProject) {
 			IRodinProject proj = (IRodinProject) element;
-			ProjectManager manager = 
-				proj.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT) ? globalProjectManager :projectManagers.get(proj);
+			ProjectManager manager = projectManagers.get(proj);
 			if (manager != null){
 				manager.processDelta(delta);
 			}
-			else if (!proj.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT)){
+			else{
 				projectManagers.put(proj, new ProjectManager(proj));
 			}
 		}
@@ -123,15 +131,6 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		IRodinElementDelta delta = event.getDelta();
 		try {
 			processDelta(delta);
-			if (globalProjectManager.hasDeployedChanged()){
-				globalProjectManager.reloadDeployedExtensions(basicFactory);
-				seedFactory = basicFactory.withExtensions(globalProjectManager.getAllDeployedExtensions());
-				globalProjectManager.setDeployedChanged(false);
-			}
-			if (globalProjectManager.hasSCChanged()){
-				globalProjectManager.reloadDirtyExtensions(basicFactory);
-				globalProjectManager.setSCChanged(false);
-			}
 			for (ProjectManager manager : projectManagers.values()){
 				if(manager.hasDeployedChanged()){
 					manager.reloadDeployedExtensions(seedFactory);
@@ -149,14 +148,10 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 	
 	private void populate(){
 		try {
-			globalProjectManager.populate(basicFactory);
-			seedFactory = seedFactory.withExtensions(globalProjectManager.getAllDeployedExtensions());
 			for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
-				if(!project.getElementName().equals(DatabaseUtilities.THEORIES_PROJECT)){
-					ProjectManager manager = new ProjectManager(project);
-					manager.populate(seedFactory);
-					projectManagers.put(project, manager);
-				}
+				ProjectManager manager = new ProjectManager(project);
+				manager.populate(seedFactory);
+				projectManagers.put(project, manager);
 			}
 			
 		} catch (CoreException e) {

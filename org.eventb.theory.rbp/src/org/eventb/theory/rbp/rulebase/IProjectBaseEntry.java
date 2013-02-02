@@ -112,10 +112,8 @@ public interface IProjectBaseEntry {
 	 */
 	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, IEventBRoot root, FormulaFactory factory);
 	
-	/**
-	 * Returns whether this entry is managing the MathExtensions project.
-	 * @return whether this entry is managing the MathExtensions project
-	 */
-	public boolean managingMathExtensionsProject();
+	public ITheoryBaseEntry<ISCTheoryRoot> getTheoryBaseEntry(ISCTheoryRoot root);
+	
+	public ITheoryBaseEntry<IDeployedTheoryRoot> getTheoryBaseEntry(IDeployedTheoryRoot root);
 	
 }

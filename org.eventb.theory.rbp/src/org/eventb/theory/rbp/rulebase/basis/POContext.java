@@ -41,11 +41,6 @@ public class POContext implements IPOContext{
 	public boolean isTheoryRelated() {
 		return DatabaseUtilities.originatedFromTheory(root.getRodinFile());
 	}
-
-	@Override
-	public boolean inMathExtensions() {
-		return DatabaseUtilities.isMathExtensionsProject(root.getRodinProject());
-	}
 	
 	@Override
 	public FormulaFactory getFormulaFactory() {

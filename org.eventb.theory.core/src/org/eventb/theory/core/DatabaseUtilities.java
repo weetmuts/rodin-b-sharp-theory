@@ -14,15 +14,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
@@ -45,9 +41,7 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public class DatabaseUtilities {
-
-	// Global constants
-	public static final String THEORIES_PROJECT = "MathExtensions";
+	
 	// As in "theory unchecked file"
 	public static final String THEORY_FILE_EXTENSION = "tuf";
 	// As in "theory checked file"
@@ -350,65 +344,6 @@ public class DatabaseUtilities {
 		return name + "." + DEPLOYED_THEORY_FILE_EXTENSION;
 	}
 
-	/**
-	 * Ensures that the deployment project exists.
-	 * 
-	 * @throws CoreException
-	 */
-	public static void ensureDeploymentProjectExists() throws CoreException {
-
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(THEORIES_PROJECT));
-
-		if (resource != null) {
-			if (!resource.isAccessible()) {
-				resource.getProject().open(null);
-			}
-			return;
-		}
-		final IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(THEORIES_PROJECT);
-		if (rodinProject.exists()) {
-			return;
-		}
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor pMonitor) throws CoreException {
-					IProject project = rodinProject.getProject();
-					if (!project.exists())
-						project.create(null);
-					project.open(null);
-					IProjectDescription description = project.getDescription();
-					description.setNatureIds(new String[] { RodinCore.NATURE_ID });
-					project.setDescription(description, null);
-				}
-
-			}, RodinCore.getRodinDB().getSchedulingRule(), null);
-
-		} catch (CoreException e) {
-			CoreUtilities.log(e, "Failed to create deployed theories project.");
-		}
-
-	}
-
-	/**
-	 * Returns the deployment project.
-	 * 
-	 * @param monitor
-	 *            the progress monitor
-	 * @return the deployment project
-	 * @throws CoreException
-	 */
-	public static IRodinProject getDeploymentProject(IProgressMonitor monitor) {
-		final IRodinProject project = RodinCore.getRodinDB().getRodinProject(THEORIES_PROJECT);
-		try {
-			ensureDeploymentProjectExists();
-
-		} catch (CoreException e) {
-			CoreUtilities.log(e, "Failed to access/create deployed theories project.");
-			return null;
-		}
-		return project;
-	}
 
 	/**
 	 * Returns whether the given proof status is of discharged status.
@@ -434,18 +369,6 @@ public class DatabaseUtilities {
 		return (status.getConfidence() > IConfidence.PENDING) && (status.getConfidence() <= IConfidence.REVIEWED_MAX);
 	}
 
-	/**
-	 * Returns whether the given project is the <code>MathExtensions</code>
-	 * project.
-	 * 
-	 * @param project
-	 *            the Rodin project, must not be <code>null</code>
-	 * @return whether <code>project</code> is the <code>MathExtensions</code>
-	 *         project
-	 */
-	public static boolean isMathExtensionsProject(IRodinProject project) {
-		return THEORIES_PROJECT.equals(project.getElementName());
-	}
 
 	/**
 	 * Returns a filter that accepts existing SC theory file with the ordinary

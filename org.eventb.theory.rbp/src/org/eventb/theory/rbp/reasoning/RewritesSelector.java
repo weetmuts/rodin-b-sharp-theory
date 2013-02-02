@@ -86,7 +86,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 				if (rule.isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {
 					continue;
 				}
-				accum.add(new RewriteTacticApplication(new RewriteInput(rule.getTheoryName(), rule.getRuleName(), 
+				accum.add(new RewriteTacticApplication(new RewriteInput(rule.getProjectName(), rule.getTheoryName(), rule.getRuleName(), 
 						rule.getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
 			}
 		}

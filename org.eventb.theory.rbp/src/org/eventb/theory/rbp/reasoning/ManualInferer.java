@@ -53,8 +53,8 @@ public class ManualInferer extends AbstractRulesApplyer{
 	 * @param ruleName
 	 * @return the antecedents or <code>null</code> if the rule is not found or inapplicable
 	 */
-	public IAntecedent[] getAntecedents(IProverSequent sequent, Predicate pred, boolean forward, String theoryName, String ruleName){
-		IDeployedInferenceRule rule = manager.getInferenceRule(theoryName, ruleName, context);
+	public IAntecedent[] getAntecedents(IProverSequent sequent, Predicate pred, boolean forward, String projectName, String theoryName, String ruleName){
+		IDeployedInferenceRule rule = manager.getInferenceRule(projectName, theoryName, ruleName, context);
 		// rule not found
 		if (rule == null) {
 			return null;

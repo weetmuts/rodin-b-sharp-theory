@@ -214,6 +214,7 @@ public class OperatorModule extends LabeledElementModule{
 					processModules(opDef, scNewOpDefs[i], repository, monitor);
 					endProcessorModules(opDef, repository, null);
 				}
+				repository.setState(identifierSymbolTable);
 				// update the factory
 				if(!operatorInformation.hasError()){
 					factory = repository.getFormulaFactory();

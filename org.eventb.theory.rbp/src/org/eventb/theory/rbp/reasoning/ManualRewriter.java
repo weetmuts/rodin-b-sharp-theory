@@ -49,7 +49,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 	 * @return the antecedents or <code>null</code> if the rule was not found or
 	 *         is inapplicable.
 	 */
-	public IAntecedent[] getAntecedents(Predicate predicate, IPosition position, boolean isGoal, String theoryName, String ruleName){
+	public IAntecedent[] getAntecedents(Predicate predicate, IPosition position, boolean isGoal, String projectName,String theoryName, String ruleName){
 		// get the subformula
 		Formula<?> formula = predicate.getSubFormula(position);
 		if (formula == null) {
@@ -57,7 +57,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 		}
 		FormulaFactory factory = context.getFormulaFactory();
 		// get the rule
-		IDeployedRewriteRule rule = manager.getRewriteRule(ruleName, theoryName, formula.getClass(), context);
+		IDeployedRewriteRule rule = manager.getRewriteRule(projectName, ruleName, theoryName, formula.getClass(), context);
 		if (rule == null) {
 			return null;
 		}
