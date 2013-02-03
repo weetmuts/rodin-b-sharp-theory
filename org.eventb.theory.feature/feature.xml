@@ -41,7 +41,7 @@
          id="org.eventb.theory.core"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.0.qualifier"
          unpack="false"/>
 
    <plugin
@@ -55,7 +55,7 @@
          id="org.eventb.theory.ui"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.0.qualifier"
          unpack="false"/>
 
    <plugin
@@ -68,7 +68,7 @@
          id="org.eventb.core.ast.extensions"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.0.0"
          unpack="false"/>
 
 </feature>
