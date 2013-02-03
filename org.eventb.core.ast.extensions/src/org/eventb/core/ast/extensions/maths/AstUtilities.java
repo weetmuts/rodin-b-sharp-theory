@@ -463,7 +463,7 @@ public class AstUtilities {
 	 *            formula factory that knows about this datatype
 	 * @return the type expression
 	 */
-	public static Type createTypeExpression(String identifierString, List<String> typeArguments, FormulaFactory ff) {
+	public static ParametricType createTypeExpression(String identifierString, List<String> typeArguments, FormulaFactory ff) {
 		String result = identifierString;
 		if (typeArguments.size() != 0) {
 			result += "(";
@@ -479,7 +479,7 @@ public class AstUtilities {
 		IParseResult parseResult = ff.parseType(result, LanguageVersion.V2);
 		if (parseResult.hasProblem())
 			return null;
-		return parseResult.getParsedType();
+		return (ParametricType) parseResult.getParsedType();
 
 	}
 

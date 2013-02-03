@@ -15,10 +15,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.ast.DefaultVisitor;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ITypeVisitor;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
@@ -41,7 +45,7 @@ public class DatatypeTable extends State implements ISCState {
 	
 	private Map<String, DatatypeEntry> datatypes;
 	// current datatype details
-	private Type typeExpression;
+	private ParametricType typeExpression;
 	//private List<String> referencedTypes;
 	private String currentDatatype = null;
 	private String currentConstructor = null;
@@ -261,8 +265,8 @@ public class DatatypeTable extends State implements ISCState {
 			
 			public boolean isBase(Type typeExpression, FormulaFactory ff){
 				for(Type type : destructors.values()){
-					BaseTypeVisitor typeVisitor = new BaseTypeVisitor(typeExpression, ff);
-					type.toExpression(ff).accept(typeVisitor);
+					BaseTypeVisitor typeVisitor = new BaseTypeVisitor((ParametricType)typeExpression);
+					type.accept(typeVisitor);
 					if(!typeVisitor.isBaseType()){
 						return false;
 					}
@@ -273,20 +277,24 @@ public class DatatypeTable extends State implements ISCState {
 			public boolean addDestructor(String name, Type type){
 				// check for admissibility before inserting
 				{
-					
+					AdmissibilityChecker checker = new AdmissibilityChecker(typeExpression);
+					type.accept(checker);
+					if(!checker.isAdmissible()){
+						return false;
+					}
 				}
 				destructors.put(name, type);
 				return true;
 			}
 		}
 		
-		public class BaseTypeVisitor extends DefaultVisitor {
+		public class BaseTypeVisitor implements ITypeVisitor{
 
-			private Expression typeExpression;
+			private ParametricType type;
 			private boolean isBase = true;
 			
-			public BaseTypeVisitor(Type type, FormulaFactory ff){
-				this.typeExpression = type.toExpression(ff);
+			public BaseTypeVisitor(ParametricType type){
+				this.type = type;
 			}
 			
 			public boolean isBaseType(){
@@ -294,12 +302,100 @@ public class DatatypeTable extends State implements ISCState {
 			}
 			
 			@Override
-			public boolean enterExtendedExpression(ExtendedExpression expression) {
-				if(expression.getTag() == typeExpression.getTag()){
+			public void visit(BooleanType type) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void visit(GivenType type) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void visit(IntegerType type) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void visit(ParametricType type) {
+				if (type.getExprExtension().equals(this.type.getExprExtension())){
 					isBase = false;
-					return false;
 				}
-				return true;
+				else {
+					for (Type tp : type.getTypeParameters()){
+						tp.accept(this);
+					}
+				}
+			}
+
+			@Override
+			public void visit(PowerSetType type) {
+				type.getBaseType().accept(this);
+				
+			}
+
+			@Override
+			public void visit(ProductType type) {
+				type.getLeft().accept(this);
+				type.getRight().accept(this);
+			}
+			
+		}
+		
+		public class AdmissibilityChecker implements ITypeVisitor{
+			
+			private ParametricType typeExpression;
+			private boolean isAdmissible = true;
+			
+			public AdmissibilityChecker(ParametricType type){
+				this.typeExpression = type;
+			}
+			
+			public boolean isAdmissible(){
+				return isAdmissible;
+			}
+	
+			@Override
+			public void visit(BooleanType type) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void visit(GivenType type) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void visit(IntegerType type) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void visit(ParametricType type) {
+				for (Type tp : type.getTypeParameters()){
+					tp.accept(this);
+				}
+			}
+
+			@Override
+			public void visit(PowerSetType type) {
+				BaseTypeVisitor baseTypeVisitor = new BaseTypeVisitor(typeExpression);
+				type.getBaseType().accept(baseTypeVisitor);
+				if (!baseTypeVisitor.isBaseType()){
+					isAdmissible = false;
+				}
+			}
+
+			@Override
+			public void visit(ProductType type) {
+				type.getLeft().accept(this);
+				type.getRight().accept(this);
 			}
 		}
 	}
