@@ -76,6 +76,8 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 		writer.putString(THEORY_KEY, ((RewriteInput) input).theoryName);
 		writer.putString(RULE_KEY, ((RewriteInput) input).ruleName);
 		writer.putString(DESC_KEY, ((RewriteInput) input).description);
+		writer.putString(PROJECT_KEY, ((RewriteInput) input).projectName);
+		writer.putString(CONTEXT_INPUT_KEY, ((RewriteInput) input).context.toString());
 	}
 
 	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {

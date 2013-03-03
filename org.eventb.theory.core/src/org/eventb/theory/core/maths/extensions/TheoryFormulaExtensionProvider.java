@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -14,8 +15,11 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
+import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
  * 
@@ -50,13 +54,27 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 
 	@Override
 	public Set<IRodinFile> getCommonFiles(IEventBRoot root) {
-		// nothing to supply
+		try {
+			ISCTheoryPathRoot[] paths = root.getRodinProject().getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
+			if (paths.length == 1){
+				return Collections.singleton(paths[0].getRodinFile());
+			}
+		} catch (RodinDBException e) {
+			CoreUtilities.log(e, "error while getting theory path for project " + root.getRodinProject());
+		}
 		return new LinkedHashSet<IRodinFile>();
 	}
 
 	@Override
 	public Set<IRodinFile> getProjectFiles(IEventBRoot root) {
-		// nothing to supply
+		try {
+			ISCTheoryPathRoot[] paths = root.getRodinProject().getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
+			if (paths.length == 1){
+				return Collections.singleton(paths[0].getRodinFile());
+			}
+		} catch (RodinDBException e) {
+			CoreUtilities.log(e, "error while getting theory path for project " + root.getRodinProject());
+		}
 		return new LinkedHashSet<IRodinFile>();
 	}
 
