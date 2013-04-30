@@ -1011,6 +1011,99 @@
 				class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">         
 		</commonSorter>
        </navigatorContent>
+       <navigatorContent
+             appearsBefore="org.eventb.theory.ui.explorer.theorem"
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AxiomaticBlockContentProvider"
+             id="org.eventb.theory.ui.explorer.axiomaticBlock"
+             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
+             name="%navigatorContent.axiomaticBlock"
+             priority="normal">
+          <triggerPoints>
+             <or>
+                <instanceof
+                      value="org.eventb.theory.core.ITheoryRoot">
+                </instanceof>
+                <instanceof
+                      value="fr.systerel.explorer.IElementNode">
+                </instanceof>
+             </or></triggerPoints>
+          <possibleChildren>
+             <or>
+                <instanceof
+                      value="org.eventb.theory.core.IAxiomaticDefinitionsBlock">
+                </instanceof>
+                <instanceof
+                      value="fr.systerel.explorer.IElementNode">
+                </instanceof>
+             </or></possibleChildren>
+          <commonSorter
+                class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">
+          </commonSorter>
+       </navigatorContent>
+       <navigatorContent
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AxiomaticTypeContentProvider"
+             id="org.eventb.theory.ui.explorer.axiomaticType"
+             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
+             name="%navigatorContent.axiomaticType"
+             priority="highest">
+          <triggerPoints>
+             <instanceof
+                   value="org.eventb.theory.core.IAxiomaticDefinitionsBlock">
+             </instanceof></triggerPoints>
+          <possibleChildren>
+             <instanceof
+                   value="org.eventb.theory.core.IAxiomaticTypeDefinition">
+             </instanceof></possibleChildren>
+          <commonSorter
+                class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">
+          </commonSorter>
+       </navigatorContent>
+       <navigatorContent
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AxiomaticOperatorContentProvider"
+             id="org.eventb.theory.ui.explorer.axiomaticOperator"
+             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
+             name="%navigatorContent.axiomaticOperator"
+             priority="higher">
+          <triggerPoints>
+             <instanceof
+                   value="org.eventb.theory.core.IAxiomaticDefinitionsBlock">
+             </instanceof></triggerPoints>
+          <possibleChildren>
+             <or>
+                <instanceof
+                      value="org.eventb.theory.core.IAxiomaticOperatorDefinition">
+                </instanceof>
+                <instanceof
+                      value="fr.systerel.explorer.IElementNode">
+                </instanceof>
+             </or></possibleChildren>
+          <commonSorter
+                class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">
+          </commonSorter>
+       </navigatorContent>
+       <navigatorContent
+             contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AxiomaticAxiomContentProvider"
+             id="org.eventb.theory.ui.explorer.axiomaticAxiom"
+             labelProvider="org.eventb.theory.ui.explorer.RodinLabelProvider"
+             name="%navigatorContent.axiomaticAxiom"
+             priority="high">
+          <triggerPoints>
+             <instanceof
+                   value="org.eventb.theory.core.IAxiomaticDefinitionsBlock">
+             </instanceof></triggerPoints>
+          <possibleChildren>
+             <or>
+                <instanceof
+                      value="org.eventb.theory.core.IAxiomaticDefinitionAxiom">
+                </instanceof>
+                <instanceof
+                      value="fr.systerel.explorer.IElementNode">
+                </instanceof>
+             </or></possibleChildren>
+          <commonSorter
+                class="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$AntiSorter">
+          </commonSorter>
+       </navigatorContent>
       <navigatorContent
              contentProvider="org.eventb.theory.ui.explorer.TheoryChildrenContentProviders$TheoremContentProvider"
              id="org.eventb.theory.ui.explorer.theorem"
@@ -1175,6 +1268,12 @@
                      value="org.eventb.theory.core.INewOperatorDefinition">
                </instanceof>
                <instanceof
+                     value="org.eventb.theory.core.IAxiomaticDefinitionsBlock">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.theory.core.IAxiomaticTypeDefinition">
+               </instanceof>
+               <instanceof
                      value="org.eventb.theory.core.IProofRulesBlock">
                </instanceof>
                <instanceof
@@ -1188,6 +1287,12 @@
                </instanceof>
                <instanceof
                      value="org.eventb.theory.core.IInferenceRule">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.theory.core.IAxiomaticDefinitionAxiom">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.theory.core.IAxiomaticOperatorDefinition">
                </instanceof>
             </or>
             
@@ -1212,6 +1317,9 @@
                   pattern="org.eventb.theory.ui.explorer.operator">
             </contentExtension>
             <contentExtension
+                  pattern="org.eventb.theory.ui.explorer.axiomaticBlock">
+            </contentExtension>
+            <contentExtension
                   pattern="org.eventb.theory.ui.explorer.rulesBlock">
             </contentExtension>
             <contentExtension
@@ -1228,6 +1336,15 @@
             </contentExtension>
             <contentExtension
                   pattern="org.eventb.theory.ui.explorer.inferenceRule">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eventb.theory.ui.explorer.axiomaticType">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eventb.theory.ui.explorer.axiomaticAxiom">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eventb.theory.ui.explorer.axiomaticOperator">
             </contentExtension>
          </includes>
       </viewerContentBinding>
