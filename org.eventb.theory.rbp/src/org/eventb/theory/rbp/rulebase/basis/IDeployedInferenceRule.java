@@ -44,10 +44,16 @@ public interface IDeployedInferenceRule extends IDeployedRule{
 	ReasoningType getReasoningType();
 	
 	/**
-	 * Returns the given clauses of this inference rule.
-	 * @return given clauses
+	 * Returns the non-hyp given clauses of this inference rule.
+	 * @return non-hyp given clauses
 	 */
 	public List<IDeployedGiven> getGivens();
+	
+	/**
+	 * Returns the hyp given clauses of this inference rule.
+	 * @return hyp given clauses
+	 */
+	public List<IDeployedGiven> getHypGivens();
 	
 	/**
 	 * Returns the infer clause of this inference rule.

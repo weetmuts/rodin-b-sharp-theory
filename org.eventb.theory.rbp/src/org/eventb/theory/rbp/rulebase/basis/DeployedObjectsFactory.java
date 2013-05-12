@@ -121,13 +121,20 @@ public class DeployedObjectsFactory {
 			String description = rule.getDescription();
 
 			List<IDeployedGiven> givens = new ArrayList<IDeployedGiven>();
+			List<IDeployedGiven> hypGivens = new ArrayList<IDeployedGiven>();
 			for (ISCGiven given : rule.getGivens()) {
 				IDeployedGiven deployedGiven = getDeployedGiven(given, factory,
 						typeEnvironment);
 				if (deployedGiven == null) {
 					return null;
 				}
-				givens.add(deployedGiven);
+				if (given.hasHypAttribute() && given.isHyp()){
+					hypGivens.add(deployedGiven);
+				}
+				else{
+					givens.add(deployedGiven);
+				}
+				
 			}
 			IDeployedInfer infer = getDeployedInfer(rule.getInfers()[0],
 					factory, typeEnvironment);
@@ -139,7 +146,7 @@ public class DeployedObjectsFactory {
 					ruleName, theoryName, isAutomatic, isInteractive, true,
 					toolTip, description,
 					rule.isSuitableForBackwardReasoning(),
-					rule.isSuitableForForwardReasoning(), givens, infer,
+					rule.isSuitableForForwardReasoning(), givens, hypGivens, infer,
 					typeEnvironment);
 			return infRule;
 		} catch (CoreException e) {

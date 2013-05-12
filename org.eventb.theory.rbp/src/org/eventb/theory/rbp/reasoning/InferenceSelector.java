@@ -43,6 +43,7 @@ public class InferenceSelector {
 	}
 
 	public List<ITacticApplication> select(Predicate predicate, IProverSequent sequent) {
+		//TODO change here to incorporate HYP
 		List<ITacticApplication> apps = new ArrayList<ITacticApplication>();
 		if (predicate == null) {
 			// backward

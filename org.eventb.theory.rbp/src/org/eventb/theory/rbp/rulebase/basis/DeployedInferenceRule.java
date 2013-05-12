@@ -22,6 +22,7 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
 public final class DeployedInferenceRule extends AbstractDeployedRule implements IDeployedInferenceRule{
 
 	private List<IDeployedGiven> givens;
+	private List<IDeployedGiven> hypGivens;
 	private IDeployedInfer infer;
 	private boolean backward;
 	private boolean forward;
@@ -29,12 +30,14 @@ public final class DeployedInferenceRule extends AbstractDeployedRule implements
 	public DeployedInferenceRule(String projectName, String ruleName, String theoryName,
 			boolean isAutomatic, boolean isInteractive, boolean isSound,
 			String toolTip, String description, boolean backward, boolean forward, 
-			List<IDeployedGiven> givens, IDeployedInfer infer, ITypeEnvironment typeEnv) {
+			List<IDeployedGiven> givens, List<IDeployedGiven> hypGivens,
+			IDeployedInfer infer, ITypeEnvironment typeEnv) {
 		super(ruleName, theoryName,projectName, isAutomatic, isInteractive, isSound, toolTip,
 				description, typeEnv);
 		this.backward = backward;
 		this.forward = forward;
 		this.givens = unmodifiableList(givens);
+		this.hypGivens = unmodifiableList(hypGivens);
 		this.infer = infer;
 	}
 
@@ -74,13 +77,14 @@ public final class DeployedInferenceRule extends AbstractDeployedRule implements
 		DeployedInferenceRule deployedInferenceRule = (DeployedInferenceRule)o;
 		return ruleName.equals(deployedInferenceRule.ruleName)&& theoryName.equals(deployedInferenceRule.theoryName)&& 
 			toolTip.equals(deployedInferenceRule.toolTip) && description.equals(deployedInferenceRule.description)&&
-			givens.equals(deployedInferenceRule.givens) && infer.equals(deployedInferenceRule.infer) &&
-			backward == deployedInferenceRule.backward && forward == deployedInferenceRule.forward;
+			givens.equals(deployedInferenceRule.givens) && hypGivens.equals(deployedInferenceRule.hypGivens)
+			 &&infer.equals(deployedInferenceRule.infer) && backward == deployedInferenceRule.backward && 
+			 forward == deployedInferenceRule.forward;
 	}
 	
 	public int hashCode(){
 		return ProverUtilities.combineHashCode(
-				ruleName, theoryName, givens, infer, 
+				ruleName, theoryName, givens, hypGivens, infer, 
 				toolTip, description, new Boolean(backward && forward));
 	}
 
@@ -94,7 +98,13 @@ public final class DeployedInferenceRule extends AbstractDeployedRule implements
 	}
 	
 	public String toString(){
-		return ProverUtilities.toString(givens) + " |=> " + infer.toString() +" :: " +getReasoningType()+"\n";
+		return ProverUtilities.toString(givens) +", "+
+				ProverUtilities.toString(hypGivens)+ " |=> " + infer.toString() +" :: " +getReasoningType()+"\n";
+	}
+
+	@Override
+	public List<IDeployedGiven> getHypGivens() {
+		return hypGivens;
 	}
 
 }
