@@ -1,6 +1,7 @@
 package org.eventb.theory.core.sc.modules;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +21,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.Definitions;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
@@ -166,9 +168,9 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 			} else {
 				boolean isExpression = AstUtilities.isExpressionOperator(operatorInformation.getFormulaType());
 				Type resultantType = null;
-				OperatorInformation.RecursiveDefinition recursiveDefinition = new OperatorInformation.RecursiveDefinition(
-						recursiveDefinitionInfo.getInductiveArgument());
+				
 				// process base cases
+				Map<Expression, Formula<?>> recursiveCases = new LinkedHashMap<Expression, Formula<?>>();
 				for (IRecursiveDefinitionCase defCase : baseEntries.keySet()) {
 					RecursiveDefinitionInfo.CaseEntry caseEntry = baseEntries.get(defCase);
 					if (!defCase.hasFormula()) {
@@ -215,10 +217,10 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 									operatorInformation.setHasError();
 									continue;
 								} else {
-									recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
+									recursiveCases.put(caseEntry.getCaseExpression(), formula);
 								}
 							} else {
-								recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
+								recursiveCases.put(caseEntry.getCaseExpression(), formula);
 							}
 						} else {
 							caseEntry.setErroneous();
@@ -226,7 +228,9 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						}
 					}
 				}
+				
 				if (!operatorInformation.hasError()) {
+					
 					FormulaFactory localFactory = factory.withExtensions(Collections.singleton(operatorInformation
 							.getInterimExtension()));
 					// process inductive cases
@@ -251,10 +255,10 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 										caseEntry.setErroneous();
 										operatorInformation.setHasError();
 									} else {
-										recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
+										recursiveCases.put(caseEntry.getCaseExpression(), formula);
 									}
 								} else {
-									recursiveDefinition.addRecursiveCase(caseEntry.getCaseExpression(), formula);
+									recursiveCases.put(caseEntry.getCaseExpression(), formula);
 								}
 							} else {
 								caseEntry.setErroneous();
@@ -263,18 +267,20 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						}
 					}
 					if (!operatorInformation.hasError()) {
+						Definitions.RecursiveDefinition recursiveDefinition = new Definitions.RecursiveDefinition(
+								recursiveDefinitionInfo.getInductiveArgument(), recursiveCases);
 						operatorInformation.setDefinition(recursiveDefinition);
 						if (operatorInformation.getWdCondition() == null) {
 							operatorInformation.addWDCondition(AstUtilities.BTRUE);
 							scParent.setPredicate(AstUtilities.BTRUE, monitor);
-							for (IRecursiveDefinitionCase defCase : baseEntries.keySet()) {
-								if (!baseEntries.get(defCase).isErroneous())
-									createSCCase(defCase, scDefinition, recursiveDefinition, baseEntries, monitor);
-							}
-							for (IRecursiveDefinitionCase defCase : inductiveEntries.keySet()) {
-								if (!inductiveEntries.get(defCase).isErroneous())
-									createSCCase(defCase, scDefinition, recursiveDefinition, inductiveEntries, monitor);
-							}
+						}
+						for (IRecursiveDefinitionCase defCase : baseEntries.keySet()) {
+							if (!baseEntries.get(defCase).isErroneous())
+								createSCCase(defCase, scDefinition, recursiveDefinition, baseEntries, monitor);
+						}
+						for (IRecursiveDefinitionCase defCase : inductiveEntries.keySet()) {
+							if (!inductiveEntries.get(defCase).isErroneous())
+								createSCCase(defCase, scDefinition, recursiveDefinition, inductiveEntries, monitor);
 						}
 					}
 				}
@@ -324,7 +330,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 	 * @throws RodinDBException
 	 */
 	private void createSCCase(IRecursiveDefinitionCase origin, ISCRecursiveOperatorDefinition parent,
-			OperatorInformation.RecursiveDefinition recursiveDefinition,
+			Definitions.RecursiveDefinition recursiveDefinition,
 			Map<IRecursiveDefinitionCase, RecursiveDefinitionInfo.CaseEntry> entries, IProgressMonitor monitor)
 			throws RodinDBException {
 		ISCRecursiveDefinitionCase scDefCase = parent.getRecursiveDefinitionCase(origin.getElementName());

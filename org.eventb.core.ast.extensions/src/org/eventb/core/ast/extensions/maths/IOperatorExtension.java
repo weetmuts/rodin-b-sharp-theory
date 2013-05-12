@@ -38,4 +38,20 @@ public interface IOperatorExtension extends IFormulaExtension{
 	 * @return operator commutativity
 	 */
 	public boolean isCommutative();
+	
+	/**
+	 * Returns the definition of this operator. 
+	 * 
+	 * This could be <code>null</code> if the extension is temporary (i.e., from a SC theory).
+	 * @return the definition of the operator
+	 */
+	public Definitions.IDefinition getDefinition();
+	
+	/**
+	 * Sets the definition of this operator.
+	 * 
+	 * @throws IllegalStateException if a definition is already set.
+	 * @param definition the definition to assign
+	 */
+	public void setDefinition(Definitions.IDefinition definition);
 }

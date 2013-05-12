@@ -15,8 +15,10 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.Definitions;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
+import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 
 /**
@@ -33,6 +35,7 @@ public abstract class OperatorExtension implements IOperatorExtension  {
 	protected OperatorTypingRule operatorTypingRule;
 	protected boolean isCommutative = false;
 	protected boolean isAssociative = false;
+	private Definitions.IDefinition definition;
 	/**
 	 * Source could be <code>IRodinElement</code>
 	 */
@@ -64,12 +67,13 @@ public abstract class OperatorExtension implements IOperatorExtension  {
 	 */
 	protected OperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative,
-			OperatorTypingRule operatorTypingRule,
+			OperatorTypingRule operatorTypingRule, Definitions.IDefinition definition,
 			Object source) {
 		AstUtilities.ensureNotNull(properties, operatorTypingRule);
 		this.properties = properties;
 		this.isCommutative = isCommutative;
 		this.isAssociative = isAssociative;
+		this.definition = definition;
 		this.operatorTypingRule = operatorTypingRule;
 		this.source = source;
 		this.operatorGroup = properties.getGroupID() == null ? AstUtilities
@@ -163,6 +167,18 @@ public abstract class OperatorExtension implements IOperatorExtension  {
 		return new ExtensionKind(properties.getNotation(), properties.getFormulaType(),
 				ExtensionFactory.makeAllExpr(ExtensionFactory.makeArity(
 						operatorTypingRule.getArity(), operatorTypingRule.getArity())), false);
+	}
+	
+	@Override
+	public IDefinition getDefinition() {
+		// TODO Auto-generated method stub
+		return definition;
+	}
+	
+	@Override
+	public void setDefinition(IDefinition definition) {
+		// TODO Auto-generated method stub
+		this.definition = definition;
 	}
 	
 }

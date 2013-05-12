@@ -30,6 +30,7 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.Definitions;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
@@ -56,79 +57,6 @@ import org.rodinp.core.RodinDBException;
 @SuppressWarnings("restriction")
 public class OperatorInformation extends State implements ISCState{
 
-	/**
-	 * 
-	 * A direct definition
-	 * @author maamria
-	 *
-	 */
-	public static class DirectDefintion implements IDefinition{
-		private Formula<?> directDefintion;
-		
-		public DirectDefintion(Formula<?> directDefinition){
-			this.directDefintion = directDefinition;
-		}
-		
-		public Formula<?> getDefinition(){
-			return directDefintion;
-		}
-	}
-	
-	/**
-	 * An axiomatic definition
-	 * @author maamria
-	 *
-	 */
-	public static class AxiomaticDefinition implements IDefinition{
-		private List<Predicate> axioms;
-		
-		public AxiomaticDefinition(List<Predicate> axioms){
-			this.axioms = axioms;
-		}
-		
-		public List<Predicate> getAxioms(){
-			return Collections.unmodifiableList(axioms);
-		}
-	}
-
-	/**
-	 * A recursive definition
-	 * @author maamria
-	 *
-	 */
-	public static class RecursiveDefinition implements IDefinition{
-		
-		private FreeIdentifier operatorArgument;
-		
-		private Map<Expression, Formula<?>> recursiveCases;
-		
-		public RecursiveDefinition(FreeIdentifier operatorArgument){
-			this.operatorArgument = operatorArgument;
-			this.recursiveCases = new LinkedHashMap<Expression, Formula<?>>();
-		}
-		
-		public FreeIdentifier getOperatorArgument(){
-			return operatorArgument;
-		}
-		
-		public Map<Expression, Formula<?>> getRecursiveCases(){
-			return Collections.unmodifiableMap(recursiveCases);
-		}
-		
-		public void addRecursiveCase(Expression inductiveCase, Formula<?> definition){
-			recursiveCases.put(inductiveCase, definition);
-		}
-	}
-
-	/**
-	 * Marker interface.
-	 * @author maamria
-	 *
-	 */
-	public static interface IDefinition{
-		
-	}
-
 	private static final Predicate[] NO_PREDICATES = new Predicate[0];
 
 	private String operatorID;
@@ -142,7 +70,7 @@ public class OperatorInformation extends State implements ISCState{
 	private Map<String, Type> opArguments;
 	private Type expressionType;
 	private List<GivenType> typeParameters;
-	private OperatorInformation.IDefinition definition;
+	private Definitions.IDefinition definition;
 	
 	private Predicate dWDCondition;
 
@@ -308,7 +236,7 @@ public class OperatorInformation extends State implements ISCState{
 		return hasError;
 	}
 
-	public void setDefinition(OperatorInformation.IDefinition definition) throws CoreException {
+	public void setDefinition(Definitions.IDefinition definition) throws CoreException {
 		assertMutable();
 		this.definition = definition;
 	}
@@ -322,10 +250,10 @@ public class OperatorInformation extends State implements ISCState{
 			}
 			if (formulaType.equals(FormulaType.EXPRESSION)) {
 				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-						opArguments, expressionType, getWdCondition(), dWDCondition, sourceOfExtension);
+						opArguments, expressionType, getWdCondition(), dWDCondition, definition,sourceOfExtension);
 			} else {
 				formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
-						getWdCondition(), dWDCondition, sourceOfExtension);
+						getWdCondition(), dWDCondition, definition,sourceOfExtension);
 			}
 			return formulaExtension;
 		} else
@@ -339,10 +267,10 @@ public class OperatorInformation extends State implements ISCState{
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 		if (expressionType != null) {
 			formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-					opArguments, expressionType, getWdCondition(), dWDCondition, null);
+					opArguments, expressionType, getWdCondition(), getWdCondition(), null, null);
 		} else {
 			formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
-					getWdCondition(), dWDCondition, null);
+					getWdCondition(), getWdCondition(), null, null);
 		}
 		return formulaExtension;
 	}
@@ -377,7 +305,7 @@ public class OperatorInformation extends State implements ISCState{
 			}
 		}
 		// one rewrite rule
-		if (definition instanceof OperatorInformation.DirectDefintion) {
+		if (definition instanceof Definitions.DirectDefintion) {
 			ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID, syntax + " expansion");
 			rewRule.setSource(originDefinition, null);
 			Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution, enhancedFactory);
@@ -386,10 +314,10 @@ public class OperatorInformation extends State implements ISCState{
 			rhs.create(null, null);
 			rhs.setLabel(syntax + " rhs", null);
 			rhs.setPredicate(AstUtilities.BTRUE, null);
-			rhs.setSCFormula(((OperatorInformation.DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
+			rhs.setSCFormula(((Definitions.DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
 			rhs.setSource(originDefinition, null);
-		} else if (definition instanceof OperatorInformation.RecursiveDefinition) {
-			OperatorInformation.RecursiveDefinition recursiveDefinition = (OperatorInformation.RecursiveDefinition) definition;
+		} else if (definition instanceof Definitions.RecursiveDefinition) {
+			Definitions.RecursiveDefinition recursiveDefinition = (Definitions.RecursiveDefinition) definition;
 			Map<Expression, Formula<?>> recursiveCases = recursiveDefinition.getRecursiveCases();
 			FreeIdentifier inductiveIdent = recursiveDefinition.getOperatorArgument();
 			int index = 0;
@@ -481,8 +409,8 @@ public class OperatorInformation extends State implements ISCState{
 			lhs = ff.makeExtendedExpression((IExpressionExtension) formulaExtension, childExpressionsForLhs, NO_PREDICATES, null);
 			// FIXED Bug in case of generic operator (e.g., {}), this is done to
 			// type check the left hand side
-			if (definition instanceof OperatorInformation.DirectDefintion && childExpressionsForLhs.length == 0) {
-				OperatorInformation.DirectDefintion directDefintion = (OperatorInformation.DirectDefintion) definition;
+			if (definition instanceof Definitions.DirectDefintion && childExpressionsForLhs.length == 0) {
+				Definitions.DirectDefintion directDefintion = (Definitions.DirectDefintion) definition;
 				Expression expressionDefinition = (Expression) directDefintion.getDefinition();
 				RelationalPredicate typeCheckPredicate = ff.makeRelationalPredicate(Formula.EQUAL, (Expression) lhs, expressionDefinition, null);
 				ITypeCheckResult typeCheckResult = typeCheckPredicate.typeCheck(typeEnvironment);

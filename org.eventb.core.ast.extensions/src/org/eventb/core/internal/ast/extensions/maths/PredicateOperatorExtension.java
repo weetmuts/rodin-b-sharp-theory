@@ -10,6 +10,7 @@ package org.eventb.core.internal.ast.extensions.maths;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
 
 /**
@@ -23,10 +24,10 @@ public class PredicateOperatorExtension extends OperatorExtension
 		implements IPredicateExtension {
 	
 	public PredicateOperatorExtension(OperatorExtensionProperties properties,
-			boolean isCommutative, OperatorTypingRule typingRule,
+			boolean isCommutative, OperatorTypingRule typingRule, IDefinition definition,
 			Object source){
 		
-		super(properties, isCommutative, false, typingRule, source);
+		super(properties, isCommutative, false, typingRule, definition, source);
 	}
 
 	@Override

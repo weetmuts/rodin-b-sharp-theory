@@ -16,6 +16,7 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -33,10 +34,10 @@ public class ExpressionOperatorExtension extends OperatorExtension
 
 	public ExpressionOperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative,
-			OperatorTypingRule typingRule,
+			OperatorTypingRule typingRule, IDefinition definition,
 			Object source) {
 
-		super(properties, isCommutative, isAssociative, typingRule, source);
+		super(properties, isCommutative, isAssociative, typingRule, definition, source);
 	}
 
 	@Override

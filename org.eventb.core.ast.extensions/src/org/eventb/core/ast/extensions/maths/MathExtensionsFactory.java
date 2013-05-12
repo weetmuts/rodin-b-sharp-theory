@@ -19,6 +19,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.internal.ast.extensions.maths.AxiomaticTypeExtension;
 import org.eventb.core.internal.ast.extensions.maths.CompleteDatatypeExtension;
@@ -67,7 +68,7 @@ public final class MathExtensionsFactory {
 	 */
 	public static  IExpressionExtension getExpressionExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative, Map<String, Type> operatorArguments, Type resultantType, 
-			Predicate wdPredicate, Predicate dWDPredicate, Object source) {
+			Predicate wdPredicate, Predicate dWDPredicate, IDefinition definition, Object source) {
 		List<OperatorArgument> opArgs = new ArrayList<OperatorArgument>();
 		int index = 0;
 		for (String name : operatorArguments.keySet()){
@@ -75,7 +76,7 @@ public final class MathExtensionsFactory {
 		}
 		OperatorTypingRule operatorTypingRule = new ExpressionOperatorTypingRule(opArgs, wdPredicate, 
 				dWDPredicate, resultantType, isAssociative);
-		return new ExpressionOperatorExtension(properties, isCommutative, isAssociative, operatorTypingRule, 
+		return new ExpressionOperatorExtension(properties, isCommutative, isAssociative, operatorTypingRule, definition,
 				source);
 	}
 	
@@ -92,7 +93,7 @@ public final class MathExtensionsFactory {
 	
 	public static  IPredicateExtension getPredicateExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, Map<String, Type> operatorArguments, Predicate wdPredicate, 
-			Predicate dWDPredicate, Object source) {
+			Predicate dWDPredicate, IDefinition definition,Object source) {
 		List<OperatorArgument> opArgs = new ArrayList<OperatorArgument>();
 		int index = 0;
 		for (String name : operatorArguments.keySet()){
@@ -100,7 +101,7 @@ public final class MathExtensionsFactory {
 		}
 		OperatorTypingRule operatorTypingRule = new PredicateOperatorTypingRule(opArgs,
 				wdPredicate, dWDPredicate);
-		return new PredicateOperatorExtension(properties, isCommutative, operatorTypingRule, source);
+		return new PredicateOperatorExtension(properties, isCommutative, operatorTypingRule, definition,source);
 	}
 	
 	/**
