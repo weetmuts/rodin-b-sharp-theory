@@ -6,6 +6,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
@@ -13,7 +14,6 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
@@ -71,26 +71,23 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 	}
 
 	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) throws SerializeException {
-		super.serializeInput(input, writer);
+		super.serializeInput(input, writer); // processes CONTEXT_INPUT_KEY
 		writer.putString(POSITION_KEY, ((RewriteInput) input).position.toString());
 		writer.putString(THEORY_KEY, ((RewriteInput) input).theoryName);
 		writer.putString(RULE_KEY, ((RewriteInput) input).ruleName);
 		writer.putString(DESC_KEY, ((RewriteInput) input).description);
 		writer.putString(PROJECT_KEY, ((RewriteInput) input).projectName);
-		writer.putString(CONTEXT_INPUT_KEY, ((RewriteInput) input).context.toString());
 	}
 
 	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
+		final ContextualInput contextual = (ContextualInput) super.deserializeInput(reader);
+
 		final String posString = reader.getString(POSITION_KEY);
 		final String theoryString = reader.getString(THEORY_KEY);
 		final String projectString = reader.getString(PROJECT_KEY);
 		final String ruleString = reader.getString(RULE_KEY);
 		final String ruleDesc = reader.getString(DESC_KEY);
-		final String poContextStr = reader.getString(CONTEXT_INPUT_KEY);
-		final IPOContext context = ContextualInput.deserialise(poContextStr);
-		if (context == null) {
-			throw new SerializeException(new IllegalStateException("PO contextual information cannot be retrieved!"));
-		}
+		final IPOContext context = contextual.context;
 		final IPosition position = FormulaFactory.makePosition(posString);
 
 		Set<Predicate> neededHyps = reader.getNeededHyps();
