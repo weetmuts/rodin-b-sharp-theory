@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2013 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel - repair missing project key
+ *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
 import java.util.Set;
@@ -12,13 +23,17 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IRepairableInputReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.reasoning.ManualRewriter;
+import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.rodinp.core.IRodinProject;
 
 /**
  * <p>
@@ -28,7 +43,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  * 
  */
-public class ManualRewriteReasoner extends ContextAwareReasoner {
+public class ManualRewriteReasoner extends ContextAwareReasoner implements IRepairableInputReasoner {
 
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".manualRewriteReasoner";
 	
@@ -80,15 +95,53 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 	}
 
 	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
-		final ContextualInput contextual = (ContextualInput) super.deserializeInput(reader);
+		return deserializeInput(reader, false);
+	}
 
+	private static String findMissingProjectKey(IPOContext context,
+			String theoryString) {
+		final Set<IRodinProject> theoryProjects = BaseManager.getDefault()
+				.findTheoryProjects(context, theoryString);
+		System.out.println("");
+		if (theoryProjects.size() != 1) {
+			final String reason;
+			if (theoryProjects.size() == 0) {
+				reason = "no accessible project defines theory " + theoryString
+						+ ", might be caused by a missing theory path";
+			} else {
+				reason = "ambiguous theory " + theoryString
+						+ ", found in several projects: "
+						+ theoryProjects.toString();
+			}
+			final String message = "Failed to repair missing project key in "
+					+ context.getParentRoot().getPRRoot() + ": " + reason;
+			CoreUtilities.log(null, message);
+			return null;
+		}
+
+		final IRodinProject theoryProject = theoryProjects.iterator().next();
+		return theoryProject.getElementName();
+	}
+	
+	private IReasonerInput deserializeInput(IReasonerInputReader reader,
+			boolean repair) throws SerializeException {
+		final ContextualInput contextual = (ContextualInput) super.deserializeInput(reader);
 		final String posString = reader.getString(POSITION_KEY);
 		final String theoryString = reader.getString(THEORY_KEY);
-		final String projectString = reader.getString(PROJECT_KEY);
 		final String ruleString = reader.getString(RULE_KEY);
 		final String ruleDesc = reader.getString(DESC_KEY);
 		final IPOContext context = contextual.context;
 		final IPosition position = FormulaFactory.makePosition(posString);
+
+		final String projectString;
+		if (repair) {
+			projectString = findMissingProjectKey(context, theoryString);
+			if (projectString == null) {
+				return null;
+			}
+		} else {
+			projectString = reader.getString(PROJECT_KEY);
+		}
 
 		Set<Predicate> neededHyps = reader.getNeededHyps();
 
@@ -115,6 +168,17 @@ public class ManualRewriteReasoner extends ContextAwareReasoner {
 	@Override
 	public String getSignature() {
 		return REASONER_ID;
+	}
+
+	@Override
+	public IReasonerInput repair(IReasonerInputReader reader) {
+		try {
+			return deserializeInput(reader, true);
+		} catch (Throwable t) {
+			// repair failed, log and resign
+			CoreUtilities.log(t, "While repairing broken input for reasoner " + getReasonerID());
+			return null;
+		}
 	}
 
 }
