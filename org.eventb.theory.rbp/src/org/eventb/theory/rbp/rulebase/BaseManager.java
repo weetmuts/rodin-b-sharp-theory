@@ -70,28 +70,20 @@ public class BaseManager implements IElementChangedListener {
 		check(rodinProject);
 		Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>>();
 		// add theory path stuff
-		try {
-			ISCTheoryPathRoot[] paths = rodinProject.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
-			if (paths.length == 1) {
-				for (ISCAvailableTheoryProject availProj : paths[0].getSCAvailableTheoryProjects()) {
-					check(availProj.getSCAvailableTheoryProject());
-					IProjectBaseEntry projBaseEntry = projectEntries.get(availProj.getSCAvailableTheoryProject());
-					if (projBaseEntry != null) {
-						Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
-						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()) {
-							IDeployedTheoryRoot scDeployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
-							ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
-									.getTheoryBaseEntry(scDeployedTheoryRoot);
-							thms.put(scDeployedTheoryRoot, theoryBaseEntry.getDeployedTheorems(factory));
-						}
-						map.put(availProj.getSCAvailableTheoryProject(), thms);
-					}
+		for (IDeployedTheoryRoot theory : getTheoriesFromPath(rodinProject)) {
+			final IRodinProject thyProject = theory.getRodinProject();
+			IProjectBaseEntry projBaseEntry = projectEntries.get(thyProject);
+			if (projBaseEntry != null) {
+				if (!map.containsKey(thyProject)) {
+					map.put(thyProject, new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
 				}
-
+				final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map.get(thyProject);
+				ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
+						.getTheoryBaseEntry(theory);
+				thms.put(theory, theoryBaseEntry.getDeployedTheorems(factory));
 			}
-		} catch (CoreException e) {
-			ProverUtilities.log(e, "Error while processing theory path for project " + rodinProject);
 		}
+
 		map.put(rodinProject, projectEntries.get(rodinProject).getTheorems(context, factory));
 		return map;
 	}
@@ -112,59 +104,47 @@ public class BaseManager implements IElementChangedListener {
 		check(rodinProject);
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
 		// add theory path stuff
-		try {
-			ISCTheoryPathRoot[] paths = rodinProject.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
-			if (paths.length == 1) {
-				for (ISCAvailableTheoryProject availProj : paths[0].getSCAvailableTheoryProjects()) {
-					check(availProj.getSCAvailableTheoryProject());
-					IProjectBaseEntry projBaseEntry = projectEntries.get(availProj.getSCAvailableTheoryProject());
-					if (projBaseEntry != null) {
-						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()) {
-							IDeployedTheoryRoot scDeployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
-							ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
-									.getTheoryBaseEntry(scDeployedTheoryRoot);
-							rules.addAll(theoryBaseEntry.getDefinitionalRules(context.getFormulaFactory()));
-						}
-					}
-				}
-
-			}
-		} catch (CoreException e) {
-			ProverUtilities.log(e, "Error while processing theory path for project " + rodinProject);
+		for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
+			rules.addAll(theoryBaseEntry.getDefinitionalRules(context.getFormulaFactory()));
 		}
+
 		rules.addAll(projectEntries.get(rodinProject).getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
 
 		return rules;
 	}
 
-	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, IPOContext context) {
+	private List<ITheoryBaseEntry<IDeployedTheoryRoot>> getTheoryPathBaseEntries(
+			IRodinProject project) {
+		final List<ITheoryBaseEntry<IDeployedTheoryRoot>> entries = new ArrayList<ITheoryBaseEntry<IDeployedTheoryRoot>>();
+		for (IDeployedTheoryRoot theory : getTheoriesFromPath(project)) {
+			IProjectBaseEntry projBaseEntry = projectEntries.get(theory
+					.getRodinProject());
+			if (projBaseEntry != null) {
+				ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
+						.getTheoryBaseEntry(theory);
+				if (theoryBaseEntry != null
+						&& !entries.contains(theoryBaseEntry)) {
+					entries.add(theoryBaseEntry);
+				}
+			}
+		}
+		return entries;
+	}
+
+	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic,
+			Class<?> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
 		// add theory path stuff
-		try {
-			ISCTheoryPathRoot[] paths = rodinProject.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
-			if (paths.length == 1) {
-				for (ISCAvailableTheoryProject availProj : paths[0].getSCAvailableTheoryProjects()) {
-					check(availProj.getSCAvailableTheoryProject());
-					IProjectBaseEntry projBaseEntry = projectEntries.get(availProj.getSCAvailableTheoryProject());
-					if (projBaseEntry != null) {
-						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()) {
-							IDeployedTheoryRoot scDeployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
-							ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
-									.getTheoryBaseEntry(scDeployedTheoryRoot);
-							rules.addAll(theoryBaseEntry.getRewriteRules(automatic, clazz, context.getFormulaFactory()));
-						}
-					}
-				}
-
-			}
-		} catch (CoreException e) {
-			ProverUtilities.log(e, "Error while processing theory path for project " + rodinProject);
+		for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
+			rules.addAll(theoryBaseEntry.getRewriteRules(automatic, clazz,
+					context.getFormulaFactory()));
 		}
-		rules.addAll(projectEntries.get(rodinProject).getRewriteRules(automatic, clazz, parentRoot,
-				context.getFormulaFactory()));
+
+		rules.addAll(projectEntries.get(rodinProject).getRewriteRules(
+				automatic, clazz, parentRoot, context.getFormulaFactory()));
 
 		return rules;
 	}
@@ -197,25 +177,8 @@ public class BaseManager implements IElementChangedListener {
 		check(rodinProject);
 		List<IDeployedInferenceRule> rules = new ArrayList<IDeployedInferenceRule>();
 		// add theory path stuff
-		try {
-			ISCTheoryPathRoot[] paths = rodinProject.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
-			if (paths.length == 1) {
-				for (ISCAvailableTheoryProject availProj : paths[0].getSCAvailableTheoryProjects()) {
-					check(availProj.getSCAvailableTheoryProject());
-					IProjectBaseEntry projBaseEntry = projectEntries.get(availProj.getSCAvailableTheoryProject());
-					if (projBaseEntry != null) {
-						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()) {
-							IDeployedTheoryRoot scDeployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
-							ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
-									.getTheoryBaseEntry(scDeployedTheoryRoot);
-							rules.addAll(theoryBaseEntry.getInferenceRules(automatic, type, context.getFormulaFactory()));
-						}
-					}
-				}
-
-			}
-		} catch (CoreException e) {
-			ProverUtilities.log(e, "Error while processing theory path for project " + rodinProject);
+		for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
+			rules.addAll(theoryBaseEntry.getInferenceRules(automatic, type, context.getFormulaFactory()));
 		}
 
 		rules.addAll(projectEntries.get(rodinProject).getInferenceRules(automatic, type, parentRoot,
