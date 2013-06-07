@@ -102,7 +102,6 @@ public class ManualRewriteReasoner extends ContextAwareReasoner implements IRepa
 			String theoryString) {
 		final Set<IRodinProject> theoryProjects = BaseManager.getDefault()
 				.findTheoryProjects(context, theoryString);
-		System.out.println("");
 		if (theoryProjects.size() != 1) {
 			final String reason;
 			if (theoryProjects.size() == 0) {
