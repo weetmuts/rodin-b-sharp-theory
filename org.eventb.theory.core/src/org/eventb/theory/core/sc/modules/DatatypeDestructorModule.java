@@ -179,6 +179,8 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 			return false;
 		}
 		else if (ident == null){
+			//createProblemMarker(destructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					//TheoryGraphProblem.IdenIsADesNameError, name);
 			return false;
 		}
 		if (!destructor.hasType() || destructor.getType().equals("")) {

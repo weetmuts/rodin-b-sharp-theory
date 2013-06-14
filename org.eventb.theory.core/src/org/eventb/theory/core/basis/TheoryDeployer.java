@@ -67,6 +67,8 @@ public final class TheoryDeployer implements ITheoryDeployer {
 				return false;
 			}
 		}
+//remove becuase we do not need to check conflicts in the time of deploy, since a theory is not accessible just by deploying
+//conflict is checked when a theory is imported in a theorypath and thus available to be used
 		monitor.subTask("checking conflicts between chosen theories");
 		// check for conflicts between theories to be deployed and deployed
 		// theories

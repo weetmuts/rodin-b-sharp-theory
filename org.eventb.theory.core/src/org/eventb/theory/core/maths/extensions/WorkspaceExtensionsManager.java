@@ -18,6 +18,7 @@ import org.eventb.theory.core.ISCAvailableTheoryProject;
 import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -51,10 +52,12 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 	}
 
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root){
+		
 		Set<IFormulaExtension> setOfExtensions= new LinkedHashSet<IFormulaExtension>();
 		// add cond extension
 		setOfExtensions.addAll(COND_EXTS);
 		IRodinProject project = root.getRodinProject();
+		
 		try{
 			ISCTheoryPathRoot[] paths = project.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
 			if (paths.length == 1){
@@ -65,6 +68,10 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()){
 							IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
 							setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
+							//add imported theories math extension
+							for (IDeployedTheoryRoot importedThy : TheoryHierarchyHelper.getImportedTheories(deployedTheoryRoot)){
+								setOfExtensions.addAll(projectManager.getNeededTheories(importedThy));
+							}
 						}
 					}
 				}
@@ -74,8 +81,10 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		} catch(CoreException e){
 			CoreUtilities.log(e, "Error while processing theory path for project "+project);
 		}
-		
-		// case Theory
+
+		//removed because a deployed local theory is not accessible by the local context/machine any more, 
+		//it is just accessible when imported in a theory path (above if case).
+/*		// case Theory
 		if (root instanceof ITheoryRoot){
 			return setOfExtensions;
 		}
@@ -96,13 +105,14 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			}
 			return setOfExtensions;
 		}
+		
 		// case theory dependent roots (not ITheoryRoot) : they get the SC theory root extensions
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(root.getComponentName(), project);
 			if (scRoot.exists()){
 				return getFormulaExtensions(scRoot);
 			}
-		}
+		}*/
 		return setOfExtensions;
 	}
 

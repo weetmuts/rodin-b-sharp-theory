@@ -58,6 +58,9 @@ public class TheoryAttributes {
 	public static IAttributeType.String GROUP_ID_ATTRIBUTE = RodinCore
 		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".groupID");
 	
+	public static IAttributeType.Handle IMPORT_THEORY_PROJECT_ATTRIBUTE = RodinCore
+			.getHandleAttrType(TheoryPlugin.PLUGIN_ID + ".importTheoryProject");
+	
 	public static IAttributeType.Handle IMPORT_THEORY_ATTRIBUTE = RodinCore
 		.getHandleAttrType(TheoryPlugin.PLUGIN_ID + ".importTheory");
 	
@@ -75,12 +78,10 @@ public class TheoryAttributes {
 	
 	public static IAttributeType.String APPLICABILITY_ATTRIBUTE = RodinCore
 		.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".applicability");
-
 	
 	public static IAttributeType.Boolean HYP_ATTRIBUTE = RodinCore
 			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".hyp");
 
-	
 	public static IAttributeType.Handle AVAILABLE_THEORY_ATTRIBUTE = RodinCore
 			.getHandleAttrType(TheoryPlugin.PLUGIN_ID + ".availableTheory");
 	

@@ -82,10 +82,15 @@
             typeId="org.eventb.theory.core.notationType">
       </choiceAttribute>
       <choiceAttribute
+            class="org.eventb.theory.internal.ui.attr.ImportProjectTheoryAttributeManipulation"
+            expandsHorizontally="false"
+            id="org.eventb.theory.ui.importTheoryProject"
+            typeId="org.eventb.theory.core.importTheoryProject">
+      </choiceAttribute>
+      <choiceAttribute
             class="org.eventb.theory.internal.ui.attr.ImportTheoryAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.theory.ui.importTheory"
-            required="true"
             typeId="org.eventb.theory.core.importTheory">
       </choiceAttribute>
       <choiceAttribute
@@ -135,10 +140,16 @@
             typeId="org.eventb.theory.core.theoryRoot">
       </element>
       <element
-            defaultColumn="0"
-            imagePath="icons/thy.gif"
-            prefix="IMPORTS"
-            prettyPrinter="org.eventb.theory.ui.editor.html.ImportPrettyPrinter"
+            imagePath="icons/block.gif"
+            prefix="IMPORTS THEORY PROJECTS"
+            prettyPrinter="org.eventb.theory.ui.editor.html.ImportProjectPrettyPrinter"
+            typeId="org.eventb.theory.core.importTheoryProject">
+      </element>
+      <element
+            defaultColumn="1"
+            imagePath="icons/thyDep.gif"
+            prefix="THEORIES"
+            prettyPrinter="org.eventb.theory.ui.editor.html.ImportTheoryPrettyPrinter"
             typeId="org.eventb.theory.core.importTheory">
       </element>
       <element
@@ -314,12 +325,12 @@
             parentTypeId="org.eventb.theory.core.theoryRoot">
          <childType
                priority="5"
-               typeId="org.eventb.theory.core.importTheory">
+               typeId="org.eventb.theory.core.importTheoryProject">
          </childType>
          <childType
                priority="10"
                typeId="org.eventb.theory.core.typeParameter">
-         </childType>
+         </childType> 
          <childType
                priority="20"
                typeId="org.eventb.theory.core.datatypeDefinition">
@@ -339,6 +350,13 @@
          <childType
                priority="40"
                typeId="org.eventb.theory.core.proofRulesBlock">
+         </childType>
+      </childRelation>
+      <childRelation
+            parentTypeId="org.eventb.theory.core.importTheoryProject">
+         <childType
+               priority="10"
+               typeId="org.eventb.theory.core.importTheory">
          </childType>
       </childRelation>
       <childRelation
@@ -440,6 +458,12 @@
             elementTypeId="org.eventb.theory.core.theoryRoot">
          <attributeReference
                descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.theory.core.importTheoryProject">
+         <attributeReference
+               descriptionId="org.eventb.theory.ui.importTheoryProject">
          </attributeReference>
       </attributeRelation>
       <attributeRelation

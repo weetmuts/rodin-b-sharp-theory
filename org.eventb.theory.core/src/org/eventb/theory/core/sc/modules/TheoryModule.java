@@ -10,11 +10,15 @@ import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.states.AxiomaticDefinitionsLabelSymbolTable;
+import org.eventb.theory.core.sc.states.ImportProjectTable;
+import org.eventb.theory.core.sc.states.ImportTheoryTable;
 import org.eventb.theory.core.sc.states.OperatorsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.ProofRulesLabelSymbolTable;
 import org.eventb.theory.core.sc.states.RulesBlocksLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoremsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryPathProjectTable;
+import org.eventb.theory.core.sc.states.TheoryPathTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -55,12 +59,16 @@ public class TheoryModule extends SCProcessorModule {
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		accuracyInfo = new TheoryAccuracyInfo();
 		
+		final ImportProjectTable projectSymbolTable = new ImportProjectTable(TheoryModule.LABEL_SYMTAB_SIZE);
+		final ImportTheoryTable theorySymbolTable = new ImportTheoryTable(TheoryModule.LABEL_SYMTAB_SIZE);
 		final TheoremsLabelSymbolTable thmSymbolTable = new TheoremsLabelSymbolTable();
 		final RulesBlocksLabelSymbolTable blocksSymbolTable = new RulesBlocksLabelSymbolTable();
 		final ProofRulesLabelSymbolTable rulesSymbolTable = new ProofRulesLabelSymbolTable();
 		final OperatorsLabelSymbolTable opLabelSymbolTable = new OperatorsLabelSymbolTable();
 		final IdentifierSymbolTable identSymbolTable = new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, repository.getFormulaFactory());
 		final AxiomaticDefinitionsLabelSymbolTable axmBlocksSymbolTable = new AxiomaticDefinitionsLabelSymbolTable();
+		repository.setState(projectSymbolTable);
+		repository.setState(theorySymbolTable);
 		repository.setState(identSymbolTable);
 		repository.setState(thmSymbolTable);
 		repository.setState(blocksSymbolTable);

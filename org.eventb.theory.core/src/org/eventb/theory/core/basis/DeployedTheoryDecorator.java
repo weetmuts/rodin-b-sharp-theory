@@ -9,6 +9,9 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.ISCAxiomaticOperatorDefinition;
+import org.eventb.theory.core.ISCAxiomaticTypeDefinition;
 import org.eventb.theory.core.ISCConstructorArgument;
 import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
@@ -54,6 +57,15 @@ public class DeployedTheoryDecorator {
 		ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
 		for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 			set.add(definition.getLabel());
+		}
+		ISCAxiomaticDefinitionsBlock[] axiomtypeDefinitions = deployedRoot.getSCAxiomaticDefinitionsBlocks();
+		for (ISCAxiomaticDefinitionsBlock definition : axiomtypeDefinitions) {
+			ISCAxiomaticTypeDefinition[] axiomaticTypes = definition.getAxiomaticTypeDefinitions();
+			for (ISCAxiomaticTypeDefinition type : axiomaticTypes) 
+				set.add(type.getIdentifierString());	
+			ISCAxiomaticOperatorDefinition[] axiomaticOperators = definition.getAxiomaticOperatorDefinitions();
+			for (ISCAxiomaticOperatorDefinition operator : axiomaticOperators) 
+				set.add(operator.getLabel());	
 		}
 		return set;
 	}

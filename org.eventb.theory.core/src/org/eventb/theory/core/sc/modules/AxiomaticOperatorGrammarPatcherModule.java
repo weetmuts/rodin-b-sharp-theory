@@ -2,7 +2,6 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
@@ -10,10 +9,8 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.IAxiomaticOperatorDefinition;
 import org.eventb.theory.core.ISCAxiomaticOperatorDefinition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IInternalElement;
@@ -34,6 +31,7 @@ public class AxiomaticOperatorGrammarPatcherModule extends SCProcessorModule {
 		
 		if (!operatorInformation.hasError()) {
 			String syntax = operatorInformation.getSyntax();
+//removed becuase we do not need to check the uniqueness of the operators 
 			if (AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
 				operatorInformation.makeImmutable();
 				IFormulaExtension formulaExtension = operatorInformation.getExtension(scAxmOperatorDefinition);
@@ -47,12 +45,12 @@ public class AxiomaticOperatorGrammarPatcherModule extends SCProcessorModule {
 				if (operatorInformation.isExpressionOperator()) {
 					scAxmOperatorDefinition.setType(operatorInformation.getResultantType(), monitor);
 				}
-			} else {
+			} /*else {
 				createProblemMarker((IAxiomaticOperatorDefinition) element, EventBAttributes.LABEL_ATTRIBUTE,
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAddedError, syntax);
 				operatorInformation.setHasError();
 				operatorInformation.makeImmutable();
-			}
+			}*/
 		}
 	}
 

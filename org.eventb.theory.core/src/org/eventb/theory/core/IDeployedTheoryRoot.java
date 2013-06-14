@@ -35,7 +35,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IDeployedTheoryRoot extends IEventBRoot, IAccuracyElement ,
 IFormulaExtensionsSource, IExtensionRulesSource, IOutdatedElement,
-ICommentedElement{
+ICommentedElement, ISCTheoryRoot{
 
 	IInternalElementType<IDeployedTheoryRoot> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".deployedTheoryRoot");

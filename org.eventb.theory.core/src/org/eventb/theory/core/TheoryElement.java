@@ -18,13 +18,13 @@ import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.FORMULA_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GIVEN_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.GROUP_ID_ATTRIBUTE;
+import static org.eventb.theory.core.TheoryAttributes.HYP_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.IMPORT_THEORY_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.WD_ATTRIBUTE;
-import static org.eventb.theory.core.TheoryAttributes.HYP_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -41,6 +41,7 @@ import org.eventb.core.basis.EventBElement;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -333,15 +334,29 @@ public abstract class TheoryElement extends EventBElement implements
 
 	}
 
+	@Override
 	public boolean hasImportTheory() throws RodinDBException {
 		return hasAttribute(IMPORT_THEORY_ATTRIBUTE);
 	}
-
-	public ISCTheoryRoot getImportTheory() throws RodinDBException {
-		return (ISCTheoryRoot) getAttributeValue(IMPORT_THEORY_ATTRIBUTE);
+	
+	@Override
+	public IDeployedTheoryRoot getImportTheory() throws RodinDBException {
+		return (IDeployedTheoryRoot) getAttributeValue(IMPORT_THEORY_ATTRIBUTE);
+	}
+	
+	@Override
+	public IRodinProject getImportTheoryProject() throws RodinDBException {
+		//return (IRodinProject) getAttributeValue(IMPORT_THEORY_PROJECT_ATTRIBUTE);
+		if(parent!=null){
+			IImportTheoryProject theoryProject = (IImportTheoryProject) parent;
+			return theoryProject.getTheoryProject();
+		}
+		
+		return null;
 	}
 
-	public void setImportTheory(ISCTheoryRoot root, IProgressMonitor monitor)
+	@Override
+	public void setImportTheory(IDeployedTheoryRoot root, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(IMPORT_THEORY_ATTRIBUTE, root, monitor);
 	}

@@ -1,10 +1,6 @@
-/*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+/**
+ * 
+ */
 package org.eventb.theory.internal.ui.attr;
 
 import java.util.ArrayList;
@@ -15,72 +11,94 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IImportTheoryElement;
-import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.IImportTheoryProject;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * 
- * @author maamria
- * 
+ * @author asiehsalehi
+ *
  */
-public class ImportTheoryAttributeManipulation extends
-		AbstractAttributeManipulation {
+public class ImportTheoryAttributeManipulation extends AbstractImportTheoryAttributeManipulation {
+	
+	/**
+	 * 
+	 */
+	public ImportTheoryAttributeManipulation() {
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation#setDefaultValue(org.rodinp.core.IRodinElement, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
+		// TODO Auto-generated method stub
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation#hasValue(org.rodinp.core.IRodinElement, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
-	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
+	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		return asImportTheoryElement(element).hasImportTheory();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation#getValue(org.rodinp.core.IRodinElement, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
-	public String getValue(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
+	public String getValue(IRodinElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		return asImportTheoryElement(element).getImportTheory().getComponentName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation#setValue(org.rodinp.core.IRodinElement, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
-	public void setValue(IRodinElement element, String value,IProgressMonitor monitor) throws RodinDBException {
-		IRodinProject proj = element.getRodinProject();
-		ISCTheoryRoot root = DatabaseUtilities.getSCTheory(value, proj);
-		if (root != null && root.exists())
-			asImportTheoryElement(element).setImportTheory(root, monitor);
-
+	public void setValue(IRodinElement element, String value,
+			IProgressMonitor monitor) throws RodinDBException {
+		IImportTheory importTheory = asImportTheoryElement(element);
+		IDeployedTheoryRoot deployedRoot = DatabaseUtilities.getDeployedTheory(value, importTheory.getImportTheoryProject());
+		
+		if (deployedRoot != null && deployedRoot.exists()){
+			importTheory.setImportTheory(deployedRoot, monitor);
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation#removeAttribute(org.rodinp.core.IRodinElement, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
-	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)throws RodinDBException {
-		asImportTheoryElement(element).removeAttribute(TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, monitor);
-
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		asImportTheoryElement(element).removeAttribute(TheoryAttributes.AVAILABLE_THEORY_ATTRIBUTE, monitor);
 	}
-
+	
 	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
-		final IImportTheoryElement theoryElement = asImportTheoryElement(element);
+		final IImportTheory theoryElement = asImportTheoryElement(element);
 		final Set<String> results = new HashSet<String>();
 		try {
-			final Set<String> theoryNames = getTheoryNames(theoryElement);
-			final Set<String> usedTheoryNames = getUsedTheoryNames(theoryElement);
-			final String elementValue = getElementValue(theoryElement);
-			final Set<String> valueToRemove = new HashSet<String>();
-			valueToRemove.addAll(usedTheoryNames);
-			valueToRemove.remove(elementValue);
-
-			results.addAll(theoryNames);
-			results.removeAll(valueToRemove);
+			IRodinProject rodinProject = theoryElement.getImportTheoryProject();
+			results.addAll(getTheoryNames(theoryElement));
+			//remove self
+			if (rodinProject.equals(theoryElement.getRodinProject()))
+				results.remove(theoryElement.getRoot().getElementName());
+			//remove already selected theories
+			results.removeAll(getAlreadySelectedTheories(theoryElement, ((ITheoryRoot) theoryElement.getParent().getParent()).getImportTheoryProjects()));
+			//remove cycles
 			removeCycle(theoryElement, results);
 		} catch (CoreException e) {
 			TheoryUIUtils.log(e, "Error while populating potential imports");
@@ -88,48 +106,21 @@ public class ImportTheoryAttributeManipulation extends
 		return results.toArray(new String[results.size()]);
 
 	}
-
-	protected IImportTheoryElement asImportTheoryElement(IRodinElement element) {
-		return (IImportTheoryElement) element;
-	}
-
-	private Set<String> getTheoryNames(IInternalElement element)throws CoreException {
-		final IRodinProject rodinProject = element.getRodinProject();
-		ISCTheoryRoot[] scTheoryRoots;
+	
+	private Set<String> getTheoryNames(IImportTheory element)throws CoreException {
+		IRodinProject rodinProject = element.getImportTheoryProject();
 		final HashSet<String> result = new HashSet<String>();
-		scTheoryRoots = rodinProject
-				.getRootElementsOfType(ISCTheoryRoot.ELEMENT_TYPE);
-		for (ISCTheoryRoot root : scTheoryRoots) {
-			result.add(root.getComponentName());
+		
+		if(rodinProject!=null){
+			for(IDeployedTheoryRoot deployedTheory: DatabaseUtilities.getDeployedTheories(rodinProject))
+				result.add(TheoryUIUtils.getImportTheoryString(rodinProject, deployedTheory));
 		}
 		return result;
 	}
 
-	private String getElementValue(IImportTheoryElement element)throws CoreException {
-		if (element.exists() && hasValue(element, null))
-			return getValue(element, null);
-		else
-			return "";
-
-	}
-
-	public Set<String> getUsedTheoryNames(IImportTheoryElement element)throws CoreException {
-		Set<String> usedNames = new HashSet<String>();
-		ITheoryRoot root = (ITheoryRoot) element.getRoot();
-		// First add myself
-		usedNames.add(root.getElementName());
-		for (IImportTheoryElement clause : root.getImportTheories()) {
-
-			if (hasValue(clause, null))
-				usedNames.add(getValue(clause, null));
-
-		}
-		return usedNames;
-	}
-
 	protected void removeCycle(IImportTheoryElement element,Set<String> theories) throws CoreException {
 		final ITheoryRoot root = (ITheoryRoot) element.getRoot();
-		final IRodinProject prj = root.getRodinProject();
+		final IRodinProject prj = element.getImportTheoryProject();
 		final Iterator<String> iter = theories.iterator();
 		while (iter.hasNext()) {
 			final String name = iter.next();
@@ -139,7 +130,7 @@ public class ImportTheoryAttributeManipulation extends
 			}
 		}
 	}
-
+	
 	private boolean isImportedBy(ITheoryRoot abstractRoot, ITheoryRoot root)throws CoreException {
 		for (ITheoryRoot thy : getImportedTheories(root)) {
 			if (thy.equals(abstractRoot) || isImportedBy(abstractRoot, thy))
@@ -147,17 +138,29 @@ public class ImportTheoryAttributeManipulation extends
 		}
 		return false;
 	}
-
+	
 	private ITheoryRoot[] getImportedTheories(ITheoryRoot root)throws CoreException {
 		List<ITheoryRoot> list = new ArrayList<ITheoryRoot>();
 		IImportTheory[] imported = root.getImportTheories();
-		IRodinProject project = root.getRodinProject();
 		for (IImportTheory imp : imported) {
 			if (imp.hasImportTheory()) {
-				list.add(DatabaseUtilities.getTheory(imp.getImportTheory().getComponentName(), project));
+				list.add(DatabaseUtilities.getTheory(imp.getImportTheory().getComponentName(), imp.getImportTheoryProject().getRodinProject()));
 			}
 		}
 		return list.toArray(new ITheoryRoot[list.size()]);
+	}
+	
+	private Set<String> getAlreadySelectedTheories(IImportTheory theoryElement, IImportTheoryProject[] importProjects) throws RodinDBException{
+		final Set<String> results = new HashSet<String>();
+		
+		for(IImportTheoryProject prj: importProjects){
+			for(IImportTheory importTheory: prj.getImportTheories()){
+				if(importTheory.getImportTheoryProject()!=null && importTheory.getImportTheoryProject().equals(prj.getTheoryProject()) && importTheory.hasImportTheory())
+						results.add(importTheory.getImportTheory().getComponentName());
+			}		
+		}
+		
+		return results;
 	}
 
 }

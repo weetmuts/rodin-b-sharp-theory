@@ -441,6 +441,12 @@ public class TheoryUIUtils {
 				root.getComponentName();
 	}
 	
+	public static String getImportTheoryString(IRodinProject project, IDeployedTheoryRoot root){
+		return 
+				//project.getElementName() + "." + 
+				root.getComponentName();
+	}
+	
 	/**
 	 * <p>
 	 * Links to the Event-B editor configured to work with the specified rodin

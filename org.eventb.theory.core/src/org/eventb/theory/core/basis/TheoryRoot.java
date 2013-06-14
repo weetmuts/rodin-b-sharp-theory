@@ -8,12 +8,17 @@
 
 package org.eventb.theory.core.basis;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
+import org.eventb.theory.core.IImportTheoryProject;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -128,15 +133,34 @@ public class TheoryRoot extends EventBRoot implements ITheoryRoot {
 				bareName).getRoot();
 		return root;
 	}
+	
+	@Override
+	public IImportTheoryProject getImportTheoryProject(String name) {
+		return getInternalElement(IImportTheoryProject.ELEMENT_TYPE, name);
+	}
+	
+	@Override
+	public IImportTheoryProject[] getImportTheoryProjects()
+			throws RodinDBException {
+		return getChildrenOfType(IImportTheoryProject.ELEMENT_TYPE);
+	}
 
 	@Override
 	public IImportTheory getImportTheory(String name) {
 		return getInternalElement(IImportTheory.ELEMENT_TYPE, name);
+		//?
 	}
 
 	@Override
 	public IImportTheory[] getImportTheories() throws RodinDBException {
-		return getChildrenOfType(IImportTheory.ELEMENT_TYPE);
+		//return getChildrenOfType(IImportTheory.ELEMENT_TYPE);
+		List<IImportTheory> theories = new ArrayList<IImportTheory>();
+		
+		for(IImportTheoryProject importTheoryProject: getImportTheoryProjects()){
+			theories.addAll(Arrays.asList(importTheoryProject.getImportTheories()));
+		}
+		
+		return theories.toArray(new IImportTheory[theories.size()]);
 	}
 	
 	@Override

@@ -82,6 +82,8 @@ public class AxiomaticTypeModule extends SCProcessorModule {
 			return false;
 
 		} else if (ident == null) {
+			//createProblemMarker(axmType, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					//TheoryGraphProblem.IdenIsAAxiomaticTypeNameError, axmType.getIdentifierString());
 			return false;
 		}
 		return true;

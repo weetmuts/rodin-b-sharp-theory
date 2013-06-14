@@ -70,6 +70,7 @@ public final class Messages {
 	public static String scuser_IdenIsADatatypeNameError;
 	public static String scuser_IdenIsAConsNameError;
 	public static String scuser_IdenIsADesNameError;
+	public static String scuser_IdenIsAAxiomaticTypeNameError;
 	public static String scuser_DatatypeHasNoBaseConsError;
 	public static String scuser_OperatorSynConflictError;
 	public static String scuser_OperatorIDExistsError;
@@ -121,6 +122,7 @@ public final class Messages {
 	public static String scuser_CondIdentsNotSubsetOfLHSIdents;
 	public static String scuser_CondTypesNotSubsetOfLHSTypes;
 	public static String scuser_RHSTypesNotSubsetOfLHSTypes;
+	public static String scuser_TheoryProjectInImportMissing;
 	public static String scuser_TheoryInImportMissing;
 	public static String scuser_ImportTheoryNotExist;
 	public static String scuser_RedundantImportWarning;

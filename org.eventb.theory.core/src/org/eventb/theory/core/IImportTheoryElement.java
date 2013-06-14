@@ -9,6 +9,7 @@ package org.eventb.theory.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -20,8 +21,10 @@ public interface IImportTheoryElement extends IInternalElement{
 
 	public boolean hasImportTheory() throws RodinDBException;
 	
-	public ISCTheoryRoot getImportTheory() throws RodinDBException;
+	public IDeployedTheoryRoot getImportTheory() throws RodinDBException;
 	
-	public void setImportTheory(ISCTheoryRoot root, IProgressMonitor monitor) throws RodinDBException;
+	public void setImportTheory(IDeployedTheoryRoot root, IProgressMonitor monitor) throws RodinDBException;
+	
+	public IRodinProject getImportTheoryProject() throws RodinDBException ;
 	
 }

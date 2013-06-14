@@ -7,22 +7,31 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
+import org.eventb.theory.core.ISCImportTheory;
+import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTypeParameter;
+import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.IUseTheory;
 import org.eventb.theory.core.TheoryAttributes;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -139,5 +148,76 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 	public ISCAxiomaticDefinitionsBlock[] getSCAxiomaticDefinitionsBlocks()
 			throws RodinDBException {
 		return getChildrenOfType(ISCAxiomaticDefinitionsBlock.ELEMENT_TYPE);
+	}
+
+	@Override
+	public ISCImportTheoryProject[] getSCImportTheoryProjects()
+			throws RodinDBException {
+		return getChildrenOfType(ISCImportTheoryProject.ELEMENT_TYPE);
+	}
+
+	@Override
+	public ISCImportTheoryProject getSCImportTheoryProject(String name)
+			throws RodinDBException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ISCImportTheory getImportTheory(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ISCImportTheory[] getImportTheories() throws RodinDBException {
+		List<ISCImportTheory> theories =  new ArrayList<ISCImportTheory>();
+		
+		for(ISCImportTheoryProject proj: getSCImportTheoryProjects()){
+			theories.addAll(Arrays.asList(proj.getSCImportTheories()));
+		}
+		
+		return theories.toArray(new ISCImportTheory[theories.size()]);
+	}
+
+	@Override
+	public IRodinFile getDeployedTheoryFile(String bareName) {
+		String fileName = DatabaseUtilities.getDeployedTheoryFullName(bareName);
+		IRodinFile file = getRodinProject().getRodinFile(fileName);
+		return file;
+	}
+
+	@Override
+	public IDeployedTheoryRoot getDeployedTheoryRoot() {
+		return getDeployedTheoryRoot(getElementName());
+	}
+
+	@Override
+	public IDeployedTheoryRoot getDeployedTheoryRoot(String bareName) {
+		IDeployedTheoryRoot root = (IDeployedTheoryRoot) getDeployedTheoryFile(bareName).getRoot();
+		return root;
+	}
+
+	@Override
+	public boolean hasDeployedVersion() {
+		return getDeployedTheoryRoot().exists();
+	}
+
+	@Override
+	public IRodinFile getTheoryFile(String bareName) {
+		String fileName = DatabaseUtilities.getTheoryFullName(bareName);
+		IRodinFile file = getRodinProject().getRodinFile(fileName);
+		return file;
+	}
+
+	@Override
+	public ITheoryRoot getTheoryRoot() {
+		return getTheoryRoot(getElementName());
+	}
+
+	@Override
+	public ITheoryRoot getTheoryRoot(String bareName) {
+		ITheoryRoot root = (ITheoryRoot) getTheoryFile(bareName).getRoot();
+		return root;
 	}
 }

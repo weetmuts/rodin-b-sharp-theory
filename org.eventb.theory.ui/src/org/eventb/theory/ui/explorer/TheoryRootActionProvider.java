@@ -91,7 +91,9 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 							ISCTheoryRoot scRoot = theory.getSCTheoryRoot();
 							if (!DatabaseUtilities.doesTheoryHaveErrors(scRoot)) {
 								toDeploy.add(scRoot);
-								try {
+// do not need to deploy the imported theoris, as they have been deploed before
+// just deployed theories can be imported
+/*								try {
 									Set<ISCTheoryRoot> allTheoriesToDeploy = TheoryHierarchyHelper.getAllTheoriesToDeploy(scRoot);
 									for (ISCTheoryRoot otherTheory : allTheoriesToDeploy) {
 										if (!DatabaseUtilities.doesTheoryHaveErrors(otherTheory)) {
@@ -105,7 +107,7 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 									MessageDialog.openError(site.getViewSite().getShell(), "Deploy Error","Could not deploy theories.");
 									TheoryUIUtils.log(e, "unable to calculate set of theories to deploy");
 									return;
-								}
+								}*/
 							} else {
 								errorTheories.add(scRoot);
 							}

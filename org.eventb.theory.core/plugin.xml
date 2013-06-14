@@ -26,6 +26,11 @@
             kind="handle"
             name="%importTheoryAttr">
       </attributeType>
+       <attributeType
+            id="importTheoryProject"
+            kind="handle"
+            name="%importTheoryProjectAttr">
+      </attributeType>
       <attributeType
             id="associative"
             kind="boolean"
@@ -128,6 +133,11 @@
             class="org.eventb.theory.core.basis.TheoryRoot"
             id="theoryRoot"
             name="%theoryRoot">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.ImportTheoryProject"
+            id="importTheoryProject"
+            name="%importTheoryProject">
       </internalElementType>
       <internalElementType
             class="org.eventb.theory.core.basis.ImportTheory"
@@ -256,6 +266,11 @@
             class="org.eventb.theory.core.basis.SCTheoryRoot"
             id="scTheoryRoot"
             name="%scTheoryRoot">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.theory.core.basis.SCImportTheoryProject"
+            id="scImportTheoryProject"
+            name="%scImportTheoryProject">
       </internalElementType>
       <internalElementType
             class="org.eventb.theory.core.basis.SCImportTheory"
@@ -424,6 +439,16 @@
             name="%theoryAccuracyInfo">
       </stateType>
       <stateType
+            class="org.eventb.theory.core.sc.states.IImportProjectTable"
+            id="importProjectTable"
+            name="Import Project Table">
+      </stateType>
+      <stateType
+            class="org.eventb.theory.core.sc.states.IImportTheoryTable"
+            id="importTheoryTable"
+            name="Import Theory Table">
+      </stateType>
+      <stateType
             class="org.eventb.theory.core.sc.states.DatatypeTable"
             id="datatypeTable"
             name="%datatypeTable">
@@ -494,18 +519,36 @@
             name="%scTheoryModule">
       </rootType>
       <processorType
+            class="org.eventb.theory.core.sc.modules.ImportTheoryProjectModule"
+            id="importTheoryProjectModule"
+            name="%scImportTheoryProjectModule"
+            parent="org.eventb.theory.core.theoryModule">
+      </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.ImportTheoryProjectFilterModule"
+            id="importTheoryProjectFilterModule"
+            name="Import Project Filter Module"
+            parent="org.eventb.theory.core.importTheoryProjectModule">
+      </filterType>
+      <processorType
             class="org.eventb.theory.core.sc.modules.ImportTheoryModule"
             id="importTheoryModule"
             name="%scImportTheoryModule"
-            parent="org.eventb.theory.core.theoryModule">
+            parent="org.eventb.theory.core.importTheoryProjectModule">
       </processorType>
+      <filterType
+            class="org.eventb.theory.core.sc.modules.ImportTheoryFilterModule"
+            id="importTheoryFilterModule"
+            name="Import Theory Filter Module"
+            parent="org.eventb.theory.core.importTheoryModule">
+      </filterType>
       <processorType
             class="org.eventb.theory.core.sc.modules.TypeParameterModule"
             id="typeParameterModule"
             name="%scTypeParameterModule"
             parent="org.eventb.theory.core.theoryModule">
          <prereq
-               id="org.eventb.theory.core.importTheoryModule">
+               id="org.eventb.theory.core.importTheoryProjectModule">
          </prereq>
       </processorType>
       <processorType
@@ -847,7 +890,16 @@
                id="org.eventb.theory.core.thySC">
          </config>
          <scModule
+               id="org.eventb.theory.core.importTheoryProjectModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.importTheoryProjectFilterModule">
+         </scModule>
+         <scModule
                id="org.eventb.theory.core.importTheoryModule">
+         </scModule>
+         <scModule
+               id="org.eventb.theory.core.importTheoryFilterModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.typeParameterModule">

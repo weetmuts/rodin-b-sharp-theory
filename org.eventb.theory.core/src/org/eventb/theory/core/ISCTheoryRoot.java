@@ -36,6 +36,20 @@ ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
 		.getInternalElementType(TheoryPlugin.PLUGIN_ID + ".scTheoryRoot");
 	
 	/**
+	 * Returns all sc import theory projects children of this element.
+	 * @return all sc import theory projects
+	 * @throws RodinDBException
+	 */
+	public ISCImportTheoryProject[] getSCImportTheoryProjects() throws RodinDBException;
+	
+	/**
+	 * Returns all import available theory project children of this element.
+	 * @return all import available theory project
+	 * @throws RodinDBException
+	 */
+	public ISCImportTheoryProject getSCImportTheoryProject(String name) throws RodinDBException;
+	
+	/**
 	 * Returns the import theory directive with the given name
 	 * @param name the name 
 	 * @return the import theory

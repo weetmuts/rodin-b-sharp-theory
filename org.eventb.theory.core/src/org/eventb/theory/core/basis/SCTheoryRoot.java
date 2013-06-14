@@ -10,16 +10,17 @@ package org.eventb.theory.core.basis;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.EventBRoot;
+import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCImportTheory;
+import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -124,15 +125,35 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 				bareName).getRoot();
 		return root;
 	}
+	
+	@Override
+	public ISCImportTheoryProject[] getSCImportTheoryProjects()
+			throws RodinDBException {
+		return getChildrenOfType(ISCImportTheoryProject.ELEMENT_TYPE);
+	}
+
+	@Override
+	public ISCImportTheoryProject getSCImportTheoryProject(String name)
+			throws RodinDBException {
+		return getInternalElement(ISCImportTheoryProject.ELEMENT_TYPE, name);
+	}
 
 	@Override
 	public ISCImportTheory getImportTheory(String name) {
 		return getInternalElement(ISCImportTheory.ELEMENT_TYPE,name);
+		//?
 	}
 
 	@Override
 	public ISCImportTheory[] getImportTheories() throws RodinDBException {
 		return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
+/*		List<ISCImportTheory> theories =  new ArrayList<ISCImportTheory>();
+		
+		for(ISCImportTheoryProject proj: getSCImportTheoryProjects()){
+			theories.addAll(Arrays.asList(proj.getSCImportTheories()));
+		}
+		
+		return theories.toArray(new ISCImportTheory[theories.size()]);*/
 	}
 
 	@Override

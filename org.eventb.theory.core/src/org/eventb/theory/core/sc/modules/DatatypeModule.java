@@ -197,6 +197,8 @@ public class DatatypeModule extends SCProcessorModule {
 
 		}
 		else if (ident == null){
+			//createProblemMarker(datatypeDefinition, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					//TheoryGraphProblem.IdenIsADatatypeNameError, name);
 			return false;
 		}
 		return true;

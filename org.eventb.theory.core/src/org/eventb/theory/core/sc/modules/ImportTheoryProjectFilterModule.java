@@ -9,39 +9,39 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.theory.core.IAvailableTheoryProject;
+import org.eventb.theory.core.IImportTheoryProject;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
-import org.eventb.theory.core.sc.states.ITheoryPathProjectTable;
-import org.eventb.theory.core.sc.states.TheoryPathAccuracyInfo;
+import org.eventb.theory.core.sc.states.IImportProjectTable;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author renatosilva
+ * @author asiehsalehi
  *
  */
-public class TheoryPathProjectFilterModule extends SCFilterModule {
+public class ImportTheoryProjectFilterModule extends SCFilterModule {
 	
-	public static final IModuleType<TheoryPathProjectFilterModule> MODULE_TYPE = SCCore
-			.getModuleType(TheoryPlugin.PLUGIN_ID + ".availableTheoryProjectFilterModule"); //$NON-NLS-1$
+	public static final IModuleType<ImportTheoryProjectFilterModule> MODULE_TYPE = SCCore
+			.getModuleType(TheoryPlugin.PLUGIN_ID + ".importTheoryProjectFilterModule"); //$NON-NLS-1$
 	
-	private ITheoryPathProjectTable projectTable;
-	private TheoryPathAccuracyInfo accuracyInfo;
+	private IImportProjectTable projectTable;
+	private TheoryAccuracyInfo accuracyInfo;
 
 	/**
 	 * 
 	 */
-	public TheoryPathProjectFilterModule() {
+	public ImportTheoryProjectFilterModule() {
 	}
 	
 	@Override
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		accuracyInfo = (TheoryPathAccuracyInfo) repository.getState(TheoryPathAccuracyInfo.STATE_TYPE);
-		projectTable = (ITheoryPathProjectTable) repository.getState(ITheoryPathProjectTable.STATE_TYPE);
+		accuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
+		projectTable = (IImportProjectTable) repository.getState(IImportProjectTable.STATE_TYPE);
 	}
 	
 	@Override
@@ -58,12 +58,12 @@ public class TheoryPathProjectFilterModule extends SCFilterModule {
 	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		IAvailableTheoryProject availableTheoryProjectClause = (IAvailableTheoryProject) element;
-		return validateTheoryProject(availableTheoryProjectClause);
+		IImportTheoryProject importTheoryProjectClause = (IImportTheoryProject) element;
+		return validateTheoryProject(importTheoryProjectClause);
 	}
 
 	private boolean validateTheoryProject(
-			IAvailableTheoryProject availableTheoryProjectClause) throws RodinDBException {
+			IImportTheoryProject importTheoryProjectClause) throws RodinDBException {
 		boolean valid = true;
 // removed becuase the local theories can be imported in the theorypath
 /*		if (availableTheoryProjectClause.getTheoryProject().equals(availableTheoryProjectClause.getRodinProject())){
@@ -72,28 +72,28 @@ public class TheoryPathProjectFilterModule extends SCFilterModule {
 					TheoryGraphProblem.TheoryPathProjectIsThisProject, availableTheoryProjectClause.getTheoryProject().getElementName());
 		}
 		
-		else*/ if(!availableTheoryProjectClause.getTheoryProject().exists()){
+		else*/ if(!importTheoryProjectClause.getTheoryProject().exists()){
 			valid = false;
 			//theory project does not exist 
-			createProblemMarker(availableTheoryProjectClause,
+			createProblemMarker(importTheoryProjectClause,
 					TheoryAttributes.THEORY_PROJECT_ATTRIBUTE,
 					TheoryGraphProblem.TheoryProjectDoesNotExistError,
-					availableTheoryProjectClause.getTheoryProject());
+					importTheoryProjectClause.getTheoryProject());
 		}
-		else if(projectTable.containsTheoryProject(availableTheoryProjectClause.getTheoryProject().getElementName())){
+		else if(projectTable.containsTheoryProject(importTheoryProjectClause.getTheoryProject().getElementName())){
 			valid = false;
 			//duplicated theory project 
-			createProblemMarker(availableTheoryProjectClause,
+			createProblemMarker(importTheoryProjectClause,
 					TheoryAttributes.THEORY_PROJECT_ATTRIBUTE,
 					TheoryGraphProblem.DuplicatedTheoryProjectError,
-					availableTheoryProjectClause.getTheoryProject().getElementName());
-		}else if(availableTheoryProjectClause.getTheories().length==0){
+					importTheoryProjectClause.getTheoryProject().getElementName());
+		}else if(importTheoryProjectClause.getImportTheories().length==0){
 			valid = false;
 			//theory project does not have any theory 
-			createProblemMarker(availableTheoryProjectClause,
+			createProblemMarker(importTheoryProjectClause,
 					TheoryAttributes.THEORY_PROJECT_ATTRIBUTE,
 					TheoryGraphProblem.NoSelectedTheoriesError,
-					availableTheoryProjectClause.getTheoryProject().getElementName());
+					importTheoryProjectClause.getTheoryProject().getElementName());
 		}
 		if(!valid){
 			accuracyInfo.setNotAccurate();

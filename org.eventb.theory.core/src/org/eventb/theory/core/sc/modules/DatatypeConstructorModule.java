@@ -142,6 +142,8 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 			return false;
 		}
 		else if (ident == null){
+			//createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					//TheoryGraphProblem.IdenIsAConsNameError, name);
 			return false;
 		}
 		return true;

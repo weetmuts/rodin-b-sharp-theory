@@ -46,7 +46,7 @@ public class OperatorFilterModule extends SCFilterModule {
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		INewOperatorDefinition opDef = (INewOperatorDefinition) element;
-		ITheoryRoot theoryRoot = opDef.getAncestor(ITheoryRoot.ELEMENT_TYPE);
+		//ITheoryRoot theoryRoot = opDef.getAncestor(ITheoryRoot.ELEMENT_TYPE);
 		String opLabel = opDef.getLabel();
 		// check against the symbol table for operator labels
 		OperatorsLabelSymbolTable labelSymbolTable = (OperatorsLabelSymbolTable) repository
@@ -56,12 +56,13 @@ public class OperatorFilterModule extends SCFilterModule {
 			return false;
 		}
 		// check ID is unique
-		String operatorId = AstUtilities.makeOperatorID(theoryRoot.getComponentName(), opLabel);
+//removed becuase we do not need to check the uniqueness of the operators 
+/*		String operatorId = AstUtilities.makeOperatorID(theoryRoot.getComponentName(), opLabel);
 		if (!AstUtilities.checkOperatorID(operatorId, factory)) {
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorIDExistsError, opLabel);
 			return false;
-		}
+		}*/
 		String syntax = opLabel;
 		// check syntax
 		if (typeEnvironment.contains(syntax)) {
@@ -76,12 +77,13 @@ public class OperatorFilterModule extends SCFilterModule {
 					TheoryGraphProblem.OperatorInvalidSynError, syntax);
 			return false;
 		}
-		if (!AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
+//removed becuase we do not need to check the uniqueness of the operators 
+/*		if (!AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
 			createProblemMarker(opDef,
 					EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorSynExistsError, syntax);
 			return false;
-		}
+		}*/
 		if (!opDef.hasFormulaType()) {
 			createProblemMarker(opDef, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
 					TheoryGraphProblem.OperatorFormTypeMissingError, opLabel);
