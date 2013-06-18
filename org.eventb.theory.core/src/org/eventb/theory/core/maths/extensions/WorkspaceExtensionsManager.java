@@ -82,9 +82,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			CoreUtilities.log(e, "Error while processing theory path for project "+project);
 		}
 
-		//removed because a deployed local theory is not accessible by the local context/machine any more, 
-		//it is just accessible when imported in a theory path (above if case).
-/*		// case Theory
+		// case Theory
 		if (root instanceof ITheoryRoot){
 			return setOfExtensions;
 		}
@@ -96,15 +94,17 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 				setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
 			return setOfExtensions;
 		}
-		
-		// case Model : add all deployed 
+
+		//removed because a deployed local theory is not accessible by the local context/machine any more, 
+		//it is just accessible when imported in a theory path (above if case).
+/*		// case Model : add all deployed 
 		if (!DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
 			ProjectManager manager = projectManagers.get(project);
 			if (manager != null){
 				setOfExtensions.addAll(manager.getAllDeployedExtensions());
 			}
 			return setOfExtensions;
-		}
+		}*/
 		
 		// case theory dependent roots (not ITheoryRoot) : they get the SC theory root extensions
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
@@ -112,7 +112,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			if (scRoot.exists()){
 				return getFormulaExtensions(scRoot);
 			}
-		}*/
+		}
 		return setOfExtensions;
 	}
 

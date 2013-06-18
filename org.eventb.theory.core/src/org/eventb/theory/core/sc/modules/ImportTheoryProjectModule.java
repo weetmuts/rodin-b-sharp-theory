@@ -19,12 +19,14 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IImportTheoryProject;
+import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
 import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGraph;
+import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -111,6 +113,10 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 			endFilterModules(repository, monitor);
 		}
 		
+		IImportTheory[] importTheories = root.getImportTheories();
+		if (importTheories != null)
+			commitImports((ISCTheoryRoot) target, monitor);
+		
 		projectTable.makeImmutable();
 		monitor.done();
 	}
@@ -120,11 +126,11 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 		processModules(theoryProject, target, repository, monitor);
 		endProcessorModules(theoryProject, repository, monitor);
 		
-		Set<IDeployedTheoryRoot> deployedTheories = new HashSet<IDeployedTheoryRoot>();
+		Set<ISCTheoryRoot> deployedTheories = new HashSet<ISCTheoryRoot>();
 		IImportTheory[] importTheories = root.getImportTheories();
 		for (IImportTheory importTheory : importTheories) {
 			IDeployedTheoryRoot importRoot = importTheory.getImportTheory();
-			deployedTheories.add(importRoot);
+			deployedTheories.add((ISCTheoryRoot) importRoot);
 		}
 		patchFormulaFactory(deployedTheories, repository);		
 	}
@@ -146,11 +152,11 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 	 * @param repository the state repository
 	 * @throws CoreException
 	 */
-	protected void patchFormulaFactory(Set<IDeployedTheoryRoot> importedTheories,
+	protected void patchFormulaFactory(Set<ISCTheoryRoot> importedTheories,
 			ISCStateRepository repository) throws CoreException {
 		// need to patch up formula factory
-		//SCTheoriesGraph graph = new SCTheoriesGraph();
-		DeployedTheoriesGraph graph = new DeployedTheoriesGraph();
+		SCTheoriesGraph graph = new SCTheoriesGraph();
+		//DeployedTheoriesGraph graph = new DeployedTheoriesGraph();
 		graph.setElements(importedTheories);
 		FormulaFactory factory = repository.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
@@ -165,6 +171,29 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 		}
 		repository.setFormulaFactory(factory);
 		repository.setTypeEnvironment(factory.makeTypeEnvironment());
+	}
+	
+	/**
+	 * Commits the theory imports to the target root.
+	 * 
+	 * @param targetRoot
+	 *            the SC theory target
+	 * @param monitor
+	 *            the progress monitor
+	 * @throws CoreException
+	 */
+	protected void commitImports(ISCTheoryRoot targetRoot,
+			IProgressMonitor monitor) throws CoreException {
+		
+		IImportTheory[] importTheories = root.getImportTheories();
+		for (IImportTheory currentImportTheory : importTheories) {
+			ISCImportTheory scImport = targetRoot
+					.getImportTheory(currentImportTheory.getElementName());
+			scImport.create(null, monitor);
+			scImport.setSource(currentImportTheory, monitor);
+			scImport.setImportTheory(currentImportTheory.getImportTheory(),
+					monitor);
+		}
 	}
 
 	/* (non-Javadoc)
