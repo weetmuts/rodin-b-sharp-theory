@@ -3,6 +3,7 @@
  */
 package org.eventb.theory.core.sc.modules;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -23,6 +24,7 @@ import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.basis.SCTheoryDecorator;
 import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
 import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGraph;
 import org.eventb.theory.core.plugin.TheoryPlugin;
@@ -33,6 +35,7 @@ import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.eventb.theory.core.ITheoryRoot;
 
 /**
  * @author asiehsalehi
@@ -68,9 +71,9 @@ public class ImportTheoryModule extends SCProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		super.endModule(element, repository, monitor);
+		
 		//checking conflict between imported theories and the self theory (importing theory)
-/*		Collection<IDeployedTheoryRoot> importedTheories = theoryTable.getAllTheories();
+		Collection<IDeployedTheoryRoot> importedTheories = theoryTable.getAllTheories();
 		IDeployedTheoryRoot[] importTheoriesArray = importedTheories.toArray(new IDeployedTheoryRoot[importedTheories.size()]);
 		for (int i = 0 ; i < importTheoriesArray.length ; i++){
 			ISCTheoryRoot theory = (ISCTheoryRoot) importTheoriesArray[i];
@@ -80,14 +83,16 @@ public class ImportTheoryModule extends SCProcessorModule {
 			SCTheoryDecorator selfHierarchy = new SCTheoryDecorator(selfTheory);
 			if (hierarchy.isConflicting(selfHierarchy)){
 				createProblemMarker(getImportTheory(theoryProj.getImportTheories(), importTheoriesArray[i]),
+				//createProblemMarker((IImportTheory) importTheoriesArray[i],
 						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
 						TheoryGraphProblem.TheoriesConflictError,
-						importTheoriesArray[i].getComponentName(), selfTheory.getComponentName());
+						selfTheory.getComponentName(), importTheoriesArray[i].getComponentName());
 			}
-		}*/
+		}
 		
 		accuracyInfo = null;
 		theoryTable = null;
+		super.endModule(element, repository, monitor);
 		
 	}
 
@@ -135,14 +140,14 @@ public class ImportTheoryModule extends SCProcessorModule {
 
 	}
 	
-/*	private IImportTheory getImportTheory(IImportTheory[] theories, IDeployedTheoryRoot deployedTheory) throws RodinDBException {
+	private IImportTheory getImportTheory(IImportTheory[] theories, IDeployedTheoryRoot deployedTheory) throws RodinDBException {
 		
 		for(IImportTheory theory: theories){
 			if (theory.getImportTheory().getComponentName().equals(deployedTheory.getComponentName()))
 				return theory;
 		}
 		return null;
-	}*/
+	}
 
 	/**
 	 * Patches the formula factory to be used for the rest of the static checking process.
