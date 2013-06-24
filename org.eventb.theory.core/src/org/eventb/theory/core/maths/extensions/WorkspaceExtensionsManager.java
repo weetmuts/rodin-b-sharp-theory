@@ -60,7 +60,8 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		
 		try{
 			ISCTheoryPathRoot[] paths = project.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
-			if (paths.length == 1){
+			// theories cannot depend on theory path, so the presence of a theory path should not change the input language of a theory
+			if (paths.length == 1 && !(root instanceof ITheoryRoot)){
 				for (ISCAvailableTheoryProject availProj: paths[0].getSCAvailableTheoryProjects()){
 					IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
 					ProjectManager projectManager = projectManagers.get(rodinProj);
