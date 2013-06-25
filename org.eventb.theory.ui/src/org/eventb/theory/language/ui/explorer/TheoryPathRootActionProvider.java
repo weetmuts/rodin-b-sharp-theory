@@ -121,7 +121,9 @@ public class TheoryPathRootActionProvider extends CommonActionProvider {
 											theoryPathFile.delete(true, new NullProgressMonitor());
 										}
 									}
-									rodinFile.delete(true, new NullProgressMonitor());
+									if (rodinFile.exists()) {
+										rodinFile.delete(true, new NullProgressMonitor());
+									}
 
 								} catch (PartInitException e) {
 									MessageDialog.openError(null, "Error", "Could not delete file");
