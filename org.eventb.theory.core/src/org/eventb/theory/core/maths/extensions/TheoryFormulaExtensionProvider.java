@@ -15,6 +15,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static org.eventb.theory.internal.core.util.CoreUtilities.log;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.eventb.core.IEventBRoot;
@@ -91,8 +92,13 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			log(e, "error while getting theory path for project " + prj);
 			return null;
 		}
-		if (paths.length != 1) {
-			log(null, "Several theory paths in project " + prj);
+		if (paths.length == 0) {
+			return null;
+		}
+		if (paths.length > 1) {
+			log(null,
+					"Several theory paths in project " + prj + ": "
+							+ Arrays.asList(paths));
 			return null;
 		}
 		return paths[0].getSCTheoryPathRoot();
