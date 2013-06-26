@@ -61,7 +61,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		try{
 			ISCTheoryPathRoot[] paths = project.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
 			// theories cannot depend on theory path, so the presence of a theory path should not change the input language of a theory
-			if (paths.length == 1 && !(root instanceof ITheoryRoot)){
+			if (paths.length == 1 && !(root instanceof ITheoryRoot) && !(root instanceof ISCTheoryRoot)){
 				for (ISCAvailableTheoryProject availProj: paths[0].getSCAvailableTheoryProjects()){
 					IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
 					ProjectManager projectManager = projectManagers.get(rodinProj);
@@ -70,9 +70,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 							IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
 							setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
 							//add imported theories math extension
-							for (IDeployedTheoryRoot importedThy : TheoryHierarchyHelper.getImportedTheories(deployedTheoryRoot)){
+							/*for (IDeployedTheoryRoot importedThy : TheoryHierarchyHelper.getImportedTheories(deployedTheoryRoot)){
 								setOfExtensions.addAll(projectManager.getNeededTheories(importedThy));
-							}
+							}*/
 						}
 					}
 				}
@@ -91,8 +91,17 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		// case SC Theory not in MathExtensions : basic set plus deployed in math extensions plus needed theories
 		if (root instanceof ISCTheoryRoot){
 			ProjectManager manager = projectManagers.get(project);
-			if (manager != null)
+			if (manager != null) {
 				setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
+				
+/*				try {
+					for (ISCTheoryRoot importedThy : TheoryHierarchyHelper.getImportedTheories((ISCTheoryRoot) root))
+						setOfExtensions.addAll(manager.getNeededTheories(importedThy));
+				} catch (CoreException e) {
+					CoreUtilities.log(e, "Error while processing SC root " + root + "in" + project);
+				}*/				
+			}
+			
 			return setOfExtensions;
 		}
 

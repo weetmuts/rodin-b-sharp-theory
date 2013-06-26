@@ -47,10 +47,11 @@ public class TheoryHierarchyHelper {
 	 * @throws CoreException
 	 */
 	public static Set<ISCTheoryRoot> getImportedTheories(ISCTheoryRoot importer) throws CoreException {
-		if (importer == null || !importer.exists()) {
-			return null;
-		}
 		Set<ISCTheoryRoot> result = new LinkedHashSet<ISCTheoryRoot>();
+		if (importer == null || !importer.exists()) {
+			return result;
+		}
+		
 		ISCImportTheory[] importedTheories = importer.getImportTheories();
 		for (ISCImportTheory use : importedTheories) {
 			if (use.hasImportTheory())

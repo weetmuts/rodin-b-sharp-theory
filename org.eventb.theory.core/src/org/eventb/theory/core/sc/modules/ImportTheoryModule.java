@@ -72,8 +72,9 @@ public class ImportTheoryModule extends SCProcessorModule {
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
+		//early to check this, it is moved to the ImportTheoryProjectModule.endModule
 		//checking conflict between imported theories and the self theory (importing theory)
-		Collection<IDeployedTheoryRoot> importedTheories = theoryTable.getAllTheories();
+/*		Collection<IDeployedTheoryRoot> importedTheories = theoryTable.getAllTheories();
 		IDeployedTheoryRoot[] importTheoriesArray = importedTheories.toArray(new IDeployedTheoryRoot[importedTheories.size()]);
 		for (int i = 0 ; i < importTheoriesArray.length ; i++){
 			ISCTheoryRoot theory = (ISCTheoryRoot) importTheoriesArray[i];
@@ -88,7 +89,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 						TheoryGraphProblem.TheoriesConflictError,
 						selfTheory.getComponentName(), importTheoriesArray[i].getComponentName());
 			}
-		}
+		}*/
 		
 		accuracyInfo = null;
 		theoryTable = null;

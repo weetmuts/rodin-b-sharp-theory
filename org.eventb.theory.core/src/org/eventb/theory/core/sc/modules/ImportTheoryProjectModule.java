@@ -3,6 +3,7 @@
  */
 package org.eventb.theory.core.sc.modules;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.basis.SCTheoryDecorator;
 import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
 import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGraph;
 import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
@@ -62,6 +64,27 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		
+		//checking conflict between imported theories and the self theory (importing theory)
+		IImportTheoryProject[] theoryProjects = root.getImportTheoryProjects();
+		for(IImportTheoryProject theoryProject: theoryProjects){
+			IImportTheory[] importedTheories = theoryProject.getImportTheories();
+			for (IImportTheory importedTheory: importedTheories){
+				IDeployedTheoryRoot deployedTheoryRoot = importedTheory.getImportTheory();
+				ISCTheoryRoot theory = (ISCTheoryRoot) deployedTheoryRoot;
+				SCTheoryDecorator hierarchy = new SCTheoryDecorator(theory);
+				
+				ISCTheoryRoot selfTheory = root.getSCTheoryRoot();
+				SCTheoryDecorator selfHierarchy = new SCTheoryDecorator(selfTheory);
+				if (selfTheory.getRodinFile().exists() && hierarchy.isConflicting(selfHierarchy)){
+					createProblemMarker(importedTheory,
+							TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
+							TheoryGraphProblem.TheoriesConflictError,
+							selfTheory.getComponentName(), deployedTheoryRoot.getComponentName());
+				}
+			}	
+		}
+		
 		projectTable = null;
 		root = null;
 		super.endModule(element, repository, monitor);
@@ -126,13 +149,14 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 		processModules(theoryProject, target, repository, monitor);
 		endProcessorModules(theoryProject, repository, monitor);
 		
-		Set<ISCTheoryRoot> deployedTheories = new HashSet<ISCTheoryRoot>();
+		Set<ISCTheoryRoot> importedTheories = new HashSet<ISCTheoryRoot>();
+		//root.getSCTheoryRoot().getImportTheories();
 		IImportTheory[] importTheories = root.getImportTheories();
 		for (IImportTheory importTheory : importTheories) {
-			IDeployedTheoryRoot importRoot = importTheory.getImportTheory();
-			deployedTheories.add((ISCTheoryRoot) importRoot);
+			ISCTheoryRoot importRoot = importTheory.getImportTheory();
+			importedTheories.add(importRoot);
 		}
-		patchFormulaFactory(deployedTheories, repository);		
+		patchFormulaFactory(importedTheories, repository);		
 	}
 
 	private ISCImportTheoryProject saveSCTheoryProject(ISCTheoryRoot target,
