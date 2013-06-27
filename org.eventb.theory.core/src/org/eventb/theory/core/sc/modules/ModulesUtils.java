@@ -88,10 +88,10 @@ public class ModulesUtils {
 
 		IParseResult pResult = factory.parseExpression(name, V2, element);
 		Expression expr = pResult.getParsedExpression();
-//removed becuase we dont need to check the uniqueness of the identifier in the time of deploy
+//removed because we dont need to check the uniqueness of the identifier in the time of deploy
 		if (pResult.hasProblem() || !(expr instanceof FreeIdentifier)) {
-			//markerDisplay.createProblemMarker(element, attrType,
-					//GraphProblem.InvalidIdentifierError, name);
+			markerDisplay.createProblemMarker(element, attrType,
+					GraphProblem.InvalidIdentifierError, name);
 			return null;
 		}
 		FreeIdentifier identifier = (FreeIdentifier) expr;

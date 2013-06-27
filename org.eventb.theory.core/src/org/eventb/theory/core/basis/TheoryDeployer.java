@@ -67,9 +67,10 @@ public final class TheoryDeployer implements ITheoryDeployer {
 				return false;
 			}
 		}
-//remove becuase we do not need to check conflicts in the time of deploy, since a theory is not accessible just by deploying
+//remove because we do not need to check conflicts in the time of deploy, since a theory is not accessible just by deploying
 //conflict is checked when a theory is imported in a theorypath and thus available to be used
-		monitor.subTask("checking conflicts between chosen theories");
+		
+/*		monitor.subTask("checking conflicts between chosen theories");
 		// check for conflicts between theories to be deployed and deployed
 		// theories
 
@@ -141,7 +142,7 @@ public final class TheoryDeployer implements ITheoryDeployer {
 				deploymentResult = new DeploymentResult(false, sb.toString());
 				return false;
 			}
-		}
+		}*/
 		// sort theories according to dependency
 		SortedSet<ISCTheoryRoot> sortedTheories = 
 				new TreeSet<ISCTheoryRoot>(TheoryHierarchyHelper.getSCTheoryDependencyComparator());

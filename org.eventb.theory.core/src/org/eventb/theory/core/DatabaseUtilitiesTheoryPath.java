@@ -131,9 +131,11 @@ public class DatabaseUtilitiesTheoryPath{
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					if (root.exists()) {
 					root.setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE,root.hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE) ? root.getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE): "", monitor);
 					root.getRodinFile().save(monitor, true);
 					root.getRodinProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+					}
 				} catch (CoreException e) {
 					CoreUtilities.log(e, "when trying to build project " + root.getElementName() + " after notifying file "+ root.getComponentName());
 					return Status.CANCEL_STATUS;

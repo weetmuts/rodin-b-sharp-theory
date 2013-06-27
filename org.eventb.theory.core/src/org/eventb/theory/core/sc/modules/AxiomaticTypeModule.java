@@ -73,7 +73,7 @@ public class AxiomaticTypeModule extends SCProcessorModule {
 		if (!axmType.hasIdentifierString() || axmType.getIdentifierString().equals("")) {
 			createProblemMarker(axmType, EventBAttributes.IDENTIFIER_ATTRIBUTE, GraphProblem.IdentifierUndefError);
 			return false;
-		}
+		}		
 		FreeIdentifier ident = ModulesUtils.parseIdentifier(axmType.getIdentifierString(), axmType,
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, this);
 		if (ident != null && typeEnvironment.contains(ident.getName())) {
@@ -82,6 +82,7 @@ public class AxiomaticTypeModule extends SCProcessorModule {
 			return false;
 
 		} else if (ident == null) {
+			//covers the conflicting case with the imported theories
 			//createProblemMarker(axmType, EventBAttributes.IDENTIFIER_ATTRIBUTE,
 					//TheoryGraphProblem.IdenIsAAxiomaticTypeNameError, axmType.getIdentifierString());
 			return false;

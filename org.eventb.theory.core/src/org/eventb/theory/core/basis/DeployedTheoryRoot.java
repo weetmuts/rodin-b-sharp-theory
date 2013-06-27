@@ -171,6 +171,7 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 
 	@Override
 	public ISCImportTheory[] getImportTheories() throws RodinDBException {
+		//return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
 		List<ISCImportTheory> theories =  new ArrayList<ISCImportTheory>();
 		
 		for(ISCImportTheoryProject proj: getSCImportTheoryProjects()){

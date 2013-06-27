@@ -143,8 +143,8 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 		}
 		else if (ident == null){
 			//covers the conflicting case with the imported theories
-			createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
-					TheoryGraphProblem.IdenIsAConsNameError, name);
+			//createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					//TheoryGraphProblem.IdenIsAConsNameError, name);
 			return false;
 		}
 		return true;
