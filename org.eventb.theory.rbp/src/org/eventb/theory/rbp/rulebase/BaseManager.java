@@ -108,7 +108,8 @@ public class BaseManager implements IElementChangedListener {
 			rules.addAll(theoryBaseEntry.getDefinitionalRules(context.getFormulaFactory()));
 		}
 
-		rules.addAll(projectEntries.get(rodinProject).getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
+		// the local theories needs to be imported in the theory path
+		//rules.addAll(projectEntries.get(rodinProject).getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
 
 		return rules;
 	}
@@ -143,8 +144,9 @@ public class BaseManager implements IElementChangedListener {
 					context.getFormulaFactory()));
 		}
 
-		rules.addAll(projectEntries.get(rodinProject).getRewriteRules(
-				automatic, clazz, parentRoot, context.getFormulaFactory()));
+		// the local theories needs to be imported in the theory path
+		//rules.addAll(projectEntries.get(rodinProject).getRewriteRules(
+				//automatic, clazz, parentRoot, context.getFormulaFactory()));
 
 		return rules;
 	}
@@ -181,8 +183,9 @@ public class BaseManager implements IElementChangedListener {
 			rules.addAll(theoryBaseEntry.getInferenceRules(automatic, type, context.getFormulaFactory()));
 		}
 
-		rules.addAll(projectEntries.get(rodinProject).getInferenceRules(automatic, type, parentRoot,
-				context.getFormulaFactory()));
+		// the local theories needs to be imported in the theory path
+		//rules.addAll(projectEntries.get(rodinProject).getInferenceRules(automatic, type, parentRoot,
+				//context.getFormulaFactory()));
 
 		return rules;
 	}
