@@ -22,7 +22,6 @@ import org.rodinp.core.RodinDBException;
 public class FormulaAttributeManipulation extends AbstractAttributeManipulation{
 
 	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
-		logCantGetPossibleValues(FORMULA_ATTRIBUTE);
 		return null;
 	}
 

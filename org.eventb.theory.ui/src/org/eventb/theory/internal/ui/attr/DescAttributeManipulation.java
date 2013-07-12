@@ -14,7 +14,6 @@ implements IAttributeManipulation {
 
 	
 	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
-		logCantGetPossibleValues(DESC_ATTRIBUTE);
 		return null;
 	}
 

@@ -13,7 +13,6 @@ public class TypingAttributeManipulation extends AbstractAttributeManipulation
 implements IAttributeManipulation {
 
 	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {
-		logCantGetPossibleValues(TYPE_ATTRIBUTE);
 		return null;
 	}
 
