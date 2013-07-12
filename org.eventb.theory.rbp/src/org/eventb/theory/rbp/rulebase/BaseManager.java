@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.rulebase;
 
+import static org.eventb.theory.core.DatabaseUtilities.getNonTempSCTheoryPaths;
 import static org.eventb.theory.core.TheoryHierarchyHelper.getImportedTheories;
 
 import java.util.ArrayList;
@@ -278,8 +279,7 @@ public class BaseManager implements IElementChangedListener {
 	private static List<IDeployedTheoryRoot> getTheoriesFromPath(IRodinProject project) {
 		final List<IDeployedTheoryRoot> pathTheories = new ArrayList<IDeployedTheoryRoot>();
 		try {
-			ISCTheoryPathRoot[] paths = project
-					.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
+			ISCTheoryPathRoot[] paths = getNonTempSCTheoryPaths(project);
 			if (paths.length != 1) {
 				// ignore paths
 				return Collections.emptyList();
