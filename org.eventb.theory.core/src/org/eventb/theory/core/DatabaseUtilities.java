@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2013 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
  *******************************************************************************/
 package org.eventb.theory.core;
 
@@ -17,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -369,7 +373,31 @@ public class DatabaseUtilities {
 		return (status.getConfidence() > IConfidence.PENDING) && (status.getConfidence() <= IConfidence.REVIEWED_MAX);
 	}
 
-
+	/**
+	 * Returns non temporary statically checked theory path roots of the given
+	 * project.
+	 * 
+	 * @param project
+	 *            a Rodin project
+	 * @return an array of theory path roots
+	 * @throws RodinDBException
+	 *             if there is a problem accessing the Rodin database
+	 */
+	public static ISCTheoryPathRoot[] getNonTempSCTheoryPaths(
+			IRodinProject project) throws RodinDBException {
+		final ISCTheoryPathRoot[] allRoots = project
+				.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
+		final List<ISCTheoryPathRoot> result = new ArrayList<ISCTheoryPathRoot>();
+		for (ISCTheoryPathRoot root : allRoots) {
+			final IPath path = root.getRodinFile().getPath();
+			final String fileExtension = path.getFileExtension();
+			if (fileExtension != null && !fileExtension.endsWith("_tmp")) {
+				result.add(root);
+			}
+		}
+		return result.toArray(new ISCTheoryPathRoot[result.size()]);
+	}
+	
 	/**
 	 * Returns a filter that accepts existing SC theory file with the ordinary
 	 * file extension.

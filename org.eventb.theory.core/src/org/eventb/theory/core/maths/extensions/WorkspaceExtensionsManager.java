@@ -1,4 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2013 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
+
+import static org.eventb.theory.core.DatabaseUtilities.getNonTempSCTheoryPaths;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +30,6 @@ import org.eventb.theory.core.ISCAvailableTheoryProject;
 import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -59,8 +70,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		IRodinProject project = root.getRodinProject();
 		
 		try{
-			ISCTheoryPathRoot[] paths = project.getRootElementsOfType(ISCTheoryPathRoot.ELEMENT_TYPE);
-			// theories cannot depend on theory path, so the presence of a theory path should not change the input language of a theory
+			ISCTheoryPathRoot[] paths = getNonTempSCTheoryPaths(project);
+			// theories cannot depend on theory path, so the presence of a
+			// theory path should not change the input language of a theory
 			if (paths.length == 1 && !(root instanceof ITheoryRoot) && !(root instanceof ISCTheoryRoot)){
 				for (ISCAvailableTheoryProject availProj: paths[0].getSCAvailableTheoryProjects()){
 					IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
