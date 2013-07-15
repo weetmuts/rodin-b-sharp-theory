@@ -48,7 +48,12 @@ public class SCAvailableTheory extends EventBElement implements
 	@Override
 	public IDeployedTheoryRoot getSCDeployedTheoryRoot()
 			throws RodinDBException {
-		return (IDeployedTheoryRoot) getAttributeValue(AVAILABLE_THEORY_ATTRIBUTE);
+		IDeployedTheoryRoot deployedTheoryRoot = (IDeployedTheoryRoot) getAttributeValue(AVAILABLE_THEORY_ATTRIBUTE);
+		if (deployedTheoryRoot.getParent().exists())
+			return deployedTheoryRoot;
+		//when availThy is undeployed
+		else
+			return null;	
 	}
 
 	@Override

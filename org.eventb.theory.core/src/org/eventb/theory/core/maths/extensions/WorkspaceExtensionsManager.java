@@ -80,7 +80,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 					if(projectManager != null){
 						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()){
 							IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
-							setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
+							//when availThy is undeployed then deployedTheoryRoot = null
+							if (deployedTheoryRoot != null)
+								setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
 							//add imported theories math extension
 							/*for (IDeployedTheoryRoot importedThy : TheoryHierarchyHelper.getImportedTheories(deployedTheoryRoot)){
 								setOfExtensions.addAll(projectManager.getNeededTheories(importedThy));
