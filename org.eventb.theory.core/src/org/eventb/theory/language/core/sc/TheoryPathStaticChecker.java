@@ -51,7 +51,7 @@ public class TheoryPathStaticChecker extends StaticChecker{
 					}
 				}
 
-				DatabaseUtilitiesTheoryPath.addListener(files,root);
+				//DatabaseUtilitiesTheoryPath.addListener(files,root);
 			}
 
 		} finally {

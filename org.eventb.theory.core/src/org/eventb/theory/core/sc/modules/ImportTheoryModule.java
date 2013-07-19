@@ -141,14 +141,14 @@ public class ImportTheoryModule extends SCProcessorModule {
 
 	}
 	
-	private IImportTheory getImportTheory(IImportTheory[] theories, IDeployedTheoryRoot deployedTheory) throws RodinDBException {
+/*	private IImportTheory getImportTheory(IImportTheory[] theories, IDeployedTheoryRoot deployedTheory) throws RodinDBException {
 		
 		for(IImportTheory theory: theories){
 			if (theory.getImportTheory().getComponentName().equals(deployedTheory.getComponentName()))
 				return theory;
 		}
 		return null;
-	}
+	}*/
 
 	/**
 	 * Patches the formula factory to be used for the rest of the static checking process.
@@ -156,7 +156,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 	 * @param repository the state repository
 	 * @throws CoreException
 	 */
-	protected void patchFormulaFactory(Set<IDeployedTheoryRoot> importedTheories,
+/*	protected void patchFormulaFactory(Set<IDeployedTheoryRoot> importedTheories,
 			ISCStateRepository repository) throws CoreException {
 		// need to patch up formula factory
 		//SCTheoriesGraph graph = new SCTheoriesGraph();
@@ -175,7 +175,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 		}
 		repository.setFormulaFactory(factory);
 		repository.setTypeEnvironment(factory.makeTypeEnvironment());
-	}
+	}*/
 	
 	private void saveSCTheory(ISCImportTheoryProject target,
 			IImportTheory theory, int index,

@@ -194,7 +194,7 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 		}
 		repository.setFormulaFactory(factory);
-		repository.setTypeEnvironment(factory.makeTypeEnvironment());
+		//repository.setTypeEnvironment(factory.makeTypeEnvironment());
 	}
 	
 	/**
