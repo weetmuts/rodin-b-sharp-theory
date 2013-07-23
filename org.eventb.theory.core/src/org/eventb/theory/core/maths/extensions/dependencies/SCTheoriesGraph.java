@@ -13,7 +13,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 
@@ -41,7 +40,9 @@ public class SCTheoriesGraph extends DependenciesGraph<ISCTheoryRoot>{
 			if (element instanceof IDeployedTheoryRoot) {
 				Set<IDeployedTheoryRoot> imported;
 				imported = TheoryHierarchyHelper.getImportedTheories((IDeployedTheoryRoot) element);
-				return imported.toArray(new ISCTheoryRoot[imported.size()]);
+				if (imported != null) {
+					return imported.toArray(new ISCTheoryRoot[imported.size()]);
+				}
 			}
 			else {
 				Set<ISCTheoryRoot> imported;
