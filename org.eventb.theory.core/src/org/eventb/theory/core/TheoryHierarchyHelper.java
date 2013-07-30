@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 /**
  * A helper class to manipulate theory hierarchies.
@@ -362,6 +363,23 @@ public class TheoryHierarchyHelper {
 				for (IDeployedTheoryRoot root : theories){
 					if (root.exists()) {
 						root.getRodinFile().delete(true, monitor);
+						/* populate (from Rodin2.8):
+						 * for each Theory path which importing this theory,
+						 * the checked theory path (.tcl) file is deleted; this automatically triggers a build in the project 
+						 */
+						monitor.subTask("populating");
+						for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
+							monitor.worked(2);
+							ITheoryPathRoot[] theoryPath = project.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
+							if (theoryPath.length != 0 && theoryPath[0].getRodinFile().exists()) {
+						
+								for (IAvailableTheory availThy : theoryPath[0].getAvailableTheories()){
+									if (availThy.getDeployedTheory().equals(root)) {
+										theoryPath[0].getSCTheoryPathRoot().getRodinFile().delete(true, monitor);
+									}		
+								}
+							}
+						}
 					}
 					monitor.worked(3);
 				}	

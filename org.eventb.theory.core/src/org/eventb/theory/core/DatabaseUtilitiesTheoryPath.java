@@ -76,15 +76,16 @@ public class DatabaseUtilitiesTheoryPath{
 		IRodinFile file = project.getRodinFile(getTheoryPathFullName(name));
 		return (ITheoryPathRoot) file.getRoot();
 	}
-	
-	/**
+
+	// From Rodin 2.8 when the dependency is correctly added to the builder, no listener is needed.
+/*	/**
 	 * Adds a listener to the workspace that it is triggered when any of the <code>files</code> are modified. 
 	 * The listener action is applied to <code>root</code> for <code>resourceChangeKind</code>.
 	 * 
 	 * @param files
 	 * @param root
 	 * @param resourceChangeKind
-	 */
+	 *//*
 	public static <T extends IEventBRoot> void addListener(final List<IRodinFile> files, final T root){
 		IElementChangedListener listener = new IElementChangedListener() {
 			@Override
@@ -119,7 +120,7 @@ public class DatabaseUtilitiesTheoryPath{
 	 * Builds the rodinProject specified according to the kind of build defined
 	 * @param root
 	 * @param builderKind
-	 */
+	 *//*
 	private static void notifyDependency(final IEventBRoot root) {
 		IJobManager jobManager = Job.getJobManager();
 		ISchedulingRule currentRule = jobManager.currentRule();
@@ -150,6 +151,6 @@ public class DatabaseUtilitiesTheoryPath{
 		job.schedule(); // start as soon as possible
 		
 		jobManager.endRule(currentRule);
-	}
+	}*/
 
 }

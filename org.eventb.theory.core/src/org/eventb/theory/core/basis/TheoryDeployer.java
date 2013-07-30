@@ -9,9 +9,6 @@ package org.eventb.theory.core.basis;
 
 import static org.eventb.theory.internal.core.util.DeployUtilities.copyDeployedElements;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -19,15 +16,18 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
+import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.IUseTheory;
 import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author maamria
@@ -178,6 +178,25 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			deploymentResult = new DeploymentResult(true, null);
 			monitor.subTask("finising with " + targetFile.getElementName());
 			monitor.worked(2);
+			/* populate (from Rodin2.8):
+			 * for each Theory path which importing this theory,
+			 * the checked theory path (.tcl) file is deleted; this automatically triggers a build in the project 
+			 */
+			monitor.subTask("populating");
+			for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
+				monitor.worked(2);
+				//project.getChildren();
+				//IRodinFile theoryPath = project.getRodinFile("TheoryPath.tcl");
+				ITheoryPathRoot[] theoryPath = project.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
+				if (theoryPath.length != 0 && theoryPath[0].getRodinFile().exists()) {
+				
+					for (IAvailableTheory availThy : theoryPath[0].getAvailableTheories()){
+						if (availThy.getDeployedTheory().equals(deployedTheoryRoot)) {
+							theoryPath[0].getSCTheoryPathRoot().getRodinFile().delete(true, monitor);
+						}		
+					}
+				}
+			}
 		}
 		return true;
 	}

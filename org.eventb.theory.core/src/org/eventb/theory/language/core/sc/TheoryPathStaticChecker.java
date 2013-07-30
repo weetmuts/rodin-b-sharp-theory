@@ -51,6 +51,7 @@ public class TheoryPathStaticChecker extends StaticChecker{
 					}
 				}
 
+				// From Rodin 2.8 when the dependency is correctly added to the builder, no listener is needed.
 				//DatabaseUtilitiesTheoryPath.addListener(files,root);
 			}
 
