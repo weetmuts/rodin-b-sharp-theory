@@ -185,8 +185,6 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			monitor.subTask("populating");
 			for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
 				monitor.worked(2);
-				//project.getChildren();
-				//IRodinFile theoryPath = project.getRodinFile("TheoryPath.tcl");
 				ITheoryPathRoot[] theoryPath = project.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
 				if (theoryPath.length != 0 && theoryPath[0].getRodinFile().exists()) {
 				

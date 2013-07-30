@@ -10,6 +10,7 @@ import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 public class UndeployWizard extends Wizard {
 
@@ -31,7 +32,12 @@ public class UndeployWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		TheoryUIUtils.runWithProgress(TheoryHierarchyHelper.getUndeployer(project, deployedRoots), project.getSchedulingRule());
+		//TheoryUIUtils.runWithProgress(TheoryHierarchyHelper.getUndeployer(project, deployedRoots), project.getSchedulingRule());
+		
+		TheoryUIUtils.runWithProgress(TheoryHierarchyHelper.getUndeployer(project, deployedRoots), RodinCore.getRodinDB().getSchedulingRule());
+		
+		//TheoryUIUtils.runWithProgress(TheoryHierarchyHelper.getUndeployer(project, deployedRoots), ResourcesPlugin.getWorkspace().getRoot().getSchedulingRule());
+
 		if (page.rebuildProject()){
 			try {
 				DatabaseUtilities.rebuild(project, null);

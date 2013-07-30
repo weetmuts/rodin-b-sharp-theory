@@ -13,6 +13,7 @@ import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 public abstract class AbstractDeployWizard extends Wizard{
 
@@ -20,7 +21,8 @@ public abstract class AbstractDeployWizard extends Wizard{
 	public boolean performFinish() {
 		IRodinProject rodinProject = getRodinProject();
 		ITheoryDeployer deployer = TheoryHierarchyHelper.getDeployer(rodinProject, selectedTheories());
-		TheoryUIUtils.runWithProgress(deployer, rodinProject.getSchedulingRule());
+		//TheoryUIUtils.runWithProgress(deployer, rodinProject.getSchedulingRule());
+		TheoryUIUtils.runWithProgress(deployer, RodinCore.getRodinDB().getSchedulingRule());
 		IDeploymentResult deploymentResult = deployer.getDeploymentResult();
 		// if successful
 		if (deploymentResult.succeeded()){
