@@ -9,6 +9,7 @@ package org.eventb.theory.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
@@ -20,6 +21,7 @@ import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IInternalElement;
@@ -45,9 +47,9 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule {
 		ISCTheoryRoot theoryRoot = scNewOperatorDefinition.getAncestor(ISCTheoryRoot.ELEMENT_TYPE);
 		
 		if (!operatorInformation.hasError()) {
-			//String syntax = operatorInformation.getSyntax();
-//removed becuase we do not need to check the uniqueness of the operators 
-//			if (AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
+			String syntax = operatorInformation.getSyntax();
+//removed if do not need to check the uniqueness of the operators 
+			if (AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
 				operatorInformation.makeImmutable();
 				IFormulaExtension formulaExtension = operatorInformation.getExtension(scNewOperatorDefinition);
 				FormulaFactory newFactory = factory.withExtensions(GeneralUtilities.singletonSet(formulaExtension));
@@ -61,12 +63,12 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule {
 					scNewOperatorDefinition.setType(operatorInformation.getResultantType(), monitor);
 				}
 				operatorInformation.generateDefinitionalRule(newOperatorDefinition, theoryRoot, factory);
-/*			} else {
+			} else {
 				createProblemMarker((INewOperatorDefinition) element, EventBAttributes.LABEL_ATTRIBUTE,
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAddedError, syntax);
 				operatorInformation.setHasError();
 				operatorInformation.makeImmutable();
-			}*/
+			}
 		}
 	}
 

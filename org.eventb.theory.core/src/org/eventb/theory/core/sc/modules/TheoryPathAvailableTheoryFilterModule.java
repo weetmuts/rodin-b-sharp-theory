@@ -138,6 +138,14 @@ public class TheoryPathAvailableTheoryFilterModule extends SCFilterModule {
 				break;
 			}
 		}
+		
+		for(IUseTheory usedTheory: newDeployedTheory.getUsedTheories()){
+			IDeployedTheoryRoot importTheory = usedTheory.getUsedTheory();
+			if(importTheory.equals(existingDeployedTheory) || isDependentOf(existingDeployedTheory, importTheory)){
+				isDependent = true;
+				break;
+			}
+		}
 
 
 		return isDependent;

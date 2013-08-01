@@ -189,7 +189,7 @@ public final class TheoryDeployer implements ITheoryDeployer {
 				if (theoryPath.length != 0 && theoryPath[0].getRodinFile().exists()) {
 				
 					for (IAvailableTheory availThy : theoryPath[0].getAvailableTheories()){
-						if (availThy.getDeployedTheory().equals(deployedTheoryRoot)) {
+						if (availThy.getDeployedTheory().equals(deployedTheoryRoot) && theoryPath[0].getSCTheoryPathRoot().getRodinFile().exists()) {
 							theoryPath[0].getSCTheoryPathRoot().getRodinFile().delete(true, monitor);
 						}		
 					}
