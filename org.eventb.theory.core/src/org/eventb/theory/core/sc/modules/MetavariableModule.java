@@ -43,6 +43,7 @@ public class MetavariableModule extends IdentifierModule {
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		typeEnvironment = repository.getTypeEnvironment();
 		IProofRulesBlock rulesBlock = (IProofRulesBlock) element;
 		ISCProofRulesBlock scRulesBlock = (ISCProofRulesBlock) target;
 		IMetavariable[] metavars = rulesBlock.getMetavariables();

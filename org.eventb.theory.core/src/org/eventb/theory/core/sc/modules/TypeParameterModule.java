@@ -39,7 +39,8 @@ public class TypeParameterModule extends IdentifierModule {
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		
-		// IdentifierModule and repository DO NOT share the same type environment, so we need to update it.
+		// IdentifierModule modifies repository type environment by side effect.
+		// this.typeEnvironment has to point to the same object as the repository, else contributions would be lost.
 		// It is only needed in the case of importing a theory, since the repository type environment is updated in the ImportTheoryProjectModule.patchFormulaFactory
 		typeEnvironment = repository.getTypeEnvironment();
 		

@@ -64,6 +64,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		typeEnvironment = repository.getTypeEnvironment();
 		INewOperatorDefinition operatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scOperatorDefinition = (ISCNewOperatorDefinition) target;
 		IOperatorArgument[] arguments = operatorDefinition.getOperatorArguments();
