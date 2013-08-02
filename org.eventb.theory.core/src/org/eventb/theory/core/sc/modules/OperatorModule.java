@@ -173,9 +173,7 @@ public class OperatorModule extends LabeledElementModule{
 				INewOperatorDefinition opDef = newOpDefs[i];
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
-				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
-				opTypeEnvironment.addAll(globalTypeEnvironment);
-				repository.setTypeEnvironment(opTypeEnvironment);
+				globalTypeEnvironment = repository.getTypeEnvironment();
 				// needed states
 				repository.setState(new StackedIdentifierSymbolTable(
 						identifierSymbolTable, ModulesUtils.IDENT_SYMTAB_SIZE,
