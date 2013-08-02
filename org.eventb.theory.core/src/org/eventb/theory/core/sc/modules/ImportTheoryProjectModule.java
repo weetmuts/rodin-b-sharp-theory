@@ -3,7 +3,6 @@
  */
 package org.eventb.theory.core.sc.modules;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +26,6 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.basis.SCTheoryDecorator;
 import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
-import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGraph;
 import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
