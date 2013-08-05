@@ -52,7 +52,6 @@ public class AxiomaticOperatorArgumentModule extends IdentifierModule{
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		typeEnvironment = repository.getTypeEnvironment();
 		IAxiomaticOperatorDefinition operatorDefinition = (IAxiomaticOperatorDefinition) element;
 		ISCAxiomaticOperatorDefinition scOperatorDefinition = (ISCAxiomaticOperatorDefinition) target;
 		IOperatorArgument[] arguments = operatorDefinition.getOperatorArguments();

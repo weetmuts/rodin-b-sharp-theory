@@ -64,7 +64,6 @@ public class OperatorArgumentModule extends IdentifierModule {
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		typeEnvironment = repository.getTypeEnvironment();
 		INewOperatorDefinition operatorDefinition = (INewOperatorDefinition) element;
 		ISCNewOperatorDefinition scOperatorDefinition = (ISCNewOperatorDefinition) target;
 		IOperatorArgument[] arguments = operatorDefinition.getOperatorArguments();
@@ -170,6 +169,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, final ITypeEnvironment environment)
 			throws CoreException {
+		// FIXME not to global type env, or restore global type env at end
 		environment.addName(newSymbolInfo.getSymbol(), newSymbolInfo.getType());
 	}
 
