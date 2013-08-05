@@ -173,7 +173,9 @@ public class OperatorModule extends LabeledElementModule{
 				INewOperatorDefinition opDef = newOpDefs[i];
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
-				globalTypeEnvironment = repository.getTypeEnvironment();
+				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
+				opTypeEnvironment.addAll(globalTypeEnvironment);
+				repository.setTypeEnvironment(opTypeEnvironment);
 				// needed states
 				repository.setState(new StackedIdentifierSymbolTable(
 						identifierSymbolTable, ModulesUtils.IDENT_SYMTAB_SIZE,
@@ -217,6 +219,7 @@ public class OperatorModule extends LabeledElementModule{
 				if(!operatorInformation.hasError()){
 					factory = repository.getFormulaFactory();
 					globalTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+					repository.setFormulaFactory(factory);
 					repository.setTypeEnvironment(globalTypeEnvironment);
 				}
 				else {
