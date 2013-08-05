@@ -173,6 +173,7 @@ public class OperatorModule extends LabeledElementModule{
 				INewOperatorDefinition opDef = newOpDefs[i];
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
+				globalTypeEnvironment = repository.getTypeEnvironment();
 				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
