@@ -266,8 +266,10 @@ public class OperatorInformation extends State implements ISCState{
 		IFormulaExtension formulaExtension = null;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 		if (expressionType != null) {
+			//formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
+					//opArguments, expressionType, getWdCondition(), getWdCondition(), null, null);
 			formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-					opArguments, expressionType, getWdCondition(), getWdCondition(), null, null);
+					opArguments, expressionType, getWdCondition(), AstUtilities.BTRUE, null, null);
 		} else {
 			formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
 					getWdCondition(), getWdCondition(), null, null);
