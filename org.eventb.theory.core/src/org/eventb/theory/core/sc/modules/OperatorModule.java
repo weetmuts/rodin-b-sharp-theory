@@ -225,12 +225,11 @@ public class OperatorModule extends LabeledElementModule{
 				}
 				else {
 					scNewOpDefs[i].setHasError(true, monitor);
+					// restore type environment without erroneous operator
+					repository.setTypeEnvironment(globalTypeEnvironment);
 				}
 			}
 			monitor.worked(1);
 		}
-		// get the new type environment corresponding to the factory
-		globalTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
-		repository.setTypeEnvironment(globalTypeEnvironment);
 	}
 }
