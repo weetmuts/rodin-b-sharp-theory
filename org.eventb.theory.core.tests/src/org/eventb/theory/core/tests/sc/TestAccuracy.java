@@ -3,6 +3,7 @@ package org.eventb.theory.core.tests.sc;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
+import org.junit.Test;
 
 /**
  * 
@@ -14,6 +15,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * erroneous type par should make theory inaccurate
 	 */
+	@Test
 	public void testAcc_001_ErroneousType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("finite"));
@@ -22,6 +24,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isNotAccurate(root.getSCTheoryRoot());
 	}
 
+	@Test
 	public void testAcc_002_ErroneousType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("1_qw"));
@@ -33,6 +36,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * erroneous import should make theory inaccurate
 	 */
+	@Test
 	public void testAcc_003_ErroneousImport() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addImportTheory(root, "DoesNotExistTheory");
@@ -41,6 +45,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isNotAccurate(root.getSCTheoryRoot());
 	}
 
+	@Test
 	public void testAcc_004_ErroneousImport() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheoryRoot anotherRoot = createTheory("anotherThy");
@@ -54,6 +59,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * erroneous theorem should make theory inaccurate
 	 */
+	@Test
 	public void testAcc_005_ErroneousTheorem() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTheorem(root, THEOREM_LABEL, "asdas asdasd");
@@ -62,6 +68,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isNotAccurate(root.getSCTheoryRoot());
 	}
 
+	@Test
 	public void testAcc_006_ErroneousTheorem() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTheorem(root, "", "2=2");
@@ -73,6 +80,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * rules block without label make theory inaccurate
 	 */
+	@Test
 	public void testAcc_007_ErroneousBlock() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		root.createChild(IProofRulesBlock.ELEMENT_TYPE, null, null);
@@ -82,6 +90,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isNotAccurate(root.getSCTheoryRoot());
 	}
 
+	@Test
 	public void testAcc_008_BlockNoError() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addProofRulesBlock(root, BLOCK_LABEL);
@@ -93,6 +102,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * rewrite rules and accuracy
 	 */
+	@Test
 	public void testAcc_009_RewNoError() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -105,6 +115,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	}
 
 	// missing formula should make theory inaccurate
+	@Test
 	public void testAcc_010_ErroneousRew() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -116,6 +127,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	}
 
 	// problem with rhs should make rewrite inaccurate but theory accuracy not affected
+	@Test
 	public void testAcc_011_ErroneousRew() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -133,6 +145,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	 * Inference rules and accuracy
 	 */
 	// problem with infer/given clause should make inference inaccurate
+	@Test
 	public void testAcc_012_ErroneousInference() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -146,6 +159,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isNotAccurate(getInferenceRule(root.getSCTheoryRoot(), BLOCK_LABEL, INFERENCE_LABEL));
 	}
 
+	@Test
 	public void testAcc_013_InferenceNoError() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -156,6 +170,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isAccurate(getInferenceRule(root.getSCTheoryRoot(), BLOCK_LABEL, INFERENCE_LABEL));
 	}
 
+	@Test
 	public void testAcc_014_ErroneousInference() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -168,6 +183,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isNotAccurate(getInferenceRule(root.getSCTheoryRoot(), BLOCK_LABEL, INFERENCE_LABEL));
 	}
 	// problem with inference itself should make theory inaccurate
+	@Test
 	public void testAcc_018_ErroneousInference() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -182,6 +198,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	 * Datatypes and accuracy
 	 */
 
+	@Test
 	public void testAcc_015_ErroneousDatatype() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addDatatypeDefinition(root, DATATYPE_NAME, makeSList(), makeSList(CONS_NAME), 
@@ -195,6 +212,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		
 	}
 
+	@Test
 	public void testAcc_016_DatatypeNoError() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addDatatypeDefinition(root, DATATYPE_NAME, makeSList(), makeSList(CONS_NAME), 
@@ -205,6 +223,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		doesNotHaveError(getDatatype(root.getSCTheoryRoot(), DATATYPE_NAME));
 	}
 	// no element cons makes dt has error but theory accuracy unaffected
+	@Test
 	public void testAcc_017_ErroneousDatatype() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addDatatypeDefinition(root, DATATYPE_NAME, makeSList(), makeSList(), 
@@ -218,6 +237,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	}
 	
 	// problem with dt name should make theory inaccurate
+	@Test
 	public void testAcc_019_ErroneousDatatype() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addDatatypeDefinition(root, "", makeSList(), makeSList(), 
@@ -228,6 +248,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		isNotAccurate(root.getSCTheoryRoot());
 	}
 	
+	@Test
 	public void testAcc_020_AxmBlockConflict() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);

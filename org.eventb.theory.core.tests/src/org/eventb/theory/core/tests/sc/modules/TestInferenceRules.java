@@ -1,5 +1,8 @@
 package org.eventb.theory.core.tests.sc.modules;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
@@ -18,6 +21,7 @@ import org.eventb.theory.core.sc.modules.InferenceInferClauseModule;
 import org.eventb.theory.core.sc.modules.InferenceRuleFilterModule;
 import org.eventb.theory.core.sc.modules.InferenceRuleModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see {@link InferenceRuleModule}, {@link InferenceRuleFilterModule}
@@ -30,6 +34,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * No Error
 	 */
+	@Test
 	public void testInferenceRules_001_NoError() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -48,6 +53,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Missing label
 	 */
+	@Test
 	public void testInferenceRules_002_MissingLabel() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -63,6 +69,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * conflict in label
 	 */
+	@Test
 	public void testInferenceRules_003_LabelConflict() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -81,6 +88,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * applicability attr missing
 	 */
+	@Test
 	public void testInferenceRules_004_MissingApplAttr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -97,6 +105,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * desc attr missing
 	 */
+	@Test
 	public void testInferenceRules_005_MissingDescAttr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -117,6 +126,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Given predicate missing
 	 */
+	@Test
 	public void testInferenceRules_006_MissingGivenPredAttr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -133,6 +143,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Given predicate equals BTRUE
 	 */
+	@Test
 	public void testInferenceRules_007_GivenPredBTRUE() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -148,6 +159,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Given is hyp or not hyp
 	 */
+	@Test
 	public void testInferenceRules_008_Hyp() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -169,6 +181,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Syntactic issues with given
 	 */
+	@Test
 	public void testInferenceRules_009_UnparsGiven() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -187,6 +200,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Untypable given
 	 */
+	@Test
 	public void testInferenceRules_009_UntypableGiven() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("S"));
@@ -206,6 +220,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Infer predicate missing
 	 */
+	@Test
 	public void testInferenceRules_010_MissingInferPredAttr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -221,6 +236,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Given predicate equals BTRUE
 	 */
+	@Test
 	public void testInferenceRules_011_InferPredBTRUE() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IInferenceRule inf = addInferenceRule(root, BLOCK_LABEL, INFERENCE_LABEL,
@@ -234,6 +250,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Syntactic issues with infer
 	 */
+	@Test
 	public void testInferenceRules_012_UnparsInfer() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -258,6 +275,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Untypable infer
 	 */
+	@Test
 	public void testInferenceRules_013_UntypableInfer() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("S"));
@@ -281,6 +299,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Forward applicability
 	 */
+	@Test
 	public void testInferenceRules_014_ForwInfer() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("S"));
@@ -309,6 +328,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Backward applicability
 	 */
+	@Test
 	public void testInferenceRules_015_BackInfer() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -333,6 +353,7 @@ public class TestInferenceRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Back/forward applicability
 	 */
+	@Test
 	public void testInferenceRules_016_ForwBackInfer() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);

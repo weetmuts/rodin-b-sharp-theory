@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -18,11 +19,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
-public class EventBTheoryFileTest extends TestCase {
+public class EventBTheoryFileTest {
 	
 	private static final String BARE_NAME = "foo";
 
@@ -57,6 +59,7 @@ public class EventBTheoryFileTest extends TestCase {
 	/**
 	 * Ensures that an unchecked theory can be created from an event-B project.
 	 */
+	@Test
 	public void testTheoryFile() throws Exception {
 		IRodinFile file = DatabaseUtilities.getTheory(BARE_NAME, rodinProject).getRodinFile();
 		assertFileName(BARE_NAME + ".tuf", file);
@@ -67,6 +70,7 @@ public class EventBTheoryFileTest extends TestCase {
 	/**
 	 * Ensures that a checked theory can be created from an event-B project.
 	 */
+	@Test
 	public void testSCTheoryFile() throws Exception {
 		IRodinFile file = DatabaseUtilities.getSCTheory(BARE_NAME, rodinProject).getRodinFile();
 		assertFileName(BARE_NAME + ".tcf", file);
@@ -76,6 +80,7 @@ public class EventBTheoryFileTest extends TestCase {
 	/**
 	 * Ensures that a deployed theory can be created from an event-B project.
 	 */
+	@Test
 	public void testDeployedTheoryFile() throws Exception {
 		IRodinFile file = DatabaseUtilities.getDeployedTheory(BARE_NAME, rodinProject).getRodinFile();
 		assertFileName(BARE_NAME + ".dtf", file);
@@ -90,6 +95,7 @@ public class EventBTheoryFileTest extends TestCase {
 		}
 	}
 	
+	@Test
 	public void testFileAdaptation() throws Exception {
 		final IRodinFile tuf = DatabaseUtilities.getTheory(BARE_NAME, rodinProject).getRodinFile();
 		final IRodinFile tcf = DatabaseUtilities.getSCTheory(BARE_NAME, rodinProject).getRodinFile();

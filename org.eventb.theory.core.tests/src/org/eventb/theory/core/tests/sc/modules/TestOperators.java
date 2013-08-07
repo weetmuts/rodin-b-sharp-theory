@@ -18,6 +18,7 @@ import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.modules.OperatorFilterModule;
 import org.eventb.theory.core.sc.modules.OperatorModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see OperatorModule
@@ -30,6 +31,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Missing syntax/label
 	 */
+	@Test
 	public void testOperators_001_NoLabel() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op2 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -47,6 +49,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Label/syntax conflict
 	 */
+	@Test
 	public void testOperators_002_LabelConf() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -65,6 +68,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Syntax is a type par
 	 */
+	@Test
 	public void testOperators_003_SynIsTypePar() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -80,6 +84,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Syntax is invalid
 	 */
+	@Test
 	public void testOperators_004_SynInvalid() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -94,6 +99,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Syntax exists already
 	 */
+	@Test
 	public void testOperators_005_SynExists() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -108,6 +114,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Formula type issues
 	 */
+	@Test
 	public void testOperators_006_NoFormType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -122,6 +129,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Notation type issues
 	 */
+	@Test
 	public void testOperators_017_NoNotationType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -135,6 +143,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 				"seq");
 	}
 
+	@Test
 	public void testOperators_007_PostfixNotSupported() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -151,6 +160,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Associativity tag issues
 	 */
+	@Test
 	public void testOperators_008_NoAssoc() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -167,6 +177,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Commutativity tag issues
 	 */
+	@Test
 	public void testOperators_009_NoCommut() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
@@ -184,6 +195,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Operator arguments missing ident
 	 */
+	@Test
 	public void testOperators_010_OpArgMissIdent() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition def = addRawOperatorDefinition(root, "seq", Notation.PREFIX, FormulaType.EXPRESSION,
@@ -202,6 +214,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Operator arguments ident issue
 	 */
+	@Test
 	public void testOperators_011_OpArgIdentIssues() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -226,6 +239,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Operator arguments missing type
 	 */
+	@Test
 	public void testOperators_012_OpArgMissType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition def = addRawOperatorDefinition(root, "seq", Notation.PREFIX, FormulaType.EXPRESSION,
@@ -245,6 +259,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Operator arguments type issues
 	 */
+	@Test
 	public void testOperators_013_OpArgTypeIssues() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -274,6 +289,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Operator WD cond missing
 	 */
+	@Test
 	public void testOperators_014_WdCondMissing() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -296,6 +312,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * WD cond unparsable/untypable
 	 */
+	@Test
 	public void testOperators_015_WdCondUntypUnpars() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T", "W");
@@ -326,6 +343,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Syntactic properties tests
 	 */
+	@Test
 	public void testOperators_016_InfixNeedTwoArgs() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op = addRawOperatorDefinition(root, "add", Notation.INFIX, FormulaType.EXPRESSION,
@@ -339,6 +357,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(op, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorExpInfixNeedsAtLeastTwoArgs);
 	}
 
+	@Test
 	public void testOperators_018_PredOnlyPrefix() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op = addRawOperatorDefinition(root, "equals", Notation.INFIX, FormulaType.PREDICATE,
@@ -350,6 +369,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(op, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredOnlyPrefix);
 	}
 
+	@Test
 	public void testOperators_019_PredNeedsOneArg() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op = addRawOperatorDefinition(root, "equals", Notation.PREFIX, FormulaType.PREDICATE,
@@ -366,6 +386,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Direct definitions testing
 	 */
+	@Test
 	public void testOperators_020_DirectDefMissingForm() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -381,6 +402,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
 	}
 
+	@Test
 	public void testOperators_021_OpDefNotExpr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition opDef = addRawOperatorDefinition(root, "add", Notation.INFIX, FormulaType.EXPRESSION,
@@ -396,6 +418,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotExpError, "add");
 	}
 
+	@Test
 	public void testOperators_022_OpDefNotPred() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition opDef = addRawOperatorDefinition(root, "equals", Notation.PREFIX, FormulaType.PREDICATE,
@@ -411,6 +434,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotPredError, "equals");
 	}
 
+	@Test
 	public void testOperators_023_OpDefRefersToIllegalIdents() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -427,6 +451,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OpCannotReferToTheseIdents, "T, c");
 	}
 
+	@Test
 	public void testOperators_024_OpDefUnpars() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition opDef = addRawOperatorDefinition(root, "equals", Notation.PREFIX, FormulaType.PREDICATE,
@@ -442,6 +467,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE);
 	}
 
+	@Test
 	public void testOperators_025_OpDefUntyp() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition opDef = addRawOperatorDefinition(root, "equals", Notation.PREFIX, FormulaType.PREDICATE,
@@ -460,6 +486,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Recursive definition testing
 	 */
+	@Test
 	public void testOperators_026_IndArgMissing() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -487,6 +514,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasNotMarker(opDef1);
 	}
 
+	@Test
 	public void testOperators_027_IndArgProb() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -523,6 +551,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Inductive cases problems
 	 */
+	@Test
 	public void testOperators_028_NoRecCases() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -541,6 +570,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(recDef, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE, TheoryGraphProblem.NoRecCasesError);
 	}
 
+	@Test
 	public void testOperators_029_NoExpInCase() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -565,6 +595,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(recCase2, EventBAttributes.EXPRESSION_ATTRIBUTE, GraphProblem.ExpressionUndefError);
 	}
 	
+	@Test
 	public void testOperators_030_UnparsCase() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -591,6 +622,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(recCase2, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.InductiveCaseNotAppropriateExp, "List(T)");
 	}
 	
+	@Test
 	public void testOperators_031_IllegalCase() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -621,6 +653,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(recCase3, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.IdentCannotBeUsedAsConsArg, "l");
 	}
 	
+	@Test
 	public void testOperators_032_CoveredCons() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -654,6 +687,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(recCase4, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.RecCaseAlreadyCovered);
 	}
 	
+	@Test
 	public void testOperators_033_ConsCoverage() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");

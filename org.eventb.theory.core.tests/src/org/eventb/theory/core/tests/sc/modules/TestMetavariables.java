@@ -10,6 +10,7 @@ import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.modules.MetavariableFilterModule;
 import org.eventb.theory.core.sc.modules.MetavariableModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see MetavariableModule
@@ -22,6 +23,7 @@ public class TestMetavariables extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * No Error
 	*/
+	@Test
 	public void testMetavariables_001_NoError() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -35,6 +37,7 @@ public class TestMetavariables extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Ident issues
 	 */
+	@Test
 	public void testMetavariables_002_IdentIssue() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -53,6 +56,7 @@ public class TestMetavariables extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Type issues
 	 */
+	@Test
 	public void testMetavariables_003_TypeIssue() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -65,6 +69,8 @@ public class TestMetavariables extends BasicTheorySCTestWithThyConfig {
 		hasMarker(v1, TheoryAttributes.TYPE_ATTRIBUTE);
 		hasMarker(v2, TheoryAttributes.TYPE_ATTRIBUTE);
 	}
+	
+	@Test
 	public void testMetavariables_004_TypeIssue() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -76,6 +82,8 @@ public class TestMetavariables extends BasicTheorySCTestWithThyConfig {
 		getProofRulesBlock(root.getSCTheoryRoot(), BLOCK_LABEL);
 		hasMarker(v1, TheoryAttributes.TYPE_ATTRIBUTE, TheoryGraphProblem.TypeAttrMissingError, "v1");
 	}
+	
+	@Test
 	public void testMetavariables_005_TypeIssue() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -86,6 +94,8 @@ public class TestMetavariables extends BasicTheorySCTestWithThyConfig {
 		getProofRulesBlock(root.getSCTheoryRoot(), BLOCK_LABEL);
 		hasMarker(v1, TheoryAttributes.TYPE_ATTRIBUTE, GraphProblem.UndeclaredFreeIdentifierError, "S");
 	}
+	
+	@Test
 	public void testMetavariables_006_TypeIssue() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);

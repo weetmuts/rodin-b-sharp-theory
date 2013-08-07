@@ -3,6 +3,11 @@ package org.eventb.theory.core.tests.sc;
 import static org.eclipse.core.resources.IMarker.MESSAGE;
 import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
 
 import java.util.ArrayList;
@@ -64,13 +69,13 @@ public abstract class BasicTheorySCTest extends TheoryTest {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		sourceRoots.clear();
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		sourceRoots.clear();
 		super.tearDown();
 	}
@@ -87,10 +92,6 @@ public abstract class BasicTheorySCTest extends TheoryTest {
 
 	public BasicTheorySCTest() {
 		super();
-	}
-
-	public BasicTheorySCTest(String name) {
-		super(name);
 	}
 
 	public static void isPredicateOperator(ISCNewOperatorDefinition operatorDefinition) throws RodinDBException {

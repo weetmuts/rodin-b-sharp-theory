@@ -1,17 +1,20 @@
 package org.eventb.theory.core.tests.sc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
+import org.junit.Test;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinMarkerUtil;
 
@@ -20,7 +23,7 @@ import org.rodinp.core.RodinMarkerUtil;
  * @author maamria
  * 
  */
-public class GraphProblemTest extends TestCase{
+public class GraphProblemTest {
 
 	private static class Spec implements Comparable<Spec> {
 
@@ -189,6 +192,7 @@ public class GraphProblemTest extends TestCase{
 		/**
 		 * check whether the messages loaded from the properties take the correct number of parameters.
 		 */
+		@Test
 		public void testArguments() throws Exception {
 			for (Spec spec : specs) {
 				assertEquals("wrong number of arguments", spec.arity, spec.problem.getArity());
@@ -198,6 +202,7 @@ public class GraphProblemTest extends TestCase{
 		/**
 		 * check whether the messages loaded from the properties file are complete
 		 */
+		@Test
 		public void testMessages() throws Exception {
 			Set<IRodinProblem> problems = new HashSet<IRodinProblem>(specs.length * 4 / 3 + 1);
 			for (Spec spec : specs) {

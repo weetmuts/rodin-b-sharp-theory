@@ -3,6 +3,9 @@
  */
 package org.eventb.theory.language.core.tests.sc.modules;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.theory.core.IDeployedTheoryRoot;
@@ -11,6 +14,7 @@ import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.language.core.tests.sc.BasicTestSCTheoryPath;
+import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 
 /**
@@ -22,6 +26,7 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	/**
 	 * No Error
 	 */
+	@Test
 	public void testTheoryPath_001_NoError() throws Exception {
 		ITheoryPathRoot root = createTheoryPath(THEORYPATH_NAME, rodinProject);
 		IDeployedTheoryRoot dt1 = createDeployedTheory("dt1");
@@ -39,6 +44,7 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	/**
 	 * No Error, deployed theory from different project
 	 */
+	@Test
 	public void testTheoryPath_002_NoError() throws Exception {
 		IRodinProject rodinProject = createRodinProject("PRJ1");
 		ITheoryPathRoot root = createTheoryPath(THEORYPATH_NAME, rodinProject);
@@ -57,6 +63,7 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	/**
 	 * Error, project where the deployed theory is located was deleted
 	 */
+	@Test
 	public void testTheoryPath_003_DeletedProject() throws Exception {
 		IRodinProject rodinProject = createRodinProject("PRJ1");
 		ITheoryPathRoot root = createTheoryPath(THEORYPATH_NAME, super.rodinProject);
@@ -77,6 +84,7 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	/**
 	 * Error, project where the deployed theory is located was closed
 	 */
+	@Test
 	public void testTheoryPath_004_ClosedProject() throws Exception {
 		IRodinProject rodinProject = createRodinProject("PRJ1");
 		ITheoryPathRoot root = createTheoryPath(THEORYPATH_NAME, super.rodinProject);
@@ -97,6 +105,7 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	/**
 	 * Error, deployed theory does not exist
 	 */
+	@Test
 	public void testTheoryPath_005_NoDeployedTheory() throws Exception {
 		IRodinProject rodinProject = createRodinProject("PRJ1");
 		ITheoryPathRoot root = createTheoryPath(THEORYPATH_NAME, rodinProject);
@@ -117,6 +126,7 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	/**
 	 * Error, deployed theory clashes with another in the same project
 	 */
+	@Test
 	public void testTheoryPath_006_DeployedTheoryClash() throws Exception {
 		IProgressMonitor monitor = new NullProgressMonitor();
 		String operatorName = "op1";
@@ -136,6 +146,7 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	/**
 	 * Error, deployed theory clashes with another in the different projects
 	 */
+	@Test
 	public void testTheoryPath_007_DeployedTheoryDifferentProjectClash() throws Exception {
 		IProgressMonitor monitor = new NullProgressMonitor();
 		IRodinProject prj2 = createRodinProject("PRJ2");

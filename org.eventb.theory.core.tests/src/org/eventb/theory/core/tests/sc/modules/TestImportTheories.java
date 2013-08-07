@@ -8,6 +8,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.modules.ImportTheoryModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see ImportTheoryModule
@@ -19,6 +20,7 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * No error
 	 */
+	@Test
 	public void testImportTheories_001_NoError() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
@@ -35,6 +37,7 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	 * Import attr missing
 	 */
 	
+	@Test
 	public void testImportTheories_002_ImportAttrMissing() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IImportTheory t = root.createChild(IImportTheory.ELEMENT_TYPE, null, null);
@@ -48,6 +51,7 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Target does not exist
 	 */
+	@Test
 	public void testImportTheories_003_ImportTargetNotExist() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addImportTheory(root, THEORY_NAME + 1);
@@ -62,6 +66,7 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Direct redundancy 
 	 */
+	@Test
 	public void testImportTheories_005_ImportDirectRedundancy() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
@@ -79,6 +84,7 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Indirect redundancy
 	 */
+	@Test
 	public void testImportTheories_006_IndirectRedundancy() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
@@ -97,6 +103,7 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Math extensions conflict
 	 */
+	@Test
 	public void testImportTheories_007_MathExtConflict() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);

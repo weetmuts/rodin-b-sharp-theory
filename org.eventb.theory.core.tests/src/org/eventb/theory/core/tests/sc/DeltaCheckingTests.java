@@ -3,6 +3,7 @@ package org.eventb.theory.core.tests.sc;
 import org.eventb.core.IPORoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
+import org.junit.Test;
 
 /**
  * 
@@ -15,6 +16,7 @@ public class DeltaCheckingTests extends BasicTheorySCTestWithThyConfig {
 	 * Ensures that the statically-checked file of a theory is modified only
 	 * when needed.
 	 */
+	@Test
 	public void testDeltaTheory() throws Exception {
 		final ITheoryRoot root = createTheory("thy");
 		final ISCTheoryRoot sc = root.getSCTheoryRoot();
@@ -32,6 +34,7 @@ public class DeltaCheckingTests extends BasicTheorySCTestWithThyConfig {
 	 * Ensures that the statically-checked file of a theory is modified only
 	 * when needed, when another theory (for instance an ancestor) has changed.
 	 */
+	@Test
 	public void testDeltaTheoryIndirect() throws Exception {
 		final ITheoryRoot rootParent = createTheory("abs");
 		final ISCTheoryRoot scParent = rootParent.getSCTheoryRoot();

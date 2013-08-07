@@ -3,6 +3,9 @@
  */
 package org.eventb.theory.core.tests.dependencies;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Iterator;
 import java.util.Set;
 

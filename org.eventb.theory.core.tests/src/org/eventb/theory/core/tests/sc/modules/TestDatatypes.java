@@ -14,6 +14,7 @@ import org.eventb.theory.core.sc.modules.DatatypeConstructorModule;
 import org.eventb.theory.core.sc.modules.DatatypeDestructorModule;
 import org.eventb.theory.core.sc.modules.DatatypeModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see DatatypeModule
@@ -27,6 +28,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * No Error
 	 */
+	@Test
 	public void testDatatypes_001_NoError() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -45,6 +47,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Datatype name missing
 	 */
+	@Test
 	public void testDatatypes_002_DtNameMissing() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IDatatypeDefinition dt = root.createChild(IDatatypeDefinition.ELEMENT_TYPE, null, null);
@@ -61,6 +64,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Illegal identifier
 	 */
+	@Test
 	public void testDatatypes_003_IllegIdent() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IDatatypeDefinition dt = addDatatypeDefinition(root, "finite", makeSList(), makeSList(), new String[][] {},
@@ -80,6 +84,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Name clash with type par
 	 */
+	@Test
 	public void testDatatypes_004_ClashTypePar() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -97,6 +102,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Local theory dt conflicts between names
 	 */
+	@Test
 	public void testDatatypes_005_LocNameConf() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -129,6 +135,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * error in type arguments
 	 */
+	@Test
 	public void testDatatypes_006_TypeArgNoArg() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -150,6 +157,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * type argument type not defined
 	 */
+	@Test
 	public void testDatatypes_007_TypeArgUndef() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -171,6 +179,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * type argument redundant
 	 */
+	@Test
 	public void testDatatypes_008_TypeArgRedund() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -192,6 +201,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * missing element constructors
 	 */
+	@Test
 	public void testDatatypes_009_NoElmnCons() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -209,6 +219,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * no base constructors
 	 */
+	@Test
 	public void testDatatypes_010_NoBaseCons() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -226,6 +237,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * constructor missing identifier
 	 */
+	@Test
 	public void testDatatypes_011_NoConsIdent() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -244,6 +256,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * constructor name unparsable
 	 */
+	@Test
 	public void testDatatypes_012_UnparsCons() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -262,6 +275,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * constructor a type par
 	 */
+	@Test
 	public void testDatatypes_013_ConsIsTypePar() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -280,6 +294,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * constructor name clash
 	 */
+	@Test
 	public void testDatatypes_014_ConsNameClash() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -301,6 +316,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * missing destructor argument identifier
 	 */
+	@Test
 	public void testDatatypes_015_NoDestIdent() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -321,6 +337,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * destructor name unparsable
 	 */
+	@Test
 	public void testDatatypes_016_UnparsDest() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -340,6 +357,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * destructor name a type par
 	 */
+	@Test
 	public void testDatatypes_017_DestIsTypePar() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -358,6 +376,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * destructor MISSING type
 	 */
+	@Test
 	public void testDatatypes_018_NoDestType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -378,6 +397,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * destructor name clash
 	 */
+	@Test
 	public void testDatatypes_019_DestNameClash() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -401,6 +421,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * destructor type issue
 	 */
+	@Test
 	public void testDatatypes_020_DestTypeIssue() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
@@ -418,6 +439,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		hasError(scDt);
 		hasMarker(dest, TheoryAttributes.TYPE_ATTRIBUTE);
 	}
+	@Test
 	public void testDatatypes_021() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("T", "S"));

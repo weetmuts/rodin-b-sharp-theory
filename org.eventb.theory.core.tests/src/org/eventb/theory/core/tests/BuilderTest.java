@@ -1,6 +1,6 @@
 package org.eventb.theory.core.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -20,6 +20,8 @@ import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -27,7 +29,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.internal.core.debug.DebugHelpers;
 
-public abstract class BuilderTest extends TestCase {
+public abstract class BuilderTest {
 
 	public static final String PLUGIN_ID = "org.eventb.theory.core.tests";
 	
@@ -41,10 +43,6 @@ public abstract class BuilderTest extends TestCase {
 		super();
 	}
 
-	public BuilderTest(String name) {
-		super(name);
-	}
-	
 	protected ITheoryRoot createTheory(String bareName, IRodinProject rodinProject) throws RodinDBException {
 		final ITheoryRoot result = DatabaseUtilities.getTheory(bareName, rodinProject);
 		createRodinFileOf(result);
@@ -105,9 +103,8 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		
 		// ensure autobuilding is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
@@ -146,10 +143,9 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		cleanupWorkspace();
-		super.tearDown();
 	}
 
 	/**

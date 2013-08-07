@@ -1,5 +1,8 @@
 package org.eventb.theory.core.tests;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,10 +68,6 @@ public abstract class TheoryTest extends BuilderTest {
 
 	public TheoryTest() {
 		super();
-	}
-
-	public TheoryTest(String name) {
-		super(name);
 	}
 
 	public void addTypeParameters(IRodinFile rodinFile, String... names) throws RodinDBException {
@@ -407,13 +406,13 @@ public abstract class TheoryTest extends BuilderTest {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		roots = new HashSet<IEventBRoot>();
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		roots = null;
 		super.tearDown();
 	}

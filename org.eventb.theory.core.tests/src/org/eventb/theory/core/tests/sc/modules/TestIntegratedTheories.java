@@ -9,6 +9,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * 
@@ -25,6 +26,7 @@ public class TestIntegratedTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * No conflict errors between theorems, rule blocks and rewrite rules
 	 */
+	@Test
 	public void testIntegratedTheories_001_NoLabelConf_Thm_RBlock_Rew() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheorem thm = addTheorem(root, BLOCK_LABEL, "1=1");
@@ -41,6 +43,7 @@ public class TestIntegratedTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * No conflict errors between theorems, rule blocks and inference rules
 	 */
+	@Test
 	public void testIntegratedTheories_002_NoLabelConf_Thm_RBlock_Inf() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheorem thm = addTheorem(root, BLOCK_LABEL, "1=1");
@@ -56,6 +59,7 @@ public class TestIntegratedTheories extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Conflict error between theorems, rule blocks and inference rules
 	 */
+	@Test
 	public void testIntegratedTheories_003_LabelConf_Rew_Inf() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock blk = addProofRulesBlock(root, BLOCK_LABEL);

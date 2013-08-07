@@ -6,6 +6,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * 
@@ -17,6 +18,7 @@ public class TestAxiomaticBlocks extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * no error
 	 */
+	@Test
 	public void testAxiomaticBlocks_001_NoError() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);
@@ -31,6 +33,7 @@ public class TestAxiomaticBlocks extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Missing label
 	*/
+	@Test
 	public void testAxiomaticBlocks_002_NoLabel() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IAxiomaticDefinitionsBlock blk = root.createChild(IAxiomaticDefinitionsBlock.ELEMENT_TYPE, null, null);
@@ -44,6 +47,7 @@ public class TestAxiomaticBlocks extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * conflict labels
 	 */
+	@Test
 	public void testAxiomaticBlocks_003_LabelConf() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IAxiomaticDefinitionsBlock blk1 = addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);

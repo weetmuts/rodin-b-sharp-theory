@@ -1,7 +1,10 @@
 package org.eventb.theory.core.tests.sc.modules;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.IRewriteRuleRightHandSide;
@@ -9,13 +12,13 @@ import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.modules.RewriteRuleFilterModule;
 import org.eventb.theory.core.sc.modules.RewriteRuleModule;
 import org.eventb.theory.core.sc.modules.RewriteRuleRHSFilterModule;
 import org.eventb.theory.core.sc.modules.RewriteRuleRHSModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * 
@@ -30,6 +33,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * No Error
 	 */
+	@Test
 	public void testRewriteRule_001_NoError() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -47,6 +51,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * missing label
 	 */
+	@Test
 	public void testRewriteRule_002_MissingLabel() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -61,6 +66,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * conflict labels
 	 */
+	@Test
 	public void testRewriteRule_003_LabelConflict() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -82,6 +88,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * missing formula
 	 */
+	@Test
 	public void testRewriteRule_004_MissingLhsFormula() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -97,6 +104,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * problem with formula
 	 */
+	@Test
 	public void testRewriteRule_006_EmptyStrFormula() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -112,6 +120,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * issues with formula
 	 */
+	@Test
 	public void testRewriteRule_007_UnparsableLhs() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -143,6 +152,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * wd-strict issues
 	 */
+	@Test
 	public void testRewriteRule_008_WDStrictess() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -174,6 +184,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * untypable lhs
 	 */
+	@Test
 	public void testRewriteRule_028_UntypableLhs() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("S"));
@@ -196,6 +207,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	
 	// to test the case where an undeclared variable appears only on the rhs of
 	// a oftype
+	@Test
 	public void testRewriteRule_010_UndeclaredIdentInOfTypeInLhs() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -211,6 +223,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * complete attr missing
 	 */
+	@Test
 	public void testRewriteRule_011_MissingCompleteAttr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -232,6 +245,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * applicability attr missing
 	 */
+	@Test
 	public void testRewriteRule_012_MissingApplAttr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -250,6 +264,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * desc attr missing
 	 */
+	@Test
 	public void testRewriteRule_013_MissingDescAttr() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "S");
@@ -272,6 +287,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * test no rhs's
 	 */
+	@Test
 	public void testRewriteRule_014_NoRHSs() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -288,6 +304,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * missing rhs label
 	 */
+	@Test
 	public void testRewriteRule_015_MissingRHSLabel() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -306,6 +323,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * conflict in labels
 	 */
+	@Test
 	public void testRewriteRule_016_RHSLabelConflict() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -326,6 +344,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	 * problem with condition of rhs
 	 */
 	// condition attr absent
+	@Test
 	public void testRewriteRule_017_MissingRHSCondition() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -344,6 +363,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * condition unparsable
 	 */
+	@Test
 	public void testRewriteRule_018_UnparsableRHSCondition() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -361,6 +381,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * some idents in condition are not defined/ cond cannot be typed
 	 */
+	@Test
 	public void testRewriteRule_019_RHSCOnditionIdentNotDecl_or_CondCannotType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -380,6 +401,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * some condition identifiers do not occur in left hand side
 	 */
+	@Test
 	public void testRewriteRule_020_CondHasIdentNotInLHS() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -400,6 +422,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * condition contains undeclared identifier
 	 */
+	@Test
 	public void testRewriteRule_021_CondHasUndeclIdents() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -419,6 +442,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * rhs unparsable
 	 */
+	@Test
 	public void testRewriteRule_022_RHSFormulaUnparsable() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -436,6 +460,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * some idents in rhs are not defined/ rhs cannot be typed
 	 */
+	@Test
 	public void testRewriteRule_023_RHSFormulaHasUndeclIdents_or_RHSFormulaCannotType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IRewriteRule rew = addRewriteRule(root, BLOCK_LABEL, REWRITE_LABEL, "1=2", true,
@@ -455,6 +480,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * some rhs identifiers do not occur in left hand side
 	 */
+	@Test
 	public void testRewriteRule_024_RHSHasIdentNotInLHS() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -475,6 +501,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * rhs contains undeclared identifier
 	 */
+	@Test
 	public void testRewriteRule_025_RHSFormulaHasUndeclIdents() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -494,6 +521,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * rhs does not have same type as lhs
 	 */
+	@Test
 	public void testRewriteRule_026_RHSandLHSTypeClash() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);
@@ -512,6 +540,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Syntactic class mismatch
 	 */
+	@Test
 	public void testRewriteRule_027_RHSandLHSSynClassMismatch() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock block = addProofRulesBlock(root, BLOCK_LABEL);

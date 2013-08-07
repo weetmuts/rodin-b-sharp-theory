@@ -3,6 +3,9 @@
  */
 package org.eventb.theory.language.core.tests.sc;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.util.HashSet;
 import java.util.Set;
 

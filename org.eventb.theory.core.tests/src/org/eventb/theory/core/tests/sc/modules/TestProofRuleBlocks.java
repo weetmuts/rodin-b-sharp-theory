@@ -7,6 +7,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.modules.ProofRulesBlockModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see ProofRulesBlockModule
@@ -17,6 +18,7 @@ public class TestProofRuleBlocks extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Missing label
 	*/
+	@Test
 	public void testProofRuleBlocks_001_NoLabel() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock blk = root.createChild(IProofRulesBlock.ELEMENT_TYPE, null, null);
@@ -31,6 +33,7 @@ public class TestProofRuleBlocks extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * conflict labels
 	 */
+	@Test
 	public void testProofRuleBlocks_003_LabelConf() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IProofRulesBlock blk1 = addProofRulesBlock(root, BLOCK_LABEL);
@@ -47,6 +50,7 @@ public class TestProofRuleBlocks extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * No Error
 	*/
+	@Test
 	public void testProofRuleBlocks_002_NoError() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addProofRulesBlock(root, BLOCK_LABEL);

@@ -4,6 +4,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.sc.modules.TypeParameterModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see TypeParameterModule
@@ -15,6 +16,7 @@ public class TestTypeParameters extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * No error
 	 */
+	@Test
 	public void testTypeParameters_001_NoError() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("T"));
@@ -24,6 +26,7 @@ public class TestTypeParameters extends BasicTheorySCTestWithThyConfig{
 		containsMarkers(root, false);
 		isAccurate(root.getSCTheoryRoot());
 	}
+	@Test
 	public void testTypeParameters_002_NoError() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("T1", "T2"));
@@ -37,6 +40,7 @@ public class TestTypeParameters extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Conflict between two type parameters
 	 */
+	@Test
 	public void testTypeParameters_003_NameConf() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("T1", "T1"));
@@ -52,6 +56,7 @@ public class TestTypeParameters extends BasicTheorySCTestWithThyConfig{
 	/**
 	 * Faulty names
 	 */
+	@Test
 	public void testTypeParameters_004_FaultyNames() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("S>", "k-1", "#"));

@@ -5,6 +5,7 @@ import org.eventb.theory.core.ITheorem;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.sc.modules.TheoremModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * @see TheoremModule
@@ -16,6 +17,7 @@ public class TestTheorems extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * No Error
 	 */
+	@Test
 	public void testTheorems_001() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTheorem(root, THEOREM_LABEL, "1=1");
@@ -29,6 +31,7 @@ public class TestTheorems extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Missing label
 	 */
+	@Test
 	public void testTheorems_002() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheorem thm = root.createChild(ITheorem.ELEMENT_TYPE, null, null);
@@ -43,6 +46,7 @@ public class TestTheorems extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Missing predicate
 	 */
+	@Test
 	public void testTheorems_003() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheorem thm = root.createChild(ITheorem.ELEMENT_TYPE, null, null);
@@ -57,6 +61,7 @@ public class TestTheorems extends BasicTheorySCTestWithThyConfig {
 	/**
 	 * Unparsable
 	 */
+	@Test
 	public void testTheorems_004() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTheorem(root, THEOREM_LABEL, "asdas ad");

@@ -1,5 +1,8 @@
 package org.eventb.theory.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -10,6 +13,7 @@ import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.IUseTheory;
+import org.junit.Test;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -50,6 +54,7 @@ public class TheoryClauseTests extends BuilderTest {
 		}
 	}
 	
+	@Test
 	public void testImportTheoryAbsent() throws Exception {
 		final ITheoryRoot thy = createTheory("foo");
 		final IImportTheory clause = thy.createChild(
@@ -62,6 +67,7 @@ public class TheoryClauseTests extends BuilderTest {
 		});
 	}
 	
+	@Test
 	public void testImportTheory() throws Exception {
 		final ITheoryRoot thy = createTheory("foo");
 		final IImportTheory clause = thy.createChild(
@@ -71,6 +77,7 @@ public class TheoryClauseTests extends BuilderTest {
 		assertEquals(target, clause.getImportTheory());
 	}
 	
+	@Test
 	public void testUseTheoryAbsent() throws Exception{
 		final IDeployedTheoryRoot thy = createDeployedTheory("foo");
 		final IUseTheory clause = thy.createChild(
@@ -83,6 +90,7 @@ public class TheoryClauseTests extends BuilderTest {
 		});
 	}
 	
+	@Test
 	public void testUseTheory() throws Exception {
 		final IDeployedTheoryRoot thy = createDeployedTheory("foo");
 		final IUseTheory clause = thy.createChild(

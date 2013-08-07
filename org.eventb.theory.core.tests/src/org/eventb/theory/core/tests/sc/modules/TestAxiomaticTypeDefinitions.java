@@ -8,6 +8,7 @@ import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
+import org.junit.Test;
 
 /**
  * 
@@ -16,6 +17,7 @@ import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
  */
 public class TestAxiomaticTypeDefinitions extends BasicTheorySCTestWithThyConfig{
 
+	@Test
 	public void testAxiomaticTypeDefinitions_001_NoError() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IAxiomaticDefinitionsBlock adb = addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);
@@ -27,6 +29,7 @@ public class TestAxiomaticTypeDefinitions extends BasicTheorySCTestWithThyConfig
 		getSCAxiomaticTypeDefinition(scAdb, "REAL");
 	}
 	
+	@Test
 	public void testAxiomaticTypeDefinitions_002_NoIdent() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IAxiomaticDefinitionsBlock adb = addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);
@@ -38,6 +41,7 @@ public class TestAxiomaticTypeDefinitions extends BasicTheorySCTestWithThyConfig
 		hasMarker(atd, EventBAttributes.IDENTIFIER_ATTRIBUTE, GraphProblem.IdentifierUndefError);
 	}
 	
+	@Test
 	public void testAxiomaticTypeDefinitions_003_IdentProb() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "LP");
@@ -54,6 +58,7 @@ public class TestAxiomaticTypeDefinitions extends BasicTheorySCTestWithThyConfig
 		hasMarker(at3, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.AxiomaticTypeNameAlreadyATypeParError, "LP");
 	}
 	
+	@Test
 	public void testAxiomaticTypeDefinitions_004_AugmentFF() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IAxiomaticDefinitionsBlock adb = addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);

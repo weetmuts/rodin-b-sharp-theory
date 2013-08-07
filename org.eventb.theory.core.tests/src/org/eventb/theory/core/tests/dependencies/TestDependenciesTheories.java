@@ -3,12 +3,16 @@
  */
 package org.eventb.theory.core.tests.dependencies;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.maths.extensions.dependencies.ProjectTheoryGraph;
+import org.junit.Test;
 
 /**
  * Tests for theories dependencies (theories that import other theories)
@@ -21,6 +25,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	/**
 	 * No Error: thy2 imports thy1
 	 */
+	@Test
 	public void testTheoryDependency_001_NoError() throws Exception {
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
@@ -46,6 +51,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	/**
 	 * No Error: th2 imports thy0. thy0 imports thy1.
 	 */
+	@Test
 	public void testTheoryDependency_002_NoError() throws Exception {
 		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
@@ -90,6 +96,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	/**
 	 * Cycle detected (Error): th2 imports thy1 and th1 imports thy2: cycle should be detected by the builder
 	 */
+	@Test
 	public void testTheoryDependency_003_CycleError() throws Exception {
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
@@ -111,6 +118,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 * No Error: thy0 imports thy1 and thy2 imports thy3: independent theories graphs
 	 * the order is not relevant as long as thy1 is before thy0 and thy3 is before thy2
 	 */
+	@Test
 	public void testTheoryDependency_004_IndependentGraphsNoError() throws Exception {
 		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
@@ -168,6 +176,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 * No Error: thy0 imports thy1 and thy2 imports thy1: dependent theories graphs
 	 * the order is not relevant as long as thy1 is before both thy0 and thy2
 	 */
+	@Test
 	public void testTheoryDependency_005_DependentGraphsNoError() throws Exception {
 		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
@@ -214,6 +223,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 * No Error: thy0 imports thy1,thy2 and thy2 imports thy3
 	 * the order is thy3, then thy1 or thy2 then thy0
 	 */
+	@Test
 	public void testTheoryDependency_006_MultipleImports_NoError() throws Exception {
 		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
@@ -258,6 +268,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 * No Error: thy0 imports thy1,th2; thy2 imports thy3,thy4; and thy4 imports thy5
 	 * the order is thy5, then thy3 or thy4, then thy2, then thy1, then thy0
 	 */
+	@Test
 	public void testTheoryDependency_006_1_MultipleImports_NoError() throws Exception {
 		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
