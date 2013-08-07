@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.IUseTheory;
 import org.rodinp.core.IRodinDBStatus;
@@ -67,7 +66,7 @@ public class TheoryClauseTests extends BuilderTest {
 		final ITheoryRoot thy = createTheory("foo");
 		final IImportTheory clause = thy.createChild(
 				IImportTheory.ELEMENT_TYPE, null, null);
-		final ISCTheoryRoot target = DatabaseUtilities.getSCTheory("bar", rodinProject);
+		final IDeployedTheoryRoot target = DatabaseUtilities.getDeployedTheory("bar", rodinProject);
 		clause.setImportTheory(target, null);
 		assertEquals(target, clause.getImportTheory());
 	}

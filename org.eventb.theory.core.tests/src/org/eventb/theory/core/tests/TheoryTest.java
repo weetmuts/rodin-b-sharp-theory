@@ -18,6 +18,7 @@ import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.IConstructorArgument;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.IGiven;
 import org.eventb.theory.core.IImportTheory;
@@ -89,7 +90,7 @@ public abstract class TheoryTest extends BuilderTest {
 
 	public void addImportTheory(ITheoryRoot root, String name) throws RodinDBException {
 		IImportTheory importThy = root.createChild(IImportTheory.ELEMENT_TYPE, null, null);
-		ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(name, rodinProject);
+		IDeployedTheoryRoot scRoot = DatabaseUtilities.getDeployedTheory(name, rodinProject);
 		importThy.setImportTheory(scRoot, null);
 	}
 
