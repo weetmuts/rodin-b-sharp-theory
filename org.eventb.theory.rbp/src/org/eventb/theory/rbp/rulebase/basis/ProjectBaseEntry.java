@@ -67,6 +67,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	@Override
 	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
+		// case when POContext is a theory
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
 			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
@@ -86,7 +87,8 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 			}
 		}
-		else {
+		// case when POContext is a context/machine; so no need add the local theories; local theories need to be imported in the theorypath
+		/*else {
 			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
 			for (IDeployedTheoryRoot deployedTheoryRoot : deployedTheoryRoots){
 				if(!deployedRoots.containsKey(deployedTheoryRoot)){
@@ -95,7 +97,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 				toReturn.addAll(deployedRoots.get(deployedTheoryRoot).getRewriteRules(automatic, clazz, factory));
 			}
-		}
+		}*/
 		return toReturn;
 	}
 
@@ -122,6 +124,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, 
 			IEventBRoot root,FormulaFactory factory){
 		List<IDeployedInferenceRule> toReturn = new ArrayList<IDeployedInferenceRule>();
+		// case when POContext is a theory
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
@@ -135,7 +138,8 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 			}
 		}
-		else {
+		// case when POContext is a context/machine; so no need add the local theories; local theories need to be imported in the theorypath
+		/*else {
 			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
 			for (IDeployedTheoryRoot deployedTheoryRoot : deployedTheoryRoots){
 				if(!deployedRoots.containsKey(deployedTheoryRoot)){
@@ -144,7 +148,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 				toReturn.addAll(deployedRoots.get(deployedTheoryRoot).getInferenceRules(automatic, type, factory));
 			}
-		}
+		}*/
 		return toReturn;
 	}
 	

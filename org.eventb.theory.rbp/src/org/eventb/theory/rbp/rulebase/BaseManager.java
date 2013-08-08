@@ -50,7 +50,7 @@ import org.rodinp.core.RodinCore;
 /**
  * An implementation of the rule base manager.
  * 
- * @author maamria
+ * @author maamria, nicolas, asieh
  * 
  */
 public class BaseManager implements IElementChangedListener {
@@ -64,28 +64,35 @@ public class BaseManager implements IElementChangedListener {
 		RodinCore.addElementChangedListener(this);
 	}
 
-	public Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(IPOContext context,
-			FormulaFactory factory) {
+	public Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(
+			IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
 		Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>>();
-		// add theory path stuff
-		for (IDeployedTheoryRoot theory : getTheoriesFromPath(rodinProject)) {
-			final IRodinProject thyProject = theory.getRodinProject();
-			IProjectBaseEntry projBaseEntry = projectEntries.get(thyProject);
-			if (projBaseEntry != null) {
-				if (!map.containsKey(thyProject)) {
-					map.put(thyProject, new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
+			// add theory path stuff
+			for (IDeployedTheoryRoot theory : getTheoriesFromPath(rodinProject)) {
+				final IRodinProject thyProject = theory.getRodinProject();
+				IProjectBaseEntry projBaseEntry = projectEntries
+						.get(thyProject);
+				if (projBaseEntry != null) {
+					if (!map.containsKey(thyProject)) {
+						map.put(thyProject,
+								new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
+					}
+					final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map
+							.get(thyProject);
+					ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
+							.getTheoryBaseEntry(theory);
+					thms.put(theory,
+							theoryBaseEntry.getDeployedTheorems(factory));
 				}
-				final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map.get(thyProject);
-				ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
-						.getTheoryBaseEntry(theory);
-				thms.put(theory, theoryBaseEntry.getDeployedTheorems(factory));
 			}
-		}
 
-		map.put(rodinProject, projectEntries.get(rodinProject).getTheorems(context, factory));
+			map.put(rodinProject,
+					projectEntries.get(rodinProject).getTheorems(context,
+							factory));
+		
 		return map;
 	}
 
@@ -99,19 +106,24 @@ public class BaseManager implements IElementChangedListener {
 	 *            the proof obligation context
 	 * @return the list of rewrite rules
 	 */
-	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, IPOContext context) {
+	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz,
+			IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		// add theory path stuff
-		for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
-			rules.addAll(theoryBaseEntry.getDefinitionalRules(context.getFormulaFactory()));
+		//case when POcontext is a theory
+		if (context.isTheoryRelated()) {
+			rules.addAll(projectEntries.get(rodinProject).getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
 		}
-
-		// the local theories needs to be imported in the theory path
-		//rules.addAll(projectEntries.get(rodinProject).getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
-
+		//case when POcontext is a context/machine
+		else {
+			// add theory path stuff
+			for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
+				rules.addAll(theoryBaseEntry.getDefinitionalRules(context
+						.getFormulaFactory()));
+			}
+		}
 		return rules;
 	}
 
@@ -133,22 +145,22 @@ public class BaseManager implements IElementChangedListener {
 		return entries;
 	}
 
-	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic,
-			Class<?> clazz, IPOContext context) {
+	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
 		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
-		// add theory path stuff
-		for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
-			rules.addAll(theoryBaseEntry.getRewriteRules(automatic, clazz,
-					context.getFormulaFactory()));
+		//case when POcontext is a theory
+		if (context.isTheoryRelated()) {
+			rules.addAll(projectEntries.get(rodinProject).getRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
 		}
-
-		// the local theories needs to be imported in the theory path
-		//rules.addAll(projectEntries.get(rodinProject).getRewriteRules(
-				//automatic, clazz, parentRoot, context.getFormulaFactory()));
-
+		//case when POcontext is a context/machine
+		else {
+			// add theory path stuff
+			for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
+				rules.addAll(theoryBaseEntry.getRewriteRules(automatic, clazz, context.getFormulaFactory()));
+			}
+		}
 		return rules;
 	}
 
@@ -174,20 +186,23 @@ public class BaseManager implements IElementChangedListener {
 
 	}
 
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, IPOContext context) {
+	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic,
+			ReasoningType type, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
 		List<IDeployedInferenceRule> rules = new ArrayList<IDeployedInferenceRule>();
-		// add theory path stuff
-		for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
-			rules.addAll(theoryBaseEntry.getInferenceRules(automatic, type, context.getFormulaFactory()));
+		// case when POcontext is a theory
+		if (context.isTheoryRelated()) {
+			rules.addAll(projectEntries.get(rodinProject).getInferenceRules(automatic, type, parentRoot, context.getFormulaFactory()));
 		}
-
-		// the local theories needs to be imported in the theory path
-		//rules.addAll(projectEntries.get(rodinProject).getInferenceRules(automatic, type, parentRoot,
-				//context.getFormulaFactory()));
-
+		// case when POcontext is a context/machine
+		else {
+			// add theory path stuff
+			for (ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry : getTheoryPathBaseEntries(rodinProject)) {
+				rules.addAll(theoryBaseEntry.getInferenceRules(automatic, type, context.getFormulaFactory()));
+			}
+		}
 		return rules;
 	}
 
