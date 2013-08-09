@@ -46,6 +46,7 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * An implementation of the rule base manager.
@@ -317,9 +318,15 @@ public class BaseManager implements IElementChangedListener {
 	}
 	
 	/**
-	 * Finds projects defining a deployed theory with the given name, accessible
+	 * Finds projects defining a theory with the given name, accessible
 	 * from the given context.
-	 * 
+	 * <p>
+	 * Theories are searched in context project theory path and, if context is theory related:
+	 * <ul>
+	 * <li>deployed theories in the context project</li>
+	 * <li>the context theory itself</li>
+	 * </ul>
+	 * </p>
 	 * @param context
 	 *            a PO context
 	 * @param theoryName
@@ -328,15 +335,31 @@ public class BaseManager implements IElementChangedListener {
 	 */
 	public Set<IRodinProject> findTheoryProjects(IPOContext context,
 			String theoryName) {
-		Set<IRodinProject> found = new HashSet<IRodinProject>();
-		final IRodinProject contextProject = context.getParentRoot()
-				.getRodinProject();
+		final Set<IRodinProject> found = new HashSet<IRodinProject>();
+		final IEventBRoot contextRoot = context.getParentRoot();
+		final IRodinProject contextProject = contextRoot.getRodinProject();
 		final List<IDeployedTheoryRoot> theoriesFromPath = getTheoriesFromPath(contextProject);
 		for (IDeployedTheoryRoot thy : theoriesFromPath) {
-			final IRodinFile thyFile = thy.getRodinFile();
-			final String bareName = thyFile.getBareName();
+			final String bareName = thy.getRodinFile().getBareName();
 			if (bareName.equals(theoryName)) {
-				found.add(thyFile.getRodinProject());
+				found.add(thy.getRodinProject());
+			}
+		}
+		if (context.isTheoryRelated()) {
+			if (contextRoot.getRodinFile().getBareName().equals(theoryName)) {
+				found.add(contextProject);
+			}
+			try {
+				for (IDeployedTheoryRoot thy : contextProject
+						.getRootElementsOfType(IDeployedTheoryRoot.ELEMENT_TYPE)) {
+					final String bareName = thy.getRodinFile().getBareName();
+					if (bareName.equals(theoryName)) {
+						found.add(contextProject);
+					}
+				}
+			} catch (RodinDBException e) {
+				ProverUtilities.log(e, "while searching project with theory "
+						+ theoryName);
 			}
 		}
 		return found;
