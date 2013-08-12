@@ -71,6 +71,12 @@ public class BaseManager implements IElementChangedListener {
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
 		Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>>();
+		// case when POcontext is a theory
+		if (context.isTheoryRelated()) {
+			map.putAll(projectEntries.get(rodinProject).getTheorems(context, factory));
+		}
+		// case when POcontext is a context/machine
+		else {
 			// add theory path stuff
 			for (IDeployedTheoryRoot theory : getTheoriesFromPath(rodinProject)) {
 				final IRodinProject thyProject = theory.getRodinProject();
@@ -89,11 +95,8 @@ public class BaseManager implements IElementChangedListener {
 							theoryBaseEntry.getDeployedTheorems(factory));
 				}
 			}
+		}
 
-			map.put(rodinProject,
-					projectEntries.get(rodinProject).getTheorems(context,
-							factory));
-		
 		return map;
 	}
 

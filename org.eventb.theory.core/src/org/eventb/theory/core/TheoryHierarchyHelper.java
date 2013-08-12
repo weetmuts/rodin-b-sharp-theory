@@ -374,7 +374,7 @@ public class TheoryHierarchyHelper {
 							if (theoryPath.length != 0 && theoryPath[0].getRodinFile().exists()) {
 						
 								for (IAvailableTheory availThy : theoryPath[0].getAvailableTheories()){
-									if (availThy.getDeployedTheory().equals(root) &&  (theoryPath[0].getSCTheoryPathRoot().getRodinFile().exists())) {
+									if (availThy.hasAvailableTheory() && availThy.getDeployedTheory().equals(root) &&  (theoryPath[0].getSCTheoryPathRoot().getRodinFile().exists())) {
 										theoryPath[0].getSCTheoryPathRoot().getRodinFile().delete(true, monitor);
 									}		
 								}

@@ -93,7 +93,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		writer.putString(RULE_KEY, ((InferenceInput) input).ruleName);
 		writer.putString(DESC_KEY, ((InferenceInput) input).description);
 		writer.putString(PROJECT_KEY, ((InferenceInput) input).projectName);
-		writer.putString(CONTEXT_INPUT_KEY, ((InferenceInput) input).context.toString());
+		//writer.putString(CONTEXT_INPUT_KEY, ((InferenceInput) input).context.toString());
 	}
 
 	@Override

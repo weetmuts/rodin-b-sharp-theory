@@ -87,7 +87,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 			}
 		}
-		// case when POContext is a context/machine; so no need add the local theories; local theories need to be imported in the theorypath
+		// case when POContext is a context/machine; so no need to add the local theories; local theories need to be imported in the theorypath
 		/*else {
 			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
 			for (IDeployedTheoryRoot deployedTheoryRoot : deployedTheoryRoots){
@@ -138,7 +138,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 			}
 		}
-		// case when POContext is a context/machine; so no need add the local theories; local theories need to be imported in the theorypath
+		// case when POContext is a context/machine; so no need to add the local theories; local theories need to be imported in the theorypath
 		/*else {
 			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
 			for (IDeployedTheoryRoot deployedTheoryRoot : deployedTheoryRoots){
@@ -174,10 +174,10 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	
 
 	@Override
-	public Map<IExtensionRulesSource, List<IDeployedTheorem>> getTheorems(IPOContext poContext, FormulaFactory factory) {
+	public Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(IPOContext poContext, FormulaFactory factory) {
 		IEventBRoot root = poContext.getParentRoot();
 		String componentName = root.getComponentName();
-		Map<IExtensionRulesSource, List<IDeployedTheorem>> map = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
+		Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>>();
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			int order = poContext.getOrder();
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(componentName, project);
@@ -188,14 +188,20 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 					scRoots.put(scTheoryRoot, entry);
 				} 
 				if(order != -1 && root.getComponentName().equals(scTheoryRoot.getComponentName())){
-					map.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(order, factory));
+					Map<IExtensionRulesSource, List<IDeployedTheorem>> mapTmp = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
+					mapTmp.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(order, factory));
+					map.put(scTheoryRoot.getRodinProject(), mapTmp);
 				}
 				else {
-					map.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
+					Map<IExtensionRulesSource, List<IDeployedTheorem>> mapTmp = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
+					mapTmp.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
+					map.put(scTheoryRoot.getRodinProject(), mapTmp);
+					//mapTmp.clear();
 				}
 			}
 		}
-		else {
+		// case when POContext is a context/machine; so no need to add the local theories; local theories need to be imported in the theorypath
+		/*else {
 			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
 			for (IDeployedTheoryRoot deployedRoot : deployedTheoryRoots){
 				if (!deployedRoots.containsKey(deployedRoot)){
@@ -204,7 +210,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 				map.put(deployedRoot, deployedRoots.get(deployedRoot).getDeployedTheorems(factory));
 			}
-		}
+		}*/
 		return map;
 	}
 
