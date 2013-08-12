@@ -3,15 +3,8 @@
  */
 package org.eventb.theory.core.sc.modules;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -22,11 +15,7 @@ import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IImportTheoryProject;
 import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCImportTheoryProject;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.basis.SCTheoryDecorator;
-import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
-import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGraph;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -35,7 +24,6 @@ import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.eventb.theory.core.ITheoryRoot;
 
 /**
  * @author asiehsalehi
@@ -45,9 +33,7 @@ public class ImportTheoryModule extends SCProcessorModule {
 	
 	private final IModuleType<ImportTheoryModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".importTheoryModule");
 	
-	private IImportTheoryProject theoryProj;
 	private IImportTheoryTable theoryTable;
-	private static final String THEORY_NAME = "THYPH";
 	private TheoryAccuracyInfo accuracyInfo;
 
 	/**
@@ -104,15 +90,14 @@ public class ImportTheoryModule extends SCProcessorModule {
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 					throws CoreException {
-		theoryProj = (IImportTheoryProject) element;
-		IImportTheory[] theories = theoryProj.getImportTheories();
+		final IImportTheoryProject theoryProj = (IImportTheoryProject) element;
 		boolean valid = false;
 
 		monitor.subTask(Messages.bind(Messages.progress_TheoryPathTheories));
 		initFilterModules(repository, monitor);
 
 		int index = 0;
-		for(IImportTheory theory: theories){
+		for(IImportTheory theory: theoryProj.getImportTheories()){
 			if(!theory.hasImportTheory()){
 				createProblemMarker(theory,
 						TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
@@ -178,11 +163,11 @@ public class ImportTheoryModule extends SCProcessorModule {
 	}*/
 	
 	private void saveSCTheory(ISCImportTheoryProject target,
-			IImportTheory theory, int index,
-			IProgressMonitor monitor) throws RodinDBException {
-		ISCImportTheory scTheory = target.getSCImportTheory(THEORY_NAME+"_"+index);
-		scTheory.create(null, monitor);
-		scTheory.setImportTheory(theory, monitor); 
+			IImportTheory theory, int index, IProgressMonitor monitor)
+			throws RodinDBException {
+		final ISCImportTheory scTheory = target.createChild(
+				ISCImportTheory.ELEMENT_TYPE, null, monitor);
+		scTheory.setImportTheory(theory.getImportTheory(), monitor);
 		scTheory.setSource(theory, monitor);
 	}
 

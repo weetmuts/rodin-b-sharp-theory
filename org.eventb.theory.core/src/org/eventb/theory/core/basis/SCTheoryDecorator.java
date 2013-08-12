@@ -53,7 +53,7 @@ public class SCTheoryDecorator {
 	 * @return the set of imported theories
 	 * @throws CoreException
 	 */
-	public Set<ISCTheoryRoot> getRequiredTheories() throws CoreException {
+	public Set<IDeployedTheoryRoot> getRequiredTheories() throws CoreException {
 		return TheoryHierarchyHelper.importClosure(scTheoryRoot);
 	}
 	
@@ -108,7 +108,7 @@ public class SCTheoryDecorator {
 	public Map<ISCTheoryRoot, Set<String>> getHierarchyContributions(boolean theoryIsLeaf) throws CoreException {
 		Map<ISCTheoryRoot, Set<String>> contribs = new LinkedHashMap<ISCTheoryRoot, Set<String>>();
 		if (theoryIsLeaf) {
-			Set<ISCTheoryRoot> requiredTheories = getRequiredTheories();
+			Set<IDeployedTheoryRoot> requiredTheories = getRequiredTheories();
 			for (ISCTheoryRoot req : requiredTheories) {
 				contribs.put(req, new SCTheoryDecorator(req).getContributions());
 			}

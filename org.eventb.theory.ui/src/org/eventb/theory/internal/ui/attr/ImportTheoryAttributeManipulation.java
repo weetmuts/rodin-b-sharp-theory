@@ -3,10 +3,10 @@
  */
 package org.eventb.theory.internal.ui.attr;
 
-import java.util.ArrayList;
+import static org.eventb.theory.core.TheoryHierarchyHelper.getImportedTheories;
+
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -16,6 +16,7 @@ import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IImportTheoryElement;
 import org.eventb.theory.core.IImportTheoryProject;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
@@ -131,23 +132,14 @@ public class ImportTheoryAttributeManipulation extends AbstractImportTheoryAttri
 		}
 	}
 	
-	private boolean isImportedBy(ITheoryRoot abstractRoot, ITheoryRoot root)throws CoreException {
-		for (ITheoryRoot thy : getImportedTheories(root)) {
+	private static boolean isImportedBy(ITheoryRoot abstractRoot,
+			ITheoryRoot root) throws CoreException {
+		for (ISCTheoryRoot scThy : getImportedTheories(root)) {
+			final ITheoryRoot thy = scThy.getTheoryRoot();
 			if (thy.equals(abstractRoot) || isImportedBy(abstractRoot, thy))
 				return true;
 		}
 		return false;
-	}
-	
-	private ITheoryRoot[] getImportedTheories(ITheoryRoot root)throws CoreException {
-		List<ITheoryRoot> list = new ArrayList<ITheoryRoot>();
-		IImportTheory[] imported = root.getImportTheories();
-		for (IImportTheory imp : imported) {
-			if (imp.hasImportTheory()) {
-				list.add(DatabaseUtilities.getTheory(imp.getImportTheory().getComponentName(), imp.getImportTheoryProject().getRodinProject()));
-			}
-		}
-		return list.toArray(new ITheoryRoot[list.size()]);
 	}
 	
 	private Set<String> getAlreadySelectedTheories(IImportTheory theoryElement, IImportTheoryProject[] importProjects) throws RodinDBException{

@@ -29,9 +29,9 @@ public class TheoryHierarchyHelper {
 	 * @return the import closure
 	 * @throws CoreException
 	 */
-	public static Set<ISCTheoryRoot> importClosure(ISCTheoryRoot scRoot) throws CoreException {
-		Set<ISCTheoryRoot> closure = new LinkedHashSet<ISCTheoryRoot>();
-		Set<ISCTheoryRoot> imported = getImportedTheories(scRoot);
+	public static Set<IDeployedTheoryRoot> importClosure(ISCTheoryRoot scRoot) throws CoreException {
+		Set<IDeployedTheoryRoot> closure = new LinkedHashSet<IDeployedTheoryRoot>();
+		Set<IDeployedTheoryRoot> imported = getImportedTheories(scRoot);
 		closure.addAll(imported);
 		for (ISCTheoryRoot otherRoot : imported) {
 			closure.addAll(importClosure(otherRoot));
@@ -47,16 +47,18 @@ public class TheoryHierarchyHelper {
 	 * @return the list of imported SC theories
 	 * @throws CoreException
 	 */
-	public static Set<ISCTheoryRoot> getImportedTheories(ISCTheoryRoot importer) throws CoreException {
-		Set<ISCTheoryRoot> result = new LinkedHashSet<ISCTheoryRoot>();
+	public static Set<IDeployedTheoryRoot> getImportedTheories(ISCTheoryRoot importer) throws CoreException {
+		Set<IDeployedTheoryRoot> result = new LinkedHashSet<IDeployedTheoryRoot>();
 		if (importer == null || !importer.exists()) {
 			return result;
 		}
 		
-		ISCImportTheory[] importedTheories = importer.getImportTheories();
-		for (ISCImportTheory use : importedTheories) {
-			if (use.hasImportTheory())
-				result.add(use.getImportTheory());
+		for (ISCImportTheoryProject impProject : importer.getSCImportTheoryProjects()) {
+			for (ISCImportTheory impTheory : impProject.getSCImportTheories()) {
+				if (impTheory.hasImportTheory()) {
+					result.add(impTheory.getImportTheory());
+				}
+			}
 		}
 		return result;
 	}
@@ -70,14 +72,18 @@ public class TheoryHierarchyHelper {
 	 * @throws CoreException
 	 */
 	public static Set<ISCTheoryRoot> getImportedTheories(ITheoryRoot importer) throws CoreException {
+		final Set<ISCTheoryRoot> result = new LinkedHashSet<ISCTheoryRoot>();
+
 		if (importer == null || !importer.exists()) {
-			return null;
+			return result;
 		}
-		IImportTheory[] importedTheories = importer.getImportTheories();
-		Set<ISCTheoryRoot> result = new LinkedHashSet<ISCTheoryRoot>();
-		for (IImportTheory use : importedTheories) {
-			if (use.hasImportTheory())
-				result.add(use.getImportTheory());
+
+		for (IImportTheoryProject impProject : importer.getImportTheoryProjects()) {
+			for (IImportTheory impTheory : impProject.getImportTheories()) {
+				if (impTheory.hasImportTheory()) {
+					result.add(impTheory.getImportTheory());
+				}
+			}
 		}
 		return result;
 	}
@@ -91,14 +97,14 @@ public class TheoryHierarchyHelper {
 	 * @throws CoreException
 	 */
 	public static Set<IDeployedTheoryRoot> getImportedTheories(IDeployedTheoryRoot theory) throws CoreException {
+		final Set<IDeployedTheoryRoot> result = new LinkedHashSet<IDeployedTheoryRoot>();
 		if (theory == null || !theory.exists()) {
-			return null;
+			return result;
 		}
-		IUseTheory[] usedTheories = theory.getUsedTheories();
-		Set<IDeployedTheoryRoot> result = new LinkedHashSet<IDeployedTheoryRoot>();
-		for (IUseTheory use : usedTheories) {
-			if (use.hasUseTheory())
+		for (IUseTheory use : theory.getUsedTheories()) {
+			if (use.hasUseTheory()) {
 				result.add(use.getUsedTheory());
+			}
 		}
 		return result;
 	}
@@ -204,8 +210,8 @@ public class TheoryHierarchyHelper {
 			return false;
 		}
 		String importeeName = importee.getComponentName();
-		Set<ISCTheoryRoot> theories = getImportedTheories(importer);
-		for (ISCTheoryRoot theory : theories) {
+		Set<IDeployedTheoryRoot> theories = getImportedTheories(importer);
+		for (IDeployedTheoryRoot theory : theories) {
 			if (theory.getComponentName().equals(importeeName) || doesTheoryImportTheory(theory, importee)) {
 				return true;
 			}
@@ -253,12 +259,11 @@ public class TheoryHierarchyHelper {
 	public static Set<ISCTheoryRoot> getAllTheoriesToDeploy(ISCTheoryRoot... roots) throws CoreException {
 		Set<ISCTheoryRoot> set = new LinkedHashSet<ISCTheoryRoot>();
 		for (ISCTheoryRoot root : roots) {
-			Set<ISCTheoryRoot> importedTheories = importClosure(root);
-			for (ISCTheoryRoot importedRoot : importedTheories) {
-				IDeployedTheoryRoot deployedTheoryRoot = importedRoot.getDeployedTheoryRoot();
+			Set<IDeployedTheoryRoot> importedTheories = importClosure(root);
+			for (IDeployedTheoryRoot importedRoot : importedTheories) {
 				// FIXED BUG check if the outdated attribute exists
-				if (!deployedTheoryRoot.exists() || (deployedTheoryRoot.exists() && 
-						deployedTheoryRoot.hasOutdatedAttribute() && deployedTheoryRoot.isOutdated())) {
+				if (!importedRoot.exists() || (importedRoot.exists() && 
+						importedRoot.hasOutdatedAttribute() && importedRoot.isOutdated())) {
 					set.add(importedRoot);
 				}
 			}

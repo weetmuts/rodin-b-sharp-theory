@@ -3,7 +3,8 @@
  */
 package org.eventb.theory.core.sc.modules;
 
-import java.util.HashSet;
+import static org.eventb.theory.core.TheoryHierarchyHelper.getImportedTheories;
+
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +20,6 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IImportTheoryProject;
-import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
@@ -134,10 +134,6 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 			endFilterModules(repository, monitor);
 		}
 		
-		IImportTheory[] importTheories = root.getImportTheories();
-		if (importTheories != null)
-			commitImports((ISCTheoryRoot) target, monitor);
-		
 		projectTable.makeImmutable();
 		monitor.done();
 	}
@@ -147,13 +143,7 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 		processModules(theoryProject, target, repository, monitor);
 		endProcessorModules(theoryProject, repository, monitor);
 		
-		Set<ISCTheoryRoot> importedTheories = new HashSet<ISCTheoryRoot>();
-		//root.getSCTheoryRoot().getImportTheories();
-		IImportTheory[] importTheories = root.getImportTheories();
-		for (IImportTheory importTheory : importTheories) {
-			ISCTheoryRoot importRoot = importTheory.getImportTheory();
-			importedTheories.add(importRoot);
-		}
+		final Set<ISCTheoryRoot> importedTheories = getImportedTheories(root);
 		patchFormulaFactory(importedTheories, repository);		
 	}
 
@@ -196,29 +186,6 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 		repository.setTypeEnvironment(typeEnvironment);
 	}
 	
-	/**
-	 * Commits the theory imports to the target root.
-	 * 
-	 * @param targetRoot
-	 *            the SC theory target
-	 * @param monitor
-	 *            the progress monitor
-	 * @throws CoreException
-	 */
-	protected void commitImports(ISCTheoryRoot targetRoot,
-			IProgressMonitor monitor) throws CoreException {
-		
-		IImportTheory[] importTheories = root.getImportTheories();
-		for (IImportTheory currentImportTheory : importTheories) {
-			ISCImportTheory scImport = targetRoot
-					.getImportTheory(currentImportTheory.getElementName());
-			scImport.create(null, monitor);
-			scImport.setSource(currentImportTheory, monitor);
-			scImport.setImportTheory(currentImportTheory.getImportTheory(),
-					monitor);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.tool.types.IModule#getModuleType()
 	 */

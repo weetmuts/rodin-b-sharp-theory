@@ -47,21 +47,6 @@ public interface ITheoryRoot extends
 	 * @throws RodinDBException
 	 */
 	public IImportTheoryProject[] getImportTheoryProjects() throws RodinDBException;
-
-	/**
-	 * Returns the import theory directive with the given name
-	 * @param name the name 
-	 * @return the import theory
-	 */
-	public IImportTheory getImportTheory(String name);
-	
-	/**
-	 * Returns all import theories children of this element.
-	 * @return all import theories
-	 * @throws RodinDBException
-	 */
-	public IImportTheory[] getImportTheories() throws RodinDBException;
-	
 	
 	/**
 	 * Returns a handle to the type parameter with the given element.

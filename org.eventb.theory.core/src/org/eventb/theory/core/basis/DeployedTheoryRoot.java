@@ -7,10 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -19,7 +15,6 @@ import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
-import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
@@ -161,24 +156,6 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 			throws RodinDBException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public ISCImportTheory getImportTheory(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISCImportTheory[] getImportTheories() throws RodinDBException {
-		//return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
-		List<ISCImportTheory> theories =  new ArrayList<ISCImportTheory>();
-		
-		for(ISCImportTheoryProject proj: getSCImportTheoryProjects()){
-			theories.addAll(Arrays.asList(proj.getSCImportTheories()));
-		}
-		
-		return theories.toArray(new ISCImportTheory[theories.size()]);
 	}
 
 	@Override

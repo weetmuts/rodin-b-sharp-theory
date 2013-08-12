@@ -11,13 +11,16 @@
 package org.eventb.theory.core.sc;
 
 import static org.eventb.theory.core.DatabaseUtilities.getNonTempSCTheoryPaths;
+import static org.eventb.theory.core.TheoryHierarchyHelper.getImportedTheories;
+
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.StaticChecker;
-import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.ISCTheoryPathRoot;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -29,7 +32,8 @@ import org.rodinp.core.builder.IGraph;
  */
 public class TheoryStaticChecker extends StaticChecker {
 
-	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)
+			throws CoreException {
 		try {
 			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
 			IRodinFile source = RodinCore.valueOf(file);
@@ -38,12 +42,12 @@ public class TheoryStaticChecker extends StaticChecker {
 			graph.addTarget(target.getResource());
 			graph.addToolDependency(source.getResource(), target.getResource(), true);
 			// FIXME added user dependencies on imports
-			IImportTheory[] importTheories = root.getImportTheories();
-			for (IImportTheory importTheory : importTheories) {
-				if (importTheory.hasImportTheory()) {
-					IRodinFile importedTheory = importTheory.getImportTheory().getRodinFile();
-					graph.addUserDependency(source.getResource(), importedTheory.getResource(), target.getResource(), false);
-				}
+			final Set<ISCTheoryRoot> importedTheories = getImportedTheories(root);
+			for (ISCTheoryRoot impTheory : importedTheories) {
+				final IRodinFile importedTheory = impTheory.getRodinFile();
+				graph.addUserDependency(source.getResource(),
+						importedTheory.getResource(),
+						target.getResource(), false);
 			}
 			ISCTheoryPathRoot[] paths = getNonTempSCTheoryPaths(root.getRodinProject());
 			if (paths.length == 1){

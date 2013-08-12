@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions.dependencies;
 
+import static org.eventb.theory.core.TheoryHierarchyHelper.getImportedTheories;
+
 import java.util.Comparator;
 import java.util.Set;
 
@@ -38,15 +40,13 @@ public class SCTheoriesGraph extends DependenciesGraph<ISCTheoryRoot>{
 		
 		try {
 			if (element instanceof IDeployedTheoryRoot) {
-				Set<IDeployedTheoryRoot> imported;
-				imported = TheoryHierarchyHelper.getImportedTheories((IDeployedTheoryRoot) element);
+				final Set<IDeployedTheoryRoot> imported = getImportedTheories((IDeployedTheoryRoot) element);
 				if (imported != null) {
 					return imported.toArray(new ISCTheoryRoot[imported.size()]);
 				}
 			}
 			else {
-				Set<ISCTheoryRoot> imported;
-				imported = TheoryHierarchyHelper.getImportedTheories(element);
+				final Set<IDeployedTheoryRoot> imported = getImportedTheories(element);
 				return imported.toArray(new ISCTheoryRoot[imported.size()]);
 			}
 				

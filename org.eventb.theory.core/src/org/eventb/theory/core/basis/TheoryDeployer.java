@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import static org.eventb.theory.core.TheoryHierarchyHelper.getImportedTheories;
 import static org.eventb.theory.internal.core.util.DeployUtilities.copyDeployedElements;
 
 import java.util.Set;
@@ -19,7 +20,6 @@ import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDeploymentResult;
-import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
 import org.eventb.theory.core.ITheoryPathRoot;
@@ -211,41 +211,33 @@ public final class TheoryDeployer implements ITheoryDeployer {
 	}
 
 	protected void setDeployedTheoryDependencies(ISCTheoryRoot source, IDeployedTheoryRoot target) throws CoreException {
-		ISCImportTheory[] imports = source.getImportTheories();
-		for (ISCImportTheory importThy : imports) {
-			if (importThy.hasImportTheory()) {
-				ISCTheoryRoot importedRoot = importThy.getImportTheory();
-				IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
-				if (deployedCounterpart.exists()) {
-					IUseTheory use = target.getUsedTheory(deployedCounterpart.getComponentName());
-					use.create(null, null);
-					use.setUsedTheory(deployedCounterpart, null);
-				}
+		for (ISCTheoryRoot importedRoot : getImportedTheories(source)) {
+			IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
+			if (deployedCounterpart.exists()) {
+				IUseTheory use = target.getUsedTheory(deployedCounterpart.getComponentName());
+				use.create(null, null);
+				use.setUsedTheory(deployedCounterpart, null);
 			}
 		}
 	}
 
 	protected boolean checkDeployedTheoryDependencies(ISCTheoryRoot source) throws CoreException {
-		ISCImportTheory[] imports = source.getImportTheories();
-		for (ISCImportTheory importThy : imports) {
-			if (importThy.hasImportTheory()) {
-				ISCTheoryRoot importedRoot = importThy.getImportTheory();
-				if (!checkDeployedTheoryDependencies(importedRoot)) {
-					return false;
-				}
-				IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
-				if (!deployedCounterpart.exists()) {
-					deploymentResult = new DeploymentResult(false, "Failed dependencies : deployed theory '"
-							+ deployedCounterpart.getComponentName() + "' does not exist in the project '"
-							+ importedRoot.getRodinProject().getElementName() + "'.");
-					return false;
-				}
-				if (deployedCounterpart.hasOutdatedAttribute() && deployedCounterpart.isOutdated()) {
-					deploymentResult = new DeploymentResult(false, "Failed dependencies : deployed theory '"
-							+ deployedCounterpart.getComponentName() + "' is outdated in the project '"
-							+ importedRoot.getRodinProject().getElementName() + "'.");
-					return false;
-				}
+		for (ISCTheoryRoot importedRoot : getImportedTheories(source)) {
+			if (!checkDeployedTheoryDependencies(importedRoot)) {
+				return false;
+			}
+			IDeployedTheoryRoot deployedCounterpart = importedRoot.getDeployedTheoryRoot();
+			if (!deployedCounterpart.exists()) {
+				deploymentResult = new DeploymentResult(false, "Failed dependencies : deployed theory '"
+						+ deployedCounterpart.getComponentName() + "' does not exist in the project '"
+						+ importedRoot.getRodinProject().getElementName() + "'.");
+				return false;
+			}
+			if (deployedCounterpart.hasOutdatedAttribute() && deployedCounterpart.isOutdated()) {
+				deploymentResult = new DeploymentResult(false, "Failed dependencies : deployed theory '"
+						+ deployedCounterpart.getComponentName() + "' is outdated in the project '"
+						+ importedRoot.getRodinProject().getElementName() + "'.");
+				return false;
 			}
 		}
 		return true;

@@ -14,7 +14,6 @@ import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
-import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCImportTheoryProject;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
@@ -136,24 +135,6 @@ public class SCTheoryRoot extends EventBRoot implements ISCTheoryRoot {
 	public ISCImportTheoryProject getSCImportTheoryProject(String name)
 			throws RodinDBException {
 		return getInternalElement(ISCImportTheoryProject.ELEMENT_TYPE, name);
-	}
-
-	@Override
-	public ISCImportTheory getImportTheory(String name) {
-		return getInternalElement(ISCImportTheory.ELEMENT_TYPE,name);
-		//?
-	}
-
-	@Override
-	public ISCImportTheory[] getImportTheories() throws RodinDBException {
-		return getChildrenOfType(ISCImportTheory.ELEMENT_TYPE);
-/*		List<ISCImportTheory> theories =  new ArrayList<ISCImportTheory>();
-		
-		for(ISCImportTheoryProject proj: getSCImportTheoryProjects()){
-			theories.addAll(Arrays.asList(proj.getSCImportTheories()));
-		}
-		
-		return theories.toArray(new ISCImportTheory[theories.size()]);*/
 	}
 
 	@Override

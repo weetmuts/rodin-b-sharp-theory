@@ -50,20 +50,6 @@ ITraceableElement, IFormulaExtensionsSource, IExtensionRulesSource{
 	public ISCImportTheoryProject getSCImportTheoryProject(String name) throws RodinDBException;
 	
 	/**
-	 * Returns the import theory directive with the given name
-	 * @param name the name 
-	 * @return the import theory
-	 */
-	public ISCImportTheory getImportTheory(String name);
-	
-	/**
-	 * Returns all import theories children of this element.
-	 * @return all import theories
-	 * @throws RodinDBException
-	 */
-	public ISCImportTheory[] getImportTheories() throws RodinDBException;
-	
-	/**
 	 * <p>Returns the global type environment of this SC theory.</p>
 	 * @param factory
 	 * @return the type environment
