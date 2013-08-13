@@ -692,9 +692,7 @@ public class AstUtilities {
 	 */
 	public static ITypeEnvironment getTypeEnvironmentForFactory(ITypeEnvironment typeEnvironment, FormulaFactory factory) {
 		ITypeEnvironment newTypeEnvironment = factory.makeTypeEnvironment();
-		for (String name : typeEnvironment.getNames()) {
-			newTypeEnvironment.addName(name, typeEnvironment.getType(name));
-		}
+		newTypeEnvironment.addAll(typeEnvironment);
 		return newTypeEnvironment;
 	}
 
