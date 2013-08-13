@@ -37,9 +37,11 @@ public class TheoremPOGModule extends UtilityPOGModule {
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".theoremPOGModule"); //$NON-NLS-1
 
 	private final static String THEOREM_WD_SUFFIX = "/WD-THM";
+	private final static String AXIOM_WD_SUFFIX = "/WD-AXM";
 	private final static String THEOREM_S_SUFFIX = "/S-THM";
 
 	private final static String THEOREM_WD_DESC = "Well-Definedness of Theorem";
+	private final static String AXIOM_WD_DESC = "Well-Definedness of Axiom";
 	private final static String THEOREM_SOUNDNESS_DESC = "Therorem Soundness";
 
 	private ITypeEnvironment typeEnvironment;
@@ -64,36 +66,60 @@ public class TheoremPOGModule extends UtilityPOGModule {
 		IPOPredicateSet hyp = target
 				.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
 		for (ISCTheorem theorem : theorems) {
-			if(theorem.hasGenerated() && theorem.isGenerated()){
-				continue;
-			}
 			String name = theorem.getLabel();
-			IPOGSource[] sources = new IPOGSource[] { makeSource(
-					IPOSource.DEFAULT_ROLE, theorem), makeSource(IPOSource.DEFAULT_ROLE, theorem.getSource()) };
+			IPOGSource[] sources = new IPOGSource[] {
+					makeSource(IPOSource.DEFAULT_ROLE, theorem),
+					makeSource(IPOSource.DEFAULT_ROLE, theorem.getSource()) };
 			Predicate poPredicate = theorem.getPredicate(factory,
 					typeEnvironment);
-			if (!isTrivial(poPredicate)) {
-				String sequentName1 = name + THEOREM_S_SUFFIX;
-				createPO(target, sequentName1,
-						natureFactory.getNature(THEOREM_SOUNDNESS_DESC), hyp,
-						EMPTY_PREDICATES, makePredicate(poPredicate, theorem.getSource()),
-						sources, new IPOGHint[] {
-								getLocalHypothesisSelectionHint(target, sequentName1, hyp)
-						}, true, monitor);
+			//case when axiom
+			if (theorem.hasGenerated() && theorem.isGenerated()) {
 				Predicate wdPredicate = poPredicate.getWDPredicate(factory);
 				if (!isTrivial(wdPredicate)) {
-					String sequentName2 = name + THEOREM_WD_SUFFIX;
-					createPO(target, name + THEOREM_WD_SUFFIX,
-							natureFactory.getNature(THEOREM_WD_DESC), hyp,
+					String sequentName2 = name + AXIOM_WD_SUFFIX;
+					createPO(
+							target,
+							name + AXIOM_WD_SUFFIX,
+							natureFactory.getNature(AXIOM_WD_DESC),
+							hyp,
 							EMPTY_PREDICATES,
 							makePredicate(wdPredicate, theorem.getSource()),
-							sources,  new IPOGHint[] {
-							getLocalHypothesisSelectionHint(target, sequentName2, hyp)
-							}, true, monitor);
+							sources,
+							new IPOGHint[] { getLocalHypothesisSelectionHint(
+									target, sequentName2, hyp) }, true, monitor);
+				}
+			//case when theorem
+			} else {
+				if (!isTrivial(poPredicate)) {
+					String sequentName1 = name + THEOREM_S_SUFFIX;
+					createPO(
+							target,
+							sequentName1,
+							natureFactory.getNature(THEOREM_SOUNDNESS_DESC),
+							hyp,
+							EMPTY_PREDICATES,
+							makePredicate(poPredicate, theorem.getSource()),
+							sources,
+							new IPOGHint[] { getLocalHypothesisSelectionHint(
+									target, sequentName1, hyp) }, true, monitor);
+					Predicate wdPredicate = poPredicate.getWDPredicate(factory);
+					if (!isTrivial(wdPredicate)) {
+						String sequentName2 = name + THEOREM_WD_SUFFIX;
+						createPO(
+								target,
+								name + THEOREM_WD_SUFFIX,
+								natureFactory.getNature(THEOREM_WD_DESC),
+								hyp,
+								EMPTY_PREDICATES,
+								makePredicate(wdPredicate, theorem.getSource()),
+								sources,
+								new IPOGHint[] { getLocalHypothesisSelectionHint(
+										target, sequentName2, hyp) }, true,
+								monitor);
+					}
 				}
 			}
 		}
-
 	}
 
 	@Override

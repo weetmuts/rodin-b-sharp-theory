@@ -117,7 +117,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 		
-		table = new Table(scrolledComposite, SWT.BORDER | SWT.MULTI);
+		table = new Table(scrolledComposite, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));

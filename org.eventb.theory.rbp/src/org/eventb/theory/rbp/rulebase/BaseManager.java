@@ -51,7 +51,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * An implementation of the rule base manager.
  * 
- * @author maamria, nicolas, asieh
+ * @author maamria, nicolas, asiehsalehi
  * 
  */
 public class BaseManager implements IElementChangedListener {

@@ -31,7 +31,7 @@ import org.rodinp.core.IRodinProject;
 
 /**
  * 
- * @author maamria
+ * @author maamria, asiehsalehi
  * @since 1.0
  * 
  */
@@ -188,15 +188,22 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 					scRoots.put(scTheoryRoot, entry);
 				} 
 				if(order != -1 && root.getComponentName().equals(scTheoryRoot.getComponentName())){
-					Map<IExtensionRulesSource, List<IDeployedTheorem>> mapTmp = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
-					mapTmp.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(order, factory));
-					map.put(scTheoryRoot.getRodinProject(), mapTmp);
+					final IRodinProject thyProject = scTheoryRoot.getRodinProject();	
+					if (!map.containsKey(thyProject)) {
+						map.put(thyProject,
+								new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
+					}
+					final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map.get(thyProject);
+					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(order, factory));
 				}
 				else {
-					Map<IExtensionRulesSource, List<IDeployedTheorem>> mapTmp = new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>();
-					mapTmp.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
-					map.put(scTheoryRoot.getRodinProject(), mapTmp);
-					//mapTmp.clear();
+					final IRodinProject thyProject = scTheoryRoot.getRodinProject();
+					if (!map.containsKey(thyProject)) {
+						map.put(thyProject,
+								new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
+					}
+					final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map.get(thyProject);
+					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
 				}
 			}
 		}
