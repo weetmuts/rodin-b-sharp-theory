@@ -14,17 +14,16 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.tests.EventBTest.DeltaListener;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.IConstructorArgument;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
-import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.IGiven;
 import org.eventb.theory.core.IImportTheory;
+import org.eventb.theory.core.IImportTheoryProject;
 import org.eventb.theory.core.IInfer;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IMetavariable;
@@ -82,15 +81,14 @@ public abstract class TheoryTest extends BuilderTest {
 		}
 	}
 
-	public void addImportTheory(IRodinFile rodinFile, String name) throws RodinDBException {
-		ITheoryRoot root = (ITheoryRoot) rodinFile.getRoot();
-		addImportTheory(root, name);
-	}
-
-	public void addImportTheory(ITheoryRoot root, String name) throws RodinDBException {
-		IImportTheory importThy = root.createChild(IImportTheory.ELEMENT_TYPE, null, null);
-		IDeployedTheoryRoot scRoot = DatabaseUtilities.getDeployedTheory(name, rodinProject);
-		importThy.setImportTheory(scRoot, null);
+	public void addImportTheory(ITheoryRoot root, ITheoryRoot theory) throws RodinDBException {
+		//FIXME imported theories would need to be deployed: 
+		// take deployed theory as argument here and deploy in callers where relevant
+		final IImportTheoryProject impThyPrj = root.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		impThyPrj.setTheoryProject(theory.getRodinProject(), null);
+		IImportTheory importThy = impThyPrj.createChild(IImportTheory.ELEMENT_TYPE, null, null);
+		importThy.setImportTheory(theory.getDeployedTheoryRoot(), null);
 	}
 
 	public void addTheorems(ITheoryRoot root, String[] names, String[] thms) throws RodinDBException {

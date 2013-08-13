@@ -45,7 +45,7 @@ public class DeltaCheckingTests extends BasicTheorySCTestWithThyConfig {
 		final ITheoryRoot childTheory = createTheory("thy");
 		final ISCTheoryRoot scChildTheory = childTheory.getSCTheoryRoot();
 		final IPORoot poChildTheory = childTheory.getPORoot();
-		addImportTheory(childTheory, "abs");
+		addImportTheory(childTheory, rootParent);
 		addTypeParameters(childTheory, makeSList("T11"));
 		saveRodinFileOf(childTheory);
 

@@ -1,5 +1,6 @@
 package org.eventb.theory.core.tests.sc;
 
+import static java.util.Arrays.asList;
 import static org.eclipse.core.resources.IMarker.MESSAGE;
 import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 import static org.eventb.core.ast.LanguageVersion.V2;
@@ -31,10 +32,10 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.theory.core.IApplicabilityElement;
 import org.eventb.theory.core.ICompleteElement;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IHasErrorElement;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCDatatypeDefinition;
-import org.eventb.theory.core.ISCImportTheory;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCProofRulesBlock;
@@ -44,6 +45,7 @@ import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.core.tests.TheoryTest;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -167,14 +169,12 @@ public abstract class BasicTheorySCTest extends TheoryTest {
 		
 	}
 
-	public void importsTheories(ISCTheoryRoot scRoot, String... names) throws RodinDBException {
-		ISCImportTheory[] importedTheories = scRoot.getImportTheories();
-		assertEquals("wrong number of import clauses", names.length, importedTheories.length);
-		if (names.length == 0)
-			return;
-		Set<String> nameSet = getImportNameSet(importedTheories);
-		for (String name : names)
-			assertTrue("should contain " + name, nameSet.contains(name));
+	public void importsTheories(ISCTheoryRoot scRoot, IDeployedTheoryRoot... expectedImports) throws CoreException {
+		final Set<IDeployedTheoryRoot> actualImports = TheoryHierarchyHelper.getImportedTheories(scRoot);
+		
+		assertEquals("wrong number of imported theories", expectedImports.length, actualImports.size());
+		final Set<IDeployedTheoryRoot> expectedSet = new HashSet<IDeployedTheoryRoot>(asList(expectedImports));
+		assertEquals(expectedSet, actualImports);
 	}
 	
 	public ISCProofRulesBlock getProofRulesBlock(ISCTheoryRoot scRoot, String label) throws RodinDBException{
@@ -289,14 +289,6 @@ public abstract class BasicTheorySCTest extends TheoryTest {
 		for (String string : syntaxes)
 			assertTrue("should contain " + string, nameSet.contains(string));
 		return scOps;
-	}
-
-	protected Set<String> getImportNameSet(ISCImportTheory[] elements) throws RodinDBException {
-		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
-		for (ISCImportTheory element : elements)
-			if (element != null)
-				names.add(element.getImportTheory().getComponentName());
-		return names;
 	}
 
 	protected Set<String> getIdentifierNameSet(ISCIdentifierElement[] elements) throws RodinDBException {

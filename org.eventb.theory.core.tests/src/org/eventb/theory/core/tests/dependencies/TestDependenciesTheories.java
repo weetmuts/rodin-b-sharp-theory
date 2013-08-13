@@ -29,7 +29,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	public void testTheoryDependency_001_NoError() throws Exception {
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
-		addImportTheory(root2, root1.getComponentName());
+		addImportTheory(root2, root1);
 
 		saveRodinFileOf(root1);
 		saveRodinFileOf(root2);
@@ -56,8 +56,8 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
-		addImportTheory(root2, root0.getComponentName());
-		addImportTheory(root0, root1.getComponentName());
+		addImportTheory(root2, root0);
+		addImportTheory(root0, root1);
 
 		saveRodinFileOf(root1);
 		saveRodinFileOf(root2);
@@ -74,8 +74,8 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		isAccurate(scTheoryRoot1);
 
 		importsTheories(scTheoryRoot1);
-		importsTheories(scTheoryRoot2, root0.getComponentName());
-		importsTheories(scTheoryRoot0, root1.getComponentName());
+		importsTheories(scTheoryRoot2, root0.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
 
 		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot1});
 		Set<ISCTheoryRoot> checkedRoots1 = projectTheoryGraph.getCheckedRoots();
@@ -100,8 +100,8 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	public void testTheoryDependency_003_CycleError() throws Exception {
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
-		addImportTheory(root2, root1.getComponentName());
-		addImportTheory(root1, root2.getComponentName());
+		addImportTheory(root2, root1);
+		addImportTheory(root1, root2);
 
 		saveRodinFileOf(root1);
 		saveRodinFileOf(root2);
@@ -125,8 +125,8 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
 		ITheoryRoot root3 = createTheory(THEORY_NAME+3);
 
-		addImportTheory(root0, root1.getComponentName());
-		addImportTheory(root2, root3.getComponentName());
+		addImportTheory(root0, root1);
+		addImportTheory(root2, root3);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
@@ -144,9 +144,9 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		isAccurate(scTheoryRoot3);
 
 		importsTheories(scTheoryRoot1);
-		importsTheories(scTheoryRoot0, root1.getComponentName());
+		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
 		importsTheories(scTheoryRoot3);
-		importsTheories(scTheoryRoot2, root3.getComponentName());
+		importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot());
 
 		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
 		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
@@ -182,8 +182,8 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
 
-		addImportTheory(root0, root1.getComponentName());
-		addImportTheory(root2, root1.getComponentName());
+		addImportTheory(root0, root1);
+		addImportTheory(root2, root1);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
@@ -198,8 +198,8 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		isAccurate(scTheoryRoot1);
 
 		importsTheories(scTheoryRoot1);
-		importsTheories(scTheoryRoot0, root1.getComponentName());
-		importsTheories(scTheoryRoot2, root1.getComponentName());
+		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot2, root1.getDeployedTheoryRoot());
 
 		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
 		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
@@ -230,9 +230,9 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
 		ITheoryRoot root3 = createTheory(THEORY_NAME+3);
 
-		addImportTheory(root0, root1.getComponentName());
-		addImportTheory(root0, root2.getComponentName());
-		addImportTheory(root2, root3.getComponentName());
+		addImportTheory(root0, root1);
+		addImportTheory(root0, root2);
+		addImportTheory(root2, root3);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
@@ -250,8 +250,8 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		isAccurate(scTheoryRoot3);
 
 		importsTheories(scTheoryRoot3);
-		importsTheories(scTheoryRoot0, root1.getComponentName(),root2.getComponentName());
-		importsTheories(scTheoryRoot2, root3.getComponentName());
+		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot(), root2.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot());
 
 		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
 		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
@@ -277,11 +277,11 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		ITheoryRoot root4 = createTheory(THEORY_NAME+4);
 		ITheoryRoot root5 = createTheory(THEORY_NAME+5);
 
-		addImportTheory(root0, root1.getComponentName());
-		addImportTheory(root0, root2.getComponentName());
-		addImportTheory(root2, root3.getComponentName());
-		addImportTheory(root2, root4.getComponentName());
-		addImportTheory(root4, root5.getComponentName());
+		addImportTheory(root0, root1);
+		addImportTheory(root0, root2);
+		addImportTheory(root2, root3);
+		addImportTheory(root2, root4);
+		addImportTheory(root4, root5);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
@@ -306,9 +306,9 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 
 		importsTheories(scTheoryRoot3);
 		importsTheories(scTheoryRoot5);
-		importsTheories(scTheoryRoot0, root1.getComponentName(),root2.getComponentName());
-		importsTheories(scTheoryRoot2, root3.getComponentName(),root4.getComponentName());
-		importsTheories(scTheoryRoot4, root5.getComponentName());
+		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot(), root2.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot(), root4.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot4, root5.getDeployedTheoryRoot());
 
 		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
 		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});

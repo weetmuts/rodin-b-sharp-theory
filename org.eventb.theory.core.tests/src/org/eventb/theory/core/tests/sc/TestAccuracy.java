@@ -1,8 +1,10 @@
 package org.eventb.theory.core.tests.sc;
 
+import static org.eventb.theory.core.DatabaseUtilities.getTheory;
+
+import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.junit.Test;
 
 /**
@@ -39,7 +41,8 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	@Test
 	public void testAcc_003_ErroneousImport() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
-		addImportTheory(root, "DoesNotExistTheory");
+		final ITheoryRoot doesNotExistTheory = getTheory("DoesNotExistTheory", root.getRodinProject());
+		addImportTheory(root, doesNotExistTheory);
 		saveRodinFileOf(root);
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
@@ -49,7 +52,7 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 	public void testAcc_004_ErroneousImport() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheoryRoot anotherRoot = createTheory("anotherThy");
-		addImportTheory(root, "anotherThy");
+		addImportTheory(root, anotherRoot);
 		saveRodinFileOf(root);
 		saveRodinFileOf(anotherRoot);
 		runBuilder();
