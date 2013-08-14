@@ -46,7 +46,7 @@ public class TheoryChildrenContentProviders {
 
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			return -1;
+			return 0;
 		}
 
 	}
