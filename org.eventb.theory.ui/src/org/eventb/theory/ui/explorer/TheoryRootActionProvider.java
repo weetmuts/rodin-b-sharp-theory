@@ -91,7 +91,7 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 							ISCTheoryRoot scRoot = theory.getSCTheoryRoot();
 							if (!DatabaseUtilities.doesTheoryHaveErrors(scRoot)) {
 								toDeploy.add(scRoot);
-// do not need to deploy the imported theoris, as they have been deploed before
+// do not need to deploy the imported theoris, as they have been deployed before
 // just deployed theories can be imported
 /*								try {
 									Set<ISCTheoryRoot> allTheoriesToDeploy = TheoryHierarchyHelper.getAllTheoriesToDeploy(scRoot);
@@ -152,6 +152,15 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 						}
 						if (!(root.getSCTheoryRoot().exists())) {
 							return false;
+						}
+						try {
+							if (root.hasDeployedVersion() && 
+								root.getDeployedTheoryRoot().hasOutdatedAttribute() &&
+								!root.getDeployedTheoryRoot().isOutdated()) {
+								return false;
+							}
+						} catch (CoreException e) {
+							e.printStackTrace();
 						}
 					}
 					return true;

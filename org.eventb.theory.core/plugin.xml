@@ -126,6 +126,11 @@
             kind="boolean"
             name="%hypAttr">
       </attributeType>
+      <attributeType
+            id="modificationHashValue"
+            kind="string"
+            name="%modificationHashValueAttr">
+      </attributeType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">

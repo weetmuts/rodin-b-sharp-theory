@@ -80,6 +80,7 @@ public class BaseManager implements IElementChangedListener {
 			// add theory path stuff
 			for (IDeployedTheoryRoot theory : getTheoriesFromPath(rodinProject)) {
 				final IRodinProject thyProject = theory.getRodinProject();
+				check(thyProject);
 				IProjectBaseEntry projBaseEntry = projectEntries
 						.get(thyProject);
 				if (projBaseEntry != null) {

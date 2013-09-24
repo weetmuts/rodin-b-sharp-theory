@@ -1,5 +1,6 @@
 package org.eventb.theory.core.sc.modules;
 
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.SCCore;
@@ -17,8 +18,6 @@ import org.eventb.theory.core.sc.states.ProofRulesLabelSymbolTable;
 import org.eventb.theory.core.sc.states.RulesBlocksLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoremsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
-import org.eventb.theory.core.sc.states.TheoryPathProjectTable;
-import org.eventb.theory.core.sc.states.TheoryPathTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -44,7 +43,14 @@ public class TheoryModule extends SCProcessorModule {
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
 		if (theoryRoot.hasDeployedVersion()) {
-			theoryRoot.getDeployedTheoryRoot().setOutdated(true, monitor);
+			// default value of outdated is set to false
+			theoryRoot.getDeployedTheoryRoot().setOutdated(false, monitor);
+			/* case when the theory is changed (deployed version not same as the SC version), 
+			 * setOUtdates is set to true, results in changing the colour to amber
+			 */
+			if (theoryRoot.getDeployedTheoryRoot().hasModificationHashValueAttribute() &&
+				!theoryRoot.getDeployedTheoryRoot().getModificationHashValue().equals(ModulesUtils.ComputeHashValue(theoryRoot)))
+				theoryRoot.getDeployedTheoryRoot().setOutdated(true, monitor);
 			// save the change to the file
 			theoryRoot.getDeployedTheoryRoot().getRodinFile().save(monitor, true);
 		}

@@ -70,6 +70,9 @@ public class TheoryAttributes {
 	public static IAttributeType.Boolean OUTDATED_ATTRIBUTE = RodinCore
 			.getBooleanAttrType(TheoryPlugin.PLUGIN_ID + ".outdated");
 	
+	public static IAttributeType.String MODIFICATION_Hash_Value_ATTRIBUTE = RodinCore
+			.getStringAttrType(TheoryPlugin.PLUGIN_ID + ".modificationHashValue");
+	
 	public static IAttributeType.Integer ORDER_ATTRIBUTE = RodinCore
 		.getIntegerAttrType(TheoryPlugin.PLUGIN_ID + ".order");
 	

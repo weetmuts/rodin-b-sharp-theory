@@ -198,4 +198,21 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 		ITheoryRoot root = (ITheoryRoot) getTheoryFile(bareName).getRoot();
 		return root;
 	}
+
+	@Override
+	public boolean hasModificationHashValueAttribute() throws RodinDBException {
+		return hasAttribute(TheoryAttributes.MODIFICATION_Hash_Value_ATTRIBUTE);
+	}
+
+	@Override
+	public String getModificationHashValue() throws RodinDBException {
+		return getAttributeValue(TheoryAttributes.MODIFICATION_Hash_Value_ATTRIBUTE);
+	}
+
+	@Override
+	public void setModificationHashValue(String modificationHashValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(TheoryAttributes.MODIFICATION_Hash_Value_ATTRIBUTE, modificationHashValue, monitor);
+		
+	}
 }

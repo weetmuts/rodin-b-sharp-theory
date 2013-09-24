@@ -25,6 +25,7 @@ import org.eventb.theory.core.ITheoryDeployer;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.IUseTheory;
 import org.eventb.theory.core.TheoryHierarchyHelper;
+import org.eventb.theory.core.sc.modules.ModulesUtils;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -173,6 +174,7 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			// miscellaneous information (accuracy, comments)
 			deployedTheoryRoot.setAccuracy(accurate, monitor);
 			deployedTheoryRoot.setComment("GENERATED THEORY FILE: !DO NOT CHANGE!", monitor);
+			deployedTheoryRoot.setModificationHashValue(ModulesUtils.ComputeHashValue(theoryRoot), monitor);
 			// save
 			targetFile.save(monitor, true);
 			deploymentResult = new DeploymentResult(true, null);
