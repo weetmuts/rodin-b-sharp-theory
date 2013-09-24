@@ -174,7 +174,9 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			// miscellaneous information (accuracy, comments)
 			deployedTheoryRoot.setAccuracy(accurate, monitor);
 			deployedTheoryRoot.setComment("GENERATED THEORY FILE: !DO NOT CHANGE!", monitor);
-			deployedTheoryRoot.setModificationHashValue(ModulesUtils.ComputeHashValue(theoryRoot), monitor);
+			deployedTheoryRoot.setModificationHashValue(
+					ModulesUtils.ComputeHashValue(theoryRoot.getResource()),
+					monitor);
 			// save
 			targetFile.save(monitor, true);
 			deploymentResult = new DeploymentResult(true, null);

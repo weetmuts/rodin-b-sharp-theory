@@ -42,18 +42,6 @@ public class TheoryModule extends SCProcessorModule {
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
-		if (theoryRoot.hasDeployedVersion()) {
-			// default value of outdated is set to false
-			theoryRoot.getDeployedTheoryRoot().setOutdated(false, monitor);
-			/* case when the theory is changed (deployed version not same as the SC version), 
-			 * setOUtdates is set to true, results in changing the colour to amber
-			 */
-			if (theoryRoot.getDeployedTheoryRoot().hasModificationHashValueAttribute() &&
-				!theoryRoot.getDeployedTheoryRoot().getModificationHashValue().equals(ModulesUtils.ComputeHashValue(theoryRoot)))
-				theoryRoot.getDeployedTheoryRoot().setOutdated(true, monitor);
-			// save the change to the file
-			theoryRoot.getDeployedTheoryRoot().getRodinFile().save(monitor, true);
-		}
 		endProcessorModules(element, repository, monitor);
 	}
 

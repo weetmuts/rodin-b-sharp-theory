@@ -15,6 +15,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
@@ -29,7 +30,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.theory.core.IFormulaElement;
-import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -311,26 +311,41 @@ public class ModulesUtils {
 	}
 	
 	/**
-	 * Calculate the MD5 digest algorithm hash value for a SC theory root
-	 * @param root the SC theory file root
+	 * Calculate the MD5 digest algorithm hash value for the given file.
+	 * <p>
+	 * The given file must exist.
+	 * <p>
+	 * 
+	 * @param file
+	 *            a file
 	 * @return the string of the calculated hash value
+	 * @throws IllegalArgumentException
+	 *             if the file does not exist
 	 */
-	public static String ComputeHashValue(ISCTheoryRoot root){
+	public static String ComputeHashValue(IFile file) {
+		if (!file.exists()) {
+			throw new IllegalArgumentException("File does not exist: " + file);
+		}
 		try {
-			final InputStream is = root.getTheoryFile(root.getElementName()).getResource().getContents();
-			MessageDigest md = MessageDigest.getInstance("MD5"); // or "SHA-1" or ...
-			final DigestInputStream dis = new DigestInputStream(is, md);
-			while(dis.read() != -1);
-			final byte[] digest = md.digest();
-			final StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < digest.length; ++i) {
-				sb.append(Integer.toHexString((digest[i] & 0xFF) | 0x100).substring(1, 3));
+			final InputStream is = file.getContents();
+			try {
+				final MessageDigest md = MessageDigest.getInstance("MD5");
+				final DigestInputStream dis = new DigestInputStream(is, md);
+				while (dis.read() != -1)
+					;
+				final byte[] digest = md.digest();
+				final StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < digest.length; i++) {
+					sb.append(Integer.toHexString((digest[i] & 0xFF) | 0x100)
+							.substring(1, 3));
+				}
+				return sb.toString();
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				is.close();
 			}
-			is.close();
-			return(sb.toString());
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -338,6 +353,6 @@ public class ModulesUtils {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return null; 
+		return null;
 	}
 }

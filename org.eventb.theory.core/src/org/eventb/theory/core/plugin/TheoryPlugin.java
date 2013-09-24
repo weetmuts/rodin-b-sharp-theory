@@ -2,6 +2,7 @@ package org.eventb.theory.core.plugin;
 
 
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.theory.internal.core.util.DeployedStatusUpdater;
 import org.eventb.theory.internal.core.util.TheoryPathListener;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.RodinCore;
@@ -24,6 +25,7 @@ public class TheoryPlugin extends Plugin {
 		super.start(context);
 		plugin = this;
 		RodinCore.addElementChangedListener(new TheoryPathListener());
+		DeployedStatusUpdater.getInstance().initAndSchedule();
 	}
 
 	public void stop(BundleContext context) throws Exception {
