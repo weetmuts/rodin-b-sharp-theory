@@ -278,18 +278,20 @@ public abstract class TheoryElement extends EventBElement implements
 		return hasFormula();
 	}
 
-	// TODO check if necessary to make this method raise an exception instead of returning null when failed
 	@Override
 	public Formula<?> getSCFormula(FormulaFactory ff,
 			ITypeEnvironment typeEnvironment) throws RodinDBException {
 		String form = getFormula();
 		Formula<?> formula = parseFormula(form, ff, false);
 		if (formula == null) {
-			return null;
+			throw Util.newRodinDBException("Error parsing formula: " + formula
+					+ "\nwith factory: " + ff.getExtensions(), this);
 		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
 		if (result.hasProblem()) {
-			return null;
+			throw Util.newRodinDBException("Error typechecking formula: "
+					+ formula + "\nwith factory: " + ff.getExtensions()
+					+ "\nresult: " + result, this);
 		}
 		return formula;
 	}
