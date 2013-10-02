@@ -121,16 +121,15 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			CoreUtilities.log(e, "Error while processing theory path for project "+project);
 		}
 
-		// case Theory
+		// case unchecked Theory
 		if (root instanceof ITheoryRoot){
 			return setOfExtensions;
 		}
 		
-		// case SC Theory not in MathExtensions : basic set plus deployed in math extensions plus needed theories
+		// case SC Theory: basic set + from needed theories + from given theory
 		if (root instanceof ISCTheoryRoot){
-			ProjectManager manager;
 			try {
-				manager = fetchManager(project);
+				final ProjectManager manager = fetchManager(project);
 				setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
 				return setOfExtensions;
 			} catch (CoreException e) {
