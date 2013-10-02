@@ -9,6 +9,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.maths.extensions.WorkspaceExtensionsManager;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.states.AxiomaticDefinitionsLabelSymbolTable;
 import org.eventb.theory.core.sc.states.ImportProjectTable;
@@ -43,6 +44,7 @@ public class TheoryModule extends SCProcessorModule {
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
 		endProcessorModules(element, repository, monitor);
+		WorkspaceExtensionsManager.getInstance().scTheoryChanged(theoryRoot);
 	}
 
 	public IModuleType<?> getModuleType() {

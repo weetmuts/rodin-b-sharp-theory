@@ -12,6 +12,7 @@ package org.eventb.theory.core.maths.extensions;
 
 import static org.eventb.theory.core.DatabaseUtilities.getNonTempSCTheoryPaths;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -46,22 +47,50 @@ import org.rodinp.core.RodinCore;
  */
 public class WorkspaceExtensionsManager implements IElementChangedListener{
 	
-	private final Set<IFormulaExtension> COND_EXTS;
+	private static final Set<IFormulaExtension> COND_EXTS = Collections
+			.singleton(AstUtilities.COND);
+	
+	private static final WorkspaceExtensionsManager INSTANCE = new WorkspaceExtensionsManager();
 	
 	private Map<IRodinProject, ProjectManager> projectManagers;
 	
 	protected FormulaFactory basicFactory;
 	protected FormulaFactory seedFactory ;
 	
-	public WorkspaceExtensionsManager() {
+	private WorkspaceExtensionsManager() {
 		RodinCore.addElementChangedListener(this);
-		COND_EXTS = Collections.singleton(AstUtilities.COND);
+		
 		projectManagers = new HashMap<IRodinProject, ProjectManager>();
 		basicFactory = FormulaFactory.getInstance(COND_EXTS);
 		seedFactory = FormulaFactory.getInstance(basicFactory.getExtensions());
-		populate();
 	}
 
+	public static WorkspaceExtensionsManager getInstance() {
+		return INSTANCE;
+	}
+	
+	/**
+	 * Returns the manager for the given project, creating it if needed.
+	 * <p>
+	 * IMPORTANT: use that method everywhere to access project managers.
+	 * </p>
+	 * 
+	 * @param proj
+	 *            the managed project
+	 * @return the manager for the given project.
+	 * @throws CoreException if a problem occurs while populating the manager 
+	 */
+	private synchronized ProjectManager fetchManager(IRodinProject proj)
+			throws CoreException {
+		ProjectManager manager = projectManagers.get(proj);
+		if (manager == null) {
+			manager = new ProjectManager(proj);
+			manager.populate(seedFactory);
+			projectManagers.put(proj, manager);
+		}
+		return manager;
+	}
+	
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root){
 		
 		Set<IFormulaExtension> setOfExtensions= new LinkedHashSet<IFormulaExtension>();
@@ -75,18 +104,13 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			// theory path should not change the input language of a theory
 			if (paths.length == 1 && !(root instanceof ITheoryRoot) && !(root instanceof ISCTheoryRoot)){
 				for (ISCAvailableTheoryProject availProj: paths[0].getSCAvailableTheoryProjects()){
-					IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
-					ProjectManager projectManager = projectManagers.get(rodinProj);
-					if(projectManager != null){
-						for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()){
-							IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
-							//when availThy is undeployed then deployedTheoryRoot = null
-							if (deployedTheoryRoot != null)
-								setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
-							//add imported theories math extension
-							/*for (IDeployedTheoryRoot importedThy : TheoryHierarchyHelper.getImportedTheories(deployedTheoryRoot)){
-								setOfExtensions.addAll(projectManager.getNeededTheories(importedThy));
-							}*/
+					final IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
+					final ProjectManager projectManager = fetchManager(rodinProj);
+					for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()){
+						IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
+						//when availThy is undeployed then deployedTheoryRoot = null
+						if (deployedTheoryRoot != null) {
+							setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
 						}
 					}
 				}
@@ -104,31 +128,16 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		
 		// case SC Theory not in MathExtensions : basic set plus deployed in math extensions plus needed theories
 		if (root instanceof ISCTheoryRoot){
-			ProjectManager manager = projectManagers.get(project);
-			if (manager != null) {
+			ProjectManager manager;
+			try {
+				manager = fetchManager(project);
 				setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
-				
-/*				try {
-					for (ISCTheoryRoot importedThy : TheoryHierarchyHelper.getImportedTheories((ISCTheoryRoot) root))
-						setOfExtensions.addAll(manager.getNeededTheories(importedThy));
-				} catch (CoreException e) {
-					CoreUtilities.log(e, "Error while processing SC root " + root + "in" + project);
-				}*/				
+				return setOfExtensions;
+			} catch (CoreException e) {
+				CoreUtilities.log(e,
+						"Error while processing SC theory " + root.getPath());
 			}
-			
-			return setOfExtensions;
 		}
-
-		//removed because a deployed local theory is not accessible by the local context/machine any more, 
-		//it is just accessible when imported in a theory path (above if case).
-/*		// case Model : add all deployed 
-		if (!DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
-			ProjectManager manager = projectManagers.get(project);
-			if (manager != null){
-				setOfExtensions.addAll(manager.getAllDeployedExtensions());
-			}
-			return setOfExtensions;
-		}*/
 		
 		// case theory dependent roots (not ITheoryRoot) : they get the SC theory root extensions
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile())){
@@ -149,30 +158,26 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 			}
 		}
 		if (element instanceof IRodinProject) {
+			//FIXME handle deleted projects
 			IRodinProject proj = (IRodinProject) element;
-			ProjectManager manager = projectManagers.get(proj);
-			if (manager != null){
-				manager.processDelta(delta);
-			}
-			else{
-				projectManagers.put(proj, new ProjectManager(proj));
-			}
+			ProjectManager manager = fetchManager(proj);
+			manager.processDelta(delta);
 		}
 	}
 	
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
-		IRodinElementDelta delta = event.getDelta();
+		final IRodinElementDelta delta = event.getDelta();
+		final Collection<ProjectManager> managers; 
+		synchronized(this) {
+			managers = projectManagers.values();
+		}
 		try {
 			processDelta(delta);
-			for (ProjectManager manager : projectManagers.values()){
+			for (ProjectManager manager : managers){
 				if(manager.hasDeployedChanged()){
 					manager.reloadDeployedExtensions(seedFactory);
 					manager.setDeployedChanged(false);
-				}
-				if(manager.hasSCChanged()){
-					manager.reloadDirtyExtensions(seedFactory);
-					manager.setSCChanged(false);
 				}
 			}
 		} catch (CoreException e) {
@@ -180,16 +185,19 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		}
 	}
 	
-	private void populate(){
+	/**
+	 * Informs that the given SC theory has changed and reloads its extensions.
+	 * 
+	 * @param scTheory
+	 *            the changed SC theory root
+	 */
+	public void scTheoryChanged(ISCTheoryRoot scTheory) {
 		try {
-			for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
-				ProjectManager manager = new ProjectManager(project);
-				manager.populate(seedFactory);
-				projectManagers.put(project, manager);
-			}
-			
+			final ProjectManager manager = fetchManager(scTheory.getRodinProject());
+			manager.reloadDirtyExtensions(seedFactory);
 		} catch (CoreException e) {
-			CoreUtilities.log(e, "Error while populating project managers for extensions");
+			CoreUtilities.log(e,
+					"Error while processing changes in SC theory " + scTheory.getPath());
 		}
 	}
 	

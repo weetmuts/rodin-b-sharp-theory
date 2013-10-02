@@ -36,14 +36,8 @@ import org.rodinp.core.RodinDBException;
  */
 public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider {
 
-	private final String PROVIDER_ID = TheoryPlugin.PLUGIN_ID
+	private static final String PROVIDER_ID = TheoryPlugin.PLUGIN_ID
 		+ ".theoryExtensionsProvider";
-	
-	private WorkspaceExtensionsManager manager;
-	
-	public TheoryFormulaExtensionProvider(){
-		manager = new WorkspaceExtensionsManager();
-	}
 	
 	@Override
 	public String getId() {
@@ -52,7 +46,7 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
-		return manager.getFormulaExtensions(root);
+		return WorkspaceExtensionsManager.getInstance().getFormulaExtensions(root);
 	}
 
 	@Override
