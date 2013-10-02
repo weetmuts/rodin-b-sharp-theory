@@ -95,95 +95,97 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 
 	protected void generateCorrespondingPOs(
 			ISCNewOperatorDefinition definition, IProgressMonitor monitor)
-			throws CoreException {
-		ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
-		if (!definition.hasError()) {
-			// get the arguments
-			ISCOperatorArgument[] arguments = definition.getOperatorArguments();
-			Set<FreeIdentifier> identifiers = new LinkedHashSet<FreeIdentifier>();
-			for (ISCOperatorArgument argument : arguments) {
-				FreeIdentifier ident = argument.getIdentifier(factory);
-				identifiers.add(ident);
-				localTypeEnvironment.add(ident);
-			}
-			// get the well-definedness condition
-			Predicate wdCondition = definition.getPredicate(factory,
-					localTypeEnvironment);
-			// get the definition
-			ISCDirectOperatorDefinition[] directDefinitions = definition
-					.getDirectOperatorDefinitions();
-			if (directDefinitions.length == 1) {
-				Formula<?> defFormula = directDefinitions[0].getSCFormula(
-						factory, localTypeEnvironment);
-				IPOGSource[] sources = new IPOGSource[] { makeSource(
-						IPOSource.DEFAULT_ROLE, definition), makeSource(IPOSource.DEFAULT_ROLE, definition.getSource()) };
-				IPOPredicateSet hyp = target
-						.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
-				// ///////////////////////////////////
-				// ////////WD Strength
-				String poName = definition.getLabel()
-						+ OPERATOR_WD_POSTFIX;
-				Predicate wdStrengthPredicate = getClosedPOPredicate(
-						wdCondition, defFormula.getWDPredicate(factory),
-						identifiers, localTypeEnvironment);
-				if (!isTrivial(wdStrengthPredicate)) {
-					createPO(
-							target,
-							poName,
-							natureFactory.getNature(OPERATOR_WD_PO),
-							hyp,
-							EMPTY_PREDICATES,
-							makePredicate(wdStrengthPredicate,
-									definition.getSource()),
+					throws CoreException {
+		if (definition.hasError()) {
+			return;
+		}
+		final ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
+		// get the arguments
+		ISCOperatorArgument[] arguments = definition.getOperatorArguments();
+		Set<FreeIdentifier> identifiers = new LinkedHashSet<FreeIdentifier>();
+		for (ISCOperatorArgument argument : arguments) {
+			FreeIdentifier ident = argument.getIdentifier(factory);
+			identifiers.add(ident);
+			localTypeEnvironment.add(ident);
+		}
+		// get the well-definedness condition
+		final Predicate wdCondition = definition.getPredicate(factory,
+				localTypeEnvironment);
+		// get the definition
+		final ISCDirectOperatorDefinition[] directDefinitions = definition
+				.getDirectOperatorDefinitions();
+		if (directDefinitions.length != 1) {
+			return;
+		}
+		Formula<?> defFormula = directDefinitions[0].getSCFormula(
+				factory, localTypeEnvironment);
+		IPOGSource[] sources = new IPOGSource[] {
+				makeSource(IPOSource.DEFAULT_ROLE, definition),
+				makeSource(IPOSource.DEFAULT_ROLE, definition.getSource()) };
+		IPOPredicateSet hyp = target
+				.getPredicateSet(TypeParametersPOGModule.ABS_HYP_NAME);
+		// ///////////////////////////////////
+		// ////////WD Strength
+		String poName = definition.getLabel()
+				+ OPERATOR_WD_POSTFIX;
+		Predicate wdStrengthPredicate = getClosedPOPredicate(
+				wdCondition, defFormula.getWDPredicate(factory),
+				identifiers, localTypeEnvironment);
+		if (!isTrivial(wdStrengthPredicate)) {
+			createPO(
+					target,
+					poName,
+					natureFactory.getNature(OPERATOR_WD_PO),
+					hyp,
+					EMPTY_PREDICATES,
+					makePredicate(wdStrengthPredicate,
+							definition.getSource()),
 							sources,
 							new IPOGHint[] { getLocalHypothesisSelectionHint(
 									target, poName, hyp) }, true, null);
-				}
-				// ///////////////////////////////////
-				// ////////Associativity
-				if (definition.isAssociative()) {
-					Predicate assocChecker = getAssociativityChecker(
-							(Expression) defFormula, identifiers,
-							localTypeEnvironment);
-					if (!isTrivial(assocChecker)) {
-						poName = definition.getLabel()
-								+ OPERATOR_ASSOC_POSTFIX;
-						createPO(
-								target,
-								poName,
-								natureFactory.getNature(OPERATOR_ASSOC_PO),
-								hyp,
-								EMPTY_PREDICATES,
-								makePredicate(assocChecker,
-										definition.getSource()),
+		}
+		// ///////////////////////////////////
+		// ////////Associativity
+		if (definition.isAssociative()) {
+			Predicate assocChecker = getAssociativityChecker(
+					(Expression) defFormula, identifiers,
+					localTypeEnvironment);
+			if (!isTrivial(assocChecker)) {
+				poName = definition.getLabel()
+						+ OPERATOR_ASSOC_POSTFIX;
+				createPO(
+						target,
+						poName,
+						natureFactory.getNature(OPERATOR_ASSOC_PO),
+						hyp,
+						EMPTY_PREDICATES,
+						makePredicate(assocChecker,
+								definition.getSource()),
 								sources,
 								new IPOGHint[] { getLocalHypothesisSelectionHint(
 										target, poName, hyp) }, true, null);
-					}
-				}
-				// ///////////////////////////////////
-				// ////////Commutativity
-				if (definition.isCommutative()) {
-					Predicate commutChecker = getCommutativityChecker(
-							(Expression) defFormula, identifiers,
-							localTypeEnvironment);
-					if (!isTrivial(commutChecker)) {
-						poName = definition.getLabel()
-								+ OPERATOR_COMMUT_POSTFIX;
-						createPO(
-								target,
-								poName,
-								natureFactory.getNature(OPERATOR_COMMUT_PO),
-								hyp,
-								EMPTY_PREDICATES,
-								makePredicate(commutChecker,
-										definition.getSource()),
+			}
+		}
+		// ///////////////////////////////////
+		// ////////Commutativity
+		if (definition.isCommutative()) {
+			Predicate commutChecker = getCommutativityChecker(
+					(Expression) defFormula, identifiers,
+					localTypeEnvironment);
+			if (!isTrivial(commutChecker)) {
+				poName = definition.getLabel()
+						+ OPERATOR_COMMUT_POSTFIX;
+				createPO(
+						target,
+						poName,
+						natureFactory.getNature(OPERATOR_COMMUT_PO),
+						hyp,
+						EMPTY_PREDICATES,
+						makePredicate(commutChecker,
+								definition.getSource()),
 								sources,
 								new IPOGHint[] { getLocalHypothesisSelectionHint(
 										target, poName, hyp) }, true, null);
-					}
-				}
-
 			}
 		}
 	}
