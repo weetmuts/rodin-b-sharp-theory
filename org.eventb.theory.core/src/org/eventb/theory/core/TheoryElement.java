@@ -284,14 +284,14 @@ public abstract class TheoryElement extends EventBElement implements
 		String form = getFormula();
 		Formula<?> formula = parseFormula(form, ff, false);
 		if (formula == null) {
-			throw Util.newRodinDBException("Error parsing formula: " + formula
-					+ "\nwith factory: " + ff.getExtensions(), this);
+			throw Util.newRodinDBException("Error parsing formula: " + form
+					+ "\nwith factory: " + ff.getExtensions());
 		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
 		if (result.hasProblem()) {
 			throw Util.newRodinDBException("Error typechecking formula: "
 					+ formula + "\nwith factory: " + ff.getExtensions()
-					+ "\nresult: " + result, this);
+					+ "\nresult: " + result);
 		}
 		return formula;
 	}
