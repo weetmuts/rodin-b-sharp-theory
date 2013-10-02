@@ -9,7 +9,6 @@ package org.eventb.theory.core.sc.modules;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -341,17 +340,12 @@ public class ModulesUtils {
 				}
 				return sb.toString();
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				CoreUtilities.log(e, "while computing hash for " + file);
 			} finally {
 				is.close();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (Exception e) {
+			CoreUtilities.log(e, "while computing hash for " + file);
 		}
 		return null;
 	}
