@@ -38,8 +38,12 @@ public class ProjectManager {
 	private boolean deployedChanged;
 	private boolean scChanged;
 
+	// cache for extensions in SC theories, used by POG and prover
 	private Map<String, Set<IFormulaExtension>> scExtensionsMap;
+	
+	// cache for extensions in deployed theories, used when resolving dependencies
 	private Map<String, Set<IFormulaExtension>> deployedExtensionsMap;
+	
 	private Set<IFormulaExtension> allDeployedExtensions;
 
 	public ProjectManager(IRodinProject project) {
@@ -59,7 +63,18 @@ public class ProjectManager {
 		Set<ISCTheoryRoot> needed = graph.getNeededTheories(scRoot);
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		for (ISCTheoryRoot root : needed){
-			extensions.addAll(scExtensionsMap.get(root.getComponentName()));
+			final Set<IFormulaExtension> extns;
+			final String name = root.getComponentName();
+			if (root instanceof IDeployedTheoryRoot) {
+				extns = deployedExtensionsMap.get(name);
+			} else {
+				extns = scExtensionsMap.get(name);
+			}
+			if (extns == null) {
+				throw new IllegalStateException(
+						"No cached extensions for component " + root.getPath());
+			}
+			extensions.addAll(extns);
 		}
 		return extensions;
 	}
@@ -123,8 +138,6 @@ public class ProjectManager {
 			IInternalElement root = file.getRoot();
 			if (root instanceof IDeployedTheoryRoot) {
 				deployedChanged = true;
-			} else if (root instanceof ISCTheoryRoot) {
-				scChanged = true;
 			}
 		}
 	}

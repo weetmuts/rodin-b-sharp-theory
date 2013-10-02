@@ -91,34 +91,29 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		return manager;
 	}
 	
-	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root){
+	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) throws CoreException{
 		
 		Set<IFormulaExtension> setOfExtensions= new LinkedHashSet<IFormulaExtension>();
 		// add cond extension
 		setOfExtensions.addAll(COND_EXTS);
 		IRodinProject project = root.getRodinProject();
 		
-		try{
-			ISCTheoryPathRoot[] paths = getNonTempSCTheoryPaths(project);
-			// theories cannot depend on theory path, so the presence of a
-			// theory path should not change the input language of a theory
-			if (paths.length == 1 && !(root instanceof ITheoryRoot) && !(root instanceof ISCTheoryRoot)){
-				for (ISCAvailableTheoryProject availProj: paths[0].getSCAvailableTheoryProjects()){
-					final IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
-					final ProjectManager projectManager = fetchManager(rodinProj);
-					for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()){
-						IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
-						//when availThy is undeployed then deployedTheoryRoot = null
-						if (deployedTheoryRoot != null) {
-							setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
-						}
+		ISCTheoryPathRoot[] paths = getNonTempSCTheoryPaths(project);
+		// theories cannot depend on theory path, so the presence of a
+		// theory path should not change the input language of a theory
+		if (paths.length == 1 && !(root instanceof ITheoryRoot) && !(root instanceof ISCTheoryRoot)){
+			for (ISCAvailableTheoryProject availProj: paths[0].getSCAvailableTheoryProjects()){
+				final IRodinProject rodinProj = availProj.getSCAvailableTheoryProject();
+				final ProjectManager projectManager = fetchManager(rodinProj);
+				for (ISCAvailableTheory availThy : availProj.getSCAvailableTheories()){
+					IDeployedTheoryRoot deployedTheoryRoot = availThy.getSCDeployedTheoryRoot();
+					//when availThy is undeployed then deployedTheoryRoot = null
+					if (deployedTheoryRoot != null) {
+						setOfExtensions.addAll(projectManager.getNeededTheories(deployedTheoryRoot));
 					}
 				}
-					
 			}
-			// else ignore paths
-		} catch(CoreException e){
-			CoreUtilities.log(e, "Error while processing theory path for project "+project);
+				
 		}
 
 		// case unchecked Theory
@@ -128,14 +123,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 		
 		// case SC Theory: basic set + from needed theories + from given theory
 		if (root instanceof ISCTheoryRoot){
-			try {
-				final ProjectManager manager = fetchManager(project);
-				setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
-				return setOfExtensions;
-			} catch (CoreException e) {
-				CoreUtilities.log(e,
-						"Error while processing SC theory " + root.getPath());
-			}
+			final ProjectManager manager = fetchManager(project);
+			setOfExtensions.addAll(manager.getNeededTheories((ISCTheoryRoot) root));
+			return setOfExtensions;
 		}
 		
 		// case theory dependent roots (not ITheoryRoot) : they get the SC theory root extensions
@@ -189,15 +179,11 @@ public class WorkspaceExtensionsManager implements IElementChangedListener{
 	 * 
 	 * @param scTheory
 	 *            the changed SC theory root
+	 * @throws CoreException if extensions could not be reloaded
 	 */
-	public void scTheoryChanged(ISCTheoryRoot scTheory) {
-		try {
+	public void scTheoryChanged(ISCTheoryRoot scTheory) throws CoreException {
 			final ProjectManager manager = fetchManager(scTheory.getRodinProject());
 			manager.reloadDirtyExtensions(seedFactory);
-		} catch (CoreException e) {
-			CoreUtilities.log(e,
-					"Error while processing changes in SC theory " + scTheory.getPath());
-		}
 	}
 	
 }

@@ -18,6 +18,7 @@ import static org.eventb.theory.internal.core.util.CoreUtilities.log;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -25,6 +26,7 @@ import org.eventb.core.extension.IFormulaExtensionProvider;
 import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -46,7 +48,16 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
-		return WorkspaceExtensionsManager.getInstance().getFormulaExtensions(root);
+		try {
+			return WorkspaceExtensionsManager.getInstance()
+					.getFormulaExtensions(root);
+			// else ignore paths
+		} catch (CoreException e) {
+			CoreUtilities
+					.log(e, "Error while computing math extensions for "
+							+ root.getPath());
+		}
+		return FormulaExtensionsLoader.EMPTY_EXT;
 	}
 
 	@Override
