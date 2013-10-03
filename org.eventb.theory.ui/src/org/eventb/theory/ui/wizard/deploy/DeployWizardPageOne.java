@@ -42,7 +42,7 @@ public class DeployWizardPageOne extends WizardPage {
 	public DeployWizardPageOne() {
 		super("deployWizardPage");
 		setTitle(Messages.wizard_deployTitle);
-		setDescription(Messages.wizard_deployDescription);
+		//setDescription(Messages.wizard_deployDescription);
 	}
 
 	/**

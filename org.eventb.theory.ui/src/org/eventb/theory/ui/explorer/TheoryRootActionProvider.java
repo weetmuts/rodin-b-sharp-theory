@@ -71,7 +71,7 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH, buildOpenWithMenu());
 		menu.add(new Separator(GROUP_META));
 		menu.appendToGroup(GROUP_META, getDeployTheoryAction());
-		menu.appendToGroup(GROUP_META, getUndeployTheoryAction());
+		//menu.appendToGroup(GROUP_META, getUndeployTheoryAction());
 		menu.add(new Separator(GROUP_DELETE));
 		menu.appendToGroup(GROUP_DELETE, getDeleteAction(site));
 	}

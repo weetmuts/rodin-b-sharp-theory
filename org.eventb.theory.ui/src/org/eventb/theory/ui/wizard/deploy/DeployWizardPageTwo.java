@@ -33,13 +33,13 @@ public class DeployWizardPageTwo extends WizardPage {
 	public DeployWizardPageTwo() {
 		super("deployWizardPage");
 		setTitle(Messages.wizard_deployTitle);
-		setDescription(Messages.wizard_deployDescription);
+		//setDescription(Messages.wizard_deployDescription);
 	}
 	
 	public DeployWizardPageTwo(Set<ISCTheoryRoot> theoryRoots) {
 		super("deployWizardPage");
 		setTitle(Messages.wizard_deployTitle);
-		setDescription(Messages.wizard_deployDescription);
+		//setDescription(Messages.wizard_deployDescription);
 		this.theoryRoots = theoryRoots;
 	}
 

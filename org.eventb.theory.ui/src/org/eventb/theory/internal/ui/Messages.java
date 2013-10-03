@@ -30,7 +30,7 @@ public class Messages {
 	public static String operator_isNotCommutative;
 	
 	public static String wizard_deployTitle;
-	public static String wizard_deployDescription;
+	//public static String wizard_deployDescription;
 	public static String wizard_undeployTitle;
 	public static String wizard_undeployDescription;
 	public static String wizard_undeployPageMessage;

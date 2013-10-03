@@ -873,7 +873,7 @@
 
 	<extension
          point="org.eclipse.ui.viewActions">
-      <viewContribution
+<!--      <viewContribution
             id="org.eventb.theory.ui.deployTheory"
             targetID="fr.systerel.explorer.navigator.view">
          <action
@@ -885,7 +885,7 @@
                toolbarPath="new"
                tooltip="%viewActions.deployTheoryTooltip">
          </action>
-      </viewContribution>
+      </viewContribution> -->
       <viewContribution
             id="org.eventb.theory.ui.newTheory"
             targetID="fr.systerel.explorer.navigator.view">
