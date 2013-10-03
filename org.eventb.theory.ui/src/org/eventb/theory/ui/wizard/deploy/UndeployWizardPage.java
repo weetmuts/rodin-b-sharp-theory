@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Button;
 public class UndeployWizardPage extends WizardPage {
 
 	private TableViewer theoriesTableViewer;
-	private Button rebuildCheckButton;
+	//private Button rebuildCheckButton;
 	
 	private Set<IDeployedTheoryRoot> deployedRoots;
 	
@@ -53,9 +53,9 @@ public class UndeployWizardPage extends WizardPage {
 		Table table = theoriesTableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 
-		rebuildCheckButton = new Button(container, SWT.CHECK);
-		rebuildCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
-		rebuildCheckButton.setText(Messages.wizard_rebuild);
+		//rebuildCheckButton = new Button(container, SWT.CHECK);
+		//rebuildCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
+		//rebuildCheckButton.setText(Messages.wizard_rebuild);
 		setup();
 		setControl(container);
 	}
@@ -93,11 +93,11 @@ public class UndeployWizardPage extends WizardPage {
 			}
 		});
 		theoriesTableViewer.setInput(deployedRoots);
-		rebuildCheckButton.setSelection(true);
+		//rebuildCheckButton.setSelection(true);
 	}
 	
-	public boolean rebuildProject(){
+/*	public boolean rebuildProject(){
 		return rebuildCheckButton.getSelection();
-	}
+	}*/
 
 }

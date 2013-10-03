@@ -23,10 +23,10 @@ public class SimpleDeployWizard extends AbstractDeployWizard{
 		return theoryRoots;
 	}
 
-	@Override
+/*	@Override
 	public boolean rebuildProject() {
 		return page.rebuildProject();
-	}
+	}*/
 
 	@Override
 	public IRodinProject getRodinProject() {

@@ -27,9 +27,9 @@ public class DeployWizard extends AbstractDeployWizard {
 		return pageOne.getSelectedTheories();
 	}
 
-	public boolean rebuildProject() {
+/*	public boolean rebuildProject() {
 		return pageTwo.rebuildProject();
-	}
+	}*/
 
 	@Override
 	public boolean canFinish() {

@@ -10,17 +10,25 @@ package org.eventb.theory.internal.core.util;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IImportTheory;
+import org.eventb.theory.core.IImportTheoryProject;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ITheoryPathRoot;
+import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -127,6 +135,80 @@ public class DeployUtilities {
 			}
 		}
 		return true;
+	}
+	
+
+	/**
+	 * Travers the projects in the workspace and rebuild the project containing a theorypath/theory which imports deployTheoryRoot (deploying theory)
+	 * 
+	 * @param monitor
+	 * @param deployedTheoryRoot
+	 * @throws RodinDBException
+	 */
+	public static void TraversAndPopulateDeploy(IProgressMonitor monitor,
+			IDeployedTheoryRoot deployedTheoryRoot) throws RodinDBException {
+		for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
+			monitor.worked(2);
+			boolean breakFlag = true;
+			
+			ITheoryPathRoot[] theoryPath = project.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
+			if (theoryPath.length != 0 && theoryPath[0].getRodinFile().exists()) {
+				for (IAvailableTheory availThy : theoryPath[0].getAvailableTheories()){
+					if (availThy.hasAvailableTheory() && availThy.getDeployedTheory().equals(deployedTheoryRoot) && theoryPath[0].getSCTheoryPathRoot().getRodinFile().exists()) {
+						//theoryPath[0].getSCTheoryPathRoot().getRodinFile().delete(true, monitor);
+						buildProject(monitor, project);
+						breakFlag = false;
+						break;
+					}		
+				}
+			}
+			//to avoid building a single project more than one time
+			if (breakFlag) {
+				ITheoryRoot[] theoryRoots = project
+						.getRootElementsOfType(ITheoryRoot.ELEMENT_TYPE);
+				if (theoryRoots.length != 0) {
+					for (ITheoryRoot thy : theoryRoots) {
+						if (thy.getRodinFile().exists()) {
+							for (IImportTheoryProject importThyPrj : thy
+									.getImportTheoryProjects()) {
+								for (IImportTheory importThy : importThyPrj
+										.getImportTheories()) {
+									if (importThy.getImportTheory().equals(
+											deployedTheoryRoot)) {
+										buildProject(monitor, project);
+									}
+
+								}
+							}
+						}
+					}
+				}
+			}
+			
+		}
+	}
+
+	/**
+	 * celan and build the project
+	 * 
+	 * @param monitor
+	 * @param project
+	 */
+	private static void buildProject(IProgressMonitor monitor,
+			IRodinProject project) {
+		try {
+			project.getProject()
+					.build(IncrementalProjectBuilder.CLEAN_BUILD,
+							monitor);
+		} catch (CoreException e) {
+			CoreUtilities
+					.log(e,
+							"when trying to clean/build project "
+									+ project
+											.getProject()
+											.getName()
+									+ "after deploying theory ");
+		}
 	}
 	
 }

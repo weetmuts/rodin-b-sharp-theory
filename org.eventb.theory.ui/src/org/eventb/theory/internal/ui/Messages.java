@@ -52,7 +52,7 @@ public class Messages {
 	public static String wizard_newTheoryDesc;
 	public static String wizard_newTheoryTitle;
 	
-	public static String wizard_rebuild;
+	//public static String wizard_rebuild;
 	public static String wizard_newTheoryPathTitle;
 	public static String wizard_multipleTheoryPathError;
 	public static String wizardRenameFileExists;

@@ -38,13 +38,13 @@ public class UndeployWizard extends Wizard {
 		
 		//TheoryUIUtils.runWithProgress(TheoryHierarchyHelper.getUndeployer(project, deployedRoots), ResourcesPlugin.getWorkspace().getRoot().getSchedulingRule());
 
-		if (page.rebuildProject()){
+/*		if (page.rebuildProject()){
 			try {
 				DatabaseUtilities.rebuild(project, null);
 			} catch (CoreException e) {
 				TheoryUIUtils.log(e, "when rebuilding project "+project);
 			}
-		}
+		}*/
 		return true;
 	}
 

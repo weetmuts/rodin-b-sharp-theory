@@ -23,7 +23,7 @@ import org.eventb.theory.internal.ui.TheoryUIUtils;
 public class DeployWizardPageTwo extends WizardPage {
 	
 	private TableViewer theoriesTableViewer;
-	private Button rebuildCheckButton;
+	//private Button rebuildCheckButton;
 	
 	private Set<ISCTheoryRoot> theoryRoots;
 	
@@ -58,9 +58,9 @@ public class DeployWizardPageTwo extends WizardPage {
 		theoriesTableViewer = new TableViewer(container, SWT.BORDER);
 		Table table = theoriesTableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 2));
-		rebuildCheckButton = new Button(container, SWT.CHECK);
-		rebuildCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
-		rebuildCheckButton.setText(Messages.wizard_rebuild);
+		//rebuildCheckButton = new Button(container, SWT.CHECK);
+		//rebuildCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+		//rebuildCheckButton.setText(Messages.wizard_rebuild);
 		setup();
 		setControl(container);
 	}
@@ -111,11 +111,11 @@ public class DeployWizardPageTwo extends WizardPage {
 			}
 		});
 		// default to selected 
-		rebuildCheckButton.setSelection(true);
+		//rebuildCheckButton.setSelection(true);
 	}
 	
-	public boolean rebuildProject(){
+/*	public boolean rebuildProject(){
 		return rebuildCheckButton.getSelection();
-	}
+	}*/
 
 }

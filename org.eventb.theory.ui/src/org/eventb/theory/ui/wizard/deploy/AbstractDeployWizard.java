@@ -2,10 +2,8 @@ package org.eventb.theory.ui.wizard.deploy;
 
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
@@ -27,13 +25,13 @@ public abstract class AbstractDeployWizard extends Wizard{
 		// if successful
 		if (deploymentResult.succeeded()){
 			// we only rebuild if successful
-			if (rebuildProject()){
+/*			if (rebuildProject()){
 				try {
 					DatabaseUtilities.rebuild(rodinProject, null);
 				} catch (CoreException e) {
 					TheoryUIUtils.log(e, "when rebuilding project "+rodinProject);
 				}
-			}
+			}*/
 			MessageDialog.openInformation(getShell(), getWindowTitle(), Messages.wizard_deploySuccess);
 			return true;
 		}
@@ -46,7 +44,7 @@ public abstract class AbstractDeployWizard extends Wizard{
 	
 	public abstract Set<ISCTheoryRoot> selectedTheories();
 	
-	public abstract boolean rebuildProject();
+	//public abstract boolean rebuildProject();
 	
 	public abstract IRodinProject getRodinProject();
 

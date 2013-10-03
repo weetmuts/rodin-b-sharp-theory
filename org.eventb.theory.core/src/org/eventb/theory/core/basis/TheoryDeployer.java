@@ -17,18 +17,16 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.theory.core.DatabaseUtilities;
-import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryDeployer;
-import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.IUseTheory;
 import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.core.sc.modules.ModulesUtils;
+import org.eventb.theory.internal.core.util.DeployUtilities;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 
 /**
  * @author maamria
@@ -177,28 +175,18 @@ public final class TheoryDeployer implements ITheoryDeployer {
 			deployedTheoryRoot.setModificationHashValue(
 					ModulesUtils.ComputeHashValue(theoryRoot.getResource()),
 					monitor);
+			// the default false is needed to make the enableness of the deploy pop up menu works @theoryRootActionProvider.getDeployTheoryAction.isEnabled
+			deployedTheoryRoot.setOutdated(false, monitor);
 			// save
 			targetFile.save(monitor, true);
 			deploymentResult = new DeploymentResult(true, null);
 			monitor.subTask("finising with " + targetFile.getElementName());
 			monitor.worked(2);
 			/* populate (from Rodin2.8):
-			 * for each Theory path which importing this theory,
-			 * the checked theory path (.tcl) file is deleted; this automatically triggers a build in the project 
+			 * traversing the workspace, each project containing a theorypath/theory which imports the deploying theory will be rebuild
 			 */
 			monitor.subTask("populating");
-			for (IRodinProject project : RodinCore.getRodinDB().getRodinProjects()){
-				monitor.worked(2);
-				ITheoryPathRoot[] theoryPath = project.getRootElementsOfType(ITheoryPathRoot.ELEMENT_TYPE);
-				if (theoryPath.length != 0 && theoryPath[0].getRodinFile().exists()) {
-				
-					for (IAvailableTheory availThy : theoryPath[0].getAvailableTheories()){
-						if (availThy.hasAvailableTheory() && availThy.getDeployedTheory().equals(deployedTheoryRoot) && theoryPath[0].getSCTheoryPathRoot().getRodinFile().exists()) {
-							theoryPath[0].getSCTheoryPathRoot().getRodinFile().delete(true, monitor);
-						}		
-					}
-				}
-			}
+			DeployUtilities.TraversAndPopulateDeploy(monitor, deployedTheoryRoot);
 		}
 		return true;
 	}
