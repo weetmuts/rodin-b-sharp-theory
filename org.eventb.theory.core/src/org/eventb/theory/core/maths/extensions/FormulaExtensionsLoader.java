@@ -367,7 +367,7 @@ class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition
 		}
 		Predicate wdCondition = definitionElmnt.getPredicate(factory, typeEnvironment);
 		Predicate dWdCondition = definitionElmnt.getWDCondition(factory, typeEnvironment);
-		IOperatorExtension extension = null;
+		final IOperatorExtension extension;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType,
 				notation, groupID);
 		if (AstUtilities.isExpressionOperator(definitionElmnt.getFormulaType())) {
