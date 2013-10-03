@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions.dependencies;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.theory.core.IDeployedTheoryRoot;
@@ -40,18 +39,6 @@ public class ProjectTheoryGraph {
 	}
 
 	/**
-	 * Sets the deployed roots to be manipulated through this graph.
-	 * 
-	 * @param roots
-	 *            the deployed roots
-	 * @return whether the roots have been set properly
-	 */
-	public boolean setDeployedRoots(List<IDeployedTheoryRoot> roots) {
-		return setDeployedRoots(roots.toArray(new IDeployedTheoryRoot[roots
-				.size()]));
-	}
-
-	/**
 	 * Returns the deployed roots manipulated through this graph. The roots are
 	 * sorted according to the defined order on deployed theories.
 	 * 
@@ -70,17 +57,6 @@ public class ProjectTheoryGraph {
 	 */
 	public boolean setCheckedRoots(ISCTheoryRoot[] roots) {
 		return scGraph.setElements(roots);
-	}
-
-	/**
-	 * Sets the sc theory roots to be manipulated through this graph.
-	 * 
-	 * @param roots
-	 *            the sc theory roots
-	 * @return whether the roots have been set properly
-	 */
-	public boolean setCheckedRoots(List<ISCTheoryRoot> roots) {
-		return setCheckedRoots(roots.toArray(new ISCTheoryRoot[roots.size()]));
 	}
 
 	/**
@@ -117,18 +93,6 @@ public class ProjectTheoryGraph {
 	 */
 	public Set<IDeployedTheoryRoot> getNeededTheories(IDeployedTheoryRoot root) {
 		return deployedGraph.getUpperSet(root);
-	}
-
-	/**
-	 * Returns the theories that depend on the given deployed theory root.
-	 * 
-	 * @param root
-	 *            the deployed root
-	 * @return all dependent theories
-	 */
-	public Set<IDeployedTheoryRoot> getDependentTheories(
-			IDeployedTheoryRoot root) {
-		return deployedGraph.getLowerSet(root);
 	}
 
 }
