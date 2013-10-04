@@ -44,7 +44,18 @@ public class TheoryModule extends SCProcessorModule {
 		theoryRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
 		theoryRoot.setSource(source, monitor);
 		endProcessorModules(element, repository, monitor);
-		WorkspaceExtensionsManager.getInstance().scTheoryChanged(theoryRoot);
+		
+		fireSCChange();
+	}
+
+	private void fireSCChange() throws CoreException {
+		final String tmpName = theoryRoot.getRodinFile().getElementName();
+		final int last = tmpName.lastIndexOf("_tmp");
+		final String scName = last < 0 ? tmpName : tmpName.substring(0, last);
+		final ISCTheoryRoot scRoot = (ISCTheoryRoot) theoryRoot
+				.getRodinProject().getRodinFile(scName).getRoot();
+
+		WorkspaceExtensionsManager.getInstance().scTheoryChanged(scRoot);
 	}
 
 	public IModuleType<?> getModuleType() {

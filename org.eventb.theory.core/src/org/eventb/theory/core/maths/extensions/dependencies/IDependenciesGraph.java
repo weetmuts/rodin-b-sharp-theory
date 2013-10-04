@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2010-11 University of Southampton.
+ * Copyright (c) 2010, 2013 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel -  refactored after imports only concern deployed theories
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions.dependencies;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 
 /**
@@ -17,58 +21,49 @@ import org.eventb.core.IEventBRoot;
  * 
  * @author maamria
  * 
- * @param E the type of the Event-B root
- *
+ * @param E
+ *            the type of the Event-B root
+ * 
  */
 public interface IDependenciesGraph<E extends IEventBRoot> {
 
 	/**
-	 * Sets the elements contained in the nodes of this graph to the given elements.
-	 * @param elements the elements to reference in the nodes of the graph
-	 * @return whether the elements were set correctly
+	 * Adds the given element to this graph.
+	 * 
+	 * @param element
+	 *            the element to add
+	 * @return whether the element was added correctly
+	 * @throws CoreException
+	 *             if something goes wrong
 	 */
-	public boolean setElements(E[] elements);
-	
+	public void addElement(E element) throws CoreException;
+
 	/**
-	 * Sets the elements contained in the nodes of this graph to the given elements.
-	 * @param elements the elements to reference in the nodes of the graph
-	 * @return whether the elements were set correctly
+	 * Removes the given element from this graph.
+	 * 
+	 * @param element
+	 *            the element to remove
+	 * @return whether the element was removed correctly
 	 */
-	public boolean setElements(Collection<E> elements);
-	
+	public void removeElement(E element);
+
 	/**
 	 * Returns the elements that are reachable from this element.
-	 * @param element the element
+	 * <p>
+	 * Returned element list contains no duplicate. Elements are sorted least
+	 * dependency first.
+	 * 
+	 * @param element
+	 *            the element
 	 * @return reachable elements
 	 */
-	public Set<E> getUpperSet(E element);
-	
-	/**
-	 * Returns the elements that can reach this element.
-	 * @param element the element
-	 * @return elements that can reach <code>e</code>
-	 */
-	public Set<E> getLowerSet(E element);
-	
-	/**
-	 * Returns the elements stored in  the nodes of this graph.
-	 * 
-	 * <p> The elements are ordered according to the partial order defined by this graph.
-	 * @return all elements of the nodes
-	 */
-	public Set<E> getElements();
-	
-	/**
-	 * Returns the set of elements resulting from removing the given element and its
-	 * dependent elements from the graph.
-	 * @param element the element to exclude
-	 * @return the set of left elements
-	 */
-	public Set<E> exclude(E element);
-	
+	public List<E> getUpperSet(E element);
+
 	/**
 	 * Returns whether the graph contains a node for the given element.
-	 * @param element the element for which to check whether a node exists
+	 * 
+	 * @param element
+	 *            the element for which to check whether a node exists
 	 * @return whether a node for the given element exists in the graph
 	 */
 	public boolean contains(E element);

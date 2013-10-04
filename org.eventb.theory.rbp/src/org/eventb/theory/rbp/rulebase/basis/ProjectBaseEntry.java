@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2013 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,10 @@ package org.eventb.theory.rbp.rulebase.basis;
 import static org.eventb.theory.core.DatabaseUtilities.originatedFromTheory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
@@ -22,7 +22,7 @@ import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
+import org.eventb.theory.core.maths.extensions.WorkspaceExtensionsManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.IProjectBaseEntry;
 import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
@@ -69,7 +69,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		// case when POContext is a theory
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
-			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -126,7 +126,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		List<IDeployedInferenceRule> toReturn = new ArrayList<IDeployedInferenceRule>();
 		// case when POContext is a theory
 		if (originatedFromTheory(root.getRodinFile(), project)){
-			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -181,7 +181,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			int order = poContext.getOrder();
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(componentName, project);
-			List<ISCTheoryRoot> requiredRoots = getRequiredSCRoots(scRoot);
+			List<IDeployedTheoryRoot> requiredRoots = getRequiredSCRoots(scRoot);
 			for (ISCTheoryRoot scTheoryRoot : requiredRoots){
 				if (!scRoots.containsKey(scTheoryRoot)){
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scTheoryRoot);
@@ -225,7 +225,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	public List<IDeployedRewriteRule> getDefinitionalRules(IEventBRoot root, FormulaFactory factory) {
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
-			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -253,7 +253,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
-			List<ISCTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -286,30 +286,21 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		return new IDeployedTheoryRoot[0];
 	}
 
-	private List<ISCTheoryRoot> getRequiredSCRoots(IEventBRoot root) {
+	private List<IDeployedTheoryRoot> getRequiredSCRoots(IEventBRoot root) {
 		if (!originatedFromTheory(root.getRodinFile())) {
-			return new ArrayList<ISCTheoryRoot>();
+			return Collections.emptyList();
 		}
-		ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(root.getComponentName(), project);
-		if (scRoot.exists()) {
-			SCTheoriesGraph graph = new SCTheoriesGraph();
-			graph.setElements(getSCTheoryRoots());
-			// TODO fix this may introduce cyclic dep
-			// Fixed bug: added the SC theory file as a required root
-			Set<ISCTheoryRoot> upperSet = graph.getUpperSet(scRoot);
-			upperSet.add(scRoot);
-			return new ArrayList<ISCTheoryRoot>(upperSet);
+		final ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(root.getComponentName(), project);
+		if (!scRoot.exists()) {
+			return Collections.emptyList();
 		}
-		return new ArrayList<ISCTheoryRoot>();
-	}
-
-	private ISCTheoryRoot[] getSCTheoryRoots() {
 		try {
-			return DatabaseUtilities.getSCTheoryRoots(project, DatabaseUtilities.getNonTempSCTheoriesFilter());
+			return WorkspaceExtensionsManager.getInstance().getTheoryImportClosure(scRoot);
 		} catch (CoreException e) {
-			ProverUtilities.log(e, "error while getting sc theory roots of "+ project.getElementName());
+			ProverUtilities.log(e, "error while getting import closure of "
+					+ root.getPath());
+			return Collections.emptyList();
 		}
-		return new ISCTheoryRoot[0];
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package org.eventb.theory.core;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -11,6 +13,7 @@ import org.eventb.theory.core.basis.TheoryDeployer;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.DeployUtilities;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinDBException;
 
 /**
  * A helper class to manipulate theory hierarchies.
@@ -30,6 +33,7 @@ public class TheoryHierarchyHelper {
 	 * @throws CoreException
 	 */
 	public static Set<IDeployedTheoryRoot> importClosure(ISCTheoryRoot scRoot) throws CoreException {
+		//TODO use WorkspaceExtensionsManager instead
 		Set<IDeployedTheoryRoot> closure = new LinkedHashSet<IDeployedTheoryRoot>();
 		Set<IDeployedTheoryRoot> imported = getImportedTheories(scRoot);
 		closure.addAll(imported);
@@ -107,6 +111,33 @@ public class TheoryHierarchyHelper {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the deployed theories imported by the given theory path.
+	 * 
+	 * @param theoryPath
+	 *            the theory path
+	 * @return a list of imported theories
+	 * @throws RodinDBException
+	 */
+	public static List<IDeployedTheoryRoot> getTheoryPathImports(
+			ISCTheoryPathRoot theoryPath) throws RodinDBException {
+		final List<IDeployedTheoryRoot> deployedRoots = new ArrayList<IDeployedTheoryRoot>();
+
+		for (ISCAvailableTheoryProject availProj : theoryPath
+				.getSCAvailableTheoryProjects()) {
+			for (ISCAvailableTheory availThy : availProj
+					.getSCAvailableTheories()) {
+				IDeployedTheoryRoot deployedRoot = availThy
+						.getSCDeployedTheoryRoot();
+				// when availThy is undeployed then deployedTheoryRoot == null
+				if (deployedRoot != null) {
+					deployedRoots.add(deployedRoot);
+				}
+			}
+		}
+		return deployedRoots;
 	}
 
 	/**
@@ -316,45 +347,13 @@ public class TheoryHierarchyHelper {
 									"Error comparing theories " + root1.getComponentName() + " and "
 											+ root2.getComponentName());
 				}
+				// FIXME wrong !!! Do not use this comparator anymore
 				// check what is safer to return
 				return 1;
 			}
 		};
 	}
 
-	/**
-	 * Returns a comparator of deployed theories based on the import (or use)
-	 * relationship that exists between theories.
-	 * 
-	 * <p>
-	 * A theory A is greater than theory B iff A uses B.
-	 * 
-	 * @return a theories dependency comparator
-	 */
-	public static Comparator<IDeployedTheoryRoot> getDeployedTheoryDependencyComparator() {
-		return new Comparator<IDeployedTheoryRoot>() {
-			@Override
-			public int compare(IDeployedTheoryRoot root1, IDeployedTheoryRoot root2) {
-				try {
-					if (doesTheoryImportTheory(root1, root2)) {
-						return 1;
-					} else if (doesTheoryImportTheory(root2, root1)) {
-						return -1;
-					} else if (root1.getComponentName().equals(root2.getComponentName())) {
-						return 0;
-					}
-				} catch (CoreException e) {
-					CoreUtilities
-							.log(e,
-									"Error comparing theories " + root1.getComponentName() + " and "
-											+ root2.getComponentName());
-				}
-				// check what is safer to return
-				return 1;
-			}
-		};
-	}
-	
 	public static ITheoryDeployer getDeployer(IRodinProject project, Set<ISCTheoryRoot> theories){
 		return new TheoryDeployer(project, theories);
 	}

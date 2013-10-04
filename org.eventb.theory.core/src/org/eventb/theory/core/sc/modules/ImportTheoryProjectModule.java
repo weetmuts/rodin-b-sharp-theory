@@ -5,6 +5,7 @@ package org.eventb.theory.core.sc.modules;
 
 import static org.eventb.theory.core.TheoryHierarchyHelper.getImportedTheories;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -25,8 +26,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.basis.SCTheoryDecorator;
-import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
-import org.eventb.theory.core.maths.extensions.dependencies.SCTheoriesGraph;
+import org.eventb.theory.core.maths.extensions.WorkspaceExtensionsManager;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -166,21 +166,18 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 	 */
 	protected void patchFormulaFactory(Set<ISCTheoryRoot> importedTheories,
 			ISCStateRepository repository) throws CoreException {
-		// need to patch up formula factory
-		SCTheoriesGraph graph = new SCTheoriesGraph();
-		//DeployedTheoriesGraph graph = new DeployedTheoriesGraph();
-		graph.setElements(importedTheories);
 		FormulaFactory factory = repository.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
 
-		for (ISCTheoryRoot root : graph.getElements()) {
-			FormulaExtensionsLoader loader = new FormulaExtensionsLoader(root,
-					factory);
-			Set<IFormulaExtension> exts = loader.load();
-			factory = factory.withExtensions(exts);
-			typeEnvironment = AstUtilities
-					.getTypeEnvironmentForFactory(typeEnvironment, factory);
+		final Set<IFormulaExtension> exts = new HashSet<IFormulaExtension>();
+		for (ISCTheoryRoot theoryRoot : importedTheories) {
+			final WorkspaceExtensionsManager mgr = WorkspaceExtensionsManager.getInstance();
+			exts.addAll(mgr.getFormulaExtensions(theoryRoot));
 		}
+		factory = factory.withExtensions(exts);
+		typeEnvironment = AstUtilities
+				.getTypeEnvironmentForFactory(typeEnvironment, factory);
+		
 		repository.setFormulaFactory(factory);
 		//repository.setTypeEnvironment(factory.makeTypeEnvironment());
 		repository.setTypeEnvironment(typeEnvironment);

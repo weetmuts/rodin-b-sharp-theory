@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2013 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel -  refactored after imports only concern deployed theories
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions.dependencies;
 
@@ -48,12 +52,25 @@ final class DependencyNode<E extends IEventBRoot> {
 	
 	/**
 	 * Adds the given node to the set of nodes reachable from this node.
-	 * @param node the node to add
+	 * 
+	 * @param node
+	 *            the node to add
 	 */
-	public void addConnectedNode(DependencyNode<E> node){
+	public void addConnectedNode(DependencyNode<E> node) {
 		connected.add(node);
 	}
-	
+
+	/**
+	 * Removes the given node from the set of nodes reachable from this node.
+	 * Does nothing if the given node is not coonnected to this node.
+	 * 
+	 * @param node
+	 *            the node to remove
+	 */
+	public void removeConnectedNode(DependencyNode<E> node) {
+		connected.remove(node);
+	}
+
 	/**
 	 * Returns the element referenced by this node.
 	 * @return the node element
