@@ -252,6 +252,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 		final Set<IDeployedTheoryRoot> imported = new LinkedHashSet<IDeployedTheoryRoot>();
 		for (IDeployedTheoryRoot neededTheory : fetchSCDependencies(scRoot)) {
 			imported.addAll(fetchDependencies(neededTheory));
+			imported.add(neededTheory);
 		}
 		return new ArrayList<IDeployedTheoryRoot>(imported);
 	}
