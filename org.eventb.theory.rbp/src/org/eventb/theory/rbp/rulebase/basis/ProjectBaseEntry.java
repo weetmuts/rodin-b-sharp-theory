@@ -69,7 +69,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		// case when POContext is a theory
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
-			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -126,7 +126,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		List<IDeployedInferenceRule> toReturn = new ArrayList<IDeployedInferenceRule>();
 		// case when POContext is a theory
 		if (originatedFromTheory(root.getRodinFile(), project)){
-			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -181,7 +181,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			int order = poContext.getOrder();
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(componentName, project);
-			List<IDeployedTheoryRoot> requiredRoots = getRequiredSCRoots(scRoot);
+			List<IDeployedTheoryRoot> requiredRoots = getRequiredTheories(scRoot);
 			for (ISCTheoryRoot scTheoryRoot : requiredRoots){
 				if (!scRoots.containsKey(scTheoryRoot)){
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scTheoryRoot);
@@ -225,7 +225,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	public List<IDeployedRewriteRule> getDefinitionalRules(IEventBRoot root, FormulaFactory factory) {
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
-			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -253,7 +253,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
-			List<IDeployedTheoryRoot> reqRoots = getRequiredSCRoots(root);
+			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -286,7 +286,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		return new IDeployedTheoryRoot[0];
 	}
 
-	private List<IDeployedTheoryRoot> getRequiredSCRoots(IEventBRoot root) {
+	private List<IDeployedTheoryRoot> getRequiredTheories(IEventBRoot root) {
 		if (!originatedFromTheory(root.getRodinFile())) {
 			return Collections.emptyList();
 		}
