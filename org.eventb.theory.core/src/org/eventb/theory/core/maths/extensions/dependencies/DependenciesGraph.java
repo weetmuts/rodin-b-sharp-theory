@@ -29,7 +29,7 @@ import org.eventb.core.IEventBRoot;
 public abstract class DependenciesGraph<E extends IEventBRoot> implements
 		IDependenciesGraph<E> {
 
-	protected Map<E, DependencyNode<E>> verticesMap = new HashMap<E, DependencyNode<E>>();
+	private final Map<E, DependencyNode<E>> verticesMap = new HashMap<E, DependencyNode<E>>();
 
 	/**
 	 * Returns the elements which are reachable from the given elements.
