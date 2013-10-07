@@ -139,14 +139,17 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 		if (!deployedRoot.exists()) {
 			return Collections.emptyList();
 		}
-		for (IDeployedTheoryRoot deployed : changedDeployed) {
-			if (deployed.exists()) {
-				deployedGraph.addElement(deployed);
-			} else {
-				deployedGraph.removeElement(deployed);
+		synchronized (deployedGraph) {
+			while(!changedDeployed.isEmpty()) {
+				final IDeployedTheoryRoot deployed = changedDeployed.remove();
+				if (deployed.exists()) {
+					deployedGraph.addElement(deployed);
+				} else {
+					deployedGraph.removeElement(deployed);
+				}
 			}
+			return deployedGraph.getUpperSet(deployedRoot);
 		}
-		return deployedGraph.getUpperSet(deployedRoot);
 	}
 
 	private Set<IFormulaExtension> getDeployedExtensionClosure(
