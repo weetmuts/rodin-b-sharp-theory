@@ -22,6 +22,7 @@ import org.eventb.theory.core.ISCInferenceClause;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.sc.states.InferenceIdentifiers;
 import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -38,6 +39,7 @@ extends SCProcessorModule{
 	protected FormulaFactory factory;
 	protected InferenceIdentifiers inferenceIdentifiers;
 	protected RuleAccuracyInfo ruleAccuracyInfo;
+	private TheoryAccuracyInfo accuracyInfo;
 	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -91,8 +93,10 @@ extends SCProcessorModule{
 				accurate = false;
 			}
 		}
-		if(!accurate)
+		if(!accurate) {
 			ruleAccuracyInfo.setNotAccurate();
+			accuracyInfo.setNotAccurate();
+		}
 		
 	}
 
@@ -146,6 +150,7 @@ extends SCProcessorModule{
 		factory = repository.getFormulaFactory();	
 		inferenceIdentifiers = (InferenceIdentifiers) repository.getState(InferenceIdentifiers.STATE_TYPE);
 		ruleAccuracyInfo = (RuleAccuracyInfo) repository.getState(RuleAccuracyInfo.STATE_TYPE);
+		accuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 	}
 	
 
@@ -158,6 +163,7 @@ extends SCProcessorModule{
 		factory = null;
 		inferenceIdentifiers = null;
 		ruleAccuracyInfo = null;
+		accuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 	

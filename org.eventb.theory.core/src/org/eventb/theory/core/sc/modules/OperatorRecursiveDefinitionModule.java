@@ -26,6 +26,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -39,6 +40,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 	private static final IModuleType<OperatorRecursiveDefinitionModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorRecursiveDefinitionModule");
 
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 	private OperatorInformation operatorInformation;
 	private ITypeEnvironment typeEnvironment;
 	private FormulaFactory factory;
@@ -59,6 +61,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	private void process(IRecursiveOperatorDefinition recursiveOperatorDefinition, INewOperatorDefinition parent,
 			ISCNewOperatorDefinition target, RecursiveDefinitionInfo recursiveDefinitionInfo,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
@@ -70,6 +73,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 					TheoryGraphProblem.InductiveArgMissing);
 			error = true;
 			operatorInformation.setHasError();
+			theoryAccuracyInfo.setNotAccurate();
 		} else {
 			String inductiveArgument = recursiveOperatorDefinition.getInductiveArgument();
 			if (!typeEnvironment.contains(inductiveArgument)
@@ -78,6 +82,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 						TheoryGraphProblem.ArgumentNotExistOrNotParametric, inductiveArgument);
 				error = true;
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 			}
 			else {
 				FreeIdentifier ident = factory.makeFreeIdentifier(inductiveArgument, null,
@@ -122,6 +127,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
 		factory = repository.getFormulaFactory();
@@ -130,6 +136,7 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		theoryAccuracyInfo = null;
 		operatorInformation = null;
 		typeEnvironment = null;
 		factory = null;

@@ -30,6 +30,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
@@ -41,6 +42,7 @@ public class AxiomaticOperatorArgumentModule extends IdentifierModule{
 	private final IModuleType<OperatorArgumentModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".axiomaticOperatorArgumentModule");
 
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 	private OperatorInformation operatorInformation;
 
 	/**
@@ -65,6 +67,7 @@ public class AxiomaticOperatorArgumentModule extends IdentifierModule{
 				createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE,
 						TheoryGraphProblem.OperatorExpInfixNeedsAtLeastTwoArgs);
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 			}
 		}
 		// Check formula type
@@ -73,6 +76,7 @@ public class AxiomaticOperatorArgumentModule extends IdentifierModule{
 			createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorPredNeedOneOrMoreArgs);
 			operatorInformation.setHasError();
+			theoryAccuracyInfo.setNotAccurate();
 		}
 		if (!operatorInformation.hasError()) {
 			insertionOrderedSymbols = new ArrayList<IIdentifierSymbolInfo>();
@@ -107,12 +111,14 @@ public class AxiomaticOperatorArgumentModule extends IdentifierModule{
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 	}
 
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		theoryAccuracyInfo = null;
 		operatorInformation = null;
 		super.endModule(element, repository, monitor);
 	}
@@ -147,6 +153,7 @@ public class AxiomaticOperatorArgumentModule extends IdentifierModule{
 			boolean ok = insertIdentifierSymbol(element, newSymbolInfo);
 			if (!ok || !checkAndType((IOperatorArgument) element, newSymbolInfo)) {
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);

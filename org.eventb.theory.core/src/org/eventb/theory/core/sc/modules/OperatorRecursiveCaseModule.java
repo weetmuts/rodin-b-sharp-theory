@@ -38,6 +38,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -53,6 +54,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 	private static final IModuleType<OperatorRecursiveCaseModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorRecursiveCaseModule");
 
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 	private FormulaFactory factory;
 	private RecursiveDefinitionInfo recursiveDefinitionInfo;
 	private ITypeEnvironment typeEnvironment;
@@ -82,6 +84,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	protected void processCases(IRecursiveDefinitionCase[] origins, ISCRecursiveOperatorDefinition target,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		for (IRecursiveDefinitionCase definitionCase : origins) {
@@ -89,6 +92,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 						GraphProblem.ExpressionUndefError);
 				recursiveDefinitionInfo.setNotAccurate();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}			
 			String caseString = definitionCase.getExpressionString();
@@ -104,6 +108,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 						TheoryGraphProblem.InductiveCaseNotAppropriateExp, caseExpression.toString());
 				recursiveDefinitionInfo.setNotAccurate();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}
 			ExtendedExpression constructorExp = (ExtendedExpression) caseExpression;
@@ -113,11 +118,13 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				if (!(childExpression instanceof FreeIdentifier)) {
 					illegalConsArg = true;
 					recursiveDefinitionInfo.setNotAccurate();
+					theoryAccuracyInfo.setNotAccurate();
 					createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 							TheoryGraphProblem.ConsArgNotIdentInCase, childExpression.toString());
 				} else if (typeEnvironment.contains(((FreeIdentifier) childExpression).getName())) {
 					illegalConsArg = true;
 					recursiveDefinitionInfo.setNotAccurate();
+					theoryAccuracyInfo.setNotAccurate();
 					createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 							TheoryGraphProblem.IdentCannotBeUsedAsConsArg,
 							((FreeIdentifier) childExpression).toString());
@@ -129,6 +136,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 			IExpressionExtension extension = ((ExtendedExpression) caseExpression).getExtension();
 			if (recursiveDefinitionInfo.isCoveredConstuctor(extension)) {
 				recursiveDefinitionInfo.setNotAccurate();
+				theoryAccuracyInfo.setNotAccurate();
 				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 						TheoryGraphProblem.RecCaseAlreadyCovered);
 				continue;
@@ -140,6 +148,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 			if (tcResult.hasProblem()) {
 				createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 						TheoryGraphProblem.UnableToTypeCase);
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			} else {
 				ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
@@ -151,6 +160,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	public void processCasesFormulae(IRecursiveOperatorDefinition definition,
 			ISCRecursiveOperatorDefinition scDefinition, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -165,6 +175,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				createProblemMarker(definition, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
 						TheoryGraphProblem.NoCoverageAllRecCase);
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 			} else {
 				boolean isExpression = AstUtilities.isExpressionOperator(operatorInformation.getFormulaType());
 				Type resultantType = null;
@@ -178,6 +189,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 								TheoryGraphProblem.MissingFormulaError);
 						caseEntry.setErroneous();
 						operatorInformation.setHasError();
+						theoryAccuracyInfo.setNotAccurate();
 						continue;
 					} else {
 						Formula<?> formula = ModulesUtils.parseFormula(defCase, factory, this);
@@ -190,6 +202,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 										GraphProblem.UndeclaredFreeIdentifierError,
 										ident.getName());
 								operatorInformation.setHasError();
+								theoryAccuracyInfo.setNotAccurate();
 								hasError = true;
 							}
 						}
@@ -202,6 +215,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 										TheoryGraphProblem.OperatorDefNotExpError, parent.getLabel());
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
+								theoryAccuracyInfo.setNotAccurate();
 								continue;
 							}
 							if (!isExpression && !(formula instanceof Predicate)) {
@@ -209,6 +223,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 										TheoryGraphProblem.OperatorDefNotPredError, parent.getLabel());
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
+								theoryAccuracyInfo.setNotAccurate();
 								continue;
 							}
 							formula = ModulesUtils.checkFormula(defCase, formula, caseEntry.getLocalTypeEnvironment(),
@@ -230,6 +245,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 											expression.getType());
 									caseEntry.setErroneous();
 									operatorInformation.setHasError();
+									theoryAccuracyInfo.setNotAccurate();
 									continue;
 								} else {
 									recursiveCases.put(caseEntry.getCaseExpression(), formula);
@@ -256,6 +272,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 									TheoryGraphProblem.MissingFormulaError);
 							caseEntry.setErroneous();
 							operatorInformation.setHasError();
+							theoryAccuracyInfo.setNotAccurate();
 							continue;
 						} else {
 							Formula<?> formula = ModulesUtils.parseAndCheckFormula(defCase, resultantType != null,
@@ -269,6 +286,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 												expression.getType());
 										caseEntry.setErroneous();
 										operatorInformation.setHasError();
+										theoryAccuracyInfo.setNotAccurate();
 									} else {
 										recursiveCases.put(caseEntry.getCaseExpression(), formula);
 									}
@@ -308,6 +326,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
 		recursiveDefinitionInfo = (RecursiveDefinitionInfo) repository.getState(RecursiveDefinitionInfo.STATE_TYPE);
@@ -317,6 +336,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		theoryAccuracyInfo = null;
 		operatorInformation = null;
 		factory = null;
 		typeEnvironment = null;

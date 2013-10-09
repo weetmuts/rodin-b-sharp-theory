@@ -131,6 +131,7 @@ public class DatatypeModule extends SCProcessorModule {
 					typeArgyments.toArray(new String[typeArgyments.size()]));
 			if (!faithful) {
 				datatypeTable.setErrorProne();
+				theoryAccurate = false;
 			}
 			// create the decoy factory
 			FormulaFactory decoy = datatypeTable.augmentDecoyFormulaFactory();
@@ -151,6 +152,7 @@ public class DatatypeModule extends SCProcessorModule {
 				createProblemMarker(datatypeDefinition, EventBAttributes.IDENTIFIER_ATTRIBUTE,
 						TheoryGraphProblem.DatatypeHasNoBaseConsError, datatypeDefinition.getIdentifierString());
 				datatypeTable.setErrorProne();
+				theoryAccurate = false;
 			}
 			if (datatypeTable.isErrorProne()) {
 				repository.setFormulaFactory(datatypeTable.reset());

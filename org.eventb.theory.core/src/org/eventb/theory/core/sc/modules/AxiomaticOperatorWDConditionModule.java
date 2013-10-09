@@ -18,6 +18,7 @@ import org.eventb.theory.core.IOperatorWDCondition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IInternalElement;
@@ -28,6 +29,7 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 	private final IModuleType<AxiomaticOperatorWDConditionModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".axiomaticOperatorWDConditionModule");
 
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 	private OperatorInformation operatorInformation;
 
 	@Override
@@ -50,6 +52,7 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	private Predicate processWdConditions(IOperatorWDCondition[] wds, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException{
 		List<Predicate> wdPredicates = new ArrayList<Predicate>();
@@ -57,12 +60,14 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 			if(!wd.hasPredicateString() || wd.getPredicateString().equals("")){
 				createProblemMarker(wd, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.WDPredMissingError);
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}
 			Predicate pred = CoreUtilities.parseAndCheckPredicate(wd, repository.getFormulaFactory(), 
 					repository.getTypeEnvironment(), this);
 			if(pred == null || !checkAgainstReferencedIdentifiers(pred, wd)){
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}
 			else {
@@ -99,6 +104,7 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 
 	}
@@ -106,6 +112,7 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		theoryAccuracyInfo = null;
 		operatorInformation = null;
 		super.endModule(element, repository, monitor);
 	}

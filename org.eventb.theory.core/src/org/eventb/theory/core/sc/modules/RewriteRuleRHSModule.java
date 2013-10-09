@@ -25,6 +25,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.RewriteRuleLabelSymbolTable;
 import org.eventb.theory.core.sc.states.RuleAccuracyInfo;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -41,7 +42,8 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 		.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".rewriteRuleRHSModule");
 	
-	private RuleAccuracyInfo accuracyInfo;
+	private RuleAccuracyInfo ruleAccuracyInfo;
+	private TheoryAccuracyInfo accuracyInfo;
 	
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -53,6 +55,7 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 		// Check rule right hand sides number
 		if (ruleRHSs.length < 1) {
 			createProblemMarker(rewriteRule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.RuleNoRhsError, rewriteRule.getLabel());
+			ruleAccuracyInfo.setNotAccurate();
 			accuracyInfo.setNotAccurate();
 			return;
 		}
@@ -76,7 +79,7 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 						createSCElement(scRewriteRule, symbolInfos[i].getSymbol(), monitor);
 			}
 			else {
-				accuracyInfo.setNotAccurate();
+				ruleAccuracyInfo.setNotAccurate();
 			}
 		}
 	}
@@ -100,7 +103,7 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 		}
 		endFilterModules(repository, monitor);
 		if(!accurate){
-			accuracyInfo.setNotAccurate();
+			ruleAccuracyInfo.setNotAccurate();
 		}
 		return symbolInfos;
 	}
@@ -110,12 +113,14 @@ public class RewriteRuleRHSModule extends LabeledElementModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		accuracyInfo = (RuleAccuracyInfo) repository.getState(RuleAccuracyInfo.STATE_TYPE);
+		ruleAccuracyInfo = (RuleAccuracyInfo) repository.getState(RuleAccuracyInfo.STATE_TYPE);
+		accuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 	}
 
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		ruleAccuracyInfo = null;
 		accuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}

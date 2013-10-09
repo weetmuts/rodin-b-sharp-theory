@@ -111,6 +111,7 @@ public class InferenceRuleModule extends RuleModule<IInferenceRule, ISCInference
 				if (!inferenceIdentifiers.isRuleApplicable()) {
 					createProblemMarker(rule, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.InferenceRuleNotApplicableError);
 					ruleAccuracyInfo.setNotAccurate();
+					accuracyInfo.setNotAccurate();
 				} else if (ruleAccuracyInfo.isAccurate()) {
 					ReasoningType reasoningType = null;
 					if (inferenceIdentifiers.isRuleApplicableInBothDirections()) {

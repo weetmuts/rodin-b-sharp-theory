@@ -25,6 +25,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -34,6 +35,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorSemanticPropertiesModule");
 
 	private OperatorInformation operatorInformation;
+	private TheoryAccuracyInfo accuracyInfo;
 
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
@@ -48,6 +50,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 
 		if (!checkSemanticProperties(operatorDefinition, formType, notation, operatorArguments, isAssos, isCommutative)) {
 			operatorInformation.setHasError();
+			accuracyInfo.setNotAccurate();
 		} else {
 			operatorInformation.setAssociative(isAssos);
 			operatorInformation.setCommutative(isCommutative);
@@ -103,6 +106,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
+		accuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 
 	}
 
@@ -110,6 +114,7 @@ public class OperatorSemanticPropertiesModule extends SCProcessorModule {
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		operatorInformation = null;
+		accuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 

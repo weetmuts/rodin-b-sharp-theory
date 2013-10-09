@@ -24,6 +24,7 @@ import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.DatatypeTable;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -36,6 +37,8 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 
 	private final IModuleType<DatatypeConstructorModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".datatypeConstructorModule");
+	
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 
 	private DatatypeTable datatypeTable;
 
@@ -44,8 +47,10 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		datatypeTable = (DatatypeTable) repository.getState(DatatypeTable.STATE_TYPE);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -56,6 +61,7 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 			createProblemMarker(datatypeDefinition, EventBAttributes.IDENTIFIER_ATTRIBUTE,
 					TheoryGraphProblem.DatatypeHasNoConsError, datatypeDefinition.getIdentifierString());
 			datatypeTable.setErrorProne();
+			theoryAccuracyInfo.setNotAccurate();
 			return;
 		}
 		processConstructors(constructors, datatypeDefinition, scDefinition, repository, monitor);
@@ -67,6 +73,7 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		datatypeTable = null;
+		theoryAccuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -96,6 +103,7 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 	 *            the progress monitor
 	 * @throws CoreException
 	 */
+	@SuppressWarnings("restriction")
 	protected void processConstructors(IDatatypeConstructor[] constructors, IDatatypeDefinition datatypeDefinition,
 			ISCDatatypeDefinition scDefinition, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -104,6 +112,7 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 		for (IDatatypeConstructor cons : constructors) {
 			if (!checkConstructorName(cons, factory, typeEnvironment, datatypeTable)) {
 				datatypeTable.setErrorProne();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}
 			ISCDatatypeConstructor scCons = ModulesUtils.createSCIdentifierElement(ISCDatatypeConstructor.ELEMENT_TYPE,

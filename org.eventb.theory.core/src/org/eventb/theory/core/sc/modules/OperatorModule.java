@@ -207,6 +207,7 @@ public class OperatorModule extends LabeledElementModule{
 									opDef.getLabel());
 						}
 						operatorInformation.setHasError();
+						theoryAccuracyInfo.setNotAccurate();
 					}
 				}
 				// children processors

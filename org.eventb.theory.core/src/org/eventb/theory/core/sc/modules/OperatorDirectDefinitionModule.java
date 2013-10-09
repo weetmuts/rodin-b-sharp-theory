@@ -33,6 +33,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -48,6 +49,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 	private static final IModuleType<OperatorDirectDefinitionModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorDirectDefinitionModule");
 
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 	private OperatorInformation operatorInformation;
 	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
@@ -67,6 +69,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
@@ -75,6 +78,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		theoryAccuracyInfo = null;
 		operatorInformation = null;
 		factory = null;
 		typeEnvironment = null;
@@ -86,6 +90,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 		return MODULE_TYPE;
 	}
 
+	@SuppressWarnings("restriction")
 	private void processDirectDefinitions(IDirectOperatorDefinition[] definitions,
 			INewOperatorDefinition newOperatorDefinition, ISCNewOperatorDefinition scNewOperatorDefinition,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException, RodinDBException {
@@ -100,6 +105,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 					setError();
 					createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE,
 							TheoryGraphProblem.OperatorDefNotExpError, label);
+					theoryAccuracyInfo.setNotAccurate();
 				}
 			} else {
 				if (defFormula instanceof Predicate) {
@@ -109,10 +115,12 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 					setError();
 					createProblemMarker(definition, TheoryAttributes.FORMULA_ATTRIBUTE,
 							TheoryGraphProblem.OperatorDefNotPredError, label);
+					theoryAccuracyInfo.setNotAccurate();
 				}
 			}
 		} else {
 			setError();
+			theoryAccuracyInfo.setNotAccurate();
 		}
 	}
 

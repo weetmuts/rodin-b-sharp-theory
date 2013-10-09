@@ -27,6 +27,7 @@ import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.DatatypeTable;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -40,6 +41,15 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 
 	private final IModuleType<DatatypeDestructorModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".datatypeDestructorModule");
+	
+	private TheoryAccuracyInfo theoryAccuracyInfo;
+	
+	@Override
+	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
+	}
 
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
@@ -79,6 +89,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 	 *            the progress monitor
 	 * @throws CoreException
 	 */
+	@SuppressWarnings("restriction")
 	protected void processDestructors(IConstructorArgument[] constructorArguments, IDatatypeConstructor constructor,
 			ISCDatatypeConstructor scConstructor, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -88,6 +99,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 		for (IConstructorArgument consArg : constructorArguments) {
 			if (!checkDestructorName(consArg, factory, typeEnvironment, datatypeTable)) {
 				datatypeTable.setErrorProne();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}
 			Type type = CoreUtilities.parseTypeExpression(consArg, factory, this);
@@ -98,6 +110,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 					createProblemMarker(consArg, TheoryAttributes.TYPE_ATTRIBUTE, 
 							TheoryGraphProblem.InadmissibleDatatypeError, type.toString());
 					datatypeTable.setErrorProne();
+					theoryAccuracyInfo.setNotAccurate();
 					continue;
 				}
 				ISCConstructorArgument scConsArg = ModulesUtils.createSCIdentifierElement(
@@ -107,6 +120,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 			}
 			else {
 				datatypeTable.setErrorProne();
+				theoryAccuracyInfo.setNotAccurate();
 			}
 		}
 	}
@@ -190,5 +204,12 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		theoryAccuracyInfo = null;
+		super.endModule(element, repository, monitor);
 	}
 }

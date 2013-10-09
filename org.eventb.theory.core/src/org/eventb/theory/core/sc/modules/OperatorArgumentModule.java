@@ -37,6 +37,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
+import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.core.sc.states.TheorySymbolFactory;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
@@ -52,6 +53,8 @@ public class OperatorArgumentModule extends IdentifierModule {
 
 	private final IModuleType<OperatorArgumentModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
 			+ ".operatorArgumentModule");
+	
+	private TheoryAccuracyInfo theoryAccuracyInfo;
 
 	private OperatorInformation operatorInformation;
 
@@ -77,6 +80,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 				createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE,
 						TheoryGraphProblem.OperatorExpInfixNeedsAtLeastTwoArgs);
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 			}
 		}
 		// Check formula type
@@ -85,6 +89,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 			createProblemMarker(operatorDefinition, EventBAttributes.LABEL_ATTRIBUTE,
 					TheoryGraphProblem.OperatorPredNeedOneOrMoreArgs);
 			operatorInformation.setHasError();
+			theoryAccuracyInfo.setNotAccurate();
 		}
 		if (!operatorInformation.hasError()) {
 			insertionOrderedSymbols = new ArrayList<IIdentifierSymbolInfo>();
@@ -119,6 +124,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 	public void initModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
+		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 		operatorInformation = (OperatorInformation) repository.getState(OperatorInformation.STATE_TYPE);
 	}
 
@@ -126,6 +132,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 	public void endModule(IRodinElement element, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		operatorInformation = null;
+		theoryAccuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -159,6 +166,7 @@ public class OperatorArgumentModule extends IdentifierModule {
 			boolean ok = insertIdentifierSymbol(element, newSymbolInfo);
 			if (!ok || !checkAndType((IOperatorArgument) element, newSymbolInfo)) {
 				operatorInformation.setHasError();
+				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			}
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);
