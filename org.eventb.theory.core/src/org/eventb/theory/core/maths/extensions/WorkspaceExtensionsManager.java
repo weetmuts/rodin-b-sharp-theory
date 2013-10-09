@@ -102,7 +102,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 		return INSTANCE;
 	}
 
-	// unique access point for 'extensions' field
+	// unique get/put access point for 'extensions' field
 	private Set<IFormulaExtension> fetchExtensions(
 			IFormulaExtensionsSource source,
 			Set<IFormulaExtension> requiredExtns) throws CoreException {
@@ -122,6 +122,8 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	private Set<IDeployedTheoryRoot> fetchSCDependencies(ISCTheoryRoot scTheory)
 			throws CoreException {
 		for (ISCTheoryRoot changedRoot : changedSC) {
+			// forget what we used to know about that theory
+			extensions.remove(changedRoot);
 			scDependencies.put(changedRoot, getImportedTheories(changedRoot));
 		}
 		Set<IDeployedTheoryRoot> requiredTheories = scDependencies
@@ -142,6 +144,8 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 		synchronized (deployedGraph) {
 			while(!changedDeployed.isEmpty()) {
 				final IDeployedTheoryRoot deployed = changedDeployed.remove();
+				// forget what we used to know about that theory
+				extensions.remove(deployedRoot);
 				if (deployed.exists()) {
 					deployedGraph.addElement(deployed);
 				} else {
