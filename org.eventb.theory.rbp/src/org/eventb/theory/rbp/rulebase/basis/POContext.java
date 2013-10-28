@@ -21,15 +21,18 @@ public class POContext implements IPOContext{
 	
 	private IEventBRoot root;
 	private int order;
+	private boolean axm;
 
 	public POContext(IEventBRoot root) {
 		this.root = root;
 		this.order = -1;
+		this.axm = false;
 	}
 	
-	public POContext(IEventBRoot root, int order) {
+	public POContext(IEventBRoot root, int order, boolean axm) {
 		this.root = root;
 		this.order = order;
+		this.axm = axm;
 	}
 
 	@Override
@@ -54,5 +57,10 @@ public class POContext implements IPOContext{
 	@Override
 	public int getOrder() {
 		return order;
+	}
+
+	@Override
+	public boolean isAxiom() {
+		return axm;
 	}
 }

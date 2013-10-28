@@ -91,7 +91,7 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return the list of deployed theorems
 	 */
-	public List<IDeployedTheorem> getDeployedTheorems(int order, FormulaFactory factory);
+	public List<IDeployedTheorem> getDeployedTheorems(boolean axm, int order, FormulaFactory factory);
 	
 	/**
 	 * Returns the list of deployed theorems.

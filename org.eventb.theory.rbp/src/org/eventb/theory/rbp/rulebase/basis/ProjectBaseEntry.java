@@ -180,8 +180,11 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>>();
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			int order = poContext.getOrder();
+			boolean axm = poContext.isAxiom();
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(componentName, project);
 			List<IDeployedTheoryRoot> requiredRoots = getRequiredTheories(scRoot);
+			//add the current theory
+			requiredRoots.add(scRoot.getDeployedTheoryRoot());
 			for (ISCTheoryRoot scTheoryRoot : requiredRoots){
 				if (!scRoots.containsKey(scTheoryRoot)){
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scTheoryRoot);
@@ -194,7 +197,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 								new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
 					}
 					final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map.get(thyProject);
-					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(order, factory));
+					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(axm, order, factory));
 				}
 				else {
 					final IRodinProject thyProject = scTheoryRoot.getRodinProject();

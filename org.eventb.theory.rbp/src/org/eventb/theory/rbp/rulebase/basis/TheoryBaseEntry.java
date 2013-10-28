@@ -175,12 +175,21 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 
 	@Override
-	public List<IDeployedTheorem> getDeployedTheorems(int order, FormulaFactory factory) {
+	public List<IDeployedTheorem> getDeployedTheorems(boolean axm, int order, FormulaFactory factory) {
 		List<IDeployedTheorem> deployedTheorems = new ArrayList<IDeployedTheorem>();
-		for (IDeployedTheorem deployedTheorem : theorems){
-			if (deployedTheorem.getOrder() < order){
-				deployedTheorems.add(deployedTheorem);
+		checkStatus(factory);
+		for (IDeployedTheorem deployedTheorem : theorems){	
+			if (axm && !deployedTheorem.isAxm()) {
+				continue;
 			}
+			
+			if (!axm && deployedTheorem.isAxm()) {
+				deployedTheorems.add(deployedTheorem);
+				continue;
+			}
+			
+			if (deployedTheorem.getOrder() < order)
+				deployedTheorems.add(deployedTheorem);
 		}
 		return deployedTheorems;
 	}

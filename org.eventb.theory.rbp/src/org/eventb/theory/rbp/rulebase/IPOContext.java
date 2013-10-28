@@ -32,6 +32,12 @@ public interface IPOContext {
 	public boolean isTheoryRelated();
 	
 	/**
+	 * Returns whether the proof obligation is related to a axiom component.
+	 * @return whether the proof obligation is related to a axiom component
+	 */
+	public boolean isAxiom();
+	
+	/**
 	 * Returns the formula factory suitable for this context.
 	 * @return the suitable formula factory
 	 */

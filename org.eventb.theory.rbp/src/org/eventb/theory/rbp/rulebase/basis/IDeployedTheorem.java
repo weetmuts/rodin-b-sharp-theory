@@ -23,4 +23,6 @@ public interface IDeployedTheorem extends Comparable<IDeployedTheorem> {
 	public boolean hasTypeParameters();
 	
 	public int getOrder();
+	
+	public boolean isAxm();
 }

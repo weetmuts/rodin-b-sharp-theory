@@ -59,7 +59,7 @@ public class AxiomaticBlockAxiomsModule extends PredicateModule<IAxiomaticDefini
 					theorem.setLabel(scAxioms[i].getLabel(), monitor);
 					theorem.setSource(scAxioms[i], monitor);
 					theorem.setGenerated(true, monitor);
-					theorem.setOrder(-1, monitor);
+					theorem.setOrder(i, monitor);
 					theorem.setPredicateString(scAxioms[i].getPredicateString(), monitor);
 				}
 			}

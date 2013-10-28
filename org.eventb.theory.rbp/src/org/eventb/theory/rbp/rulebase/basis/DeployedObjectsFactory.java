@@ -16,6 +16,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.IExtensionRulesSource;
+import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
@@ -43,10 +44,18 @@ public class DeployedObjectsFactory {
 						!scTheorem.hasOrderAttribute()){
 					continue;
 				}
-				IDeployedTheorem deployedTheorem = 
+				if (scTheorem.getSource() instanceof ISCAxiomaticDefinitionAxiom) {
+					IDeployedTheorem deployedTheorem = 
+						new DeployedTheorem(scTheorem.getLabel(), 
+								scTheorem.getPredicate(factory, typeEnvironment), scTheorem.getOrder(), true);
+					result.add(deployedTheorem);
+				}
+				else {
+					IDeployedTheorem deployedTheorem = 
 					new DeployedTheorem(scTheorem.getLabel(), 
-							scTheorem.getPredicate(factory, typeEnvironment), scTheorem.getOrder());
-				result.add(deployedTheorem);
+							scTheorem.getPredicate(factory, typeEnvironment), scTheorem.getOrder(), false);
+					result.add(deployedTheorem);
+				}
 			}
 			return result;
 		} catch(CoreException e){

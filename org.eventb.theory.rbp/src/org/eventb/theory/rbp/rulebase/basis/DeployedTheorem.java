@@ -19,11 +19,13 @@ public class DeployedTheorem implements IDeployedTheorem{
 	private String name;
 	private Predicate theorem;
 	private int order;
+	private boolean axm;
 
-	public DeployedTheorem(String name, Predicate theorem, int order){
+	public DeployedTheorem(String name, Predicate theorem, int order, boolean axm){
 		this.name = name;
 		this.theorem = theorem;
 		this.order = order;
+		this.axm = axm;
 	}
 	
 	@Override
@@ -45,6 +47,11 @@ public class DeployedTheorem implements IDeployedTheorem{
 	public int getOrder() {
 		return order;
 	}
+	
+	@Override
+	public boolean isAxm() {
+		return axm;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -56,7 +63,7 @@ public class DeployedTheorem implements IDeployedTheorem{
 		}
 		DeployedTheorem other = (DeployedTheorem) o;
 		return name.equals(other.name) && theorem.equals(other.theorem) &&
-			order == other.order;
+			order == other.order && axm == other.axm;
 	}
 	
 	@Override

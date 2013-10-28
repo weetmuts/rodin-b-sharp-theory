@@ -18,6 +18,7 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.THReasoner;
@@ -53,12 +54,15 @@ public class THTacticApplication implements ITacticApplication {
 					if (origin instanceof IProofAttempt) {
 						final IProofAttempt pa = (IProofAttempt) origin;
 						int order = -1;
+						boolean axm = false;
 						try {
 							IPOSource[] sources = pa.getStatus().getPOSequent().getSources();
 							for (IPOSource source : sources){
 								if (source.getSource() instanceof ISCTheorem){
 									ISCTheorem scTheorem = (ISCTheorem) source.getSource();
 									order = scTheorem.getOrder();
+									if (scTheorem.getSource() instanceof ISCAxiomaticDefinitionAxiom)
+										axm = true;
 									break;
 								}
 							}
@@ -66,7 +70,8 @@ public class THTacticApplication implements ITacticApplication {
 							ProverUtilities.log(e, "uanbale to check sources of PO");
 							return "Unable to continue";
 						}
-						final IPOContext context = new POContext(pa.getComponent().getPORoot(), order);
+				
+						final IPOContext context = new POContext(pa.getComponent().getPORoot(), order, axm);
 						ITypeEnvironment typeEnvironment = node.getSequent().typeEnvironment();
 						// Show wizard
 						TheoremSelectorWizard wizard = new TheoremSelectorWizard(context, typeEnvironment);
