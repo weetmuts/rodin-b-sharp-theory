@@ -24,7 +24,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
+import org.eventb.theory.core.ISCTheorem;
+import org.rodinp.core.RodinDBException;
 
 public class TheoremSelectorWizardPageOne extends WizardPage {
 	
@@ -40,7 +41,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 	private TheoremsRetriever retriever;
 	private String selectedProject = null;
 	private String selectedTheory = null;
-	private List<IDeployedTheorem> selectedTheorems = null;
+	private List<ISCTheorem> selectedTheorems = null;
 
 	public TheoremSelectorWizardPageOne(TheoremsRetriever retriever) {
 		super("selectTheorems");
@@ -100,10 +101,15 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 				selectedTheory = value;
 				selectedTheorems = null;
 				table.removeAll();
-				for (IDeployedTheorem thy : retriever.getDeployedTheorems(selectedProject, selectedTheory)){
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, thy.getName());
-					item.setText(1, thy.getTheorem().toString());
+				try {
+					for (ISCTheorem thy : retriever.getSCTheorems(selectedProject, selectedTheory)){
+						TableItem item = new TableItem(table, SWT.NONE);
+						item.setText(0, thy.getLabel());
+						item.setText(1, thy.getPredicateString());
+					}
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				dialogChanged();
 			}
@@ -181,15 +187,15 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 		return selectedTheory;
 	}
 
-	public List<IDeployedTheorem> getSelectedTheorem() {
+	public List<ISCTheorem> getSelectedTheorem() {
 		return selectedTheorems;
 	}
 	
-	private List<IDeployedTheorem> getTheorems(TableItem[] items){
-		List<IDeployedTheorem> l = new ArrayList<IDeployedTheorem>();
+	private List<ISCTheorem> getTheorems(TableItem[] items){
+		List<ISCTheorem> l = new ArrayList<ISCTheorem>();
 		for (TableItem item : items){
 			String name = item.getText(0);
-			IDeployedTheorem deployedTheorem = retriever.getDeployedTheorem(selectedProject, selectedTheory, name);
+			ISCTheorem deployedTheorem = retriever.getSCTheorem(selectedProject, selectedTheory, name);
 			if (deployedTheorem != null)
 				l.add(deployedTheorem);
 		}

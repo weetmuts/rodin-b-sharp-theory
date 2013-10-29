@@ -16,15 +16,16 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IExtensionRulesSource;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * A utility class the help retrieve theorems suitable for a given context.
- * @author maamria
+ * @author maamria, asiehsalehi
  *
  */
 public class TheoremsRetriever {
@@ -33,7 +34,7 @@ public class TheoremsRetriever {
 	private BaseManager baseManager;
 	private FormulaFactory factory;
 	
-	private Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> theorems;
+	private Map<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>> theorems;
 
 	public TheoremsRetriever(IPOContext poContext){
 		this.poContext = poContext;
@@ -69,7 +70,7 @@ public class TheoremsRetriever {
 	 */
 	public String[] getTheories(String project){
 		IRodinProject rodinProject =  RodinCore.getRodinDB().getRodinProject(project);
-		Map<IExtensionRulesSource, List<IDeployedTheorem>> theories = theorems.get(rodinProject);
+		Map<IExtensionRulesSource, List<ISCTheorem>> theories = theorems.get(rodinProject);
 		if (theories != null){
 			Set<IExtensionRulesSource> keySet = theories.keySet();
 			return DatabaseUtilities.getElementNames(keySet).toArray(new String[keySet.size()]);
@@ -78,20 +79,20 @@ public class TheoremsRetriever {
 	}
 	
 	/**
-	 * Returns all deployed theorem specified by the given modifiers.
+	 * Returns all SC theorem specified by the given modifiers.
 	 * @param project the project name
 	 * @param theory the theory name
-	 * @return list of deployed theorems
+	 * @return list of SC theorems
 	 */
-	public List<IDeployedTheorem> getDeployedTheorems(String project, String theory){
+	public List<ISCTheorem> getSCTheorems(String project, String theory){
 		IRodinProject rodinProject =  RodinCore.getRodinDB().getRodinProject(project);
-		Map<IExtensionRulesSource, List<IDeployedTheorem>> theories = theorems.get(rodinProject);
+		Map<IExtensionRulesSource, List<ISCTheorem>> theories = theorems.get(rodinProject);
 		for (IExtensionRulesSource source : theories.keySet()){
 			if (source.getElementName().equals(theory)){
 				return theories.get(source);
 			}
 		}
-		return new ArrayList<IDeployedTheorem>();
+		return new ArrayList<ISCTheorem>();
 	}
 	
 	/**
@@ -99,13 +100,18 @@ public class TheoremsRetriever {
 	 * @param project the project name
 	 * @param theory the theory name
 	 * @param theorem the theorem name
-	 * @return the deployed theorem, or <code>null</code> if not found
+	 * @return the SC theorem, or <code>null</code> if not found
 	 */
-	public IDeployedTheorem getDeployedTheorem(String project, String theory, String theorem){
-		for (IDeployedTheorem deployedTheorem : getDeployedTheorems(project, theory)){
-			if (deployedTheorem.getName().equals(theorem)){
-				return deployedTheorem;
+	public ISCTheorem getSCTheorem(String project, String theory, String theorem){
+		try {
+			for (ISCTheorem SCTheorem : getSCTheorems(project, theory)){
+				if (SCTheorem.getLabel().equals(theorem)){
+					return SCTheorem;
+				}
 			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -115,14 +121,19 @@ public class TheoremsRetriever {
 	 * @param project the project name
 	 * @param theory the theory name
 	 * @param theorems the theorems names
-	 * @return the deployed theorems
+	 * @return the SC theorems
 	 */
-	public List<IDeployedTheorem> getDeployedTheorems(String project, String theory, List<String> theorems){
-		List<IDeployedTheorem> list = new ArrayList<IDeployedTheorem>();
-		for (IDeployedTheorem deployedTheorem : getDeployedTheorems(project, theory)){
-			if (theorems.contains(deployedTheorem.getName())){
-				list.add(deployedTheorem);
+	public List<ISCTheorem> getSCTheorems(String project, String theory, List<String> theorems){
+		List<ISCTheorem> list = new ArrayList<ISCTheorem>();
+		try {
+			for (ISCTheorem SCTheorem : getSCTheorems(project, theory)){
+				if (theorems.contains(SCTheorem.getLabel())){
+					list.add(SCTheorem);
+				}
 			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return list;
 	}

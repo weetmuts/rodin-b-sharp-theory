@@ -14,9 +14,9 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 
 /**
  * Common protocol for a theory entry that can be queried for various rules it holds.
@@ -86,19 +86,19 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, FormulaFactory factory);
 	
 	/**
-	 * Returns the deployed theorems in this entry that has an order less than the passed order.
+	 * Returns the SC theorems in this entry that has an order less than the passed order.
 	 * @param order the upper bound order of expected theorems
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return the list of deployed theorems
 	 */
-	public List<IDeployedTheorem> getDeployedTheorems(boolean axm, int order, FormulaFactory factory);
+	public List<ISCTheorem> getSCTheorems(boolean axm, int order, FormulaFactory factory);
 	
 	/**
-	 * Returns the list of deployed theorems.
+	 * Returns the list of SC theorems.
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return the list of deployed theorems
 	 */
-	public List<IDeployedTheorem> getDeployedTheorems(FormulaFactory factory);
+	public List<ISCTheorem> getSCTheorems(FormulaFactory factory);
 	
 	/**
 	 * Returns whether the theory backing this entry has changed.
@@ -111,4 +111,5 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	 * @param hasChanged whether the theory backing this entry has changed
 	 */
 	public void setHasChanged(boolean hasChanged) ;
+
 }

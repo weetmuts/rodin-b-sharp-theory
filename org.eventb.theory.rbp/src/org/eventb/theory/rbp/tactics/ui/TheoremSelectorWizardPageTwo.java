@@ -28,8 +28,9 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.ui.EventBStyledText;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.utils.ProverUtilities;
+import org.rodinp.core.RodinDBException;
 
 /**
  * 
@@ -45,7 +46,7 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 	private GivenType[] givenTypes;
 	private StyledText[] texts;
 	
-	private List<IDeployedTheorem> deployedTheorems;
+	private List<ISCTheorem> SCTheorems;
 	private Map<GivenType, String> instantiations;
 	
 	public TheoremSelectorWizardPageTwo(ITypeEnvironment typeEnvironment) {
@@ -142,7 +143,7 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 	}
 
 	private void init() {
-		deployedTheorems = getPreviousPage().getSelectedTheorem();
+		SCTheorems = getPreviousPage().getSelectedTheorem();
 		Set<GivenType> typesSet = getGivenTypes();
 		givenTypes = typesSet.toArray(new GivenType[typesSet.size()]);
 		texts = new StyledText[givenTypes.length];
@@ -177,10 +178,16 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 		for (GivenType gType : instantiations.keySet()){
 			subs.put(factory.makeFreeIdentifier(gType.getName(), null, factory.makePowerSetType(gType)), instantiations.get(gType));
 		}
-		for (IDeployedTheorem deployedTheorem : deployedTheorems){
-			Predicate theorem = deployedTheorem.getTheorem();
-			Predicate substitutedTheorem = (Predicate) subtitute(theorem.toString(), subs);
-			strings.add(substitutedTheorem.toString());
+		try {
+			for (ISCTheorem deployedTheorem : SCTheorems){
+				Predicate theorem;
+					theorem = deployedTheorem.getPredicate(factory, typeEnvironment);
+					Predicate substitutedTheorem = (Predicate) subtitute(theorem.toString(), subs);
+					strings.add(substitutedTheorem.toString());
+			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return strings;
 	}
@@ -213,8 +220,13 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 	
 	private Set<GivenType> getGivenTypes(){
 		Set<GivenType> set = new LinkedHashSet<GivenType>();
-		for(IDeployedTheorem deployedTheorem : deployedTheorems){
-			set.addAll(deployedTheorem.getTheorem().getGivenTypes());
+		try {
+			for(ISCTheorem deployedTheorem : SCTheorems){
+				set.addAll(deployedTheorem.getPredicate(factory, typeEnvironment).getGivenTypes());
+			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return set;
 	}

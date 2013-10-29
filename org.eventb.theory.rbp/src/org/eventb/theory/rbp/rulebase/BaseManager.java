@@ -30,12 +30,12 @@ import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCAvailableTheory;
 import org.eventb.theory.core.ISCAvailableTheoryProject;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 import org.eventb.theory.rbp.rulebase.basis.ProjectBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.ElementChangedEvent;
@@ -65,12 +65,12 @@ public class BaseManager implements IElementChangedListener {
 		RodinCore.addElementChangedListener(this);
 	}
 
-	public Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(
+	public Map<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>> getTheorems(
 			IPOContext context, FormulaFactory factory) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
-		Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>>();
+		Map<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>>();
 		// case when POcontext is a theory
 		if (context.isTheoryRelated()) {
 			map.putAll(projectEntries.get(rodinProject).getTheorems(context, factory));
@@ -86,14 +86,14 @@ public class BaseManager implements IElementChangedListener {
 				if (projBaseEntry != null) {
 					if (!map.containsKey(thyProject)) {
 						map.put(thyProject,
-								new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
+								new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
 					}
-					final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map
+					final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map
 							.get(thyProject);
 					ITheoryBaseEntry<IDeployedTheoryRoot> theoryBaseEntry = projBaseEntry
 							.getTheoryBaseEntry(theory);
 					thms.put(theory,
-							theoryBaseEntry.getDeployedTheorems(factory));
+							theoryBaseEntry.getSCTheorems(factory));
 				}
 			}
 		}

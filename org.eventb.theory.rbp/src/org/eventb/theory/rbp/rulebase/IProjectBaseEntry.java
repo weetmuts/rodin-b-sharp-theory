@@ -15,10 +15,10 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedTheorem;
 import org.rodinp.core.IRodinProject;
 
 /**
@@ -88,12 +88,12 @@ public interface IProjectBaseEntry {
 	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IEventBRoot root, FormulaFactory factory);
 	
 	/**
-	 * Returns the deployed theorems available for the PO context <code>context</code>.
+	 * Returns the SC theorems available for the PO context <code>context</code>.
 	 * @param context the proof obligation context
 	 * @param factory the formula factory
 	 * @return the deployed theorems
 	 */
-	public Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(IPOContext context, FormulaFactory factory);
+	public Map<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>> getTheorems(IPOContext context, FormulaFactory factory);
 	
 	/**
 	 * Returns all the definitional rules available to the given root.

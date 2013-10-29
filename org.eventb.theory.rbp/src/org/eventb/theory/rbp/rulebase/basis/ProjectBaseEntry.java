@@ -21,6 +21,7 @@ import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.maths.extensions.WorkspaceExtensionsManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
@@ -174,10 +175,10 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	
 
 	@Override
-	public Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> getTheorems(IPOContext poContext, FormulaFactory factory) {
+	public Map<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>> getTheorems(IPOContext poContext, FormulaFactory factory) {
 		IEventBRoot root = poContext.getParentRoot();
 		String componentName = root.getComponentName();
-		Map<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<IDeployedTheorem>>>();
+		Map<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>> map = new LinkedHashMap<IRodinProject, Map<IExtensionRulesSource, List<ISCTheorem>>>();
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			int order = poContext.getOrder();
 			boolean axm = poContext.isAxiom();
@@ -194,19 +195,19 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 					final IRodinProject thyProject = scTheoryRoot.getRodinProject();	
 					if (!map.containsKey(thyProject)) {
 						map.put(thyProject,
-								new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
+								new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
 					}
-					final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map.get(thyProject);
-					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(axm, order, factory));
+					final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map.get(thyProject);
+					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getSCTheorems(axm, order, factory));
 				}
 				else {
 					final IRodinProject thyProject = scTheoryRoot.getRodinProject();
 					if (!map.containsKey(thyProject)) {
 						map.put(thyProject,
-								new LinkedHashMap<IExtensionRulesSource, List<IDeployedTheorem>>());
+								new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
 					}
-					final Map<IExtensionRulesSource, List<IDeployedTheorem>> thms = map.get(thyProject);
-					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getDeployedTheorems(factory));
+					final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map.get(thyProject);
+					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getSCTheorems(factory));
 				}
 			}
 		}

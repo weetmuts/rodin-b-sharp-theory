@@ -8,6 +8,7 @@
 package org.eventb.theory.rbp.rulebase.basis;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +18,12 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
+import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
+import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
+import org.rodinp.core.RodinDBException;
 
 /**
  * 
@@ -36,7 +40,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	 */
 	private List<IDeployedRewriteRule> rewriteRules;
 	private List<IDeployedInferenceRule> inferenceRules;
-	private List<IDeployedTheorem> theorems;
+	private List<ISCTheorem> theorems;
 	/**
 	 * Definitional rules
 	 */
@@ -74,7 +78,11 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
 		rewriteRules = file.getRewriteRules();
 		inferenceRules = file.getInferenceRules();
-		theorems = file.getTheorems();
+		try {
+			theorems = Arrays.asList(theoryRoot.getTheorems());
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 		// clear all
 		autoRewRules.clear();
 		interRewRules.clear();
@@ -169,29 +177,33 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 	
 	@Override
-	public List<IDeployedTheorem> getDeployedTheorems(FormulaFactory factory) {
+	public List<ISCTheorem> getSCTheorems(FormulaFactory factory) {
 		checkStatus(factory);
 		return theorems;
 	}
 
 	@Override
-	public List<IDeployedTheorem> getDeployedTheorems(boolean axm, int order, FormulaFactory factory) {
-		List<IDeployedTheorem> deployedTheorems = new ArrayList<IDeployedTheorem>();
+	public List<ISCTheorem> getSCTheorems(boolean axm, int order, FormulaFactory factory) {
+		List<ISCTheorem> SCTheorems = new ArrayList<ISCTheorem>();
 		checkStatus(factory);
-		for (IDeployedTheorem deployedTheorem : theorems){	
-			if (axm && !deployedTheorem.isAxm()) {
+		try {
+		for (ISCTheorem SCTheorem : theorems){	
+			if (axm && !(SCTheorem.getSource() instanceof ISCAxiomaticDefinitionAxiom)) {
 				continue;
 			}
 			
-			if (!axm && deployedTheorem.isAxm()) {
-				deployedTheorems.add(deployedTheorem);
+			if (!axm && (SCTheorem.getSource() instanceof ISCAxiomaticDefinitionAxiom)) {
+				SCTheorems.add(SCTheorem);
 				continue;
 			}
 			
-			if (deployedTheorem.getOrder() < order)
-				deployedTheorems.add(deployedTheorem);
+			if (SCTheorem.getOrder() < order)
+				SCTheorems.add(SCTheorem);
 		}
-		return deployedTheorems;
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return SCTheorems;
 	}
 
 	@Override
