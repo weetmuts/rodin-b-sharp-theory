@@ -42,15 +42,18 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 	private final IModuleType<InferenceRulePOGModule> MODULE_TYPE = POGCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".inferenceRulePOGModule"); //$NON-NLS-1
 
-	private final static String RULE_SB_SUFFIX = "/S-INF_B";
-	private final static String RULE_SF_SUFFIX = "/S-INF_F";
+	//private final static String RULE_SB_SUFFIX = "/S-INF_B";
+	//private final static String RULE_SF_SUFFIX = "/S-INF_F";
+	private final static String RULE_S_SUFFIX = "/S-INF";
 	private final static String RULE_WDB_SUFFIX = "/WD-INF_B";
 	private final static String RULE_WDF_SUFFIX = "/WD-INF_F";
 
-	private final static String RULE_SOUNDNESS_DESC_F = "Inference FORWARD Rule Soundness";
-	private final static String RULE_SOUNDNESS_DESC_B = "Inference BACKWARD Rule Soundness";
+
+	//private final static String RULE_SOUNDNESS_DESC_F = "Inference FORWARD Rule Soundness";
+	//private final static String RULE_SOUNDNESS_DESC_B = "Inference BACKWARD Rule Soundness";
+	private final static String RULE_SOUNDNESS_DESC = "Inference Rule Soundness";
 	private final static String RULE_WD_DESC_F = "Inference FORWARD Rule WD";
-	private final static String RULE_WD_DESC_B = "Inference BACKWARD Rule WD";
+	private final static String RULE_WD_DESC_B = "Inference BACKWARD Rule WD";	
 
 	protected ITypeEnvironment typeEnvironment;
 	protected POGNatureFactory natureFactory;
@@ -111,23 +114,23 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 			Predicate poPredicate = library.makeImp(conj1, conj2);
 			if (!isTrivial(poPredicate)) {
 				String label = inferenceRule.getLabel();
+				String poName = label
+						+ RULE_S_SUFFIX;
+				Predicate finalPO = library.makeImp(conj2WD, poPredicate);
+				createPO(
+						target,
+						poName,
+						natureFactory.getNature(RULE_SOUNDNESS_DESC),
+						hyp,
+						EMPTY_PREDICATES,
+						makePredicate(
+								makeClosedPredicate(finalPO,
+										typeEnvironment), inferenceRule
+										.getSource()),
+						sources,
+						new IPOGHint[] { getLocalHypothesisSelectionHint(
+								target, poName, hyp) }, true, monitor);
 				if (inferenceRule.isSuitableForBackwardReasoning()) {
-					String poName = label
-							+ RULE_SB_SUFFIX;
-					Predicate finalPO = library.makeImp(conj2WD, poPredicate);
-					createPO(
-							target,
-							poName,
-							natureFactory.getNature(RULE_SOUNDNESS_DESC_B),
-							hyp,
-							EMPTY_PREDICATES,
-							makePredicate(
-									makeClosedPredicate(finalPO,
-											typeEnvironment), inferenceRule
-											.getSource()),
-							sources,
-							new IPOGHint[] { getLocalHypothesisSelectionHint(
-									target, poName, hyp) }, true, monitor);
 					if (!isTrivial(conj1WD)) {
 						String poWDName = label
 								+ RULE_WDB_SUFFIX;
@@ -149,22 +152,6 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 
 				}
 				if (inferenceRule.isSuitableForForwardReasoning()) {
-					String poName = label
-							+ RULE_SF_SUFFIX;
-					Predicate finalPO = library.makeImp(conj1WD, poPredicate);
-					createPO(
-							target,
-							poName,
-							natureFactory.getNature(RULE_SOUNDNESS_DESC_F),
-							hyp,
-							EMPTY_PREDICATES,
-							makePredicate(
-									makeClosedPredicate(finalPO,
-											typeEnvironment), inferenceRule
-											.getSource()),
-							sources,
-							new IPOGHint[] { getLocalHypothesisSelectionHint(
-									target, poName, hyp) }, true, monitor);
 					if (!isTrivial(conj2WD)) {
 						String poWDName = label
 								+ RULE_WDF_SUFFIX;
