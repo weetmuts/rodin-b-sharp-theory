@@ -71,6 +71,9 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		// case when POContext is a theory
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
+			String componentName = root.getComponentName();
+			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
+			reqRoots.add(SCRoot.getDeployedTheoryRoot());
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -128,6 +131,9 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		// case when POContext is a theory
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
+			String componentName = root.getComponentName();
+			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
+			reqRoots.add(SCRoot.getDeployedTheoryRoot());
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -230,6 +236,9 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
+			String componentName = root.getComponentName();
+			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
+			reqRoots.add(SCRoot.getDeployedTheoryRoot());
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
@@ -258,6 +267,9 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
+			String componentName = root.getComponentName();
+			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
+			reqRoots.add(SCRoot.getDeployedTheoryRoot());
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
