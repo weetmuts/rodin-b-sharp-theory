@@ -93,13 +93,13 @@ public class TheoryPathAvailableTheoryFilterModule extends SCFilterModule {
 		
 		for(IDeployedTheoryRoot deployedTheory: theoryTable.getAllTheories()){
 			//Check if the newDeployedTheories imports do not clash with existing ones
-			for(IUseTheory usedTheory: newDeployedTheory.getUsedTheories()){
+/*			for(IUseTheory usedTheory: newDeployedTheory.getUsedTheories()){
 				if(isDependentOf(usedTheory.getUsedTheory(),deployedTheory)){
 					valid = false;
 					//redundant deployed theory dependency
 					createRedundanctProblem(availableTheoryClause, usedTheory.getUsedTheory(), newDeployedTheory);
 				}
-			}
+			}*/
 			
 			if(isDependentOf(newDeployedTheory, deployedTheory)){
 				valid = false;
@@ -138,15 +138,6 @@ public class TheoryPathAvailableTheoryFilterModule extends SCFilterModule {
 				break;
 			}
 		}
-		
-		for(IUseTheory usedTheory: newDeployedTheory.getUsedTheories()){
-			IDeployedTheoryRoot importTheory = usedTheory.getUsedTheory();
-			if(importTheory.equals(existingDeployedTheory) || isDependentOf(existingDeployedTheory, importTheory)){
-				isDependent = true;
-				break;
-			}
-		}
-
 
 		return isDependent;
 	}

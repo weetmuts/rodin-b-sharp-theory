@@ -60,9 +60,11 @@ public class ACMatchStack<F extends Formula<F>> {
 	}
 	
 	public void pop() {
-		matchesStack.pop();
-		usedUp.pop();
-		exploredMatches.pop();
+		if (matchesStack.size()>0 && usedUp.size()>0 && exploredMatches.size()>0){
+			matchesStack.pop();
+			usedUp.pop();
+			exploredMatches.pop();
+		}
 	}
 	
 	public IBinding getFinalBinding() {
