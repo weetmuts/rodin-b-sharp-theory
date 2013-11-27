@@ -20,9 +20,11 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaInspector;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -37,12 +39,16 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.theory.core.IGeneralRule;
+import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 import org.eventb.theory.rbp.tactics.applications.RewriteTacticApplication;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.eventb.ui.prover.ITacticApplication;
+import org.rodinp.core.RodinDBException;
 
 /**
  * A selector of applicable interactive rewrite rules.
@@ -80,14 +86,31 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	 *            the accumulator
 	 */
 	protected void select(Formula<?> formula, IAccumulator<ITacticApplication> accum) {
-		List<IDeployedRewriteRule> rules = manager.getRewriteRules(false, formula.getClass(), context);
-		for (IDeployedRewriteRule rule : rules) {
-			if (canFindABinding(formula, rule.getLeftHandSide())) {
-				if (rule.isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {
-					continue;
+		List<IGeneralRule> rules = manager.getRewriteRules(false, formula.getClass(), context);
+		for (IGeneralRule rule : rules) {
+			if (rule instanceof IDeployedRewriteRule) {
+				if (canFindABinding(formula, ( (IDeployedRewriteRule) rule).getLeftHandSide())) {
+					if (( (IDeployedRewriteRule) rule).isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {
+						continue;
+					}
+					accum.add(new RewriteTacticApplication(new RewriteInput(( (IDeployedRewriteRule) rule).getProjectName(), ( (IDeployedRewriteRule) rule).getTheoryName(), ( (IDeployedRewriteRule) rule).getRuleName(), 
+							( (IDeployedRewriteRule) rule).getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
 				}
-				accum.add(new RewriteTacticApplication(new RewriteInput(rule.getProjectName(), rule.getTheoryName(), rule.getRuleName(), 
-						rule.getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
+			} else { //if (rule instanceof ISCRewriteRule) {
+				FormulaFactory factory = context.getFormulaFactory();
+				try {
+					ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
+					if (canFindABinding(formula, ( (ISCRewriteRule) rule).getSCFormula(factory, typeEnvironment))) {
+						if (ProverUtilities.isConditional((ISCRewriteRule) rule, factory, typeEnvironment) && !predicate.isWDStrict(accum.getCurrentPosition())) {
+							continue;
+						}
+						accum.add(new RewriteTacticApplication(new RewriteInput(( (ISCRewriteRule) rule).getRoot().getRodinProject().getElementName(), ( (ISCRewriteRule) rule).getRoot().getElementName(), ( (ISCRewriteRule) rule).getLabel(), 
+								( (ISCRewriteRule) rule).getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
+					}
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}

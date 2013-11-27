@@ -1,5 +1,6 @@
 package org.eventb.theory.rbp.reasoning;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -17,6 +18,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -30,8 +32,12 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extensions.pm.ComplexBinder;
 import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.theory.core.IGeneralRule;
+import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
+import org.eventb.theory.rbp.utils.ProverUtilities;
+import org.rodinp.core.RodinDBException;
 
 /**
  * <p>An implementation of a rewrite rule automatic rewriter.</p>
@@ -82,16 +88,31 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @return the rewritten formula
 	 */
 	private Formula<?> applyRules(Formula<?> original){
-		List<IDeployedRewriteRule> rules = getRules(original);
+		List<IGeneralRule> rules = getRules(original);
 		Formula<?> result = original;
-		for(IDeployedRewriteRule rule: rules){
-			Formula<?> ruleLhs = rule.getLeftHandSide();
+		Formula<?> ruleLhs = null;
+		Formula<?> ruleRhs = null;
+		for(IGeneralRule rule: rules){
+			if (rule instanceof IDeployedRewriteRule) {
+				ruleLhs = ((IDeployedRewriteRule) rule).getLeftHandSide();
+				ruleRhs = ((IDeployedRewriteRule) rule).getRightHandSides().get(0).getRHSFormula();
+			}
+			else { //if (rule instanceof ISCRewriteRule) {
+				try {
+				FormulaFactory factory = context.getFormulaFactory();
+				ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
+				ruleLhs = ((ISCRewriteRule) rule).getSCFormula(factory, typeEnvironment);
+				ruleRhs = Arrays.asList(((ISCRewriteRule) rule).getRuleRHSs()).get(0).getSCFormula(factory, typeEnvironment);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				};
+			}
 			IBinding binding = finder.match(original, ruleLhs, true);
 			if(binding == null){
 				continue;
 			}
 			// since rule is unconditional
-			Formula<?> ruleRhs = rule.getRightHandSides().get(0).getRHSFormula();
 			Formula<?> boundRhs = binder.bind(ruleRhs, binding, true);
 			if (boundRhs == null){
 				continue;
@@ -108,8 +129,8 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @param original
 	 * @return
 	 */
-	protected List<IDeployedRewriteRule> getRules(Formula<?> original){
-		List<IDeployedRewriteRule> rules = manager.getRewriteRules(true, original.getClass(), context);
+	protected List<IGeneralRule> getRules(Formula<?> original){
+		List<IGeneralRule> rules = manager.getRewriteRules(true, original.getClass(), context);
 		return rules;
 	}
 	

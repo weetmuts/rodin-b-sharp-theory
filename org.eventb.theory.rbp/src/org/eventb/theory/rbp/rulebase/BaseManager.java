@@ -27,6 +27,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
+import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCAvailableTheory;
 import org.eventb.theory.core.ISCAvailableTheoryProject;
@@ -34,8 +35,6 @@ import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.internal.core.util.CoreUtilities;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 import org.eventb.theory.rbp.rulebase.basis.ProjectBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.ElementChangedEvent;
@@ -111,12 +110,12 @@ public class BaseManager implements IElementChangedListener {
 	 *            the proof obligation context
 	 * @return the list of rewrite rules
 	 */
-	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz,
+	public List<IGeneralRule> getDefinitionalRules(Class<?> clazz,
 			IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
-		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
+		List<IGeneralRule> rules = new ArrayList<IGeneralRule>();
 		//case when POcontext is a theory
 		if (context.isTheoryRelated()) {
 			rules.addAll(projectEntries.get(rodinProject).getDefinitionalRules(clazz, parentRoot, context.getFormulaFactory()));
@@ -136,6 +135,7 @@ public class BaseManager implements IElementChangedListener {
 			IRodinProject project) {
 		final List<ITheoryBaseEntry<IDeployedTheoryRoot>> entries = new ArrayList<ITheoryBaseEntry<IDeployedTheoryRoot>>();
 		for (IDeployedTheoryRoot theory : getTheoriesFromPath(project)) {
+			check(theory.getRodinProject());
 			IProjectBaseEntry projBaseEntry = projectEntries.get(theory
 					.getRodinProject());
 			if (projBaseEntry != null) {
@@ -150,11 +150,11 @@ public class BaseManager implements IElementChangedListener {
 		return entries;
 	}
 
-	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, IPOContext context) {
+	public List<IGeneralRule> getRewriteRules(boolean automatic, Class<?> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
-		List<IDeployedRewriteRule> rules = new ArrayList<IDeployedRewriteRule>();
+		List<IGeneralRule> rules = new ArrayList<IGeneralRule>();
 		//case when POcontext is a theory
 		if (context.isTheoryRelated()) {
 			rules.addAll(projectEntries.get(rodinProject).getRewriteRules(automatic, clazz, parentRoot, context.getFormulaFactory()));
@@ -182,7 +182,7 @@ public class BaseManager implements IElementChangedListener {
 	 *            the obligation context
 	 * @return the deployed rule, or <code>null</code> if not found
 	 */
-	public IDeployedRewriteRule getRewriteRule(String projectName, String ruleName, String theoryName, Class<?> clazz, IPOContext context) {
+	public IGeneralRule getRewriteRule(String projectName, String ruleName, String theoryName, Class<?> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(projectName);
 		check(rodinProject);
@@ -191,12 +191,12 @@ public class BaseManager implements IElementChangedListener {
 
 	}
 
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic,
+	public List<IGeneralRule> getInferenceRules(boolean automatic,
 			ReasoningType type, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = parentRoot.getRodinProject();
 		check(rodinProject);
-		List<IDeployedInferenceRule> rules = new ArrayList<IDeployedInferenceRule>();
+		List<IGeneralRule> rules = new ArrayList<IGeneralRule>();
 		// case when POcontext is a theory
 		if (context.isTheoryRelated()) {
 			rules.addAll(projectEntries.get(rodinProject).getInferenceRules(automatic, type, parentRoot, context.getFormulaFactory()));
@@ -222,7 +222,7 @@ public class BaseManager implements IElementChangedListener {
 	 *            the obligation context
 	 * @return the deployed inference rule, or <code>null</code> if not found
 	 */
-	public IDeployedInferenceRule getInferenceRule(String projectName, String theoryName, String ruleName, IPOContext context) {
+	public IGeneralRule getInferenceRule(String projectName, String theoryName, String ruleName, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(projectName);
 		check(rodinProject);

@@ -8,12 +8,13 @@
 package org.eventb.theory.rbp.rulebase.basis;
 
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.theory.core.IGeneralRule;
 
 /**
  * @author maamria
  *
  */
-public interface IDeployedRule {
+public interface IDeployedRule extends IGeneralRule{
 	
 	/**
 	 * <p>Returns the description of this rule.</p>

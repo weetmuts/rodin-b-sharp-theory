@@ -10,8 +10,8 @@ package org.eventb.theory.rbp.reasoning;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 
 public class XDAutoRewriter extends AutoRewriter{
 
@@ -19,8 +19,8 @@ public class XDAutoRewriter extends AutoRewriter{
 		super(context);
 	}
 	
-	protected List<IDeployedRewriteRule> getRules(Formula<?> original){
-		List<IDeployedRewriteRule> rules = manager.getDefinitionalRules(original.getClass(), context);
+	protected List<IGeneralRule> getRules(Formula<?> original){
+		List<IGeneralRule> rules = manager.getDefinitionalRules(original.getClass(), context);
 		return rules;
 	}
 

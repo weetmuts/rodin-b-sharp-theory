@@ -14,11 +14,10 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
+import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
-import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 import org.rodinp.core.IRodinProject;
 
 /**
@@ -50,7 +49,7 @@ public interface IProjectBaseEntry {
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return rewrite rules the list of rules
 	 */
-	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, 
+	public List<IGeneralRule> getRewriteRules(boolean automatic, Class<?> clazz, 
 			IEventBRoot root, FormulaFactory factory);
 	
 	/**
@@ -63,7 +62,7 @@ public interface IProjectBaseEntry {
 	 * 
 	 * @return the rule or <code>null</code> if not found
 	 */
-	public IDeployedRewriteRule getRewriteRule(String theoryName, String ruleName, Class<?> clazz, 
+	public IGeneralRule getRewriteRule(String theoryName, String ruleName, Class<?> clazz, 
 			IEventBRoot root, FormulaFactory factory);
 	/**
 	 * Returns the list of inference rules satisfying the given criteria. The rules must be available to use
@@ -75,7 +74,7 @@ public interface IProjectBaseEntry {
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return inference rules the list of inference rules
 	 */
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, IEventBRoot root,FormulaFactory factory);
+	public List<IGeneralRule> getInferenceRules(boolean automatic, ReasoningType type, IEventBRoot root,FormulaFactory factory);
 	
 	/**
 	 * Returns the interactive deployed inference rule by the given name. The rules must be available to use
@@ -85,7 +84,7 @@ public interface IProjectBaseEntry {
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return the deployed rule
 	 */
-	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, IEventBRoot root, FormulaFactory factory);
+	public IGeneralRule getInferenceRule(String theoryName, String ruleName, IEventBRoot root, FormulaFactory factory);
 	
 	/**
 	 * Returns the SC theorems available for the PO context <code>context</code>.
@@ -101,7 +100,7 @@ public interface IProjectBaseEntry {
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return list of definitional rules
 	 */
-	public List<IDeployedRewriteRule> getDefinitionalRules(IEventBRoot root, FormulaFactory factory);
+	public List<IGeneralRule> getDefinitionalRules(IEventBRoot root, FormulaFactory factory);
 	
 	/**
 	 * Returns the list of definitional rules satisfying the given criteria. The rules must be available
@@ -111,7 +110,7 @@ public interface IProjectBaseEntry {
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return list of definitional rules
 	 */
-	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, IEventBRoot root, FormulaFactory factory);
+	public List<IGeneralRule> getDefinitionalRules(Class<?> clazz, IEventBRoot root, FormulaFactory factory);
 	
 	public ITheoryBaseEntry<ISCTheoryRoot> getTheoryBaseEntry(ISCTheoryRoot root);
 	

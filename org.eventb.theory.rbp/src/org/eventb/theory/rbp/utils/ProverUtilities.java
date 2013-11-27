@@ -3,6 +3,7 @@ package org.eventb.theory.rbp.utils;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,6 +18,16 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.ISCInferenceRule;
+import org.eventb.theory.core.ISCMetavariable;
+import org.eventb.theory.core.ISCProofRulesBlock;
+import org.eventb.theory.core.ISCRewriteRule;
+import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
+import org.eventb.theory.core.ISCRule;
+import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRule;
 import org.rodinp.core.RodinDBException;
@@ -254,5 +265,45 @@ public class ProverUtilities {
 		}
 		return false;
 	}
+	
+	public static ITypeEnvironment makeTypeEnvironment(FormulaFactory factory, ISCRule rule) {
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		try {
+		ISCTheoryRoot SCtheoryRoot = DatabaseUtilities.getSCTheory(rule.getRoot().getElementName(), rule.getRoot().getRodinProject());
+		ISCTypeParameter[] types = SCtheoryRoot.getSCTypeParameters();
+		for (ISCTypeParameter par : types) {
+			typeEnvironment.addGivenSet(par.getIdentifier(factory).getName());
+		}
+		ISCMetavariable[] vars = ((ISCProofRulesBlock) rule.getParent()).getMetavariables();
+		for (ISCMetavariable var : vars) {
+			typeEnvironment.add(var.getIdentifier(factory));
+		}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		return typeEnvironment;
+	}
+	
+	public static boolean isConditional(ISCRewriteRule rule, FormulaFactory factory, ITypeEnvironment typeEnv) throws RodinDBException {
+		boolean isCond = true;
+		List<ISCRewriteRuleRightHandSide> ruleRHSs = Arrays.asList(rule.getRuleRHSs());
+		if(ruleRHSs.size() == 1){
+			ISCRewriteRuleRightHandSide rhs0 = ruleRHSs.get(0);
+			Predicate cond = rhs0.getPredicate(factory, typeEnv);
+			if(cond.equals(ProverUtilities.BTRUE)){
+				isCond = false;
+			}
+		}
+		return isCond;
+	}
 
+	public static ReasoningType getReasoningType(ISCInferenceRule rule, boolean backward, boolean forward) {
+		if(backward && forward)
+			return ReasoningType.BACKWARD_AND_FORWARD;
+		else if(forward)
+			return ReasoningType.FORWARD;
+		return ReasoningType.BACKWARD;
+	}
 }

@@ -20,6 +20,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
+import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -49,65 +50,51 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	}
 	
 	public void setHasChanged(ISCTheoryRoot scRoot){
-		if (!scRoots.containsKey(scRoot)) {
+		//if (!scRoots.containsKey(scRoot)) {
 			TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
 					scRoot);
 			scRoots.put(scRoot, entry);
-		}
+		//}
 		scRoots.get(scRoot).setHasChanged(true);
 	}
 	
 	public void setHasChanged(IDeployedTheoryRoot depRoot){
-		if(!deployedRoots.containsKey(depRoot)){
+		//if(!deployedRoots.containsKey(depRoot)){
 			TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(depRoot);
 			deployedRoots.put(depRoot, entry);
-		}
+		//}
 		deployedRoots.get(depRoot).setHasChanged(true);
 	}
 
 	@Override
-	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
-		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
-		// case when POContext is a theory
-		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
+	public List<IGeneralRule> getRewriteRules(boolean automatic, Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
+		List<IGeneralRule> toReturn = new ArrayList<IGeneralRule>();
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			String componentName = root.getComponentName();
-			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
-			reqRoots.add(SCRoot.getDeployedTheoryRoot());
-			for (ISCTheoryRoot scRoot : reqRoots) {
-				if (!scRoots.containsKey(scRoot)) {
+			//add imported theories (deployed)
+			for (IDeployedTheoryRoot deployedRoot : reqRoots) {
+				if (!scRoots.containsKey(deployedRoot)) {
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
-							scRoot);
-					scRoots.put(scRoot, entry);
+							deployedRoot);
+					scRoots.put(deployedRoot, entry);
 				}
-				// this is to avoid circularity of rules (rule used to prove itself)
-				if (!root.getComponentName().equals(scRoot.getComponentName())){
-					toReturn.addAll(scRoots.get(scRoot).getRewriteRules(automatic, clazz, factory));
-				}
-				else {
-					// supply definitional rules for interactive prover only
-					if (!automatic)
-						toReturn.addAll(scRoots.get(scRoot).getDefinitionalRules(clazz, factory));
-				}
+				toReturn.addAll(scRoots.get(deployedRoot).getRewriteRules(automatic, clazz, factory));	
 			}
-		}
-		// case when POContext is a context/machine; so no need to add the local theories; local theories need to be imported in the theorypath
-		/*else {
-			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
-			for (IDeployedTheoryRoot deployedTheoryRoot : deployedTheoryRoots){
-				if(!deployedRoots.containsKey(deployedTheoryRoot)){
-					TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(deployedTheoryRoot);
-					deployedRoots.put(deployedTheoryRoot, entry);
-				}
-				toReturn.addAll(deployedRoots.get(deployedTheoryRoot).getRewriteRules(automatic, clazz, factory));
+			//add the current theory (sc)
+			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
+			if (!scRoots.containsKey(SCRoot)) {
+				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(
+						SCRoot);
+				scRoots.put(SCRoot, entry);
 			}
-		}*/
+			if (!automatic)
+				toReturn.addAll(scRoots.get(SCRoot).getDefinitionalRules(clazz, factory));
 		return toReturn;
 	}
 
 	@Override
-	public IDeployedRewriteRule getRewriteRule(String theoryName, String ruleName, Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
-		if (originatedFromTheory(root.getRodinFile(), project)){
+	public IGeneralRule getRewriteRule(String theoryName, String ruleName, Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
+		if (originatedFromTheory(root.getRodinFile(), project) && theoryName.equals(root.getElementName()) ){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
 			if (!scRoots.containsKey(scRoot)){
 				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
@@ -125,14 +112,15 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		}
 	}
 	
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, 
+	public List<IGeneralRule> getInferenceRules(boolean automatic, ReasoningType type, 
 			IEventBRoot root,FormulaFactory factory){
-		List<IDeployedInferenceRule> toReturn = new ArrayList<IDeployedInferenceRule>();
+		List<IGeneralRule> toReturn = new ArrayList<IGeneralRule>();
 		// case when POContext is a theory
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			String componentName = root.getComponentName();
 			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
+			//add imported theories (deployed)
 			reqRoots.add(SCRoot.getDeployedTheoryRoot());
 			for (ISCTheoryRoot scRoot : reqRoots) {
 				if (!scRoots.containsKey(scRoot)) {
@@ -145,21 +133,10 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				}
 			}
 		}
-		// case when POContext is a context/machine; so no need to add the local theories; local theories need to be imported in the theorypath
-		/*else {
-			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
-			for (IDeployedTheoryRoot deployedTheoryRoot : deployedTheoryRoots){
-				if(!deployedRoots.containsKey(deployedTheoryRoot)){
-					TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(deployedTheoryRoot);
-					deployedRoots.put(deployedTheoryRoot, entry);
-				}
-				toReturn.addAll(deployedRoots.get(deployedTheoryRoot).getInferenceRules(automatic, type, factory));
-			}
-		}*/
 		return toReturn;
 	}
 	
-	public IDeployedInferenceRule getInferenceRule(String theoryName, String ruleName, 
+	public IGeneralRule getInferenceRule(String theoryName, String ruleName, 
 			IEventBRoot root, FormulaFactory factory){
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
@@ -190,50 +167,51 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 			boolean axm = poContext.isAxiom();
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(componentName, project);
 			List<IDeployedTheoryRoot> requiredRoots = getRequiredTheories(scRoot);
-			//add the current theory
-			requiredRoots.add(scRoot.getDeployedTheoryRoot());
+			//add imported theories (deployed)
 			for (ISCTheoryRoot scTheoryRoot : requiredRoots){
 				if (!scRoots.containsKey(scTheoryRoot)){
 					TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scTheoryRoot);
 					scRoots.put(scTheoryRoot, entry);
 				} 
-				if(order != -1 && root.getComponentName().equals(scTheoryRoot.getComponentName())){
-					final IRodinProject thyProject = scTheoryRoot.getRodinProject();	
-					if (!map.containsKey(thyProject)) {
-						map.put(thyProject,
-								new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
-					}
-					final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map.get(thyProject);
-					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getSCTheorems(axm, order, factory));
+				final IRodinProject thyProject = scTheoryRoot.getRodinProject();
+				if (!map.containsKey(thyProject)) {
+					map.put(thyProject,
+							new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
 				}
-				else {
-					final IRodinProject thyProject = scTheoryRoot.getRodinProject();
-					if (!map.containsKey(thyProject)) {
-						map.put(thyProject,
-								new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
-					}
-					final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map.get(thyProject);
-					thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getSCTheorems(factory));
-				}
+				final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map.get(thyProject);
+				thms.put(scTheoryRoot, scRoots.get(scTheoryRoot).getSCTheorems(factory));
 			}
+			//add the current theory (sc)
+			if (!scRoots.containsKey(scRoot)){
+				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
+				scRoots.put(scRoot, entry);
+			} 
+			if(order != -1){
+				final IRodinProject thyProject = scRoot.getRodinProject();	
+				if (!map.containsKey(thyProject)) {
+					map.put(thyProject,
+							new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
+				}
+				final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map.get(thyProject);
+				thms.put(scRoot, scRoots.get(scRoot).getSCTheorems(axm, order, factory));
+			}
+			else {
+				final IRodinProject thyProject = scRoot.getRodinProject();
+				if (!map.containsKey(thyProject)) {
+					map.put(thyProject,
+							new LinkedHashMap<IExtensionRulesSource, List<ISCTheorem>>());
+				}
+				final Map<IExtensionRulesSource, List<ISCTheorem>> thms = map.get(thyProject);
+				thms.put(scRoot, scRoots.get(scRoot).getSCTheorems(factory));
+			}
+			
 		}
-		// case when POContext is a context/machine; so no need to add the local theories; local theories need to be imported in the theorypath
-		/*else {
-			IDeployedTheoryRoot[] deployedTheoryRoots = getDeployedRoots();
-			for (IDeployedTheoryRoot deployedRoot : deployedTheoryRoots){
-				if (!deployedRoots.containsKey(deployedRoot)){
-					TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(deployedRoot);
-					deployedRoots.put(deployedRoot, entry);
-				}
-				map.put(deployedRoot, deployedRoots.get(deployedRoot).getDeployedTheorems(factory));
-			}
-		}*/
 		return map;
 	}
 
 	@Override
-	public List<IDeployedRewriteRule> getDefinitionalRules(IEventBRoot root, FormulaFactory factory) {
-		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
+	public List<IGeneralRule> getDefinitionalRules(IEventBRoot root, FormulaFactory factory) {
+		List<IGeneralRule> toReturn = new ArrayList<IGeneralRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			String componentName = root.getComponentName();
@@ -263,8 +241,8 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	}
 
 	@Override
-	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
-		List<IDeployedRewriteRule> toReturn = new ArrayList<IDeployedRewriteRule>();
+	public List<IGeneralRule> getDefinitionalRules(Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
+		List<IGeneralRule> toReturn = new ArrayList<IGeneralRule>();
 		if (DatabaseUtilities.originatedFromTheory(root.getRodinFile(), project)) {
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
 			String componentName = root.getComponentName();

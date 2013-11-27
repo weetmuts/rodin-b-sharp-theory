@@ -16,11 +16,21 @@ import java.util.Map;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.theory.core.DatabaseUtilities;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
+import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
+import org.eventb.theory.core.ISCInferenceRule;
+import org.eventb.theory.core.ISCMetavariable;
+import org.eventb.theory.core.ISCProofRulesBlock;
+import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.RodinDBException;
@@ -34,102 +44,181 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 
 	private boolean hasChanged;
 	private R theoryRoot;
+	private ITypeEnvironment typeEnv;
 
 	/**
 	 * All rules.
 	 */
-	private List<IDeployedRewriteRule> rewriteRules;
-	private List<IDeployedInferenceRule> inferenceRules;
+	private List<IGeneralRule> rewriteRules;
+	private List<IGeneralRule> inferenceRules;
 	private List<ISCTheorem> theorems;
 	/**
 	 * Definitional rules
 	 */
-	private List<IDeployedRewriteRule> definitionalRules;
+	private List<IGeneralRule> definitionalRules;
 	
 	/**
 	 * Mapped automatic rules by runtime class of formula.
 	 */
-	private Map<Class<?>, List<IDeployedRewriteRule>> autoRewRules;
+	private Map<Class<?>, List<IGeneralRule>> autoRewRules;
 
 	/**
 	 * Mapped interactive rules by runtime class of formula.
 	 */
-	private Map<Class<?>, List<IDeployedRewriteRule>> interRewRules;
+	private Map<Class<?>, List<IGeneralRule>> interRewRules;
 
 	/**
 	 * Mapped inference rules by reasoning type runtime class.
 	 */
-	private Map<ReasoningType, List<IDeployedInferenceRule>> autoTypedInferenceMap;
-	private Map<ReasoningType, List<IDeployedInferenceRule>> interTypedInferenceMap;
+	private Map<ReasoningType, List<IGeneralRule>> autoTypedInferenceMap;
+	private Map<ReasoningType, List<IGeneralRule>> interTypedInferenceMap;
 
 	public TheoryBaseEntry(R theoryRoot) {
 		this.theoryRoot = theoryRoot;
-		autoRewRules = new LinkedHashMap<Class<?>, List<IDeployedRewriteRule>>();
-		interRewRules = new LinkedHashMap<Class<?>, List<IDeployedRewriteRule>>();
+		rewriteRules = new ArrayList<IGeneralRule>();
+		inferenceRules = new ArrayList<IGeneralRule>();;
+		autoRewRules = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
+		interRewRules = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
 		
-		autoTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IDeployedInferenceRule>>();
-		interTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IDeployedInferenceRule>>();
-		definitionalRules = new ArrayList<IDeployedRewriteRule>();
+		autoTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IGeneralRule>>();
+		interTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IGeneralRule>>();
+		definitionalRules = new ArrayList<IGeneralRule>();
 		// set to true to initiate an reload
 		this.hasChanged = true;
 	}
 
 	protected void reload(FormulaFactory factory) {
-		IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
-		rewriteRules = file.getRewriteRules();
-		inferenceRules = file.getInferenceRules();
-		try {
-			theorems = Arrays.asList(theoryRoot.getTheorems());
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		// clear all
-		autoRewRules.clear();
-		interRewRules.clear();
-		autoTypedInferenceMap.clear();
-		interTypedInferenceMap.clear();
-		definitionalRules.clear();
+		if (theoryRoot instanceof IDeployedTheoryRoot) {
+			IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
+			rewriteRules = (List<IGeneralRule>)(List<?>) file.getRewriteRules();
+			inferenceRules = (List<IGeneralRule>)(List<?>) file.getInferenceRules();
+			try {
+				theorems = Arrays.asList(theoryRoot.getTheorems());
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+			// clear all
+			autoRewRules.clear();
+			interRewRules.clear();
+			autoTypedInferenceMap.clear();
+			interTypedInferenceMap.clear();
+			definitionalRules.clear();
 
-		for (IDeployedRewriteRule rule : rewriteRules) {
-			if(rule.isDefinitional()){
-				definitionalRules.add(rule);
+			for (IGeneralRule rule : rewriteRules) {
+				if(((IDeployedRewriteRule) rule).isDefinitional()){
+					definitionalRules.add(rule);
+				}
+				Formula<?> leftHandSide = ((IDeployedRewriteRule) rule).getLeftHandSide();
+				// only automatic + unconditional rewrites
+				if (((IDeployedRewriteRule) rule).isAutomatic() && !((IDeployedRewriteRule) rule).isConditional()) {
+					if (autoRewRules.get(leftHandSide.getClass()) == null) {
+						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+						autoRewRules.put(leftHandSide.getClass(), list);
+					}
+					autoRewRules.get(leftHandSide.getClass()).add(rule);
+				} 
+				// interactive rewrites + conditional
+				if (((IDeployedRewriteRule) rule).isInteracive() || ((IDeployedRewriteRule) rule).isConditional()) {
+					if (interRewRules.get(leftHandSide.getClass()) == null) {
+						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+						interRewRules.put(leftHandSide.getClass(), list);
+					}
+					interRewRules.get(leftHandSide.getClass()).add(rule);
+				}
 			}
-			Formula<?> leftHandSide = rule.getLeftHandSide();
-			// only automatic + unconditional rewrites
-			if (rule.isAutomatic() && !rule.isConditional()) {
-				if (autoRewRules.get(leftHandSide.getClass()) == null) {
-					List<IDeployedRewriteRule> list = new ArrayList<IDeployedRewriteRule>();
-					autoRewRules.put(leftHandSide.getClass(), list);
+			for (IGeneralRule rule : inferenceRules) {
+				// automatic inference
+				if (( (IDeployedInferenceRule) rule).isAutomatic()) {
+					ReasoningType type = ( (IDeployedInferenceRule) rule).getReasoningType();
+					if (!autoTypedInferenceMap.containsKey(type)) {
+						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+						autoTypedInferenceMap.put(type, list);
+					}
+					autoTypedInferenceMap.get(type).add(rule);
+				} 
+				// interactive inference
+				if(( (IDeployedInferenceRule) rule).isInteracive()){
+					ReasoningType type = ( (IDeployedInferenceRule) rule).getReasoningType();
+					if (!interTypedInferenceMap.containsKey(type)) {
+						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+						interTypedInferenceMap.put(type, list);
+					}
+					interTypedInferenceMap.get(type).add(rule);
 				}
-				autoRewRules.get(leftHandSide.getClass()).add(rule);
-			} 
-			// interactive rewrites + conditional
-			if (rule.isInteracive() || rule.isConditional()) {
-				if (interRewRules.get(leftHandSide.getClass()) == null) {
-					List<IDeployedRewriteRule> list = new ArrayList<IDeployedRewriteRule>();
-					interRewRules.put(leftHandSide.getClass(), list);
-				}
-				interRewRules.get(leftHandSide.getClass()).add(rule);
 			}
 		}
-		for (IDeployedInferenceRule rule : inferenceRules) {
-			// automatic inference
-			if (rule.isAutomatic()) {
-				ReasoningType type = rule.getReasoningType();
-				if (!autoTypedInferenceMap.containsKey(type)) {
-					List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
-					autoTypedInferenceMap.put(type, list);
+		else {// if (theoryRoot instanceof ISCTheoryRoot))
+			try {
+				typeEnv = factory.makeTypeEnvironment();
+				ISCTheoryRoot SCtheoryRoot = DatabaseUtilities.getSCTheory(theoryRoot.getElementName(), theoryRoot.getRodinProject());
+				ISCTypeParameter[] types = SCtheoryRoot.getSCTypeParameters();
+				for (ISCTypeParameter par : types) {
+					typeEnv.addGivenSet(par.getIdentifier(factory).getName());
 				}
-				autoTypedInferenceMap.get(type).add(rule);
-			} 
-			// interactive inference
-			if(rule.isInteracive()){
-				ReasoningType type = rule.getReasoningType();
-				if (!interTypedInferenceMap.containsKey(type)) {
-					List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
-					interTypedInferenceMap.put(type, list);
+				ISCProofRulesBlock[] blocks = theoryRoot.getProofRulesBlocks();
+				for (ISCProofRulesBlock block : blocks) {
+					rewriteRules.addAll(Arrays.asList(block.getRewriteRules()));
+					inferenceRules.addAll(Arrays.asList(block.getInferenceRules()));
+					ISCMetavariable[] vars = block.getMetavariables();
+					for (ISCMetavariable var : vars) {
+						typeEnv.add(var.getIdentifier(factory));
+					}
 				}
-				interTypedInferenceMap.get(type).add(rule);
+				
+				
+				theorems = Arrays.asList(theoryRoot.getTheorems());
+
+				// clear all
+				autoRewRules.clear();
+				interRewRules.clear();
+				autoTypedInferenceMap.clear();
+				interTypedInferenceMap.clear();
+				definitionalRules.clear();
+
+				for (IGeneralRule rule : rewriteRules) {
+					if(( (ISCRewriteRule) rule).hasDefinitionalAttribute() && ( (ISCRewriteRule) rule).isDefinitional()){
+						definitionalRules.add(rule);
+					}
+					Formula<?> leftHandSide = ( (ISCRewriteRule) rule).getSCFormula(factory, typeEnv);
+					// only automatic + unconditional rewrites
+					if (( (ISCRewriteRule) rule).isAutomatic() && !ProverUtilities.isConditional((ISCRewriteRule)rule, factory, typeEnv)) {
+						if (autoRewRules.get(leftHandSide.getClass()) == null) {
+							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+							autoRewRules.put(leftHandSide.getClass(), list);
+						}
+						autoRewRules.get(leftHandSide.getClass()).add(rule);
+					} 
+					// interactive rewrites + conditional
+					if (( (ISCRewriteRule) rule).isInteractive() || ProverUtilities.isConditional((ISCRewriteRule)rule, factory, typeEnv)) {
+						if (interRewRules.get(leftHandSide.getClass()) == null) {
+							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+							interRewRules.put(leftHandSide.getClass(), list);
+						}
+						interRewRules.get(leftHandSide.getClass()).add(rule);
+					}
+				}
+				for (IGeneralRule rule : inferenceRules) {
+					// automatic inference
+					if (( (ISCInferenceRule) rule).isAutomatic()) {
+						ReasoningType type = ProverUtilities.getReasoningType((ISCInferenceRule)rule, ( (ISCInferenceRule) rule).isSuitableForBackwardReasoning(), ( (ISCInferenceRule) rule).isSuitableForForwardReasoning());
+						if (!autoTypedInferenceMap.containsKey(type)) {
+							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+							autoTypedInferenceMap.put(type, list);
+						}
+						autoTypedInferenceMap.get(type).add(rule);
+					} 
+					// interactive inference
+					if(( (ISCInferenceRule) rule).isInteractive()){
+						ReasoningType type = ProverUtilities.getReasoningType((ISCInferenceRule)rule, ( (ISCInferenceRule) rule).isSuitableForBackwardReasoning(), ( (ISCInferenceRule) rule).isSuitableForForwardReasoning());
+						if (!interTypedInferenceMap.containsKey(type)) {
+							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+							interTypedInferenceMap.put(type, list);
+						}
+						interTypedInferenceMap.get(type).add(rule);
+					}
+				}
+			} catch (RodinDBException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -150,7 +239,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 	
 	@Override
-	public List<IDeployedRewriteRule> getRewriteRules(boolean automatic, Class<?> clazz, FormulaFactory factory) {
+	public List<IGeneralRule> getRewriteRules(boolean automatic, Class<?> clazz, FormulaFactory factory) {
 		checkStatus(factory);
 		if (automatic) {
 			if (autoRewRules.containsKey(clazz))
@@ -159,17 +248,29 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			if (interRewRules.containsKey(clazz))
 				return getList(interRewRules.get(clazz));
 		}
-		return new ArrayList<IDeployedRewriteRule>();
+		return new ArrayList<IGeneralRule>();
 	}
 
 	@Override
-	public IDeployedRewriteRule getRewriteRule(String ruleName, Class<?> clazz, FormulaFactory factory) {
+	public IGeneralRule getRewriteRule(String ruleName, Class<?> clazz, FormulaFactory factory) {
 		checkStatus(factory);
 		if (interRewRules.get(clazz) == null) {
 			return null;
 		}
-		for (IDeployedRewriteRule rule : interRewRules.get(clazz)) {
-			if (rule.getRuleName().equals(ruleName)) {
+		for (IGeneralRule rule : interRewRules.get(clazz)) {
+			String name = null;
+			if (rule instanceof IDeployedRewriteRule) {
+				name = ((IDeployedRewriteRule) rule).getRuleName();
+			}
+			else {
+				try { // if (rule instanceof ISCRewriteRule)
+					name = ((ISCRewriteRule) rule).getLabel();
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (name.equals(ruleName)) {
 				return rule;
 			}
 		}
@@ -207,15 +308,15 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 
 	@Override
-	public List<IDeployedInferenceRule> getInferenceRules(boolean automatic, ReasoningType type, FormulaFactory factory) {
+	public List<IGeneralRule> getInferenceRules(boolean automatic, ReasoningType type, FormulaFactory factory) {
 		checkStatus(factory);
-		List<IDeployedInferenceRule> toReturn = new ArrayList<IDeployedInferenceRule>();
+		List<IGeneralRule> toReturn = new ArrayList<IGeneralRule>();
 		if (automatic) {
 			if (!autoTypedInferenceMap.containsKey(type)) {
-				List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
+				List<IGeneralRule> list = new ArrayList<IGeneralRule>();
 				autoTypedInferenceMap.put(type, list);
 			}
-			List<IDeployedInferenceRule> bfRules = ProverUtilities.safeList(autoTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD));
+			List<IGeneralRule> bfRules = ProverUtilities.safeList(autoTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD));
 			switch (type) {
 			case BACKWARD:
 			case FORWARD: {
@@ -229,10 +330,10 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			}
 		} else {
 			if (!interTypedInferenceMap.containsKey(type)) {
-				List<IDeployedInferenceRule> list = new ArrayList<IDeployedInferenceRule>();
+				List<IGeneralRule> list = new ArrayList<IGeneralRule>();
 				interTypedInferenceMap.put(type, list);
 			}
-			List<IDeployedInferenceRule> bfRules = ProverUtilities.safeList(interTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD));
+			List<IGeneralRule> bfRules = ProverUtilities.safeList(interTypedInferenceMap.get(ReasoningType.BACKWARD_AND_FORWARD));
 			switch (type) {
 			case BACKWARD:
 			case FORWARD: {
@@ -250,10 +351,22 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 
 	@Override
-	public IDeployedInferenceRule getInferenceRule(String ruleName, FormulaFactory factory) {
+	public IGeneralRule getInferenceRule(String ruleName, FormulaFactory factory) {
 		checkStatus(factory);
-		for (IDeployedInferenceRule rule : inferenceRules) {
-			if (rule.getRuleName().equals(ruleName)) {
+		for (IGeneralRule rule : inferenceRules) {
+			String name = null;
+			if (rule instanceof IDeployedInferenceRule) {
+				name = ((IDeployedInferenceRule) rule).getRuleName();
+			}
+			else { // if (rule instanceof ISCInferenceRule)
+				try {
+					name = ((ISCRewriteRule) rule).getLabel();
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (name.equals(ruleName)) {
 				return rule;
 			}
 		}
@@ -261,21 +374,33 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 
 	@Override
-	public List<IDeployedRewriteRule> getDefinitionalRules(FormulaFactory factory) {
+	public List<IGeneralRule> getDefinitionalRules(FormulaFactory factory) {
 		checkStatus(factory);
 		return definitionalRules;
 	}
 
 	@Override
-	public List<IDeployedRewriteRule> getDefinitionalRules(Class<?> clazz, FormulaFactory factory) {
+	public List<IGeneralRule> getDefinitionalRules(Class<?> clazz, FormulaFactory factory) {
 		checkStatus(factory);
-		List<IDeployedRewriteRule> deployedRewriteRules = new ArrayList<IDeployedRewriteRule>();
-		for (IDeployedRewriteRule rule : definitionalRules){
-			if(rule.getLeftHandSide().getClass().equals(clazz)){
-				deployedRewriteRules.add(rule);
+		List<IGeneralRule> rewriteRules = new ArrayList<IGeneralRule>();
+		for (IGeneralRule rule : definitionalRules){
+			Formula<?> lhs = null;
+			if (rule instanceof IDeployedRewriteRule) {
+				lhs = ((IDeployedRewriteRule) rule).getLeftHandSide();
+			}
+			else {
+				try { // if (rule instanceof ISCRewriteRule)
+					lhs = ((ISCRewriteRule) rule).getSCFormula(factory, typeEnv);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(lhs.getClass().equals(clazz)){
+				rewriteRules.add(rule);
 			}
 		}
-		return deployedRewriteRules;
+		return rewriteRules;
 	}
 	
 	/**
