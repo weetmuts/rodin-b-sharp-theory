@@ -34,6 +34,7 @@ import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
+import org.eventb.core.ast.extensions.maths.AstUtilities.PositionPoint;
 import org.eventb.core.internal.ast.extensions.maths.CompleteDatatypeExtension;
 import org.eventb.core.internal.ast.extensions.maths.OperatorArgument;
 
@@ -56,6 +57,7 @@ public abstract class BasicAstExtTest extends TestCase {
 	private Set<IFormulaExtension> REAL_TYPE_EXTENSIONS;
 	private IPredicateExtension IS_EMPTY_EXTENSION;
 	private IPredicateExtension SAME_SIZE_EXTENSION;
+	private IPredicateExtension INFIX_ASSOC_PRED_EXTENSION;
 	private IExpressionExtension SEQ_EXTENSION;
 	private IExpressionExtension SEQ_SIZE_EXTENSION;
 	private IExpressionExtension SEQ_TAIL_EXTENSION;
@@ -68,7 +70,8 @@ public abstract class BasicAstExtTest extends TestCase {
 	private IExpressionExtension SIZE_LIST_EXTENSION;
 	private IExpressionExtension OPPOSITE_EXTENSION;
 	private IExpressionExtension NOT_EXTENSION;
-
+	private IExpressionExtension CHILDLESS_EXTENSION;
+	
 	public static final Type BOOL = FormulaFactory.getDefault().makeBooleanType();
 	public static final Type Z = FormulaFactory.getDefault().makeIntegerType();
 	public static final Predicate TRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
@@ -210,7 +213,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("n", factory.makeIntegerType());
 		}
 		PRIME_EXTENSION = MathExtensionsFactory.getPredicateExtension(properties, false, operatorArguments,
-				predicate("n > 1"), predicate("n > 1"), null);
+				predicate("n > 1"), predicate("n > 1"), null, null);
 		return PRIME_EXTENSION;
 	}
 
@@ -225,8 +228,24 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s2", type("ℙ(S)"));
 		}
 		SAME_SIZE_EXTENSION = MathExtensionsFactory.getPredicateExtension(properties, true, operatorArguments,
-				predicate("finite(s1) ∧ finite(s2)"), predicate("finite(s1) ∧ finite(s2)"), null);
+				predicate("finite(s1) ∧ finite(s2)"), predicate("finite(s1) ∧ finite(s2)"), null, null);
 		return SAME_SIZE_EXTENSION;
+	}
+	
+	public IPredicateExtension infixAssocPredExtension() throws CoreException {
+		if (INFIX_ASSOC_PRED_EXTENSION != null)
+			return INFIX_ASSOC_PRED_EXTENSION;
+		OperatorExtensionProperties properties = new OperatorExtensionProperties("infixAssocPredId", "infixAssocPred",
+				FormulaType.PREDICATE, Notation.INFIX, "infixAssocPredGroup");
+		Map<String, Type> operatorArguments = new LinkedHashMap<String, Type>();
+		{
+			//FIXME: how do define an infix predicate operator with predicate arguments?
+			operatorArguments.put("p1", null);
+			operatorArguments.put("p2", null);
+		}
+		INFIX_ASSOC_PRED_EXTENSION = MathExtensionsFactory.getPredicateExtension(properties, true, operatorArguments,
+				TRUE, TRUE, null, null);
+		return INFIX_ASSOC_PRED_EXTENSION;
 	}
 
 	public IExpressionExtension seqExtension() throws CoreException {
@@ -239,7 +258,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("a", type("ℙ(A)"));
 		}
 		SEQ_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				type("ℙ(ℤ↔A)"), TRUE, TRUE, null);
+				type("ℙ(ℤ↔A)"), TRUE, TRUE, null, null);
 		return SEQ_EXTENSION;
 	}
 
@@ -255,7 +274,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
 		IS_EMPTY_EXTENSION = MathExtensionsFactory.getPredicateExtension(properties, false, operatorArguments,
-				predicate("s ∈ seq(A)"), predicate("s ∈ seq(A)"), null);
+				predicate("s ∈ seq(A)"), predicate("s ∈ seq(A)"), null, null);
 		return IS_EMPTY_EXTENSION;
 	}
 
@@ -270,7 +289,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
 		SEQ_SIZE_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				Z, predicate("s ∈ seq(A)"), predicate("s ∈ seq(A)"), null);
+				Z, predicate("s ∈ seq(A)"), predicate("s ∈ seq(A)"), null, null);
 		return SEQ_SIZE_EXTENSION;
 	}
 
@@ -285,7 +304,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
 		SEQ_TAIL_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				type("ℤ↔A"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), null);
+				type("ℤ↔A"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), null, null);
 		return SEQ_TAIL_EXTENSION;
 	}
 
@@ -300,7 +319,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
 		SEQ_HEAD_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				type("A"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), null);
+				type("A"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), null, null);
 		return SEQ_HEAD_EXTENSION;
 	}
 
@@ -315,7 +334,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("a2", BOOL);
 		}
 		AND_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, true, true, operatorArguments, BOOL,
-				TRUE, TRUE, null);
+				TRUE, TRUE, null, null);
 		return AND_EXTENSION;
 	}
 
@@ -330,7 +349,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("a2", BOOL);
 		}
 		OR_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, true, true, operatorArguments, BOOL,
-				TRUE, TRUE, null);
+				TRUE, TRUE, null, null);
 		return OR_EXTENSION;
 	}
 
@@ -344,8 +363,22 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("a", BOOL);
 		}
 		NOT_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments, BOOL,
-				TRUE, TRUE, null);
+				TRUE, TRUE, null, null);
 		return NOT_EXTENSION;
+	}
+	
+	public IExpressionExtension childlessExtension() throws CoreException {
+		if (CHILDLESS_EXTENSION != null)
+			return CHILDLESS_EXTENSION;
+		OperatorExtensionProperties properties = new OperatorExtensionProperties("childlessId", "childless",
+				FormulaType.EXPRESSION, Notation.PREFIX, "childlessGroup");
+//		Map<String, Type> operatorArguments = new LinkedHashMap<String, Type>();
+//		{
+//			operatorArguments.put("a", BOOL);
+//		}
+		CHILDLESS_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, new LinkedHashMap<String, Type>(), BOOL,
+				TRUE, TRUE, null, null);
+		return CHILDLESS_EXTENSION;
 	}
 
 	public IExpressionExtension seqConcatExtension() throws CoreException {
@@ -360,7 +393,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s2", type("ℤ↔A"));
 		}
 		SEQ_CONCAT_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, true, operatorArguments,
-				type("ℤ↔A"), predicate("s1 ∈ seq(A) ∧ s2 ∈ seq(A)"), predicate("s1 ∈ seq(A) ∧ s2 ∈ seq(A)"), null);
+				type("ℤ↔A"), predicate("s1 ∈ seq(A) ∧ s2 ∈ seq(A)"), predicate("s1 ∈ seq(A) ∧ s2 ∈ seq(A)"), null, null);
 		return SEQ_CONCAT_EXTENSION;
 	}
 
@@ -410,7 +443,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("l", type("List(T)"));
 		}
 		SIZE_LIST_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				Z, TRUE, TRUE, null);
+				Z, TRUE, TRUE, null, null);
 		return SIZE_LIST_EXTENSION;
 	}
 
@@ -426,7 +459,7 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("d", type("DIRECTION"));
 		}
 		OPPOSITE_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				type("DIRECTION"), TRUE, TRUE, null);
+				type("DIRECTION"), TRUE, TRUE, null, null);
 		return OPPOSITE_EXTENSION;
 	}
 
@@ -563,4 +596,10 @@ public abstract class BasicAstExtTest extends TestCase {
 				(IFormulaExtension)MathExtensionsFactory.getAxiomaticTypeExtension("REAL", "REAL ID", null));
 		return REAL_TYPE_EXTENSIONS;
 	}
+	
+	protected void equalPositionPoint(PositionPoint positionPoint1,PositionPoint positionPoint2) {
+		assertEquals("incorrect x in Position Point", positionPoint1.getX(), positionPoint2.getX());
+		assertEquals("incorrect y in Position Point", positionPoint1.getY(), positionPoint2.getY());		
+	}
+	
 }
