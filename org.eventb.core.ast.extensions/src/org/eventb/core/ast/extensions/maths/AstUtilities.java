@@ -91,7 +91,8 @@ public class AstUtilities {
 	 * @return whether the given extended expression is associative
 	 */
 	public static boolean isAssociative(ExtendedExpression expression) {
-		return expression != null && expression.getExtension() instanceof IOperatorExtension
+		return expression != null 
+				&& expression.getExtension() instanceof IOperatorExtension				 	//cfs:difficult to test this?
 				&& ((IOperatorExtension) expression.getExtension()).isAssociative();
 	}
 
@@ -115,7 +116,7 @@ public class AstUtilities {
 	 */
 	public static Formula<?> unflatten(IExtendedFormula formula, FormulaFactory factory) {
 		IFormulaExtension extension = formula.getExtension();
-		if (extension instanceof IOperatorExtension){
+		if (extension instanceof IOperatorExtension){											//cfs:difficult to test this?
 			IOperatorExtension operatorExtension = (IOperatorExtension) extension;
 			if (operatorExtension.isAssociative())
 				return unflattenExpression(operatorExtension,formula.getChildExpressions(), factory);
@@ -260,7 +261,8 @@ public class AstUtilities {
 	 * @return whether the extension declares an associative operator
 	 */
 	public static boolean isAnAssociativeExtension(IFormulaExtension extension) {
-		return isATheoryExtension(extension) && ((IOperatorExtension) extension).isAssociative();
+		return isATheoryExtension(extension) 
+				&& ((IOperatorExtension) extension).isAssociative();
 	}
 
 	/**
@@ -271,7 +273,8 @@ public class AstUtilities {
 	 * @return whether the extension declares a commutative operator
 	 */
 	public static boolean isACommutativeExtension(IFormulaExtension extension) {
-		return isATheoryExtension(extension) && ((IOperatorExtension) extension).isCommutative();
+		return isATheoryExtension(extension) 
+				&& ((IOperatorExtension) extension).isCommutative();
 	}
 
 	/**
@@ -295,10 +298,12 @@ public class AstUtilities {
 		boolean letter = false;
 		while (i < end) {
 			char c = predStr.charAt(i);
-			if (letter == false && !isSpaceOrBracket(c)) {
+			if (letter == false 
+					&& !isSpaceOrBracket(c)) {
 				x = i;
 				letter = true;
-			} else if (letter == true && isSpaceOrBracket(c)) {
+			} else if (letter == true 
+					&& isSpaceOrBracket(c)) {
 				y = i;
 				return new PositionPoint(x, y);
 			}
@@ -307,7 +312,7 @@ public class AstUtilities {
 		if (letter == true)
 			return new PositionPoint(x, end);
 		else
-			return new PositionPoint(start, end);
+			return new PositionPoint(start, end);		//cfs: may not be reachable?
 	}
 
 	/**
@@ -321,7 +326,11 @@ public class AstUtilities {
 	 *         otherwise return <code>false</code>.
 	 */
 	private static boolean isSpaceOrBracket(char c) {
-		return (c == '\t' || c == '\n' || c == ' ' || c == '(' || c == ')');
+		return (c == '\t' 
+				|| c == '\n' 
+				|| c == ' ' 
+				|| c == '(' 
+				|| c == ')');
 	}
 
 	/**
