@@ -16,9 +16,11 @@ import org.eventb.core.ast.Predicate;
 public final class DeployedGiven implements IDeployedGiven{
 
 	private Predicate pred;
+	private boolean isHyp;
 
-	public DeployedGiven(Predicate pred){
+	public DeployedGiven(Predicate pred, boolean isHyp){
 		this.pred = pred;
+		this.isHyp = isHyp;
 	}
 	
 	@Override
@@ -42,6 +44,10 @@ public final class DeployedGiven implements IDeployedGiven{
 	
 	public String toString(){
 		return pred.toString();
+	}
+	
+	public boolean isHyp() {
+		return isHyp;
 	}
 
 }

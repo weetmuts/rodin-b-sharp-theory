@@ -221,8 +221,7 @@ public class DeployedObjectsFactory {
 	public static IDeployedGiven getDeployedGiven(ISCGiven given,
 			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
 		try {
-			IDeployedGiven dep = new DeployedGiven(given.getPredicate(factory,
-					typeEnvironment));
+			IDeployedGiven dep = new DeployedGiven(given.getPredicate(factory,typeEnvironment), given.isHyp());
 			return dep;
 		} catch (CoreException e) {
 			ProverUtilities.log(e, "error creating deployed given clause from "+ given);

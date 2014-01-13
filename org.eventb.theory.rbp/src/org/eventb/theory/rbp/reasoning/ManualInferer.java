@@ -10,6 +10,7 @@ package org.eventb.theory.rbp.reasoning;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -113,17 +114,32 @@ public class ManualInferer extends AbstractRulesApplyer{
 	protected IAntecedent[] backwardReason(IProverSequent sequent,
 			IDeployedInferenceRule rule) {
 		Predicate goal = sequent.goal();
+		Iterable<Predicate> selectedHyp = sequent.selectedHypIterable();
 		Predicate infer = rule.getInfer().getInferClause();
 		IBinding binding = finder.match(goal, infer, false);
+		//add inhyp givens binding
 		if (binding != null) {
+			IBinding cloneBinding = binding.clone();
+			List<IDeployedGiven> hypGivens = rule.getHypGivens();
+			for (IDeployedGiven hypGiven : hypGivens) {
+				for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
+					Predicate hyp = (Predicate) iterator.next();
+					IBinding hypBinding = finder.match(hyp, hypGiven.getGivenClause(), false);
+					if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
+						cloneBinding.insertBinding(hypBinding);
+						break;
+					}
+				}
+			}
+			cloneBinding.makeImmutable();
 			List<IDeployedGiven> givens = rule.getGivens();
 			Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
 			for (IDeployedGiven given : givens) {
-				Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), binding);
+				Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), cloneBinding);
 				antecedents.add(ProverFactory.makeAntecedent(subGoal));
 			}
 			// add the well-definedness conditions where appropriate
-			Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
+			Map<FreeIdentifier, Expression> expressionMappings = cloneBinding.getExpressionMappings();
 			for (FreeIdentifier identifier : expressionMappings.keySet()){
 				Expression mappedExpression = expressionMappings.get(identifier);
 				Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
@@ -193,17 +209,43 @@ public class ManualInferer extends AbstractRulesApplyer{
 		FormulaFactory factory = context.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, rule);
 		Predicate goal = sequent.goal();
+		Iterable<Predicate> selectedHyp = sequent.selectedHypIterable();
 		Predicate infer = rule.getInfers()[0].getPredicate(factory, typeEnvironment);
 		IBinding binding = finder.match(goal, infer, false);
 		if (binding != null) {
-			List<ISCGiven> givens = Arrays.asList(rule.getGivens());
+			List<ISCGiven> hypGivens = new ArrayList<ISCGiven>();
+			for (ISCGiven r : Arrays.asList(rule.getGivens())) {
+				if (r.isHyp()) {
+					hypGivens.add(r);
+				}
+			}
+			IBinding cloneBinding = binding.clone();
+			for (ISCGiven hypGiven : hypGivens) {
+				for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
+					Predicate hyp = (Predicate) iterator.next();
+					IBinding hypBinding = finder.match(hyp, hypGiven.getPredicate(factory, typeEnvironment), false);
+					if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
+						cloneBinding.insertBinding(hypBinding);
+						break;
+					}
+				}
+			}
+			cloneBinding.makeImmutable();
+			//List<ISCGiven> givens = Arrays.asList(rule.getGivens());
+			//add just non-inhyp givens
+			List<ISCGiven> givens = new ArrayList<ISCGiven>();
+			for (ISCGiven r : Arrays.asList(rule.getGivens())) {
+				if (!r.isHyp()) {
+					givens.add(r);
+				}
+			}
 			Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
 			for (ISCGiven given : givens) {
-				Predicate subGoal = (Predicate) binder.bind(given.getPredicate(factory, typeEnvironment), binding);
+				Predicate subGoal = (Predicate) binder.bind(given.getPredicate(factory, typeEnvironment), cloneBinding);
 				antecedents.add(ProverFactory.makeAntecedent(subGoal));
 			}
 			// add the well-definedness conditions where appropriate
-			Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
+			Map<FreeIdentifier, Expression> expressionMappings = cloneBinding.getExpressionMappings();
 			for (FreeIdentifier identifier : expressionMappings.keySet()){
 				Expression mappedExpression = expressionMappings.get(identifier);
 				Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());

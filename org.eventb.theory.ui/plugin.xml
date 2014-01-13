@@ -132,6 +132,11 @@
             required="true"
             typeId="org.eventb.theory.core.inductiveArgument">
       </choiceAttribute>
+      <toggleAttribute
+            class="org.eventb.theory.internal.ui.attr.HypAttributeManipulation"
+            id="org.eventb.theory.ui.hyp"
+            typeId="org.eventb.theory.core.hyp">
+      </toggleAttribute>
       <element
             childrenSuffix="END"
             imagePath="icons/thy.gif"
@@ -668,6 +673,10 @@
          <attributeReference
                column="0"
                descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.theory.ui.hyp">
          </attributeReference>
          <attributeReference
                descriptionId="org.eventb.ui.comment">

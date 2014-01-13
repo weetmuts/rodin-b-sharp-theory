@@ -22,5 +22,11 @@ public interface IDeployedGiven {
 	 * @return the given clause
 	 */
 	public Predicate getGivenClause();
+	
+	/**
+	 * Returns the isHyp boolean
+	 * @return the isHyp boolean
+	 */
+	public boolean isHyp();
 
 }

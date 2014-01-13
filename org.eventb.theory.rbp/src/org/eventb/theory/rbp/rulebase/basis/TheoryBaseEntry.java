@@ -76,7 +76,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	public TheoryBaseEntry(R theoryRoot) {
 		this.theoryRoot = theoryRoot;
 		rewriteRules = new ArrayList<IGeneralRule>();
-		inferenceRules = new ArrayList<IGeneralRule>();;
+		inferenceRules = new ArrayList<IGeneralRule>();
 		autoRewRules = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
 		interRewRules = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
 		
@@ -360,7 +360,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			}
 			else { // if (rule instanceof ISCInferenceRule)
 				try {
-					name = ((ISCRewriteRule) rule).getLabel();
+					name = ((ISCInferenceRule) rule).getLabel();
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

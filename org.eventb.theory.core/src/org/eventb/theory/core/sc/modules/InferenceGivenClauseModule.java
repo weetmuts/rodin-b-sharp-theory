@@ -56,7 +56,22 @@ public class InferenceGivenClauseModule extends
 		}
 		inferenceIdentifiers.addGivenIdentifiers(iTypes);
 		inferenceIdentifiers.addGivenIdentifiers(predicate.getFreeIdentifiers());
-
+		
+	}
+	
+	@Override
+	protected void addHypIdentifiers(Predicate predicate) throws CoreException{
+		Collection<GivenType> types = predicate.getGivenTypes();
+		FreeIdentifier iTypes[] = new FreeIdentifier[types.size()];
+		int i = 0;
+		for (GivenType type : types) {
+			iTypes[i] = factory.makeFreeIdentifier(type.getName(), null,
+					typeEnvironment.getType(type.getName()));
+			i++;
+		}
+		inferenceIdentifiers.addHypIdentifiers(iTypes);
+		inferenceIdentifiers.addHypIdentifiers(predicate.getFreeIdentifiers());
+		
 	}
 
 	@Override

@@ -62,6 +62,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		
 		final Predicate goal = sequent.goal();
 		if (pred == null) {
+			//backward
 			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, projectName, theoryName, ruleName);
 			if(antecedents == null){
 				return ProverFactory.reasonerFailure(this, input, 

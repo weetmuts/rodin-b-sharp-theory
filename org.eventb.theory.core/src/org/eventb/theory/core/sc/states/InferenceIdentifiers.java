@@ -38,16 +38,19 @@ public class InferenceIdentifiers extends State implements ISCState{
 	
 	private List<FreeIdentifier> inferIdents;
 	private List<FreeIdentifier> givenIdents;
+	private List<FreeIdentifier> hypIdents;
 	
 	public InferenceIdentifiers(){
 		inferIdents = new ArrayList<FreeIdentifier>();
 		givenIdents = new ArrayList<FreeIdentifier>();
+		hypIdents = new ArrayList<FreeIdentifier>();
 	}
 	
 	@Override
 	public void makeImmutable() {
 		inferIdents = Collections.unmodifiableList(inferIdents);
 		givenIdents = Collections.unmodifiableList(givenIdents);
+		hypIdents = Collections.unmodifiableList(hypIdents);
 		super.makeImmutable();
 	}
 	
@@ -69,6 +72,15 @@ public class InferenceIdentifiers extends State implements ISCState{
 		}
 	}
 	
+	public void addHypIdentifiers(FreeIdentifier[] idents) throws CoreException{
+		assertMutable();
+		for(FreeIdentifier ident : idents){
+			if(!hypIdents.contains(ident)){
+				hypIdents.add(ident);
+			}
+		}
+	}
+	
 	public boolean isRuleApplicable() throws CoreException{
 		assertImmutable();
 		return givenIdents.containsAll(inferIdents) ||
@@ -77,7 +89,18 @@ public class InferenceIdentifiers extends State implements ISCState{
 	
 	public boolean isRuleBackwardApplicable() throws CoreException{
 		assertImmutable();
-		return inferIdents.containsAll(givenIdents);
+		List<FreeIdentifier> inferHypIdents = new ArrayList<FreeIdentifier>();
+		inferHypIdents.addAll(inferIdents);
+		for(FreeIdentifier ident : hypIdents){
+			if(!inferHypIdents.contains(ident)){
+				inferHypIdents.add(ident);
+			}
+		}
+		List<FreeIdentifier> givenNotHypIdents = new ArrayList<FreeIdentifier>();
+		givenNotHypIdents.addAll(givenIdents);
+		givenNotHypIdents.removeAll(hypIdents);
+		return inferIdents.containsAll(givenIdents) ||
+				inferHypIdents.containsAll(givenNotHypIdents);
 	}
 	
 	public boolean isRuleForwardApplicable() throws CoreException{

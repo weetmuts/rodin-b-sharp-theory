@@ -16,6 +16,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.theory.core.IGiven;
 import org.eventb.theory.core.IInferenceClause;
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.ISCInferenceClause;
@@ -83,6 +84,10 @@ extends SCProcessorModule{
 					// fixed absence of source of clauses shown by test TestAccuracy.testAcc_012/4
 					scClause.setSource(clause, null);
 					processSCClause(scClause, clause);
+					if ((clause instanceof IGiven) && ((IGiven) clause).hasHypAttribute()) {
+						if (((IGiven) clause).isHyp())
+							addHypIdentifiers(predicate);
+					}
 					addIdentifiers(predicate);
 				}
 				else {
@@ -122,6 +127,13 @@ extends SCProcessorModule{
 	 * @throws CoreException
 	 */
 	protected abstract void addIdentifiers(Predicate predicate) throws CoreException;
+	
+	/**
+	 * Adds the free identifiers of the predicate to the hyp identifiers collection
+	 * @param predicate the clause predicate
+	 * @throws CoreException
+	 */
+	protected abstract void addHypIdentifiers(Predicate predicate) throws CoreException;
 	
 	/**
 	 * Returns a handle to the SC clause whose parent is <code>parent</code> and name is <code>name</code>.
@@ -175,4 +187,5 @@ extends SCProcessorModule{
 		return scClause;
 		
 	}
+
 }

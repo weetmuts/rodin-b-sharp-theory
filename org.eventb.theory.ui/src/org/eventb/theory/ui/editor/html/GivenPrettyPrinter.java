@@ -17,8 +17,10 @@ import org.rodinp.core.RodinDBException;
 public class GivenPrettyPrinter extends DefaultPrettyPrinter {
 
 	private static final String G_PRED = "axiomPredicate"; 
+	private static final String G_HYP = "variantExpression"; 
 	
 	private static final String ONE_SPACES = " ";
+	private static final String TWO_SPACES = "  ";
 	
 	private static final String G_IDENT_SEPARATOR_BEGIN = null;
 	private static final String G_IDENT_SEPARATOR_END = null;
@@ -30,7 +32,7 @@ public class GivenPrettyPrinter extends DefaultPrettyPrinter {
 			IGiven g = (IGiven) elt;
 			try {
 				String pred = g.getPredicateString();
-				ps.appendString(wrapString("\u25aa"+ONE_SPACES+pred), 
+				ps.appendString(wrapString("\u25aa"+ONE_SPACES+pred)+ TWO_SPACES, 
 						getHTMLBeginForCSSClass(G_PRED, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //
@@ -39,6 +41,18 @@ public class GivenPrettyPrinter extends DefaultPrettyPrinter {
 								VerticalAlignement.MIDDLE), 
 								G_IDENT_SEPARATOR_BEGIN, 
 								G_IDENT_SEPARATOR_END);
+				String inHyp = ONE_SPACES;
+				if (g.isHyp())
+					inHyp = "  (in hypothesis)";
+				ps.appendString(wrapString(inHyp), 
+						getHTMLBeginForCSSClass(G_HYP, //
+						HorizontalAlignment.LEFT, //
+						VerticalAlignement.MIDDLE), 
+						getHTMLEndForCSSClass(G_HYP, //
+						HorizontalAlignment.LEFT, //
+						VerticalAlignement.MIDDLE), //
+						G_IDENT_SEPARATOR_BEGIN, //
+						G_IDENT_SEPARATOR_END);
 			} catch (RodinDBException e) {
 				EventBEditorUtils.debugAndLogError(
 						e,

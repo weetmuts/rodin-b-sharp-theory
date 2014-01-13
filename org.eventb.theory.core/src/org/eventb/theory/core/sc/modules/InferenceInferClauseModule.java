@@ -118,4 +118,9 @@ public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, I
 		super.endModule(element, repository, monitor);
 	}
 
+	@Override
+	protected void addHypIdentifiers(Predicate predicate) throws CoreException {
+		
+	}
+
 }

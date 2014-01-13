@@ -8,6 +8,8 @@
 package org.eventb.theory.rbp.reasoning;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
@@ -57,6 +59,7 @@ public class InferenceSelector {
 		if (predicate == null) {
 			// backward
 			Predicate goal = sequent.goal();
+			Iterable<Predicate> selectedHyp = sequent.selectedHypIterable();
 			List<IGeneralRule> rules = ruleBaseManager.getInferenceRules(false,
 					ReasoningType.BACKWARD, context);
 			for (IGeneralRule rule : rules) {
@@ -65,7 +68,27 @@ public class InferenceSelector {
 							((IDeployedInferenceRule) rule).getInfer()
 									.getInferClause(), false);
 					if (binding != null) {
-						apps.add(new InferenceTacticApplication(
+						IBinding cloneBinding = binding.clone();
+						boolean inHypApplicable = true;
+						mainloop:
+						for (IDeployedGiven hypGiven : ((IDeployedInferenceRule) rule).getHypGivens()) {
+							inHypApplicable = false;
+							for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
+								Predicate hyp = (Predicate) iterator.next();
+								IBinding hypBinding = finder.match(hyp, hypGiven.getGivenClause(), false);
+								if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
+									inHypApplicable = true;
+									cloneBinding.insertBinding(hypBinding);
+									break;
+								}
+							}
+							if (!inHypApplicable) {
+								break mainloop;
+							}
+						}
+					
+						if (inHypApplicable) {
+							apps.add(new InferenceTacticApplication(
 								new InferenceInput(
 										((IDeployedInferenceRule) rule)
 												.getProjectName(),
@@ -76,6 +99,7 @@ public class InferenceSelector {
 										((IDeployedInferenceRule) rule)
 												.getDescription(), null, false,
 										context)));
+						}
 					}
 				} else { // if (rule instanceof ISCInferenceRule) {
 					try {
@@ -87,7 +111,33 @@ public class InferenceSelector {
 										.getInfers()[0].getPredicate(factory,
 										typeEnvironment), false);
 						if (binding != null) {
-							apps.add(new InferenceTacticApplication(
+							IBinding cloneBinding = binding.clone();
+							List<ISCGiven> hypGivens = new ArrayList<ISCGiven>();
+							for (ISCGiven r : Arrays.asList(((ISCInferenceRule) rule).getGivens())) {
+								if (r.isHyp()) {
+									hypGivens.add(r);
+								}
+							}
+							boolean inHypApplicable = true;
+							mainloop:
+							for (ISCGiven hypGiven : hypGivens) {
+								inHypApplicable = false;
+								for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
+									Predicate hyp = (Predicate) iterator.next();
+									IBinding hypBinding = finder.match(hyp, hypGiven.getPredicate(factory, typeEnvironment), false);
+									if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
+										inHypApplicable = true;
+										//cloneBinding.insertBinding(hypBinding);
+										break;
+									}
+								}
+								if (!inHypApplicable) {
+									break mainloop;
+								}
+							}
+						
+							if (inHypApplicable) {
+								apps.add(new InferenceTacticApplication(
 									new InferenceInput(
 											((ISCInferenceRule) rule).getRoot()
 													.getRodinProject()
@@ -100,6 +150,7 @@ public class InferenceSelector {
 													.getDescription(), null,
 											false, context)));
 
+							}
 						}
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
