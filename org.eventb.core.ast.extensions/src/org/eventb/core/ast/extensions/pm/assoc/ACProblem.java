@@ -43,7 +43,7 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 			boolean solved = false;
 			for (Match<F> match : matchesList) {
 				ACMatchStack<F> matchStack = new ACMatchStack<F>(matcher, match);
-				if (explore(0, matchStack)) {
+				if (explore(1, matchStack)) {
 					IBinding matchBinding = matchStack.getFinalBinding();
 					matchBinding.makeImmutable();
 					// if we cannot insert the match binding in the original binding
@@ -74,24 +74,45 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 	}
 
 	protected boolean explore(int patternIndex, ACMatchStack<F> matchStack) {
-		if (patternIndex < 0) {
-			// we backtracked too much
-			return false;
-		}
+//		if (patternIndex < 1) {
+//			// we backtracked too much
+//			return false;
+//		}
+//		if (patternIndex == searchSpace.size()) {
+//			// finished all of them
+//			return true;
+//		}
+//		MatchEntry<F> matchEntry = searchSpace.get(patternIndex);
+//		List<Match<F>> matchesList = matchEntry.getMatches();
+//		for (Match<F> match : matchesList) {
+//			if (matchStack.push(match)) {
+//				return explore(patternIndex + 1, matchStack);
+//			}
+//		}
+//		matchStack.pop();
+//		return explore(patternIndex - 1, matchStack);
+
 		if (patternIndex == searchSpace.size()) {
 			// finished all of them
 			return true;
 		}
 		MatchEntry<F> matchEntry = searchSpace.get(patternIndex);
 		List<Match<F>> matchesList = matchEntry.getMatches();
+		boolean flag = false;
 		for (Match<F> match : matchesList) {
 			if (matchStack.push(match)) {
-				return explore(patternIndex + 1, matchStack);
+				if (explore(patternIndex + 1, matchStack)) {
+					flag = true; 
+					break;
+				}
 			}
 		}
-		matchStack.pop();
-		return explore(patternIndex - 1, matchStack);
-
+		if (!flag) {
+			matchStack.pop();
+			return false;
+		}
+		else	
+			return true;
 	}
 	
 	/**

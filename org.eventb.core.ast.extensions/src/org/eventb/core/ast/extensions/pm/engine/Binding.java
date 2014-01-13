@@ -323,20 +323,6 @@ public class Binding implements IBinding {
 	}
 
 	@Override
-	public IBinding clone() {
-		// copy all state information
-		Binding newBinding = new Binding(formula, pattern, isPartialMatchAcceptable, factory);
-		newBinding.binding = new LinkedHashMap<FreeIdentifier, Expression>(binding);
-		newBinding.typeParametersInstantiations = new LinkedHashMap<FreeIdentifier, Type>(typeParametersInstantiations);
-		newBinding.predicateBinding = new LinkedHashMap<PredicateVariable, Predicate>(predicateBinding);
-		if (expressionComplement != null)
-			newBinding.expressionComplement = new AssociativeExpressionComplement(expressionComplement);
-		if (predicateComplement != null)
-			newBinding.predicateComplement = new AssociativePredicateComplement(predicateComplement);
-		return newBinding;
-	}
-
-	@Override
 	public boolean isImmutable() {
 		return isImmutable;
 	}
@@ -360,6 +346,20 @@ public class Binding implements IBinding {
 	public ITypeEnvironment getTypeEnvironment() {
 		checkImmutable();
 		return typeEnvironment.clone();
+	}
+
+	@Override
+	public IBinding clone() {
+		// copy all state information
+		Binding newBinding = new Binding(formula, pattern, isPartialMatchAcceptable, factory);
+		newBinding.binding = new LinkedHashMap<FreeIdentifier, Expression>(binding);
+		newBinding.typeParametersInstantiations = new LinkedHashMap<FreeIdentifier, Type>(typeParametersInstantiations);
+		newBinding.predicateBinding = new LinkedHashMap<PredicateVariable, Predicate>(predicateBinding);
+		if (expressionComplement != null)
+			newBinding.expressionComplement = new AssociativeExpressionComplement(expressionComplement);
+		if (predicateComplement != null)
+			newBinding.predicateComplement = new AssociativePredicateComplement(predicateComplement);
+		return newBinding;
 	}
 
 	@Override
