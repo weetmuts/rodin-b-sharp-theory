@@ -118,7 +118,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		// case when POContext is a theory
 		if (originatedFromTheory(root.getRodinFile(), project)){
 			List<IDeployedTheoryRoot> reqRoots = getRequiredTheories(root);
-			String componentName = root.getComponentName();
+			//String componentName = root.getComponentName();
 			//add imported theories (deployed)
 			for (IDeployedTheoryRoot deployedRoot : reqRoots) {
 				if (!scRoots.containsKey(deployedRoot)) {
@@ -132,12 +132,12 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 			}
 			
 			//add the current theory (sc)
-			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
-			if (!scRoots.containsKey(SCRoot)) {
-				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(SCRoot);
-				scRoots.put(SCRoot, entry);
-			}
-			toReturn.addAll(scRoots.get(SCRoot).getInferenceRules(automatic, type, factory));
+//			ISCTheoryRoot SCRoot = DatabaseUtilities.getSCTheory(componentName, project);
+//			if (!scRoots.containsKey(SCRoot)) {
+//				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(SCRoot);
+//				scRoots.put(SCRoot, entry);
+//			}
+//			toReturn.addAll(scRoots.get(SCRoot).getInferenceRules(automatic, type, factory));
 			
 		}
 		return toReturn;
