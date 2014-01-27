@@ -10,6 +10,7 @@ package org.eventb.theory.rbp.reasoners;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -57,13 +58,14 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		final String ruleName = input.ruleName;
 		final String displayName = input.description;
 		final IPOContext context = input.context;
+		final IBinding binding = input.binding;
 		
 		ManualInferer inferer = new ManualInferer(context);
 		
 		final Predicate goal = sequent.goal();
 		if (pred == null) {
 			//backward
-			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, projectName, theoryName, ruleName);
+			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, projectName, theoryName, ruleName, binding);
 			if(antecedents == null){
 				return ProverFactory.reasonerFailure(this, input, 
 						"Rule "+ruleName+" is not applicable to "+goal +".");
@@ -76,7 +78,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 				return ProverFactory.reasonerFailure(this, input,
 						"Nonexistent hypothesis: " + pred);
 			}
-			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, projectName, theoryName, ruleName);
+			IAntecedent[] antecedents = inferer.getAntecedents(sequent, pred, forward, projectName, theoryName, ruleName, binding);
 			if(antecedents == null){
 				return ProverFactory.reasonerFailure(this, input, 
 						"Rule "+ruleName+" is not applicable to "+pred +".");
@@ -116,7 +118,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		final int length = neededHyps.size();
 		if (length == 0) {
 			// backward
-			return new InferenceInput(projectString, theoryString, ruleString, ruleDesc, null, forward, context);
+			return new InferenceInput(projectString, theoryString, ruleString, ruleDesc, null, forward, null, context);
 		}
 		// forward
 		if (length != 1) {
@@ -127,7 +129,7 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		for (Predicate hyp : neededHyps) {
 			pred = hyp;
 		}
-		return new InferenceInput(projectString, theoryString, ruleString, ruleDesc,pred, forward, context);
+		return new InferenceInput(projectString, theoryString, ruleString, ruleDesc,pred, forward, null, context);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ package org.eventb.theory.rbp.reasoners.input;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.core.ast.extensions.pm.IBinding;
 
 /**
  * An implementation of an inference reasoner input.
@@ -27,6 +28,7 @@ public class InferenceInput extends ContextualInput {
 	public String theoryName;
 	public String projectName;
 	public Predicate predicate;
+	public IBinding binding;
 
 	/**
 	 * Constructs an input with the given parameters.
@@ -44,7 +46,7 @@ public class InferenceInput extends ContextualInput {
 	 * @param context
 	 *            the PO context
 	 */
-	public InferenceInput(String projectName,String theoryName, String ruleName, String ruleDesc, Predicate predicate, boolean forward, IPOContext context) {
+	public InferenceInput(String projectName,String theoryName, String ruleName, String ruleDesc, Predicate predicate, boolean forward, IBinding binding, IPOContext context) {
 		super(context);
 		this.projectName = projectName;
 		this.forward = forward;
@@ -52,6 +54,7 @@ public class InferenceInput extends ContextualInput {
 		this.ruleName = ruleName;
 		this.theoryName = theoryName;
 		this.predicate = predicate;
+		this.binding = binding;
 	}
 
 	@Override

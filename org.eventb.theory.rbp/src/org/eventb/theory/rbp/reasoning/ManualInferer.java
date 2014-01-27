@@ -10,7 +10,6 @@ package org.eventb.theory.rbp.reasoning;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +38,12 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author maamria
- *
+ * @author maamria, asiehsalehi
+ * 
+ * the case when inf rule is tyoe of ISCInferenceRule is commented; 
+ * for now the (SC) inf rules defined in a theory are not applicable in proving within the theory
+ * TODO: like application of theorems, in POs of each inf rule, the inf rules above that should be available
+ * 
  */
 public class ManualInferer extends AbstractRulesApplyer{
 	
@@ -59,9 +62,10 @@ public class ManualInferer extends AbstractRulesApplyer{
 	 * @param isGoal 
 	 * @param theoryName
 	 * @param ruleName
+	 * @param binding 
 	 * @return the antecedents or <code>null</code> if the rule is not found or inapplicable
 	 */
-	public IAntecedent[] getAntecedents(IProverSequent sequent, Predicate pred, boolean forward, String projectName, String theoryName, String ruleName){
+	public IAntecedent[] getAntecedents(IProverSequent sequent, Predicate pred, boolean forward, String projectName, String theoryName, String ruleName, IBinding binding){
 		IGeneralRule rule = manager.getInferenceRule(projectName, theoryName, ruleName, context);
 		// rule not found
 		if (rule == null) {
@@ -85,8 +89,9 @@ public class ManualInferer extends AbstractRulesApplyer{
 			if (forward)
 				return forwardReason(sequent, pred, ((IDeployedInferenceRule) rule));
 			else
-				return backwardReason(sequent, ((IDeployedInferenceRule) rule));
-		} else { // if (rule instanceof ISCInferenceRule) {
+				return backwardReason(sequent, ((IDeployedInferenceRule) rule), binding);
+		} 
+		else { // if (rule instanceof ISCInferenceRule) {
 			// if expected forward application but rule is not suitable
 			try {
 			if (forward && !((ISCInferenceRule) rule).isSuitableForForwardReasoning()) {
@@ -105,41 +110,23 @@ public class ManualInferer extends AbstractRulesApplyer{
 			if (forward)
 				return forwardReason(sequent, pred, ((ISCInferenceRule) rule));
 			else
-				return backwardReason(sequent, ((ISCInferenceRule) rule));
+				return backwardReason(sequent, ((ISCInferenceRule) rule), binding);
 		}
 		
 		
 	}
 
 	protected IAntecedent[] backwardReason(IProverSequent sequent,
-			IDeployedInferenceRule rule) {
-		Predicate goal = sequent.goal();
-		Iterable<Predicate> selectedHyp = sequent.selectedHypIterable();
-		Predicate infer = rule.getInfer().getInferClause();
-		IBinding binding = finder.match(goal, infer, false);
-		//add inhyp givens binding
-		if (binding != null) {
-			IBinding cloneBinding = binding.clone();
-			List<IDeployedGiven> hypGivens = rule.getHypGivens();
-			for (IDeployedGiven hypGiven : hypGivens) {
-				for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
-					Predicate hyp = (Predicate) iterator.next();
-					IBinding hypBinding = finder.match(hyp, hypGiven.getGivenClause(), false);
-					if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
-						cloneBinding.insertBinding(hypBinding);
-						break;
-					}
-				}
-			}
-			cloneBinding.makeImmutable();
+			IDeployedInferenceRule rule, IBinding binding) {
+			binding.makeImmutable();
 			List<IDeployedGiven> givens = rule.getGivens();
 			Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
 			for (IDeployedGiven given : givens) {
-				Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), cloneBinding);
+				Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), binding);
 				antecedents.add(ProverFactory.makeAntecedent(subGoal));
 			}
 			// add the well-definedness conditions where appropriate
-			Map<FreeIdentifier, Expression> expressionMappings = cloneBinding.getExpressionMappings();
+			Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
 			for (FreeIdentifier identifier : expressionMappings.keySet()){
 				Expression mappedExpression = expressionMappings.get(identifier);
 				Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
@@ -149,23 +136,24 @@ public class ManualInferer extends AbstractRulesApplyer{
 				}
 			}
 			return antecedents.toArray(new IAntecedent[antecedents.size()]);
-		}
-		return null;
 	}
 
 	protected IAntecedent[] forwardReason(IProverSequent sequent, Predicate hypothesis, IDeployedInferenceRule rule){
 		// rule must have at least one given clause
-		if (rule.getGivens().size() < 1){
+		List<IDeployedGiven> givens = new ArrayList<IDeployedGiven>();
+		givens.addAll(rule.getGivens());
+		givens.addAll(rule.getHypGivens());
+		if (givens.size() < 1){
 			return null;
 		}
-		IDeployedGiven firstGiven = rule.getGivens().get(0);
+		IDeployedGiven firstGiven = givens.get(0);
 		Predicate givenPredicate = firstGiven.getGivenClause();
 		IBinding binding = finder.match(hypothesis, givenPredicate, true);
 		if(binding == null){
 			return null;
 		}
 		List<Predicate> otherGivens = new ArrayList<Predicate>();
-		for (IDeployedGiven given : rule.getGivens()){
+		for (IDeployedGiven given : givens){
 			if(!given.equals(firstGiven)){
 				otherGivens.add(given.getGivenClause());
 			}
@@ -203,35 +191,13 @@ public class ManualInferer extends AbstractRulesApplyer{
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	}
 	
+	// change the binding to be read from binding (follow the way in the above backwardReason method)
 	protected IAntecedent[] backwardReason(IProverSequent sequent,
-			ISCInferenceRule rule) {
+			ISCInferenceRule rule, IBinding binding) {
 		try{
+		binding.makeImmutable();
 		FormulaFactory factory = context.getFormulaFactory();
 		ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, rule);
-		Predicate goal = sequent.goal();
-		Iterable<Predicate> selectedHyp = sequent.selectedHypIterable();
-		Predicate infer = rule.getInfers()[0].getPredicate(factory, typeEnvironment);
-		IBinding binding = finder.match(goal, infer, false);
-		if (binding != null) {
-			List<ISCGiven> hypGivens = new ArrayList<ISCGiven>();
-			for (ISCGiven r : Arrays.asList(rule.getGivens())) {
-				if (r.isHyp()) {
-					hypGivens.add(r);
-				}
-			}
-			IBinding cloneBinding = binding.clone();
-			for (ISCGiven hypGiven : hypGivens) {
-				for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
-					Predicate hyp = (Predicate) iterator.next();
-					IBinding hypBinding = finder.match(hyp, hypGiven.getPredicate(factory, typeEnvironment), false);
-					if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
-						cloneBinding.insertBinding(hypBinding);
-						break;
-					}
-				}
-			}
-			cloneBinding.makeImmutable();
-			//List<ISCGiven> givens = Arrays.asList(rule.getGivens());
 			//add just non-inhyp givens
 			List<ISCGiven> givens = new ArrayList<ISCGiven>();
 			for (ISCGiven r : Arrays.asList(rule.getGivens())) {
@@ -241,11 +207,11 @@ public class ManualInferer extends AbstractRulesApplyer{
 			}
 			Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
 			for (ISCGiven given : givens) {
-				Predicate subGoal = (Predicate) binder.bind(given.getPredicate(factory, typeEnvironment), cloneBinding);
+				Predicate subGoal = (Predicate) binder.bind(given.getPredicate(factory, typeEnvironment), binding);
 				antecedents.add(ProverFactory.makeAntecedent(subGoal));
 			}
 			// add the well-definedness conditions where appropriate
-			Map<FreeIdentifier, Expression> expressionMappings = cloneBinding.getExpressionMappings();
+			Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
 			for (FreeIdentifier identifier : expressionMappings.keySet()){
 				Expression mappedExpression = expressionMappings.get(identifier);
 				Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
@@ -255,7 +221,6 @@ public class ManualInferer extends AbstractRulesApplyer{
 				}
 			}
 			return antecedents.toArray(new IAntecedent[antecedents.size()]);
-		}
 	} catch (RodinDBException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
