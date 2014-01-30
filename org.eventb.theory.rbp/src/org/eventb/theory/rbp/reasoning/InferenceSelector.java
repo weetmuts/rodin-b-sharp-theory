@@ -74,77 +74,106 @@ public class InferenceSelector {
 							((IDeployedInferenceRule) rule).getInfer()
 									.getInferClause(), false);
 					// if goal match infer
-					if (binding != null) {	
+					if (binding != null) {
 						HashMap<IDeployedGiven, List<Predicate>> matches = new HashMap<IDeployedGiven, List<Predicate>>();
 						IBinding cloneBinding = binding.clone();
-						List<IDeployedGiven> hypGivens = ((IDeployedInferenceRule) rule).getHypGivens();
+						List<IDeployedGiven> hypGivens = ((IDeployedInferenceRule) rule)
+								.getHypGivens();
 						boolean matchFound = false;
-						
-						//perform the hypgivens checking in 2 steps
+
+						// perform the hypgivens checking in 2 steps
 						// step1: fill a map of hypGiven and matched hypothesis
-						for (IDeployedGiven hypGiven : hypGivens) {
-							matchFound = false;
-							List<Predicate> hypList = new ArrayList<Predicate>();
-							for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
-								Predicate hyp = (Predicate) iterator.next();
-								IBinding hypBinding = finder.match(hyp, hypGiven.getGivenClause(), false);
-								if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
-									hypList.add(hyp);
-									matchFound = true;
-								}
-							}
-							matches.put(hypGiven, hypList);
-							if (!matchFound)
-								break;
-						}
-						
-						boolean found = false;
-						//step2: for all of hypGivens at least one hypothesis should be matched
-						if (matchFound) {
-							found = true;
-							HashMap<IDeployedGiven, List<Predicate>> cloneMatches = (HashMap<IDeployedGiven, List<Predicate>>) matches.clone();
-							Object[] hypGivenArr = hypGivens.toArray();
-							IBinding restoreBinding = null;
-							 
-							//check the compatible bindings
-							for (int i = 0; i < hypGivenArr.length; i++) {
-								IDeployedGiven hypGiven = (IDeployedGiven) hypGivenArr[i];
-								boolean inHypApplicable = false;
-								
-								if (!cloneMatches.containsKey(hypGiven)) {
-									if (i == 0) {
-										found = false;
-										break;
+						if (!hypGivens.isEmpty()) {
+							for (IDeployedGiven hypGiven : hypGivens) {
+								matchFound = false;
+								List<Predicate> hypList = new ArrayList<Predicate>();
+								for (Iterator<Predicate> iterator = selectedHyp
+										.iterator(); iterator.hasNext();) {
+									Predicate hyp = (Predicate) iterator.next();
+									IBinding hypBinding = finder.match(hyp,
+											hypGiven.getGivenClause(), false);
+									if (hypBinding != null
+											&& cloneBinding
+													.isBindingInsertable(hypBinding)) {
+										hypList.add(hyp);
+										matchFound = true;
 									}
-									else {
-										// reset match list
-										cloneMatches.put(hypGiven, matches.get(hypGiven));
+								}
+								matches.put(hypGiven, hypList);
+								if (!matchFound)
+									break;
+							}
+
+							boolean found = false;
+							// step2: for all of hypGivens at least one
+							// hypothesis should be matched
+							if (matchFound) {
+								found = true;
+								HashMap<IDeployedGiven, List<Predicate>> cloneMatches = (HashMap<IDeployedGiven, List<Predicate>>) matches.clone();
+								Object[] hypGivenArr = hypGivens.toArray();
+								IBinding restoreBinding = null;
+
+								// check the compatible bindings
+								for (int i = 0; i < hypGivenArr.length; i++) {
+									IDeployedGiven hypGiven = (IDeployedGiven) hypGivenArr[i];
+									boolean inHypApplicable = false;
+
+									if (!cloneMatches.containsKey(hypGiven)) {
+										if (i == 0) {
+											found = false;
+											break;
+										} else {
+											// reset match list
+											cloneMatches.put(hypGiven,
+													matches.get(hypGiven));
+											i = i - 2;
+											continue;
+										}
+									}
+
+									for (Predicate hyp : cloneMatches
+											.get(hypGiven)) {
+										IBinding hypBinding = finder.match(hyp,
+												hypGiven.getGivenClause(),
+												false);
+										if (hypBinding != null
+												&& cloneBinding
+														.isBindingInsertable(hypBinding)) {
+											restoreBinding = cloneBinding
+													.clone();
+											cloneBinding
+													.insertBinding(hypBinding);
+											cloneMatches.get(hypGiven).remove(
+													hyp);
+											inHypApplicable = true;
+											break;
+										}
+									}
+
+									if (!inHypApplicable) {
+										// reset binding
+										cloneBinding = restoreBinding.clone();
 										i = i - 2;
 										continue;
-									}		
-								}
-								
-								for (Predicate hyp : cloneMatches.get(hypGiven)) {
-									IBinding hypBinding = finder.match(hyp, hypGiven.getGivenClause(), false);
-									if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
-										restoreBinding = cloneBinding.clone();
-										cloneBinding.insertBinding(hypBinding);
-										cloneMatches.get(hypGiven).remove(hyp);
-										inHypApplicable = true;
-										break;
 									}
 								}
-								
-								if (!inHypApplicable) {
-									// reset binding
-									cloneBinding = restoreBinding.clone();
-									i = i - 2;
-									continue;
-								}
 							}
-						}
-						
-						if (found) {
+
+							if (found) {
+								apps.add(new InferenceTacticApplication(
+										new InferenceInput(
+												((IDeployedInferenceRule) rule)
+														.getProjectName(),
+												((IDeployedInferenceRule) rule)
+														.getTheoryName(),
+												((IDeployedInferenceRule) rule)
+														.getRuleName(),
+												((IDeployedInferenceRule) rule)
+														.getDescription(),
+												null, false, cloneBinding,
+												context)));
+							}
+						} else {
 							apps.add(new InferenceTacticApplication(
 									new InferenceInput(
 											((IDeployedInferenceRule) rule)
@@ -154,70 +183,73 @@ public class InferenceSelector {
 											((IDeployedInferenceRule) rule)
 													.getRuleName(),
 											((IDeployedInferenceRule) rule)
-													.getDescription(), null, false,
-													cloneBinding,
-											context)));
+													.getDescription(), null,
+											false, cloneBinding, context)));
 						}
-						
-					}		
-				} 
-//				else { // if (rule instanceof ISCInferenceRule) {
-//					try {
-//						ITypeEnvironment typeEnvironment = ProverUtilities
-//								.makeTypeEnvironment(factory,
-//										(ISCInferenceRule) rule);
-//						IBinding binding = finder
-//								.match(goal, ((ISCInferenceRule) rule)
-//										.getInfers()[0].getPredicate(factory,
-//										typeEnvironment), false);
-//						if (binding != null) {
-//							IBinding cloneBinding = binding.clone();
-//							List<ISCGiven> hypGivens = new ArrayList<ISCGiven>();
-//							for (ISCGiven r : Arrays.asList(((ISCInferenceRule) rule).getGivens())) {
-//								if (r.isHyp()) {
-//									hypGivens.add(r);
-//								}
-//							}
-//							boolean inHypApplicable = true;
-//							mainloop:
-//							for (ISCGiven hypGiven : hypGivens) {
-//								inHypApplicable = false;
-//								for (Iterator<Predicate> iterator = selectedHyp.iterator(); iterator.hasNext();) {
-//									Predicate hyp = (Predicate) iterator.next();
-//									IBinding hypBinding = finder.match(hyp, hypGiven.getPredicate(factory, typeEnvironment), false);
-//									if (hypBinding != null && cloneBinding.isBindingInsertable(hypBinding)) {
-//										inHypApplicable = true;
-//										//cloneBinding.insertBinding(hypBinding);
-//										break;
-//									}
-//								}
-//								if (!inHypApplicable) {
-//									break mainloop;
-//								}
-//							}
-//						
-//							if (inHypApplicable) {
-//								apps.add(new InferenceTacticApplication(
-//									new InferenceInput(
-//											((ISCInferenceRule) rule).getRoot()
-//													.getRodinProject()
-//													.getElementName(),
-//											((ISCInferenceRule) rule).getRoot()
-//													.getElementName(),
-//											((ISCInferenceRule) rule)
-//													.getLabel(),
-//											((ISCInferenceRule) rule)
-//													.getDescription(), null,
-//											false, cloneBinding, context)));
-//
-//							}
-//						}
-//					} catch (RodinDBException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//						return null;
-//					}
-//				}
+
+					}
+				}
+				// else { // if (rule instanceof ISCInferenceRule) {
+				// try {
+				// ITypeEnvironment typeEnvironment = ProverUtilities
+				// .makeTypeEnvironment(factory,
+				// (ISCInferenceRule) rule);
+				// IBinding binding = finder
+				// .match(goal, ((ISCInferenceRule) rule)
+				// .getInfers()[0].getPredicate(factory,
+				// typeEnvironment), false);
+				// if (binding != null) {
+				// IBinding cloneBinding = binding.clone();
+				// List<ISCGiven> hypGivens = new ArrayList<ISCGiven>();
+				// for (ISCGiven r : Arrays.asList(((ISCInferenceRule)
+				// rule).getGivens())) {
+				// if (r.isHyp()) {
+				// hypGivens.add(r);
+				// }
+				// }
+				// boolean inHypApplicable = true;
+				// mainloop:
+				// for (ISCGiven hypGiven : hypGivens) {
+				// inHypApplicable = false;
+				// for (Iterator<Predicate> iterator = selectedHyp.iterator();
+				// iterator.hasNext();) {
+				// Predicate hyp = (Predicate) iterator.next();
+				// IBinding hypBinding = finder.match(hyp,
+				// hypGiven.getPredicate(factory, typeEnvironment), false);
+				// if (hypBinding != null &&
+				// cloneBinding.isBindingInsertable(hypBinding)) {
+				// inHypApplicable = true;
+				// //cloneBinding.insertBinding(hypBinding);
+				// break;
+				// }
+				// }
+				// if (!inHypApplicable) {
+				// break mainloop;
+				// }
+				// }
+				//
+				// if (inHypApplicable) {
+				// apps.add(new InferenceTacticApplication(
+				// new InferenceInput(
+				// ((ISCInferenceRule) rule).getRoot()
+				// .getRodinProject()
+				// .getElementName(),
+				// ((ISCInferenceRule) rule).getRoot()
+				// .getElementName(),
+				// ((ISCInferenceRule) rule)
+				// .getLabel(),
+				// ((ISCInferenceRule) rule)
+				// .getDescription(), null,
+				// false, cloneBinding, context)));
+				//
+				// }
+				// }
+				// } catch (RodinDBException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// return null;
+				// }
+				// }
 			}
 		}
 		// forward
@@ -246,7 +278,11 @@ public class InferenceSelector {
 						}
 					}
 					List<Predicate> otherHyps = new ArrayList<Predicate>();
-					for (Predicate hyp : sequent.hypIterable()) {
+					//we can read eaither from all of the hyps or the selected hyps, to be compatible to the backward application we read from selected hyps here
+					//TODO: there can be optional for the user to select the applicability of the inf rules (both backwarf or forward) to be available only 
+					//by selected hyps or all of hyps
+					//for (Predicate hyp : sequent.sehypIterable()) {
+					for (Predicate hyp : sequent.selectedHypIterable()) {
 						if (!hyp.equals(predicate)) {
 							otherHyps.add(hyp);
 						}
