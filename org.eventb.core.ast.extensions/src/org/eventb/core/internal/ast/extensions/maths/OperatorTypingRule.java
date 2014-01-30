@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -30,6 +31,7 @@ import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
@@ -325,8 +327,19 @@ public abstract class OperatorTypingRule {
 					newTypePars[i] = constructPatternType(typePars[i],
 							typeParameterToTypeVariablesMap, mediator);
 				}
-				return mediator.makeParametricType(Arrays.asList(newTypePars),
-						((ParametricType) theoryType).getExprExtension());
+				final FormulaFactory factory = mediator.getFactory();
+				final IExpressionExtension exprExtension = ((ParametricType) theoryType)
+						.getExprExtension();
+				for (IFormulaExtension ext : factory.getExtensions()) {
+					if (ext.equals(exprExtension)) {
+						if (ext != exprExtension) {
+							System.out.println("Should not happen !!!!!!!!");
+						}
+						return mediator.makeParametricType(
+								Arrays.asList(newTypePars),
+								(IExpressionExtension) ext);
+					}
+				}
 			}
 		}
 		return theoryType;
