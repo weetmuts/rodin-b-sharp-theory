@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     University of Southampton - initial API and implementation
+ *     Systerel - add infix expression operator group
  *******************************************************************************/
 package org.eventb.core.ast.extensions.maths;
 
@@ -40,6 +41,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension;
 
 /**
  * Utilities from the Theory Core that are mostly useful for the Rule-based
@@ -64,6 +66,16 @@ public class AstUtilities {
 	 */
 	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";
 
+	/**
+	 * Operator group for infix expression extensions.
+	 * 
+	 * <p>
+	 * Group setup is performed in
+	 * {@link ExpressionOperatorExtension#addPriorities(IPriorityMediator)}.
+	 * </p>
+	 */
+	public static final String INFIX_EXTENDED_EXPRESSION_OPERATOR_GROUP = "infix extended expression group";	
+	
 	// the currently supported notations
 	public static final String[] POSSIBLE_NOTATION_TYPES = new String[] { Notation.PREFIX.toString(),
 			Notation.INFIX.toString() };
@@ -515,7 +527,7 @@ public class AstUtilities {
 		case EXPRESSION: {
 			switch (notation) {
 			case INFIX: {
-				group = StandardGroup.BINOP.getId();
+				group = INFIX_EXTENDED_EXPRESSION_OPERATOR_GROUP;
 				break;
 			}
 			case PREFIX: {
@@ -540,7 +552,7 @@ public class AstUtilities {
 				}
 				// infix makes sense for ops with more than two args
 				if (arity > 1) {
-					group = StandardGroup.INFIX_PRED.getId();
+					group = StandardGroup.RELOP_PRED.getId();
 				}
 				break;
 			}
