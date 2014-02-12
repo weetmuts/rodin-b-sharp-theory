@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
@@ -11,8 +14,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -91,7 +97,6 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 	
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
@@ -183,7 +188,8 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 				operatorInformation.setSyntax(opDef.getLabel());
 				operatorInformation.setAssociative(opDef.isAssociative());
 				operatorInformation.setCommutative(opDef.isCommutative());
-				operatorInformation.setResultantType(factory.parseType(opDef.getType(), LanguageVersion.V2).getParsedType());
+				final Type type = fetchType(opDef);
+				operatorInformation.setResultantType(type);
 				// children processors
 				{
 					
@@ -207,5 +213,23 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 		// get the new type environment corresponding to the factory
 		globalTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
 		repository.setTypeEnvironment(globalTypeEnvironment);
+	}
+
+	private Type fetchType(IAxiomaticOperatorDefinition opDef)
+			throws CoreException {
+		if (opDef.getFormulaType() != FormulaType.EXPRESSION) {
+			return null;
+		}
+		final String opDefType = opDef.getType();
+		final IParseResult result = factory.parseType(opDefType,
+				LanguageVersion.V2);
+		if (result.hasProblem()) {
+			// these problems should have been issued in
+			// AxiomaticOperatorFilterModule
+			throw new IllegalStateException("factory with extensions: "
+					+ factory.getExtensions() + "\ndoes not recognize type \""
+					+ opDefType + "\"\nparse errors: " + result);
+		}
+		return result.getParsedType();
 	}
 }
