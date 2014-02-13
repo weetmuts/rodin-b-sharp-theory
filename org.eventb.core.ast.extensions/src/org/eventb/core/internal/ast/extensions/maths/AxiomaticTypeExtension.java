@@ -1,7 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel - cache instances for uniqueness (type checker requires it)
+ *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.maths;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -28,12 +41,46 @@ import org.eventb.core.ast.extensions.maths.AstUtilities;
  *
  */
 public class AxiomaticTypeExtension implements IExpressionExtension {
+	
+	/**
+	 * Axiomatic type extension cache. Ensures that the same instance is used
+	 * everywhere for given id, type name and origin.
+	 */
+	private static final Map<IExpressionExtension, IExpressionExtension> typeExtCache = new HashMap<IExpressionExtension, IExpressionExtension>();
 
 	private final String typeName;
 	private final String id;
 	private final Object origin;
 
-	public AxiomaticTypeExtension(String typeName, String id, Object origin) {
+	
+	/**
+	 * Returns the unique axiomatic type extension with the given parameters.
+	 * 
+	 * @param typeName
+	 *            the name of the type
+	 * @param id
+	 *            the id of the type
+	 * @param origin
+	 *            the origin of the extension
+	 * @return the axiomatic type extension
+	 */
+	public static synchronized IExpressionExtension getAxiomaticTypeExtension(
+			String typeName, String id, Object origin) {
+		final AxiomaticTypeExtension typeExt = new AxiomaticTypeExtension(
+				typeName, id, origin);
+		final IExpressionExtension result = typeExtCache.get(typeExt);
+		if (result != null) {
+			return result;
+		}
+		typeExtCache.put(typeExt, typeExt);
+		return typeExt;
+	}
+	
+	/**
+	 * THIS CONSTRUCTOR MUST NOT BE CALLED DIRECTLY. Only allowed inside
+	 * {@link #getAxiomaticTypeExtension(String, String, Object)}.
+	 */
+	private AxiomaticTypeExtension(String typeName, String id, Object origin) {
 		AstUtilities.ensureNotNull(typeName, id);
 		this.typeName = typeName;
 		this.id = id;
@@ -146,11 +193,17 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 		return true;
 	}
 
+	////////////////////////////////////////////////////////////////////////
+	// IMPORTANT NOTE: use all fields in hashCode() and equals()          //
+	// because the cache relies on it to enforce instance uniqueness.     //
+	////////////////////////////////////////////////////////////////////////
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((origin == null) ? 0 : origin.hashCode());
 		result = prime * result
 				+ ((typeName == null) ? 0 : typeName.hashCode());
 		return result;
@@ -164,7 +217,7 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof AxiomaticTypeExtension)) {
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		AxiomaticTypeExtension other = (AxiomaticTypeExtension) obj;
@@ -173,6 +226,13 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 				return false;
 			}
 		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (origin == null) {
+			if (other.origin != null) {
+				return false;
+			}
+		} else if (!origin.equals(other.origin)) {
 			return false;
 		}
 		if (typeName == null) {

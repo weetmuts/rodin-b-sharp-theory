@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.ast.extensions.maths;
 
@@ -19,8 +22,8 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.core.internal.ast.extensions.maths.AxiomaticTypeExtension;
 import org.eventb.core.internal.ast.extensions.maths.CompleteDatatypeExtension;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension;
@@ -144,12 +147,18 @@ public final class MathExtensionsFactory {
 	
 	/**
 	 * Returns the axiomatic type extension with the name <code>typeName</code>.
-	 * @param typeName the name of the type, e.g., REAL
-	 * @param id the id of the operator
-	 * @param origin the origin of the extension
+	 * 
+	 * @param typeName
+	 *            the name of the type, e.g., REAL
+	 * @param id
+	 *            the id of the operator
+	 * @param origin
+	 *            the origin of the extension
 	 * @return the axiomatic type extension
 	 */
-	public static IExpressionExtension getAxiomaticTypeExtension(String typeName, String id, Object origin){
-		return new AxiomaticTypeExtension(typeName, id, origin);
+	public static IExpressionExtension getAxiomaticTypeExtension(
+			String typeName, String id, Object origin) {
+		return AxiomaticTypeExtension.getAxiomaticTypeExtension(typeName, id,
+				origin);
 	}
 }
