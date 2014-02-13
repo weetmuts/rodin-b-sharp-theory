@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.maths;
 
@@ -14,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -31,7 +33,6 @@ import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
@@ -327,19 +328,10 @@ public abstract class OperatorTypingRule {
 					newTypePars[i] = constructPatternType(typePars[i],
 							typeParameterToTypeVariablesMap, mediator);
 				}
-				final FormulaFactory factory = mediator.getFactory();
 				final IExpressionExtension exprExtension = ((ParametricType) theoryType)
 						.getExprExtension();
-				for (IFormulaExtension ext : factory.getExtensions()) {
-					if (ext.equals(exprExtension)) {
-						if (ext != exprExtension) {
-							System.out.println("Should not happen !!!!!!!!");
-						}
-						return mediator.makeParametricType(
-								Arrays.asList(newTypePars),
-								(IExpressionExtension) ext);
-					}
-				}
+				return mediator.makeParametricType(Arrays.asList(newTypePars),
+						(IExpressionExtension) exprExtension);
 			}
 		}
 		return theoryType;
