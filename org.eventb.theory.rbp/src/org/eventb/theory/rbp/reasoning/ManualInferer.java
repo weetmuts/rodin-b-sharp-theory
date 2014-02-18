@@ -118,21 +118,23 @@ public class ManualInferer extends AbstractRulesApplyer{
 
 	protected IAntecedent[] backwardReason(IProverSequent sequent,
 			IDeployedInferenceRule rule, IBinding binding) {
-			binding.makeImmutable();
 			List<IDeployedGiven> givens = rule.getGivens();
 			Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
-			for (IDeployedGiven given : givens) {
-				Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), binding);
-				antecedents.add(ProverFactory.makeAntecedent(subGoal));
-			}
-			// add the well-definedness conditions where appropriate
-			Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
-			for (FreeIdentifier identifier : expressionMappings.keySet()){
-				Expression mappedExpression = expressionMappings.get(identifier);
-				Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
-				if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-					if (!sequent.containsHypothesis(wdPredicate))
-						antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+			if (binding != null) {
+				binding.makeImmutable();
+				for (IDeployedGiven given : givens) {
+					Predicate subGoal = (Predicate) binder.bind(given.getGivenClause(), binding);
+					antecedents.add(ProverFactory.makeAntecedent(subGoal));
+				}
+				// add the well-definedness conditions where appropriate
+				Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
+				for (FreeIdentifier identifier : expressionMappings.keySet()){
+					Expression mappedExpression = expressionMappings.get(identifier);
+					Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
+					if (!wdPredicate.equals(ProverUtilities.BTRUE)){
+						if (!sequent.containsHypothesis(wdPredicate))
+							antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+					}
 				}
 			}
 			return antecedents.toArray(new IAntecedent[antecedents.size()]);

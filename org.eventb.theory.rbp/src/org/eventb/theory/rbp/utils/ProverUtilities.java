@@ -20,8 +20,12 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.basis.NewOperatorDefinition;
+import org.eventb.theory.core.basis.SCRewriteRule;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
+import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
@@ -274,10 +278,29 @@ public class ProverUtilities {
 		for (ISCTypeParameter par : types) {
 			typeEnvironment.addGivenSet(par.getIdentifier(factory).getName());
 		}
-		ISCMetavariable[] vars = ((ISCProofRulesBlock) rule.getParent()).getMetavariables();
-		for (ISCMetavariable var : vars) {
-			typeEnvironment.add(var.getIdentifier(factory));
+		
+		//update typeEnv
+		ISCProofRulesBlock block = ((ISCProofRulesBlock) rule.getParent());
+		if (!(block.getSource() instanceof NewOperatorDefinition)) {
+			ISCMetavariable[] vars = block.getMetavariables();
+			for (ISCMetavariable var : vars) {
+				typeEnvironment.add(var.getIdentifier(factory));
+			}
 		}
+		else {
+			ISCTheoryRoot deployedRoot = (ISCTheoryRoot) block.getParent();
+			ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
+			for (ISCNewOperatorDefinition definition : operatorDefinitions) {
+				if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
+					ISCOperatorArgument[] vars = definition.getOperatorArguments();
+					for (ISCOperatorArgument var : vars) {
+						typeEnvironment.add(var.getIdentifier(factory));
+					}
+					break;
+				}
+			}
+		}
+		
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -25,10 +25,15 @@ import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
+import org.eventb.theory.core.ISCNewOperatorDefinition;
+import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.basis.NewOperatorDefinition;
+import org.eventb.theory.core.basis.SCProofRulesBlock;
+import org.eventb.theory.core.basis.SCRewriteRule;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
@@ -159,10 +164,10 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 				for (ISCProofRulesBlock block : blocks) {
 					rewriteRules.addAll(Arrays.asList(block.getRewriteRules()));
 					inferenceRules.addAll(Arrays.asList(block.getInferenceRules()));
-					ISCMetavariable[] vars = block.getMetavariables();
-					for (ISCMetavariable var : vars) {
-						typeEnv.add(var.getIdentifier(factory));
-					}
+//					ISCMetavariable[] vars = block.getMetavariables();
+//					for (ISCMetavariable var : vars) {
+//						typeEnv.add(var.getIdentifier(factory));
+//					}
 				}
 				
 				
@@ -176,12 +181,35 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 				definitionalRules.clear();
 
 				for (IGeneralRule rule : rewriteRules) {
+					
+					//update typeEnv
+					ITypeEnvironment augTypeEnvironment = typeEnv.clone();
+					SCProofRulesBlock block = (SCProofRulesBlock) ((SCRewriteRule) rule).getParent();
+					if (!(block.getSource() instanceof NewOperatorDefinition)) {
+						ISCMetavariable[] vars = block.getMetavariables();
+						for (ISCMetavariable var : vars) {
+							augTypeEnvironment.add(var.getIdentifier(factory));
+						}
+					}
+					else {
+						ISCNewOperatorDefinition[] operatorDefinitions = theoryRoot.getSCNewOperatorDefinitions();
+						for (ISCNewOperatorDefinition definition : operatorDefinitions) {
+							if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
+								ISCOperatorArgument[] vars = definition.getOperatorArguments();
+								for (ISCOperatorArgument var : vars) {
+									augTypeEnvironment.add(var.getIdentifier(factory));
+								}
+								break;
+							}
+						}
+					}
+					
 					if(( (ISCRewriteRule) rule).hasDefinitionalAttribute() && ( (ISCRewriteRule) rule).isDefinitional()){
 						definitionalRules.add(rule);
 					}
-					Formula<?> leftHandSide = ( (ISCRewriteRule) rule).getSCFormula(factory, typeEnv);
+					Formula<?> leftHandSide = ( (ISCRewriteRule) rule).getSCFormula(factory, augTypeEnvironment);
 					// only automatic + unconditional rewrites
-					if (( (ISCRewriteRule) rule).isAutomatic() && !ProverUtilities.isConditional((ISCRewriteRule)rule, factory, typeEnv)) {
+					if (( (ISCRewriteRule) rule).isAutomatic() && !ProverUtilities.isConditional((ISCRewriteRule)rule, factory, augTypeEnvironment)) {
 						if (autoRewRules.get(leftHandSide.getClass()) == null) {
 							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
 							autoRewRules.put(leftHandSide.getClass(), list);
@@ -189,7 +217,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 						autoRewRules.get(leftHandSide.getClass()).add(rule);
 					} 
 					// interactive rewrites + conditional
-					if (( (ISCRewriteRule) rule).isInteractive() || ProverUtilities.isConditional((ISCRewriteRule)rule, factory, typeEnv)) {
+					if (( (ISCRewriteRule) rule).isInteractive() || ProverUtilities.isConditional((ISCRewriteRule)rule, factory, augTypeEnvironment)) {
 						if (interRewRules.get(leftHandSide.getClass()) == null) {
 							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
 							interRewRules.put(leftHandSide.getClass(), list);
@@ -390,7 +418,30 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			}
 			else {
 				try { // if (rule instanceof ISCRewriteRule)
-					lhs = ((ISCRewriteRule) rule).getSCFormula(factory, typeEnv);
+					
+					//update typeEnv
+					ITypeEnvironment augTypeEnvironment = typeEnv.clone();
+					SCProofRulesBlock block = (SCProofRulesBlock) ((SCRewriteRule) rule).getParent();
+					if (!(block.getSource() instanceof NewOperatorDefinition)) {
+						ISCMetavariable[] vars = block.getMetavariables();
+						for (ISCMetavariable var : vars) {
+							augTypeEnvironment.add(var.getIdentifier(factory));
+						}
+					}
+					else {
+						ISCNewOperatorDefinition[] operatorDefinitions = theoryRoot.getSCNewOperatorDefinitions();
+						for (ISCNewOperatorDefinition definition : operatorDefinitions) {
+							if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
+								ISCOperatorArgument[] vars = definition.getOperatorArguments();
+								for (ISCOperatorArgument var : vars) {
+									augTypeEnvironment.add(var.getIdentifier(factory));
+								}
+								break;
+							}
+						}
+					}
+					
+					lhs = ((ISCRewriteRule) rule).getSCFormula(factory, augTypeEnvironment);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
