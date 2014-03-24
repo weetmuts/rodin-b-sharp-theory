@@ -249,11 +249,15 @@ public class OperatorInformation extends State implements ISCState{
 				dWDCondition = getWdCondition();
 			}
 			if (formulaType.equals(FormulaType.EXPRESSION)) {
+//				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
+//						opArguments, expressionType, getWdCondition(), dWDCondition, definition, sourceOfExtension);
 				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-						opArguments, expressionType, getWdCondition(), dWDCondition, definition,sourceOfExtension);
+						opArguments, expressionType, getWdCondition(), AstUtilities.BTRUE, definition, sourceOfExtension);
 			} else {
+//				formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
+//						getWdCondition(), dWDCondition, definition,sourceOfExtension);
 				formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
-						getWdCondition(), dWDCondition, definition,sourceOfExtension);
+						getWdCondition(), AstUtilities.BTRUE, definition,sourceOfExtension);
 			}
 			return formulaExtension;
 		} else
@@ -266,13 +270,19 @@ public class OperatorInformation extends State implements ISCState{
 		IFormulaExtension formulaExtension = null;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType, notation, null);
 		if (expressionType != null) {
-			//formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-					//opArguments, expressionType, getWdCondition(), getWdCondition(), null, null);
+			/*
+			 * DWD condition is set to true as a temporary solution, since we commented the WD PO for the inf rules 
+			 * and DWD condition would not be used else where.
+			 */
+//			formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
+//					opArguments, expressionType, getWdCondition(), getWdCondition(), null, null);
 			formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
 					opArguments, expressionType, getWdCondition(), AstUtilities.BTRUE, null, null);
 		} else {
+//			formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
+//					getWdCondition(), getWdCondition(), null, null);
 			formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
-					getWdCondition(), getWdCondition(), null, null);
+					getWdCondition(), AstUtilities.BTRUE, null, null);
 		}
 		return formulaExtension;
 	}

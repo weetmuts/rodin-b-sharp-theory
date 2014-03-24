@@ -85,7 +85,7 @@ public class DeployedTheoryDecorator {
 	 * @throws CoreException
 	 */
 	public Set<IDeployedTheoryRoot> getRequiredTheories() throws CoreException {
-		return TheoryHierarchyHelper.importingClosure(deployedRoot);
+		return TheoryHierarchyHelper.importClosure(deployedRoot);
 	}
 
 	/**

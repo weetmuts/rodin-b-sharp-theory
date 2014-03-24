@@ -130,48 +130,52 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 						sources,
 						new IPOGHint[] { getLocalHypothesisSelectionHint(
 								target, poName, hyp) }, true, monitor);
-				if (inferenceRule.isSuitableForBackwardReasoning()) {
-					if (!isTrivial(conj1WD)) {
-						String poWDName = label
-								+ RULE_WDB_SUFFIX;
-						Predicate finalWDPO = library.makeImp(conj2WD, conj1WD);
-						createPO(
-								target,
-								poWDName,
-								natureFactory.getNature(RULE_WD_DESC_B),
-								hyp,
-								EMPTY_PREDICATES,
-								makePredicate(
-										makeClosedPredicate(finalWDPO,
-												typeEnvironment), inferenceRule
-												.getSource()),
-								sources,
-								new IPOGHint[] { getLocalHypothesisSelectionHint(
-										target, poWDName, hyp) }, true, monitor);
-					}
+				/*
+				 * The WD PO for the INF rules are removed because of complexity; It is due to enhanced and put back again.
+				 */
+//				if (inferenceRule.isSuitableForBackwardReasoning()) {
+//					if (!isTrivial(conj1WD)) {
+//						String poWDName = label
+//								+ RULE_WDB_SUFFIX;
+//						Predicate finalWDPO = library.makeImp(conj2WD, conj1WD);
+//						createPO(
+//								target,
+//								poWDName,
+//								natureFactory.getNature(RULE_WD_DESC_B),
+//								hyp,
+//								EMPTY_PREDICATES,
+//								makePredicate(
+//										makeClosedPredicate(finalWDPO,
+//												typeEnvironment), inferenceRule
+//												.getSource()),
+//								sources,
+//								new IPOGHint[] { getLocalHypothesisSelectionHint(
+//										target, poWDName, hyp) }, true, monitor);
+//					}
+//
+//				}
 
-				}
-				if (inferenceRule.isSuitableForForwardReasoning()) {
-					if (!isTrivial(conj2WD)) {
-						String poWDName = label
-								+ RULE_WDF_SUFFIX;
-						Predicate finalWDPO = library.makeImp(
-								library.makeConj(conj1WD, conj1), conj2WD);
-						createPO(
-								target,
-								poWDName,
-								natureFactory.getNature(RULE_WD_DESC_F),
-								hyp,
-								EMPTY_PREDICATES,
-								makePredicate(
-										makeClosedPredicate(finalWDPO,
-												typeEnvironment), inferenceRule
-												.getSource()),
-								sources,
-								new IPOGHint[] { getLocalHypothesisSelectionHint(
-										target, poWDName, hyp) }, true, monitor);
-					}
-				}
+//				if (inferenceRule.isSuitableForForwardReasoning()) {
+//					if (!isTrivial(conj2WD)) {
+//						String poWDName = label
+//								+ RULE_WDF_SUFFIX;
+//						Predicate finalWDPO = library.makeImp(
+//								library.makeConj(conj1WD, conj1), conj2WD);
+//						createPO(
+//								target,
+//								poWDName,
+//								natureFactory.getNature(RULE_WD_DESC_F),
+//								hyp,
+//								EMPTY_PREDICATES,
+//								makePredicate(
+//										makeClosedPredicate(finalWDPO,
+//												typeEnvironment), inferenceRule
+//												.getSource()),
+//								sources,
+//								new IPOGHint[] { getLocalHypothesisSelectionHint(
+//										target, poWDName, hyp) }, true, monitor);
+//					}
+//				}
 
 			}
 
