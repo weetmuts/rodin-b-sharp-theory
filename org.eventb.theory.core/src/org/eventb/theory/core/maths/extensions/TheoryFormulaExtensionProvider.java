@@ -19,7 +19,9 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
@@ -60,26 +62,6 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		return FormulaExtensionsLoader.EMPTY_EXT;
 	}
 
-	@Override
-	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
-		// nothing to do
-	}
-
-	@Override
-	public Set<IRodinFile> getCommonFiles(IEventBRoot root) {
-		return emptySet();
-	}
-
-	@Override
-	public Set<IRodinFile> getProjectFiles(IEventBRoot root) {
-		final IRodinProject prj = root.getRodinProject();
-		final ISCTheoryPathRoot pathRoot = findSCTheoryPathRoot(prj);
-		if (pathRoot == null) {
-			return emptySet();
-		}
-		return singleton(pathRoot.getRodinFile());
-	}
-
 	/**
 	 * Returns the checked theory path of the given project. We do not search
 	 * directly the checked file, as it might not exist yet (e.g., just after a
@@ -107,6 +89,30 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			return null;
 		}
 		return paths[0].getSCTheoryPathRoot();
+	}
+
+	@Override
+	public Set<IRodinFile> getFactoryFiles(IEventBRoot root) {
+		final IRodinProject prj = root.getRodinProject();
+		final ISCTheoryPathRoot pathRoot = findSCTheoryPathRoot(prj);
+		if (pathRoot == null) {
+			return emptySet();
+		}
+		return singleton(pathRoot.getRodinFile());
+	}
+
+	@Override
+	public FormulaFactory loadFormulaFactory(ILanguage element,
+			IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveFormulaFactory(ILanguage element, FormulaFactory factory,
+			IProgressMonitor monitor) throws RodinDBException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

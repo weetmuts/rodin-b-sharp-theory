@@ -16,8 +16,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
@@ -32,7 +35,6 @@ import org.eventb.core.internal.ast.extensions.maths.OperatorArgument;
 import org.eventb.core.internal.ast.extensions.maths.OperatorTypingRule;
 import org.eventb.core.internal.ast.extensions.maths.PredicateOperatorExtension;
 import org.eventb.core.internal.ast.extensions.maths.PredicateOperatorTypingRule;
-import org.eventb.core.internal.ast.extensions.maths.SimpleDatatypeExtension;
 
 /**
  * Factory class for the different mathematical extensions contributed by the
@@ -120,8 +122,13 @@ public final class MathExtensionsFactory {
 	 */
 	public static Set<IFormulaExtension> getSimpleDatatypeExtensions(
 			String identifier, String[] typeArguments, FormulaFactory factory) {
-		return factory.makeDatatype(
-				new SimpleDatatypeExtension(identifier, typeArguments)).getExtensions();
+		final List<GivenType> givenTypes = new ArrayList<GivenType>();
+		for (String typeArgument : typeArguments) {
+			givenTypes.add(factory.makeGivenType(typeArgument));
+		}
+		final IDatatypeBuilder dtBuilder = factory.makeDatatypeBuilder(identifier, givenTypes);
+		final IDatatype datatype = dtBuilder.finalizeDatatype();
+		return datatype.getExtensions();
 	}
 
 	/**
@@ -142,7 +149,7 @@ public final class MathExtensionsFactory {
 			Map<String, Map<String, String>> constructors, FormulaFactory factory) {
 		CompleteDatatypeExtension completeDtExt = new CompleteDatatypeExtension(identifier, 
 				typeArguments, constructors);
-		return factory.makeDatatype(completeDtExt).getExtensions();
+		return completeDtExt.toDatatype(factory).getExtensions();
 	}
 	
 	/**

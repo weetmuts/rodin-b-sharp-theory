@@ -1,6 +1,5 @@
 package org.eventb.theory.rbp.utils;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.ast.Formula;
@@ -16,12 +16,11 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.core.basis.NewOperatorDefinition;
-import org.eventb.theory.core.basis.SCRewriteRule;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
@@ -32,6 +31,8 @@ import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCRule;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
+import org.eventb.theory.core.basis.NewOperatorDefinition;
+import org.eventb.theory.core.basis.SCRewriteRule;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRule;
 import org.rodinp.core.RodinDBException;
@@ -88,10 +89,10 @@ public class ProverUtilities {
 	public static Formula<?> parseFormula(String formStr,boolean isExpression, FormulaFactory factory) {
 		Formula<?> form = null;
 		if (isExpression) {
-			IParseResult r = factory.parseExpressionPattern(formStr, V2, null);
+			IParseResult r = factory.parseExpressionPattern(formStr, null);
 			form = r.getParsedExpression();
 		} else {
-			IParseResult r = factory.parsePredicatePattern(formStr, V2, null);
+			IParseResult r = factory.parsePredicatePattern(formStr, null);
 			form = r.getParsedPredicate();
 		}
 		return form;
@@ -99,9 +100,9 @@ public class ProverUtilities {
 
 	// to parse a Theory formula i.e. predicate or expression
 	public static Formula<?> parseFormulaPattern(String formula, FormulaFactory factory) {
-		IParseResult res = factory.parseExpressionPattern(formula, V2, null);
+		IParseResult res = factory.parseExpressionPattern(formula, null);
 		if (res.hasProblem()) {
-			res = factory.parsePredicatePattern(formula, V2, null);
+			res = factory.parsePredicatePattern(formula, null);
 			if (res.hasProblem()) {
 				return null;
 			} else
@@ -270,8 +271,8 @@ public class ProverUtilities {
 		return false;
 	}
 	
-	public static ITypeEnvironment makeTypeEnvironment(FormulaFactory factory, ISCRule rule) {
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+	public static ITypeEnvironment makeTypeEnvironment(FormulaFactory factory, ISCRule rule) throws CoreException {
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		try {
 		ISCTheoryRoot SCtheoryRoot = DatabaseUtilities.getSCTheory(rule.getRoot().getElementName(), rule.getRoot().getRodinProject());
 		ISCTypeParameter[] types = SCtheoryRoot.getSCTypeParameters();
@@ -309,12 +310,12 @@ public class ProverUtilities {
 		return typeEnvironment;
 	}
 	
-	public static boolean isConditional(ISCRewriteRule rule, FormulaFactory factory, ITypeEnvironment typeEnv) throws RodinDBException {
+	public static boolean isConditional(ISCRewriteRule rule, FormulaFactory factory, ITypeEnvironment typeEnv) throws CoreException {
 		boolean isCond = true;
 		List<ISCRewriteRuleRightHandSide> ruleRHSs = Arrays.asList(rule.getRuleRHSs());
 		if(ruleRHSs.size() == 1){
 			ISCRewriteRuleRightHandSide rhs0 = ruleRHSs.get(0);
-			Predicate cond = rhs0.getPredicate(factory, typeEnv);
+			Predicate cond = rhs0.getPredicate(typeEnv);
 			if(cond.equals(ProverUtilities.BTRUE)){
 				isCond = false;
 			}

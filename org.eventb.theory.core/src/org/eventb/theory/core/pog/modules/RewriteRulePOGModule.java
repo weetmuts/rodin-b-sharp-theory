@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.core.pog.modules;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.True;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeImp;
+
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
@@ -23,7 +26,6 @@ import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.POGNatureFactory;
 import org.eventb.theory.core.ISCProofRulesBlock;
@@ -45,7 +47,6 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 
 	protected ITypeEnvironment typeEnvironment;
 	protected POGNatureFactory natureFactory;
-	protected DLib library;
 
 	private final static String RULE_RHS_WD_SUFFIX = "/WD-S/";
 	private final static String RULE_C_WD_SUFFIX = "/WD-C/";
@@ -64,7 +65,6 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 		super.initModule(element, repository, monitor);
 		typeEnvironment = repository.getTypeEnvironment();
 		natureFactory = POGNatureFactory.getInstance();
-		library = DLib.mDLib(factory);
 	}
 	
 	public void process(IRodinElement element, IPOGStateRepository repository,
@@ -104,7 +104,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 						.getSCFormula(factory, typeEnvironment);
 				Predicate rhsWD = getDWDCondition(rhsForm);
 				Predicate condition = rhs
-						.getPredicate(factory, typeEnvironment);
+						.getPredicate(typeEnvironment);
 				// since we will make a disjunction, disregard bottom?
 				allConditions.add(condition);
 				
@@ -127,7 +127,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				// -------------------------------------------------------
 				// lhsWD => conditionWD
 				if (!isTrivial(conditionWD)) {
-					Predicate poPredicate = library.makeImp(lhsWD, conditionWD);
+					Predicate poPredicate = makeImp(lhsWD, conditionWD);
 					String poName = ruleName + RULE_C_WD_SUFFIX + rhsLabel;
 					createPO(target, poName,
 							natureFactory.getNature(RULE_C_WD_DESC),
@@ -145,11 +145,11 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				// lhsWD & conditionWD & condition => rhsWD
 				if (!isTrivial(rhsWD)) {
 					Predicate poPredicate = AstUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition}, factory);
-					if(poPredicate.equals(library.True())){
+					if(poPredicate.equals(True(factory))){
 						poPredicate = rhsWD;
 					}
 					else{
-						poPredicate = library.makeImp(poPredicate, rhsWD);
+						poPredicate = makeImp(poPredicate, rhsWD);
 					}
 					String poName = ruleName + RULE_RHS_WD_SUFFIX + rhsLabel;
 					createPO(target, poName,
@@ -168,11 +168,11 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				// lhsWD & conditionWD & condition & rhsWD => lhs = rhs
 				if (!isTrivial(soundnessPredicate)) {
 					Predicate poPredicate = AstUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition, rhsWD}, factory);
-					if(poPredicate.equals(library.True())){
+					if(poPredicate.equals(True(factory))){
 						poPredicate = soundnessPredicate;
 					}
 					else{
-						poPredicate = library.makeImp(poPredicate, soundnessPredicate);
+						poPredicate = makeImp(poPredicate, soundnessPredicate);
 					}
 					String poName = ruleName + RULE_S_SUFFIX + rhsLabel;
 					
@@ -203,7 +203,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 			
 				if(!isTrivial(goal)){
 					Predicate hyps = AstUtilities.conjunctPredicates(wdAllConditions, factory);
-					Predicate poPredicate = library.makeImp(hyps, goal);
+					Predicate poPredicate = makeImp(hyps, goal);
 					createPO(target, poName,
 							natureFactory.getNature(RULE_COMPLETENESS_DESC),
 							hyp, EMPTY_PREDICATES,
@@ -222,7 +222,6 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 			throws CoreException {
 		typeEnvironment = null;
 		natureFactory = null;
-		library = null;
 		super.endModule(element, repository, monitor);
 	}
 

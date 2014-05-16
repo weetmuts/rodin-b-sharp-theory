@@ -15,8 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
@@ -52,7 +51,7 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".axiomaticOperatorModule");
 	
 	private TheoryAccuracyInfo theoryAccuracyInfo;
-	private ITypeEnvironment globalTypeEnvironment;
+	private ITypeEnvironmentBuilder globalTypeEnvironment;
 	private FormulaFactory factory;
 	private IdentifierSymbolTable identifierSymbolTable;
 	
@@ -172,7 +171,7 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 				IAxiomaticOperatorDefinition opDef = newOpDefs[i];
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
-				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
+				ITypeEnvironmentBuilder opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
 				// needed states
@@ -221,8 +220,7 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 			return null;
 		}
 		final String opDefType = opDef.getType();
-		final IParseResult result = factory.parseType(opDefType,
-				LanguageVersion.V2);
+		final IParseResult result = factory.parseType(opDefType);
 		if (result.hasProblem()) {
 			// these problems should have been issued in
 			// AxiomaticOperatorFilterModule

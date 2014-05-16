@@ -96,7 +96,7 @@ public class DComputer implements ISimpleVisitor2{
 	 */
 	public Predicate getWDLemma(Formula<?> formula) {
 		assert formula.isTypeChecked();
-		return wd(formula).flatten(fb.ff);
+		return wd(formula).flatten();
 	}
 	
 	/**

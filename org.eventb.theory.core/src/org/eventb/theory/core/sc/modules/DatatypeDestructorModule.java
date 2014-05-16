@@ -103,7 +103,7 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 				continue;
 			}
 			Type type = CoreUtilities.parseTypeExpression(consArg, factory, this);
-			if (type != null && checkTypeParameters(type, consArg, factory, typeEnvironment, datatypeTable)) {
+			if (type != null && checkTypeParameters(type, consArg, typeEnvironment, datatypeTable)) {
 				// check first before we commit the SC destructor
 				boolean admissibility = datatypeTable.addDestructor(consArg.getIdentifierString(), type);
 				if(!admissibility){
@@ -133,8 +133,6 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 	 *            the type of the destructor
 	 * @param consArg
 	 *            the constructor argument
-	 * @param factory
-	 *            the formula factory
 	 * @param typeEnvironment
 	 *            the type environment
 	 * @param datatypeTable
@@ -142,9 +140,9 @@ public class DatatypeDestructorModule extends SCProcessorModule {
 	 * @return whether the type of the destructor is acceptable
 	 * @throws CoreException
 	 */
-	protected boolean checkTypeParameters(Type type, IConstructorArgument consArg, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment, DatatypeTable datatypeTable) throws CoreException {
-		FreeIdentifier[] idents = type.toExpression(factory).getSyntacticallyFreeIdentifiers();
+	protected boolean checkTypeParameters(Type type, IConstructorArgument consArg, ITypeEnvironment typeEnvironment,
+			DatatypeTable datatypeTable) throws CoreException {
+		FreeIdentifier[] idents = type.toExpression().getSyntacticallyFreeIdentifiers();
 		boolean result = true;
 		for (FreeIdentifier ident : idents) {
 			if (!datatypeTable.isAllowedIdentifier(ident.toString())) {

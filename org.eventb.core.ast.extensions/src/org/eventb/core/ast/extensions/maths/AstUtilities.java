@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.extensions.maths;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,12 +23,13 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -38,9 +37,9 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
+import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.StandardGroup;
-import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension;
 
 /**
@@ -446,7 +445,7 @@ public class AstUtilities {
 				pList.add(p);
 			}
 		}
-		return AstUtilities.conjunctPredicates(pList, ff).flatten(ff);
+		return AstUtilities.conjunctPredicates(pList, ff).flatten();
 	}
 
 	/**
@@ -500,7 +499,7 @@ public class AstUtilities {
 			result += ")";
 
 		}
-		IParseResult parseResult = ff.parseType(result, LanguageVersion.V2);
+		IParseResult parseResult = ff.parseType(result);
 		if (parseResult.hasProblem())
 			return null;
 		return (ParametricType) parseResult.getParsedType();
@@ -715,8 +714,8 @@ public class AstUtilities {
 	 *            the formula factory
 	 * @return the new type environment
 	 */
-	public static ITypeEnvironment getTypeEnvironmentForFactory(ITypeEnvironment typeEnvironment, FormulaFactory factory) {
-		ITypeEnvironment newTypeEnvironment = factory.makeTypeEnvironment();
+	public static ITypeEnvironmentBuilder getTypeEnvironmentForFactory(ITypeEnvironment typeEnvironment, FormulaFactory factory) {
+		ITypeEnvironmentBuilder newTypeEnvironment = factory.makeTypeEnvironment();
 		newTypeEnvironment.addAll(typeEnvironment);
 		return newTypeEnvironment;
 	}
@@ -770,10 +769,10 @@ public class AstUtilities {
 	public static Formula<?> parseFormula(String formStr, boolean isExpression, FormulaFactory factory) {
 		Formula<?> form = null;
 		if (isExpression) {
-			IParseResult r = factory.parseExpressionPattern(formStr, V2, null);
+			IParseResult r = factory.parseExpressionPattern(formStr, null);
 			form = r.getParsedExpression();
 		} else {
-			IParseResult r = factory.parsePredicatePattern(formStr, V2, null);
+			IParseResult r = factory.parsePredicatePattern(formStr, null);
 			form = r.getParsedPredicate();
 		}
 		return form;

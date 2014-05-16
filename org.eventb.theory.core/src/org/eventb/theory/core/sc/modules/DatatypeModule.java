@@ -16,6 +16,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
@@ -114,7 +115,7 @@ public class DatatypeModule extends SCProcessorModule {
 		// get the ff and type env here as they will most likely change after
 		// each iteration of the following loop
 		FormulaFactory factory = repository.getFormulaFactory();
-		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = repository.getTypeEnvironment();
 		for (IDatatypeDefinition datatypeDefinition : datatypeDefinitions) {
 			if (!checkDatatypeName(datatypeDefinition, factory, typeEnvironment, datatypeTable)) {
 				theoryAccurate = false;

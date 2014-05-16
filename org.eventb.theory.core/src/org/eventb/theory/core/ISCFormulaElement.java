@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -34,9 +35,9 @@ public interface ISCFormulaElement extends IInternalElement{
 	 * @param ff the formula factory
 	 * @param typeEnvironment the type environment
 	 * @return the SC formula
-	 * @throws RodinDBException
+	 * @throws CoreException 
 	 */
-	Formula<?> getSCFormula(FormulaFactory ff, ITypeEnvironment typeEnvironment) throws RodinDBException;
+	Formula<?> getSCFormula(FormulaFactory ff, ITypeEnvironment typeEnvironment) throws CoreException;
 	
 	/**
 	 * Sets the formula attribute of this element to the given formula.

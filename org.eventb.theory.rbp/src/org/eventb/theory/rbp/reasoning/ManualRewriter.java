@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
@@ -25,7 +26,6 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRuleRHS;
 import org.eventb.theory.rbp.utils.ProverUtilities;
-import org.rodinp.core.RodinDBException;
 
 /**
  * <p>An implementation of a manual rewriter.</p>
@@ -99,7 +99,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 				// get the new subformula
 				Formula<?> rhsFormula = complexBinder.bind(rhs.getRHSFormula(), binding, true);
 				// apply the rewriting at the given position
-				Predicate newPred = predicate.rewriteSubFormula(position, rhsFormula, factory);
+				Predicate newPred = predicate.rewriteSubFormula(position, rhsFormula);
 				Predicate goal = (isGoal ? newPred : null);
 				Set<Predicate> addedHyps = new HashSet<Predicate>();
 				// add interesting hyps only (no T)
@@ -160,7 +160,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 				// for each right hand side make an antecedent
 				for (ISCRewriteRuleRightHandSide rhs : ruleRHSs) {
 					// get the condition
-					Predicate condition = (Predicate) simpleBinder.bind(rhs.getPredicate(factory, typeEnvironment), binding);
+					Predicate condition = (Predicate) simpleBinder.bind(rhs.getPredicate(typeEnvironment), binding);
 					// if rule is incomplete keep it till later as we will make
 					// negation
 					// of disjunction of all conditions
@@ -170,7 +170,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 					Formula<?> rhsFormula = complexBinder.bind(rhs.getSCFormula(factory, typeEnvironment), binding, true);
 					// apply the rewriting at the given position
 					Predicate newPred = predicate.rewriteSubFormula(position,
-							rhsFormula, factory);
+							rhsFormula);
 					Predicate goal = (isGoal ? newPred : null);
 					Set<Predicate> addedHyps = new HashSet<Predicate>();
 					// add interesting hyps only (no T)
@@ -213,7 +213,7 @@ public class ManualRewriter extends AbstractRulesApplyer{
 											.singleton(negOfDisj)));
 				}
 				return antecedents;
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return null;

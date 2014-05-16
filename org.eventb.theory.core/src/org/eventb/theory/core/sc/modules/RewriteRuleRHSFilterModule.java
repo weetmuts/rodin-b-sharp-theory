@@ -24,7 +24,6 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
@@ -117,16 +116,14 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 		Formula<?> rhsFormula = null;
 		String rhsStr = ruleRHS.getFormula();
 		if (lhsFormula instanceof Expression) {
-			parseResult = factory.parseExpression(rhsStr,
-					LanguageVersion.V2, ruleRHS);
+			parseResult = factory.parseExpression(rhsStr, ruleRHS);
 			if (CoreUtilities.issueASTProblemMarkers(ruleRHS,
 					TheoryAttributes.FORMULA_ATTRIBUTE, parseResult, this)) {
 				return null;
 			}
 			rhsFormula = parseResult.getParsedExpression();
 		} else if (lhsFormula instanceof Predicate) {
-			parseResult = factory.parsePredicate(rhsStr,
-					LanguageVersion.V2, ruleRHS);
+			parseResult = factory.parsePredicate(rhsStr, ruleRHS);
 			if (CoreUtilities.issueASTProblemMarkers(ruleRHS,
 					TheoryAttributes.FORMULA_ATTRIBUTE, parseResult, this)) {
 				return null;
@@ -178,8 +175,7 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 		}
 		Formula<?> lhsFormula = lhsParsedFormula.getFormula();
 		String condStr = ruleRHS.getPredicateString();
-		IParseResult parseResult = factory.parsePredicatePattern(condStr,
-				LanguageVersion.V2, ruleRHS);
+		IParseResult parseResult = factory.parsePredicatePattern(condStr, ruleRHS);
 		if (CoreUtilities.issueASTProblemMarkers(ruleRHS,
 				EventBAttributes.PREDICATE_ATTRIBUTE, parseResult, this)) {
 			return null;
@@ -296,7 +292,7 @@ public class RewriteRuleRHSFilterModule extends SCFilterModule {
 	private Set<FreeIdentifier> getFreeIdentifiers(Set<GivenType> types){
 		Set<FreeIdentifier> set = new LinkedHashSet<FreeIdentifier>();
 		for (GivenType givenType : types){
-			set.add((FreeIdentifier)givenType.toExpression(factory));
+			set.add((FreeIdentifier)givenType.toExpression());
 		}
 		return set;
 	}

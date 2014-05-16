@@ -3,9 +3,8 @@ package org.eventb.theory.core.sc;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IMarker;
-import org.rodinp.core.IRodinProblem;
-
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author maamria

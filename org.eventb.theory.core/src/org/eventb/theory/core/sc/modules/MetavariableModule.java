@@ -10,7 +10,7 @@ package org.eventb.theory.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -88,7 +88,7 @@ public class MetavariableModule extends IdentifierModule {
 	}
 
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
-			final ITypeEnvironment environment) throws CoreException {
+			final ITypeEnvironmentBuilder environment) throws CoreException {
 		environment.addName(newSymbolInfo.getSymbol(), newSymbolInfo.getType());
 	}
 	

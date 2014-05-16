@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -46,7 +46,7 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 	private IIdentifierSymbolTable identifierSymbolTable;
 	private TheoryAccuracyInfo theoryAccuracyInfo;
 
-	private ITypeEnvironment globalTypeEnvironment;
+	private ITypeEnvironmentBuilder globalTypeEnvironment;
 
 	private IProofRulesBlock[] rulesBlocks;
 	
@@ -83,7 +83,7 @@ public class ProofRulesBlockModule extends LabeledElementModule{
 				
 				repository.setState(stackedIdentSymbolTable);
 				
-				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
+				ITypeEnvironmentBuilder opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
 				{

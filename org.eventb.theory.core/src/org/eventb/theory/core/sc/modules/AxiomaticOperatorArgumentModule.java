@@ -10,7 +10,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -162,7 +162,7 @@ public class AxiomaticOperatorArgumentModule extends IdentifierModule{
 		}
 	}
 
-	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, final ITypeEnvironment environment)
+	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, ITypeEnvironmentBuilder environment)
 			throws CoreException {
 		environment.addName(newSymbolInfo.getSymbol(), newSymbolInfo.getType());
 	}

@@ -80,7 +80,7 @@ public class FormulaBuilder {
 		final int tag = lower ? LE : GE;
 		final Predicate rel = ff.makeRelationalPredicate(tag, b1, b0, null);
 		final RelationalPredicate xInSet = ff.makeRelationalPredicate(IN, b0,
-				set.shiftBoundIdentifiers(2, ff), null);
+				set.shiftBoundIdentifiers(2), null);
 		final Predicate impl = ff.makeBinaryPredicate(LIMP, xInSet, rel, null);
 		final BoundIdentDecl[] b = new BoundIdentDecl[] { ff
 				.makeBoundIdentDecl("b", null, Z()) };
@@ -127,8 +127,8 @@ public class FormulaBuilder {
 
 	public Predicate partial(Expression fun) {
 		final Type funType = fun.getType();
-		final Expression src = funType.getSource().toExpression(ff);
-		final Expression trg = funType.getTarget().toExpression(ff);
+		final Expression src = funType.getSource().toExpression();
+		final Expression trg = funType.getTarget().toExpression();
 		final Expression pfun = ff.makeBinaryExpression(PFUN, src, trg, null);
 		return ff.makeRelationalPredicate(IN, fun, pfun, null);
 	}

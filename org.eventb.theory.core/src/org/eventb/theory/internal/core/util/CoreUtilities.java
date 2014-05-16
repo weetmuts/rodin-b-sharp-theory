@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.internal.core.util;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
-
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
@@ -166,7 +164,7 @@ public class CoreUtilities {
 	public static Type parseTypeExpression(ITypeElement typingElmnt, FormulaFactory factory, IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = TheoryAttributes.TYPE_ATTRIBUTE;
 		String expString = typingElmnt.getType();
-		IParseResult parseResult = factory.parseType(expString, V2);
+		IParseResult parseResult = factory.parseType(expString);
 		if (issueASTProblemMarkers(typingElmnt, attributeType, parseResult, display)) {
 			return null;
 		}
@@ -192,7 +190,7 @@ public class CoreUtilities {
 	public static Predicate parseAndCheckPredicate(IPredicateElement element, FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
 		String pred = element.getPredicateString();
-		IParseResult result = ff.parsePredicate(pred, V2, null);
+		IParseResult result = ff.parsePredicate(pred, null);
 		if (issueASTProblemMarkers(element, attributeType, result, display)) {
 			return null;
 		}
@@ -237,7 +235,7 @@ public class CoreUtilities {
 	public static Expression parseAndCheckExpression(IExpressionElement element, FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws CoreException {
 		IAttributeType.String attributeType = EventBAttributes.EXPRESSION_ATTRIBUTE;
 		String exp = element.getExpressionString();
-		IParseResult result = ff.parseExpression(exp, V2, null);
+		IParseResult result = ff.parseExpression(exp, null);
 		if (issueASTProblemMarkers(element, attributeType, result, display)) {
 			return null;
 		}

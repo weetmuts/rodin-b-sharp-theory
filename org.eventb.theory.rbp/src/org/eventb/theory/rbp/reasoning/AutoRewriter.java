@@ -3,6 +3,7 @@ package org.eventb.theory.rbp.reasoning;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -37,7 +38,6 @@ import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 import org.eventb.theory.rbp.utils.ProverUtilities;
-import org.rodinp.core.RodinDBException;
 
 /**
  * <p>An implementation of a rewrite rule automatic rewriter.</p>
@@ -103,7 +103,7 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 				ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
 				ruleLhs = ((ISCRewriteRule) rule).getSCFormula(factory, typeEnvironment);
 				ruleRhs = Arrays.asList(((ISCRewriteRule) rule).getRuleRHSs()).get(0).getSCFormula(factory, typeEnvironment);
-				} catch (RodinDBException e) {
+				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				};
@@ -244,11 +244,6 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	@Override
 	public void enteringQuantifier(int nbOfDeclarations) {
 		// nothing to do
-	}
-
-	@Override
-	public FormulaFactory getFactory() {
-		return context.getFormulaFactory();
 	}
 
 	@Override

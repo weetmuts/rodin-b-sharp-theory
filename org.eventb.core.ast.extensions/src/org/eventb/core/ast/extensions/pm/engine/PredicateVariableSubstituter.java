@@ -3,7 +3,6 @@ package org.eventb.core.ast.extensions.pm.engine;
 import java.util.Map;
 
 import org.eventb.core.ast.DefaultRewriter;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 
@@ -19,11 +18,10 @@ public class PredicateVariableSubstituter extends DefaultRewriter {
 	/**
 	 * Creates a predicate variables rewriter.
 	 * @param map the map of predicate variables mapped to their substitutes
-	 * @param ff the formula factory
 	 */
 	public PredicateVariableSubstituter(
-			Map<PredicateVariable, Predicate> map, FormulaFactory ff){
-		super(true, ff);
+			Map<PredicateVariable, Predicate> map){
+		super(true);
 		this.map = map;
 	}
 	

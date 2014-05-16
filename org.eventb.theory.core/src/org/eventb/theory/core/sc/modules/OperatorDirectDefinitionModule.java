@@ -126,13 +126,13 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 
 	private void commitDirectDefinition(Formula<?> defFormula, IDirectOperatorDefinition definition,
 			ISCNewOperatorDefinition scNewOperatorDefinition, ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException, RodinDBException {
+			throws CoreException {
 		createSCDirectDefinition(defFormula, scNewOperatorDefinition, definition, repository, monitor);
 		if (defFormula instanceof Expression)
 			operatorInformation.setResultantType(((Expression) defFormula).getType());
 		operatorInformation.setDefinition(new Definitions.DirectDefintion(defFormula));
 		if (operatorInformation.getWdCondition() == null) {
-			Predicate wdPredicate = defFormula.getWDPredicate(factory);
+			Predicate wdPredicate = defFormula.getWDPredicate();
 			scNewOperatorDefinition.setPredicate(wdPredicate, monitor);
 			operatorInformation.addWDCondition(wdPredicate);
 		}

@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.tests.BasicAstExtTest;
 
@@ -262,7 +261,7 @@ public class TestExtensions extends BasicAstExtTest{
 			int i = 0 ;
 			for (String form : formulae){
 				Formula<?> formula = typeCheck(form);
-				equalFormulae(tcPredicate(expectedWDs[i]), formula.getWDPredicate(factory));
+				equalFormulae(tcPredicate(expectedWDs[i]), formula.getWDPredicate());
 				i++;
 			}
 		}
@@ -375,7 +374,7 @@ public class TestExtensions extends BasicAstExtTest{
 		assertParses("REAL × ℤ", false);
 		assertParses("REAL × {BOOL}", false);
 		assertNotNull("should parse as type but did not", 
-				factory.parseType("REAL", LanguageVersion.V2).getParsedType());
+				factory.parseType("REAL").getParsedType());
 	}
 	
 	public void testExtensions_040_TC() throws Exception{
@@ -388,6 +387,6 @@ public class TestExtensions extends BasicAstExtTest{
 	
 	public void testExtensions_041_WD() throws Exception{
 		addExtensions(realTypeExtensions());
-		equalFormulae(predicate("⊤"), expression("REAL").getWDPredicate(factory));
+		equalFormulae(predicate("⊤"), expression("REAL").getWDPredicate());
 	}
 }

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.pog.modules;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeUnivQuant;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,7 +31,6 @@ import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -93,7 +94,7 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 	protected List<FreeIdentifier> getMetavariables(
 			ITypeEnvironment typeEnvironment) {
 		FormulaFactory factory = typeEnvironment.getFormulaFactory();
-		Set<String> all = new LinkedHashSet<String>(typeEnvironment.clone().getNames());
+		Set<String> all = new LinkedHashSet<String>(typeEnvironment.getNames());
 		all.removeAll(AstUtilities.getGivenSetsNames(typeEnvironment));
 		List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
 		for (String name : all) {
@@ -120,8 +121,8 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 		if (nonSetsIdents.size() == 0) {
 			return predicate;
 		}
-		predicate = predicate.bindTheseIdents(nonSetsIdents, factory);
-		predicate = DLib.mDLib(factory).makeUnivQuant(
+		predicate = predicate.bindTheseIdents(nonSetsIdents);
+		predicate = makeUnivQuant(
 				decls.toArray(new BoundIdentDecl[decls.size()]), predicate);
 		return predicate;
 	}

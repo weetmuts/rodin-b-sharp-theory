@@ -13,15 +13,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.IGeneralRule;
+import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
@@ -30,12 +32,11 @@ import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCTheorem;
-import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.basis.NewOperatorDefinition;
 import org.eventb.theory.core.basis.SCProofRulesBlock;
 import org.eventb.theory.core.basis.SCRewriteRule;
-import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.RodinDBException;
@@ -49,7 +50,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 
 	private boolean hasChanged;
 	private R theoryRoot;
-	private ITypeEnvironment typeEnv;
+	private ITypeEnvironmentBuilder typeEnv;
 
 	/**
 	 * All rules.
@@ -183,7 +184,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 				for (IGeneralRule rule : rewriteRules) {
 					
 					//update typeEnv
-					ITypeEnvironment augTypeEnvironment = typeEnv.clone();
+					ITypeEnvironmentBuilder augTypeEnvironment = typeEnv.makeBuilder();
 					SCProofRulesBlock block = (SCProofRulesBlock) ((SCRewriteRule) rule).getParent();
 					if (!(block.getSource() instanceof NewOperatorDefinition)) {
 						ISCMetavariable[] vars = block.getMetavariables();
@@ -245,7 +246,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 						interTypedInferenceMap.get(type).add(rule);
 					}
 				}
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
@@ -420,7 +421,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 				try { // if (rule instanceof ISCRewriteRule)
 					
 					//update typeEnv
-					ITypeEnvironment augTypeEnvironment = typeEnv.clone();
+					ITypeEnvironmentBuilder augTypeEnvironment = typeEnv.makeBuilder();
 					SCProofRulesBlock block = (SCProofRulesBlock) ((SCRewriteRule) rule).getParent();
 					if (!(block.getSource() instanceof NewOperatorDefinition)) {
 						ISCMetavariable[] vars = block.getMetavariables();
@@ -442,7 +443,7 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 					}
 					
 					lhs = ((ISCRewriteRule) rule).getSCFormula(factory, augTypeEnvironment);
-				} catch (RodinDBException e) {
+				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

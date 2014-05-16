@@ -4,8 +4,8 @@ import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.theory.core.ITypeElement;
+import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

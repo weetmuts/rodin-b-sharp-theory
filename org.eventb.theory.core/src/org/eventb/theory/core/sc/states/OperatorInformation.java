@@ -21,7 +21,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
@@ -29,11 +29,11 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.Definitions;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
-import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
@@ -80,7 +80,7 @@ public class OperatorInformation extends State implements ISCState{
 
 	private boolean hasError = false;
 
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 
 	public final static IStateType<OperatorInformation> STATE_TYPE = SCCore
 			.getToolStateType(TheoryPlugin.PLUGIN_ID + ".operatorInformation");
@@ -320,13 +320,13 @@ public class OperatorInformation extends State implements ISCState{
 		if (definition instanceof Definitions.DirectDefintion) {
 			ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID, syntax + " expansion");
 			rewRule.setSource(originDefinition, null);
-			Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution, enhancedFactory);
+			Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution);
 			rewRule.setSCFormula(lhs, null);
 			ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 			rhs.create(null, null);
 			rhs.setLabel(syntax + " rhs", null);
 			rhs.setPredicate(AstUtilities.BTRUE, null);
-			rhs.setSCFormula(((Definitions.DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution, enhancedFactory), null);
+			rhs.setSCFormula(((Definitions.DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution), null);
 			rhs.setSource(originDefinition, null);
 		} else if (definition instanceof Definitions.RecursiveDefinition) {
 			Definitions.RecursiveDefinition recursiveDefinition = (Definitions.RecursiveDefinition) definition;
@@ -354,17 +354,17 @@ public class OperatorInformation extends State implements ISCState{
 
 					}
 				}
-				Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution, enhancedFactory);
+				Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution);
 				Map<FreeIdentifier, Expression> indSub = new HashMap<FreeIdentifier, Expression>();
 				// substitute the free identifier for the inductive var so that it reflects the namings above
 				// FIXED BUG
 				FreeIdentifier newInductiveIdentifier = (FreeIdentifier) inductiveIdent.substituteFreeIdents(
-						possibleSubstitution, enhancedFactory);
+						possibleSubstitution);
 				indSub.put(newInductiveIdentifier, indCase);
 				// substitute the inductive ident if necessary
-				lhs = lhs.substituteFreeIdents(indSub, enhancedFactory);
+				lhs = lhs.substituteFreeIdents(indSub);
 				// substitute the vars of the inductive case if necessary
-				lhs = lhs.substituteFreeIdents(possibleSubstitution, enhancedFactory);
+				lhs = lhs.substituteFreeIdents(possibleSubstitution);
 				rewRule.setSCFormula(lhs, null);
 				ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 				rhs.create(null, null);
@@ -374,7 +374,7 @@ public class OperatorInformation extends State implements ISCState{
 				// get the rhs 
 				Formula<?> indCaseDefinitionFormula = recursiveCases.get(indCase);
 				// apply substitution if necessary
-				indCaseDefinitionFormula = indCaseDefinitionFormula.substituteFreeIdents(possibleSubstitution, enhancedFactory);
+				indCaseDefinitionFormula = indCaseDefinitionFormula.substituteFreeIdents(possibleSubstitution);
 				rhs.setSCFormula(indCaseDefinitionFormula, null);
 			}
 		}

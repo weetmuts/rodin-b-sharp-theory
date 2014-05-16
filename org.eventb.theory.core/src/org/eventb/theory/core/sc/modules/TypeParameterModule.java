@@ -3,7 +3,7 @@ package org.eventb.theory.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
@@ -92,7 +92,7 @@ public class TypeParameterModule extends IdentifierModule {
 	}
 
 	@Override
-	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, ITypeEnvironment environment) throws CoreException {
+	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, ITypeEnvironmentBuilder environment) throws CoreException {
 		environment.addGivenSet(newSymbolInfo.getSymbol());
 		newSymbolInfo.setType(environment.getType(newSymbolInfo.getSymbol()));
 	}

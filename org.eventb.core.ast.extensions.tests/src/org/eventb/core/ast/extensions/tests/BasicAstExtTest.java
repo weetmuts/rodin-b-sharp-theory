@@ -21,7 +21,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
@@ -30,7 +30,6 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
@@ -50,7 +49,7 @@ import org.eventb.core.internal.ast.extensions.maths.OperatorArgument;
 public abstract class BasicAstExtTest extends TestCase {
 
 	protected FormulaFactory factory;
-	protected ITypeEnvironment environment;
+	protected ITypeEnvironmentBuilder environment;
 
 	// cache the extensions we use, no need to recreate
 	private IPredicateExtension PRIME_EXTENSION;
@@ -97,7 +96,7 @@ public abstract class BasicAstExtTest extends TestCase {
 	}
 
 	public ITypeEnvironment typeEnvironment(String[] givenTypes, String[] names, String[] types) throws CoreException {
-		ITypeEnvironment env = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder env = factory.makeTypeEnvironment();
 		for (String t : givenTypes) {
 			env.addGivenSet(t);
 		}
@@ -150,7 +149,7 @@ public abstract class BasicAstExtTest extends TestCase {
 		List<OperatorArgument> operatorArguments = new ArrayList<OperatorArgument>();
 		int i = 0;
 		for (String name : names) {
-			operatorArguments.add(new OperatorArgument(i, name, factory.parseType(types[i], LanguageVersion.V2)
+			operatorArguments.add(new OperatorArgument(i, name, factory.parseType(types[i])
 					.getParsedType()));
 			i++;
 		}
@@ -158,11 +157,11 @@ public abstract class BasicAstExtTest extends TestCase {
 	}
 
 	public Predicate predicate(String str) throws CoreException {
-		return factory.parsePredicate(str, LanguageVersion.V2, null).getParsedPredicate();
+		return factory.parsePredicate(str, null).getParsedPredicate();
 	}
 
 	public Predicate tcPredicate(String str) throws CoreException {
-		Predicate parsedPredicate = factory.parsePredicate(str, LanguageVersion.V2, null).getParsedPredicate();
+		Predicate parsedPredicate = factory.parsePredicate(str, null).getParsedPredicate();
 		if (parsedPredicate == null)
 			fail("expected string to parse as predicate but was not");
 		ITypeCheckResult typeCheck = parsedPredicate.typeCheck(environment);
@@ -172,24 +171,24 @@ public abstract class BasicAstExtTest extends TestCase {
 	}
 
 	public Expression expression(String str) throws CoreException {
-		return factory.parseExpression(str, LanguageVersion.V2, null).getParsedExpression();
+		return factory.parseExpression(str, null).getParsedExpression();
 	}
 
 	public Expression tcExpression(String str) throws CoreException {
-		Expression parsedExpression = factory.parseExpression(str, LanguageVersion.V2, null).getParsedExpression();
+		Expression parsedExpression = factory.parseExpression(str, null).getParsedExpression();
 		parsedExpression.typeCheck(environment);
 		return parsedExpression;
 	}
 
 	public Expression tcExpression(String str, String[] gTypes, String names[], String... types) throws CoreException {
-		Expression parsedExpression = factory.parseExpression(str, LanguageVersion.V2, null).getParsedExpression();
+		Expression parsedExpression = factory.parseExpression(str, null).getParsedExpression();
 		ITypeEnvironment te = typeEnvironment(gTypes, names, types);
 		parsedExpression.typeCheck(te);
 		return parsedExpression;
 	}
 
 	public Predicate tcPredicate(String str, String[] gTypes, String names[], String... types) throws CoreException {
-		Predicate parsedPredicate = factory.parsePredicate(str, LanguageVersion.V2, null).getParsedPredicate();
+		Predicate parsedPredicate = factory.parsePredicate(str, null).getParsedPredicate();
 		ITypeEnvironment te = typeEnvironment(gTypes, names, types);
 		parsedPredicate.typeCheck(te);
 		return parsedPredicate;
@@ -200,7 +199,7 @@ public abstract class BasicAstExtTest extends TestCase {
 	}
 
 	public Type type(String str) throws CoreException {
-		return factory.parseType(str, LanguageVersion.V2).getParsedType();
+		return factory.parseType(str).getParsedType();
 	}
 
 	public IPredicateExtension primeExtension() throws CoreException {
@@ -410,8 +409,8 @@ public abstract class BasicAstExtTest extends TestCase {
 			}
 			constructors.put("cons", consDest);
 		}
-		IDatatypeExtension ext = new CompleteDatatypeExtension("List", makeSList("T"), constructors);
-		LIST_EXTENSIONS = factory.makeDatatype(ext).getExtensions();
+		CompleteDatatypeExtension ext = new CompleteDatatypeExtension("List", makeSList("T"), constructors);
+		LIST_EXTENSIONS = ext.toDatatype(factory).getExtensions();
 		return LIST_EXTENSIONS;
 	}
 
@@ -425,8 +424,8 @@ public abstract class BasicAstExtTest extends TestCase {
 			constructors.put("EAST", Collections.<String, String> emptyMap());
 			constructors.put("WEST", Collections.<String, String> emptyMap());
 		}
-		IDatatypeExtension ext = new CompleteDatatypeExtension("DIRECTION", makeSList(), constructors);
-		DIRECTION_EXTENSIONS = factory.makeDatatype(ext).getExtensions();
+		CompleteDatatypeExtension ext = new CompleteDatatypeExtension("DIRECTION", makeSList(), constructors);
+		DIRECTION_EXTENSIONS = ext.toDatatype(factory).getExtensions();
 		return DIRECTION_EXTENSIONS;
 	}
 
@@ -498,12 +497,12 @@ public abstract class BasicAstExtTest extends TestCase {
 
 	public void assertParses(String str, boolean isPredicate) throws CoreException {
 		if (isPredicate) {
-			IParseResult res = factory.parsePredicate(str, LanguageVersion.V2, null);
+			IParseResult res = factory.parsePredicate(str, null);
 			if (res.hasProblem()) {
 				fail("expected string to parse as predicate, but did not");
 			}
 		} else {
-			IParseResult res = factory.parseExpression(str, LanguageVersion.V2, null);
+			IParseResult res = factory.parseExpression(str, null);
 			if (res.hasProblem()) {
 				fail("expected string to parse as expression, but did not");
 			}
@@ -512,12 +511,12 @@ public abstract class BasicAstExtTest extends TestCase {
 
 	public void assertNotParses(String str, boolean isPredicate) throws CoreException {
 		if (isPredicate) {
-			IParseResult res = factory.parsePredicate(str, LanguageVersion.V2, null);
+			IParseResult res = factory.parsePredicate(str, null);
 			if (!res.hasProblem()) {
 				fail("expected string to not parse as predicate, but did");
 			}
 		} else {
-			IParseResult res = factory.parseExpression(str, LanguageVersion.V2, null);
+			IParseResult res = factory.parseExpression(str, null);
 			if (!res.hasProblem()) {
 				fail("expected string to not parse as expression, but did");
 			}
@@ -525,9 +524,9 @@ public abstract class BasicAstExtTest extends TestCase {
 	}
 
 	public Formula<?> parse(String str) throws CoreException {
-		IParseResult res = factory.parsePredicate(str, LanguageVersion.V2, null);
+		IParseResult res = factory.parsePredicate(str, null);
 		if (res.hasProblem()) {
-			res = factory.parseExpression(str, LanguageVersion.V2, null);
+			res = factory.parseExpression(str, null);
 			if (res.hasProblem()) {
 				fail("string could not be parsed as predicate nor expression");
 			} else {

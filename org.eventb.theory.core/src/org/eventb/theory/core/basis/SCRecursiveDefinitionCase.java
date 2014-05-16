@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -42,16 +43,16 @@ public class SCRecursiveDefinitionCase extends SCExpressionElement implements
 
 	@Override
 	public Formula<?> getSCFormula(FormulaFactory ff,
-			ITypeEnvironment typeEnvironment) throws RodinDBException {
+			ITypeEnvironment typeEnvironment) throws CoreException {
 		String form = getAttributeValue(TheoryAttributes.FORMULA_ATTRIBUTE);
 		Formula<?> formula = TheoryElement.parseFormula(form, ff, false);
 		if (formula == null) {
-			throw Util.newRodinDBException("Error parsing formula: " + formula
+			throw Util.newCoreException("Error parsing formula: " + formula
 					+ "\nwith factory: " + ff.getExtensions(), this);
 		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
 		if (result.hasProblem()) {
-			throw Util.newRodinDBException("Error typechecking formula: "
+			throw Util.newCoreException("Error typechecking formula: "
 					+ formula + "\nwith factory: " + ff.getExtensions()
 					+ "\nresult: " + result, this);
 		}

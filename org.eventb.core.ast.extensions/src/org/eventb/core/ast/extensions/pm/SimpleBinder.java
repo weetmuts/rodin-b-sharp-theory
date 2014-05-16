@@ -51,9 +51,9 @@ public class SimpleBinder {
 			return null;
 		}
 		Formula<?> resultFormula = AstUtilities.parseFormula(pattern.toString(), pattern instanceof Expression, factory);
-		Formula<?> finalResultFormula = resultFormula.rewrite(new PredicateVariableSubstituter(binding.getPredicateMappings(), factory));
+		Formula<?> finalResultFormula = resultFormula.rewrite(new PredicateVariableSubstituter(binding.getPredicateMappings()));
 		finalResultFormula.typeCheck(binding.getTypeEnvironment());
-		Formula<?> formula = finalResultFormula.substituteFreeIdents(binding.getExpressionMappings(), factory);
+		Formula<?> formula = finalResultFormula.substituteFreeIdents(binding.getExpressionMappings());
 		return formula;
 	}
 }

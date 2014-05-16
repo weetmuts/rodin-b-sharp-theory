@@ -20,7 +20,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.POGProcessorModule;
@@ -51,7 +51,7 @@ public class TypeParametersPOGModule extends POGProcessorModule {
 	}
 	
 	private IPORoot target;
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 	private FormulaFactory factory;
 	
 	@Override
@@ -82,7 +82,7 @@ public class TypeParametersPOGModule extends POGProcessorModule {
 	protected void fetchTypeParameters(
 			ISCTheoryRoot theory, 
 			IPOPredicateSet rootSet, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		for (ISCTypeParameter set : theory.getSCTypeParameters()) {
 			FreeIdentifier identifier = fetchIdentifier(set);
 			createIdentifier(rootSet, identifier, monitor);
@@ -100,7 +100,7 @@ public class TypeParametersPOGModule extends POGProcessorModule {
 		poIdentifier.setType(type, monitor);
 	}
 
-	protected FreeIdentifier fetchIdentifier(ISCIdentifierElement ident) throws RodinDBException {
+	protected FreeIdentifier fetchIdentifier(ISCIdentifierElement ident) throws CoreException {
 		FreeIdentifier identifier = ident.getIdentifier(factory);
 		typeEnvironment.add(identifier);
 		return identifier;

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
@@ -28,9 +29,8 @@ import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheorem;
-import org.eventb.theory.rbp.utils.ProverUtilities;
-import org.rodinp.core.RodinDBException;
 import org.eventb.theory.core.basis.NewOperatorDefinition;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 
 
 /**
@@ -39,8 +39,7 @@ import org.eventb.theory.core.basis.NewOperatorDefinition;
  */
 public class DeployedObjectsFactory {
 
-	public static List<IDeployedTheorem> getDeployedTheorems(IExtensionRulesSource source, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment){
+	public static List<IDeployedTheorem> getDeployedTheorems(IExtensionRulesSource source, ITypeEnvironment typeEnvironment){
 		try {
 			List<IDeployedTheorem> result = new ArrayList<IDeployedTheorem>();
 			ISCTheorem[] scTheorems = source.getTheorems();
@@ -52,13 +51,13 @@ public class DeployedObjectsFactory {
 				if (scTheorem.getSource() instanceof ISCAxiomaticDefinitionAxiom) {
 					IDeployedTheorem deployedTheorem = 
 						new DeployedTheorem(scTheorem.getLabel(), 
-								scTheorem.getPredicate(factory, typeEnvironment), scTheorem.getOrder(), true);
+								scTheorem.getPredicate(typeEnvironment), scTheorem.getOrder(), true);
 					result.add(deployedTheorem);
 				}
 				else {
 					IDeployedTheorem deployedTheorem = 
 					new DeployedTheorem(scTheorem.getLabel(), 
-							scTheorem.getPredicate(factory, typeEnvironment), scTheorem.getOrder(), false);
+							scTheorem.getPredicate(typeEnvironment), scTheorem.getOrder(), false);
 					result.add(deployedTheorem);
 				}
 			}
@@ -74,7 +73,7 @@ public class DeployedObjectsFactory {
 			ITypeEnvironment typeEnvironment) {
 		try {
 			List<IDeployedRewriteRule> result = new ArrayList<IDeployedRewriteRule>();
-			ITypeEnvironment augTypeEnvironment = typeEnvironment.clone();
+			ITypeEnvironmentBuilder augTypeEnvironment = typeEnvironment.makeBuilder();
 			if (!(block.getSource() instanceof NewOperatorDefinition)) {
 				ISCMetavariable[] vars = block.getMetavariables();
 				for (ISCMetavariable var : vars) {
@@ -85,7 +84,7 @@ public class DeployedObjectsFactory {
 			for (ISCRewriteRule rule : rules) {
 				//update typeEnv
 				if (rule.getSource() instanceof NewOperatorDefinition) {
-					augTypeEnvironment = typeEnvironment.clone();
+					augTypeEnvironment = typeEnvironment.makeBuilder();//FIXME forget meta variables ?
 					IDeployedTheoryRoot deployedRoot = (IDeployedTheoryRoot) block.getParent();
 					ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
 					for (ISCNewOperatorDefinition definition : operatorDefinitions) {
@@ -116,7 +115,7 @@ public class DeployedObjectsFactory {
 			ITypeEnvironment typeEnvironment) {
 		try {
 			List<IDeployedInferenceRule> result = new ArrayList<IDeployedInferenceRule>();
-			ITypeEnvironment augTypeEnvironment = typeEnvironment.clone();
+			ITypeEnvironmentBuilder augTypeEnvironment = typeEnvironment.makeBuilder();
 			ISCMetavariable[] vars = block.getMetavariables();
 			for (ISCMetavariable var : vars) {
 				augTypeEnvironment.add(var.getIdentifier(factory));
@@ -231,7 +230,7 @@ public class DeployedObjectsFactory {
 		try {
 			String name = rhs.getLabel();
 			Formula<?> rhsForm = rhs.getSCFormula(factory, typeEnvironment);
-			Predicate cond = rhs.getPredicate(factory, typeEnvironment);
+			Predicate cond = rhs.getPredicate(typeEnvironment);
 			IDeployedRuleRHS depRHS = new DeployedRuleRHS(name, rhsForm, cond);
 			return depRHS;
 		} catch (CoreException e) {
@@ -243,7 +242,7 @@ public class DeployedObjectsFactory {
 	public static IDeployedGiven getDeployedGiven(ISCGiven given,
 			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
 		try {
-			IDeployedGiven dep = new DeployedGiven(given.getPredicate(factory,typeEnvironment), given.isHyp());
+			IDeployedGiven dep = new DeployedGiven(given.getPredicate(typeEnvironment), given.isHyp());
 			return dep;
 		} catch (CoreException e) {
 			ProverUtilities.log(e, "error creating deployed given clause from "+ given);
@@ -254,10 +253,9 @@ public class DeployedObjectsFactory {
 	public static IDeployedInfer getDeployedInfer(ISCInfer infer,
 			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
 		try {
-			IDeployedInfer dep = new DeployedInfer(infer.getPredicate(factory,
-					typeEnvironment));
+			IDeployedInfer dep = new DeployedInfer(infer.getPredicate(typeEnvironment));
 			return dep;
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			ProverUtilities.log(e, "error creating deployed infer clause from "+ infer);
 		}
 		return null;

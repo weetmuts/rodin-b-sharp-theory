@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
@@ -31,9 +32,9 @@ public interface ISCTypeElement extends IInternalElement{
 	 * Returns the type associated with this element.
 	 * @param factory the formula factory
 	 * @return the type
-	 * @throws RodinDBException
+	 * @throws CoreException 
 	 */
-	Type getType(FormulaFactory factory) throws RodinDBException;
+	Type getType(FormulaFactory factory) throws CoreException;
 	
 	/**
 	 * Sets the type associated with this element to the given type.

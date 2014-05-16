@@ -7,10 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.Notation;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 

@@ -1,8 +1,8 @@
 package org.eventb.theory.core.basis;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.theory.core.TheoryAttributes.HAS_ERROR_ATTRIBUTE;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
@@ -42,9 +42,7 @@ public class SCAxiomaticOperatorDefinition extends TheoryElement implements ISCA
 		setAttributeValue(HAS_ERROR_ATTRIBUTE, hasError, monitor);
 	}
 	
-	@Override
-	@Deprecated
-	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
+	private Predicate getPredicate(FormulaFactory factory) throws CoreException {
 		String contents = getPredicateString();
 		final IRodinElement source;
 		if (hasAttribute(EventBAttributes.SOURCE_ATTRIBUTE)) {
@@ -52,9 +50,9 @@ public class SCAxiomaticOperatorDefinition extends TheoryElement implements ISCA
 		} else {
 			source = null;
 		}
-		IParseResult parserResult = factory.parsePredicate(contents, V2, source);
+		IParseResult parserResult = factory.parsePredicate(contents, source);
 		if (parserResult.getProblems().size() != 0) {
-			throw Util.newRodinDBException(
+			throw Util.newCoreException(
 					Messages.database_SCPredicateParseFailure,
 					this
 			);
@@ -64,13 +62,11 @@ public class SCAxiomaticOperatorDefinition extends TheoryElement implements ISCA
 	}
 
 	@Override
-	public Predicate getPredicate(
-			FormulaFactory factory, ITypeEnvironment typenv) throws RodinDBException {
-		
-		Predicate result = getPredicate(factory);
+	public Predicate getPredicate(ITypeEnvironment typenv) throws CoreException {
+		Predicate result = getPredicate(typenv.getFormulaFactory());
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
-			throw Util.newRodinDBException(
+			throw Util.newCoreException(
 					Messages.database_SCPredicateTCFailure,
 					this
 			);
@@ -84,12 +80,6 @@ public class SCAxiomaticOperatorDefinition extends TheoryElement implements ISCA
 		setPredicateString(predicate.toStringWithTypes(), monitor);
 	}
 	
-	@Override
-	@Deprecated
-	public void setPredicate(Predicate predicate) throws RodinDBException {
-		setPredicate(predicate, null);
-	}
-
 	@Override
 	public ISCOperatorArgument getOperatorArgument(String name) {
 		return getInternalElement(ISCOperatorArgument.ELEMENT_TYPE, name);

@@ -7,11 +7,14 @@
  *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.maths;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 
 /**
@@ -23,7 +26,7 @@ import org.eventb.core.ast.extensions.maths.AstUtilities;
  * @author maamria
  *
  */
-public class SimpleDatatypeExtension implements IDatatypeExtension{
+public class SimpleDatatypeExtension {
 
 	/**
 	 * ID used to name the datatype.
@@ -43,29 +46,35 @@ public class SimpleDatatypeExtension implements IDatatypeExtension{
 		this.typeArguments = typeArguments;
 	}
 	
-	@Override
-	public String getTypeName() {
-		return identifier;
-	}
-
-	
-	@Override
-	public String getId() {
-		return identifier + DATATYPE_ID;
-	}
-
-	@Override
-	public void addTypeParameters(ITypeConstructorMediator mediator) {
-		for(String arg : typeArguments){
-			mediator.addTypeParam(arg);
+	/**
+	 * Makes and populates a datatype builder from this datatype specification.
+	 * Subclasses may override in order to populate with additional items, but
+	 * must call this method to get a pre populated datatype builder instance.
+	 * 
+	 * @param factory
+	 *            the formula factory used to make a IDatatypeBuilder instance
+	 * @return a datatype builder
+	 */
+	protected IDatatypeBuilder toDatatypeBuilder(FormulaFactory factory) {
+		final List<GivenType> parameters = new ArrayList<GivenType>();
+		for (String parameter : typeArguments) {
+			parameters.add(factory.makeGivenType(parameter));
 		}
+		return factory.makeDatatypeBuilder(identifier, parameters);
 	}
-
-	@Override
-	public void addConstructors(IConstructorMediator mediator) {
-		// no constructors
+	
+	/**
+	 * Converts this datatype specification into a finalized datatype instance.
+	 * 
+	 * @param factory
+	 *            the formula factory used to make a IDatatypeBuilder instance
+	 * @return a finalized datatype
+	 * @see FormulaFactory#makeDatatypeBuilder(String, List)
+	 */
+	public final IDatatype toDatatype(FormulaFactory factory) {
+		return toDatatypeBuilder(factory).finalizeDatatype();
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)

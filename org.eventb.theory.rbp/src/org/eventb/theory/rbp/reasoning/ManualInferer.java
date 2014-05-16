@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -130,7 +131,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 				Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
 				for (FreeIdentifier identifier : expressionMappings.keySet()){
 					Expression mappedExpression = expressionMappings.get(identifier);
-					Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
+					Predicate wdPredicate = mappedExpression.getWDPredicate();
 					if (!wdPredicate.equals(ProverUtilities.BTRUE)){
 						if (!sequent.containsHypothesis(wdPredicate))
 							antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
@@ -184,7 +185,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 		Map<FreeIdentifier, Expression> mappedIdents = finalBinding.getExpressionMappings();
 		for (FreeIdentifier identifier : mappedIdents.keySet()){
 			Expression mappedExpression = mappedIdents.get(identifier);
-			Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
+			Predicate wdPredicate = mappedExpression.getWDPredicate();
 			if (!wdPredicate.equals(ProverUtilities.BTRUE)){
 				if (!sequent.containsHypothesis(wdPredicate))
 					antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
@@ -209,21 +210,21 @@ public class ManualInferer extends AbstractRulesApplyer{
 			}
 			Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
 			for (ISCGiven given : givens) {
-				Predicate subGoal = (Predicate) binder.bind(given.getPredicate(factory, typeEnvironment), binding);
+				Predicate subGoal = (Predicate) binder.bind(given.getPredicate(typeEnvironment), binding);
 				antecedents.add(ProverFactory.makeAntecedent(subGoal));
 			}
 			// add the well-definedness conditions where appropriate
 			Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
 			for (FreeIdentifier identifier : expressionMappings.keySet()){
 				Expression mappedExpression = expressionMappings.get(identifier);
-				Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
+				Predicate wdPredicate = mappedExpression.getWDPredicate();
 				if (!wdPredicate.equals(ProverUtilities.BTRUE)){
 					if (!sequent.containsHypothesis(wdPredicate))
 						antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
 				}
 			}
 			return antecedents.toArray(new IAntecedent[antecedents.size()]);
-	} catch (RodinDBException e) {
+	} catch (CoreException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
@@ -240,7 +241,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 		FormulaFactory factory = context.getFormulaFactory();
 		//ITypeEnvironment typeEnv = sequent.typeEnvironment();
 		ITypeEnvironment typeEnv = ProverUtilities.makeTypeEnvironment(factory, rule);
-		Predicate givenPredicate = firstGiven.getPredicate(factory, typeEnv);
+		Predicate givenPredicate = firstGiven.getPredicate(typeEnv);
 		IBinding binding = finder.match(hypothesis, givenPredicate, true);
 		if(binding == null){
 			return null;
@@ -248,7 +249,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 		List<Predicate> otherGivens = new ArrayList<Predicate>();
 		for (ISCGiven given : rule.getGivens()){
 			if(!given.equals(firstGiven)){
-				otherGivens.add(given.getPredicate(factory, typeEnv));
+				otherGivens.add(given.getPredicate(typeEnv));
 			}
 		}
 		List<Predicate> otherHyps = new ArrayList<Predicate>();
@@ -265,7 +266,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 			return null;
 		}
 		finalBinding.makeImmutable();
-		Predicate newHyp = (Predicate) binder.bind(rule.getInfers()[0].getPredicate(factory, typeEnv), finalBinding);
+		Predicate newHyp = (Predicate) binder.bind(rule.getInfers()[0].getPredicate(typeEnv), finalBinding);
 		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
 		// add the antecedent corresponding to the infer clause
 		IAntecedent mainAntecedent = ProverFactory.makeAntecedent(null, Collections.singleton(newHyp), 
@@ -275,14 +276,14 @@ public class ManualInferer extends AbstractRulesApplyer{
 		Map<FreeIdentifier, Expression> mappedIdents = finalBinding.getExpressionMappings();
 		for (FreeIdentifier identifier : mappedIdents.keySet()){
 			Expression mappedExpression = mappedIdents.get(identifier);
-			Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
+			Predicate wdPredicate = mappedExpression.getWDPredicate();
 			if (!wdPredicate.equals(ProverUtilities.BTRUE)){
 				if (!sequent.containsHypothesis(wdPredicate))
 					antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
 			}
 		}
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);
-	} catch (RodinDBException e) {
+	} catch (CoreException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 		return null;

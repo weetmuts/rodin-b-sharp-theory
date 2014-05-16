@@ -24,11 +24,6 @@ public class XDReasoner extends AutoRewriteReasoner {
 	private static final String DISPLAY_NAME = "RbPxd";
 
 	@Override
-	public String getSignature() {
-		return REASONER_ID;
-	}
-
-	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

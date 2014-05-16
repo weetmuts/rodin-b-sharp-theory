@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCProofRulesBlock;
@@ -34,7 +35,7 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 	private List<IDeployedInferenceRule> inferenceRules;
 	private List<IDeployedTheorem> theorems; 
 
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 	private R theoryRoot;
 
 	/**
@@ -65,7 +66,7 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 
 	@Override
 	public ITypeEnvironment getGloablTypeEnvironment() {
-		return typeEnvironment.clone();
+		return typeEnvironment.makeSnapshot();
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public final class DeployedTheoryFile<R extends IEventBRoot & IFormulaExtensions
 				typeEnvironment.addGivenSet(par.getIdentifier(factory)
 						.getName());
 			}
-			theorems.addAll(DeployedObjectsFactory.getDeployedTheorems(theoryRoot, factory, typeEnvironment));
+			theorems.addAll(DeployedObjectsFactory.getDeployedTheorems(theoryRoot, typeEnvironment));
 			ISCProofRulesBlock[] blocks = theoryRoot.getProofRulesBlocks();
 			for (ISCProofRulesBlock b : blocks) {
 				rewriteRules.addAll(DeployedObjectsFactory.getDeployedRewriteRules(b, factory, typeEnvironment));

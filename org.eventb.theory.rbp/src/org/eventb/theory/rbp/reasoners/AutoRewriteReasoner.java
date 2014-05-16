@@ -1,7 +1,5 @@
 package org.eventb.theory.rbp.reasoners;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +15,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
@@ -51,7 +50,7 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 			if (inferredHyp == hyp && inferredHyps.size() == 1)
 				continue;
 			// Check if rewriting generated something interesting
-			inferredHyps.remove(mDLib(ff).True());
+			inferredHyps.remove(DLib.True(ff));
 			Collection<Predicate> originalHyps = Collections.singleton(hyp);
 			// Hide the original if the inferredHyps is empty, i.e. the
 			// hypothesis get rewritten to Lib.True.
@@ -85,11 +84,6 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 		return ProverFactory.reasonerFailure(this, contextualInput, "No rewrites applicable");
 	}
 
-	@Override
-	public String getSignature() {
-		return REASONER_ID;
-	}
-	
 	// can be overridden to provide alternative display name
 	protected String getDisplayName() {
 		return DISPLAY_NAME;

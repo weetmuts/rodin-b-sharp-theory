@@ -20,10 +20,11 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
@@ -72,7 +73,7 @@ public class FormulaExtensionsLoader {
 	public static final Set<IFormulaExtension> EMPTY_EXT = new LinkedHashSet<IFormulaExtension>();
 
 	private FormulaFactory factory;
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 	private IFormulaExtensionsSource source;
 
 	public FormulaExtensionsLoader(IFormulaExtensionsSource source, FormulaFactory factory) {
@@ -103,7 +104,7 @@ public class FormulaExtensionsLoader {
 		ISCNewOperatorDefinition operatorDefinitions[] = getOperators(source);
 		for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 			OperatorTransformer transformer = new OperatorTransformer();
-			ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
+			ITypeEnvironmentBuilder localTypeEnvironment = typeEnvironment.makeBuilder();
 			IOperatorExtension addedExtensions = transformer.transform(definition, factory, localTypeEnvironment);
 			if (addedExtensions == null) {
 				continue;
@@ -124,13 +125,13 @@ public class FormulaExtensionsLoader {
 						null, localTypeEnvironment.getType(recDef.getInductiveArgument()));
 				for (ISCRecursiveDefinitionCase recCase : recDef.getRecursiveDefinitionCases()){
 					String expressionString = recCase.getExpressionString();
-					IParseResult parseRes = factory.parseExpression(expressionString, LanguageVersion.V2, null);
+					IParseResult parseRes = factory.parseExpression(expressionString, null);
 					if (!parseRes.hasProblem()){
 						Expression caseExp = parseRes.getParsedExpression();
 						RelationalPredicate predicate = factory.makeRelationalPredicate(Formula.EQUAL, inductiveArg, caseExp, null);
 						ITypeCheckResult typeCheckRes = predicate.typeCheck(localTypeEnvironment);
 						if(!typeCheckRes.hasProblem()){
-							ITypeEnvironment inferredEnvironment = typeCheckRes.getInferredEnvironment();
+							IInferredTypeEnvironment inferredEnvironment = typeCheckRes.getInferredEnvironment();
 							inferredEnvironment.addAll(localTypeEnvironment);
 							Formula<?> caseDef = recCase.getSCFormula(factory, inferredEnvironment);
 							recursiveCases.put(predicate.getRight(), caseDef);
@@ -168,7 +169,7 @@ public class FormulaExtensionsLoader {
 			}
 			List<Predicate> axiomPredicates = new ArrayList<Predicate>();
 			for (ISCAxiomaticDefinitionAxiom axiom : block.getAxiomaticDefinitionAxioms()){
-				axiomPredicates.add(axiom.getPredicate(factory, typeEnvironment));
+				axiomPredicates.add(axiom.getPredicate(typeEnvironment));
 			}
 			for (IOperatorExtension opExt : axiomExts){
 				opExt.setDefinition(new Definitions.AxiomaticDefinition(axiomPredicates));
@@ -213,7 +214,7 @@ public class FormulaExtensionsLoader {
 class DatatypeTransformer{
 
 	public Set<IFormulaExtension> transform(final ISCDatatypeDefinition definition, final FormulaFactory factory,
-			ITypeEnvironment typeEnvironment) throws RodinDBException {
+			ITypeEnvironment typeEnvironment) throws CoreException {
 		if (definition == null || !definition.exists()) {
 			return null;
 		}
@@ -271,7 +272,7 @@ class AxiomaticOperatorTransformer extends DefinitionTransformer<ISCAxiomaticOpe
 	
 	@Override
 	public IOperatorExtension transform(ISCAxiomaticOperatorDefinition definitionElmnt, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment) throws RodinDBException {
+			ITypeEnvironmentBuilder typeEnvironment) throws CoreException {
 		if (definitionElmnt == null || !definitionElmnt.exists()) {
 			return null;
 		}
@@ -299,12 +300,12 @@ class AxiomaticOperatorTransformer extends DefinitionTransformer<ISCAxiomaticOpe
 				}
 			}
 		}
-		ITypeEnvironment tempTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(
+		ITypeEnvironmentBuilder tempTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(
 				typeEnvironment, factory);
 		for (String arg : operatorArguments.keySet()) {
 			tempTypeEnvironment.addName(arg, operatorArguments.get(arg));
 		}
-		Predicate wdCondition = definitionElmnt.getPredicate(factory, tempTypeEnvironment);
+		Predicate wdCondition = definitionElmnt.getPredicate(tempTypeEnvironment);
 		Predicate dWdCondition = definitionElmnt.getWDCondition(factory, tempTypeEnvironment);
 		IOperatorExtension extension = null;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType,
@@ -334,7 +335,7 @@ class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition
 
 	@Override
 	public IOperatorExtension transform(ISCNewOperatorDefinition definitionElmnt, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment) throws RodinDBException {
+			ITypeEnvironmentBuilder typeEnvironment) throws CoreException {
 		if (definitionElmnt == null || !definitionElmnt.exists()) {
 			return null;
 		}
@@ -365,7 +366,7 @@ class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition
 		for (String arg : operatorArguments.keySet()) {
 			typeEnvironment.addName(arg, operatorArguments.get(arg));
 		}
-		Predicate wdCondition = definitionElmnt.getPredicate(factory, typeEnvironment);
+		Predicate wdCondition = definitionElmnt.getPredicate(typeEnvironment);
 		Predicate dWdCondition = definitionElmnt.getWDCondition(factory, typeEnvironment);
 		final IOperatorExtension extension;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType,
@@ -418,6 +419,6 @@ abstract class DefinitionTransformer<E extends IInternalElement> {
 	 * @throws CoreException
 	 */
 	public abstract IOperatorExtension transform(E definition, final FormulaFactory factory,
-			ITypeEnvironment typeEnvironment) throws RodinDBException;
+			ITypeEnvironmentBuilder typeEnvironment) throws CoreException;
 
 }

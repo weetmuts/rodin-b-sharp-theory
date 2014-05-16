@@ -136,7 +136,7 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 			prmTypes.add(alpha);
 		}
 		return tcMediator.makePowerSetType(tcMediator.makeParametricType(
-				prmTypes, this));
+				this, prmTypes));
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 			childTypes.add(baseType);
 		}
 		return mediator.makePowerSetType(mediator.makeParametricType(
-				childTypes, this));
+				this, childTypes));
 	}
 
 	@Override

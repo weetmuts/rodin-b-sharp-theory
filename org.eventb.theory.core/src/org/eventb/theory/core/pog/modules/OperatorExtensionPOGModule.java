@@ -7,6 +7,12 @@
  *******************************************************************************/
 package org.eventb.theory.core.pog.modules;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.True;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeConj;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeEq;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeImp;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeUnivQuant;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -26,12 +32,12 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.POGNatureFactory;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
@@ -99,7 +105,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		if (definition.hasError()) {
 			return;
 		}
-		final ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
+		final ITypeEnvironmentBuilder localTypeEnvironment = typeEnvironment.makeBuilder();
 		// get the arguments
 		ISCOperatorArgument[] arguments = definition.getOperatorArguments();
 		Set<FreeIdentifier> identifiers = new LinkedHashSet<FreeIdentifier>();
@@ -109,8 +115,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 			localTypeEnvironment.add(ident);
 		}
 		// get the well-definedness condition
-		final Predicate wdCondition = definition.getPredicate(factory,
-				localTypeEnvironment);
+		final Predicate wdCondition = definition.getPredicate(localTypeEnvironment);
 		// get the definition
 		final ISCDirectOperatorDefinition[] directDefinitions = definition
 				.getDirectOperatorDefinitions();
@@ -129,7 +134,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		String poName = definition.getLabel()
 				+ OPERATOR_WD_POSTFIX;
 		Predicate wdStrengthPredicate = getClosedPOPredicate(
-				wdCondition, defFormula.getWDPredicate(factory),
+				wdCondition, defFormula.getWDPredicate(),
 				identifiers, localTypeEnvironment);
 		if (!isTrivial(wdStrengthPredicate)) {
 			createPO(
@@ -199,38 +204,36 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 
 	@Override
 	public IModuleType<?> getModuleType() {
-		// TODO Auto-generated method stub
 		return MODULE_TYPE;
 	}
 
 	protected Predicate getClosedPOPredicate(Predicate wdCondition,
 			Predicate otherPredicate, Set<FreeIdentifier> identifiers,
 			ITypeEnvironment typeEnvironment) {
-		DLib library = DLib.mDLib(factory);
 		if (otherPredicate.equals(wdCondition)
-				|| otherPredicate.equals(library.True())) {
-			return library.True();
+				|| otherPredicate.equals(True(factory))) {
+			return True(factory);
 		}
-		Predicate boundPred = library.makeImp(wdCondition, otherPredicate);
+		Predicate boundPred = makeImp(wdCondition, otherPredicate);
 		List<Predicate> typingPreds = new ArrayList<Predicate>();
 		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();
 		for (FreeIdentifier identifier : identifiers) {
 			typingPreds.add(factory.makeRelationalPredicate(Formula.IN,
-					identifier, identifier.getType().toExpression(factory),
+					identifier, identifier.getType().toExpression(),
 					null));
 			identifiers.add(identifier);
 			decls.add(factory.makeBoundIdentDecl(identifier.getName(), null,
 					identifier.getType()));
 		}
-		Predicate initial = library.makeImp(library.makeConj(typingPreds),
+		Predicate initial = makeImp(makeConj(factory, typingPreds),
 				boundPred);
 
-		initial = initial.bindTheseIdents(identifiers, factory);
+		initial = initial.bindTheseIdents(identifiers);
 		Predicate pred = null;
 		if (decls.size() == 0) {
 			pred = initial;
 		} else {
-			pred = library.makeUnivQuant(
+			pred = makeUnivQuant(
 					decls.toArray(new BoundIdentDecl[decls.size()]), initial);
 		}
 		ITypeCheckResult result = pred.typeCheck(typeEnvironment);
@@ -247,19 +250,18 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		FreeIdentifier temp = factory.makeFreeIdentifier(VAR_TEMP_NAME, null,
 				ident1.getType());
 		subs.put(ident1, temp);
-		Formula<?> form1 = formula.substituteFreeIdents(subs, factory);
+		Formula<?> form1 = formula.substituteFreeIdents(subs);
 		subs.clear();
 		subs.put(ident2, ident1);
-		Formula<?> form2 = form1.substituteFreeIdents(subs, factory);
+		Formula<?> form2 = form1.substituteFreeIdents(subs);
 		subs.clear();
 		subs.put(temp, ident2);
-		Formula<?> form3 = form2.substituteFreeIdents(subs, factory);
+		Formula<?> form3 = form2.substituteFreeIdents(subs);
 		return form3;
 	}
 
 	protected Predicate getAssociativityChecker(Expression directDefinition,
 			Set<FreeIdentifier> arguments, ITypeEnvironment typeEnvironment) {
-		DLib library = DLib.mDLib(factory);
 		FreeIdentifier[] opArgs = arguments
 				.toArray(new FreeIdentifier[arguments.size()]);
 		FreeIdentifier x = opArgs[0];
@@ -270,22 +272,21 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		// left (x op y) op z
 		subs.put(y, z);
 		Expression y_by_z = directDefinition
-				.substituteFreeIdents(subs, factory);
+				.substituteFreeIdents(subs);
 		subs.clear();
 		subs.put(x, directDefinition);
-		Expression left = y_by_z.substituteFreeIdents(subs, factory);
+		Expression left = y_by_z.substituteFreeIdents(subs);
 		subs.clear();
 		// right x op (y op z)
 		subs.put(y, z);
-		Expression y_by_z2 = directDefinition.substituteFreeIdents(subs,
-				factory);
+		Expression y_by_z2 = directDefinition.substituteFreeIdents(subs);
 		subs.clear();
 		subs.put(x, y);
-		Expression x_by_y2 = y_by_z2.substituteFreeIdents(subs, factory);
+		Expression x_by_y2 = y_by_z2.substituteFreeIdents(subs);
 		subs.clear();
 		subs.put(y, x_by_y2);
-		Expression right = directDefinition.substituteFreeIdents(subs, factory);
-		Predicate assocCond = library.makeEq(left, right);
+		Expression right = directDefinition.substituteFreeIdents(subs);
+		Predicate assocCond = makeEq(left, right);
 
 		List<FreeIdentifier> identsToBind = new ArrayList<FreeIdentifier>();
 		Predicate[] typingPreds = new Predicate[3];
@@ -293,21 +294,21 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		identsToBind.add(x);
 		decls[0] = factory.makeBoundIdentDecl(x.getName(), null, x.getType());
 		typingPreds[0] = factory.makeRelationalPredicate(Formula.IN, x, x
-				.getType().toExpression(factory), null);
+				.getType().toExpression(), null);
 		identsToBind.add(y);
 		decls[1] = factory.makeBoundIdentDecl(y.getName(), null, y.getType());
 		typingPreds[1] = factory.makeRelationalPredicate(Formula.IN, y, y
-				.getType().toExpression(factory), null);
+				.getType().toExpression(), null);
 		identsToBind.add(z);
 		decls[2] = factory.makeBoundIdentDecl(z.getName(), null, z.getType());
 		typingPreds[2] = factory.makeRelationalPredicate(Formula.IN, z, z
-				.getType().toExpression(factory), null);
+				.getType().toExpression(), null);
 
-		Predicate rawCondition = library.makeImp(library.makeConj(typingPreds),
-				library.makeImp(assocCond.getWDPredicate(factory), assocCond));
+		Predicate rawCondition = makeImp(makeConj(factory, typingPreds),
+				makeImp(assocCond.getWDPredicate(), assocCond));
 
-		rawCondition = rawCondition.bindTheseIdents(identsToBind, factory);
-		rawCondition = library.makeUnivQuant(decls, rawCondition);
+		rawCondition = rawCondition.bindTheseIdents(identsToBind);
+		rawCondition = makeUnivQuant(decls, rawCondition);
 		ITypeCheckResult result = rawCondition.typeCheck(typeEnvironment);
 		assert !result.hasProblem();
 		return rawCondition;
@@ -316,7 +317,6 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 
 	public Predicate getCommutativityChecker(Formula<?> defFormula,
 			Set<FreeIdentifier> arguments, ITypeEnvironment typeEnvironment) {
-		DLib library = DLib.mDLib(factory);
 		FreeIdentifier[] opArgs = arguments
 				.toArray(new FreeIdentifier[arguments.size()]);
 		FreeIdentifier x = opArgs[0];
@@ -324,13 +324,13 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		Formula<?> commutForm = swap(x, y, defFormula);
 		Predicate commutPred = null;
 		if (commutForm instanceof Expression) {
-			commutPred = library.makeEq((Expression) defFormula,
+			commutPred = makeEq((Expression) defFormula,
 					(Expression) commutForm);
 		} else {
 			commutPred = factory.makeBinaryPredicate(Formula.LEQV,
 					(Predicate) defFormula, (Predicate) commutForm, null);
 		}
-		return getClosedPOPredicate(commutPred.getWDPredicate(factory),
+		return getClosedPOPredicate(commutPred.getWDPredicate(),
 				commutPred, arguments, typeEnvironment);
 	}
 

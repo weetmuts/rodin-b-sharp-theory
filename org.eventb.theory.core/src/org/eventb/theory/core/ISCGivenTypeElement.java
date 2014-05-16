@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
@@ -25,9 +26,9 @@ public interface ISCGivenTypeElement extends IInternalElement{
 	 * Returns the given type associated with this element.
 	 * @param factory the formula factory
 	 * @return the given type
-	 * @throws RodinDBException
+	 * @throws CoreException 
 	 */
-	Type getSCGivenType(FormulaFactory factory) throws RodinDBException;
+	Type getSCGivenType(FormulaFactory factory) throws CoreException;
 	
 	/**
 	 * Sets the given type attribute to the given type.

@@ -165,12 +165,6 @@ public class ManualRewriteReasoner extends ContextAwareReasoner implements IRepa
 	}
 
 	@Override
-	public String getSignature() {
-		// FIXME should return a signature of the current theory environment
-		return REASONER_ID;
-	}
-
-	@Override
 	public IReasonerInput repair(IReasonerInputReader reader) {
 		try {
 			return deserializeInput(reader, true);

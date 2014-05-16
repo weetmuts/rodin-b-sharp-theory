@@ -10,7 +10,7 @@ package org.eventb.theory.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.POGProcessorModule;
@@ -31,7 +31,7 @@ public class RulesBlockPOGModule extends POGProcessorModule {
 
 	private final IModuleType<RulesBlockPOGModule> MODULE_TYPE = POGCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".rulesBlockPOGModule"); //$NON-NLS-1$
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 	private FormulaFactory factory;
 
 	@Override
@@ -50,7 +50,7 @@ public class RulesBlockPOGModule extends POGProcessorModule {
 		ISCTheoryRoot root = (ISCTheoryRoot) scTheoryFile.getRoot();
 		ISCProofRulesBlock[] rulesBlocks = root.getProofRulesBlocks();
 		for (ISCProofRulesBlock rulesBlock : rulesBlocks) {
-			ITypeEnvironment localEnvironment = AstUtilities
+			ITypeEnvironmentBuilder localEnvironment = AstUtilities
 					.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			ISCMetavariable[] metavariables = rulesBlock.getMetavariables();
 			for (ISCMetavariable var : metavariables) {

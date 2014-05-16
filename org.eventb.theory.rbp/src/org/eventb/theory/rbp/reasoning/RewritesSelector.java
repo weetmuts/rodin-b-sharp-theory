@@ -9,6 +9,7 @@ package org.eventb.theory.rbp.reasoning;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -48,7 +49,6 @@ import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 import org.eventb.theory.rbp.tactics.applications.RewriteTacticApplication;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.eventb.ui.prover.ITacticApplication;
-import org.rodinp.core.RodinDBException;
 
 /**
  * A selector of applicable interactive rewrite rules.
@@ -107,7 +107,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 						accum.add(new RewriteTacticApplication(new RewriteInput(( (ISCRewriteRule) rule).getRoot().getRodinProject().getElementName(), ( (ISCRewriteRule) rule).getRoot().getElementName(), ( (ISCRewriteRule) rule).getLabel(), 
 								( (ISCRewriteRule) rule).getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
 					}
-				} catch (RodinDBException e) {
+				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

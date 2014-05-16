@@ -132,8 +132,4 @@ public class ManualInferenceReasoner extends ContextAwareReasoner{
 		return new InferenceInput(projectString, theoryString, ruleString, ruleDesc,pred, forward, null, context);
 	}
 
-	@Override
-	public String getSignature() {
-		return REASONER_ID;
-	}
 }

@@ -82,7 +82,7 @@ public class MetavariableFilterModule extends SCFilterModule {
 	 */
 	protected boolean checkTypeParameters(Type type, IMetavariable var, FormulaFactory factory, ITypeEnvironment typeEnvironment)
 			throws RodinDBException {
-		FreeIdentifier[] idents = type.toExpression(factory)
+		FreeIdentifier[] idents = type.toExpression()
 				.getSyntacticallyFreeIdentifiers();
 		List<String> givenSets = AstUtilities
 				.getGivenSetsNames(typeEnvironment);

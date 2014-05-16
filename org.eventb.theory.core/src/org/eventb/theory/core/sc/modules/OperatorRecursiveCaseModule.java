@@ -15,7 +15,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
@@ -96,7 +96,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				continue;
 			}			
 			String caseString = definitionCase.getExpressionString();
-			IParseResult parseResult = factory.parseExpression(caseString, LanguageVersion.V2, null);
+			IParseResult parseResult = factory.parseExpression(caseString, null);
 			if (CoreUtilities.issueASTProblemMarkers(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 					parseResult, this)) {
 				recursiveDefinitionInfo.setNotAccurate();
@@ -151,7 +151,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 				theoryAccuracyInfo.setNotAccurate();
 				continue;
 			} else {
-				ITypeEnvironment localTypeEnvironment = typeEnvironment.clone();
+				ITypeEnvironmentBuilder localTypeEnvironment = typeEnvironment.makeBuilder();
 				localTypeEnvironment.addAll(tcResult.getInferredEnvironment());
 				// we do this because it's type checked
 				constructorExp = (ExtendedExpression) ((RelationalPredicate) predicate).getRight();

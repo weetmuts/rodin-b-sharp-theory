@@ -10,11 +10,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ICommentedElement;
 import org.eventb.internal.ui.OverlayIcon;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.theory.internal.ui.ITheoryImages;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
@@ -156,7 +157,7 @@ public class TheoryPathImage {
 	public static ImageDescriptor getImageDescriptor(IRodinElement element) {
 		final IElementDesc elementDesc = ElementDescRegistry.getInstance()
 				.getElementDesc(element.getElementType());
-		return elementDesc.getImageProvider().getImageDescriptor(element);
+		return ((ElementDesc) elementDesc).getImageProvider().getImageDescriptor(element);
 	}
 
 	public static Image getImage(ImageDescriptor desc, int overlay) {
@@ -260,8 +261,6 @@ public class TheoryPathImage {
 		// Other images
 		registerImage(registry, ITheoryImages.IMG_PENDING,
 				"icons/pending.gif");
-		registerImage(registry, ITheoryImages.IMG_APPLIED,
-				"icons/applied.gif");
 		registerImage(registry, ITheoryImages.IMG_DISCHARGED,
 				"icons/discharged.gif");
 		registerImage(registry, ITheoryImages.IMG_REVIEWED,

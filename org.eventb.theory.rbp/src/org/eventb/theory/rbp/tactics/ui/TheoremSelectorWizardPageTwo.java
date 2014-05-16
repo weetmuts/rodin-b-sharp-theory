@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -24,13 +25,11 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.rbp.utils.ProverUtilities;
-import org.rodinp.core.RodinDBException;
 
 /**
  * 
@@ -97,14 +96,14 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 							dialogChanged();
 							return;
 						}
-						Type parsedType = factory.parseType(textStr, LanguageVersion.V2).getParsedType();
+						Type parsedType = factory.parseType(textStr).getParsedType();
 						if (parsedType == null){
 							instantiations.remove(givenTypes[k]);
 							texts[k].setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 							dialogChanged();
 							return;
 						}
-						Expression typeExpression = parsedType.toExpression(factory);
+						Expression typeExpression = parsedType.toExpression();
 						for (GivenType ident : typeExpression.getGivenTypes()){
 							if (!ProverUtilities.isGivenSet(typeEnvironment, ident.getName())){
 								instantiations.remove(givenTypes[k]);
@@ -181,11 +180,11 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 		try {
 			for (ISCTheorem deployedTheorem : SCTheorems){
 				Predicate theorem;
-					theorem = deployedTheorem.getPredicate(factory, typeEnvironment);
+					theorem = deployedTheorem.getPredicate(typeEnvironment);
 					Predicate substitutedTheorem = (Predicate) subtitute(theorem.toString(), subs);
 					strings.add(substitutedTheorem.toString());
 			}
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -195,7 +194,7 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 	private Formula<?> subtitute(String srcStr, Map<FreeIdentifier, String> substs) {
 		Formula<?> result = parseFormula(srcStr);
 		Map<FreeIdentifier, Expression> exprSubsts = convert(substs);
-		return result.substituteFreeIdents(exprSubsts, factory);
+		return result.substituteFreeIdents(exprSubsts);
 	}
 
 	private Map<FreeIdentifier, Expression> convert(Map<FreeIdentifier, String> substs) {
@@ -203,7 +202,7 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 				substs.size());
 		for (FreeIdentifier key : substs.keySet()) {
 			FreeIdentifier ident = factory.makeFreeIdentifier(key.getName(), null);
-			Expression expr = factory.parseExpression(substs.get(key), LanguageVersion.V2, null).getParsedExpression();
+			Expression expr = factory.parseExpression(substs.get(key), null).getParsedExpression();
 			result.put(ident, expr);
 		}
 		return result;
@@ -211,9 +210,9 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 	
 	private Formula<?> parseFormula(String formStr) {
 		Formula<?> result = 
-				factory.parsePredicate(formStr, LanguageVersion.V2, null).getParsedPredicate();
+				factory.parsePredicate(formStr, null).getParsedPredicate();
 		if (result == null) {
-			result = factory.parseExpression(formStr, LanguageVersion.V2, null).getParsedExpression();
+			result = factory.parseExpression(formStr, null).getParsedExpression();
 		}
 		return result;
 	}
@@ -222,9 +221,9 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 		Set<GivenType> set = new LinkedHashSet<GivenType>();
 		try {
 			for(ISCTheorem deployedTheorem : SCTheorems){
-				set.addAll(deployedTheorem.getPredicate(factory, typeEnvironment).getGivenTypes());
+				set.addAll(deployedTheorem.getPredicate(typeEnvironment).getGivenTypes());
 			}
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

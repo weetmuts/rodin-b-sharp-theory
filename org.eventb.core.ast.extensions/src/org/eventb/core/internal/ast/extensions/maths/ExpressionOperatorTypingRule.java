@@ -17,8 +17,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.InvalidExpressionException;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
@@ -134,9 +132,9 @@ public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 			return childrenTypes[0];
 		}
 
-		Expression typeExpression = resultantType.toExpression(factory);
+		Expression typeExpression = resultantType.toExpression();
 		String rawTypeExp = typeExpression.toString();
-		Expression exp = factory.parseExpression(rawTypeExp, LanguageVersion.V2, null).getParsedExpression();
+		Expression exp = factory.parseExpression(rawTypeExp, null).getParsedExpression();
 		Map<FreeIdentifier, Expression> typeSubs = getTypeSubstitutions(childrenTypes, factory);
 		// FIXED Bug if type substitutions is empty that means we are dealing with a generic operator, 
 		// hence need proposed type and type check
@@ -144,10 +142,10 @@ public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 			return null;
 		ITypeEnvironment typeEnvironment = generateTypeParametersTypeEnvironment(typeSubs, factory);
 		exp.typeCheck(typeEnvironment);
-		Expression actTypeExpression = exp.substituteFreeIdents(typeSubs, factory);
+		Expression actTypeExpression = exp.substituteFreeIdents(typeSubs);
 		try {
 			return actTypeExpression.toType();
-		} catch (InvalidExpressionException e) {
+		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -169,7 +167,7 @@ public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 			}
 		}
 		for (GivenType gType : instantiations.keySet()) {
-			subs.put(factory.makeFreeIdentifier(gType.getName(), null, instantiations.get(gType).toExpression(factory).getType()), instantiations.get(gType).toExpression(factory));
+			subs.put(factory.makeFreeIdentifier(gType.getName(), null, instantiations.get(gType).toExpression().getType()), instantiations.get(gType).toExpression());
 		}
 		return subs;
 	}

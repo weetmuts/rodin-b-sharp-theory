@@ -16,7 +16,6 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
@@ -123,7 +122,7 @@ public class AxiomaticOperatorFilterModule extends SCFilterModule {
 					TheoryGraphProblem.AxiomaticPredicateOpDoesNotReqTypeWarn, opDef.getLabel());
 		}
 		if (formType.equals(FormulaType.EXPRESSION)) {
-			IParseResult result = factory.parseType(opDef.getType(), LanguageVersion.V2);
+			IParseResult result = factory.parseType(opDef.getType());
 			if (CoreUtilities.issueASTProblemMarkers(opDef, TheoryAttributes.TYPE_ATTRIBUTE, result, this)) {
 				return false;
 			}

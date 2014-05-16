@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
-import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.IImportTheoryProject;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;

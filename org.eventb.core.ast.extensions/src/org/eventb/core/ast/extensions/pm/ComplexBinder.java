@@ -62,7 +62,7 @@ public final class ComplexBinder {
 		Formula<?> resultFormula = AstUtilities.parseFormula(
 				pattern.toString(), pattern instanceof Expression, factory);
 		Formula<?> finalResultFormula = resultFormula.rewrite(
-				new PredicateVariableSubstituter(binding.getPredicateMappings(), factory));
+				new PredicateVariableSubstituter(binding.getPredicateMappings()));
 		finalResultFormula.typeCheck(binding.getTypeEnvironment());
 		// if the result is still not type-checked (e.g., dealing with atomic expression like {})
 		if(!finalResultFormula.isTypeChecked()){
@@ -84,7 +84,7 @@ public final class ComplexBinder {
 			}
 		}
 		// make the substitutions
-		Formula<?> formula = finalResultFormula.substituteFreeIdents(binding.getExpressionMappings(), factory);
+		Formula<?> formula = finalResultFormula.substituteFreeIdents(binding.getExpressionMappings());
 		if (!includeComplement) {
 			return formula;
 		}

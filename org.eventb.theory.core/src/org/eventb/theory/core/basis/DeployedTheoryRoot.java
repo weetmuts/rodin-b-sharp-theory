@@ -10,6 +10,7 @@ package org.eventb.theory.core.basis;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.basis.EventBRoot;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
@@ -124,7 +125,7 @@ public class DeployedTheoryRoot extends EventBRoot implements IDeployedTheoryRoo
 	@Override
 	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException {
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 
 		for (ISCTypeParameter par : getSCTypeParameters()) {
 			typeEnvironment.addGivenSet(par.getIdentifierString());

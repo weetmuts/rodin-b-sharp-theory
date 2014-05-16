@@ -11,7 +11,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
@@ -95,10 +95,6 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.tool.types.ISCProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalElement, org.eventb.core.sc.state.ISCStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@SuppressWarnings("restriction")
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -167,7 +163,7 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 	protected void patchFormulaFactory(Set<ISCTheoryRoot> importedTheories,
 			ISCStateRepository repository) throws CoreException {
 		FormulaFactory factory = repository.getFormulaFactory();
-		ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = repository.getTypeEnvironment();
 
 		final Set<IFormulaExtension> exts = new HashSet<IFormulaExtension>();
 		for (ISCTheoryRoot theoryRoot : importedTheories) {

@@ -7,17 +7,12 @@
  *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.maths;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 
 /**
@@ -47,28 +42,25 @@ public class CompleteDatatypeExtension extends SimpleDatatypeExtension{
 		this.constructors = constructors;
 	}
 
-	@Override
-	public void addConstructors(IConstructorMediator mediator) {
+	private void addConstructors(IDatatypeBuilder dtBuilder) {
 		// add the type constructor just in case we deal with inductive dt
-		FormulaFactory factory = mediator.getFactory();
-		factory = factory.withExtensions(Collections.singleton((IFormulaExtension)
-						mediator.getTypeConstructor()));
-		for (String cons : constructors.keySet()){
-			Map<String, String> destructors = constructors.get(cons);
-			if(destructors.size() == 0 ){
-				mediator.addConstructor(cons, cons + CONS_ID);
-			}
-			else{
-				List<IArgument> arguments = new ArrayList<IArgument>();
-				for (String dest : destructors.keySet()){
-					String typeStr = destructors.get(dest);
-					Type argumentType = factory.parseType(typeStr, LanguageVersion.V2).getParsedType();
-					arguments.add(mediator.newArgument(dest,mediator.newArgumentType(argumentType)));
-				}
-				mediator.addConstructor(cons, cons + CONS_ID, arguments );
+		FormulaFactory factory = dtBuilder.getFactory();
+		for (String consName : constructors.keySet()){
+			final IConstructorBuilder cons = dtBuilder.addConstructor(consName);
+			Map<String, String> destructors = constructors.get(consName);
+			for (String dest : destructors.keySet()){
+				final String typeStr = destructors.get(dest);
+				final Type argumentType = factory.parseType(typeStr).getParsedType();
+				cons.addArgument(dest, argumentType);
 			}
 		}
-		
+	}
+	
+	@Override
+	protected IDatatypeBuilder toDatatypeBuilder(FormulaFactory factory) {
+		final IDatatypeBuilder dtBuilder = super.toDatatypeBuilder(factory);
+		addConstructors(dtBuilder);
+		return dtBuilder;
 	}
 	
 	public boolean equals(Object o){

@@ -8,6 +8,7 @@
 package org.eventb.theory.rbp.reasoning;
 
 import static java.util.Collections.unmodifiableList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -37,7 +39,6 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedGiven;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.utils.ProverUtilities;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria
@@ -115,7 +116,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 							Expression mappedExpression = expressionMappings
 									.get(identifier);
 							Predicate wdPredicate = mappedExpression
-									.getWDPredicate(context.getFormulaFactory());
+									.getWDPredicate();
 							if (!wdPredicate.equals(ProverUtilities.BTRUE)) {
 								if (!sequent.containsHypothesis(wdPredicate))
 									ants.add(ProverFactory.makeAntecedent(
@@ -136,7 +137,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 								.makeTypeEnvironment(factory,
 										(ISCInferenceRule) rule);
 						infer = ((ISCInferenceRule) rule).getInfers()[0]
-								.getPredicate(factory, typeEnvironment);
+								.getPredicate(typeEnvironment);
 						IBinding binding = finder.match(goal, infer, false);
 						if (binding != null) {
 							List<ISCGiven> givens = unmodifiableList(Arrays
@@ -145,8 +146,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 							Set<IAntecedent> ants = new LinkedHashSet<IAntecedent>();
 							for (ISCGiven given : givens) {
 								Predicate pred = (Predicate) binder.bind(
-										given.getPredicate(factory,
-												typeEnvironment), binding);
+										given.getPredicate(typeEnvironment), binding);
 								ants.add(ProverFactory.makeAntecedent(pred,
 										addedHyps, null));
 							}
@@ -157,8 +157,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 								Expression mappedExpression = expressionMappings
 										.get(identifier);
 								Predicate wdPredicate = mappedExpression
-										.getWDPredicate(context
-												.getFormulaFactory());
+										.getWDPredicate();
 								if (!wdPredicate.equals(ProverUtilities.BTRUE)) {
 									if (!sequent
 											.containsHypothesis(wdPredicate))
@@ -173,7 +172,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 										addedHyps);
 							}
 						}
-					} catch (RodinDBException e) {
+					} catch (CoreException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -220,7 +219,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 			}
 			else { //if (rule instanceof ISCInferenceRule) {
 				typeEnv = ProverUtilities.makeTypeEnvironment(factory, (ISCInferenceRule) rule);
-				ins = (Predicate) binder.bind(( (ISCInferenceRule) rule).getInfers()[0].getPredicate(factory, typeEnv), binding);
+				ins = (Predicate) binder.bind(( (ISCInferenceRule) rule).getInfers()[0].getPredicate(typeEnv), binding);
 			}
 			
 			if (!sequent.containsHypothesis(ins)) {
@@ -228,7 +227,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 				Map<FreeIdentifier, Expression> expressionMappings = binding.getExpressionMappings();
 				for (FreeIdentifier identifier : expressionMappings.keySet()) {
 					Expression mappedExpression = expressionMappings.get(identifier);
-					Predicate wdPredicate = mappedExpression.getWDPredicate(context.getFormulaFactory());
+					Predicate wdPredicate = mappedExpression.getWDPredicate();
 					if (!wdPredicate.equals(ProverUtilities.BTRUE)) {
 						if (!sequent.containsHypothesis(wdPredicate))
 							extraWDants.add(wdPredicate);
@@ -236,7 +235,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 				}
 			}
 		}
-	} catch (RodinDBException e) {
+	} catch (CoreException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
@@ -265,8 +264,8 @@ public class AutoInferer extends AbstractRulesApplyer {
 		Iterator<ISCGiven> iterator = givens.iterator();
 		while (iterator.hasNext()) {
 			try {
-				list.add(iterator.next().getPredicate(factory, typeEnv));
-			} catch (RodinDBException e) {
+				list.add(iterator.next().getPredicate(typeEnv));
+			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

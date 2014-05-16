@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.pog.modules;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeImp;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,6 @@ import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.POGNatureFactory;
 import org.eventb.theory.core.ISCGiven;
@@ -57,7 +58,6 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 
 	protected ITypeEnvironment typeEnvironment;
 	protected POGNatureFactory natureFactory;
-	protected DLib library;
 
 	@Override
 	public void initModule(IRodinElement element,
@@ -66,7 +66,6 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 		super.initModule(element, repository, monitor);
 		typeEnvironment = repository.getTypeEnvironment();
 		natureFactory = POGNatureFactory.getInstance();
-		library = DLib.mDLib(factory);
 	}
 
 	@Override
@@ -87,7 +86,7 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 			List<Predicate> givensPredicates = new ArrayList<Predicate>();
 			List<Predicate> givensPredicatesWDs = new ArrayList<Predicate>();
 			for (ISCGiven given : givens) {
-				Predicate pred = given.getPredicate(factory, typeEnvironment);
+				Predicate pred = given.getPredicate(typeEnvironment);
 				if (pred != null) {
 					givensPredicates.add(pred);
 					givensPredicatesWDs.add(getDWDCondition(pred));
@@ -97,7 +96,7 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 			List<Predicate> infersPredicates = new ArrayList<Predicate>();
 			List<Predicate> infersPredicatesWDs = new ArrayList<Predicate>();
 			for (ISCInfer infer : infers) {
-				Predicate pred = infer.getPredicate(factory, typeEnvironment);
+				Predicate pred = infer.getPredicate(typeEnvironment);
 				if (pred != null) {
 					infersPredicates.add(pred);
 					infersPredicatesWDs.add(getDWDCondition(pred));
@@ -111,12 +110,12 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 					infersPredicates, factory);
 			Predicate conj2WD = AstUtilities.conjunctPredicates(
 					infersPredicatesWDs, factory);
-			Predicate poPredicate = library.makeImp(conj1, conj2);
+			Predicate poPredicate = makeImp(conj1, conj2);
 			if (!isTrivial(poPredicate)) {
 				String label = inferenceRule.getLabel();
 				String poName = label
 						+ RULE_S_SUFFIX;
-				Predicate finalPO = library.makeImp(conj2WD, poPredicate);
+				Predicate finalPO = makeImp(conj2WD, poPredicate);
 				createPO(
 						target,
 						poName,
@@ -189,7 +188,6 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 			throws CoreException {
 		typeEnvironment = null;
 		natureFactory = null;
-		library = null;
 		super.endModule(element, repository, monitor);
 	}
 

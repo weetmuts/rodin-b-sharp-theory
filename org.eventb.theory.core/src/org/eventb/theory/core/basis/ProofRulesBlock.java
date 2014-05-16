@@ -9,8 +9,8 @@ package org.eventb.theory.core.basis;
 
 import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IMetavariable;
-import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.IProofRulesBlock;
+import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.TheoryElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;

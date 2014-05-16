@@ -21,7 +21,6 @@ import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.theory.core.INewOperatorDefinition;
-import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -38,7 +37,6 @@ public class OperatorFilterModule extends SCFilterModule {
 	private final IModuleType<OperatorFilterModule> MODULE_TYPE = SCCore
 			.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorFilterModule");
 
-	private FormulaFactory factory;
 	private ITypeEnvironment typeEnvironment;
 
 	@SuppressWarnings("restriction")
@@ -142,14 +140,12 @@ public class OperatorFilterModule extends SCFilterModule {
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
 	}
 
 	@Override
 	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		factory = null;
 		typeEnvironment = null;
 		super.endModule(repository, monitor);
 	}

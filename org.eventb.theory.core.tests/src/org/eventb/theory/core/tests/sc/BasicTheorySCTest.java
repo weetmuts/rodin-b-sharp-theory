@@ -3,7 +3,6 @@ package org.eventb.theory.core.tests.sc;
 import static java.util.Arrays.asList;
 import static org.eclipse.core.resources.IMarker.MESSAGE;
 import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -316,14 +315,14 @@ public abstract class BasicTheorySCTest extends TheoryTest {
 	}
 
 	public String getNormalizedExpression(String input, FormulaFactory factory, ITypeEnvironment environment) {
-		Expression expr = factory.parseExpression(input, V2, null).getParsedExpression();
+		Expression expr = factory.parseExpression(input, null).getParsedExpression();
 		expr.typeCheck(environment);
 		assertTrue(expr.isTypeChecked());
 		return expr.toStringWithTypes();
 	}
 
 	public String getNormalizedPredicate(String input, FormulaFactory factory, ITypeEnvironment environment) {
-		Predicate pred = factory.parsePredicate(input, V2, null).getParsedPredicate();
+		Predicate pred = factory.parsePredicate(input, null).getParsedPredicate();
 		pred.typeCheck(environment);
 		assertTrue(pred.isTypeChecked());
 		return pred.toStringWithTypes();

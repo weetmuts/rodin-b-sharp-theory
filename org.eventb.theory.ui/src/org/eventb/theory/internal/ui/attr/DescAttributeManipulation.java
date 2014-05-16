@@ -4,13 +4,12 @@ import static org.eventb.theory.core.TheoryAttributes.DESC_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractAttributeManipulation;
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.theory.core.IDescriptionElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class DescAttributeManipulation extends AbstractAttributeManipulation
-implements IAttributeManipulation {
+implements org.eventb.ui.manipulation.IAttributeManipulation {
 
 	
 	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {

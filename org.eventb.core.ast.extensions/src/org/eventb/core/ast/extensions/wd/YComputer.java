@@ -43,7 +43,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ISimpleVisitor2;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
@@ -58,7 +57,6 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.ast.extensions.wd.YMediator;
 import org.eventb.core.internal.ast.extensions.wd.FComputer;
 import org.eventb.core.internal.ast.extensions.wd.FormulaBuilder;
 import org.eventb.core.internal.ast.extensions.wd.TComputer;
@@ -93,7 +91,7 @@ public class YComputer implements ISimpleVisitor2{
 	 */
 	public Predicate getWDLemma(Formula<?> formula) {
 		assert formula.isTypeChecked();
-		return wd(formula).flatten(fb.ff);
+		return wd(formula).flatten();
 	}
 	
 	/**
@@ -353,12 +351,12 @@ public class YComputer implements ISimpleVisitor2{
 
 	public static void main(String[] args) {
 		FormulaFactory ff = FormulaFactory.getDefault();
-		IParseResult parsePredicate = ff.parsePredicate("card({1,2}) = 2 ∨ 1÷0=3 ", LanguageVersion.V2, null);
+		IParseResult parsePredicate = ff.parsePredicate("card({1,2}) = 2 ∨ 1÷0=3 ", null);
 		Predicate pred = parsePredicate.getParsedPredicate();
 		YComputer comp = new YComputer(ff);
 		Predicate wdLemma = comp.getWDLemma(pred);
 		System.out.println("Y:     "+wdLemma);
-		System.out.println("L:     "+pred.getWDPredicate(ff));
+		System.out.println("L:     "+pred.getWDPredicate());
 		System.out.println("D:     "+new YComputer(ff).getWDLemma(pred));
 	}
 	

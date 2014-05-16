@@ -54,7 +54,7 @@ public abstract class AbstractComputer implements ISimpleVisitor2{
 	 */
 	public Predicate getLemma(Formula<?> formula) {
 		assert formula.isTypeChecked();
-		return condition(formula).flatten(fb.ff);
+		return condition(formula).flatten();
 	}
 	
 	/**

@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
-
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -92,7 +90,7 @@ public class ModulesUtils {
 			FormulaFactory factory, IMarkerDisplay markerDisplay)
 			throws RodinDBException {
 
-		IParseResult pResult = factory.parseExpression(name, V2, element);
+		IParseResult pResult = factory.parseExpression(name, element);
 		Expression expr = pResult.getParsedExpression();
 //removed because we dont need to check the uniqueness of the identifier in the time of deploy
 		if (pResult.hasProblem() || !(expr instanceof FreeIdentifier)) {
@@ -187,7 +185,7 @@ public class ModulesUtils {
 		String form = element.getFormula();
 		Formula<?> formula = null;
 		if (isExpression) {
-			IParseResult result = ff.parseExpression(form, V2, null);
+			IParseResult result = ff.parseExpression(form, null);
 			if (issueErrors) {
 				if (CoreUtilities.issueASTProblemMarkers(element,
 						attributeType, result, markerDisplay)) {
@@ -201,7 +199,7 @@ public class ModulesUtils {
 			formula = result.getParsedExpression();
 
 		} else {
-			IParseResult result = ff.parsePredicate(form, V2, null);
+			IParseResult result = ff.parsePredicate(form, null);
 			if (issueErrors) {
 				if (CoreUtilities.issueASTProblemMarkers(element,
 						attributeType, result, markerDisplay)) {
@@ -250,9 +248,9 @@ public class ModulesUtils {
 			FormulaFactory ff, IMarkerDisplay markerDisplay)throws CoreException {
 		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
 		String form = element.getFormula();
-		IParseResult result = ff.parseExpression(form, V2, null);
+		IParseResult result = ff.parseExpression(form, null);
 		if(result.hasProblem()){
-			result = ff.parsePredicate(form, V2, null);
+			result = ff.parsePredicate(form, null);
 			if (CoreUtilities.issueASTProblemMarkers(element,
 					attributeType, result, markerDisplay)){
 				return null;
@@ -291,9 +289,9 @@ public class ModulesUtils {
 	 */
 	public static Formula<?> parseAndTypeCheckFormula(String form, FormulaFactory ff, ITypeEnvironment env){
 		Formula<?> formula = null;
-		IParseResult result = ff.parseExpression(form, V2, null);
+		IParseResult result = ff.parseExpression(form, null);
 		if(result.hasProblem()){
-			result = ff.parsePredicate(form, V2, null);
+			result = ff.parsePredicate(form, null);
 			if (result.hasProblem()){
 				return null;
 			}

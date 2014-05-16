@@ -11,8 +11,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.DatabaseUtilitiesTheoryPath;
-import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.basis.DeployedTheoryDecorator;
 import org.rodinp.core.RodinDBException;
 

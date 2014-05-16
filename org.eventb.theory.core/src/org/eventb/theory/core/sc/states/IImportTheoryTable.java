@@ -9,8 +9,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
-import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.RodinDBException;
 

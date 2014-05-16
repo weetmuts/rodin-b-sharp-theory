@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -35,10 +36,10 @@ public interface IWDElement extends IInternalElement{
 	 * @param factory the formula factory
 	 * @param typeEnvironment the type environment
 	 * @return the WD condition
-	 * @throws RodinDBException
+	 * @throws CoreException 
 	 */
 	public Predicate getWDCondition(FormulaFactory factory, 
-			ITypeEnvironment typeEnvironment) throws RodinDBException;
+			ITypeEnvironment typeEnvironment) throws CoreException;
 	
 	/**
 	 * Sets the WD condition of this element to the given value.

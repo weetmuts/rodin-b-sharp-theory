@@ -4,8 +4,8 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eventb.core.ast.extensions;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
- org.eventb.core.ast;bundle-version="2.5.0"
+Require-Bundle: org.eventb.core.ast;bundle-version="3.0.0",
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eventb.core.ast.extensions.maths,
  org.eventb.core.ast.extensions.plugin;x-friends:="org.eventb.core.ast.extensions.tests",

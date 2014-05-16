@@ -62,7 +62,7 @@ public abstract class AbstractDeployedRule implements IDeployedRule{
 
 	
 	public ITypeEnvironment getTypeEnvironment() {
-		return globalTypeEnv.clone();
+		return globalTypeEnv.makeSnapshot();
 	}
 
 	

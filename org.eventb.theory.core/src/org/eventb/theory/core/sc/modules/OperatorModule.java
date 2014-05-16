@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -51,7 +51,7 @@ public class OperatorModule extends LabeledElementModule{
 		SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".operatorModule");
 	
 	private TheoryAccuracyInfo theoryAccuracyInfo;
-	private ITypeEnvironment globalTypeEnvironment;
+	private ITypeEnvironmentBuilder globalTypeEnvironment;
 	private FormulaFactory factory;
 	private IdentifierSymbolTable identifierSymbolTable;
 	
@@ -174,7 +174,7 @@ public class OperatorModule extends LabeledElementModule{
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
 				globalTypeEnvironment = repository.getTypeEnvironment();
-				ITypeEnvironment opTypeEnvironment = factory.makeTypeEnvironment();
+				ITypeEnvironmentBuilder opTypeEnvironment = factory.makeTypeEnvironment();
 				opTypeEnvironment.addAll(globalTypeEnvironment);
 				repository.setTypeEnvironment(opTypeEnvironment);
 				// needed states

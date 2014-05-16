@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.theory.core.TheoryAttributes.APPLICABILITY_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMMUTATIVE_ATTRIBUTE;
@@ -26,6 +25,7 @@ import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.WD_ATTRIBUTE;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -82,11 +82,11 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 	
 	@Override
-	public Type getType(FormulaFactory factory) throws RodinDBException {
-		String type = getType();
-		IParseResult result = factory.parseType(type, V2);
+	public Type getType(FormulaFactory factory) throws CoreException {
+		final String type = getType();
+		final IParseResult result = factory.parseType(type);
 		if (result.hasProblem()){
-			throw Util.newRodinDBException(org.eventb.theory.core.sc.Messages.database_SCTypeParseFailure, this);
+			throw Util.newCoreException(org.eventb.theory.core.sc.Messages.database_SCTypeParseFailure, this);
 		}
 		return result.getParsedType();
 	}
@@ -256,11 +256,11 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 
 	@Override
-	public Type getSCGivenType(FormulaFactory factory) throws RodinDBException {
+	public Type getSCGivenType(FormulaFactory factory) throws CoreException {
 		String typeStr = getAttributeValue(GIVEN_TYPE_ATTRIBUTE);
-		IParseResult parserResult = factory.parseType(typeStr, V2);
+		IParseResult parserResult = factory.parseType(typeStr);
 		if (parserResult.getProblems().size() != 0) {
-			throw Util.newRodinDBException(
+			throw Util.newCoreException(
 					Messages.database_SCIdentifierTypeParseFailure, this);
 		}
 		return parserResult.getParsedType();
@@ -280,16 +280,16 @@ public abstract class TheoryElement extends EventBElement implements
 
 	@Override
 	public Formula<?> getSCFormula(FormulaFactory ff,
-			ITypeEnvironment typeEnvironment) throws RodinDBException {
+			ITypeEnvironment typeEnvironment) throws CoreException {
 		String form = getFormula();
 		Formula<?> formula = parseFormula(form, ff, false);
 		if (formula == null) {
-			throw Util.newRodinDBException("Error parsing formula: " + form
+			throw Util.newCoreException("Error parsing formula: " + form
 					+ "\nwith factory: " + ff.getExtensions());
 		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
 		if (result.hasProblem()) {
-			throw Util.newRodinDBException("Error typechecking formula: "
+			throw Util.newCoreException("Error typechecking formula: "
 					+ formula + "\nwith factory: " + ff.getExtensions()
 					+ "\nresult: " + result);
 		}
@@ -397,16 +397,16 @@ public abstract class TheoryElement extends EventBElement implements
 	}
 
 	@Override
-	public Predicate getWDCondition(FormulaFactory factory, ITypeEnvironment typeEnvironment) throws RodinDBException {
+	public Predicate getWDCondition(FormulaFactory factory, ITypeEnvironment typeEnvironment) throws CoreException {
 		String wdStr = getAttributeValue(WD_ATTRIBUTE);
-		IParseResult result = factory.parsePredicate(wdStr, V2, null);
+		IParseResult result = factory.parsePredicate(wdStr, null);
 		if(result.hasProblem()){
-			throw Util.newRodinDBException(Messages.database_SCPredicateParseFailure);
+			throw Util.newCoreException(Messages.database_SCPredicateParseFailure);
 		}
 		Predicate pred = result.getParsedPredicate();
 		ITypeCheckResult tcResult = pred.typeCheck(typeEnvironment);
 		if(tcResult.hasProblem()){
-			throw Util.newRodinDBException(Messages.database_SCPredicateTCFailure);
+			throw Util.newCoreException(Messages.database_SCPredicateTCFailure);
 		}
 		return pred;
 	}
@@ -460,21 +460,21 @@ public abstract class TheoryElement extends EventBElement implements
 			boolean isPattern) {
 		Formula<?> formula = null;
 		if (isPattern) {
-			IParseResult res = ff.parseExpressionPattern(formStr, V2, null);
+			IParseResult res = ff.parseExpressionPattern(formStr, null);
 			if (!res.hasProblem()) {
 				formula = res.getParsedExpression();
 			} else {
-				res = ff.parsePredicatePattern(formStr, V2, null);
+				res = ff.parsePredicatePattern(formStr, null);
 				if (!res.hasProblem()) {
 					formula = res.getParsedPredicate();
 				}
 			}
 		} else {
-			IParseResult res = ff.parseExpression(formStr, V2, null);
+			IParseResult res = ff.parseExpression(formStr, null);
 			if (!res.hasProblem()) {
 				formula = res.getParsedExpression();
 			} else {
-				res = ff.parsePredicate(formStr, V2, null);
+				res = ff.parsePredicate(formStr, null);
 				if (!res.hasProblem()) {
 					formula = res.getParsedPredicate();
 				}

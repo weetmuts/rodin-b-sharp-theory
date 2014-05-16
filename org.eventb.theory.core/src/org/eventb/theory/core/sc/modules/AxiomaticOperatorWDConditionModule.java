@@ -42,7 +42,7 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 			Predicate wdPred = processWdConditions(wdConds, repository, monitor);
 			if (wdPred != null && !wdPred.equals(AstUtilities.BTRUE)) {
 				if (target != null) {
-					Predicate wdPredWD = wdPred.getWDPredicate(repository.getFormulaFactory());
+					Predicate wdPredWD = wdPred.getWDPredicate();
 					wdPred = AstUtilities.conjunctPredicates(new Predicate[] { wdPredWD, wdPred }, repository.getFormulaFactory());
 					operatorInformation.addWDCondition(wdPred);
 				} else {

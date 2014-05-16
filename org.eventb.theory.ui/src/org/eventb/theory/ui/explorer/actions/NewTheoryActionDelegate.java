@@ -35,7 +35,7 @@ public class NewTheoryActionDelegate implements IViewActionDelegate {
 				}
 				NewTheoryWizard wizard = new NewTheoryWizard();
 				wizard.init(EventBUIPlugin.getDefault().getWorkbench(),sel);
-				WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchShell(), wizard);
+				WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchWindow().getShell(), wizard);
 				dialog.open();
 			}
 		});

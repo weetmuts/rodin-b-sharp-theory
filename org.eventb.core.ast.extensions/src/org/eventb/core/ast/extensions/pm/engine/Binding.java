@@ -19,6 +19,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
@@ -67,7 +68,7 @@ public class Binding implements IBinding {
 	/**
 	 * The type environment generated if the matching process is a success.
 	 */
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 
 	/**
 	 * Other matching information.
@@ -249,7 +250,7 @@ public class Binding implements IBinding {
 			if (augmentBinding){
 				return putTypeMapping(
 						factory.makeFreeIdentifier(((GivenType) patternType).getName(), null,
-								patternType.toExpression(factory).getType()), expressionType);
+								patternType.toExpression().getType()), expressionType);
 			}
 			else{
 				return true;
@@ -332,7 +333,7 @@ public class Binding implements IBinding {
 		isImmutable = true;
 		for (FreeIdentifier ident : typeParametersInstantiations.keySet()) {
 			Type type = typeParametersInstantiations.get(ident);
-			Expression expression = type.toExpression(factory);
+			Expression expression = type.toExpression();
 			binding.put(ident, expression);
 		}
 		for (FreeIdentifier ident : binding.keySet()) {
@@ -345,7 +346,7 @@ public class Binding implements IBinding {
 	@Override
 	public ITypeEnvironment getTypeEnvironment() {
 		checkImmutable();
-		return typeEnvironment.clone();
+		return typeEnvironment.makeSnapshot();
 	}
 
 	@Override
@@ -423,7 +424,7 @@ public class Binding implements IBinding {
 	protected boolean putTypeMapping(FreeIdentifier ident, Type type) {
 		// if there is a binding for ident that is different from the type
 		// expression
-		if (binding.get(ident) != null && !binding.get(ident).equals(type.toExpression(factory))) {
+		if (binding.get(ident) != null && !binding.get(ident).equals(type.toExpression())) {
 			return false;
 		}
 		// if there is a type instant. for ident that is different from type
@@ -482,7 +483,7 @@ public class Binding implements IBinding {
 	 */
 	protected boolean isIdentAGivenType(FreeIdentifier identifier) {
 		for (GivenType gt : identifier.getGivenTypes()) {
-			if (identifier.equals(gt.toExpression(factory))) {
+			if (identifier.equals(gt.toExpression())) {
 				return true;
 			}
 		}

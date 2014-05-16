@@ -70,11 +70,10 @@ public class TheoremPOGModule extends UtilityPOGModule {
 			IPOGSource[] sources = new IPOGSource[] {
 					makeSource(IPOSource.DEFAULT_ROLE, theorem),
 					makeSource(IPOSource.DEFAULT_ROLE, theorem.getSource()) };
-			Predicate poPredicate = theorem.getPredicate(factory,
-					typeEnvironment);
+			Predicate poPredicate = theorem.getPredicate(typeEnvironment);
 			//case when axiom
 			if (theorem.hasGenerated() && theorem.isGenerated()) {
-				Predicate wdPredicate = poPredicate.getWDPredicate(factory);
+				Predicate wdPredicate = poPredicate.getWDPredicate();
 				if (!isTrivial(wdPredicate)) {
 					String sequentName2 = name + AXIOM_WD_SUFFIX;
 					createPO(
@@ -102,7 +101,7 @@ public class TheoremPOGModule extends UtilityPOGModule {
 							sources,
 							new IPOGHint[] { getLocalHypothesisSelectionHint(
 									target, sequentName1, hyp) }, true, monitor);
-					Predicate wdPredicate = poPredicate.getWDPredicate(factory);
+					Predicate wdPredicate = poPredicate.getWDPredicate();
 					if (!isTrivial(wdPredicate)) {
 						String sequentName2 = name + THEOREM_WD_SUFFIX;
 						createPO(

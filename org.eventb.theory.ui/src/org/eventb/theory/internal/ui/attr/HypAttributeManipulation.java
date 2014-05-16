@@ -4,9 +4,9 @@ import static org.eventb.theory.core.TheoryAttributes.HYP_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation;
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.theory.core.IHypElement;
 import org.eventb.theory.internal.ui.Messages;
+import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

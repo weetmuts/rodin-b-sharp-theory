@@ -7,10 +7,10 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
+import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
-import org.eventb.core.seqprover.ISignatureReasoner;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.rulebase.IPOContext;
@@ -21,7 +21,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @since 1.0
  *
  */
-public abstract class ContextAwareReasoner implements ISignatureReasoner{
+public abstract class ContextAwareReasoner implements IReasoner {
 	
 	protected static final String CONTEXT_INPUT_KEY = "poContext";
 	

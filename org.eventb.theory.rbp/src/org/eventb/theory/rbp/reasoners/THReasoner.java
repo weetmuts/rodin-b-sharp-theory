@@ -20,7 +20,6 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -63,7 +62,7 @@ public class THReasoner extends ContextAwareReasoner {
 		Set<Predicate> addedWDHyps = new LinkedHashSet<Predicate>();
 		for (String theoremStr : theoremsStrs) {
 			// parse the string
-			IParseResult parseResult = factory.parsePredicate(theoremStr, LanguageVersion.V2, null);
+			IParseResult parseResult = factory.parsePredicate(theoremStr, null);
 			if (parseResult.hasProblem()) {
 				return ProverFactory.reasonerFailure(this, stringInput, "Cannot parse '" + theoremStr + "'");
 			}
@@ -88,7 +87,7 @@ public class THReasoner extends ContextAwareReasoner {
 			// make the forward inference step
 
 			addedHyps.add(theoremPredicate);
-			Predicate wdPredicate = theoremPredicate.getWDPredicate(factory);
+			Predicate wdPredicate = theoremPredicate.getWDPredicate();
 			if (!wdPredicate.equals(ProverUtilities.BTRUE)) {
 				addedHyps.add(wdPredicate);
 				addedWDHyps.add(wdPredicate);
@@ -101,11 +100,6 @@ public class THReasoner extends ContextAwareReasoner {
 
 	@Override
 	public String getReasonerID() {
-		return REASONER_ID;
-	}
-
-	@Override
-	public String getSignature() {
 		return REASONER_ID;
 	}
 

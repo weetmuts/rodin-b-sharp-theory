@@ -47,11 +47,6 @@ public class AutoInferenceReasoner extends ContextAwareReasoner {
 		return ProverFactory.makeProofRule(this, contextualInput, seq.goal(), getDisplayName(), antecedents);
 	}
 	
-	@Override
-	public String getSignature() {
-		return REASONER_ID;
-	}
-
 	protected String getDisplayName() {
 		return DISPLAY_NAME;
 	}

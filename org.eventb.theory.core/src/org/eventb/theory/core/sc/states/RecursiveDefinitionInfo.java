@@ -1,5 +1,7 @@
 package org.eventb.theory.core.sc.states;
 
+import static java.util.Arrays.asList;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -12,8 +14,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
@@ -50,17 +52,17 @@ public class RecursiveDefinitionInfo extends State implements ISCState{
 		this.inductiveArgument = ident;
 		Type type = ident.getType();
 		
-		if (type == null || !( type.toExpression(factory) instanceof ExtendedExpression) ||
-				!(((ExtendedExpression)type.toExpression(factory)).getExtension().getOrigin() instanceof IDatatype)){
+		if (type == null || !( type.toExpression() instanceof ExtendedExpression) ||
+				!(((ExtendedExpression)type.toExpression()).getExtension().getOrigin() instanceof IDatatype)){
 			throw new IllegalStateException("Illegal inductive argument");
 		}
-		IExpressionExtension extension = ((ExtendedExpression)type.toExpression(factory)).getExtension();
+		IExpressionExtension extension = ((ExtendedExpression)type.toExpression()).getExtension();
 		datatype = (IDatatype) extension.getOrigin();
 	}
 	
 	public boolean isConstructor(IExpressionExtension extension) throws CoreException{
 		assertMutable();
-		return datatype.isConstructor(extension);
+		return datatype.getConstructor(extension.getSyntaxSymbol()) != null;
 	}
 	
 	public boolean isCoveredConstuctor(IExpressionExtension extension) throws CoreException{
@@ -70,7 +72,7 @@ public class RecursiveDefinitionInfo extends State implements ISCState{
 	
 	public boolean coveredAllConstructors() throws CoreException{
 		assertImmutable();
-		return coveredConstructors.containsAll(datatype.getConstructors());
+		return coveredConstructors.containsAll(asList(datatype.getConstructors()));
 	}
 	
 	public FreeIdentifier getInductiveArgument() throws CoreException{

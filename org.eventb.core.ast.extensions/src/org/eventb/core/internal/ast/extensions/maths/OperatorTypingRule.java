@@ -24,8 +24,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -105,12 +105,12 @@ public abstract class OperatorTypingRule {
 		}
 		String rawWD = wdToUse.toString();
 		Predicate pred = factory
-				.parsePredicate(rawWD, LanguageVersion.V2, null)
+				.parsePredicate(rawWD, null)
 				.getParsedPredicate();
 		ITypeEnvironment typeEnvironment = generateOverallTypeEnvironment(allSubs, factory);
 		pred.typeCheck(typeEnvironment);
-		Predicate actWDPred = pred.substituteFreeIdents(allSubs, factory);
-		Predicate actWDPredWD = actWDPred.getWDPredicate(factory);
+		Predicate actWDPred = pred.substituteFreeIdents(allSubs);
+		Predicate actWDPredWD = actWDPred.getWDPredicate();
 		return AstUtilities.conjunctPredicates(new Predicate[] {
 				actWDPredWD, actWDPred }, factory);
 	}
@@ -247,8 +247,8 @@ public abstract class OperatorTypingRule {
 		}
 		for (GivenType gType : instantiations.keySet()) {
 			subs.put(factory.makeFreeIdentifier(gType.getName(), null,
-					instantiations.get(gType).toExpression(factory).getType()),
-					instantiations.get(gType).toExpression(factory));
+					instantiations.get(gType).toExpression().getType()),
+					instantiations.get(gType).toExpression());
 		}
 		return subs;
 	}
@@ -264,7 +264,7 @@ public abstract class OperatorTypingRule {
 	}
 
 	protected ITypeEnvironment generateTypeParametersTypeEnvironment(Map<FreeIdentifier, Expression> typeSubs, FormulaFactory factory) {
-		ITypeEnvironment actualTypeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder actualTypeEnvironment = factory.makeTypeEnvironment();
 		for (FreeIdentifier ident : typeSubs.keySet()) {
 			actualTypeEnvironment.addName(ident.getName(), typeSubs.get(ident)
 					.getType());
@@ -273,7 +273,7 @@ public abstract class OperatorTypingRule {
 	}
 
 	protected ITypeEnvironment generateOverallTypeEnvironment(Map<FreeIdentifier, Expression> allSubs, FormulaFactory factory) {
-		ITypeEnvironment actualTypeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder actualTypeEnvironment = factory.makeTypeEnvironment();
 		for (FreeIdentifier ident : allSubs.keySet()) {
 			actualTypeEnvironment.addName(ident.getName(), allSubs.get(ident)
 					.getType());
@@ -330,8 +330,8 @@ public abstract class OperatorTypingRule {
 				}
 				final IExpressionExtension exprExtension = ((ParametricType) theoryType)
 						.getExprExtension();
-				return mediator.makeParametricType(Arrays.asList(newTypePars),
-						(IExpressionExtension) exprExtension);
+				return mediator.makeParametricType((IExpressionExtension) exprExtension,
+						Arrays.asList(newTypePars));
 			}
 		}
 		return theoryType;

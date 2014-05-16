@@ -7,8 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
-
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FormulaFactory;
@@ -37,10 +36,8 @@ public class SCRewriteRuleRightHandSide extends TheoryElement implements
 		super(name, parent);
 	}
 
-	@Override
-	@Deprecated
-	public Predicate getPredicate(FormulaFactory factory)
-			throws RodinDBException {
+	private Predicate getPredicate(FormulaFactory factory)
+			throws CoreException {
 		String contents = getPredicateString();
 		final IRodinElement source;
 		if (hasAttribute(EventBAttributes.SOURCE_ATTRIBUTE)) {
@@ -49,9 +46,9 @@ public class SCRewriteRuleRightHandSide extends TheoryElement implements
 			source = null;
 		}
 		IParseResult parserResult = factory
-				.parsePredicate(contents, V2, source);
+				.parsePredicate(contents, source);
 		if (parserResult.getProblems().size() != 0) {
-			throw Util.newRodinDBException(
+			throw Util.newCoreException(
 					Messages.database_SCPredicateParseFailure, this);
 		}
 		Predicate result = parserResult.getParsedPredicate();
@@ -59,13 +56,11 @@ public class SCRewriteRuleRightHandSide extends TheoryElement implements
 	}
 
 	@Override
-	public Predicate getPredicate(FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
-
-		Predicate result = getPredicate(factory);
+	public Predicate getPredicate(ITypeEnvironment typenv) throws CoreException {
+		Predicate result = getPredicate(typenv.getFormulaFactory());
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (!tcResult.isSuccess()) {
-			throw Util.newRodinDBException(
+			throw Util.newCoreException(
 					Messages.database_SCPredicateTCFailure, this);
 		}
 		assert result.isTypeChecked();
@@ -76,12 +71,6 @@ public class SCRewriteRuleRightHandSide extends TheoryElement implements
 	public void setPredicate(Predicate predicate, IProgressMonitor monitor)
 			throws RodinDBException {
 		setPredicateString(predicate.toStringWithTypes(), monitor);
-	}
-
-	@Override
-	@Deprecated
-	public void setPredicate(Predicate predicate) throws RodinDBException {
-		setPredicate(predicate, null);
 	}
 
 	@Override
