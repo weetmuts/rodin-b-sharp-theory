@@ -108,9 +108,9 @@ public class TheoryPathAvailableTheoryFilterModule extends SCFilterModule {
 			}
 		}
 		
-		if(!valid){
-			accuracyInfo.setNotAccurate();
-		}
+//		if(!valid){
+//			accuracyInfo.setNotAccurate();
+//		}
 		
 		return valid;
 	}

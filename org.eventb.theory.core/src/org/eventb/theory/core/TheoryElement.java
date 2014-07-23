@@ -291,7 +291,8 @@ public abstract class TheoryElement extends EventBElement implements
 		if (result.hasProblem()) {
 			throw Util.newCoreException("Error typechecking formula: "
 					+ formula + "\nwith factory: " + ff.getExtensions()
-					+ "\nresult: " + result);
+					+ "\nwith type env: " + typeEnvironment + "\nresult: "
+					+ result);
 		}
 		return formula;
 	}

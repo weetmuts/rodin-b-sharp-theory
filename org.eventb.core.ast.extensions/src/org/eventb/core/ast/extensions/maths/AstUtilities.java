@@ -213,9 +213,8 @@ public class AstUtilities {
 	 * @return operator position
 	 */
 	public static PositionPoint getPositionOfOperator(ExtendedExpression eexp, String predStr) {
-		assert eexp.getExtension() instanceof IOperatorExtension;
 		PositionPoint point = null;
-		IOperatorExtension extension = (IOperatorExtension) eexp.getExtension();
+		final IExpressionExtension extension = eexp.getExtension();
 		Notation notation = extension.getKind().getProperties().getNotation();
 
 		switch (notation) {
@@ -250,7 +249,6 @@ public class AstUtilities {
 	 * @return operator position
 	 */
 	public static PositionPoint getPositionOfOperator(ExtendedPredicate epred, String predStr) {
-		assert epred.getExtension() instanceof IOperatorExtension;
 		PositionPoint point = null;
 		Expression pe1 = epred.getChildExpressions()[0];
 		point = getOperatorPosition(predStr, epred.getSourceLocation().getStart(), pe1.getSourceLocation().getStart());

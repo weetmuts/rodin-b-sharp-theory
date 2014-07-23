@@ -5,7 +5,6 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.AstUtilities.PositionPoint;
 import org.eventb.core.seqprover.ITactic;
@@ -55,19 +54,22 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 		Formula<?> subFormula = predicate.getSubFormula(position);
 		if (subFormula instanceof ExtendedExpression) {
 			ExtendedExpression exp = (ExtendedExpression) subFormula;
-			IFormulaExtension extension = exp.getExtension();
-			if(AstUtilities.isATheoryExtension(extension)){
+			// TODO temporary fix to core issue about redlinks
+			// (can't handle rewriting with constructor/destructor at root) 
+			// Uncomment the lines below when core fixes it (DefaultTacticProvider)
+//			IFormulaExtension extension = exp.getExtension();
+//			if(AstUtilities.isATheoryExtension(extension)){
 				PositionPoint point = AstUtilities.getPositionOfOperator(exp, predStr);
 				return new Point(point.getX(), point.getY());
-			}
+//			}
 		}
 		if (subFormula instanceof ExtendedPredicate) {
 			ExtendedPredicate pred = (ExtendedPredicate) subFormula;
-			IFormulaExtension extension = pred.getExtension();
-			if(AstUtilities.isATheoryExtension(extension)){
+//			IFormulaExtension extension = pred.getExtension();
+//			if(AstUtilities.isATheoryExtension(extension)){
 				PositionPoint point = AstUtilities.getPositionOfOperator(pred, predStr);
 				return new Point(point.getX(), point.getY());
-			}
+//			}
 		}
 		return super.getOperatorPosition(predicate, predStr);
 	}

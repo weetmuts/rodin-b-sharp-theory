@@ -186,18 +186,16 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 					//update typeEnv
 					ITypeEnvironmentBuilder augTypeEnvironment = typeEnv.makeBuilder();
 					SCProofRulesBlock block = (SCProofRulesBlock) ((SCRewriteRule) rule).getParent();
-					if (!(block.getSource() instanceof NewOperatorDefinition)) {
-						ISCMetavariable[] vars = block.getMetavariables();
-						for (ISCMetavariable var : vars) {
-							augTypeEnvironment.add(var.getIdentifier(factory));
-						}
+					ISCMetavariable[] vars = block.getMetavariables();
+					for (ISCMetavariable var : vars) {
+						augTypeEnvironment.add(var.getIdentifier(factory));
 					}
-					else {
+					if (block.getSource() instanceof NewOperatorDefinition) {
 						ISCNewOperatorDefinition[] operatorDefinitions = theoryRoot.getSCNewOperatorDefinitions();
 						for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 							if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-								ISCOperatorArgument[] vars = definition.getOperatorArguments();
-								for (ISCOperatorArgument var : vars) {
+								ISCOperatorArgument[] args = definition.getOperatorArguments();
+								for (ISCOperatorArgument var : args) {
 									augTypeEnvironment.add(var.getIdentifier(factory));
 								}
 								break;
@@ -423,25 +421,22 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 					//update typeEnv
 					ITypeEnvironmentBuilder augTypeEnvironment = typeEnv.makeBuilder();
 					SCProofRulesBlock block = (SCProofRulesBlock) ((SCRewriteRule) rule).getParent();
-					if (!(block.getSource() instanceof NewOperatorDefinition)) {
-						ISCMetavariable[] vars = block.getMetavariables();
-						for (ISCMetavariable var : vars) {
-							augTypeEnvironment.add(var.getIdentifier(factory));
-						}
+					ISCMetavariable[] vars = block.getMetavariables();
+					for (ISCMetavariable var : vars) {
+						augTypeEnvironment.add(var.getIdentifier(factory));
 					}
-					else {
+					if (block.getSource() instanceof NewOperatorDefinition) {
 						ISCNewOperatorDefinition[] operatorDefinitions = theoryRoot.getSCNewOperatorDefinitions();
 						for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 							if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-								ISCOperatorArgument[] vars = definition.getOperatorArguments();
-								for (ISCOperatorArgument var : vars) {
+								ISCOperatorArgument[] args = definition.getOperatorArguments();
+								for (ISCOperatorArgument var : args) {
 									augTypeEnvironment.add(var.getIdentifier(factory));
 								}
 								break;
 							}
 						}
 					}
-					
 					lhs = ((ISCRewriteRule) rule).getSCFormula(factory, augTypeEnvironment);
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block

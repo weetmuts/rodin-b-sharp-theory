@@ -74,11 +74,9 @@ public class DeployedObjectsFactory {
 		try {
 			List<IDeployedRewriteRule> result = new ArrayList<IDeployedRewriteRule>();
 			ITypeEnvironmentBuilder augTypeEnvironment = typeEnvironment.makeBuilder();
-			if (!(block.getSource() instanceof NewOperatorDefinition)) {
 				ISCMetavariable[] vars = block.getMetavariables();
-				for (ISCMetavariable var : vars) {
-					augTypeEnvironment.add(var.getIdentifier(factory));
-				}
+			for (ISCMetavariable var : vars) {
+				augTypeEnvironment.add(var.getIdentifier(factory));
 			}
 			ISCRewriteRule[] rules = block.getRewriteRules();
 			for (ISCRewriteRule rule : rules) {
@@ -89,8 +87,8 @@ public class DeployedObjectsFactory {
 					ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
 					for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 						if (definition.getLabel().equals(rule.getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-							ISCOperatorArgument[] vars = definition.getOperatorArguments();
-							for (ISCOperatorArgument var : vars) {
+							ISCOperatorArgument[] args = definition.getOperatorArguments();
+							for (ISCOperatorArgument var : args) {
 								augTypeEnvironment.add(var.getIdentifier(factory));
 							}
 							break;

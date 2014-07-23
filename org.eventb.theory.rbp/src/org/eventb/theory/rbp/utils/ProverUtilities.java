@@ -282,19 +282,17 @@ public class ProverUtilities {
 		
 		//update typeEnv
 		ISCProofRulesBlock block = ((ISCProofRulesBlock) rule.getParent());
-		if (!(block.getSource() instanceof NewOperatorDefinition)) {
-			ISCMetavariable[] vars = block.getMetavariables();
-			for (ISCMetavariable var : vars) {
-				typeEnvironment.add(var.getIdentifier(factory));
-			}
+		ISCMetavariable[] vars = block.getMetavariables();
+		for (ISCMetavariable var : vars) {
+			typeEnvironment.add(var.getIdentifier(factory));
 		}
-		else {
+		if (block.getSource() instanceof NewOperatorDefinition) {
 			ISCTheoryRoot deployedRoot = (ISCTheoryRoot) block.getParent();
 			ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
 			for (ISCNewOperatorDefinition definition : operatorDefinitions) {
 				if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-					ISCOperatorArgument[] vars = definition.getOperatorArguments();
-					for (ISCOperatorArgument var : vars) {
+					ISCOperatorArgument[] args = definition.getOperatorArguments();
+					for (ISCOperatorArgument var : args) {
 						typeEnvironment.add(var.getIdentifier(factory));
 					}
 					break;
