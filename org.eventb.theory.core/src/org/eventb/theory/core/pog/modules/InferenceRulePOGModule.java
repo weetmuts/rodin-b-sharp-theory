@@ -89,7 +89,7 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 				Predicate pred = given.getPredicate(typeEnvironment);
 				if (pred != null) {
 					givensPredicates.add(pred);
-					givensPredicatesWDs.add(getDWDCondition(pred));
+					//givensPredicatesWDs.add(getDWDCondition(pred));
 				}
 			}
 			ISCInfer infers[] = inferenceRule.getInfers();
@@ -99,7 +99,10 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 				Predicate pred = infer.getPredicate(typeEnvironment);
 				if (pred != null) {
 					infersPredicates.add(pred);
-					infersPredicatesWDs.add(getDWDCondition(pred));
+					/*
+					 * removed because of huge WD predicate in the PO goal which results in very low speed of opening/discharging the PO
+					 */
+					//infersPredicatesWDs.add(getDWDCondition(pred));
 				}
 			}
 			Predicate conj1 = AstUtilities.conjunctPredicates(
