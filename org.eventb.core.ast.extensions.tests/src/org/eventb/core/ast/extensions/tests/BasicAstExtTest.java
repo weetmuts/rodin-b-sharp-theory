@@ -25,16 +25,18 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.AstUtilities.PositionPoint;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
-import org.eventb.core.ast.extensions.maths.AstUtilities.PositionPoint;
-import org.eventb.core.internal.ast.extensions.maths.CompleteDatatypeExtension;
 import org.eventb.core.internal.ast.extensions.maths.OperatorArgument;
 
 /**
@@ -399,33 +401,31 @@ public abstract class BasicAstExtTest extends TestCase {
 	public Set<IFormulaExtension> listExtensions() throws CoreException {
 		if (LIST_EXTENSIONS != null)
 			return LIST_EXTENSIONS;
-		Map<String, Map<String, String>> constructors = new LinkedHashMap<String, Map<String, String>>();
-		{
-			constructors.put("nil", Collections.<String, String> emptyMap());
-			Map<String, String> consDest = new LinkedHashMap<String, String>();
-			{
-				consDest.put("head", "T");
-				consDest.put("tail", "List(T)");
-			}
-			constructors.put("cons", consDest);
-		}
-		CompleteDatatypeExtension ext = new CompleteDatatypeExtension("List", makeSList("T"), constructors);
-		LIST_EXTENSIONS = ext.toDatatype(factory).getExtensions();
+
+		final IDatatypeBuilder listBuilder = factory.makeDatatypeBuilder(
+				"List", factory.makeGivenType("T"));
+		listBuilder.addConstructor("nil");
+		final IConstructorBuilder cons = listBuilder.addConstructor("cons");
+		cons.addArgument("head", factory.makeGivenType("T"));
+		cons.addArgument("tail", factory.makeGivenType("List"));
+		final IDatatype list = listBuilder.finalizeDatatype();
+		
+		LIST_EXTENSIONS = list.getExtensions();
 		return LIST_EXTENSIONS;
 	}
 
 	public Set<IFormulaExtension> directionExtensions() throws CoreException {
 		if (DIRECTION_EXTENSIONS != null)
 			return DIRECTION_EXTENSIONS;
-		Map<String, Map<String, String>> constructors = new LinkedHashMap<String, Map<String, String>>();
-		{
-			constructors.put("NORTH", Collections.<String, String> emptyMap());
-			constructors.put("SOUTH", Collections.<String, String> emptyMap());
-			constructors.put("EAST", Collections.<String, String> emptyMap());
-			constructors.put("WEST", Collections.<String, String> emptyMap());
-		}
-		CompleteDatatypeExtension ext = new CompleteDatatypeExtension("DIRECTION", makeSList(), constructors);
-		DIRECTION_EXTENSIONS = ext.toDatatype(factory).getExtensions();
+
+		final IDatatypeBuilder dirBuilder = factory.makeDatatypeBuilder("DIRECTION");
+		dirBuilder.addConstructor("NORTH");
+		dirBuilder.addConstructor("SOUTH");
+		dirBuilder.addConstructor("EAST");
+		dirBuilder.addConstructor("WEST");
+		final IDatatype directions = dirBuilder.finalizeDatatype();
+		
+		DIRECTION_EXTENSIONS = directions.getExtensions();
 		return DIRECTION_EXTENSIONS;
 	}
 

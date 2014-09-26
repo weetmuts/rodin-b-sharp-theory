@@ -11,7 +11,6 @@ import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.modules.DatatypeConstructorModule;
-import org.eventb.theory.core.sc.modules.DatatypeDestructorModule;
 import org.eventb.theory.core.sc.modules.DatatypeModule;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
 import org.junit.Test;
@@ -415,7 +414,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "AnotherList");
 		hasError(scDt);
 		getDatatypes(scTheoryRoot, "List", "AnotherList");
-		hasMarker(dest, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.IdenIsAConsNameError, "nil");
+		hasMarker(dest, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.IdenIsExistingNameError, "nil");
 	}
 	
 	/**
