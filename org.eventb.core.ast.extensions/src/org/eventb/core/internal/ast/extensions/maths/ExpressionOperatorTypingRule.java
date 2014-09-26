@@ -167,7 +167,8 @@ public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 			}
 		}
 		for (GivenType gType : instantiations.keySet()) {
-			subs.put(factory.makeFreeIdentifier(gType.getName(), null, instantiations.get(gType).toExpression().getType()), instantiations.get(gType).toExpression());
+			final Type instType = instantiations.get(gType).translate(factory);
+			subs.put(factory.makeFreeIdentifier(gType.getName(), null, instType.toExpression().getType()), instType.toExpression());
 		}
 		return subs;
 	}
