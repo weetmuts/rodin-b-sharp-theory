@@ -34,6 +34,8 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -45,6 +47,8 @@ import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.states.OperatorInformation;
+import org.eventb.theory.internal.core.util.GeneralUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
@@ -85,6 +89,12 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		ISCNewOperatorDefinition definitions[] = theory
 				.getSCNewOperatorDefinitions();
 		for (ISCNewOperatorDefinition definition : definitions) {
+			OperatorInformation operatorInformation = null;
+			IFormulaExtension formulaExtension = operatorInformation.getExtension(definition);
+			FormulaFactory newFactory = factory.withExtensions(GeneralUtilities.singletonSet(formulaExtension));
+			repository.setFormulaFactory(newFactory);
+			repository.setTypeEnvironment(AstUtilities.getTypeEnvironmentForFactory(repository.getTypeEnvironment(), newFactory));
+			factory = repository.getFormulaFactory();
 			generateCorrespondingPOs(definition, monitor);
 		}
 	}

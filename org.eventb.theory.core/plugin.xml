@@ -572,12 +572,6 @@
             parent="org.eventb.theory.core.datatypeModule">
       </processorType>
       <processorType
-            class="org.eventb.theory.core.sc.modules.DatatypeDestructorModule"
-            id="datatypeDestructorModule"
-            name="%scDatatypeDestructorModule"
-            parent="org.eventb.theory.core.datatypeConstructorModule">
-      </processorType>
-      <processorType
             class="org.eventb.theory.core.sc.modules.OperatorModule"
             id="operatorModule"
             name="%scOperatorModule"
@@ -914,9 +908,6 @@
          </scModule>
          <scModule
                id="org.eventb.theory.core.datatypeConstructorModule">
-         </scModule>
-         <scModule
-               id="org.eventb.theory.core.datatypeDestructorModule">
          </scModule>
          <scModule
                id="org.eventb.theory.core.operatorModule">
@@ -1997,6 +1988,9 @@
          <attributeType
                typeId="org.eventb.core.source">
          </attributeType>
+         <attributeType
+               typeId="org.eventb.core.label">
+         </attributeType>
          <childType
                typeId="org.eventb.theory.core.scMetavariable">
          </childType>
@@ -2149,6 +2143,66 @@
             parentTypeId="org.eventb.theory.core.useTheory">
          <attributeType
                typeId="org.eventb.core.scTarget">
+         </attributeType>
+      </relationship>
+      <relationship
+            parentTypeId="org.eventb.theory.core.theoryLanguageRoot">
+         <attributeType
+               typeId="org.eventb.core.configuration">
+         </attributeType>
+         <childType
+               typeId="org.eventb.theory.core.availableTheoryProject">
+         </childType>
+      </relationship>
+      <relationship
+            parentTypeId="org.eventb.theory.core.availableTheoryProject">
+         <attributeType
+               typeId="org.eventb.theory.core.availableTheoryProject">
+         </attributeType>
+         <childType
+               typeId="org.eventb.theory.core.availableTheory">
+         </childType>
+      </relationship>
+      <relationship
+            parentTypeId="org.eventb.theory.core.availableTheory">
+         <attributeType
+               typeId="org.eventb.theory.core.availableTheory">
+         </attributeType>
+      </relationship>
+      <relationship
+            parentTypeId="org.eventb.theory.core.scTheoryLanguageRoot">
+         <attributeType
+               typeId="org.eventb.core.accurate">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.core.configuration">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.core.source">
+         </attributeType>
+         <childType
+               typeId="org.eventb.theory.core.scAvailableTheoryProject">
+         </childType>
+      </relationship>
+      <relationship
+            parentTypeId="org.eventb.theory.core.scAvailableTheoryProject">
+         <attributeType
+               typeId="org.eventb.core.source">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.theory.core.availableTheoryProject">
+         </attributeType>
+         <childType
+               typeId="org.eventb.theory.core.scAvailableTheory">
+         </childType>
+      </relationship>
+      <relationship
+            parentTypeId="org.eventb.theory.core.scAvailableTheory">
+         <attributeType
+               typeId="org.eventb.core.source">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.theory.core.availableTheory">
          </attributeType>
       </relationship>
    </extension>

@@ -305,6 +305,7 @@ public abstract class OperatorTypingRule {
 			Map<GivenType, Type> typeParameterToTypeVariablesMap,
 			ITypeMediator mediator) {
 
+		theoryType = theoryType.translate(mediator.getFactory());
 		if (typeParameterToTypeVariablesMap.containsKey(theoryType)) {
 			return typeParameterToTypeVariablesMap.get(theoryType);
 		} else {

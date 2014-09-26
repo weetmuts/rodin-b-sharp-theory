@@ -7,28 +7,25 @@
  *
  * Contributors:
  *     University of Southampton - initial API and implementation
+ *     Systerel - adapt datatypes to Rodin 3.0 API
  *******************************************************************************/
 package org.eventb.core.ast.extensions.maths;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.core.internal.ast.extensions.maths.AxiomaticTypeExtension;
-import org.eventb.core.internal.ast.extensions.maths.CompleteDatatypeExtension;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorTypingRule;
 import org.eventb.core.internal.ast.extensions.maths.OperatorArgument;
@@ -110,7 +107,8 @@ public final class MathExtensionsFactory {
 	}
 	
 	/**
-	 * Returns a simple datatype extension with the given details.
+	 * Returns a datatype builder for the given identifier and type arguments,
+	 * based on the given factory.
 	 * 
 	 * @param identifier
 	 *            the name of the datatype
@@ -120,36 +118,13 @@ public final class MathExtensionsFactory {
 	 *            the formula factory
 	 * @return the set of resulting extensions
 	 */
-	public static Set<IFormulaExtension> getSimpleDatatypeExtensions(
-			String identifier, String[] typeArguments, FormulaFactory factory) {
+	public static IDatatypeBuilder makeDatatypeBuilder(
+			String identifier, List<String> typeArguments, FormulaFactory factory) {
 		final List<GivenType> givenTypes = new ArrayList<GivenType>();
 		for (String typeArgument : typeArguments) {
 			givenTypes.add(factory.makeGivenType(typeArgument));
 		}
-		final IDatatypeBuilder dtBuilder = factory.makeDatatypeBuilder(identifier, givenTypes);
-		final IDatatype datatype = dtBuilder.finalizeDatatype();
-		return datatype.getExtensions();
-	}
-
-	/**
-	 * Returns a complete datatype extension with the given details.
-	 * 
-	 * @param identifier
-	 *            the name of the datatype
-	 * @param typeArguments
-	 *            the type arguments of this datatype
-	 * @param constructors
-	 *            the constructors of this datatype
-	 * @param factory
-	 *            the formula factory
-	 * @return the set of resulting extensions
-	 */
-	public static Set<IFormulaExtension> getCompleteDatatypeExtensions(
-			String identifier, String[] typeArguments,
-			Map<String, Map<String, String>> constructors, FormulaFactory factory) {
-		CompleteDatatypeExtension completeDtExt = new CompleteDatatypeExtension(identifier, 
-				typeArguments, constructors);
-		return completeDtExt.toDatatype(factory).getExtensions();
+		return factory.makeDatatypeBuilder(identifier, givenTypes);
 	}
 	
 	/**

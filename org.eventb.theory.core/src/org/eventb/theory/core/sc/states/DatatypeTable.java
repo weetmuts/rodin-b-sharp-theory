@@ -1,13 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel - adapt datatypes to Rodin 3.0 API
  *******************************************************************************/
 package org.eventb.theory.core.sc.states;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,17 +19,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ITypeVisitor;
-import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.ParametricType;
-import org.eventb.core.ast.PowerSetType;
-import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
@@ -44,19 +45,12 @@ public class DatatypeTable extends State implements ISCState {
 	public static final IStateType<DatatypeTable> STATE_TYPE = SCCore.getToolStateType(TheoryPlugin.PLUGIN_ID + ".datatypeTable");
 	
 	private Map<String, DatatypeEntry> datatypes;
-	// current datatype details
-	private ParametricType typeExpression;
-	//private List<String> referencedTypes;
 	private String currentDatatype = null;
-	private String currentConstructor = null;
-	private boolean isAdmissible = true;
 	
 	private FormulaFactory initialFactory;
-	private FormulaFactory decoyFactory;
 
 	public DatatypeTable(FormulaFactory initialFactory){
 		this.initialFactory = initialFactory;
-		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		datatypes = new LinkedHashMap<String, DatatypeTable.DatatypeEntry>();
 	}
 	
@@ -65,35 +59,20 @@ public class DatatypeTable extends State implements ISCState {
 		return STATE_TYPE;
 	}
 	
-	public FormulaFactory augmentDecoyFormulaFactory() throws CoreException{
-		assertMutable();
-		DatatypeEntry entry = datatypes.get(currentDatatype);
-		Set<IFormulaExtension> extensions  = entry.generateTypeExpression();
-		if(extensions != null){
-			decoyFactory = decoyFactory.withExtensions(extensions);
-		}
-		typeExpression = AstUtilities.
-				createTypeExpression(currentDatatype, Arrays.asList(entry.typeArguments), decoyFactory);
-		return decoyFactory;
-	}
-	
 	public FormulaFactory augmentFormulaFactory() throws CoreException{
 		assertMutable();
 		DatatypeEntry entry = datatypes.get(currentDatatype);
-		Set<IFormulaExtension> extensions  = entry.generateDatatypeExtensions();
-		if(extensions != null){
-			initialFactory = initialFactory.withExtensions(extensions);
-		}
-		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
+		
+		final IDatatype datatype = entry.finalizeDatatype();
+		
+		Set<IFormulaExtension> extensions  = datatype.getExtensions();
+		initialFactory = initialFactory.withExtensions(extensions);
 		return initialFactory;
 	}
 	
 	public FormulaFactory reset() throws CoreException{
 		assertMutable();
-		decoyFactory = FormulaFactory.getInstance(initialFactory.getExtensions());
 		currentDatatype = null;
-		currentConstructor = null;
-		isAdmissible = true;
 		return initialFactory;
 	}
 	
@@ -112,7 +91,7 @@ public class DatatypeTable extends State implements ISCState {
 		return true;
 	}
 	
-	public void addDatatype(String name, String[] typeArgs) throws CoreException{
+	public void addDatatype(String name, List<String> typeArgs) throws CoreException{
 		assertMutable();
 		datatypes.put(name, new DatatypeEntry(name, typeArgs));
 		currentDatatype = name;
@@ -120,16 +99,12 @@ public class DatatypeTable extends State implements ISCState {
 	
 	public boolean datatypeHasBaseConstructor() throws CoreException{
 		assertMutable();
-		return datatypes.get(currentDatatype).hasBaseConstructor(typeExpression, decoyFactory);
+		return datatypes.get(currentDatatype).hasBaseConstructor();
 	}
 	
-	public boolean isAdmissible() {
-		return isAdmissible;
-	}
-	
-	public boolean isAllowedIdentifier(String identifier) throws CoreException {
+	public boolean isAllowedGivenType(GivenType givenType) throws CoreException {
 		assertMutable();
-		return datatypes.get(currentDatatype).isAllowedIdentifier(identifier);
+		return datatypes.get(currentDatatype).isAllowedGivenType(givenType);
 	}
 	
 	@Override
@@ -140,51 +115,47 @@ public class DatatypeTable extends State implements ISCState {
 	
 	public String checkName(String name) throws CoreException{
 		assertMutable();
-		if(datatypes.containsKey(name)){
-			return Messages.scuser_IdenIsADatatypeNameError;
+		if (!initialFactory.isValidIdentifierName(name)) {
+			return Messages.scuser_DatatypeError;
 		}
-		String code = null;
-		for (DatatypeEntry entry : datatypes.values()){
-			code = entry.checkName(name);
-			if(code != null){
-				break;
-			}
-		}
-		return code;
+		return null;
 	}
 
-	public void addConstructor(String consName) throws CoreException{
+	public void addConstructor(String consName) throws CoreException {
 		assertMutable();
 		datatypes.get(currentDatatype).addConstructor(consName);
-		currentConstructor = consName;
 	}
 	
-	public boolean addDestructor(String destName, Type type) throws CoreException{
+	public IParseResult parseType(String strType) throws CoreException {
 		assertMutable();
-		boolean admissibility = datatypes.get(currentDatatype).addDestructor(currentConstructor, destName, type);
-		if (!admissibility){
-			isAdmissible = false;
-		}
-		return admissibility;
+		return datatypes.get(currentDatatype).parseType(strType);
+	}
+
+	public void addDestructor(String destName, Type type) throws CoreException{
+		assertMutable();
+		datatypes.get(currentDatatype).addDestructor(destName, type);
 	}
 	
 	private class DatatypeEntry{
 		
-		String identifier;
-		String[] typeArguments;
-		List<String> listTypeArguments;
-		LinkedHashMap<String, ConstructorEntry> constructors;
+		private final IDatatypeBuilder dtBuilder;
+		private final String identifier;
+		private final List<String> typeArguments;
+		private final List<String> constructors = new ArrayList<String>();
+		private final List<String> destructors = new ArrayList<String>();
+		private IConstructorBuilder currentConstructor = null;
+
 		boolean isErrorProne = false;
 		
-		public DatatypeEntry(String identifier, String[] typeArguments){
+		public DatatypeEntry(String identifier, List<String> typeArgs){
+			this.dtBuilder = MathExtensionsFactory.makeDatatypeBuilder(identifier, typeArgs, initialFactory);
 			this.identifier = identifier;
-			this.typeArguments = typeArguments;
-			this.listTypeArguments = Arrays.asList(typeArguments);
-			this.constructors = new LinkedHashMap<String, DatatypeTable.DatatypeEntry.ConstructorEntry>();
+			this.typeArguments = new ArrayList<String>(typeArgs);
 		}
 		
-		public boolean isAllowedIdentifier(String identifier) throws CoreException {
-			return listTypeArguments.contains(identifier);
+		public boolean isAllowedGivenType(GivenType givenType) throws CoreException {
+			final String name = givenType.getName();
+			return identifier.equals(name) || typeArguments.contains(name);
 		}
 		
 		public void setErrorProne(){
@@ -195,208 +166,26 @@ public class DatatypeTable extends State implements ISCState {
 			return isErrorProne;
 		}
 		
-		public boolean hasBaseConstructor(Type typeExpression, FormulaFactory ff){
-			boolean result = false;
-			for(ConstructorEntry entry : constructors.values()){
-				if(entry.isBase(typeExpression, ff)){
-					result = true;
-					break;
-				}
-			}
-			return result;
+		public boolean hasBaseConstructor() {
+			return dtBuilder.hasBasicConstructor();
 		}
 		
 		public void addConstructor(String name){
-			constructors.put(name, new ConstructorEntry());
+			currentConstructor = dtBuilder.addConstructor(name);
+			constructors.add(name);
+		}
+
+		public IParseResult parseType(String strType) {
+			return dtBuilder.parseType(strType);
 		}
 		
-		
-		public String checkName(String name){
-			if(constructors.containsKey(name)){
-				return Messages.scuser_IdenIsAConsNameError;
-			}
-			String code = null;
-			for (ConstructorEntry entry : constructors.values()){
-				code = entry.checkName(name);
-				if(code != null){
-					break;
-				}
-			}
-			return code;
+		public void addDestructor(String destructor, Type type){
+			currentConstructor.addArgument(destructor, type);
+			destructors.add(destructor);
 		}
 		
-		public boolean addDestructor(String constructor, String destructor, Type type){
-			return constructors.get(constructor).addDestructor(destructor, type);
-		}
-		
-		public Set<IFormulaExtension> generateTypeExpression(){
-			return MathExtensionsFactory.getSimpleDatatypeExtensions(identifier, typeArguments, decoyFactory);
-		}
-		
-		public Set<IFormulaExtension> generateDatatypeExtensions(){
-			if(isErrorProne)
-				return null;
-			Map<String, Map<String, String>> consMap = new LinkedHashMap<String, Map<String,String>>();
-			for(String entry : constructors.keySet()){
-				Map<String, String> destMap = new LinkedHashMap<String, String>();
-				ConstructorEntry consEntry = constructors.get(entry);
-				for(String destEntry : consEntry.destructors.keySet()){
-					destMap.put(destEntry, consEntry.destructors.get(destEntry).toString());
-				}
-				consMap.put(entry, destMap);
-			}
-			return MathExtensionsFactory.getCompleteDatatypeExtensions(identifier, typeArguments, consMap, initialFactory);
-		}
-		
-		public class ConstructorEntry{
-			
-			Map<String, Type> destructors;
-			
-			public ConstructorEntry(){
-				destructors = new LinkedHashMap<String, Type>();
-			}
-			
-			public String checkName(String name){
-				if(destructors.containsKey(name)){
-					return Messages.scuser_IdenIsADesNameError;
-				}
-				return null;
-			}
-			
-			public boolean isBase(Type typeExpression, FormulaFactory ff){
-				for(Type type : destructors.values()){
-					BaseTypeVisitor typeVisitor = new BaseTypeVisitor((ParametricType)typeExpression);
-					type.accept(typeVisitor);
-					if(!typeVisitor.isBaseType()){
-						return false;
-					}
-				}
-				return true;
-			}
-			
-			public boolean addDestructor(String name, Type type){
-				// check for admissibility before inserting
-				{
-					AdmissibilityChecker checker = new AdmissibilityChecker(typeExpression);
-					type.accept(checker);
-					if(!checker.isAdmissible()){
-						return false;
-					}
-				}
-				destructors.put(name, type);
-				return true;
-			}
-		}
-		
-		public class BaseTypeVisitor implements ITypeVisitor{
-
-			private ParametricType type;
-			private boolean isBase = true;
-			
-			public BaseTypeVisitor(ParametricType type){
-				this.type = type;
-			}
-			
-			public boolean isBaseType(){
-				return isBase;
-			}
-			
-			@Override
-			public void visit(BooleanType type) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void visit(GivenType type) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void visit(IntegerType type) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void visit(ParametricType type) {
-				if (type.getExprExtension().equals(this.type.getExprExtension())){
-					isBase = false;
-				}
-				else {
-					for (Type tp : type.getTypeParameters()){
-						tp.accept(this);
-					}
-				}
-			}
-
-			@Override
-			public void visit(PowerSetType type) {
-				type.getBaseType().accept(this);
-				
-			}
-
-			@Override
-			public void visit(ProductType type) {
-				type.getLeft().accept(this);
-				type.getRight().accept(this);
-			}
-			
-		}
-		
-		public class AdmissibilityChecker implements ITypeVisitor{
-			
-			private ParametricType typeExpression;
-			private boolean isAdmissible = true;
-			
-			public AdmissibilityChecker(ParametricType type){
-				this.typeExpression = type;
-			}
-			
-			public boolean isAdmissible(){
-				return isAdmissible;
-			}
-	
-			@Override
-			public void visit(BooleanType type) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void visit(GivenType type) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void visit(IntegerType type) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void visit(ParametricType type) {
-				for (Type tp : type.getTypeParameters()){
-					tp.accept(this);
-				}
-			}
-
-			@Override
-			public void visit(PowerSetType type) {
-				BaseTypeVisitor baseTypeVisitor = new BaseTypeVisitor(typeExpression);
-				type.getBaseType().accept(baseTypeVisitor);
-				if (!baseTypeVisitor.isBaseType()){
-					isAdmissible = false;
-				}
-			}
-
-			@Override
-			public void visit(ProductType type) {
-				type.getLeft().accept(this);
-				type.getRight().accept(this);
-			}
+		public IDatatype finalizeDatatype() {
+			return dtBuilder.finalizeDatatype();
 		}
 	}
 }

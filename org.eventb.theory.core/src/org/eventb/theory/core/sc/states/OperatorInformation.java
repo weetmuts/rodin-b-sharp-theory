@@ -302,7 +302,7 @@ public class OperatorInformation extends State implements ISCState{
 		}
 		Map<FreeIdentifier, Expression> possibleSubstitution = new HashMap<FreeIdentifier, Expression>();
 		for (String arg : opArguments.keySet()) {
-			Type argType = opArguments.get(arg);
+			Type argType = opArguments.get(arg).translate(enhancedFactory);
 			FreeIdentifier argIdent = enhancedFactory.makeFreeIdentifier(arg, null, argType);
 			ISCMetavariable var = newRulesbBlock.getMetavariable(arg);
 			while (var.exists() && !var.getType(enhancedFactory).equals(argType)) {
@@ -326,12 +326,12 @@ public class OperatorInformation extends State implements ISCState{
 			rhs.create(null, null);
 			rhs.setLabel(syntax + " rhs", null);
 			rhs.setPredicate(AstUtilities.BTRUE, null);
-			rhs.setSCFormula(((Definitions.DirectDefintion) definition).getDefinition().substituteFreeIdents(possibleSubstitution), null);
+			rhs.setSCFormula(((Definitions.DirectDefintion) definition).getDefinition().translate(enhancedFactory).substituteFreeIdents(possibleSubstitution), null);
 			rhs.setSource(originDefinition, null);
 		} else if (definition instanceof Definitions.RecursiveDefinition) {
 			Definitions.RecursiveDefinition recursiveDefinition = (Definitions.RecursiveDefinition) definition;
 			Map<Expression, Formula<?>> recursiveCases = recursiveDefinition.getRecursiveCases();
-			FreeIdentifier inductiveIdent = recursiveDefinition.getOperatorArgument();
+			FreeIdentifier inductiveIdent = (FreeIdentifier) recursiveDefinition.getOperatorArgument().translate(enhancedFactory);
 			int index = 0;
 			for (Expression indCase : recursiveCases.keySet()) {
 				ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID + " case " + index++, syntax + " expansion");
@@ -360,7 +360,7 @@ public class OperatorInformation extends State implements ISCState{
 				// FIXED BUG
 				FreeIdentifier newInductiveIdentifier = (FreeIdentifier) inductiveIdent.substituteFreeIdents(
 						possibleSubstitution);
-				indSub.put(newInductiveIdentifier, indCase);
+				indSub.put(newInductiveIdentifier, indCase.translate(enhancedFactory));
 				// substitute the inductive ident if necessary
 				lhs = lhs.substituteFreeIdents(indSub);
 				// substitute the vars of the inductive case if necessary
@@ -372,7 +372,7 @@ public class OperatorInformation extends State implements ISCState{
 				rhs.setLabel(syntax + " rhs", null);
 				rhs.setPredicate(AstUtilities.BTRUE, null);
 				// get the rhs 
-				Formula<?> indCaseDefinitionFormula = recursiveCases.get(indCase);
+				Formula<?> indCaseDefinitionFormula = recursiveCases.get(indCase).translate(enhancedFactory);
 				// apply substitution if necessary
 				indCaseDefinitionFormula = indCaseDefinitionFormula.substituteFreeIdents(possibleSubstitution);
 				rhs.setSCFormula(indCaseDefinitionFormula, null);
@@ -449,7 +449,7 @@ public class OperatorInformation extends State implements ISCState{
 		Expression[] exps = new Expression[opArguments.size()];
 		int i = 0;
 		for (String name : opArguments.keySet()){
-			exps[i] = ff.makeFreeIdentifier(name, null, opArguments.get(name));
+			exps[i] = ff.makeFreeIdentifier(name, null, opArguments.get(name).translate(ff));
 			i ++;
 		}
 		return exps;

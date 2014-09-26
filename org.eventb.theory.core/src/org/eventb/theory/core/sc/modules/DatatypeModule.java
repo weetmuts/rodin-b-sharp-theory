@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel - adapt datatypes to Rodin 3.0 API
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
@@ -125,22 +129,21 @@ public class DatatypeModule extends SCProcessorModule {
 					datatypeDefinition, targetRoot, monitor);
 			target.setSource(datatypeDefinition, monitor);
 			// process the type arguments
-			List<String> typeArgyments = new ArrayList<String>();
-			boolean faithful = processTypeArguments(datatypeDefinition, typeArgyments, target, factory,
-					typeEnvironment, datatypeTable, monitor);
-			datatypeTable.addDatatype(datatypeDefinition.getIdentifierString(),
-					typeArgyments.toArray(new String[typeArgyments.size()]));
+			List<String> typeArguments = new ArrayList<String>();
+			boolean faithful = processTypeArguments(datatypeDefinition,
+					typeArguments, target, factory, typeEnvironment, monitor);
+			
+			try {
+				datatypeTable.addDatatype(datatypeDefinition.getIdentifierString(),
+						typeArguments);
+			} catch (IllegalArgumentException e) {
+				createProblemMarker(datatypeDefinition, TheoryAttributes.TYPE_ATTRIBUTE, 
+						TheoryGraphProblem.DatatypeError, e.getMessage());
+			}
 			if (!faithful) {
 				datatypeTable.setErrorProne();
 				theoryAccurate = false;
 			}
-			// create the decoy factory
-			FormulaFactory decoy = datatypeTable.augmentDecoyFormulaFactory();
-			// set the new factory and create an associated type environment
-			repository.setFormulaFactory(decoy);
-			factory = decoy;
-			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
-			repository.setTypeEnvironment(typeEnvironment);
 
 			// Run the child modules
 			{
@@ -221,8 +224,6 @@ public class DatatypeModule extends SCProcessorModule {
 	 *            the formula factory
 	 * @param typeEnvironment
 	 *            the type environment
-	 * @param datatypeTable
-	 *            the datatype table
 	 * @param monitor
 	 *            the progress monitor
 	 * @return whether all type arguments have been processed faithfully
@@ -230,7 +231,7 @@ public class DatatypeModule extends SCProcessorModule {
 	 */
 	private boolean processTypeArguments(IDatatypeDefinition datatypeDefinition, List<String> toPopulate,
 			ISCDatatypeDefinition target, FormulaFactory factory, ITypeEnvironment typeEnvironment,
-			DatatypeTable datatypeTable, IProgressMonitor monitor) throws CoreException {
+			IProgressMonitor monitor) throws CoreException {
 		ITypeArgument typeArgs[] = datatypeDefinition.getTypeArguments();
 		// needed to check for redundancies
 		boolean faithful = true;

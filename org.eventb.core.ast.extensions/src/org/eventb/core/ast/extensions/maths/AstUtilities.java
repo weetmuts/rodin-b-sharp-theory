@@ -8,6 +8,7 @@
  * Contributors:
  *     University of Southampton - initial API and implementation
  *     Systerel - add infix expression operator group
+ *     Systerel - adapt datatypes to Rodin 3.0 API
  *******************************************************************************/
 package org.eventb.core.ast.extensions.maths;
 
@@ -464,7 +465,7 @@ public class AstUtilities {
 			preds.remove(BTRUE);
 		}
 		if (preds.size() == 0) {
-			return BTRUE;
+			return BTRUE.translate(ff);
 		}
 		if (preds.size() == 1) {
 			return preds.get(0);
@@ -713,9 +714,13 @@ public class AstUtilities {
 	 * @return the new type environment
 	 */
 	public static ITypeEnvironmentBuilder getTypeEnvironmentForFactory(ITypeEnvironment typeEnvironment, FormulaFactory factory) {
-		ITypeEnvironmentBuilder newTypeEnvironment = factory.makeTypeEnvironment();
-		newTypeEnvironment.addAll(typeEnvironment);
-		return newTypeEnvironment;
+//		ITypeEnvironmentBuilder newTypeEnvironment = factory.makeTypeEnvironment();
+//		newTypeEnvironment.addAll(typeEnvironment);
+//		return newTypeEnvironment;
+		if (typeEnvironment.isTranslatable(factory))
+			return (ITypeEnvironmentBuilder) typeEnvironment.translate(factory);
+		else
+			throw new IllegalArgumentException("tupeEnvironment " + typeEnvironment + " is not translatable");
 	}
 
 	/**

@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel - adapt datatypes to Rodin 3.0 API
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
@@ -28,6 +32,9 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
@@ -94,9 +101,9 @@ public class FormulaExtensionsLoader {
 
 		for (ISCDatatypeDefinition definition : datatypeDefinitions) {
 			DatatypeTransformer transformer = new DatatypeTransformer();
-			Set<IFormulaExtension> addedExtensions = transformer.transform(definition, factory, typeEnvironment);
-			if (addedExtensions != null) {
-				extensions.addAll(addedExtensions);
+			IDatatype datatype = transformer.transform(definition, factory);
+			if (datatype != null) {
+				extensions.addAll(datatype.getExtensions());
 			}
 			factory = factory.withExtensions(extensions);
 			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
@@ -213,42 +220,37 @@ public class FormulaExtensionsLoader {
  */
 class DatatypeTransformer{
 
-	public Set<IFormulaExtension> transform(final ISCDatatypeDefinition definition, final FormulaFactory factory,
-			ITypeEnvironment typeEnvironment) throws CoreException {
+	public IDatatype transform(ISCDatatypeDefinition definition, FormulaFactory factory) throws CoreException {
 		if (definition == null || !definition.exists()) {
 			return null;
 		}
 		if (definition.hasHasErrorAttribute() && definition.hasError()) {
-			return FormulaExtensionsLoader.EMPTY_EXT;
+			return null;
 		}
 
 		final String typeName = definition.getIdentifierString();
 		ISCTypeArgument[] scTypeArguments = definition.getTypeArguments();
-		final String[] typeArguments = new String[scTypeArguments.length];
-		for (int i = 0; i < typeArguments.length; i++) {
-			typeArguments[i] = scTypeArguments[i].getSCGivenType(factory).toString();
+		final List<String> typeArguments = new ArrayList<String>(scTypeArguments.length);
+		for (ISCTypeArgument scTypeArg : scTypeArguments) {
+			typeArguments.add(scTypeArg.getSCGivenType(factory).toString());
 		}
-		FormulaFactory tempFactory = factory.withExtensions(MathExtensionsFactory.getSimpleDatatypeExtensions(
-				typeName, typeArguments, factory));
+		final IDatatypeBuilder dtBuilder = MathExtensionsFactory
+				.makeDatatypeBuilder(typeName, typeArguments, factory);
 
-		ISCDatatypeConstructor[] constructors = definition.getConstructors();
-		final Map<String, Map<String, String>> datatypeCons = new LinkedHashMap<String, Map<String, String>>();
-		for (ISCDatatypeConstructor cons : constructors) {
-			String consIdent = cons.getIdentifierString();
-			ISCConstructorArgument[] destructors = cons.getConstructorArguments();
-			if (destructors.length == 0) {
-				datatypeCons.put(consIdent, new LinkedHashMap<String, String>());
-			} else {
-				Map<String, String> datatypeDes = new LinkedHashMap<String, String>();
-				for (ISCConstructorArgument dest : destructors) {
-					datatypeDes.put(dest.getIdentifierString(), dest.getType(tempFactory).toString());
-				}
-				datatypeCons.put(consIdent, datatypeDes);
+		for (ISCDatatypeConstructor cons : definition.getConstructors()) {
+			final IConstructorBuilder consBuilder = dtBuilder
+					.addConstructor(cons.getIdentifierString());
+			for (ISCConstructorArgument dest : cons.getConstructorArguments()) {
+				// Note: the datatype type has been serialized as a given type,
+				// which is what the IConstructorBuilder expects (instead of
+				// a parametric type as one could imagine).
+				// Hence not parsing with dtBuilder.parseType(),
+				// as this one looks for a parametric type.
+				final Type type = dest.getType(factory);
+				consBuilder.addArgument(dest.getIdentifierString(), type);
 			}
-			
 		}
-		return MathExtensionsFactory.getCompleteDatatypeExtensions(typeName, typeArguments, datatypeCons, factory);
-
+		return dtBuilder.finalizeDatatype();
 	}
 
 }

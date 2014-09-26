@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel - adapt datatypes to Rodin 3.0 API
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
@@ -148,14 +152,8 @@ public class ModulesUtils {
 	 * @return the rodin problem
 	 */
 	public static IRodinProblem getAppropriateProblemForCode(String errorCode) {
-		if (errorCode.equals(Messages.scuser_IdenIsAConsNameError)) {
-			return TheoryGraphProblem.IdenIsAConsNameError;
-		}
-		if (errorCode.equals(Messages.scuser_IdenIsADatatypeNameError)) {
-			return TheoryGraphProblem.IdenIsADatatypeNameError;
-		}
-		if (errorCode.equals(Messages.scuser_IdenIsADesNameError)) {
-			return TheoryGraphProblem.IdenIsADesNameError;
+		if (errorCode.equals(Messages.scuser_IdenIsExistingNameError)) {
+			return TheoryGraphProblem.IdenIsExistingNameError;
 		}
 		return null;
 	}
@@ -221,7 +219,9 @@ public class ModulesUtils {
 				return null;
 			}
 		}
-		ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
+		final ITypeEnvironment tEnv = typeEnvironment.translate(formula.getFactory());
+		ITypeCheckResult tcResult = formula.typeCheck(tEnv);
+		//ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
 		if (issueErrors) {
 			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
 					tcResult, markerDisplay)) {

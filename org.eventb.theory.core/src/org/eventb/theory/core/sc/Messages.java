@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added scuser_LoadingRootModuleError
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - adapt datatypes to Rodin 3.0 API
  *******************************************************************************/
 package org.eventb.theory.core.sc;
 
@@ -67,9 +68,7 @@ public final class Messages {
 	public static String scuser_MissingDatatypeNameError;
 	public static String scuser_MissingDestructorTypeError;
 	public static String scuser_TypeIsNotRefTypeError;
-	public static String scuser_IdenIsADatatypeNameError;
-	public static String scuser_IdenIsAConsNameError;
-	public static String scuser_IdenIsADesNameError;
+	public static String scuser_IdenIsExistingNameError;
 	public static String scuser_IdenIsAAxiomaticTypeNameError;
 	public static String scuser_DatatypeHasNoBaseConsError;
 	public static String scuser_OperatorSynConflictError;
@@ -149,7 +148,7 @@ public final class Messages {
 	public static String database_SCTypeParseFailure;
 	public static String scuser_OpArgExprNotSet;
 	public static String scuser_ApplicabilityUndefError;
-	public static String scuser_InadmissibleDatatypeError;
+	public static String scuser_DatatypeError;
 	public static String progress_TheoryProjects;
 	public static String scuser_NoTheoryProjectError;
 	public static String scuser_DuplicatedTheoryProjectError;
