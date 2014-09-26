@@ -714,11 +714,8 @@ public class AstUtilities {
 	 * @return the new type environment
 	 */
 	public static ITypeEnvironmentBuilder getTypeEnvironmentForFactory(ITypeEnvironment typeEnvironment, FormulaFactory factory) {
-//		ITypeEnvironmentBuilder newTypeEnvironment = factory.makeTypeEnvironment();
-//		newTypeEnvironment.addAll(typeEnvironment);
-//		return newTypeEnvironment;
 		if (typeEnvironment.isTranslatable(factory))
-			return (ITypeEnvironmentBuilder) typeEnvironment.translate(factory);
+			return typeEnvironment.translate(factory).makeBuilder();
 		else
 			throw new IllegalArgumentException("tupeEnvironment " + typeEnvironment + " is not translatable");
 	}
