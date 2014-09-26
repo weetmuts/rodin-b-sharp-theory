@@ -179,6 +179,7 @@ public class ModulesUtils {
 			boolean isExpression, boolean issueErrors, FormulaFactory ff,
 			ITypeEnvironment typeEnvironment, IMarkerDisplay markerDisplay)
 			throws CoreException {
+		final ITypeEnvironment tEnv = typeEnvironment.translate(ff);
 		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
 		String form = element.getFormula();
 		Formula<?> formula = null;
@@ -212,16 +213,14 @@ public class ModulesUtils {
 		}
 		FreeIdentifier[] idents = formula.getFreeIdentifiers();
 		for (FreeIdentifier ident : idents) {
-			if (!typeEnvironment.contains(ident.getName())) {
+			if (!tEnv.contains(ident.getName())) {
 				markerDisplay.createProblemMarker(element, attributeType,
 						GraphProblem.UndeclaredFreeIdentifierError,
 						ident.getName());
 				return null;
 			}
 		}
-		final ITypeEnvironment tEnv = typeEnvironment.translate(formula.getFactory());
 		ITypeCheckResult tcResult = formula.typeCheck(tEnv);
-		//ITypeCheckResult tcResult = formula.typeCheck(typeEnvironment);
 		if (issueErrors) {
 			if (CoreUtilities.issueASTProblemMarkers(element, attributeType,
 					tcResult, markerDisplay)) {
