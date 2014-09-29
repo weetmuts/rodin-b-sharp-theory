@@ -89,12 +89,6 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		ISCNewOperatorDefinition definitions[] = theory
 				.getSCNewOperatorDefinitions();
 		for (ISCNewOperatorDefinition definition : definitions) {
-			OperatorInformation operatorInformation = null;
-			IFormulaExtension formulaExtension = operatorInformation.getExtension(definition);
-			FormulaFactory newFactory = factory.withExtensions(GeneralUtilities.singletonSet(formulaExtension));
-			repository.setFormulaFactory(newFactory);
-			repository.setTypeEnvironment(AstUtilities.getTypeEnvironmentForFactory(repository.getTypeEnvironment(), newFactory));
-			factory = repository.getFormulaFactory();
 			generateCorrespondingPOs(definition, monitor);
 		}
 	}
