@@ -171,8 +171,8 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 				IAxiomaticOperatorDefinition opDef = newOpDefs[i];
 				// get latest factory and environment
 				factory = repository.getFormulaFactory();
-				ITypeEnvironmentBuilder opTypeEnvironment = factory.makeTypeEnvironment();
-				opTypeEnvironment.addAll(globalTypeEnvironment);
+				globalTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(globalTypeEnvironment, factory);
+				ITypeEnvironmentBuilder opTypeEnvironment = globalTypeEnvironment.makeBuilder();
 				repository.setTypeEnvironment(opTypeEnvironment);
 				// needed states
 				repository.setState(new StackedIdentifierSymbolTable(
