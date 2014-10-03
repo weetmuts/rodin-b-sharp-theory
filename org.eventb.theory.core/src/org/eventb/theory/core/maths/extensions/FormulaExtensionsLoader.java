@@ -139,8 +139,11 @@ public class FormulaExtensionsLoader {
 						ITypeCheckResult typeCheckRes = predicate.typeCheck(localTypeEnvironment);
 						if(!typeCheckRes.hasProblem()){
 							IInferredTypeEnvironment inferredEnvironment = typeCheckRes.getInferredEnvironment();
-							inferredEnvironment.addAll(localTypeEnvironment);
-							Formula<?> caseDef = recCase.getSCFormula(factory, inferredEnvironment);
+							// We cannot directly use an inferred type environment for type-checking a formula,
+							// as it only exposes the newly inferred identifiers. Hence using a new type environment.
+							final ITypeEnvironmentBuilder typeEnv = localTypeEnvironment.makeBuilder();
+							typeEnv.addAll(inferredEnvironment);
+							Formula<?> caseDef = recCase.getSCFormula(factory, typeEnv);
 							recursiveCases.put(predicate.getRight(), caseDef);
 						}
 					}
