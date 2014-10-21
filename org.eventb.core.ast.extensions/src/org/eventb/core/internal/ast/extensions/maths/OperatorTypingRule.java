@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     University of Southampton - initial API and implementation
+ *     Systerel - use Specialization
  *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.maths;
 
@@ -91,29 +92,32 @@ public abstract class OperatorTypingRule {
 	
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
-		FormulaFactory factory = wdMediator.getFormulaFactory();
-		Formula<?> unflattened = AstUtilities.unflatten(formula, factory);
-		Map<FreeIdentifier, Expression> allSubs = getOverallSubstitutions(
-				((IExtendedFormula) unflattened).getChildExpressions(), factory);
-		if (allSubs == null) {
+		final FormulaFactory factory = wdMediator.getFormulaFactory();
+		final Formula<?> unflattened = AstUtilities.unflatten(formula, factory);
+		final Instantiation inst = new Instantiation(operatorArguments, factory);
+		final Expression[] childExprs = ((IExtendedFormula) unflattened)
+				.getChildExpressions();
+		if (!inst.matchArguments(childExprs)) {
 			return null;
 		}
-		Predicate wdToUse = wdPredicate;
-		// if the call is to generate a D WD condition
-		if(wdMediator instanceof YMediator){
-			wdToUse = dWDPredicate;
+		if (!completeInstantiation(formula, inst)) {
+			return null;
 		}
-		String rawWD = wdToUse.toString();
-		Predicate pred = factory
-				.parsePredicate(rawWD, null)
-				.getParsedPredicate();
-		ITypeEnvironment typeEnvironment = generateOverallTypeEnvironment(allSubs, factory);
-		pred.typeCheck(typeEnvironment);
-		Predicate actWDPred = pred.substituteFreeIdents(allSubs);
-		Predicate actWDPredWD = actWDPred.getWDPredicate();
+		final Predicate wdToUse;
+		if (wdMediator instanceof YMediator) {
+			wdToUse = dWDPredicate;
+		} else {
+			wdToUse = wdPredicate;
+		}
+		final Predicate actWDPred = inst.instantiate(wdToUse);
+		final Predicate actWDPredWD = actWDPred.getWDPredicate();
 		return AstUtilities.conjunctPredicates(new Predicate[] {
 				actWDPredWD, actWDPred }, factory);
 	}
+
+	// Complete an instantiation based on result type, if any
+	protected abstract boolean completeInstantiation(IExtendedFormula formula,
+			Instantiation inst);
 
 	public boolean equals(Object o) {
 		if (o == this)

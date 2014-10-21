@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     Systerel - use Specialization
  *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.maths;
 
@@ -19,6 +23,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
@@ -172,4 +177,12 @@ public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 		}
 		return subs;
 	}
+
+	@Override
+	protected boolean completeInstantiation(IExtendedFormula formula,
+			Instantiation inst) {
+		final Type actualType = ((ExtendedExpression) formula).getType();
+		return inst.matchType(resultantType, actualType);
+	}
+
 }
