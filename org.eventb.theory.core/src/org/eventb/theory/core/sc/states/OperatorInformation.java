@@ -21,6 +21,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -59,54 +60,48 @@ public class OperatorInformation extends State implements ISCState{
 
 	private static final Predicate[] NO_PREDICATES = new Predicate[0];
 
-	private String operatorID;
+	private final String operatorID;
 	private String syntax;
 	private FormulaType formulaType;
 	private Notation notation;
 	private boolean isAssociative = false;
 	private boolean isCommutative = false;
 	private List<Predicate> wdConditions;
-	private List<String> allowedIdentifiers;
 	private Map<String, Type> opArguments;
 	private Type expressionType;
-	private List<GivenType> typeParameters;
 	private Definitions.IDefinition definition;
 	
 	private Predicate dWDCondition;
 
-	private FormulaFactory factory;
+	private final FormulaFactory factory;
 
 	private IFormulaExtension formulaExtension = null;
 
 	private boolean hasError = false;
 
-	private ITypeEnvironmentBuilder typeEnvironment;
+	private final ITypeEnvironmentBuilder typeEnvironment;
 
 	public final static IStateType<OperatorInformation> STATE_TYPE = SCCore
 			.getToolStateType(TheoryPlugin.PLUGIN_ID + ".operatorInformation");
 
-	public OperatorInformation(String operatorID, FormulaFactory factory) {
+	public OperatorInformation(String operatorID, ITypeEnvironment typeEnvironment) {
 		this.operatorID = operatorID;
-		this.allowedIdentifiers = new ArrayList<String>();
 		this.opArguments = new LinkedHashMap<String, Type>();
-		this.typeParameters = new ArrayList<GivenType>();
 		this.wdConditions = new ArrayList<Predicate>();
-		this.factory = factory;
-		this.typeEnvironment = this.factory.makeTypeEnvironment();
+		this.typeEnvironment = typeEnvironment.makeBuilder();
+		this.factory = this.typeEnvironment.getFormulaFactory();
 	}
 	
 	@Override
 	public void makeImmutable() {
-		allowedIdentifiers = Collections.unmodifiableList(allowedIdentifiers);
 		opArguments = Collections.unmodifiableMap(opArguments);
 		wdConditions = Collections.unmodifiableList(wdConditions);
-		typeParameters = Collections.unmodifiableList(typeParameters);
 		super.makeImmutable();
 	}
 
 	public boolean isAllowedIdentifier(FreeIdentifier ident) throws CoreException {
 		assertMutable();
-		return allowedIdentifiers.contains(ident.getName());
+		return typeEnvironment.contains(ident);
 	}
 
 	public boolean isExpressionOperator() {
@@ -211,18 +206,10 @@ public class OperatorInformation extends State implements ISCState{
 		assertMutable();
 		if (!opArguments.containsKey(ident)) {
 			for (GivenType gtype : AstUtilities.getGivenTypes(type)) {
-				if (!typeParameters.contains(gtype)) {
-					typeParameters.add(gtype);
-					typeEnvironment.addGivenSet(gtype.getName());
-				}
-				if (!allowedIdentifiers.contains(gtype.getName())) {
-					allowedIdentifiers.add(gtype.getName());
-				}
+				typeEnvironment.addGivenSet(gtype.getName());
 			}
 			typeEnvironment.addName(ident, type);
 			opArguments.put(ident, type);
-			allowedIdentifiers.add(ident);
-
 		}
 
 	}
@@ -423,9 +410,10 @@ public class OperatorInformation extends State implements ISCState{
 			// type check the left hand side
 			if (definition instanceof Definitions.DirectDefintion && childExpressionsForLhs.length == 0) {
 				Definitions.DirectDefintion directDefintion = (Definitions.DirectDefintion) definition;
-				Expression expressionDefinition = (Expression) directDefintion.getDefinition();
+				Expression expressionDefinition = (Expression) directDefintion.getDefinition().translate(ff);
 				RelationalPredicate typeCheckPredicate = ff.makeRelationalPredicate(Formula.EQUAL, (Expression) lhs, expressionDefinition, null);
-				ITypeCheckResult typeCheckResult = typeCheckPredicate.typeCheck(typeEnvironment);
+				ITypeEnvironment tEnv = typeEnvironment.translate(ff);
+				ITypeCheckResult typeCheckResult = typeCheckPredicate.typeCheck(tEnv);
 				if (typeCheckResult.hasProblem()){
 					throw new IllegalStateException("Could not type check left hand side of rule for statically checked operator.");
 				}

@@ -179,7 +179,7 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 						identifierSymbolTable, ModulesUtils.IDENT_SYMTAB_SIZE,
 						factory));
 				String opID = theoryName + "." + operators[i].getSymbol();
-				OperatorInformation operatorInformation = new OperatorInformation(opID, factory);
+				OperatorInformation operatorInformation = new OperatorInformation(opID, globalTypeEnvironment);
 				repository.setState(operatorInformation);
 				// copying of information
 				operatorInformation.setFormulaType(opDef.getFormulaType());
