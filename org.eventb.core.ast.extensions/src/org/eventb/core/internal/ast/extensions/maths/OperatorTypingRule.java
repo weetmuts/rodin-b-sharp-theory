@@ -19,11 +19,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
@@ -31,6 +33,7 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.QuantifiedUtil;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -93,8 +96,12 @@ public abstract class OperatorTypingRule {
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
 		final FormulaFactory factory = wdMediator.getFormulaFactory();
+		//factory.makeExtendedExpression(extension, expressions, predicates, location) like the one in the unflatten
+		//assositive opt
 		final Formula<?> unflattened = AstUtilities.unflatten(formula, factory);
+		//formal arg
 		final Instantiation inst = new Instantiation(operatorArguments, factory);
+		//actual arg
 		final Expression[] childExprs = ((IExtendedFormula) unflattened)
 				.getChildExpressions();
 		if (!inst.matchArguments(childExprs)) {
@@ -259,12 +266,31 @@ public abstract class OperatorTypingRule {
 
 	protected boolean isValidTypeInstantiation(int argumentIndex,
 			Type proposedType, Map<GivenType, Type> calculatedInstantiations) {
-		Type argumentType = operatorArguments.get(argumentIndex)
-				.getArgumentType();
+		Type argumentType = operatorArguments.get(argumentIndex).getArgumentType();
 		if (argumentType == null) {
 			return false;
 		}
-		return unifyTypes(argumentType, proposedType, calculatedInstantiations);
+		final FormulaFactory factory = argumentType.getFactory();
+		final ISpecialization specialization = factory.makeSpecialization();
+		final Set<GivenType> givenTypes = proposedType.getGivenTypes();
+		final GivenType[] givenTypesArray = givenTypes.toArray(new GivenType[givenTypes.size()]);
+		final Set<String> usedNames = new HashSet<String>();
+		final BoundIdentDecl[] bidArray = new BoundIdentDecl[givenTypesArray.length];
+		for (int i = 0; i < givenTypesArray.length; i++) {
+			final String name = givenTypesArray[i].getName();
+			usedNames.add(name);
+			bidArray[i] = factory.makeBoundIdentDecl(name, null);
+		}
+		final String[] freshNames = QuantifiedUtil.resolveIdents(bidArray, usedNames, factory);
+		
+		for (int i = 0; i < givenTypesArray.length; i++) {
+			specialization.put(givenTypesArray[i], factory.makeGivenType(freshNames[i]));
+		}
+		final Type modifiedArgumentType = argumentType.specialize(specialization);
+		
+		
+		// TODO use specialization to replace type instantiation done by unifyTypes()
+		return unifyTypes(modifiedArgumentType, proposedType, calculatedInstantiations);
 	}
 
 	protected ITypeEnvironment generateTypeParametersTypeEnvironment(Map<FreeIdentifier, Expression> typeSubs, FormulaFactory factory) {
@@ -335,7 +361,7 @@ public abstract class OperatorTypingRule {
 				}
 				final IExpressionExtension exprExtension = ((ParametricType) theoryType)
 						.getExprExtension();
-				return mediator.makeParametricType((IExpressionExtension) exprExtension,
+				return mediator.makeParametricType(exprExtension,
 						Arrays.asList(newTypePars));
 			}
 		}
