@@ -74,15 +74,12 @@ public class DeployedObjectsFactory {
 		try {
 			List<IDeployedRewriteRule> result = new ArrayList<IDeployedRewriteRule>();
 			ITypeEnvironmentBuilder augTypeEnvironment = typeEnvironment.makeBuilder();
-				ISCMetavariable[] vars = block.getMetavariables();
-			for (ISCMetavariable var : vars) {
+			for (ISCMetavariable var : block.getMetavariables()) {
 				augTypeEnvironment.add(var.getIdentifier(factory));
 			}
 			ISCRewriteRule[] rules = block.getRewriteRules();
 			for (ISCRewriteRule rule : rules) {
-				//update typeEnv
 				if (rule.getSource() instanceof NewOperatorDefinition) {
-					augTypeEnvironment = typeEnvironment.makeBuilder();//FIXME forget meta variables ?
 					IDeployedTheoryRoot deployedRoot = (IDeployedTheoryRoot) block.getParent();
 					ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
 					for (ISCNewOperatorDefinition definition : operatorDefinitions) {
