@@ -118,7 +118,7 @@ public class DeployedObjectsFactory {
 			ISCInferenceRule[] rules = block.getInferenceRules();
 			for (ISCInferenceRule rule : rules) {
 				IDeployedInferenceRule deployedInferenceRule = getDeployedInferenceRule(
-						rule, factory, augTypeEnvironment);
+						rule, augTypeEnvironment);
 				if (deployedInferenceRule != null)
 					result.add(deployedInferenceRule);
 			}
@@ -131,8 +131,7 @@ public class DeployedObjectsFactory {
 	}
 
 	public static IDeployedInferenceRule getDeployedInferenceRule(
-			ISCInferenceRule rule, FormulaFactory factory,
-			ITypeEnvironment typeEnvironment) {
+			ISCInferenceRule rule, ITypeEnvironment typeEnvironment) {
 		try {
 			// BUG fix, if not accurate don't load
 			if (!rule.isAccurate()){
@@ -148,8 +147,7 @@ public class DeployedObjectsFactory {
 			List<IDeployedGiven> givens = new ArrayList<IDeployedGiven>();
 			List<IDeployedGiven> hypGivens = new ArrayList<IDeployedGiven>();
 			for (ISCGiven given : rule.getGivens()) {
-				IDeployedGiven deployedGiven = getDeployedGiven(given, factory,
-						typeEnvironment);
+				IDeployedGiven deployedGiven = getDeployedGiven(given, typeEnvironment);
 				if (deployedGiven == null) {
 					return null;
 				}
@@ -162,7 +160,7 @@ public class DeployedObjectsFactory {
 				
 			}
 			IDeployedInfer infer = getDeployedInfer(rule.getInfers()[0],
-					factory, typeEnvironment);
+					typeEnvironment);
 			if(infer == null){
 				return null;
 			}
@@ -235,7 +233,7 @@ public class DeployedObjectsFactory {
 	}
 
 	public static IDeployedGiven getDeployedGiven(ISCGiven given,
-			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
+			ITypeEnvironment typeEnvironment) {
 		try {
 			IDeployedGiven dep = new DeployedGiven(given.getPredicate(typeEnvironment), given.isHyp());
 			return dep;
@@ -246,7 +244,7 @@ public class DeployedObjectsFactory {
 	}
 
 	public static IDeployedInfer getDeployedInfer(ISCInfer infer,
-			FormulaFactory factory, ITypeEnvironment typeEnvironment) {
+			ITypeEnvironment typeEnvironment) {
 		try {
 			IDeployedInfer dep = new DeployedInfer(infer.getPredicate(typeEnvironment));
 			return dep;
