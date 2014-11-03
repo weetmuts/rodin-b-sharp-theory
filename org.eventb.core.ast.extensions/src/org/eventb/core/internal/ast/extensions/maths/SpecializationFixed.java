@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.internal.ast.extensions.maths;
 
-import java.util.Collection;
+import static org.eventb.internal.core.ast.Substitute.makeSubstitute;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,45 +25,50 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.ast.Specialization;
+import org.eventb.internal.core.ast.Substitute;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.ast.TypeRewriter;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
 
 /**
- * Local implementation of {@link ISpecialization} for working around a bug in
- * the type rewriter which does not take into account factories and lift the
- * limitation to well-formed expressions.
+ * THIS IS AN ADAPTED COPY OF THE CODE THAT WILL BE AVAILABLE IN RODIN 3.1RC2.
+ * 
+ * Common implementation for specializations. To ensure compatibility of the
+ * type and identifier substitution, we check that no substitution is entered
+ * twice and we also remember, for each identifier substitution the list of
+ * given types that must not change afterwards. A type substitution is also
+ * doubled as an identifier substitution.
  * 
  * @author Laurent Voisin
  */
-public class SpecializationFixed extends Specialization {
+public class SpecializationFixed extends Specialization implements ISpecialization {
 
 	// Type substitutions
 	private final Map<GivenType, Type> typeSubst;
 
 	// Identifier substitutions
-	private final Map<FreeIdentifier, Expression> identSubst;
-
+	private final Map<FreeIdentifier, Substitute> identSubst;
+	
 	private final TypeRewriter speTypeRewriter;
 
 	public SpecializationFixed(FormulaFactory ff) {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
-		identSubst = new HashMap<FreeIdentifier, Expression>();
+		identSubst = new HashMap<FreeIdentifier, Substitute>();
 		speTypeRewriter = new TypeRewriter(ff) {
 			@Override
 			public void visit(GivenType type) {
-				final Type rewritten = get(type);
-				// If the given type translates to itself, return the same
-				// object
-				// FIXME report this fix to AST library
+				final Type rewritten = getOrSetDefault(type);
+				// If the given type is not rewritten, use the super algorithm
+				// (this implements factory translation)
 				if (type.equals(rewritten)) {
 					super.visit(type);
 				} else {
@@ -72,9 +78,16 @@ public class SpecializationFixed extends Specialization {
 		};
 	}
 
+	public SpecializationFixed(SpecializationFixed other) {
+		super(other.ff);
+		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
+		identSubst = new HashMap<FreeIdentifier, Substitute>(other.identSubst);
+		speTypeRewriter = other.speTypeRewriter;
+	}
+
 	@Override
 	public ISpecialization clone() {
-		return new Specialization(this);
+		return new SpecializationFixed(this);
 	}
 
 	@Override
@@ -83,6 +96,10 @@ public class SpecializationFixed extends Specialization {
 			throw new NullPointerException("Null given type");
 		if (value == null)
 			throw new NullPointerException("Null type");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
 		final Type oldValue = typeSubst.put(type, value);
 		if (oldValue != null && !oldValue.equals(value)) {
 			typeSubst.put(type, oldValue); // repair
@@ -91,26 +108,22 @@ public class SpecializationFixed extends Specialization {
 		}
 		// TODO: If formula factory is the same do not rewrite (to be checked
 		// after Formula factory cleaning)
-		identSubst.put(type.toExpression(), value.toExpression());
+		final Substitute subst = makeSubstitute(value.toExpression());
+		identSubst.put(type.toExpression(), subst);
 	}
 
+	// @Override
 	public Type get(GivenType key) {
-		final Type value = typeSubst.get(key);
-		if (value == null)
-			return key;
+		return typeSubst.get(key);
+	}
+
+	public Type getOrSetDefault(GivenType key) {
+		Type value = get(key);
+		if (value == null) {
+			value = key.translate(ff);
+			put(key,  value);
+		}
 		return value;
-	}
-
-	public Collection<Type> getSubstitutionTypes() {
-		return typeSubst.values();
-	}
-
-	public Map<GivenType, Type> getTypeSubstitutions() {
-		return typeSubst;
-	}
-
-	public Map<FreeIdentifier, Expression> getIndentifierSubstitutions() {
-		return identSubst;
 	}
 
 	@Override
@@ -121,15 +134,17 @@ public class SpecializationFixed extends Specialization {
 			throw new IllegalArgumentException("Untyped identifier");
 		if (value == null)
 			throw new NullPointerException("Null value");
-		// FIXME remove two lines below from AST library
-		//		if (!value.isWellFormed())
-		//			throw new IllegalArgumentException("Ill-formed value");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		verify(ident, value);
-		final Expression oldValue = identSubst.put(ident, value);
-		if (oldValue != null && !oldValue.equals(value)) {
-			identSubst.put(ident, oldValue); // repair
+		final Substitute subst = makeSubstitute(value);
+		final Substitute oldSubst = identSubst.put(ident, subst);
+		if (oldSubst != null && !oldSubst.equals(subst)) {
+			identSubst.put(ident, oldSubst); // repair
 			throw new IllegalArgumentException("Identifier substitution for "
 					+ ident + " already registered");
 		}
@@ -145,19 +160,6 @@ public class SpecializationFixed extends Specialization {
 		if (!value.getType().equals(newType)) {
 			throw new IllegalArgumentException("Incompatible types for "
 					+ ident);
-		}
-		freezeSetsFor(identType);
-	}
-
-	/*
-	 * To freeze a set, we just add a substitution to itself, so that it cannot
-	 * be substituted to something else afterwards.
-	 */
-	private void freezeSetsFor(Type identType) {
-		for (final GivenType gt : identType.getGivenTypes()) {
-			if (!typeSubst.containsKey(gt)) {
-				typeSubst.put(gt, gt);
-			}
 		}
 	}
 
@@ -178,7 +180,7 @@ public class SpecializationFixed extends Specialization {
 			iter.advance();
 			final FreeIdentifier ident = ff.makeFreeIdentifier(iter.getName(),
 					null, iter.getType());
-			final Expression expr = this.get(ident);
+			final Expression expr = this.getOrSetDefault(ident);
 			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
 				result.add(free);
 			}
@@ -186,10 +188,16 @@ public class SpecializationFixed extends Specialization {
 		return result;
 	}
 
+	// @Override
 	public Expression get(FreeIdentifier ident) {
-		final Expression value = identSubst.get(ident);
-		if (value != null) {
-			return value;
+		final Substitute subst = identSubst.get(ident);
+		return subst == null ? null : subst.getSubstitute(ident, 0);
+	}
+
+	public Expression getOrSetDefault(FreeIdentifier ident) {
+		final Substitute subst = identSubst.get(ident);
+		if (subst != null) {
+			return subst.getSubstitute(ident, getBindingDepth());
 		}
 		final Type type = ident.getType();
 		final Type newType = type.specialize(this);
@@ -200,13 +208,13 @@ public class SpecializationFixed extends Specialization {
 			result = ff.makeFreeIdentifier(ident.getName(),
 					ident.getSourceLocation(), newType);
 		}
-		identSubst.put(ident, result);
+		identSubst.put(ident, makeSubstitute(result));
 		return result;
 	}
 
 	@Override
 	public Expression rewrite(FreeIdentifier identifier) {
-		final Expression newIdent = get(identifier);
+		final Expression newIdent = getOrSetDefault(identifier);
 		if (newIdent.equals(identifier)) {
 			return super.rewrite(identifier);
 		}
@@ -290,7 +298,7 @@ public class SpecializationFixed extends Specialization {
 			sb.append("=");
 			sb.append(entry.getValue());
 		}
-		for (Entry<FreeIdentifier, Expression> entry : identSubst.entrySet()) {
+		for (Entry<FreeIdentifier, Substitute> entry : identSubst.entrySet()) {
 			sb.append(sep);
 			sep = " || ";
 			sb.append(entry.getKey());
