@@ -116,15 +116,17 @@ public final class MathExtensionsFactory {
 	 *            the type arguments of this datatype
 	 * @param factory
 	 *            the formula factory
+	 * @param origin
+	 *            the origin of the datatype
 	 * @return the set of resulting extensions
 	 */
-	public static IDatatypeBuilder makeDatatypeBuilder(
-			String identifier, List<String> typeArguments, FormulaFactory factory) {
+	public static IDatatypeBuilder makeDatatypeBuilder(String identifier,
+			List<String> typeArguments, FormulaFactory factory, Object origin) {
 		final List<GivenType> givenTypes = new ArrayList<GivenType>();
 		for (String typeArgument : typeArguments) {
 			givenTypes.add(factory.makeGivenType(typeArgument));
 		}
-		return factory.makeDatatypeBuilder(identifier, givenTypes);
+		return factory.makeDatatypeBuilder(identifier, givenTypes, origin);
 	}
 	
 	/**

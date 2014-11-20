@@ -91,9 +91,9 @@ public class DatatypeTable extends State implements ISCState {
 		return true;
 	}
 	
-	public void addDatatype(String name, List<String> typeArgs) throws CoreException{
+	public void addDatatype(String name, List<String> typeArgs, Object origin) throws CoreException{
 		assertMutable();
-		datatypes.put(name, new DatatypeEntry(name, typeArgs));
+		datatypes.put(name, new DatatypeEntry(name, typeArgs, origin));
 		currentDatatype = name;
 	}
 	
@@ -147,8 +147,8 @@ public class DatatypeTable extends State implements ISCState {
 
 		boolean isErrorProne = false;
 		
-		public DatatypeEntry(String identifier, List<String> typeArgs){
-			this.dtBuilder = MathExtensionsFactory.makeDatatypeBuilder(identifier, typeArgs, initialFactory);
+		public DatatypeEntry(String identifier, List<String> typeArgs, Object origin){
+			this.dtBuilder = MathExtensionsFactory.makeDatatypeBuilder(identifier, typeArgs, initialFactory, origin);
 			this.identifier = identifier;
 			this.typeArguments = new ArrayList<String>(typeArgs);
 		}

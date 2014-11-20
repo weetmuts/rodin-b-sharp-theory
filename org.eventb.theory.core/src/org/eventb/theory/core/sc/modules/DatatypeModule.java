@@ -134,8 +134,9 @@ public class DatatypeModule extends SCProcessorModule {
 					typeArguments, target, factory, typeEnvironment, monitor);
 			
 			try {
-				datatypeTable.addDatatype(datatypeDefinition.getIdentifierString(),
-						typeArguments);
+				datatypeTable.addDatatype(
+						datatypeDefinition.getIdentifierString(),
+						typeArguments, target);
 			} catch (IllegalArgumentException e) {
 				createProblemMarker(datatypeDefinition, TheoryAttributes.TYPE_ATTRIBUTE, 
 						TheoryGraphProblem.DatatypeError, e.getMessage());

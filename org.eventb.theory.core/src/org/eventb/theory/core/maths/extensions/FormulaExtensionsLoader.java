@@ -238,7 +238,8 @@ class DatatypeTransformer{
 			typeArguments.add(scTypeArg.getSCGivenType(factory).toString());
 		}
 		final IDatatypeBuilder dtBuilder = MathExtensionsFactory
-				.makeDatatypeBuilder(typeName, typeArguments, factory);
+				.makeDatatypeBuilder(typeName, typeArguments, factory,
+						definition);
 
 		for (ISCDatatypeConstructor cons : definition.getConstructors()) {
 			final IConstructorBuilder consBuilder = dtBuilder
