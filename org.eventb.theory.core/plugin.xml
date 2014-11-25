@@ -2205,6 +2205,21 @@
                typeId="org.eventb.theory.core.availableTheory">
          </attributeType>
       </relationship>
+      <relationship
+            parentTypeId="org.eventb.core.lang">
+         <childType
+               typeId="org.eventb.theory.core.scNewOperatorDefinition">
+         </childType>
+         <childType
+               typeId="org.eventb.theory.core.scAxiomaticTypeDefinition">
+         </childType>
+         <childType
+               typeId="org.eventb.theory.core.scAxiomaticOperatorDefinition">
+         </childType>
+         <childType
+               typeId="org.eventb.theory.core.scDatatypeDefinition">
+         </childType>
+      </relationship>
    </extension>
    
   
