@@ -104,6 +104,9 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		}
 		else {
 			IDeployedTheoryRoot depRoot = DatabaseUtilities.getDeployedTheory(theoryName, project);
+			if (depRoot == null || !depRoot.exists()){
+				return null;
+			}
 			if (!deployedRoots.containsKey(depRoot)){
 				TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(depRoot);
 				deployedRoots.put(depRoot, entry);
@@ -155,6 +158,9 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 		}
 		else {
 			IDeployedTheoryRoot depRoot = DatabaseUtilities.getDeployedTheory(theoryName, project);
+			if (depRoot == null || !depRoot.exists()){
+				return null;
+			}
 			if (!deployedRoots.containsKey(depRoot)){
 				TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(depRoot);
 				deployedRoots.put(depRoot, entry);
