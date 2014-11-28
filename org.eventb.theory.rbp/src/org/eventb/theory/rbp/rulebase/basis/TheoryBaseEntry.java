@@ -94,6 +94,18 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 
 	protected void reload(FormulaFactory factory) {
+		// clear all
+		autoRewRules.clear();
+		interRewRules.clear();
+		autoTypedInferenceMap.clear();
+		interTypedInferenceMap.clear();
+		definitionalRules.clear();
+		
+		if (!theoryRoot.exists()) {
+			// happens if theories have been undeployed
+			return;
+		}
+		
 		if (theoryRoot instanceof IDeployedTheoryRoot) {
 			IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
 			rewriteRules = (List<IGeneralRule>)(List<?>) file.getRewriteRules();
@@ -103,12 +115,6 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
-			// clear all
-			autoRewRules.clear();
-			interRewRules.clear();
-			autoTypedInferenceMap.clear();
-			interTypedInferenceMap.clear();
-			definitionalRules.clear();
 
 			for (IGeneralRule rule : rewriteRules) {
 				if(((IDeployedRewriteRule) rule).isDefinitional()){
@@ -173,13 +179,6 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 				
 				
 				theorems = Arrays.asList(theoryRoot.getTheorems());
-
-				// clear all
-				autoRewRules.clear();
-				interRewRules.clear();
-				autoTypedInferenceMap.clear();
-				interTypedInferenceMap.clear();
-				definitionalRules.clear();
 
 				for (IGeneralRule rule : rewriteRules) {
 					
