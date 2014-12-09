@@ -47,7 +47,7 @@ public class Instantiation {
 		final int size = operatorArguments.size();
 		final OperatorArgument[] model = new OperatorArgument[size];
 		this.operatorArguments = operatorArguments.toArray(model);
-		this.specialization = new SpecializationFixed(ff);
+		this.specialization = ff.makeSpecialization();
 		this.knownFormalTypes = new HashSet<GivenType>();
 	}
 
