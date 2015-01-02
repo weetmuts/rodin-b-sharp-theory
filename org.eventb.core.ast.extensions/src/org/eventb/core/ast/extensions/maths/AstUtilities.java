@@ -449,38 +449,6 @@ public class AstUtilities {
 	}
 
 	/**
-	 * Returns the string type expression with the given name and type
-	 * parameters e.g., List(A), Tree(A).
-	 * 
-	 * @param identifierString
-	 *            the name of the type
-	 * @param typeArguments
-	 *            the list of type arguments
-	 * @param the
-	 *            formula factory that knows about this datatype
-	 * @return the type expression
-	 */
-	public static ParametricType createTypeExpression(String identifierString, List<String> typeArguments, FormulaFactory ff) {
-		String result = identifierString;
-		if (typeArguments.size() != 0) {
-			result += "(";
-			for (int i = 0; i < typeArguments.size(); i++) {
-				result += typeArguments.get(i);
-				if (i < typeArguments.size() - 1) {
-					result += ",";
-				}
-			}
-			result += ")";
-
-		}
-		IParseResult parseResult = ff.parseType(result);
-		if (parseResult.hasProblem())
-			return null;
-		return (ParametricType) parseResult.getParsedType();
-
-	}
-
-	/**
 	 * Returns an appropriate group for the operator with the supplied
 	 * properties.
 	 * <p>

@@ -4,7 +4,6 @@ import static org.eventb.core.ast.extensions.maths.AstUtilities.getNotation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.Expression;
@@ -13,7 +12,6 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
@@ -109,20 +107,6 @@ public class TestBasicASTMaths extends BasicAstExtTest{
 		assertFalse(AstUtilities.isGivenSet(environment, "d"));
 		assertFalse(AstUtilities.isGivenSet(environment, "U"));
 		assertFalse(AstUtilities.isGivenSet(environment, "z"));
-	}
-	
-	public void testUtilities_010_createTypeExpression() throws Exception{
-		addExtensions(listExtensions());
-		addExtensions(directionExtensions());
-
-		Type listType = AstUtilities.createTypeExpression("List", Collections.singletonList("T"), factory);
-		assertEquals("expected types to be equal but were not", type("List(T)"), listType);
-		Type badlistType = AstUtilities.createTypeExpression("List", Arrays.asList("T","S"), factory);
-		assertEquals("expected types to be equal but were not", null, badlistType);		
-		
-		Type dType = AstUtilities.createTypeExpression("DIRECTION", Collections.<String>emptyList(), factory);
-		assertEquals("expected types to be equal but were not", type("DIRECTION"), dType);
-		
 	}
 	
 	public void testUtilities_011_checkOperatorID() throws Exception{
