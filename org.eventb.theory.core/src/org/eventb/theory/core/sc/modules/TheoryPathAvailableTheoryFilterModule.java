@@ -30,6 +30,8 @@ public class TheoryPathAvailableTheoryFilterModule extends SCFilterModule {
 	private final IModuleType<TheoryPathAvailableTheoryFilterModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".availableTheoryFilterModule");
 	
 	private ITheoryPathTable theoryTable;
+
+	@SuppressWarnings("unused")
 	private TheoryPathAccuracyInfo accuracyInfo;
 
 	/**

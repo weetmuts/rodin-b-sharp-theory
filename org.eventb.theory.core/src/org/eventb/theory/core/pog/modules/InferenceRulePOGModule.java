@@ -46,15 +46,14 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 	//private final static String RULE_SB_SUFFIX = "/S-INF_B";
 	//private final static String RULE_SF_SUFFIX = "/S-INF_F";
 	private final static String RULE_S_SUFFIX = "/S-INF";
-	private final static String RULE_WDB_SUFFIX = "/WD-INF_B";
-	private final static String RULE_WDF_SUFFIX = "/WD-INF_F";
-
+	// private final static String RULE_WDB_SUFFIX = "/WD-INF_B";
+	// private final static String RULE_WDF_SUFFIX = "/WD-INF_F";
 
 	//private final static String RULE_SOUNDNESS_DESC_F = "Inference FORWARD Rule Soundness";
 	//private final static String RULE_SOUNDNESS_DESC_B = "Inference BACKWARD Rule Soundness";
 	private final static String RULE_SOUNDNESS_DESC = "Inference Rule Soundness";
-	private final static String RULE_WD_DESC_F = "Inference FORWARD Rule WD";
-	private final static String RULE_WD_DESC_B = "Inference BACKWARD Rule WD";	
+	// private final static String RULE_WD_DESC_F = "Inference FORWARD Rule WD";
+	// private final static String RULE_WD_DESC_B = "Inference BACKWARD Rule WD";	
 
 	protected ITypeEnvironment typeEnvironment;
 	protected POGNatureFactory natureFactory;
@@ -84,7 +83,7 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 					IPOSource.DEFAULT_ROLE, inferenceRule) , makeSource(IPOSource.DEFAULT_ROLE, inferenceRule.getSource())};
 			ISCGiven givens[] = inferenceRule.getGivens();
 			List<Predicate> givensPredicates = new ArrayList<Predicate>();
-			List<Predicate> givensPredicatesWDs = new ArrayList<Predicate>();
+			// List<Predicate> givensPredicatesWDs = new ArrayList<Predicate>();
 			for (ISCGiven given : givens) {
 				Predicate pred = given.getPredicate(typeEnvironment);
 				if (pred != null) {
@@ -107,8 +106,8 @@ public class InferenceRulePOGModule extends UtilityPOGModule {
 			}
 			Predicate conj1 = AstUtilities.conjunctPredicates(
 					givensPredicates, factory);
-			Predicate conj1WD = AstUtilities.conjunctPredicates(
-					givensPredicatesWDs, factory);
+			// Predicate conj1WD = AstUtilities.conjunctPredicates(
+			//		givensPredicatesWDs, factory);
 			Predicate conj2 = AstUtilities.conjunctPredicates(
 					infersPredicates, factory);
 			Predicate conj2WD = AstUtilities.conjunctPredicates(

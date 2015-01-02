@@ -30,6 +30,8 @@ public class ImportTheoryFilterModule extends SCFilterModule {
 	private final IModuleType<ImportTheoryFilterModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID + ".importTheoryFilterModule");
 	
 	private IImportTheoryTable theoryTable;
+
+	@SuppressWarnings("unused")
 	private TheoryAccuracyInfo accuracyInfo;
 
 	/**
