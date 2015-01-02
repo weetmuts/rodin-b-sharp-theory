@@ -4,8 +4,6 @@ import static org.eventb.internal.ui.UIUtils.HTMLWrapUp;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 
-import javax.swing.text.WrappedPlainView;
-
 import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;

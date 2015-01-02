@@ -2,9 +2,7 @@ package org.eventb.theory.ui.wizard.deploy;
 
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.Wizard;
-import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.eventb.theory.internal.ui.Messages;

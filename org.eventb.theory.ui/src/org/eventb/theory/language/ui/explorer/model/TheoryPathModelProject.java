@@ -7,9 +7,7 @@ import java.util.HashMap;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.ITheoryPathRoot;
-import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;

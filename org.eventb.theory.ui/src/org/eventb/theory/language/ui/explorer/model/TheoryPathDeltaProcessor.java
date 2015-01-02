@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
-import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;

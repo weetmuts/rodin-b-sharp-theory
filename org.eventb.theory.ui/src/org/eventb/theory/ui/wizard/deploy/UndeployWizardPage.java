@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.internal.ui.Messages;
 import org.eventb.theory.internal.ui.TheoryUIUtils;
-import org.eclipse.swt.widgets.Button;
 
 public class UndeployWizardPage extends WizardPage {
 
