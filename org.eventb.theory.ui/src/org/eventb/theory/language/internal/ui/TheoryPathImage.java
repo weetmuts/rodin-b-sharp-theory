@@ -7,17 +7,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eventb.core.ICommentedElement;
-import org.eventb.internal.ui.OverlayIcon;
-import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.theory.internal.ui.ITheoryImages;
 import org.eventb.theory.ui.plugin.TheoryUIPlugIn;
-import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
 public class TheoryPathImage {
@@ -100,104 +92,6 @@ public class TheoryPathImage {
 		return registry.get(key);
 	}
 	
-	/**
-	 * Getting an image corresponding to a Rodin element.
-	 * <p>
-	 * 
-	 * @param element
-	 *            A Rodin element
-	 * @return The image for displaying corresponding to the input element
-	 */
-	public static Image getRodinImage(IRodinElement element) {
-		final ImageDescriptor desc = getImageDescriptor(element);
-		if (desc == null)
-			return null;
-
-		int F_COMMENT = 0x00001;
-		
-		int F_ERROR = 0x00002;
-		
-		int F_WARNING = 0x00004;
-
-		int F_INFO = 0x00008;
-
-		// Compute the key
-		// key = desc:Description:overlay
-		// overlay = comment + error
-		int overlay = 0;
-		if (element instanceof ICommentedElement) {
-			ICommentedElement ce = (ICommentedElement) element;
-			try {
-				if (ce.hasComment() && ce.getComment().length() != 0)
-					overlay = overlay | F_COMMENT;
-			} catch (RodinDBException e) {
-				// Do nothing
-				if (UIUtils.DEBUG)
-					e.printStackTrace();
-			}
-		}
-
-		try {
-			int severity = getMaxMarkerSeverity(element);
-			if (severity == IMarker.SEVERITY_ERROR) {
-				overlay = overlay | F_ERROR;
-			} else if (severity == IMarker.SEVERITY_WARNING) {
-				overlay = overlay | F_WARNING;
-			} else if (severity == IMarker.SEVERITY_INFO) {
-				overlay = overlay | F_INFO;
-			}
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return getImage(desc, overlay);
-	}
-
-	public static ImageDescriptor getImageDescriptor(IRodinElement element) {
-		final IElementDesc elementDesc = ElementDescRegistry.getInstance()
-				.getElementDesc(element.getElementType());
-		return ((ElementDesc) elementDesc).getImageProvider().getImageDescriptor(element);
-	}
-
-	public static Image getImage(ImageDescriptor desc, int overlay) {
-		int F_COMMENT = 0x00001;
-		
-		int F_ERROR = 0x00002;
-		
-		int F_WARNING = 0x00004;
-
-		String key = "desc:" + desc;
-		key += ":" + overlay;
-
-		ImageRegistry imageRegistry = TheoryUIPlugIn.getDefault()
-				.getImageRegistry();
-		Image image = imageRegistry.get(key);
-		if (image == null) {
-			if (UIUtils.DEBUG)
-				System.out.println("Create a new image: " + key);
-			OverlayIcon icon = new OverlayIcon(desc);
-			if ((overlay & F_COMMENT) != 0)
-				icon
-						.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
-			if ((overlay & F_ERROR) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_ERROR_OVERLAY_PATH));
-			else if ((overlay & F_WARNING) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH));
-			image = icon.createImage();
-			imageRegistry.put(key, image);
-		}
-		return image;
-
-	}
-	
-	
-
-	
-
-
 	/**
 	 * Initialialise the image registry. Additional image should be added here
 	 * <p>
