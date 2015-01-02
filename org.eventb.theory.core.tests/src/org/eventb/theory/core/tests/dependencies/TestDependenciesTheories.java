@@ -6,16 +6,18 @@ package org.eventb.theory.core.tests.dependencies;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.Set;
+//import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.core.maths.extensions.dependencies.ProjectTheoryGraph;
+//import org.eventb.theory.core.maths.extensions.dependencies.ProjectTheoryGraph;
 import org.junit.Test;
 
 /**
  * Tests for theories dependencies (theories that import other theories)
+ *
+ * FIXME : Put back code using the appropriate replacement for ProjectTheoryGraph.
  *
  * @author renatosilva
  *
@@ -35,17 +37,17 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		saveRodinFileOf(root2);
 		runBuilder();
 
-		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
+//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
 
 		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
 		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
 		isAccurate(scTheoryRoot1);
 		isAccurate(scTheoryRoot2);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
+//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots2, scTheoryRoot1,scTheoryRoot2);
+//		correctOrder(checkedRoots2, scTheoryRoot1,scTheoryRoot2);
 	}
 
 	/**
@@ -64,7 +66,7 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		saveRodinFileOf(root0);
 		runBuilder();
 
-		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
+		// ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
 
 		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
 		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
@@ -77,20 +79,20 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		importsTheories(scTheoryRoot2, root0.getDeployedTheoryRoot());
 		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot1});
-		Set<ISCTheoryRoot> checkedRoots1 = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot1});
+//		Set<ISCTheoryRoot> checkedRoots1 = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots1,scTheoryRoot1);
+//		correctOrder(checkedRoots1,scTheoryRoot1);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-		Set<ISCTheoryRoot> checkedRoots0 = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
+//		Set<ISCTheoryRoot> checkedRoots0 = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots0,scTheoryRoot1,scTheoryRoot0);
+//		correctOrder(checkedRoots0,scTheoryRoot1,scTheoryRoot0);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
+//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots2,scTheoryRoot1,scTheoryRoot0,scTheoryRoot2);
+//		correctOrder(checkedRoots2,scTheoryRoot1,scTheoryRoot0,scTheoryRoot2);
 	}
 
 	/**
@@ -148,28 +150,28 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		importsTheories(scTheoryRoot3);
 		importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot());
 
-		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
+//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
+//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
+//		correctOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
+//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots2,scTheoryRoot3,scTheoryRoot2);
+//		correctOrder(checkedRoots2,scTheoryRoot3,scTheoryRoot2);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0,scTheoryRoot2});
-		Set<ISCTheoryRoot> bothCheckedRoots = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0,scTheoryRoot2});
+//		Set<ISCTheoryRoot> bothCheckedRoots = projectTheoryGraph.getCheckedRoots();
 
-		correctPartialOrder(bothCheckedRoots,scTheoryRoot3,scTheoryRoot2);
-		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot0);
+//		correctPartialOrder(bothCheckedRoots,scTheoryRoot3,scTheoryRoot2);
+//		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot0);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0, scTheoryRoot1, scTheoryRoot2, scTheoryRoot3});
-		Set<ISCTheoryRoot> allCheckedRoots = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0, scTheoryRoot1, scTheoryRoot2, scTheoryRoot3});
+//		Set<ISCTheoryRoot> allCheckedRoots = projectTheoryGraph.getCheckedRoots();
 
-		correctPartialOrder(allCheckedRoots,scTheoryRoot3,scTheoryRoot2);
-		correctPartialOrder(allCheckedRoots,scTheoryRoot1,scTheoryRoot0);
+//		correctPartialOrder(allCheckedRoots,scTheoryRoot3,scTheoryRoot2);
+//		correctPartialOrder(allCheckedRoots,scTheoryRoot1,scTheoryRoot0);
 	}
 
 	/**
@@ -201,22 +203,22 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
 		importsTheories(scTheoryRoot2, root1.getDeployedTheoryRoot());
 
-		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
+//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
+//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
+//		correctOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
+//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
 
-		correctOrder(checkedRoots2,scTheoryRoot1,scTheoryRoot2);
+//		correctOrder(checkedRoots2,scTheoryRoot1,scTheoryRoot2);
 
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0,scTheoryRoot2});
-		Set<ISCTheoryRoot> bothCheckedRoots = projectTheoryGraph.getCheckedRoots();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0,scTheoryRoot2});
+//		Set<ISCTheoryRoot> bothCheckedRoots = projectTheoryGraph.getCheckedRoots();
 
-		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot2);
-		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot0);
+//		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot2);
+//		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot0);
 	}
 
 	/**
@@ -253,15 +255,15 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot(), root2.getDeployedTheoryRoot());
 		importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot());
 
-		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
+//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
+//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
 
-		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot2);
-		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot1);
-		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot0);
-		correctPartialOrder(checkedRoots,scTheoryRoot2,scTheoryRoot0);
-		correctPartialOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot2);
+//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot1);
+//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot2,scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
 	}
 
 	/**
@@ -310,14 +312,14 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot(), root4.getDeployedTheoryRoot());
 		importsTheories(scTheoryRoot4, root5.getDeployedTheoryRoot());
 
-		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
+//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
+//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
+//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
 
-		correctPartialOrder(checkedRoots,scTheoryRoot5,scTheoryRoot4, scTheoryRoot2, scTheoryRoot0);
-		correctPartialOrder(checkedRoots,scTheoryRoot4,scTheoryRoot2, scTheoryRoot0);
-		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot2, scTheoryRoot0);
-		correctPartialOrder(checkedRoots,scTheoryRoot2,scTheoryRoot0);
-		correctPartialOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot5,scTheoryRoot4, scTheoryRoot2, scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot4,scTheoryRoot2, scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot2, scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot2,scTheoryRoot0);
+//		correctPartialOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
 	}
 }
