@@ -39,10 +39,12 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.maths.Definitions;
+import org.eventb.core.ast.extensions.maths.AxiomaticDefinition;
+import org.eventb.core.ast.extensions.maths.DirectDefinition;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
+import org.eventb.core.ast.extensions.maths.RecursiveDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IFormulaExtensionsSource;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
@@ -123,7 +125,7 @@ public class FormulaExtensionsLoader {
 			
 			if (definition.getDirectOperatorDefinitions().length == 1){
 				Formula<?> scFormula = definition.getDirectOperatorDefinitions()[0].getSCFormula(factory, localTypeEnvironment);
-				addedExtensions.setDefinition(new Definitions.DirectDefintion(scFormula));
+				addedExtensions.setDefinition(new DirectDefinition(scFormula));
 			}
 			else if (definition.getRecursiveOperatorDefinitions().length == 1){
 				ISCRecursiveOperatorDefinition recDef = definition.getRecursiveOperatorDefinitions()[0];
@@ -150,7 +152,7 @@ public class FormulaExtensionsLoader {
 					
 				}
 				
-				addedExtensions.setDefinition(new Definitions.RecursiveDefinition(inductiveArg, recursiveCases));
+				addedExtensions.setDefinition(new RecursiveDefinition(inductiveArg, recursiveCases));
 			}
 
 		}
@@ -182,7 +184,7 @@ public class FormulaExtensionsLoader {
 				axiomPredicates.add(axiom.getPredicate(typeEnvironment));
 			}
 			for (IOperatorExtension opExt : axiomExts){
-				opExt.setDefinition(new Definitions.AxiomaticDefinition(axiomPredicates));
+				opExt.setDefinition(new AxiomaticDefinition(axiomPredicates));
 			}
 		}
 		return extensions;

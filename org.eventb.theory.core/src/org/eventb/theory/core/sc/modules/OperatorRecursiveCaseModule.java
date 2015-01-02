@@ -23,7 +23,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.maths.Definitions;
+import org.eventb.core.ast.extensions.maths.RecursiveDefinition;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
@@ -302,7 +302,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						}
 					}
 					if (!operatorInformation.hasError()) {
-						Definitions.RecursiveDefinition recursiveDefinition = new Definitions.RecursiveDefinition(
+						RecursiveDefinition recursiveDefinition = new RecursiveDefinition(
 								recursiveDefinitionInfo.getInductiveArgument(), recursiveCases);
 						operatorInformation.setDefinition(recursiveDefinition);
 						if (operatorInformation.getWdCondition() == null) {
@@ -367,7 +367,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 	 * @throws RodinDBException
 	 */
 	private void createSCCase(IRecursiveDefinitionCase origin, ISCRecursiveOperatorDefinition parent,
-			Definitions.RecursiveDefinition recursiveDefinition,
+			RecursiveDefinition recursiveDefinition,
 			Map<IRecursiveDefinitionCase, RecursiveDefinitionInfo.CaseEntry> entries, IProgressMonitor monitor)
 			throws RodinDBException {
 		ISCRecursiveDefinitionCase scDefCase = parent.getRecursiveDefinitionCase(origin.getElementName());

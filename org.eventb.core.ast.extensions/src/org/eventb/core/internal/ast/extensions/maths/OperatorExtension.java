@@ -15,10 +15,9 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.maths.Definitions;
+import org.eventb.core.ast.extensions.maths.Definition;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
-import org.eventb.core.ast.extensions.maths.Definitions.IDefinition;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 
 /**
@@ -35,7 +34,7 @@ public abstract class OperatorExtension implements IOperatorExtension  {
 	protected OperatorTypingRule operatorTypingRule;
 	protected boolean isCommutative = false;
 	protected boolean isAssociative = false;
-	private Definitions.IDefinition definition;
+	private Definition definition;
 	/**
 	 * Source could be <code>IRodinElement</code>
 	 */
@@ -67,7 +66,7 @@ public abstract class OperatorExtension implements IOperatorExtension  {
 	 */
 	protected OperatorExtension(OperatorExtensionProperties properties,
 			boolean isCommutative, boolean isAssociative,
-			OperatorTypingRule operatorTypingRule, Definitions.IDefinition definition,
+			OperatorTypingRule operatorTypingRule, Definition definition,
 			Object source) {
 		AstUtilities.ensureNotNull(properties, operatorTypingRule);
 		this.properties = properties;
@@ -170,13 +169,13 @@ public abstract class OperatorExtension implements IOperatorExtension  {
 	}
 	
 	@Override
-	public IDefinition getDefinition() {
+	public Definition getDefinition() {
 		// TODO Auto-generated method stub
 		return definition;
 	}
 	
 	@Override
-	public void setDefinition(IDefinition definition) {
+	public void setDefinition(Definition definition) {
 		// TODO Auto-generated method stub
 		this.definition = definition;
 	}

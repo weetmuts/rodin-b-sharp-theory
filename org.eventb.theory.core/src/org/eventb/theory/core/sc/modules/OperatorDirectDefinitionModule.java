@@ -19,7 +19,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.maths.Definitions;
+import org.eventb.core.ast.extensions.maths.DirectDefinition;
 import org.eventb.core.ast.extensions.wd.YComputer;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
@@ -130,7 +130,7 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 		createSCDirectDefinition(defFormula, scNewOperatorDefinition, definition, repository, monitor);
 		if (defFormula instanceof Expression)
 			operatorInformation.setResultantType(((Expression) defFormula).getType());
-		operatorInformation.setDefinition(new Definitions.DirectDefintion(defFormula));
+		operatorInformation.setDefinition(new DirectDefinition(defFormula));
 		if (operatorInformation.getWdCondition() == null) {
 			Predicate wdPredicate = defFormula.getWDPredicate();
 			scNewOperatorDefinition.setPredicate(wdPredicate, monitor);

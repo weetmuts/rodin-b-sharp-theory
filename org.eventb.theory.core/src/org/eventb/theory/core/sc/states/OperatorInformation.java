@@ -32,9 +32,11 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.maths.Definitions;
+import org.eventb.core.ast.extensions.maths.Definition;
+import org.eventb.core.ast.extensions.maths.DirectDefinition;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
+import org.eventb.core.ast.extensions.maths.RecursiveDefinition;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
@@ -69,7 +71,7 @@ public class OperatorInformation extends State implements ISCState{
 	private List<Predicate> wdConditions;
 	private Map<String, Type> opArguments;
 	private Type expressionType;
-	private Definitions.IDefinition definition;
+	private Definition definition;
 	
 	private Predicate dWDCondition;
 
@@ -223,7 +225,7 @@ public class OperatorInformation extends State implements ISCState{
 		return hasError;
 	}
 
-	public void setDefinition(Definitions.IDefinition definition) throws CoreException {
+	public void setDefinition(Definition definition) throws CoreException {
 		assertMutable();
 		this.definition = definition;
 	}
@@ -304,7 +306,7 @@ public class OperatorInformation extends State implements ISCState{
 			}
 		}
 		// one rewrite rule
-		if (definition instanceof Definitions.DirectDefintion) {
+		if (definition instanceof DirectDefinition) {
 			ISCRewriteRule rewRule = createRewriteRule(newRulesbBlock, operatorID, syntax + " expansion");
 			rewRule.setSource(originDefinition, null);
 			Formula<?> lhs = makeLhs(enhancedFactory).substituteFreeIdents(possibleSubstitution);
@@ -313,10 +315,10 @@ public class OperatorInformation extends State implements ISCState{
 			rhs.create(null, null);
 			rhs.setLabel(syntax + " rhs", null);
 			rhs.setPredicate(makeBTRUE(), null);
-			rhs.setSCFormula(((Definitions.DirectDefintion) definition).getDefinition().translate(enhancedFactory).substituteFreeIdents(possibleSubstitution), null);
+			rhs.setSCFormula(((DirectDefinition) definition).getDefinition().translate(enhancedFactory).substituteFreeIdents(possibleSubstitution), null);
 			rhs.setSource(originDefinition, null);
-		} else if (definition instanceof Definitions.RecursiveDefinition) {
-			Definitions.RecursiveDefinition recursiveDefinition = (Definitions.RecursiveDefinition) definition;
+		} else if (definition instanceof RecursiveDefinition) {
+			RecursiveDefinition recursiveDefinition = (RecursiveDefinition) definition;
 			Map<Expression, Formula<?>> recursiveCases = recursiveDefinition.getRecursiveCases();
 			FreeIdentifier inductiveIdent = (FreeIdentifier) recursiveDefinition.getOperatorArgument().translate(enhancedFactory);
 			int index = 0;
@@ -408,8 +410,8 @@ public class OperatorInformation extends State implements ISCState{
 			lhs = ff.makeExtendedExpression((IExpressionExtension) formulaExtension, childExpressionsForLhs, NO_PREDICATES, null);
 			// FIXED Bug in case of generic operator (e.g., {}), this is done to
 			// type check the left hand side
-			if (definition instanceof Definitions.DirectDefintion && childExpressionsForLhs.length == 0) {
-				Definitions.DirectDefintion directDefintion = (Definitions.DirectDefintion) definition;
+			if (definition instanceof DirectDefinition && childExpressionsForLhs.length == 0) {
+				DirectDefinition directDefintion = (DirectDefinition) definition;
 				Expression expressionDefinition = (Expression) directDefintion.getDefinition().translate(ff);
 				RelationalPredicate typeCheckPredicate = ff.makeRelationalPredicate(Formula.EQUAL, (Expression) lhs, expressionDefinition, null);
 				ITypeEnvironment tEnv = typeEnvironment.translate(ff);

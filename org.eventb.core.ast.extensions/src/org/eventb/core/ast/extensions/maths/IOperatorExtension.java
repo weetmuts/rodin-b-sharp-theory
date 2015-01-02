@@ -45,7 +45,7 @@ public interface IOperatorExtension extends IFormulaExtension{
 	 * This could be <code>null</code> if the extension is temporary (i.e., from a SC theory).
 	 * @return the definition of the operator
 	 */
-	public Definitions.IDefinition getDefinition();
+	public Definition getDefinition();
 	
 	/**
 	 * Sets the definition of this operator.
@@ -53,5 +53,5 @@ public interface IOperatorExtension extends IFormulaExtension{
 	 * @throws IllegalStateException if a definition is already set.
 	 * @param definition the definition to assign
 	 */
-	public void setDefinition(Definitions.IDefinition definition);
+	public void setDefinition(Definition definition);
 }
