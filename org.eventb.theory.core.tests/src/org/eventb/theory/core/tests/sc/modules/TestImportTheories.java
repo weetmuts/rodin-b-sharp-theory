@@ -119,7 +119,7 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
 		containsMarkers(root, true);
-		hasMarker(root.getImportTheoryProjects()[0].getImportTheories()[1], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
+		hasMarker(root.getImportTheoryProjects()[1].getImportTheories()[0], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
 	}
 	
 	/**
