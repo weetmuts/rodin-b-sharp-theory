@@ -62,12 +62,22 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+
+		/*
+		 * FIXME This is neither the appropriate way to do this check, nor the
+		 * place to do it. The check should be done while processing, not in the
+		 * endModule. Moreover, the check should use the state computed by the
+		 * processors, rather than reading again from the source file.
+		 */
 		
 		//checking conflict between imported theories and the self theory (importing theory)
 		IImportTheoryProject[] theoryProjects = root.getImportTheoryProjects();
 		for(IImportTheoryProject theoryProject: theoryProjects){
 			IImportTheory[] importedTheories = theoryProject.getImportTheories();
 			for (IImportTheory importedTheory: importedTheories){
+				if (!importedTheory.hasImportTheory()) {
+					continue;
+				}
 				IDeployedTheoryRoot deployedTheoryRoot = importedTheory.getImportTheory();
 				ISCTheoryRoot theory = (ISCTheoryRoot) deployedTheoryRoot;
 				SCTheoryDecorator hierarchy = new SCTheoryDecorator(theory);
