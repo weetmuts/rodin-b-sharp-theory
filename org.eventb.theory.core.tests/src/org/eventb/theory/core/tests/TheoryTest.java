@@ -158,10 +158,15 @@ public abstract class TheoryTest extends BuilderTest {
 		return def;
 	}
 	
-	public IDatatypeDefinition addDatatypeDefinition(ITheoryRoot root, String identifier, String[] givenTypes,
-			String[] constructors, String[][] destructors, String[][] destructorTypes) throws RodinDBException {
+	public IDatatypeDefinition addDatatypeDefinition(ITheoryRoot root, String identifier) throws RodinDBException {
 		IDatatypeDefinition datatypeDefinition = root.createChild(IDatatypeDefinition.ELEMENT_TYPE, null, null);
 		datatypeDefinition.setIdentifierString(identifier, null);
+		return datatypeDefinition;
+	}
+
+	public IDatatypeDefinition addDatatypeDefinition(ITheoryRoot root, String identifier, String[] givenTypes,
+			String[] constructors, String[][] destructors, String[][] destructorTypes) throws RodinDBException {
+		IDatatypeDefinition datatypeDefinition = addDatatypeDefinition(root, identifier);
 		addTypeArguments(datatypeDefinition, givenTypes);
 		addDatatypeConstructors(datatypeDefinition, constructors, destructors, destructorTypes);
 		return datatypeDefinition;
@@ -188,11 +193,18 @@ public abstract class TheoryTest extends BuilderTest {
 		}
 	}
 
-	public IDatatypeConstructor addDatatypeConstructor(IDatatypeDefinition datatypeDefinition, String constructorIdent,
-			String[] destructors, String[] destructorTypes) throws RodinDBException {
-		IDatatypeConstructor constructor = datatypeDefinition
-				.createChild(IDatatypeConstructor.ELEMENT_TYPE, null, null);
-		constructor.setIdentifierString(constructorIdent, null);
+	public IDatatypeConstructor addDatatypeConstructor(IDatatypeDefinition dt,
+			String name) throws RodinDBException {
+		IDatatypeConstructor constructor = dt.createChild(
+				IDatatypeConstructor.ELEMENT_TYPE, null, null);
+		constructor.setIdentifierString(name, null);
+		return constructor;
+	}
+
+	public IDatatypeConstructor addDatatypeConstructor(IDatatypeDefinition dt,
+			String name, String[] destructors, String[] destructorTypes)
+			throws RodinDBException {
+		IDatatypeConstructor constructor = addDatatypeConstructor(dt, name);
 		addDatatypeDestructors(constructor, destructors, destructorTypes);
 		return constructor;
 	}

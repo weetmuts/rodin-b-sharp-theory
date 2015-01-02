@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.InvalidIdentForConstructor;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.InvalidIdentForDestructor;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -195,10 +199,9 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 			return false;
 		}
 		String name = constructor.getIdentifierString();
-		String error = datatypeTable.checkName(name);
-		if (error != null) {
-			createProblemMarker(constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
-					ModulesUtils.getAppropriateProblemForCode(error), name);
+		if (!datatypeTable.checkName(name)) {
+			createProblemMarker(constructor, IDENTIFIER_ATTRIBUTE,
+					InvalidIdentForConstructor, name);
 			return false;
 		}
 		FreeIdentifier ident = ModulesUtils.parseIdentifier(name, constructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
@@ -263,10 +266,9 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 			return false;
 		}
 		String name = destructor.getIdentifierString();
-		String error = datatypeTable.checkName(name);
-		if (error != null) {
-			createProblemMarker(destructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,
-					ModulesUtils.getAppropriateProblemForCode(error), name);
+		if (!datatypeTable.checkName(name)) {
+			createProblemMarker(destructor, IDENTIFIER_ATTRIBUTE,
+					InvalidIdentForDestructor, name);
 			return false;
 		}
 		FreeIdentifier ident = ModulesUtils.parseIdentifier(name, destructor, EventBAttributes.IDENTIFIER_ATTRIBUTE,

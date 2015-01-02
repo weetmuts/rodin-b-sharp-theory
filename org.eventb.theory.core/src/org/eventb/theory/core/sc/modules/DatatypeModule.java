@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.InvalidIdentForDatatype;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,10 +191,9 @@ public class DatatypeModule extends SCProcessorModule {
 			return false;
 		}
 		String name = datatypeDefinition.getIdentifierString();
-		String error = datatypeTable.checkName(name);
-		if (error != null) {
-			createProblemMarker(datatypeDefinition, EventBAttributes.IDENTIFIER_ATTRIBUTE,
-					ModulesUtils.getAppropriateProblemForCode(error), name);
+		if (!datatypeTable.checkName(name)) {
+			createProblemMarker(datatypeDefinition, IDENTIFIER_ATTRIBUTE,
+					InvalidIdentForDatatype, name);
 			return false;
 		}
 		FreeIdentifier ident = ModulesUtils.parseIdentifier(name, datatypeDefinition,

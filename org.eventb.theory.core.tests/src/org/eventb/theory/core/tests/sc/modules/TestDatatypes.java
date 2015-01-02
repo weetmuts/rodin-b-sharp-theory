@@ -1,5 +1,15 @@
 package org.eventb.theory.core.tests.sc.modules;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.ConstructorNameAlreadyATypeParError;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.DatatypeHasNoBaseConsError;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.DatatypeHasNoConsError;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.DatatypeNameAlreadyATypeParError;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.DestructorNameAlreadyATypeParError;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.InvalidIdentForConstructor;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.InvalidIdentForDatatype;
+import static org.eventb.theory.core.sc.TheoryGraphProblem.InvalidIdentForDestructor;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.theory.core.IConstructorArgument;
 import org.eventb.theory.core.IDatatypeConstructor;
@@ -66,18 +76,16 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	@Test
 	public void testDatatypes_003_IllegIdent() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "finite", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
-		IDatatypeDefinition dt1 = addDatatypeDefinition(root, "#", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "finite");
+		IDatatypeDefinition dt1 = addDatatypeDefinition(root, "#");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		isNotAccurate(scTheoryRoot);
 		getDatatypes(scTheoryRoot);
 		containsMarkers(root, true);
-		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE);
-		hasMarker(dt1, EventBAttributes.IDENTIFIER_ATTRIBUTE);
+		hasMarker(dt, IDENTIFIER_ATTRIBUTE, InvalidIdentForDatatype, "finite");
+		hasMarker(dt1, IDENTIFIER_ATTRIBUTE, InvalidIdentForDatatype, "#");
 	}
 
 	/**
@@ -87,15 +95,14 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_004_ClashTypePar() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = root.createChild(IDatatypeDefinition.ELEMENT_TYPE, null, null);
-		dt.setIdentifierString("T", null);
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "T");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		isNotAccurate(scTheoryRoot);
 		getDatatypes(scTheoryRoot);
 		containsMarkers(root, true);
-		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.DatatypeNameAlreadyATypeParError, "T");
+		hasMarker(dt, IDENTIFIER_ATTRIBUTE, DatatypeNameAlreadyATypeParError, "T");
 	}
 
 	/**
@@ -108,27 +115,22 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		addDatatypeDefinition(root, "List", makeSList("T"), makeSList("cons", "nil"),
 				new String[][] { makeSList("head", "tail"), makeSList() }, new String[][] { makeSList("T", "List(T)"),
 						makeSList() });
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
-		IDatatypeDefinition dt1 = addDatatypeDefinition(root, "cons", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
-		IDatatypeDefinition dt2 = addDatatypeDefinition(root, "nil", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
-		IDatatypeDefinition dt3 = addDatatypeDefinition(root, "head", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
-		IDatatypeDefinition dt4 = addDatatypeDefinition(root, "tail", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		IDatatypeDefinition dt1 = addDatatypeDefinition(root, "cons");
+		IDatatypeDefinition dt2 = addDatatypeDefinition(root, "nil");
+		IDatatypeDefinition dt3 = addDatatypeDefinition(root, "head");
+		IDatatypeDefinition dt4 = addDatatypeDefinition(root, "tail");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		isNotAccurate(scTheoryRoot);
 		containsTypeParameters(scTheoryRoot, "T");
 		getDatatype(scTheoryRoot, "List");
-		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE);
-		hasMarker(dt1, EventBAttributes.IDENTIFIER_ATTRIBUTE);
-		hasMarker(dt2, EventBAttributes.IDENTIFIER_ATTRIBUTE);
-		hasMarker(dt3, EventBAttributes.IDENTIFIER_ATTRIBUTE);
-		hasMarker(dt4, EventBAttributes.IDENTIFIER_ATTRIBUTE);
+		hasMarker(dt, IDENTIFIER_ATTRIBUTE, InvalidIdentForDatatype, "List");
+		hasMarker(dt1, IDENTIFIER_ATTRIBUTE, InvalidIdentForDatatype, "cons");
+		hasMarker(dt2, IDENTIFIER_ATTRIBUTE, InvalidIdentForDatatype, "nil");
+		hasMarker(dt3, IDENTIFIER_ATTRIBUTE, InvalidIdentForDatatype, "head");
+		hasMarker(dt4, IDENTIFIER_ATTRIBUTE, InvalidIdentForDatatype, "tail");
 	}
 
 	/**
@@ -160,9 +162,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_007_TypeArgUndef() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList("cons", "nil"),
-				new String[][] { makeSList("head", "tail"), makeSList() }, new String[][] { makeSList("T", "List(T)"),
-						makeSList() });
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
 		ITypeArgument arg = addTypeArgument(dt, "S");
 		saveRodinFileOf(root);
 		runBuilder();
@@ -182,9 +182,8 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_008_TypeArgRedund() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList("cons", "nil"),
-				new String[][] { makeSList("head", "tail"), makeSList() }, new String[][] { makeSList("T", "List(T)"),
-						makeSList() });
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		addTypeArgument(dt, "T");
 		ITypeArgument arg = addTypeArgument(dt, "T");
 		saveRodinFileOf(root);
 		runBuilder();
@@ -203,16 +202,14 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	@Test
 	public void testDatatypes_009_NoElmnCons() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
-		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList(), new String[][] {},
-				new String[][] {});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "DT");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		// FIXME isAccurate(scTheoryRoot);
-		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
+		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
-		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.DatatypeHasNoConsError, "List");
+		hasMarker(dt, IDENTIFIER_ATTRIBUTE, DatatypeHasNoConsError, "DT");
 	}
 
 	/**
@@ -221,16 +218,16 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	@Test
 	public void testDatatypes_010_NoBaseCons() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
-		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList("cons"),
-				new String[][] { makeSList("head", "tail") }, new String[][] { makeSList("T", "List(T)") });
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "DT");
+		IDatatypeConstructor cons = addDatatypeConstructor(dt, "cons");
+		addDatatypeDestructor(cons, "foo", "DT");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		// FIXME isAccurate(scTheoryRoot);
-		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
+		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
-		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.DatatypeHasNoBaseConsError, "List");
+		hasMarker(dt, IDENTIFIER_ATTRIBUTE, DatatypeHasNoBaseConsError, "DT");
 	}
 
 	/**
@@ -240,14 +237,13 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_011_NoConsIdent() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList("cons"),
-				new String[][] { makeSList("head", "tail") }, new String[][] { makeSList("T", "List(T)") });
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "DT");
 		dt.createChild(IDatatypeConstructor.ELEMENT_TYPE, null, null);
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		// FIXME isAccurate(scTheoryRoot);
-		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
+		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE);
 	}
@@ -259,16 +255,16 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_012_UnparsCons() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList("finite"),
-				new String[][] {makeSList()}, new String[][] {makeSList()});
-		dt.createChild(IDatatypeConstructor.ELEMENT_TYPE, null, null);
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "DT");
+		IDatatypeConstructor cons = addDatatypeConstructor(dt, "finite");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		isAccurate(scTheoryRoot);
-		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
+		// FIXME isAccurate(scTheoryRoot);
+		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
-		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE);
+		hasMarker(cons, IDENTIFIER_ATTRIBUTE, InvalidIdentForConstructor,
+				"finite");
 	}
 
 	/**
@@ -278,16 +274,17 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_013_ConsIsTypePar() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList("T"),
-				new String[][] {makeSList()}, new String[][] {makeSList()});
-		IDatatypeConstructor cons = dt.getDatatypeConstructors()[0];
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		addTypeArgument(dt, "T");
+		IDatatypeConstructor cons = addDatatypeConstructor(dt, "T");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		// FIXME isAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
-		hasMarker(cons, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.ConstructorNameAlreadyATypeParError, "T");
+		hasMarker(cons, IDENTIFIER_ATTRIBUTE,
+				ConstructorNameAlreadyATypeParError, "T");
 	}
 	
 	/**
@@ -300,16 +297,17 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		addDatatypeDefinition(root, "List", makeSList("T"), makeSList("cons", "nil"),
 				new String[][] { makeSList("head", "tail"), makeSList() }, new String[][] { makeSList("T", "List(T)"),
 						makeSList() });
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "AnotherList", makeSList(), makeSList("head"), new String[][] {makeSList()},
-				new String[][] {makeSList()});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "DT");
+		IDatatypeConstructor cons = addDatatypeConstructor(dt, "head");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		isAccurate(scTheoryRoot);
-		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "AnotherList");
+		// FIXME isAccurate(scTheoryRoot);
+		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
-		getDatatypes(scTheoryRoot, "List", "AnotherList");
-		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE);
+		getDatatypes(scTheoryRoot, "List", "DT");
+		hasMarker(cons, IDENTIFIER_ATTRIBUTE, InvalidIdentForConstructor,
+				"head");
 	}
 
 	/**
@@ -319,9 +317,9 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_015_NoDestIdent() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList(),
-				new String[][] {}, new String[][] {});
-		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons", new String[]{}, new String[]{});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		addTypeArgument(dt, "T");
+		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons");
 		IConstructorArgument dest = dtCons.createChild(IConstructorArgument.ELEMENT_TYPE, null, null);
 		dest.setType("T", null);
 		saveRodinFileOf(root);
@@ -340,17 +338,17 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_016_UnparsDest() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList(),
-				new String[][] {}, new String[][] {});
-		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons", new String[]{}, new String[]{});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		addTypeArgument(dt, "T");
+		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons");
 		IConstructorArgument dest = addDatatypeDestructor(dtCons, "card", "T");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		isAccurate(scTheoryRoot);
+		// FIXME isAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
-		hasMarker(dest, EventBAttributes.IDENTIFIER_ATTRIBUTE);
+		hasMarker(dest, IDENTIFIER_ATTRIBUTE, InvalidIdentForDestructor, "card");
 	}
 
 	/**
@@ -360,17 +358,18 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_017_DestIsTypePar() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList(),
-				new String[][] {}, new String[][] {});
-		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons", new String[]{}, new String[]{});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "DT");
+		addTypeArgument(dt, "T");
+		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons");
 		IConstructorArgument dest = addDatatypeDestructor(dtCons, "T", "T");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		// FIXME isAccurate(scTheoryRoot);
-		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
+		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
-		hasMarker(dest, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.DestructorNameAlreadyATypeParError, "T");
+		hasMarker(dest, IDENTIFIER_ATTRIBUTE,
+				DestructorNameAlreadyATypeParError, "T");
 	}
 	/**
 	 * destructor MISSING type
@@ -378,10 +377,8 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	@Test
 	public void testDatatypes_018_NoDestType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
-		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList(),
-				new String[][] {}, new String[][] {});
-		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons", new String[]{}, new String[]{});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons");
 		IConstructorArgument dest = dtCons.createChild(IConstructorArgument.ELEMENT_TYPE, null, null);
 		dest.setIdentifierString("head", null);
 		saveRodinFileOf(root);
@@ -403,18 +400,17 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		addDatatypeDefinition(root, "List", makeSList("T"), makeSList("cons", "nil"),
 				new String[][] { makeSList("head", "tail"), makeSList() }, new String[][] { makeSList("T", "List(T)"),
 						makeSList() });
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "AnotherList", makeSList(), makeSList(), new String[][] {},
-				new String[][] {});
-		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "anotherCons", new String[]{}, new String[]{});
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "DT");
+		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "someCons");
 		IConstructorArgument dest = addDatatypeDestructor(dtCons, "nil", "T");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		isAccurate(scTheoryRoot);
-		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "AnotherList");
+		// FIXME isAccurate(scTheoryRoot);
+		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
-		getDatatypes(scTheoryRoot, "List", "AnotherList");
-		hasMarker(dest, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.IdenIsExistingNameError, "nil");
+		getDatatypes(scTheoryRoot, "List", "DT");
+		hasMarker(dest, IDENTIFIER_ATTRIBUTE, InvalidIdentForDestructor, "nil");
 	}
 	
 	/**
@@ -424,12 +420,10 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_020_DestTypeIssue() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, "T");
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList(),
-				new String[][] {}, new String[][] {});
-		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons", new String[]{}, new String[]{});
-		IConstructorArgument dest = dtCons.createChild(IConstructorArgument.ELEMENT_TYPE, null, null);
-		dest.setIdentifierString("head", null);
-		dest.setType("ttT", null);
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		addTypeArgument(dt, "T");
+		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons");
+		IConstructorArgument dest = addDatatypeDestructor(dtCons, "head", "ttT");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
@@ -442,12 +436,10 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 	public void testDatatypes_021() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		addTypeParameters(root, makeSList("T", "S"));
-		IDatatypeDefinition dt = addDatatypeDefinition(root, "List", makeSList("T"), makeSList(),
-				new String[][] {}, new String[][] {});
-		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons", new String[]{}, new String[]{});
-		IConstructorArgument dest = dtCons.createChild(IConstructorArgument.ELEMENT_TYPE, null, null);
-		dest.setIdentifierString("head", null);
-		dest.setType("S", null);
+		IDatatypeDefinition dt = addDatatypeDefinition(root, "List");
+		addTypeArgument(dt, "T");
+		IDatatypeConstructor dtCons = addDatatypeConstructor(dt, "cons");
+		IConstructorArgument dest = addDatatypeDestructor(dtCons, "head", "S");
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();

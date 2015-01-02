@@ -32,13 +32,10 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.TheoryAttributes;
-import org.eventb.theory.core.sc.Messages;
-import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -141,21 +138,6 @@ public class ModulesUtils {
 				source.getIdentifierString());
 		scElement.create(null, monitor);
 		return scElement;
-	}
-
-	/**
-	 * Returns appropriate rodin problem for <code>code</code>. The error codes
-	 * correspond to problems of name clashes of datatype related identifiers.
-	 * 
-	 * @param errorCode
-	 *            the error code
-	 * @return the rodin problem
-	 */
-	public static IRodinProblem getAppropriateProblemForCode(String errorCode) {
-		if (errorCode.equals(Messages.scuser_IdenIsExistingNameError)) {
-			return TheoryGraphProblem.IdenIsExistingNameError;
-		}
-		return null;
 	}
 
 	/**

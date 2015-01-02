@@ -149,6 +149,9 @@ public final class Messages {
 	public static String scuser_OpArgExprNotSet;
 	public static String scuser_ApplicabilityUndefError;
 	public static String scuser_DatatypeError;
+	public static String scuser_InvalidIdentForDatatype;
+	public static String scuser_InvalidIdentForConstructor;
+	public static String scuser_InvalidIdentForDestructor;
 	public static String progress_TheoryProjects;
 	public static String scuser_NoTheoryProjectError;
 	public static String scuser_DuplicatedTheoryProjectError;

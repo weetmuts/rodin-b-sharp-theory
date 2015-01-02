@@ -33,7 +33,6 @@ import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.core.sc.Messages;
 
 /**
  * @author maamria
@@ -113,12 +112,9 @@ public class DatatypeTable extends State implements ISCState {
 		super.makeImmutable();
 	}
 	
-	public String checkName(String name) throws CoreException{
+	public boolean checkName(String name) throws CoreException{
 		assertMutable();
-		if (!initialFactory.isValidIdentifierName(name)) {
-			return Messages.scuser_DatatypeError;
-		}
-		return null;
+		return initialFactory.isValidIdentifierName(name);
 	}
 
 	public void addConstructor(String consName) throws CoreException {
