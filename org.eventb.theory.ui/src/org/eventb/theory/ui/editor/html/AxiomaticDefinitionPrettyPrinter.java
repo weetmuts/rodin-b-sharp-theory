@@ -19,7 +19,6 @@ public class AxiomaticDefinitionPrettyPrinter extends DefaultPrettyPrinter
 	private static final String NORMAL_STYLE = "eventLabel";
 	private static final String SEPARATOR_BEGIN = null;
 	private static final String SEPARATOR_END = null;
-	private static final String TWO_SPACES = "  ";
 
 	@SuppressWarnings("restriction")
 	@Override

@@ -52,7 +52,6 @@ public class AxiomaticOperatorDefinitionPrettyPrinter extends
 
 	private void stringBuilder(IAxiomaticOperatorDefinition aod,
 			IPrettyPrintStream ps) throws RodinDBException {
-		FormulaType exp = aod.getFormulaType();
 		Notation not = aod.getNotationType();
 		boolean ass = aod.isAssociative();
 		boolean com = aod.isCommutative();
@@ -94,7 +93,7 @@ public class AxiomaticOperatorDefinitionPrettyPrinter extends
 				SEPARATOR_END);
 
 		String lab = "";
-		if (aod.getFormulaType() == exp.EXPRESSION) {
+		if (aod.getFormulaType() == FormulaType.EXPRESSION) {
 			lab = lab + SPACE + EXPRESSION_STRING;
 		} else {
 			lab = lab + SPACE + PREDICATE_STRING;

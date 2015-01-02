@@ -174,6 +174,7 @@ public class TheoryRootActionProvider extends CommonActionProvider {
 		return action;
 	}
 
+	@SuppressWarnings("unused")
 	private Action getUndeployTheoryAction() {
 		Action action = new Action() {
 			public void run() {
