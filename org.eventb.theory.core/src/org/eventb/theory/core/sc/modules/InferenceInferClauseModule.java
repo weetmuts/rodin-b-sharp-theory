@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
+import static org.eventb.core.ast.Formula.BTRUE;
+
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
@@ -15,7 +17,6 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
@@ -72,7 +73,7 @@ public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, I
 	@SuppressWarnings("restriction")
 	@Override
 	protected boolean checkPredicate(Predicate predicate, IInfer clause) throws CoreException {
-		if (predicate.equals(AstUtilities.BTRUE)) {
+		if (predicate.getTag() == BTRUE) {
 			createProblemMarker(clause, EventBAttributes.PREDICATE_ATTRIBUTE,
 					TheoryGraphProblem.InferenceInferBTRUEPredErr);
 			accuracyInfo.setNotAccurate();

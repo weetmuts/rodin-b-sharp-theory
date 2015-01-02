@@ -1,5 +1,7 @@
 package org.eventb.theory.core.sc.modules;
 
+import static org.eventb.core.ast.Formula.BTRUE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 		// check for error
 		if (!operatorInformation.hasError() && wdConds != null && wdConds.length > 0) {
 			Predicate wdPred = processWdConditions(wdConds, repository, monitor);
-			if (wdPred != null && !wdPred.equals(AstUtilities.BTRUE)) {
+			if (wdPred != null && wdPred.getTag() != BTRUE) {
 				if (target != null) {
 					Predicate wdPredWD = wdPred.getWDPredicate();
 					wdPred = AstUtilities.conjunctPredicates(new Predicate[] { wdPredWD, wdPred }, repository.getFormulaFactory());
@@ -71,7 +73,7 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 				continue;
 			}
 			else {
-				if(!pred.equals(AstUtilities.BTRUE))
+				if(pred.getTag() != BTRUE)
 					wdPredicates.add(pred);
 			}
 		}

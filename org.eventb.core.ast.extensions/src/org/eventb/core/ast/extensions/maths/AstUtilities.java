@@ -12,7 +12,11 @@
  *******************************************************************************/
 package org.eventb.core.ast.extensions.maths;
 
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.LAND;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -53,10 +57,6 @@ import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension
  */
 public class AstUtilities {
 
-	/**
-	 * Literal predicate true.
-	 */
-	public static final Predicate BTRUE = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null);
 	/**
 	 * Cond extension
 	 */
@@ -438,13 +438,7 @@ public class AstUtilities {
 	 * @return the predicate
 	 */
 	public static Predicate conjunctPredicates(Predicate[] preds, FormulaFactory ff) {
-		List<Predicate> pList = new ArrayList<Predicate>();
-		for (Predicate p : preds) {
-			if (!p.equals(BTRUE)) {
-				pList.add(p);
-			}
-		}
-		return AstUtilities.conjunctPredicates(pList, ff).flatten();
+		return conjunctPredicates(Arrays.asList(preds), ff);
 	}
 
 	/**
@@ -461,16 +455,19 @@ public class AstUtilities {
 	 * @return the predicate
 	 */
 	public static Predicate conjunctPredicates(List<Predicate> preds, FormulaFactory ff) {
-		while (preds.contains(BTRUE)) {
-			preds.remove(BTRUE);
+		final List<Predicate> conjuncts = new ArrayList<Predicate>(preds.size());
+		for (final Predicate pred : preds) {
+			if (pred.getTag() != BTRUE)
+				conjuncts.add(pred);
 		}
-		if (preds.size() == 0) {
-			return BTRUE.translate(ff);
+		switch (conjuncts.size()) {
+		case 0:
+			return makeBTRUE(ff);
+		case 1:
+			return conjuncts.get(0);
+		default:
+			return ff.makeAssociativePredicate(LAND, conjuncts, null);
 		}
-		if (preds.size() == 1) {
-			return preds.get(0);
-		}
-		return ff.makeAssociativePredicate(Formula.LAND, preds, null);
 	}
 
 	/**
@@ -776,6 +773,17 @@ public class AstUtilities {
 			form = r.getParsedPredicate();
 		}
 		return form;
+	}
+
+	/**
+	 * Returns the truth predicate built with the given factory.
+	 * 
+	 * @param factory
+	 *            some formula factory
+	 * @return the truth predicate built with the given factory
+	 */
+	public static Predicate makeBTRUE(FormulaFactory factory) {
+		return factory.makeLiteralPredicate(BTRUE, null);
 	}
 
 	/**

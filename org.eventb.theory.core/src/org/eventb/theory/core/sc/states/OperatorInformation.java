@@ -239,12 +239,12 @@ public class OperatorInformation extends State implements ISCState{
 //				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
 //						opArguments, expressionType, getWdCondition(), dWDCondition, definition, sourceOfExtension);
 				formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-						opArguments, expressionType, getWdCondition(), AstUtilities.BTRUE, definition, sourceOfExtension);
+						opArguments, expressionType, getWdCondition(), makeBTRUE(), definition, sourceOfExtension);
 			} else {
 //				formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
 //						getWdCondition(), dWDCondition, definition,sourceOfExtension);
 				formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
-						getWdCondition(), AstUtilities.BTRUE, definition,sourceOfExtension);
+						getWdCondition(), makeBTRUE(), definition,sourceOfExtension);
 			}
 			return formulaExtension;
 		} else
@@ -264,12 +264,12 @@ public class OperatorInformation extends State implements ISCState{
 //			formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
 //					opArguments, expressionType, getWdCondition(), getWdCondition(), null, null);
 			formulaExtension = MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-					opArguments, expressionType, getWdCondition(), AstUtilities.BTRUE, null, null);
+					opArguments, expressionType, getWdCondition(), makeBTRUE(), null, null);
 		} else {
 //			formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
 //					getWdCondition(), getWdCondition(), null, null);
 			formulaExtension = MathExtensionsFactory.getPredicateExtension(properties, isCommutative, opArguments,
-					getWdCondition(), AstUtilities.BTRUE, null, null);
+					getWdCondition(), makeBTRUE(), null, null);
 		}
 		return formulaExtension;
 	}
@@ -312,7 +312,7 @@ public class OperatorInformation extends State implements ISCState{
 			ISCRewriteRuleRightHandSide rhs = rewRule.getRuleRHS(syntax + " rhs");
 			rhs.create(null, null);
 			rhs.setLabel(syntax + " rhs", null);
-			rhs.setPredicate(AstUtilities.BTRUE, null);
+			rhs.setPredicate(makeBTRUE(), null);
 			rhs.setSCFormula(((Definitions.DirectDefintion) definition).getDefinition().translate(enhancedFactory).substituteFreeIdents(possibleSubstitution), null);
 			rhs.setSource(originDefinition, null);
 		} else if (definition instanceof Definitions.RecursiveDefinition) {
@@ -357,7 +357,7 @@ public class OperatorInformation extends State implements ISCState{
 				rhs.create(null, null);
 				rhs.setSource(originDefinition, null);
 				rhs.setLabel(syntax + " rhs", null);
-				rhs.setPredicate(AstUtilities.BTRUE, null);
+				rhs.setPredicate(makeBTRUE(), null);
 				// get the rhs 
 				Formula<?> indCaseDefinitionFormula = recursiveCases.get(indCase).translate(enhancedFactory);
 				// apply substitution if necessary
@@ -441,5 +441,9 @@ public class OperatorInformation extends State implements ISCState{
 			i ++;
 		}
 		return exps;
+	}
+
+	private Predicate makeBTRUE() {
+		return AstUtilities.makeBTRUE(factory);
 	}
 }

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
+import static org.eventb.core.ast.extensions.maths.AstUtilities.makeBTRUE;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
@@ -102,8 +104,8 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 			if (!recursiveDefinitionInfo.isAccurate()) {
 				operatorInformation.setHasError();
 			} else {
-				target.setWDCondition(AstUtilities.BTRUE, monitor);
-				operatorInformation.setD_WDCondition(AstUtilities.BTRUE);
+				target.setWDCondition(makeBTRUE(factory), monitor);
+				operatorInformation.setD_WDCondition(makeBTRUE(factory));
 			}
 		}
 	}

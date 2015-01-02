@@ -1,5 +1,7 @@
 package org.eventb.theory.core.sc.modules;
 
+import static org.eventb.core.ast.extensions.maths.AstUtilities.makeBTRUE;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -304,8 +306,8 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 								recursiveDefinitionInfo.getInductiveArgument(), recursiveCases);
 						operatorInformation.setDefinition(recursiveDefinition);
 						if (operatorInformation.getWdCondition() == null) {
-							operatorInformation.addWDCondition(AstUtilities.BTRUE);
-							scParent.setPredicate(AstUtilities.BTRUE, monitor);
+							operatorInformation.addWDCondition(makeBTRUE(localFactory));
+							scParent.setPredicate(makeBTRUE(localFactory), monitor);
 						}
 						for (IRecursiveDefinitionCase defCase : baseEntries.keySet()) {
 							if (!baseEntries.get(defCase).isErroneous())
