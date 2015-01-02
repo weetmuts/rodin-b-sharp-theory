@@ -9,7 +9,6 @@ Require-Bundle: org.eventb.theory.core,
  org.rodinp.core;bundle-version="1.7.0",
  org.eventb.core.ast;bundle-version="3.0.0",
  org.eventb.core;bundle-version="3.0.0",
- org.eventb.core.tests,
  org.junit,
  org.eclipse.core.runtime,
  org.eclipse.core.resources

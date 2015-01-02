@@ -13,7 +13,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.tests.EventBTest.DeltaListener;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.IAxiomaticTypeDefinition;
@@ -49,7 +48,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -427,14 +425,6 @@ public abstract class TheoryTest extends BuilderTest {
 			if (root.exists())
 				checkSources(root);
 		}
-	}
-
-	protected void runBuilderNotChanged(IEventBRoot... rfs) throws CoreException {
-		final DeltaListener listener = new DeltaListener();
-		RodinCore.addElementChangedListener(listener);
-		super.runBuilder();
-		RodinCore.removeElementChangedListener(listener);
-		listener.assertNotChanged(rfs);
 	}
 
 	private boolean isTheory(IOpenable element) {

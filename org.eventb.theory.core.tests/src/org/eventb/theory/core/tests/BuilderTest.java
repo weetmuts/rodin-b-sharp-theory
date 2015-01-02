@@ -15,7 +15,6 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.tests.ResourceUtils;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
@@ -27,7 +26,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.internal.core.debug.DebugHelpers;
 
 public abstract class BuilderTest {
 
@@ -115,7 +113,12 @@ public abstract class BuilderTest {
 		
 		rodinProject = createRodinProject("P");
 		
-		DebugHelpers.disableIndexing();
+		disableIndexing();
+	}
+
+	@SuppressWarnings("restriction")
+	private void disableIndexing() {
+		org.rodinp.internal.core.debug.DebugHelpers.disableIndexing();
 	}
 
 	protected IRodinProject createRodinProject(String projectName)
@@ -130,10 +133,6 @@ public abstract class BuilderTest {
 		return result;
 	}
 	
-	protected void importProject(String prjName) throws Exception {
-		ResourceUtils.importProjectFiles(rodinProject.getProject(), prjName);
-	}
-
 	public static void setReadOnly(IResource resource, boolean readOnly)
 			throws CoreException {
 		final ResourceAttributes attrs = resource.getResourceAttributes();
