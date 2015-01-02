@@ -27,6 +27,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
 import org.eventb.core.ast.extensions.pm.IBinding;
 
 /**
@@ -102,7 +103,7 @@ public class Binding implements IBinding {
 	 *             checked
 	 */
 	public Binding(Formula<?> formula, Formula<?> pattern, boolean isPartialMatchAcceptable, FormulaFactory factory) {
-		/*if (formula == null || pattern == null) {
+		if (formula == null || pattern == null) {
 			IllegalArgumentException ex = new IllegalArgumentException("formula and pattern should not be null");
 			AstExtensionsPlugin.log(ex, ex.getMessage());
 			throw ex;
@@ -112,7 +113,7 @@ public class Binding implements IBinding {
 					+ formula + "   |   " + pattern + "]");
 			AstExtensionsPlugin.log(ex, ex.getMessage());
 			throw ex;
-		}*/
+		}
 		this.formula = formula;
 		this.pattern = pattern;
 		this.isPartialMatchAcceptable = isPartialMatchAcceptable;
