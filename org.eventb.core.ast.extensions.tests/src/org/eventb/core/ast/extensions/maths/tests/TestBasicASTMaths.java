@@ -256,9 +256,9 @@ public class TestBasicASTMaths extends BasicAstExtTest{
 		//Note: AstUtilities.getGroupFor() is public whereas AstUtilities.DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP" is protected,
 		//Hence, public users of this method have to know the group name string explicitly. Hence this test also checks for that string explicitly.
 		//In contrast, standard event-B group Id's are accessed via getId() methods
-		assertEquals("expected group: NEW THEORY GROUP","NEW THEORY GROUP",AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.INFIX,0));
-		assertEquals("expected group: NEW THEORY GROUP","NEW THEORY GROUP",AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.INFIX,1));
-		assertEquals("expected group: NEW THEORY GROUP","NEW THEORY GROUP",AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.INFIX,2));
+		assertEquals("infix extended expression group",AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.INFIX,0));
+		assertEquals("infix extended expression group",AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.INFIX,1));
+		assertEquals("infix extended expression group",AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.INFIX,2));
 		assertEquals("expected group: standard atomic expression",StandardGroup.ATOMIC_EXPR.getId(),AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.PREFIX,0));
 		assertEquals("expected group: standard closed",StandardGroup.CLOSED.getId(),AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.PREFIX,1));
 		assertEquals("expected group: standard closed",StandardGroup.CLOSED.getId(),AstUtilities.getGroupFor(FormulaType.EXPRESSION, Notation.PREFIX,2));
@@ -268,7 +268,7 @@ public class TestBasicASTMaths extends BasicAstExtTest{
 		
 		assertEquals("expected group: standard atomic predicate",StandardGroup.ATOMIC_PRED.getId(),AstUtilities.getGroupFor(FormulaType.PREDICATE, Notation.INFIX,0));
 		assertEquals("expected group: NEW THEORY GROUP","NEW THEORY GROUP",AstUtilities.getGroupFor(FormulaType.PREDICATE, Notation.INFIX,1));
-		assertEquals("expected group: standard infix predicate",StandardGroup.INFIX_PRED.getId(),AstUtilities.getGroupFor(FormulaType.PREDICATE, Notation.INFIX,2));
+		assertEquals("expected group: standard infix predicate",StandardGroup.RELOP_PRED.getId(),AstUtilities.getGroupFor(FormulaType.PREDICATE, Notation.INFIX,2));
 		assertEquals("expected group: standard atomic predicate",StandardGroup.ATOMIC_PRED.getId(),AstUtilities.getGroupFor(FormulaType.PREDICATE, Notation.PREFIX,0));
 		assertEquals("expected group: standard closed",StandardGroup.CLOSED.getId(),AstUtilities.getGroupFor(FormulaType.PREDICATE, Notation.PREFIX,1));
 		assertEquals("expected group: standard closed",StandardGroup.CLOSED.getId(),AstUtilities.getGroupFor(FormulaType.PREDICATE, Notation.PREFIX,2));
