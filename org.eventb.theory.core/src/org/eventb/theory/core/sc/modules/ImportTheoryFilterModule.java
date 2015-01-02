@@ -80,14 +80,14 @@ public class ImportTheoryFilterModule extends SCFilterModule {
 			valid = false;
 			//duplicated theory project 
 			createProblemMarker(importTheoryClause,
-					TheoryAttributes.AVAILABLE_THEORY_ATTRIBUTE,
+					TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
 					TheoryGraphProblem.DuplicatedTheoryError,
 					newDeployedTheory.getElementName());
 		}
 		else if(!newDeployedTheory.exists()){
 			//deployed theory does not exist 
 			createProblemMarker(importTheoryClause,
-					TheoryAttributes.AVAILABLE_THEORY_ATTRIBUTE,
+					TheoryAttributes.IMPORT_THEORY_ATTRIBUTE,
 					TheoryGraphProblem.DeployedTheoryNotExistError,
 					newDeployedTheory.getElementName());
 			return false;
