@@ -1367,9 +1367,9 @@
          <childType
                typeId="org.eventb.theory.core.importTheoryProject">
          </childType>
-         <attributeType
+         <childType
                typeId="org.eventb.theory.core.typeParameter">
-         </attributeType>
+         </childType>
          <childType
                typeId="org.eventb.theory.core.datatypeDefinition">
          </childType>
@@ -1405,6 +1405,9 @@
             parentTypeId="org.eventb.theory.core.typeParameter">
          <attributeType
                typeId="org.eventb.core.identifier">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.core.comment">
          </attributeType>
       </relationship>
       <relationship
