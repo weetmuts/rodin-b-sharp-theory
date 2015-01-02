@@ -19,6 +19,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -108,6 +109,14 @@ public abstract class BasicAstExtTest extends TestCase {
 		return env;
 	}
 
+	public ISealedTypeEnvironment typeEnvironment(Map<String, Type> args) {
+		final ITypeEnvironmentBuilder builder = factory.makeTypeEnvironment();
+		for (final Map.Entry<String, Type> arg : args.entrySet()) {
+			builder.addName(arg.getKey(), arg.getValue());
+		}
+		return builder.makeSnapshot();
+	}
+
 	public FreeIdentifier ident(String name, String type) throws CoreException {
 		return factory.makeFreeIdentifier(name, null, type(type));
 	}
@@ -158,7 +167,7 @@ public abstract class BasicAstExtTest extends TestCase {
 		return operatorArguments;
 	}
 
-	public Predicate predicate(String str) throws CoreException {
+	public Predicate predicate(String str) {
 		return factory.parsePredicate(str, null).getParsedPredicate();
 	}
 
@@ -196,6 +205,14 @@ public abstract class BasicAstExtTest extends TestCase {
 		return parsedPredicate;
 	}
 
+	public Predicate tcPredicate(String str, Map<String, Type> args) {
+		final Predicate result = predicate(str);
+		final ITypeEnvironment te = typeEnvironment(args);
+		final ITypeCheckResult tcResult = result.typeCheck(te);
+		assertFalse(tcResult.hasProblem());
+		return result;
+	}
+
 	public GivenType givenType(String str) throws CoreException {
 		return factory.makeGivenType(str);
 	}
@@ -213,8 +230,9 @@ public abstract class BasicAstExtTest extends TestCase {
 		{
 			operatorArguments.put("n", factory.makeIntegerType());
 		}
+		final Predicate wdPredicate = tcPredicate("n > 1", operatorArguments);
 		PRIME_EXTENSION = MathExtensionsFactory.getPredicateExtension(properties, false, operatorArguments,
-				predicate("n > 1"), predicate("n > 1"), null, null);
+				wdPredicate, wdPredicate, null, null);
 		return PRIME_EXTENSION;
 	}
 
@@ -228,8 +246,10 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s1", type("ℙ(T)"));
 			operatorArguments.put("s2", type("ℙ(S)"));
 		}
+		final Predicate wdPredicate = tcPredicate("finite(s1) ∧ finite(s2)",
+				operatorArguments);
 		SAME_SIZE_EXTENSION = MathExtensionsFactory.getPredicateExtension(properties, true, operatorArguments,
-				predicate("finite(s1) ∧ finite(s2)"), predicate("finite(s1) ∧ finite(s2)"), null, null);
+				wdPredicate, wdPredicate, null, null);
 		return SAME_SIZE_EXTENSION;
 	}
 	
@@ -274,8 +294,9 @@ public abstract class BasicAstExtTest extends TestCase {
 		{
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
+		final Predicate wdPredicate = tcPredicate("s ∈ seq(A)", operatorArguments);
 		IS_EMPTY_EXTENSION = MathExtensionsFactory.getPredicateExtension(properties, false, operatorArguments,
-				predicate("s ∈ seq(A)"), predicate("s ∈ seq(A)"), null, null);
+				wdPredicate, wdPredicate, null, null);
 		return IS_EMPTY_EXTENSION;
 	}
 
@@ -289,8 +310,9 @@ public abstract class BasicAstExtTest extends TestCase {
 		{
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
+		final Predicate wdPredicate = tcPredicate("s ∈ seq(A)", operatorArguments);
 		SEQ_SIZE_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				Z, predicate("s ∈ seq(A)"), predicate("s ∈ seq(A)"), null, null);
+				Z, wdPredicate, wdPredicate, null, null);
 		return SEQ_SIZE_EXTENSION;
 	}
 
@@ -304,8 +326,9 @@ public abstract class BasicAstExtTest extends TestCase {
 		{
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
+		final Predicate wdPredicate = tcPredicate("s ∈ seq(A) ∧ ¬isEmpty(s)", operatorArguments);
 		SEQ_TAIL_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				type("ℤ↔A"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), null, null);
+				type("ℤ↔A"), wdPredicate, wdPredicate, null, null);
 		return SEQ_TAIL_EXTENSION;
 	}
 
@@ -319,8 +342,9 @@ public abstract class BasicAstExtTest extends TestCase {
 		{
 			operatorArguments.put("s", type("ℤ↔A"));
 		}
+		final Predicate wdPredicate = tcPredicate("s ∈ seq(A) ∧ ¬isEmpty(s)", operatorArguments);
 		SEQ_HEAD_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, false, operatorArguments,
-				type("A"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), predicate("s ∈ seq(A) ∧ ¬(isEmpty(s))"), null, null);
+				type("A"), wdPredicate, wdPredicate, null, null);
 		return SEQ_HEAD_EXTENSION;
 	}
 
@@ -393,8 +417,9 @@ public abstract class BasicAstExtTest extends TestCase {
 			operatorArguments.put("s1", type("ℤ↔A"));
 			operatorArguments.put("s2", type("ℤ↔A"));
 		}
+		final Predicate wdPredicate = tcPredicate("s1 ∈ seq(A) ∧ s2 ∈ seq(A)", operatorArguments);
 		SEQ_CONCAT_EXTENSION = MathExtensionsFactory.getExpressionExtension(properties, false, true, operatorArguments,
-				type("ℤ↔A"), predicate("s1 ∈ seq(A) ∧ s2 ∈ seq(A)"), predicate("s1 ∈ seq(A) ∧ s2 ∈ seq(A)"), null, null);
+				type("ℤ↔A"), wdPredicate, wdPredicate, null, null);
 		return SEQ_CONCAT_EXTENSION;
 	}
 
