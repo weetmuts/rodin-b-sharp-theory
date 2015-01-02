@@ -8,6 +8,7 @@
 package org.eventb.theory.core.sc.modules;
 
 import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
+import static org.eventb.theory.internal.core.util.CoreUtilities.checkAgainstTypeParameters;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -16,10 +17,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -81,19 +80,15 @@ public class RewriteRuleFilterModule extends RuleFilterModule<IRewriteRule> {
 		if (lhsForm == null) {
 			return false;
 		}
-		// check all idents of the lhs formula were actually declared BUG FIXED.
+		// First check that there is no given type besides type parameters
+		if (!checkAgainstTypeParameters(rule, lhsForm, typeEnvironment, this)) {
+			return false;
+		}
+		// then check all idents of the lhs formula were actually declared BUG FIXED.
 		for (FreeIdentifier identifier : lhsForm.getFreeIdentifiers()) {
 			if (!typeEnvironment.contains(identifier.getName())) {
 				createProblemMarker(rule, FORMULA_ATTRIBUTE, GraphProblem.UndeclaredFreeIdentifierError,
 						identifier.getName());
-				return false;
-			}
-		}
-		// tested by TestRewriteRules.testRewriteRules_010()
-		for (GivenType type : lhsForm.getGivenTypes()){
-			if (!typeEnvironment.contains(type.getName()) || !AstUtilities.isGivenSet(typeEnvironment, type.getName())){
-				createProblemMarker(rule, FORMULA_ATTRIBUTE, 
-						TheoryGraphProblem.NonTypeParOccurError, type.getName());
 				return false;
 			}
 		}
