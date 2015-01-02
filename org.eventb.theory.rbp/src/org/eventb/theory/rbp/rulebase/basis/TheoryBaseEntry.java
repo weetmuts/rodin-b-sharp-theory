@@ -55,8 +55,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	/**
 	 * All rules.
 	 */
-	private List<IGeneralRule> rewriteRules;
-	private List<IGeneralRule> inferenceRules;
+	private final List<IGeneralRule> rewriteRules;
+	private final List<IGeneralRule> inferenceRules;
 	private List<ISCTheorem> theorems;
 	/**
 	 * Definitional rules
@@ -95,6 +95,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 
 	protected void reload(FormulaFactory factory) {
 		// clear all
+		rewriteRules.clear();
+		inferenceRules.clear();
 		autoRewRules.clear();
 		interRewRules.clear();
 		autoTypedInferenceMap.clear();
@@ -108,8 +110,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		
 		if (theoryRoot instanceof IDeployedTheoryRoot) {
 			IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
-			rewriteRules = (List<IGeneralRule>)(List<?>) file.getRewriteRules();
-			inferenceRules = (List<IGeneralRule>)(List<?>) file.getInferenceRules();
+			rewriteRules.addAll(file.getRewriteRules());
+			inferenceRules.addAll(file.getInferenceRules());
 			try {
 				theorems = Arrays.asList(theoryRoot.getTheorems());
 			} catch (RodinDBException e) {

@@ -8,16 +8,11 @@
 package org.eventb.theory.rbp.reasoning;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
@@ -26,17 +21,13 @@ import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
-import org.eventb.theory.core.ISCGiven;
-import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedGiven;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.tactics.applications.InferenceTacticApplication;
-import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.eventb.ui.prover.ITacticApplication;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author maamria, asiehsalehi
@@ -60,7 +51,7 @@ public class InferenceSelector {
 
 	public List<ITacticApplication> select(Predicate predicate,
 			IProverSequent sequent) {
-		FormulaFactory factory = context.getFormulaFactory();
+		// FormulaFactory factory = context.getFormulaFactory();
 		List<ITacticApplication> apps = new ArrayList<ITacticApplication>();
 		if (predicate == null) {
 			// backward
@@ -109,6 +100,7 @@ public class InferenceSelector {
 							// hypothesis should be matched
 							if (matchFound) {
 								found = true;
+								@SuppressWarnings("unchecked")
 								HashMap<IDeployedGiven, List<Predicate>> cloneMatches = (HashMap<IDeployedGiven, List<Predicate>>) matches.clone();
 								Object[] hypGivenArr = hypGivens.toArray();
 								IBinding restoreBinding = null;
