@@ -56,7 +56,7 @@ public class OperatorWDConditionModule extends SCProcessorModule {
 			if (wdPred != null && wdPred.getTag() != BTRUE) {
 				if (target != null) {
 					Predicate wdPredWD = wdPred.getWDPredicate();
-					wdPred = AstUtilities.conjunctPredicates(new Predicate[] { wdPredWD, wdPred }, repository.getFormulaFactory());
+					wdPred = AstUtilities.conjunctPredicates(wdPredWD, wdPred);
 					operatorInformation.addWDCondition(wdPred);
 				} else {
 					operatorInformation.setHasError();

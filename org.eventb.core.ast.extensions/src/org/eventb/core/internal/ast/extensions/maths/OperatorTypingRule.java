@@ -118,8 +118,7 @@ public abstract class OperatorTypingRule {
 		}
 		final Predicate actWDPred = inst.instantiate(wdToUse);
 		final Predicate actWDPredWD = actWDPred.getWDPredicate();
-		return AstUtilities.conjunctPredicates(new Predicate[] {
-				actWDPredWD, actWDPred }, factory);
+		return AstUtilities.conjunctPredicates(actWDPredWD, actWDPred);
 	}
 
 	// Complete an instantiation based on result type, if any

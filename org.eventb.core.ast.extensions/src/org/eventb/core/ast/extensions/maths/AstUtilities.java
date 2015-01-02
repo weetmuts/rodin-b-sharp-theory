@@ -408,15 +408,14 @@ public class AstUtilities {
 	 * 
 	 * <p>
 	 * Note that simplifications are performed before the resulting predicate is
-	 * produced. Also flattening is performed.
+	 * produced.
 	 * 
 	 * @param preds
-	 *            the array of predicates
-	 * @param ff
-	 *            the formula factor
+	 *            some predicates (at least one)
 	 * @return the predicate
 	 */
-	public static Predicate conjunctPredicates(Predicate[] preds, FormulaFactory ff) {
+	public static Predicate conjunctPredicates(Predicate... preds) {
+		final FormulaFactory ff = preds[0].getFactory();
 		return conjunctPredicates(Arrays.asList(preds), ff);
 	}
 

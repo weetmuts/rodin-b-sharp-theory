@@ -144,7 +144,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				// -------------------------------------------------------
 				// lhsWD & conditionWD & condition => rhsWD
 				if (!isTrivial(rhsWD)) {
-					Predicate poPredicate = AstUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition}, factory);
+					Predicate poPredicate = AstUtilities.conjunctPredicates(lhsWD, conditionWD, condition);
 					if(poPredicate.equals(True(factory))){
 						poPredicate = rhsWD;
 					}
@@ -167,7 +167,7 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 				// -------------------------------------------------------
 				// lhsWD & conditionWD & condition & rhsWD => lhs = rhs
 				if (!isTrivial(soundnessPredicate)) {
-					Predicate poPredicate = AstUtilities.conjunctPredicates(new Predicate[]{lhsWD, conditionWD, condition, rhsWD}, factory);
+					Predicate poPredicate = AstUtilities.conjunctPredicates(lhsWD, conditionWD, condition, rhsWD);
 					if(poPredicate.equals(True(factory))){
 						poPredicate = soundnessPredicate;
 					}
