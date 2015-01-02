@@ -195,6 +195,12 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						continue;
 					} else {
 						Formula<?> formula = ModulesUtils.parseFormula(defCase, factory, this);
+						if (formula == null) {
+							caseEntry.setErroneous();
+							operatorInformation.setHasError();
+							continue;
+						}
+
 						//check undefined identifiers
 						FreeIdentifier[] idents = formula.getFreeIdentifiers();
 						boolean hasError = false;
@@ -211,53 +217,48 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						if (hasError)
 							continue;
 						
-						if (formula != null) {
-							if (isExpression && !(formula instanceof Expression)) {
-								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
-										TheoryGraphProblem.OperatorDefNotExpError, parent.getLabel());
+						if (isExpression && !(formula instanceof Expression)) {
+							createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
+									TheoryGraphProblem.OperatorDefNotExpError, parent.getLabel());
+							caseEntry.setErroneous();
+							operatorInformation.setHasError();
+							theoryAccuracyInfo.setNotAccurate();
+							continue;
+						}
+						if (!isExpression && !(formula instanceof Predicate)) {
+							createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
+									TheoryGraphProblem.OperatorDefNotPredError, parent.getLabel());
+							caseEntry.setErroneous();
+							operatorInformation.setHasError();
+							theoryAccuracyInfo.setNotAccurate();
+							continue;
+						}
+						formula = ModulesUtils.checkFormula(defCase, formula, caseEntry.getLocalTypeEnvironment(),
+								this);
+						if (formula == null) {
+							caseEntry.setErroneous();
+							operatorInformation.setHasError();
+							continue;
+						}
+						if (isExpression) {
+							Expression expression = (Expression) formula;
+							if (resultantType == null) {
+								resultantType = expression.getType();
+								operatorInformation.setResultantType(resultantType);
+							}
+							if (!expression.getType().equals(resultantType)) {
+								createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE,
+										TheoryGraphProblem.RecOpTypeNotConsistent, resultantType,
+										expression.getType());
 								caseEntry.setErroneous();
 								operatorInformation.setHasError();
 								theoryAccuracyInfo.setNotAccurate();
 								continue;
-							}
-							if (!isExpression && !(formula instanceof Predicate)) {
-								createProblemMarker(parent, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
-										TheoryGraphProblem.OperatorDefNotPredError, parent.getLabel());
-								caseEntry.setErroneous();
-								operatorInformation.setHasError();
-								theoryAccuracyInfo.setNotAccurate();
-								continue;
-							}
-							formula = ModulesUtils.checkFormula(defCase, formula, caseEntry.getLocalTypeEnvironment(),
-									this);
-							if (formula == null) {
-								caseEntry.setErroneous();
-								operatorInformation.setHasError();
-								continue;
-							}
-							if (isExpression) {
-								Expression expression = (Expression) formula;
-								if (resultantType == null) {
-									resultantType = expression.getType();
-									operatorInformation.setResultantType(resultantType);
-								}
-								if (!expression.getType().equals(resultantType)) {
-									createProblemMarker(defCase, TheoryAttributes.FORMULA_ATTRIBUTE,
-											TheoryGraphProblem.RecOpTypeNotConsistent, resultantType,
-											expression.getType());
-									caseEntry.setErroneous();
-									operatorInformation.setHasError();
-									theoryAccuracyInfo.setNotAccurate();
-									continue;
-								} else {
-									recursiveCases.put(caseEntry.getCaseExpression(), formula);
-								}
 							} else {
 								recursiveCases.put(caseEntry.getCaseExpression(), formula);
 							}
 						} else {
-							caseEntry.setErroneous();
-							operatorInformation.setHasError();
+							recursiveCases.put(caseEntry.getCaseExpression(), formula);
 						}
 					}
 				}
