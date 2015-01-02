@@ -17,6 +17,7 @@ import static org.eventb.core.ast.Formula.LAND;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -30,9 +31,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.ParametricType;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -671,26 +670,7 @@ public class AstUtilities {
 	 * @return all given types
 	 */
 	public static List<GivenType> getGivenTypes(Type type) {
-		List<GivenType> list = new ArrayList<GivenType>();
-		if (type instanceof GivenType) {
-			list.add((GivenType) type);
-		}
-		if (type instanceof ParametricType) {
-			ParametricType parametricType = (ParametricType) type;
-			for (Type t : parametricType.getTypeParameters()) {
-				list.addAll(getGivenTypes(t));
-			}
-		}
-		if (type instanceof PowerSetType) {
-			PowerSetType powerSetType = (PowerSetType) type;
-			list.addAll(getGivenTypes(powerSetType.getBaseType()));
-		}
-		if (type instanceof ProductType) {
-			ProductType productType = (ProductType) type;
-			list.addAll(getGivenTypes(productType.getLeft()));
-			list.addAll(getGivenTypes(productType.getRight()));
-		}
-		return list;
+		return new ArrayList<GivenType>(type.getGivenTypes());
 	}
 
 	/**
@@ -751,9 +731,9 @@ public class AstUtilities {
 		IFormulaExtension extension = factory.getExtension(tag);
 		if (extension != null) {
 			return factory.makeExtendedExpression((IExpressionExtension) extension,
-					es.toArray(new Expression[es.size()]), new Predicate[0], null);
+					es, Collections.<Predicate>emptyList(), null);
 		} else {
-			return factory.makeAssociativeExpression(tag, es.toArray(new Expression[es.size()]), null);
+			return factory.makeAssociativeExpression(tag, es, null);
 		}
 	}
 
@@ -773,7 +753,7 @@ public class AstUtilities {
 		if (es.size() == 1)
 			return es.get(0);
 		else {
-			return factory.makeAssociativePredicate(tag, es.toArray(new Predicate[es.size()]), null);
+			return factory.makeAssociativePredicate(tag, es, null);
 		}
 	}
 	
