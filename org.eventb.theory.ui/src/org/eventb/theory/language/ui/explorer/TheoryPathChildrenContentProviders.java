@@ -25,6 +25,7 @@ import fr.systerel.internal.explorer.model.IModelElement;
  * @author RenatoSilva
  *
  */
+@SuppressWarnings("restriction")
 public class TheoryPathChildrenContentProviders {
 
 	public static class AntiSorter extends ViewerSorter {
