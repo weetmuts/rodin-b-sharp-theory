@@ -59,6 +59,10 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
+		// First refresh local cache from repository
+		factory = repository.getFormulaFactory();
+		globalTypeEnvironment = repository.getTypeEnvironment();
+
 		IAxiomaticDefinitionsBlock block = (IAxiomaticDefinitionsBlock) element;
 		ISCAxiomaticDefinitionsBlock scBlock = (ISCAxiomaticDefinitionsBlock) target;
 		monitor.worked(1);
@@ -77,8 +81,6 @@ public class AxiomaticOperatorModule extends LabeledElementModule{
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
-		factory = repository.getFormulaFactory();
-		globalTypeEnvironment = repository.getTypeEnvironment();
 		identifierSymbolTable = (IdentifierSymbolTable) repository.getState(IdentifierSymbolTable.STATE_TYPE);
 		
 	}
