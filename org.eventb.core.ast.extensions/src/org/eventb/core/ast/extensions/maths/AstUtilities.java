@@ -58,10 +58,6 @@ import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension
 public class AstUtilities {
 
 	/**
-	 * Cond extension
-	 */
-	public static final IFormulaExtension COND = FormulaFactory.getCond();
-	/**
 	 * Dummy theory group
 	 */
 	protected static final String DUMMY_OPERATOR_GROUP = "NEW THEORY GROUP";

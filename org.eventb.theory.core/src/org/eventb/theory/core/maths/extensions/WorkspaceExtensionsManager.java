@@ -58,7 +58,7 @@ import org.rodinp.core.RodinCore;
 public class WorkspaceExtensionsManager implements IElementChangedListener {
 
 	private static final Set<IFormulaExtension> COND_EXTS = Collections
-			.singleton(AstUtilities.COND);
+			.<IFormulaExtension> singleton(FormulaFactory.getCond());
 
 	private static final WorkspaceExtensionsManager INSTANCE = new WorkspaceExtensionsManager();
 
