@@ -79,7 +79,7 @@ public abstract class TheoryTest extends BuilderTest {
 		}
 	}
 
-	public void addImportTheory(ITheoryRoot root, ITheoryRoot theory) throws RodinDBException {
+	public IImportTheory addImportTheory(ITheoryRoot root, ITheoryRoot theory) throws RodinDBException {
 		//FIXME imported theories would need to be deployed: 
 		// take deployed theory as argument here and deploy in callers where relevant
 		final IImportTheoryProject impThyPrj = root.createChild(
@@ -87,6 +87,7 @@ public abstract class TheoryTest extends BuilderTest {
 		impThyPrj.setTheoryProject(theory.getRodinProject(), null);
 		IImportTheory importThy = impThyPrj.createChild(IImportTheory.ELEMENT_TYPE, null, null);
 		importThy.setImportTheory(theory.getDeployedTheoryRoot(), null);
+		return importThy;
 	}
 
 	public void addTheorems(ITheoryRoot root, String[] names, String[] thms) throws RodinDBException {

@@ -76,13 +76,13 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	public void testImportTheories_003_ImportTargetNotExist() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		final ITheoryRoot doesNotExistTheory = getTheory("DoesNotExistTheory", root.getRodinProject());
-		addImportTheory(root, doesNotExistTheory);
+		final IImportTheory importClause = addImportTheory(root, doesNotExistTheory);
 		saveRodinFilesOf(root);
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
 		importsTheories(root.getSCTheoryRoot());
 		containsMarkers(root, true);
-		hasMarker( root.getImportTheoryProjects()[0].getImportTheories()[0], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
+		hasMarker(importClause, TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
 	}
 	
 	/**
@@ -93,14 +93,14 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
 		addImportTheory(root, root1);
-		addImportTheory(root, root1);
+		final IImportTheory importClause = addImportTheory(root, root1);
 		
 		saveRodinFilesOf(root, root1);
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
 		importsTheories(root.getSCTheoryRoot(), root1.getDeployedTheoryRoot());
 		containsMarkers(root, true);
-		hasMarker(root.getImportTheoryProjects()[0].getImportTheories()[1], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
+		hasMarker(importClause, TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
 	}
 	
 	/**
@@ -113,13 +113,13 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
 		
 		addImportTheory(root1, root2);
-		addImportTheory(root, root1);
+		final IImportTheory importClause = addImportTheory(root, root1);
 		addImportTheory(root, root2);
 		saveRodinFilesOf(root, root1, root2);
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
 		containsMarkers(root, true);
-		hasMarker(root.getImportTheoryProjects()[1].getImportTheories()[0], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
+		hasMarker(importClause, TheoryAttributes.IMPORT_THEORY_ATTRIBUTE);
 	}
 	
 	/**
@@ -134,16 +134,15 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
 		addOperatorDefinitionWithDirectDef(root2, "op", Notation.PREFIX , FormulaType.EXPRESSION, false, false,
 				makeSList(), makeSList(), makeSList(), "1+1");
-		addImportTheory(root, root1);
-		addImportTheory(root, root2);
+		final IImportTheory importClause1 = addImportTheory(root, root1);
+		final IImportTheory importClause2 = addImportTheory(root, root2);
 		saveRodinFilesOf(root, root1, root2);
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
 		containsMarkers(root, true);
-		final IImportTheoryProject impThyPrj = root.getImportTheoryProjects()[0];
-		hasMarker(impThyPrj.getImportTheories()[0], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, 
+		hasMarker(importClause1, TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, 
 				TheoryGraphProblem.ImportConflict, root1.getComponentName(), root2.getComponentName());
-		hasMarker(impThyPrj.getImportTheories()[1], TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, 
+		hasMarker(importClause2, TheoryAttributes.IMPORT_THEORY_ATTRIBUTE, 
 				TheoryGraphProblem.ImportConflict, root2.getComponentName(), root1.getComponentName());
 	}
 }
