@@ -10,10 +10,7 @@ package org.eventb.theory.core.pog.modules;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeUnivQuant;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
@@ -25,7 +22,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.wd.YComputer;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
