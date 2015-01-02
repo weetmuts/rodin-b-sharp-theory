@@ -19,6 +19,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
+@SuppressWarnings("restriction")
 public class FormulaAttributeManipulation extends AbstractAttributeManipulation{
 
 	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {

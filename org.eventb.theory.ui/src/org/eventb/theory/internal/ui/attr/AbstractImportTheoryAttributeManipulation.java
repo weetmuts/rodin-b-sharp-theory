@@ -12,6 +12,7 @@ import org.rodinp.core.IRodinElement;
  * @author asiehsalehi
  *
  */
+@SuppressWarnings("restriction")
 public abstract class AbstractImportTheoryAttributeManipulation extends AbstractAttributeManipulation{
 	
 	protected final String[] EMPTY_LIST = new String[0];

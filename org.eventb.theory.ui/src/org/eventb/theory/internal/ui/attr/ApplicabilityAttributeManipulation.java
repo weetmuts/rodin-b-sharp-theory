@@ -16,6 +16,7 @@ import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class ApplicabilityAttributeManipulation extends AbstractAttributeManipulation {
 
 	@Override

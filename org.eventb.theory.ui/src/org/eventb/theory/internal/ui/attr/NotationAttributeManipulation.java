@@ -21,6 +21,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
+@SuppressWarnings("restriction")
 public class NotationAttributeManipulation extends AbstractAttributeManipulation{
 
 	public String[] getPossibleValues(IRodinElement element,IProgressMonitor monitor) {

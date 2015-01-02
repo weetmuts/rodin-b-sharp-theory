@@ -9,6 +9,7 @@ import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class GivenTypeAttributeManipulation extends AbstractAttributeManipulation {
 
 	@Override

@@ -10,6 +10,7 @@ import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class HypAttributeManipulation extends AbstractBooleanManipulation implements IAttributeManipulation {
 
 	public HypAttributeManipulation() {

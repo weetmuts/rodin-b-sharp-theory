@@ -8,6 +8,7 @@ import org.eventb.theory.internal.ui.Messages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class CompleteAttributeManipulation extends AbstractBooleanManipulation{
 
 	public CompleteAttributeManipulation() {

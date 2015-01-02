@@ -8,6 +8,7 @@ import org.eventb.theory.core.IDescriptionElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+@SuppressWarnings("restriction")
 public class DescAttributeManipulation extends AbstractAttributeManipulation
 implements org.eventb.ui.manipulation.IAttributeManipulation {
 
