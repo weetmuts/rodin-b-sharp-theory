@@ -1,6 +1,9 @@
 package org.eventb.theory.core.basis;
 
+import static org.eventb.internal.core.Messages.database_SCPredicateParseFailure;
+import static org.eventb.internal.core.Messages.database_SCPredicateTCFailure;
 import static org.eventb.theory.core.TheoryAttributes.HAS_ERROR_ATTRIBUTE;
+import static org.eventb.theory.internal.core.util.CoreUtilities.newCoreException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -10,8 +13,6 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.eventb.theory.core.ISCAxiomaticOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.TheoryElement;
@@ -52,10 +53,7 @@ public class SCAxiomaticOperatorDefinition extends TheoryElement implements ISCA
 		}
 		IParseResult parserResult = factory.parsePredicate(contents, source);
 		if (parserResult.getProblems().size() != 0) {
-			throw Util.newCoreException(
-					Messages.database_SCPredicateParseFailure,
-					this
-			);
+			throw newCoreException(database_SCPredicateParseFailure, this);
 		}
 		Predicate result = parserResult.getParsedPredicate();
 		return result;
@@ -66,10 +64,7 @@ public class SCAxiomaticOperatorDefinition extends TheoryElement implements ISCA
 		Predicate result = getPredicate(typenv.getFormulaFactory());
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
-			throw Util.newCoreException(
-					Messages.database_SCPredicateTCFailure,
-					this
-			);
+			throw newCoreException(database_SCPredicateTCFailure, this);
 		}
 		assert result.isTypeChecked();
 		return result;

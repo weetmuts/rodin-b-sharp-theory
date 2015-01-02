@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
+import static org.eventb.internal.core.Messages.database_SCIdentifierTypeParseFailure;
+import static org.eventb.internal.core.Messages.database_SCPredicateParseFailure;
+import static org.eventb.internal.core.Messages.database_SCPredicateTCFailure;
 import static org.eventb.theory.core.TheoryAttributes.APPLICABILITY_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.ASSOCIATIVE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.COMMUTATIVE_ATTRIBUTE;
@@ -24,6 +27,8 @@ import static org.eventb.theory.core.TheoryAttributes.NOTATION_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.REASONING_TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.TYPE_ATTRIBUTE;
 import static org.eventb.theory.core.TheoryAttributes.WD_ATTRIBUTE;
+import static org.eventb.theory.core.sc.Messages.database_SCTypeParseFailure;
+import static org.eventb.theory.internal.core.util.CoreUtilities.newCoreException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,8 +43,6 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.basis.EventBElement;
-import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -86,7 +89,7 @@ public abstract class TheoryElement extends EventBElement implements
 		final String type = getType();
 		final IParseResult result = factory.parseType(type);
 		if (result.hasProblem()){
-			throw Util.newCoreException(org.eventb.theory.core.sc.Messages.database_SCTypeParseFailure, this);
+			throw newCoreException(database_SCTypeParseFailure, this);
 		}
 		return result.getParsedType();
 	}
@@ -260,8 +263,7 @@ public abstract class TheoryElement extends EventBElement implements
 		String typeStr = getAttributeValue(GIVEN_TYPE_ATTRIBUTE);
 		IParseResult parserResult = factory.parseType(typeStr);
 		if (parserResult.getProblems().size() != 0) {
-			throw Util.newCoreException(
-					Messages.database_SCIdentifierTypeParseFailure, this);
+			throw newCoreException(database_SCIdentifierTypeParseFailure, this);
 		}
 		return parserResult.getParsedType();
 	}
@@ -284,13 +286,13 @@ public abstract class TheoryElement extends EventBElement implements
 		String form = getFormula();
 		Formula<?> formula = parseFormula(form, ff, false);
 		if (formula == null) {
-			throw Util.newCoreException("Error parsing formula: " + form
+			throw newCoreException("Error parsing formula: " + form
 					+ "\nwith factory: " + ff.getExtensions());
 		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
 		if (result.hasProblem()) {
-			throw Util.newCoreException("Error typechecking formula: "
-					+ formula + "\nwith factory: " + ff.getExtensions()
+			throw newCoreException("Error typechecking formula: " + formula
+					+ "\nwith factory: " + ff.getExtensions()
 					+ "\nwith type env: " + typeEnvironment + "\nresult: "
 					+ result);
 		}
@@ -402,12 +404,12 @@ public abstract class TheoryElement extends EventBElement implements
 		String wdStr = getAttributeValue(WD_ATTRIBUTE);
 		IParseResult result = factory.parsePredicate(wdStr, null);
 		if(result.hasProblem()){
-			throw Util.newCoreException(Messages.database_SCPredicateParseFailure);
+			throw newCoreException(database_SCPredicateParseFailure);
 		}
 		Predicate pred = result.getParsedPredicate();
 		ITypeCheckResult tcResult = pred.typeCheck(typeEnvironment);
 		if(tcResult.hasProblem()){
-			throw Util.newCoreException(Messages.database_SCPredicateTCFailure);
+			throw newCoreException(database_SCPredicateTCFailure);
 		}
 		return pred;
 	}

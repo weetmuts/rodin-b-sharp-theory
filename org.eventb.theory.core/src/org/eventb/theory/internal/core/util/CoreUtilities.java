@@ -42,6 +42,7 @@ import org.eventb.theory.core.IFormulaElement;
 import org.eventb.theory.core.ITypeElement;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.plugin.TheoryPlugin;
+import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -80,8 +81,46 @@ public class CoreUtilities {
 		if (message == null) {
 			message = "Unknown context"; //$NON-NLS-1$
 		}
-		IStatus status = new Status(IStatus.ERROR, TheoryPlugin.PLUGIN_ID, IStatus.ERROR, message, exc);
+		IStatus status = makeErrorStatus(message, exc);
 		TheoryPlugin.getDefault().getLog().log(status);
+	}
+
+	/**
+	 * Creates a new core exception for this plug-in with the given message and
+	 * message arguments.
+	 * 
+	 * @param message
+	 *            a human-readable message, localized to the current locale.
+	 *            Should be one of the messages defined in the {@link Messages}
+	 *            class
+	 * 
+	 * @param args
+	 *            parameters to bind with the message
+	 * 
+	 * @see #newCoreException(String)
+	 */
+	public static CoreException newCoreException(String message, Object... args) {
+		return newCoreException(Messages.bind(message, args));
+	}
+
+	/**
+	 * Creates a new core exception for this plug-in, with the given message.
+	 * <p>
+	 * The severity of the status associated to this exception is
+	 * <code>ERROR</code>. The plug-in specific code is <code>OK</code>. No
+	 * nested exception is stored in the status.
+	 * </p>
+	 * 
+	 * @param message
+	 *            a human-readable message, localized to the current locale.
+	 */
+	public static CoreException newCoreException(String message) {
+		return new CoreException(makeErrorStatus(message, null));
+	}
+
+	private static Status makeErrorStatus(String message, Throwable exc) {
+		return new Status(IStatus.ERROR, TheoryPlugin.PLUGIN_ID, IStatus.OK,
+				message, exc);
 	}
 
 	/**

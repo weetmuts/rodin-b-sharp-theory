@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.core.basis;
 
+import static org.eventb.theory.internal.core.util.CoreUtilities.newCoreException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Formula;
@@ -14,7 +16,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.basis.SCExpressionElement;
-import org.eventb.internal.core.Util;
 import org.eventb.theory.core.ISCRecursiveDefinitionCase;
 import org.eventb.theory.core.TheoryAttributes;
 import org.eventb.theory.core.TheoryElement;
@@ -47,14 +48,14 @@ public class SCRecursiveDefinitionCase extends SCExpressionElement implements
 		String form = getAttributeValue(TheoryAttributes.FORMULA_ATTRIBUTE);
 		Formula<?> formula = TheoryElement.parseFormula(form, ff, false);
 		if (formula == null) {
-			throw Util.newCoreException("Error parsing formula: " + formula
-					+ "\nwith factory: " + ff.getExtensions(), this);
+			throw newCoreException("Error parsing formula: " + formula
+					+ "\nwith factory: " + ff.getExtensions());
 		}
 		ITypeCheckResult result = formula.typeCheck(typeEnvironment);
 		if (result.hasProblem()) {
-			throw Util.newCoreException("Error typechecking formula: "
-					+ formula + "\nwith factory: " + ff.getExtensions()
-					+ "\nresult: " + result, this);
+			throw newCoreException("Error typechecking formula: " + formula
+					+ "\nwith factory: " + ff.getExtensions() + "\nresult: "
+					+ result);
 		}
 		return formula;
 	}
