@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IImportTheory;
+import org.eventb.theory.core.IImportTheoryProject;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.IUseTheory;
 import org.junit.Test;
@@ -55,9 +56,33 @@ public class TheoryClauseTests extends BuilderTest {
 	}
 	
 	@Test
+	public void testImportTheoryProjectAbsent() throws Exception {
+		final ITheoryRoot thy = createTheory("foo");
+		final IImportTheoryProject clause = thy.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		assertFalse(clause.hasTheoryProject());
+		assertError(ATTRIBUTE_DOES_NOT_EXIST, clause, new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				clause.getTheoryProject();
+			}
+		});
+	}
+	
+	@Test
+	public void testImportTheoryProject() throws Exception {
+		final ITheoryRoot thy = createTheory("foo");
+		final IImportTheoryProject clause = thy.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		clause.setTheoryProject(rodinProject, null);
+		assertEquals(rodinProject, clause.getTheoryProject());
+	}
+	
+	@Test
 	public void testImportTheoryAbsent() throws Exception {
 		final ITheoryRoot thy = createTheory("foo");
-		final IImportTheory clause = thy.createChild(
+		final IImportTheoryProject parent = thy.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		final IImportTheory clause = parent.createChild(
 				IImportTheory.ELEMENT_TYPE, null, null);
 		assertFalse(clause.hasImportTheory());
 		assertError(ATTRIBUTE_DOES_NOT_EXIST, clause, new IWorkspaceRunnable() {
@@ -70,7 +95,9 @@ public class TheoryClauseTests extends BuilderTest {
 	@Test
 	public void testImportTheory() throws Exception {
 		final ITheoryRoot thy = createTheory("foo");
-		final IImportTheory clause = thy.createChild(
+		final IImportTheoryProject parent = thy.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		final IImportTheory clause = parent.createChild(
 				IImportTheory.ELEMENT_TYPE, null, null);
 		final IDeployedTheoryRoot target = DatabaseUtilities.getDeployedTheory("bar", rodinProject);
 		clause.setImportTheory(target, null);

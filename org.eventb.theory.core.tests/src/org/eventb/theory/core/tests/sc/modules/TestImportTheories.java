@@ -36,13 +36,32 @@ public class TestImportTheories extends BasicTheorySCTestWithThyConfig{
 	}
 	
 	/**
+	 * Theory project attr missing
+	 */
+	
+	@Test
+	public void testImportTheories_002_TheoryProjectAttrMissing() throws Exception{
+		ITheoryRoot root = createTheory(THEORY_NAME);
+		final IImportTheoryProject impThyPrj = root.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		saveRodinFileOf(root);
+		runBuilder();
+		isNotAccurate(root.getSCTheoryRoot());
+		containsMarkers(root, true);
+		containsMarkers(impThyPrj, true);
+	}
+	
+	/**
 	 * Import attr missing
 	 */
 	
 	@Test
 	public void testImportTheories_002_ImportAttrMissing() throws Exception{
 		ITheoryRoot root = createTheory(THEORY_NAME);
-		IImportTheory t = root.createChild(IImportTheory.ELEMENT_TYPE, null, null);
+		final IImportTheoryProject impThyPrj = root.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		impThyPrj.setTheoryProject(rodinProject, null);
+		IImportTheory t = impThyPrj.createChild(IImportTheory.ELEMENT_TYPE, null, null);
 		saveRodinFileOf(root);
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
