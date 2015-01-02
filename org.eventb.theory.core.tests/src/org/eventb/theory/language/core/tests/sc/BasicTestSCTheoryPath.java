@@ -75,19 +75,24 @@ public class BasicTestSCTheoryPath extends BuilderTestTheoryPath {
 	 * @throws CoreException 
 	 * @throws InterruptedException 
 	 */
-	protected ISCTheoryRoot createSCTheory(String operatorName, String theoryName, IRodinProject project,IProgressMonitor monitor) throws CoreException, InterruptedException{
+	protected ISCTheoryRoot createSCTheory(String operatorName, String theoryName, IRodinProject project,IProgressMonitor monitor) throws Exception, InterruptedException{
 		ITheoryRoot root = createTheory(theoryName,project);
 		
 		addTypeParameters(root, "T");
 		addDatatypeDefinition(root, operatorName, makeSList("T"), makeSList("nil", "cons"), new String[][] { makeSList(),
-				makeSList("head", "tail") }, new String[][] { makeSList(), makeSList("T", "List(T)") });
+				makeSList("head", "tail") }, new String[][] { makeSList(), makeSList("T", operatorName + "(T)") });
 		INewOperatorDefinition opDef = addRawOperatorDefinition(root, "listSize", Notation.PREFIX,
-				FormulaType.EXPRESSION, false, false, makeSList("l"), makeSList("List(T)"), makeSList());
+				FormulaType.EXPRESSION, false, false, makeSList("l"), makeSList(operatorName + "(T)"), makeSList());
 		IRecursiveOperatorDefinition recDef = opDef.createChild(IRecursiveOperatorDefinition.ELEMENT_TYPE, null, monitor);
 		recDef.setInductiveArgument("l", null);
 		
 		IRecursiveDefinitionCase recCase1 = recDef.createChild(IRecursiveDefinitionCase.ELEMENT_TYPE, null, monitor);
-		recCase1.setExpressionString("cons(1, l0)", monitor);
+		recCase1.setExpressionString("nil", monitor);
+		recCase1.setFormula("0", null);
+
+		IRecursiveDefinitionCase recCase2 = recDef.createChild(IRecursiveDefinitionCase.ELEMENT_TYPE, null, monitor);
+		recCase2.setExpressionString("cons(x, l0)", monitor);
+		recCase2.setFormula("1 + listSize(l0)", null);
 
 		saveRodinFileOf(root);
 		runBuilder(project);
