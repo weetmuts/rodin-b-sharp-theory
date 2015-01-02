@@ -23,6 +23,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.wd.YComputer;
@@ -93,13 +94,13 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 	 */
 	protected List<FreeIdentifier> getMetavariables(
 			ITypeEnvironment typeEnvironment) {
-		FormulaFactory factory = typeEnvironment.getFormulaFactory();
-		Set<String> all = new LinkedHashSet<String>(typeEnvironment.getNames());
-		all.removeAll(AstUtilities.getGivenSetsNames(typeEnvironment));
-		List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
-		for (String name : all) {
-			vars.add(factory.makeFreeIdentifier(name, null,
-					typeEnvironment.getType(name)));
+		final List<FreeIdentifier> vars = new ArrayList<FreeIdentifier>();
+		final IIterator iter = typeEnvironment.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			if (!iter.isGivenSet()) {
+				vars.add(iter.asFreeIdentifier());
+			}
 		}
 		return vars;
 	}

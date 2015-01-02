@@ -381,23 +381,6 @@ public class AstUtilities {
 	}
 
 	/**
-	 * Returns the given types in <code>typeEnvironment</code>.
-	 * 
-	 * @param typeEnvironment
-	 *            the type environment
-	 * @return all given types
-	 */
-	public static List<String> getGivenSetsNames(ITypeEnvironment typeEnvironment) {
-		List<String> result = new ArrayList<String>();
-		for (String name : typeEnvironment.getNames()) {
-			if (isGivenSet(typeEnvironment, name)) {
-				result.add(name);
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * Checks whether the name <code>name</code> is a given set in the given
 	 * type environment.
 	 * 

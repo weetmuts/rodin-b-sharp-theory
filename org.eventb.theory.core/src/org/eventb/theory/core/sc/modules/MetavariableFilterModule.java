@@ -7,15 +7,13 @@
  *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
@@ -63,7 +61,7 @@ public class MetavariableFilterModule extends SCFilterModule {
 			symbolInfo.setError();
 			return false;
 		}
-		if (!checkTypeParameters(type, var, repository.getFormulaFactory(), repository.getTypeEnvironment())) {
+		if (!checkTypeParameters(type, var, repository.getTypeEnvironment())) {
 			symbolInfo.setError();
 			return false;
 		}
@@ -75,32 +73,28 @@ public class MetavariableFilterModule extends SCFilterModule {
 	 * Checks that the type of the given metavariable only refers to types defined as type parameters in the type environment.
 	 * @param type the type of the metavariable
 	 * @param var the metavariable element
-	 * @param factory the formula factory
 	 * @param typeEnvironment the type environment
 	 * @return whether only type parameters are used to construct the type of the metavariable
 	 * @throws RodinDBException
 	 */
-	protected boolean checkTypeParameters(Type type, IMetavariable var, FormulaFactory factory, ITypeEnvironment typeEnvironment)
+	protected boolean checkTypeParameters(Type type, IMetavariable var, ITypeEnvironment typeEnvironment)
 			throws RodinDBException {
-		FreeIdentifier[] idents = type.toExpression()
-				.getSyntacticallyFreeIdentifiers();
-		List<String> givenSets = AstUtilities
-				.getGivenSetsNames(typeEnvironment);
-		for (FreeIdentifier ident : idents) {
+		final Set<GivenType> gtypes = type.getGivenTypes();
+		for (final GivenType gtype : gtypes) {
+			final String name = gtype.getName();
+			final Type typeInEnv = typeEnvironment.getType(name);
 			// if not declared
-			if (!typeEnvironment.contains(ident.getName())) {
+			if (typeInEnv == null) {
 				createProblemMarker(var, TheoryAttributes.TYPE_ATTRIBUTE,
 						GraphProblem.UndeclaredFreeIdentifierError,
-						ident.getName());
+						name);
 				return false;
 			} 
 			// if declared but not a type par
-			if (!givenSets.contains(ident.getName())) {
-				createProblemMarker(var,
-
-				TheoryAttributes.TYPE_ATTRIBUTE,
+			if (!gtype.equals(typeInEnv.getBaseType())) {
+				createProblemMarker(var, TheoryAttributes.TYPE_ATTRIBUTE,
 						TheoryGraphProblem.IdentIsNotTypeParError,
-						ident.getName());
+						name);
 				return false;
 			}
 
