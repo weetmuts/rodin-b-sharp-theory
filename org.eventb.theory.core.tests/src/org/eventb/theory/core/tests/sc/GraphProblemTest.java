@@ -86,9 +86,8 @@ public class GraphProblemTest {
 		spec(TheoryGraphProblem.MissingDatatypeNameError, 0),
 		spec(TheoryGraphProblem.TypeIsNotRefTypeError, 1),
 		spec(TheoryGraphProblem.IdentIsNotTypeParError, 1),
-		spec(TheoryGraphProblem.IdenIsADatatypeNameError, 1),
-		spec(TheoryGraphProblem.IdenIsAConsNameError, 1),
-		spec(TheoryGraphProblem.IdenIsADesNameError, 1),
+		spec(TheoryGraphProblem.IdenIsExistingNameError, 1), 
+		spec(TheoryGraphProblem.IdenIsAAxiomaticTypeNameError, 1), 
 		spec(TheoryGraphProblem.OperatorSynConflictError, 1),
 		spec(TheoryGraphProblem.OperatorIDExistsError, 1),
 		spec(TheoryGraphProblem.OperatorSynMissingError, 1),
@@ -107,11 +106,15 @@ public class GraphProblemTest {
 		spec(TheoryGraphProblem.OperatorDefNotPredError, 1),
 		spec(TheoryGraphProblem.OperatorInvalidSynError, 1),
 		spec(TheoryGraphProblem.RulesBlockLabelProblemError, 1),
+		spec(TheoryGraphProblem.AxiomaticBlockLabelProblemError, 1),
 		spec(TheoryGraphProblem.TheoremPredMissingError, 1),
+		spec(TheoryGraphProblem.AxiomPredMissingError, 1),
 		
 		spec(TheoryGraphProblem.TheoremLabelProblemError, 1),
+		spec(TheoryGraphProblem.AxiomLabelProblemError, 1),
 		spec(TheoryGraphProblem.ApplicabilityUndefError, 0),
 		spec(TheoryGraphProblem.RedundantImportWarning, 1),
+		spec(TheoryGraphProblem.ImportTheoryProjectMissing, 0),
 		spec(TheoryGraphProblem.ImportTheoryMissing, 0),
 		spec(TheoryGraphProblem.ImportTheoryNotExist, 1),
 		spec(TheoryGraphProblem.InferenceGivenBTRUEPredWarn, 0),
@@ -176,9 +179,20 @@ public class GraphProblemTest {
 		spec(TheoryGraphProblem.NoCoverageAllRecCase, 0),
 		spec(TheoryGraphProblem.RecOpTypeNotConsistent, 2),
 		spec(TheoryGraphProblem.OpArgExprNotSet, 1),
-		spec(TheoryGraphProblem.InadmissibleDatatypeError, 1),
-		spec(TheoryGraphProblem.AxiomaticBlockLabelProblemError, 1),
-		spec(TheoryGraphProblem.AxiomaticTypeNameAlreadyATypeParError, 1)
+		spec(TheoryGraphProblem.DatatypeError, 1),
+		spec(TheoryGraphProblem.NoTheoryProjectClausesError, 0),
+		spec(TheoryGraphProblem.DuplicatedTheoryProjectError, 1),
+		spec(TheoryGraphProblem.NoSelectedTheoriesError, 1),
+		spec(TheoryGraphProblem.TheoryPathProjectIsThisProject, 1),
+		spec(TheoryGraphProblem.DuplicatedTheoryError, 1),
+		spec(TheoryGraphProblem.DeployedTheoryNotExistError, 1),
+		spec(TheoryGraphProblem.NoTheoryClausesError, 0),
+		spec(TheoryGraphProblem.RedundantDeployedTheoryWarning, 2),
+		spec(TheoryGraphProblem.TheoriesConflictError, 2),
+		spec(TheoryGraphProblem.MultipleTheoryPathProjectError, 1),
+		spec(TheoryGraphProblem.TheoryProjectDoesNotExistError, 1),
+		spec(TheoryGraphProblem.AxiomaticTypeNameAlreadyATypeParError, 1),
+		spec(TheoryGraphProblem.AxiomaticPredicateOpDoesNotReqTypeWarn, 1),
 	};
 	
 	private static Map<TheoryGraphProblem, Spec> specMap = 
@@ -195,7 +209,8 @@ public class GraphProblemTest {
 		@Test
 		public void testArguments() throws Exception {
 			for (Spec spec : specs) {
-				assertEquals("wrong number of arguments", spec.arity, spec.problem.getArity());
+				assertEquals("wrong number of arguments for " + spec, //
+						spec.arity, spec.problem.getArity());
 			}
 		}
 		
