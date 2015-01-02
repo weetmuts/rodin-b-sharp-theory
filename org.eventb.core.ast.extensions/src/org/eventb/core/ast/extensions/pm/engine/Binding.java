@@ -27,8 +27,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
 import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.internal.ast.extensions.AstExtensionsPlugin;
 
 /**
  * <p>

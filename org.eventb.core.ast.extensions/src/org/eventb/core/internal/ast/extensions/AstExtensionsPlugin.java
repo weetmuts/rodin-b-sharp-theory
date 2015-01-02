@@ -1,4 +1,3 @@
-package org.eventb.core.ast.extensions.plugin;
 /*******************************************************************************
  * Copyright (c) 2011 University of Southampton.
  * All rights reserved. This program and the accompanying materials
@@ -6,6 +5,7 @@ package org.eventb.core.ast.extensions.plugin;
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+package org.eventb.core.internal.ast.extensions;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;

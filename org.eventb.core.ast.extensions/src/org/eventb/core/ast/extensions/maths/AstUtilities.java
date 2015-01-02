@@ -40,7 +40,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.StandardGroup;
-import org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin;
+import org.eventb.core.internal.ast.extensions.AstExtensionsPlugin;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension;
 
 /**

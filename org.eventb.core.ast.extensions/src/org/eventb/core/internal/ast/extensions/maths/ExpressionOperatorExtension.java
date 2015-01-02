@@ -12,7 +12,7 @@
 package org.eventb.core.internal.ast.extensions.maths;
 
 import static org.eventb.core.ast.extensions.maths.AstUtilities.INFIX_EXTENDED_EXPRESSION_OPERATOR_GROUP;
-import static org.eventb.core.ast.extensions.plugin.AstExtensionsPlugin.log;
+import static org.eventb.core.internal.ast.extensions.AstExtensionsPlugin.log;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
