@@ -99,12 +99,13 @@ public class TestBasicASTMaths extends BasicAstExtTest{
 	public void testUtilities_009_getGivenSetsNames_isGivenSet() throws Exception{
 		addTypes("S", "T", "Q");
 		addNames(makeSList("a", "b", "c", "d"), makeSList("S", "ℙ(T)↔Q", "ℙ(T)", "R"));
-		assertContains(AstUtilities.getGivenSetsNames(environment), "S", "T", "Q");
-		assertNotContain(AstUtilities.getGivenSetsNames(environment), "R");
+		assertContains(AstUtilities.getGivenSetsNames(environment), "S", "T", "Q", "R");
+		assertNotContain(AstUtilities.getGivenSetsNames(environment), "U");
 		assertTrue(AstUtilities.isGivenSet(environment, "S"));
 		assertTrue(AstUtilities.isGivenSet(environment, "T"));
 		assertTrue(AstUtilities.isGivenSet(environment, "Q"));
-		assertFalse(AstUtilities.isGivenSet(environment, "R"));
+		assertTrue(AstUtilities.isGivenSet(environment, "R"));
+		assertFalse(AstUtilities.isGivenSet(environment, "U"));
 	}
 	
 	public void testUtilities_010_createTypeExpression() throws Exception{
