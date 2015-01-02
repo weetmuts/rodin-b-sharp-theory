@@ -1,11 +1,11 @@
 package org.eventb.theory.ui.editor.html;
 
+import static org.eventb.internal.ui.UIUtils.HTMLWrapUp;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 
 import javax.swing.text.WrappedPlainView;
 
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IAxiomaticDefinitionAxiom;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
@@ -24,13 +24,14 @@ public class AxiomaticDefinitionAxiomPrettyPrinter extends DefaultPrettyPrinter 
 	private static final String TWO_SPACES = "  ";
 
 
+	@SuppressWarnings("restriction")
 	public void prettyPrint(IInternalElement elt, IInternalElement parent,
 			IPrettyPrintStream ps){
 		if (elt instanceof IAxiomaticDefinitionAxiom) {
 			IAxiomaticDefinitionAxiom ada = (IAxiomaticDefinitionAxiom) elt;
 			try {
 				ps.appendString(
-						UIUtils.HTMLWrapUp(ada.getLabel()+LABEL_SEPARATOR+TWO_SPACES),
+						HTMLWrapUp(ada.getLabel()+LABEL_SEPARATOR+TWO_SPACES),
 						getHTMLBeginForCSSClass(AXIOM_LABEL, HorizontalAlignment.LEFT,
 								VerticalAlignement.MIDDLE),
 						getHTMLEndForCSSClass(AXIOM_LABEL, HorizontalAlignment.LEFT,

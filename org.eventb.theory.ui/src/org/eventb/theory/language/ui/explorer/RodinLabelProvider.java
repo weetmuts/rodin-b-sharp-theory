@@ -12,7 +12,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.ITheoryPathRoot;
@@ -79,19 +78,19 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 				try {
 					return ((ILabeledElement) obj).getLabel();
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when getting label for " + obj);
+					TheoryUIUtils.log(e, "when getting label for " + obj);
 				}
 			} else if (obj instanceof IIdentifierElement) {
 				try {
 					return ((IIdentifierElement) obj).getIdentifierString();
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when getting identifier for " + obj);
+					TheoryUIUtils.log(e, "when getting identifier for " + obj);
 				}
 			} else if (obj instanceof IAvailableTheoryProject){
 				try {
 					return ((IAvailableTheoryProject)obj).getTheoryProject().getElementName();
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when getting IAvailableTheoryProject for " + obj);
+					TheoryUIUtils.log(e, "when getting IAvailableTheoryProject for " + obj);
 				}
 			}
 			else if (obj instanceof IRodinElement) {

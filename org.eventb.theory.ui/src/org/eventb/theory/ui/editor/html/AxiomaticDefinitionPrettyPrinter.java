@@ -1,9 +1,9 @@
 package org.eventb.theory.ui.editor.html;
 
+import static org.eventb.internal.ui.UIUtils.HTMLWrapUp;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
@@ -29,7 +29,7 @@ public class AxiomaticDefinitionPrettyPrinter extends DefaultPrettyPrinter
 			final IAxiomaticDefinitionsBlock ad = (IAxiomaticDefinitionsBlock) elt;
 
 			try {
-				ps.appendString(UIUtils.HTMLWrapUp(ad.getLabel()),
+				ps.appendString(HTMLWrapUp(ad.getLabel()),
 						getHTMLBeginForCSSClass(NORMAL_STYLE, //
 								HorizontalAlignment.LEFT, //
 								VerticalAlignement.MIDDLE), //

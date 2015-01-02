@@ -7,8 +7,8 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLBeginForCSSClass
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.getHTMLEndForCSSClass;
 import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.theory.core.IImportTheory;
+import org.eventb.theory.internal.ui.TheoryUIUtils;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.HorizontalAlignment;
@@ -37,9 +37,8 @@ public class ImportTheoryPrettyPrinter extends DefaultPrettyPrinter {
 			includeMchClause.append(TAB + includeMachine.getImportTheory().getComponentName());
 			appendClause(ps, wrapString(includeMchClause.toString()));
 		} catch (RodinDBException e) {
-			EventBEditorUtils.debugAndLogError(e,
-				"Cannot get the import target for import "
-						+ elt.getElementName());
+			TheoryUIUtils.log(e, "Cannot get the import target for import "
+					+ elt.getElementName());
 		}
 	}
 
