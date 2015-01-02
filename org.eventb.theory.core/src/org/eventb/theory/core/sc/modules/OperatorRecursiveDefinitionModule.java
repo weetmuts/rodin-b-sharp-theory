@@ -63,7 +63,6 @@ public class OperatorRecursiveDefinitionModule extends SCProcessorModule {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	private void process(IRecursiveOperatorDefinition recursiveOperatorDefinition, INewOperatorDefinition parent,
 			ISCNewOperatorDefinition target, RecursiveDefinitionInfo recursiveDefinitionInfo,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {

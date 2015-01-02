@@ -30,7 +30,6 @@ public class AxiomaticOperatorSemanticPropertiesModule extends SCProcessorModule
 	private TheoryAccuracyInfo theoryAccuracyInfo;
 	private OperatorInformation operatorInformation;
 
-	@SuppressWarnings("restriction")
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {

@@ -90,7 +90,6 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 		return MODULE_TYPE;
 	}
 
-	@SuppressWarnings("restriction")
 	private void processDirectDefinitions(IDirectOperatorDefinition[] definitions,
 			INewOperatorDefinition newOperatorDefinition, ISCNewOperatorDefinition scNewOperatorDefinition,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException, RodinDBException {

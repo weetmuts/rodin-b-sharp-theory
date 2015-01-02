@@ -112,7 +112,6 @@ public class DatatypeModule extends SCProcessorModule {
 	 *            the progress monitor
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("restriction")
 	protected void processDatatypes(IDatatypeDefinition[] datatypeDefinitions, ISCTheoryRoot targetRoot,
 			DatatypeTable datatypeTable, ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		boolean theoryAccurate = true;

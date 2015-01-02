@@ -86,7 +86,6 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	protected void processCases(IRecursiveDefinitionCase[] origins, ISCRecursiveOperatorDefinition target,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		for (IRecursiveDefinitionCase definitionCase : origins) {
@@ -162,7 +161,6 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	public void processCasesFormulae(IRecursiveOperatorDefinition definition,
 			ISCRecursiveOperatorDefinition scDefinition, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

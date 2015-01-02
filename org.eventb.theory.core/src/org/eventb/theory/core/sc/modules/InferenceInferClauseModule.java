@@ -70,7 +70,6 @@ public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, I
 		return scInfer;
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	protected boolean checkPredicate(Predicate predicate, IInfer clause) throws CoreException {
 		if (predicate.getTag() == BTRUE) {
@@ -82,7 +81,6 @@ public class InferenceInferClauseModule extends InferenceClausesModule<IInfer, I
 		return true;
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	protected boolean checkClauses(IInfer[] clauses, IInferenceRule rule) throws CoreException {
 		// Rule must have one infer clause

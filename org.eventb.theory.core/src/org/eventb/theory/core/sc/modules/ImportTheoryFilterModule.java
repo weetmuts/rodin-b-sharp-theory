@@ -72,7 +72,6 @@ public class ImportTheoryFilterModule extends SCFilterModule {
 		return validateTheory(importTheoryClause);
 	}
 
-	@SuppressWarnings("restriction")
 	private boolean validateTheory(IImportTheory importTheoryClause) throws RodinDBException {
 		boolean valid = true;
 		IDeployedTheoryRoot newDeployedTheory = importTheoryClause.getImportTheory();

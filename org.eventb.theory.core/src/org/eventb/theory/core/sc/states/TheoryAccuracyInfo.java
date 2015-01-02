@@ -21,5 +21,13 @@ public class TheoryAccuracyInfo extends AccuracyInfo implements IAccuracyInfo{
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
+
+	// Re-declaring this method here avoids propagating warnings about
+	// restricted access all over the code
+	@Override
+	public void setNotAccurate() {
+		super.setNotAccurate();
+	}
+
 }
 

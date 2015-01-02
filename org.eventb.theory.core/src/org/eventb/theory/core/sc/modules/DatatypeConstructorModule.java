@@ -62,7 +62,6 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 		theoryAccuracyInfo = (TheoryAccuracyInfo) repository.getState(TheoryAccuracyInfo.STATE_TYPE);
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	public void process(IRodinElement element, IInternalElement target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -113,7 +112,6 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 	 *            the progress monitor
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("restriction")
 	protected void processConstructors(IDatatypeConstructor[] constructors, ISCDatatypeDefinition scDefinition, ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		FormulaFactory factory = repository.getFormulaFactory();
@@ -140,7 +138,6 @@ public class DatatypeConstructorModule extends SCProcessorModule {
 	}
 	
 	
-	@SuppressWarnings("restriction")
 	private void processDestructors(IDatatypeConstructor constructor,
 			ISCDatatypeConstructor scConstructor,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {

@@ -64,7 +64,6 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.tool.types.ISCProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalElement, org.eventb.core.sc.state.ISCStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	@SuppressWarnings("restriction")
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)

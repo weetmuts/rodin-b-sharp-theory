@@ -49,7 +49,6 @@ public class AxiomaticTypeModule extends SCProcessorModule {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	private void processTypeDefinitions(IAxiomaticTypeDefinition typeDefinition, ISCAxiomaticDefinitionsBlock scBlock,
 			ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		if (checkTypeName(typeDefinition, repository.getFormulaFactory(), repository.getTypeEnvironment())) {

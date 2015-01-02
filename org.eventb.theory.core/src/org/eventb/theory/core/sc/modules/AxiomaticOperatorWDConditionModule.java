@@ -54,7 +54,6 @@ public class AxiomaticOperatorWDConditionModule extends SCProcessorModule{
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	private Predicate processWdConditions(IOperatorWDCondition[] wds, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException{
 		List<Predicate> wdPredicates = new ArrayList<Predicate>();
