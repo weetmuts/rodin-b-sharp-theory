@@ -12,7 +12,7 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -27,7 +27,7 @@ public class DefaultExtendedPredicateMatcher extends PredicateMatcher<ExtendedPr
 	}
 
 	@Override
-	protected boolean gatherBindings(ExtendedPredicate form, ExtendedPredicate pattern, IBinding existingBinding) {
+	protected boolean gatherBindings(ExtendedPredicate form, ExtendedPredicate pattern, Binding existingBinding) {
 		Expression[] formulaExpressions = form.getChildExpressions();
 		Expression[] patternExpressions =  pattern.getChildExpressions();
 		if (formulaExpressions.length != patternExpressions.length){

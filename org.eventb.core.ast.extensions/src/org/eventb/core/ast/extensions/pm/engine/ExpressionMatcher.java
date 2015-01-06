@@ -1,7 +1,6 @@
 package org.eventb.core.ast.extensions.pm.engine;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.MatchingFactory;
 
 /**
@@ -23,7 +22,7 @@ public abstract class ExpressionMatcher<E extends Expression>{
 	}
 
 	public boolean match(Expression form, Expression pattern,
-			IBinding existingBinding) {
+			Binding existingBinding) {
 		E eForm = getExpression(form);
 		E ePattern = getExpression(pattern);
 		// check same tags
@@ -48,7 +47,7 @@ public abstract class ExpressionMatcher<E extends Expression>{
 	 * @param existingBinding the binding
 	 * @return whether matching succeeded
 	 */
-	protected abstract boolean gatherBindings(E form, E pattern, IBinding existingBinding);
+	protected abstract boolean gatherBindings(E form, E pattern, Binding existingBinding);
 	
 	/**
 	 * Casts the given expression to the specific type this matcher works with.

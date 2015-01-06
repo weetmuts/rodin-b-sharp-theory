@@ -3,7 +3,7 @@ package org.eventb.core.ast.extensions.pm.engine.pred;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -19,7 +19,7 @@ public class BinaryPredicateMatcher extends PredicateMatcher<BinaryPredicate> {
 
 	@Override
 	protected boolean gatherBindings(BinaryPredicate bpForm,
-			BinaryPredicate bpPattern, IBinding existingBinding){
+			BinaryPredicate bpPattern, Binding existingBinding){
 		Predicate fLeft = bpForm.getLeft();
 		Predicate pLeft = bpPattern.getLeft();
 		if(pLeft instanceof PredicateVariable){

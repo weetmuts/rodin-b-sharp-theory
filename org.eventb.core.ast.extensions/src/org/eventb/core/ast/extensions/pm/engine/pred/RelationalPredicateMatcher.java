@@ -4,7 +4,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -20,7 +20,7 @@ public class RelationalPredicateMatcher extends PredicateMatcher<RelationalPredi
 
 	@Override
 	protected boolean gatherBindings(RelationalPredicate rpForm,
-			RelationalPredicate rpPattern, IBinding existingBinding){
+			RelationalPredicate rpPattern, Binding existingBinding){
 		Expression pLeft = rpPattern.getLeft();
 		Expression fLeft = rpForm.getLeft();
 		if(pLeft instanceof FreeIdentifier){

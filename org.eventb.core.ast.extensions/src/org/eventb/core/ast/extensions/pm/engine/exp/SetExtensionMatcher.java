@@ -3,7 +3,7 @@ package org.eventb.core.ast.extensions.pm.engine.exp;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
@@ -20,7 +20,7 @@ public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
 	
 	@Override
 	protected boolean gatherBindings(SetExtension form, SetExtension pattern,
-			IBinding existingBinding)  {
+			Binding existingBinding)  {
 		Expression[] patternMembers = pattern.getMembers();
 		Expression[] formMembers = form.getMembers();
 		// work with singleton

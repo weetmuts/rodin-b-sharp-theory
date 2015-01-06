@@ -10,6 +10,7 @@ package org.eventb.core.ast.extensions.pm;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 
 /**
  * An implementation of a matching engine.
@@ -53,7 +54,7 @@ public final class Matcher {
 		if (!form.getClass().equals(pattern.getClass())) {
 			return null;
 		}
-		IBinding initialBinding = matchingFactory.createBinding(form, pattern, acceptPartialMatch, factory);
+		Binding initialBinding = (Binding) matchingFactory.createBinding(form, pattern, acceptPartialMatch, factory);
 		if (matchingFactory.match(form, pattern, initialBinding)) {
 			initialBinding.makeImmutable();
 			return initialBinding;
@@ -92,7 +93,7 @@ public final class Matcher {
 	 * @return whether the declarations match
 	 */
 	public static boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, BoundIdentDecl[] patternDecs,
-			IBinding existingBinding) {
+			Binding existingBinding) {
 		if (formulaDecs.length == patternDecs.length) {
 			int index = 0;
 			for (BoundIdentDecl pDec : patternDecs) {

@@ -2,7 +2,7 @@ package org.eventb.core.ast.extensions.pm.engine.pred;
 
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -18,7 +18,7 @@ public class LiteralPredicateMatcher extends PredicateMatcher<LiteralPredicate> 
 
 	@Override
 	protected boolean gatherBindings(LiteralPredicate form,
-			LiteralPredicate pattern, IBinding existingBinding){
+			LiteralPredicate pattern, Binding existingBinding){
 		if(!form.equals(pattern)){
 			return false;
 		}

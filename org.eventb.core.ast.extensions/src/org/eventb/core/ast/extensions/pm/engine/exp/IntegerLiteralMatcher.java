@@ -2,7 +2,7 @@ package org.eventb.core.ast.extensions.pm.engine.exp;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
@@ -18,7 +18,7 @@ public class IntegerLiteralMatcher extends ExpressionMatcher<IntegerLiteral> {
 	
 	@Override
 	protected boolean gatherBindings(IntegerLiteral form, IntegerLiteral pattern,
-			IBinding existingBinding) {
+			Binding existingBinding) {
 		if(!form.equals(pattern)){
 			return false;
 		}

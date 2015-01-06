@@ -113,7 +113,7 @@ public final class MatchingFactory {
 	 * @param initialBinding must not be <code>null</code>
 	 * @return whether the matching succeeded
 	 */
-	public final boolean match(Formula<?> formula, Formula<?> pattern, IBinding initialBinding){
+	public final boolean match(Formula<?> formula, Formula<?> pattern, Binding initialBinding){
 		// initial binding cannot be null
 		if(initialBinding == null){
 			throw new IllegalArgumentException("Matching started without a binding object.");

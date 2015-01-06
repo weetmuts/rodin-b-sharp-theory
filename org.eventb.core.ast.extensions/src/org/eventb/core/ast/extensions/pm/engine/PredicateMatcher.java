@@ -1,7 +1,6 @@
 package org.eventb.core.ast.extensions.pm.engine;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.MatchingFactory;
 
 /**
@@ -23,7 +22,7 @@ public abstract class PredicateMatcher<P extends Predicate> {
 	}
 
 	public boolean match(Predicate form, Predicate pattern,
-			IBinding existingBinding) {
+			Binding existingBinding) {
 		P pForm = getPredicate(form);
 		P pPattern = getPredicate(pattern);
 		// check same tag
@@ -43,7 +42,7 @@ public abstract class PredicateMatcher<P extends Predicate> {
 	 * @param existingBinding the binding
 	 * @return whether matching succeeded
 	 */
-	protected abstract boolean gatherBindings(P form, P pattern, IBinding existingBinding);	
+	protected abstract boolean gatherBindings(P form, P pattern, Binding existingBinding);	
 
 	/**
 	 * Casts the given predicate to the specific type this matcher works with.

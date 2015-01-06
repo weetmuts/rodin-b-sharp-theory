@@ -4,7 +4,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -20,7 +20,7 @@ public class SimplePredicateMatcher extends PredicateMatcher<SimplePredicate> {
 
 	@Override
 	protected boolean gatherBindings(SimplePredicate spForm,
-			SimplePredicate spPattern, IBinding existingBinding){
+			SimplePredicate spPattern, Binding existingBinding){
 		Expression fExp = spForm.getExpression();
 		Expression pExp = spPattern.getExpression();
 		if(pExp instanceof FreeIdentifier){

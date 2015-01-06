@@ -4,8 +4,8 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -22,7 +22,7 @@ public class QuantifiedPredicateMatcher extends PredicateMatcher<QuantifiedPredi
 
 	@Override
 	protected boolean gatherBindings(QuantifiedPredicate qpForm,
-			QuantifiedPredicate qpPattern, IBinding existingBinding) {
+			QuantifiedPredicate qpPattern, Binding existingBinding) {
 		BoundIdentDecl[] fDec = qpForm.getBoundIdentDecls();
 		BoundIdentDecl[] pDec = qpPattern.getBoundIdentDecls();
 		if (!Matcher.boundIdentDecsMatch(fDec, pDec, existingBinding)) {

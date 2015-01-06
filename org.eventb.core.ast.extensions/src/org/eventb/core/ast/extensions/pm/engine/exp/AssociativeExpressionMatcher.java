@@ -2,10 +2,10 @@ package org.eventb.core.ast.extensions.pm.engine.exp;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.assoc.ACExpressionProblem;
 import org.eventb.core.ast.extensions.pm.assoc.AExpressionProblem;
 import org.eventb.core.ast.extensions.pm.assoc.AssociativityProblem;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
@@ -22,7 +22,7 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 
 	@Override
 	protected boolean gatherBindings(AssociativeExpression form,
-			AssociativeExpression pattern, IBinding existingBinding){
+			AssociativeExpression pattern, Binding existingBinding){
 		boolean isAC = isAssociativeCommutative(form.getTag());
 		// get the children
 		Expression[] formChildren = form.getChildren();
@@ -35,7 +35,7 @@ public class AssociativeExpressionMatcher extends ExpressionMatcher<AssociativeE
 			problem = new AExpressionProblem(form.getTag(), formChildren, patternChildren, existingBinding);
 		}
 		boolean partialMatchAcceptable = existingBinding.isPartialMatchAcceptable();
-		IBinding solution = (IBinding) problem.solve(partialMatchAcceptable);
+		Binding solution = (Binding) problem.solve(partialMatchAcceptable);
 		if (solution != null){
 			solution.makeImmutable();
 			if (existingBinding.insertBinding(solution)){

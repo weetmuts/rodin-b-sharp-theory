@@ -3,7 +3,7 @@ package org.eventb.core.ast.extensions.pm.engine.exp;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
@@ -19,7 +19,7 @@ public class BinaryExpressionMatcher extends  ExpressionMatcher<BinaryExpression
 	
 	@Override
 	protected boolean gatherBindings(BinaryExpression beForm,
-			BinaryExpression bePattern, IBinding existingBinding){
+			BinaryExpression bePattern, Binding existingBinding){
 		// for left's
 		Expression fLeft = beForm.getLeft();
 		Expression pLeft = bePattern.getLeft();

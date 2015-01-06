@@ -2,7 +2,7 @@ package org.eventb.core.ast.extensions.pm.engine.pred;
 
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -20,7 +20,7 @@ public class MultiplePredicateMatcher extends PredicateMatcher<MultiplePredicate
 
 	@Override
 	protected boolean gatherBindings(MultiplePredicate form,
-			MultiplePredicate pattern, IBinding existingBinding) {
+			MultiplePredicate pattern, Binding existingBinding) {
 		// nothing to do at the moment for Partition
 		return false;
 	}

@@ -12,7 +12,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
@@ -27,7 +27,7 @@ public class DefaultExtendedExpressionMatcher extends ExpressionMatcher<Extended
 	}
 
 	@Override
-	protected boolean gatherBindings(ExtendedExpression form, ExtendedExpression pattern, IBinding existingBinding) {
+	protected boolean gatherBindings(ExtendedExpression form, ExtendedExpression pattern, Binding existingBinding) {
 		Expression[] formulaExpressions = form.getChildExpressions();
 		Expression[] patternExpressions =  pattern.getChildExpressions();
 		if (formulaExpressions.length != patternExpressions.length){

@@ -2,7 +2,7 @@ package org.eventb.core.ast.extensions.pm.engine.exp;
 
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
@@ -18,7 +18,7 @@ public class AtomicExpressionMatcher extends ExpressionMatcher<AtomicExpression>
 	
 	@Override
 	protected boolean gatherBindings(AtomicExpression form,
-			AtomicExpression pattern, IBinding existingBinding){
+			AtomicExpression pattern, Binding existingBinding){
 		// no further action required
 		return true;
 	}

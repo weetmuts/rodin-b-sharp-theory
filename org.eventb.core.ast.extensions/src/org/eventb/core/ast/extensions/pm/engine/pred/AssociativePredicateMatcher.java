@@ -2,9 +2,9 @@ package org.eventb.core.ast.extensions.pm.engine.pred;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
 import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
 
 /**
@@ -23,13 +23,13 @@ public class AssociativePredicateMatcher extends PredicateMatcher<AssociativePre
 	
 	@Override
 	protected boolean gatherBindings(AssociativePredicate form,
-			AssociativePredicate pattern, IBinding existingBinding){
+			AssociativePredicate pattern, Binding existingBinding){
 		// get the children
 		Predicate[] formChildren = form.getChildren();
 		Predicate[] patternChildren = pattern.getChildren();
 		ACProblem<Predicate> problem = new ACPredicateProblem(form.getTag(), formChildren, patternChildren, existingBinding);
 		boolean partialMatchAcceptable = existingBinding.isPartialMatchAcceptable();
-		IBinding solution = problem.solve(partialMatchAcceptable);
+		Binding solution = (Binding) problem.solve(partialMatchAcceptable);
 		if(solution != null){
 			solution.makeImmutable();
 			if(existingBinding.insertBinding(solution)){

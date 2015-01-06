@@ -7,8 +7,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
 
 /**
@@ -25,7 +25,7 @@ public class QuantifiedExpressionMatcher extends  ExpressionMatcher<QuantifiedEx
 	
 	@Override
 	protected boolean gatherBindings(QuantifiedExpression qeForm,
-			QuantifiedExpression qePattern, IBinding existingBinding){
+			QuantifiedExpression qePattern, Binding existingBinding){
 		if(qeForm.getTag() == Formula.CSET){
 			if(qeForm.getForm() != qePattern.getForm()){
 				return false;
