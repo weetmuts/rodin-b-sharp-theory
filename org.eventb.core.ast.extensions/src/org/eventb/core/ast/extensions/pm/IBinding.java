@@ -256,9 +256,4 @@ public interface IBinding extends Cloneable{
 	 */
 	public FormulaFactory getFormulaFactory();
 	
-	/**
-	 * This should reset any state held as part of the binding.
-	 */
-	public void reset();
-	
 }

@@ -132,16 +132,20 @@ public class TestBinding extends BasicAstExtTest {
 		IBinding binding = binding(true);
 		boolean b = binding.putExpressionMapping(ident("A", "ℙ(A)"), tcExpression("{1}"));
 		assertFalse("should not have inserted the mapping but did", b);
-		binding.reset();
+
+		binding = binding(true);
 		b = binding.putExpressionMapping(ident("A", "ℙ(A)"), tcExpression("{BOOL}"));
 		assertFalse("should not have inserted the mapping but did", b);
-		binding.reset();
+
+		binding = binding(true);
 		b = binding.putExpressionMapping(ident("A", "ℙ(A)"), tcExpression("seq(ℤ)"));
 		assertFalse("should not have inserted the mapping but did", b);
-		binding.reset();
+
+		binding = binding(true);
 		b = binding.putExpressionMapping(ident("A", "ℙ(A)"), tcExpression("ℙ(BOOL)"));
 		assertTrue("should not have inserted the mapping but did", b);
-		binding.reset();
+
+		binding = binding(true);
 		b = binding.putExpressionMapping(ident("B", "ℙ(B)"), tcExpression("ℤ"));
 		assertTrue("should not have inserted the mapping but did", b);
 	}
@@ -213,45 +217,56 @@ public class TestBinding extends BasicAstExtTest {
 		addExtensions(listExtensions());
 		IBinding binding = binding(false);
 		assertTrue(binding.unifyTypes(type("ℤ"), type("ℤ"), false));
-		binding.reset();
+
+		binding = binding(true);
 		assertFalse(binding.unifyTypes(type("BOOL"), type("ℤ"), false));
-		binding.reset();
+
+		binding = binding(true);
 		assertFalse(binding.unifyTypes(type("A"), type("BOOL"), false));
-		binding.reset();
+
+		binding = binding(true);
 		assertTrue(binding.unifyTypes(type("BOOL"), type("BOOL"), false));
-		binding.reset();
+
+		binding = binding(true);
 		assertTrue(binding.unifyTypes(type("BOOL×B"), type("A"), true));
 		binding.makeImmutable();
 		assertTrue(binding.getTypeEnvironment().contains("A"));
-		binding.reset();
+
+		binding = binding(true);
 		assertTrue(binding.unifyTypes(type("ℙ(BOOL×BOOL)"), type("ℙ(A×B)"), true));
 		binding.makeImmutable();
 		assertTrue(binding.getTypeEnvironment().contains("A"));
 		assertTrue(binding.getTypeEnvironment().contains("B"));
-		binding.reset();
+
+		binding = binding(true);
 		assertFalse(binding.unifyTypes(type("BOOL×C"), type("ℙ(A×B)"), false));
-		binding.reset();
+
+		binding = binding(true);
 		assertTrue(binding.unifyTypes(type("BOOL×ℤ"), type("A×B"), true));
 		binding.makeImmutable();
 		assertTrue(binding.getTypeEnvironment().contains("A"));
 		assertTrue(binding.getTypeEnvironment().contains("B"));
-		binding.reset();
+
+		binding = binding(true);
 		assertFalse(binding.unifyTypes(type("ℙ(BOOL×BOOL)"), type("A×B"), false));
-		binding.reset();
+
+		binding = binding(true);
 		assertTrue(binding.unifyTypes(type("List(BOOL)"), type("List(A)"), false));
-		binding.reset();
+
+		binding = binding(true);
 		assertFalse(binding.unifyTypes(type("BOOL×List(ℤ)"), type("List(A)"), false));
-		binding.reset();
+
 		// more complex augmentBinding set to true
+		binding = binding(true);
 		assertTrue(binding.unifyTypes(type("List(ℤ×List(BOOL))↔(BOOL×List(ℤ×(List(D×F))))"), type("List(A×B)↔(BOOL×List(C))"), true));
 		binding.makeImmutable();
 		ITypeEnvironment env = binding.getTypeEnvironment();
 		assertEquals(type("ℙ(ℤ)"), env.getType("A"));
 		assertEquals(type("ℙ(List(BOOL))"), env.getType("B"));
 		assertEquals(type("ℙ(ℤ×(List(D×F)))"), env.getType("C"));
-		
-		binding.reset();
+
 		// augment binding set to false
+		binding = binding(true);
 		assertTrue(binding.unifyTypes(type("List(ℤ×List(BOOL))↔(BOOL×List(ℤ×(List(D×F))))"), type("List(A×B)↔(BOOL×List(C))"), false));
 		binding.makeImmutable();
 		env = binding.getTypeEnvironment();
@@ -428,7 +443,8 @@ public class TestBinding extends BasicAstExtTest {
 		
 		binding.setAssociativeExpressionComplement(expComp);
 		binding.setAssociativePredicateComplement(predComp);
-		binding.reset();
+
+		binding = binding(false);
 		// immutable binding
 		binding.makeImmutable();
 		try{
@@ -443,7 +459,8 @@ public class TestBinding extends BasicAstExtTest {
 		} catch (UnsupportedOperationException e) {
 			// expected
 		}
-		binding.reset();
+
+		binding = binding(false);
 		// mutable binding
 		binding.setAssociativeExpressionComplement(expComp);
 		binding.setAssociativePredicateComplement(predComp);
@@ -481,7 +498,8 @@ public class TestBinding extends BasicAstExtTest {
 		binding.makeImmutable();
 		assertTrue("mappings should be empty but is not", binding.getPredicateMappings().isEmpty());
 		assertTrue("mappings should be empty but is not", binding.getExpressionMappings().isEmpty());
-		binding.reset();
+
+		binding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				binding.putExpressionMapping(
 						ident("a", "A"), 

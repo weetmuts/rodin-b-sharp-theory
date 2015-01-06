@@ -527,14 +527,4 @@ public class Binding implements IBinding {
 		return true;
 	}
 
-	@Override
-	public void reset() {
-		binding = new HashMap<FreeIdentifier, Expression>();
-		typeParametersInstantiations = new HashMap<FreeIdentifier, Type>();
-		predicateBinding = new HashMap<PredicateVariable, Predicate>();
-		typeEnvironment = factory.makeTypeEnvironment();
-		expressionComplement = null;
-		predicateComplement = null;
-		isImmutable = false;
-	}
 }
