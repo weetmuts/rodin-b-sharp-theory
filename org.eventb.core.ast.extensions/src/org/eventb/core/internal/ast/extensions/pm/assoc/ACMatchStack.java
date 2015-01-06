@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class ACMatchStack<F extends Formula<F>> {
 	private Deque<Match<F>> matchesStack;
 	private Deque<IndexedFormula<F>> usedUp;
 	private Deque<List<Match<F>>> exploredMatches;
-	private IBinding initialBinding;
+	private Binding initialBinding;
 	
 	public ACMatchStack(Matcher matcher, Match<F> initialMatch){
 		this.matcher = matcher;
@@ -67,8 +67,8 @@ public class ACMatchStack<F extends Formula<F>> {
 		}
 	}
 	
-	public IBinding getFinalBinding() {
-		IBinding internalBinding = matcher.getMatchingFactory().createBinding(false, matcher.getFactory());
+	public Binding getFinalBinding() {
+		Binding internalBinding = (Binding) matcher.getMatchingFactory().createBinding(false, matcher.getFactory());
 		internalBinding.insertBinding(initialBinding);
 		Iterator<Match<F>> elements = matchesStack.descendingIterator();
 		while (elements.hasNext()) {
@@ -82,7 +82,7 @@ public class ACMatchStack<F extends Formula<F>> {
 	}
 	
 	private boolean isMatchAcceptable(Match<F> match) {
-		IBinding internalBinding = getFinalBinding();
+		Binding internalBinding = getFinalBinding();
 		return internalBinding.isBindingInsertable(match.getBinding());
 	}
 }

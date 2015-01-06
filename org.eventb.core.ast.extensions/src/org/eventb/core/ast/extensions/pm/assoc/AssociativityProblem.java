@@ -13,8 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
 import org.eventb.core.internal.ast.extensions.pm.assoc.Match;
 import org.eventb.core.internal.ast.extensions.pm.assoc.MatchEntry;
@@ -45,7 +45,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	protected List<IndexedFormula<F>> indexedFormulae;
 	protected List<IndexedFormula<F>> indexedPatterns;
 	
-	protected IBinding existingBinding;
+	protected Binding existingBinding;
 	
 	protected Matcher matcher;
 
@@ -66,7 +66,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	 * @param existinBinding
 	 *            the existing binding
 	 */
-	protected AssociativityProblem(int tag, F[] formulae, F[] patterns, IBinding existinBinding) {
+	protected AssociativityProblem(int tag, F[] formulae, F[] patterns, Binding existinBinding) {
 		this.tag = tag;
 		this.indexedFormulae = getIndexedFormulae(formulae);
 		this.indexedPatterns = getIndexedFormulae(patterns);
@@ -87,7 +87,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	 * @return the matching result, or <code>null</code> if the problem cannot
 	 *         be solved [by this algorithm]
 	 */
-	public abstract IBinding solve(boolean acceptPartialMatch);
+	public abstract Binding solve(boolean acceptPartialMatch);
 
 	/**
 	 * Returns an indexed formula list based on the formulae supplied.
@@ -187,7 +187,7 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 			List<Match<F>> matches = new ArrayList<Match<F>>();
 			for (IndexedFormula<F> indexedFormula : indexedFormulae) {
 				F formula = indexedFormula.getFormula();
-				IBinding binding = matcher.match(formula, pattern, false);
+				Binding binding = (Binding) matcher.match(formula, pattern, false);
 				if (binding != null) {
 					if(existingBinding.isBindingInsertable(binding))
 						matches.add(new Match<F>(indexedFormula, indexedPattern, binding));

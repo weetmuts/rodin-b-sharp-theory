@@ -15,8 +15,8 @@ import java.util.List;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.engine.AssociativeExpressionComplement;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
 import org.eventb.core.internal.ast.extensions.pm.assoc.Match;
 import org.eventb.core.internal.ast.extensions.pm.assoc.MatchEntry;
@@ -29,12 +29,12 @@ import org.eventb.core.internal.ast.extensions.pm.assoc.MatchEntry;
  */
 public class AExpressionProblem extends AssociativityProblem<Expression> {
 
-	public AExpressionProblem(int tag, Expression[] formulae, Expression[] patterns, IBinding existingBinding) {
+	public AExpressionProblem(int tag, Expression[] formulae, Expression[] patterns, Binding existingBinding) {
 		super(tag, formulae, patterns, existingBinding);
 	}
 
 	@Override
-	public IBinding solve(boolean acceptPartialMatch) {
+	public Binding solve(boolean acceptPartialMatch) {
 		if (!isSolvable) {
 			return null;
 		}
@@ -131,11 +131,11 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 		return AstUtilities.makeAppropriateAssociativeExpression(tag, existingBinding.getFormulaFactory(), list.toArray(new Expression[list.size()]));
 	}
 
-	private IBinding oneVariableOneFormula(List<IndexedFormula<Expression>> availableFormulae, boolean acceptPartialMatch) {
+	private Binding oneVariableOneFormula(List<IndexedFormula<Expression>> availableFormulae, boolean acceptPartialMatch) {
 		if (variables.size() == 1 && searchSpace.size() == 1) {
 			IndexedFormula<Expression> var = variables.get(0);
 			FreeIdentifier identifier = (FreeIdentifier) var.getFormula();
-			IBinding initialBinding = existingBinding.clone();
+			Binding initialBinding = existingBinding.clone();
 			MatchEntry<Expression> entry = searchSpace.get(0);
 			Expression varMapping = initialBinding.getCurrentMapping(identifier);
 			if (varMapping != null) {
@@ -210,9 +210,9 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 		return null;
 	}
 
-	private IBinding twoVariables(List<IndexedFormula<Expression>> availableFormulae, boolean acceptPartialMatch) {
+	private Binding twoVariables(List<IndexedFormula<Expression>> availableFormulae, boolean acceptPartialMatch) {
 		if (variables.size() == 2) {
-			IBinding initialBinding = existingBinding.clone();
+			Binding initialBinding = existingBinding.clone();
 			IndexedFormula<Expression> var1 = variables.get(0);
 			FreeIdentifier identifier1 = (FreeIdentifier) var1.getFormula();
 			IndexedFormula<Expression> var2 = variables.get(1);
@@ -290,9 +290,9 @@ public class AExpressionProblem extends AssociativityProblem<Expression> {
 		return null;
 	}
 	
-	private IBinding twoFormulae(List<IndexedFormula<Expression>> availableFormulae, boolean acceptPartialMatch){
+	private Binding twoFormulae(List<IndexedFormula<Expression>> availableFormulae, boolean acceptPartialMatch){
 		if (searchSpace.size() == 2) {
-			IBinding initialBinding = existingBinding.clone();
+			Binding initialBinding = existingBinding.clone();
 			MatchEntry<Expression> matchEntry1 = searchSpace.get(0);
 			MatchEntry<Expression> matchEntry2 = searchSpace.get(1);
 			IndexedFormula<Expression> indexedFormula1 = matchEntry1.getIndexedPattern();

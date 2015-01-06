@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.internal.ast.extensions.pm.assoc.ACMatchStack;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
 import org.eventb.core.internal.ast.extensions.pm.assoc.Match;
@@ -25,15 +25,15 @@ import org.eventb.core.internal.ast.extensions.pm.assoc.MatchEntry;
  */
 public abstract class ACProblem<F extends Formula<F>> extends AssociativityProblem<F> {
 
-	public ACProblem(int tag, F[] formulae, F[] patterns, IBinding existingBinding) {
+	public ACProblem(int tag, F[] formulae, F[] patterns, Binding existingBinding) {
 		super(tag, formulae, patterns, existingBinding);
 	}
 
-	public IBinding solve(boolean acceptPartialMatch) {
+	public Binding solve(boolean acceptPartialMatch) {
 		if (!isSolvable) {
 			return null;
 		}
-		IBinding initialBinding = existingBinding.clone();
+		Binding initialBinding = existingBinding.clone();
 		boolean searchSpaceEmpty = searchSpace.size() == 0;
 		// trace consumed formulae
 		List<IndexedFormula<F>> usedUpFormulae = new ArrayList<IndexedFormula<F>>();
@@ -44,7 +44,7 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 			for (Match<F> match : matchesList) {
 				ACMatchStack<F> matchStack = new ACMatchStack<F>(matcher, match);
 				if (explore(1, matchStack)) {
-					IBinding matchBinding = matchStack.getFinalBinding();
+					Binding matchBinding = matchStack.getFinalBinding();
 					matchBinding.makeImmutable();
 					// if we cannot insert the match binding in the original binding
 					if(!initialBinding.isBindingInsertable(matchBinding)){
@@ -121,12 +121,12 @@ public abstract class ACProblem<F extends Formula<F>> extends AssociativityProbl
 	 * @param initialBinding the binding to fill
 	 * @return whether all variables have been mapped successfully
 	 */
-	protected abstract boolean mapVariables(List<IndexedFormula<F>> usedUpFormulae, IBinding initialBinding);
+	protected abstract boolean mapVariables(List<IndexedFormula<F>> usedUpFormulae, Binding initialBinding);
 	
 	/**
 	 * Sets the associative complement consisting of the given formulae.
 	 * @param formulae the formulae
 	 * @param binding the target binding
 	 */
-	protected abstract void addAssociativeComplement(List<IndexedFormula<F>> formulae, IBinding binding);
+	protected abstract void addAssociativeComplement(List<IndexedFormula<F>> formulae, Binding binding);
 }

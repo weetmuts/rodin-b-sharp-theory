@@ -8,7 +8,7 @@
 package org.eventb.core.internal.ast.extensions.pm.assoc;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 
 /**
  * A simple implementation of a match.
@@ -22,7 +22,7 @@ public final class Match<F extends Formula<F>> {
 
 	private IndexedFormula<F> indexedFormula;
 	private IndexedFormula<F> indexedPattern;
-	private IBinding binding;
+	private Binding binding;
 	
 	/**
 	 * Creates a match between the formula and the patterns. The supplied binding, when applied, must match formula to the pattern.
@@ -30,7 +30,7 @@ public final class Match<F extends Formula<F>> {
 	 * @param indexedPattern the indexed pattern
 	 * @param binding the binding
 	 */
-	public Match(IndexedFormula<F> indexedFormula, IndexedFormula<F> indexedPattern, IBinding binding){
+	public Match(IndexedFormula<F> indexedFormula, IndexedFormula<F> indexedPattern, Binding binding){
 		this.indexedFormula = indexedFormula;
 		this.indexedPattern = indexedPattern;
 		this.binding = binding;
@@ -56,7 +56,7 @@ public final class Match<F extends Formula<F>> {
 	 * Returns the binding that unifies the pattern with the formula.
 	 * @return the binding
 	 */
-	public IBinding getBinding() {
+	public Binding getBinding() {
 		return binding;
 	}
 	

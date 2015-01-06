@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
 import org.eventb.core.internal.ast.extensions.pm.assoc.Match;
 import org.eventb.core.internal.ast.extensions.pm.assoc.MatchEntry;
@@ -38,7 +38,7 @@ public abstract class StripperCollectorMatcher<F extends Formula<F>> {
 	
 	protected List<IndexedFormula<F>> variables;
 	
-	protected IBinding existingBinding;
+	protected Binding existingBinding;
 	protected Matcher matcher;
 	
 	protected boolean solvable = true;
@@ -54,7 +54,7 @@ public abstract class StripperCollectorMatcher<F extends Formula<F>> {
 	 * @param existingBinding the existing binding
 	 */
 	public StripperCollectorMatcher(int tag, F[] formulae, F[] patterns, 
-			IBinding existingBinding){
+			Binding existingBinding){
 		AstUtilities.ensureNotNull(formulae, patterns, existingBinding);
 		// no need to go further if number of formulae is less than number of patterns
 		if (formulae.length < patterns.length){
@@ -72,7 +72,7 @@ public abstract class StripperCollectorMatcher<F extends Formula<F>> {
 		this.searchSpace = generateSearchSpace();
 	}
 	
-	public IBinding solve(boolean acceptPartialMatch){
+	public Binding solve(boolean acceptPartialMatch){
 		// if not solvable based on the simple obvious criteria, do not go further
 		if (!solvable)
 			return null;
@@ -112,7 +112,7 @@ public abstract class StripperCollectorMatcher<F extends Formula<F>> {
 			List<Match<F>> matches = new ArrayList<Match<F>>();
 			for (IndexedFormula<F> indexedFormula : indexedFormulae) {
 				F formula = indexedFormula.getFormula();
-				IBinding binding = matcher.match(formula, pattern, false);
+				Binding binding = (Binding) matcher.match(formula, pattern, false);
 				if (binding != null 
 						&& existingBinding.isBindingInsertable(binding)) {
 					matches.add(new Match<F>(indexedFormula, indexedPattern, binding));

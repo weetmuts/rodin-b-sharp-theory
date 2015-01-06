@@ -13,8 +13,8 @@ import java.util.List;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.engine.AssociativePredicateComplement;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
 
 /**
@@ -24,12 +24,12 @@ import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
  */
 public class ACPredicateProblem extends ACProblem<Predicate> {
 
-	public ACPredicateProblem(int tag, Predicate[] formulae, Predicate[] patterns, IBinding existingBinding) {
+	public ACPredicateProblem(int tag, Predicate[] formulae, Predicate[] patterns, Binding existingBinding) {
 		super(tag, formulae, patterns, existingBinding);
 	}
 	
 	@Override
-	protected boolean mapVariables(List<IndexedFormula<Predicate>> usedUpFormulae, IBinding initialBinding) {
+	protected boolean mapVariables(List<IndexedFormula<Predicate>> usedUpFormulae, Binding initialBinding) {
 		int sizeOfVariables = variables.size();
 		if (sizeOfVariables > 0) {
 			List<IndexedFormula<Predicate>> availableFormulae = new ArrayList<IndexedFormula<Predicate>>();
@@ -87,7 +87,7 @@ public class ACPredicateProblem extends ACProblem<Predicate> {
 	}
 	
 	@Override
-	protected void addAssociativeComplement(List<IndexedFormula<Predicate>> formulae, IBinding binding) {
+	protected void addAssociativeComplement(List<IndexedFormula<Predicate>> formulae, Binding binding) {
 		List<Predicate> list = new ArrayList<Predicate>();
 		for (IndexedFormula<Predicate> formula : formulae){
 			list.add(formula.getFormula());

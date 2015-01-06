@@ -13,8 +13,8 @@ import java.util.List;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.engine.AssociativeExpressionComplement;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
 
 /**
@@ -24,12 +24,12 @@ import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
  */
 public class ACExpressionProblem extends ACProblem<Expression> {
 
-	public ACExpressionProblem(int tag, Expression[] formulae, Expression[] patterns, IBinding existingBinding) {
+	public ACExpressionProblem(int tag, Expression[] formulae, Expression[] patterns, Binding existingBinding) {
 		super(tag, formulae, patterns, existingBinding);
 	}
 	
 	@Override
-	protected boolean mapVariables(List<IndexedFormula<Expression>> usedUpFormulae, IBinding initialBinding) {
+	protected boolean mapVariables(List<IndexedFormula<Expression>> usedUpFormulae, Binding initialBinding) {
 		int sizeOfVariables = variables.size();
 		if (sizeOfVariables > 0) {
 			List<IndexedFormula<Expression>> availableFormulae = new ArrayList<IndexedFormula<Expression>>();
@@ -88,7 +88,7 @@ public class ACExpressionProblem extends ACProblem<Expression> {
 	}
 
 	@Override
-	protected void addAssociativeComplement(List<IndexedFormula<Expression>> formulae, IBinding binding) {
+	protected void addAssociativeComplement(List<IndexedFormula<Expression>> formulae, Binding binding) {
 		List<Expression> list = new ArrayList<Expression>();
 		for (IndexedFormula<Expression> formula : formulae) {
 			list.add(formula.getFormula());

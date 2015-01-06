@@ -351,7 +351,7 @@ public class Binding implements IBinding {
 	}
 
 	@Override
-	public IBinding clone() {
+	public Binding clone() {
 		// copy all state information
 		Binding newBinding = new Binding(formula, pattern, isPartialMatchAcceptable, factory);
 		newBinding.binding = new LinkedHashMap<FreeIdentifier, Expression>(binding);

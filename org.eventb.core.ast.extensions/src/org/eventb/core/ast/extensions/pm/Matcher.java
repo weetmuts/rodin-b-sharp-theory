@@ -86,7 +86,7 @@ public final class Matcher {
 			IBinding binding) {
 		Predicate[] fs = formulae.toArray(new Predicate[formulae.size()]);
 		Predicate[] ps = patterns.toArray(new Predicate[patterns.size()]);
-		ACProblem<?> problem = new ACPredicateProblem(LAND, fs, ps, binding);
+		ACProblem<?> problem = new ACPredicateProblem(LAND, fs, ps, (Binding) binding);
 		return problem.solve(true);
 	}
 
