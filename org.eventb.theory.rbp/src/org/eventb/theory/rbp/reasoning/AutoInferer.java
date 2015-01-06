@@ -25,8 +25,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.SimpleBinder;
-import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
-import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -208,9 +206,11 @@ public class AutoInferer extends AbstractRulesApplyer {
 			List<ISCGiven> givens = unmodifiableList(Arrays.asList(((ISCInferenceRule) rule).getGivens()));
 			predicates = getPredicates(givens, factory, typeEnv);
 		}
-		ACProblem<Predicate> problem = new ACPredicateProblem(Predicate.LAND, getPredicates(sequent.hypIterable()), predicates, finder.getMatchingFactory().createBinding(true,
-				context.getFormulaFactory()));
-		IBinding binding = problem.solve(true);
+		IBinding binding = finder.match(
+				getPredicates(sequent.hypIterable()),
+				predicates,
+				finder.getMatchingFactory().createBinding(true,
+						context.getFormulaFactory()));
 		if (binding != null) {
 			binding.makeImmutable();
 			Predicate ins;

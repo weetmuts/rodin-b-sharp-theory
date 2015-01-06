@@ -7,9 +7,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.extensions.pm;
 
+import static org.eventb.core.ast.Formula.LAND;
+
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
+import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
 import org.eventb.core.ast.extensions.pm.engine.Binding;
 
 /**
@@ -60,6 +65,26 @@ public final class Matcher {
 			return initialBinding;
 		}
 		return null;
+	}
+
+	/**
+	 * Matches all the given patterns against some of the given formulas under
+	 * the constraint of an initial binding. Returns a new binding which is a
+	 * superset of the given binding. The returned binding is immutable.
+	 * 
+	 * @param formulae
+	 *            some formulae
+	 * @param patterns
+	 *            some patterns
+	 * @param binding
+	 *            an initial binding
+	 * @return the binding, or <code>null</code> if matching failed
+	 */
+	public IBinding match(Predicate[] formulae, Predicate[] patterns,
+			IBinding binding) {
+		ACProblem<?> problem = new ACPredicateProblem(LAND, formulae, patterns,
+				binding);
+		return problem.solve(true);
 	}
 
 	/**

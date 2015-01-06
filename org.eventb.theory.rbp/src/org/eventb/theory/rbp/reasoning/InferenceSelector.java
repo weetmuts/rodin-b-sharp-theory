@@ -12,12 +12,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
-import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
-import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
@@ -279,12 +276,10 @@ public class InferenceSelector {
 							otherHyps.add(hyp);
 						}
 					}
-					ACProblem<Predicate> acProblem = new ACPredicateProblem(
-							Formula.LAND,
-							otherHyps.toArray(new Predicate[otherHyps.size()]),
+					IBinding finalBinding = finder.match(otherHyps
+							.toArray(new Predicate[otherHyps.size()]),
 							otherGivens.toArray(new Predicate[otherGivens
 									.size()]), binding);
-					IBinding finalBinding = acProblem.solve(true);
 					if (finalBinding == null) {
 						continue;
 					}

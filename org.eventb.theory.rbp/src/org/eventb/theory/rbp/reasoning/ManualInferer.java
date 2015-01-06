@@ -17,15 +17,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.SimpleBinder;
-import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
-import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -167,10 +164,8 @@ public class ManualInferer extends AbstractRulesApplyer{
 				otherHyps.add(hyp);
 			}
 		}
-		ACProblem<Predicate> acProblem = new ACPredicateProblem(
-				Formula.LAND, otherHyps.toArray(new Predicate[otherHyps.size()]), 
+		IBinding finalBinding = finder.match(otherHyps.toArray(new Predicate[otherHyps.size()]), 
 				otherGivens.toArray(new Predicate[otherGivens.size()]), binding);
-		IBinding finalBinding = acProblem.solve(true);
 		if (finalBinding==null){
 			return null;
 		}
@@ -258,10 +253,8 @@ public class ManualInferer extends AbstractRulesApplyer{
 				otherHyps.add(hyp);
 			}
 		}
-		ACProblem<Predicate> acProblem = new ACPredicateProblem(
-				Formula.LAND, otherHyps.toArray(new Predicate[otherHyps.size()]), 
+		IBinding finalBinding = finder.match(otherHyps.toArray(new Predicate[otherHyps.size()]), 
 				otherGivens.toArray(new Predicate[otherGivens.size()]), binding);
-		IBinding finalBinding = acProblem.solve(true);
 		if (finalBinding==null){
 			return null;
 		}
