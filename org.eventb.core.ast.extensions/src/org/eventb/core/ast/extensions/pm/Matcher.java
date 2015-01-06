@@ -9,6 +9,8 @@ package org.eventb.core.ast.extensions.pm;
 
 import static org.eventb.core.ast.Formula.LAND;
 
+import java.util.List;
+
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -80,10 +82,11 @@ public final class Matcher {
 	 *            an initial binding
 	 * @return the binding, or <code>null</code> if matching failed
 	 */
-	public IBinding match(Predicate[] formulae, Predicate[] patterns,
+	public IBinding match(List<Predicate> formulae, List<Predicate> patterns,
 			IBinding binding) {
-		ACProblem<?> problem = new ACPredicateProblem(LAND, formulae, patterns,
-				binding);
+		Predicate[] fs = formulae.toArray(new Predicate[formulae.size()]);
+		Predicate[] ps = patterns.toArray(new Predicate[patterns.size()]);
+		ACProblem<?> problem = new ACPredicateProblem(LAND, fs, ps, binding);
 		return problem.solve(true);
 	}
 

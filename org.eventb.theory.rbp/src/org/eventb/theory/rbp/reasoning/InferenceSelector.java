@@ -276,10 +276,8 @@ public class InferenceSelector {
 							otherHyps.add(hyp);
 						}
 					}
-					IBinding finalBinding = finder.match(otherHyps
-							.toArray(new Predicate[otherHyps.size()]),
-							otherGivens.toArray(new Predicate[otherGivens
-									.size()]), binding);
+					IBinding finalBinding = finder.match(otherHyps,
+							otherGivens, binding);
 					if (finalBinding == null) {
 						continue;
 					}

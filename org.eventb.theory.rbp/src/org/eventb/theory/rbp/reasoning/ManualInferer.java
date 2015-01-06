@@ -164,8 +164,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 				otherHyps.add(hyp);
 			}
 		}
-		IBinding finalBinding = finder.match(otherHyps.toArray(new Predicate[otherHyps.size()]), 
-				otherGivens.toArray(new Predicate[otherGivens.size()]), binding);
+		IBinding finalBinding = finder.match(otherHyps, otherGivens, binding);
 		if (finalBinding==null){
 			return null;
 		}
@@ -253,8 +252,7 @@ public class ManualInferer extends AbstractRulesApplyer{
 				otherHyps.add(hyp);
 			}
 		}
-		IBinding finalBinding = finder.match(otherHyps.toArray(new Predicate[otherHyps.size()]), 
-				otherGivens.toArray(new Predicate[otherGivens.size()]), binding);
+		IBinding finalBinding = finder.match(otherHyps, otherGivens, binding);
 		if (finalBinding==null){
 			return null;
 		}

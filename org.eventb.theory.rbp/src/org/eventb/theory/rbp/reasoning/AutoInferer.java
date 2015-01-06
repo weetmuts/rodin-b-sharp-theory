@@ -194,7 +194,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 	 */
 	private void applyForwardRule(IProverSequent sequent, IGeneralRule rule, Set<Predicate> addedHyps, Set<Predicate> extraWDants) {
 		try{
-		Predicate[] predicates;
+		List<Predicate> predicates;
 		FormulaFactory factory= context.getFormulaFactory();
 		ITypeEnvironment typeEnv;
 		if (rule instanceof IDeployedInferenceRule) {
@@ -241,25 +241,25 @@ public class AutoInferer extends AbstractRulesApplyer {
 	}
 	}
 
-	private Predicate[] getPredicates(Iterable<Predicate> iter) {
+	private List<Predicate> getPredicates(Iterable<Predicate> iter) {
 		ArrayList<Predicate> list = new ArrayList<Predicate>();
 		Iterator<Predicate> iterator = iter.iterator();
 		while (iterator.hasNext()) {
 			list.add(iterator.next());
 		}
-		return list.toArray(new Predicate[list.size()]);
+		return list;
 	}
 
-	private Predicate[] getPredicates(List<IDeployedGiven> givens) {
+	private List<Predicate> getPredicates(List<IDeployedGiven> givens) {
 		ArrayList<Predicate> list = new ArrayList<Predicate>();
 		Iterator<IDeployedGiven> iterator = givens.iterator();
 		while (iterator.hasNext()) {
 			list.add(iterator.next().getGivenClause());
 		}
-		return list.toArray(new Predicate[list.size()]);
+		return list;
 	}
 	
-	private Predicate[] getPredicates(List<ISCGiven> givens, FormulaFactory factory, ITypeEnvironment typeEnv) {
+	private List<Predicate> getPredicates(List<ISCGiven> givens, FormulaFactory factory, ITypeEnvironment typeEnv) {
 		ArrayList<Predicate> list = new ArrayList<Predicate>();
 		Iterator<ISCGiven> iterator = givens.iterator();
 		while (iterator.hasNext()) {
@@ -270,7 +270,7 @@ public class AutoInferer extends AbstractRulesApplyer {
 				e.printStackTrace();
 			}
 		}
-		return list.toArray(new Predicate[list.size()]);
+		return list;
 	}
 
 }
