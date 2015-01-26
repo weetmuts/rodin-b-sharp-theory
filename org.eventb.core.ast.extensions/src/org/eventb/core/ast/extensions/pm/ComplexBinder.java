@@ -16,6 +16,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.pm.engine.AssociativeExpressionComplement;
 import org.eventb.core.ast.extensions.pm.engine.AssociativePredicateComplement;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateVariableSubstituter;
 
 /**
@@ -49,16 +50,17 @@ public final class ComplexBinder {
 	 * 
 	 * @param pattern
 	 *            the pattern
-	 * @param binding
+	 * @param ibinding
 	 *            the matching result
 	 * @param includeComplement
 	 *            whether associative complements should be considered
 	 * @return the resultant formula
 	 */
-	public Formula<?> bind(Formula<?> pattern, IBinding binding, boolean includeComplement) {
-		if (binding == null) {
+	public Formula<?> bind(Formula<?> pattern, IBinding ibinding, boolean includeComplement) {
+		if (ibinding == null) {
 			return null;
 		}
+		final Binding binding = (Binding) ibinding;
 		Formula<?> resultFormula = AstUtilities.parseFormula(
 				pattern.toString(), pattern instanceof Expression, factory);
 		Formula<?> finalResultFormula = resultFormula.rewrite(

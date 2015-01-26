@@ -5,10 +5,10 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.MatchingFactory;
 import org.eventb.core.ast.extensions.pm.engine.AssociativeExpressionComplement;
 import org.eventb.core.ast.extensions.pm.engine.AssociativePredicateComplement;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.tests.BasicAstExtTest;
 
 /**
@@ -33,12 +33,12 @@ public class TestBinding extends BasicAstExtTest {
 		super.tearDown();
 	}
 
-	public IBinding binding(Formula<?> formula, Formula<?> pattern, boolean isPartialMatchAcceptable) throws Exception {
-		return matchingFactory.createBinding(formula, pattern, isPartialMatchAcceptable, factory);
+	public Binding binding(Formula<?> formula, Formula<?> pattern, boolean isPartialMatchAcceptable) throws Exception {
+		return (Binding) matchingFactory.createBinding(formula, pattern, isPartialMatchAcceptable, factory);
 	}
 
-	public IBinding binding(boolean isPartialMatchAcceptable) throws Exception {
-		return matchingFactory.createBinding(isPartialMatchAcceptable, factory);
+	public Binding binding(boolean isPartialMatchAcceptable) throws Exception {
+		return (Binding) matchingFactory.createBinding(isPartialMatchAcceptable, factory);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class TestBinding extends BasicAstExtTest {
 
 	public void testBinding_005_isImmutable() throws Exception {
 		addExtensions(seqExtension());
-		IBinding binding = binding(true);
+		Binding binding = binding(true);
 		assertFalse(binding.isImmutable());
 		binding.makeImmutable();
 		assertTrue(binding.isImmutable());
@@ -109,7 +109,7 @@ public class TestBinding extends BasicAstExtTest {
 
 	// binding immutable
 	public void testBinding_006_putExpressionMapping() throws Exception {
-		IBinding binding = binding(true);
+		Binding binding = binding(true);
 		binding.makeImmutable();
 		try {
 			binding.putExpressionMapping(ident("a", "A"), tcExpression("1+3"));
@@ -121,7 +121,7 @@ public class TestBinding extends BasicAstExtTest {
 
 	// type unif conflict
 	public void testBinding_007_putExpressionMapping() throws Exception {
-		IBinding binding = binding(true);
+		Binding binding = binding(true);
 		boolean b = binding.putExpressionMapping(ident("a", "ℙ(BOOL)"), tcExpression("1+3"));
 		assertFalse("should not have inserted the mapping but did", b);
 	}
@@ -129,7 +129,7 @@ public class TestBinding extends BasicAstExtTest {
 	// given type matched against a normal expr
 	public void testBinding_008_putExpressionMapping() throws Exception {
 		addExtensions(seqExtension());
-		IBinding binding = binding(true);
+		Binding binding = binding(true);
 		boolean b = binding.putExpressionMapping(ident("A", "ℙ(A)"), tcExpression("{1}"));
 		assertFalse("should not have inserted the mapping but did", b);
 
@@ -152,7 +152,7 @@ public class TestBinding extends BasicAstExtTest {
 
 	// enrty exists but different mapping
 	public void testBinding_009_putExpressionMapping() throws Exception {
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		boolean b = binding.putExpressionMapping(ident("a", "ℙ(A)"), tcExpression("ℕ"));
 		assertTrue(b);
 		b = binding.putExpressionMapping(ident("a", "ℙ(A)"), tcExpression("ℤ"));
@@ -161,7 +161,7 @@ public class TestBinding extends BasicAstExtTest {
 
 	// binding immutable
 	public void testBinding_010_putPredicateMapping() throws Exception {
-		IBinding binding = binding(true);
+		Binding binding = binding(true);
 		binding.makeImmutable();
 		try {
 			binding.putPredicateMapping(predVar("$P"), tcPredicate("1=1"));
@@ -173,7 +173,7 @@ public class TestBinding extends BasicAstExtTest {
 
 	// enrty exists but different mapping
 	public void testBinding_011_putPredicateMapping() throws Exception {
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		boolean b = binding.putPredicateMapping(predVar("$P"), tcPredicate("2=1"));
 		assertTrue(b);
 		b = binding.putPredicateMapping(predVar("$P"), tcPredicate("3=3"));
@@ -182,7 +182,7 @@ public class TestBinding extends BasicAstExtTest {
 	
 	// immutable
 	public void testBinding_012_getCurrentMapping() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		binding.makeImmutable();
 		try {
 			binding.getCurrentMapping(ident("a", "A"));
@@ -193,7 +193,7 @@ public class TestBinding extends BasicAstExtTest {
 	}
 	
 	public void testBinding_013_getCurrentMapping() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		binding.makeImmutable();
 		try {
 			binding.getCurrentMapping(predVar("$Q"));
@@ -204,7 +204,7 @@ public class TestBinding extends BasicAstExtTest {
 	}
 	// no errors
 	public void testBinding_014_getCurrentMapping() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		assertTrue(binding.putExpressionMapping(ident("a", "A"), tcExpression("1")));
 		equalFormulae(tcExpression("1"), binding.getCurrentMapping(ident("a", "A")));
 		assertTrue(binding.putPredicateMapping(predVar("$P"), tcPredicate("1=1")));
@@ -215,7 +215,7 @@ public class TestBinding extends BasicAstExtTest {
 	// type unification procedure
 	public void testBinding_015_unifyTypes() throws Exception{
 		addExtensions(listExtensions());
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		assertTrue(binding.unifyTypes(type("ℤ"), type("ℤ"), false));
 
 		binding = binding(true);
@@ -276,7 +276,7 @@ public class TestBinding extends BasicAstExtTest {
 	}
 	
 	public void testBinding_016_getTypeEnvironment() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		try {
 			binding.getTypeEnvironment();
 			fail("should have not been able to get type env, exception is expected as binding is mutable");
@@ -287,7 +287,7 @@ public class TestBinding extends BasicAstExtTest {
 	
 	public void testBinding_017_getTypeEnvironment() throws Exception{
 		addExtensions(listExtensions());
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		Expression tcExpression = tcExpression("cons(x, l)", 
 				makeSList("B"), 
 				makeSList("x", "l"), 
@@ -310,7 +310,7 @@ public class TestBinding extends BasicAstExtTest {
 	
 	// no error
 	public void testBinding_018_isBindingInsertable_insertBinding() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				binding.putExpressionMapping(
 						ident("a", "A"), 
@@ -320,7 +320,7 @@ public class TestBinding extends BasicAstExtTest {
 						ident("b", "ℙ(A)"), 
 						tcExpression("{e↦f}", makeSList("E", "F"), makeSList("e", "f"), makeSList("E", "F"))));
 		
-		IBinding anotherBinding = binding(false);
+		Binding anotherBinding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				anotherBinding.putExpressionMapping(
 						ident("a", "A"), 
@@ -340,7 +340,7 @@ public class TestBinding extends BasicAstExtTest {
 	}
 	// binding is immutable
 	public void testBinding_019_isBindingInsertable_insertBinding() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				binding.putExpressionMapping(
 						ident("a", "A"), 
@@ -350,7 +350,7 @@ public class TestBinding extends BasicAstExtTest {
 						ident("b", "ℙ(A)"), 
 						tcExpression("{e↦f}", makeSList("E", "F"), makeSList("e", "f"), makeSList("E", "F"))));
 		binding.makeImmutable();
-		IBinding anotherBinding = binding(false);
+		Binding anotherBinding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				anotherBinding.putExpressionMapping(
 						ident("a", "A"), 
@@ -370,7 +370,7 @@ public class TestBinding extends BasicAstExtTest {
 	
 	// the other binding mutable
 	public void testBinding_020_isBindingInsertable_insertBinding() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				binding.putExpressionMapping(
 						ident("a", "A"), 
@@ -379,7 +379,7 @@ public class TestBinding extends BasicAstExtTest {
 				binding.putExpressionMapping(
 						ident("b", "ℙ(A)"), 
 						tcExpression("{e↦f}", makeSList("E", "F"), makeSList("e", "f"), makeSList("E", "F"))));
-		IBinding anotherBinding = binding(false);
+		Binding anotherBinding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				anotherBinding.putExpressionMapping(
 						ident("a", "A"), 
@@ -399,7 +399,7 @@ public class TestBinding extends BasicAstExtTest {
 	
 	// binding clash
 	public void testBinding_021_isBindingInsertable_insertBinding() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				binding.putExpressionMapping(
 						ident("a", "A"), 
@@ -408,7 +408,7 @@ public class TestBinding extends BasicAstExtTest {
 				binding.putExpressionMapping(
 						ident("b", "ℙ(A)"), 
 						tcExpression("{e↦f}", makeSList("E", "F"), makeSList("e", "f"), makeSList("E", "F"))));
-		IBinding anotherBinding = binding(false);
+		Binding anotherBinding = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				anotherBinding.putExpressionMapping(
 						ident("a", "A"), 
@@ -417,7 +417,7 @@ public class TestBinding extends BasicAstExtTest {
 		assertFalse("binding should not be insertable but is", binding.isBindingInsertable(anotherBinding));
 		assertFalse("binding should not be insertable but is", binding.insertBinding(anotherBinding));
 		
-		IBinding anotherBinding2 = binding(false);
+		Binding anotherBinding2 = binding(false);
 		assertTrue("mapping should be inserted but is not",
 				anotherBinding2.putExpressionMapping(
 						ident("b", "ℙ(A)"), 
@@ -434,7 +434,7 @@ public class TestBinding extends BasicAstExtTest {
 	
 	public void testBinding_022_complement() throws Exception{
 		
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		// no error
 		AssociativeExpressionComplement expComp = 
 				new AssociativeExpressionComplement(AssociativeExpression.BINTER,tcExpression("{1}"),tcExpression("{2}"));
@@ -480,7 +480,7 @@ public class TestBinding extends BasicAstExtTest {
 	
 	// TODO more rigour required to test getExpressionMappings()/getPredicateMappings()
 	public void testBinding_023_getMappings() throws Exception{
-		IBinding binding = binding(false);
+		Binding binding = binding(false);
 		// mutable binding
 		try{
 			binding.getExpressionMappings();

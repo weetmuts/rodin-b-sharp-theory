@@ -11,6 +11,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.pm.engine.PredicateVariableSubstituter;
 
 /**
@@ -42,14 +43,15 @@ public class SimpleBinder {
 	 * 
 	 * @param pattern
 	 *            the pattern
-	 * @param binding
+	 * @param ibinding
 	 *            the binding
 	 * @return the resultant formula
 	 */
-	public Formula<?> bind(Formula<?> pattern, IBinding binding) {
-		if (binding == null) {
+	public Formula<?> bind(Formula<?> pattern, IBinding ibinding) {
+		if (ibinding == null) {
 			return null;
 		}
+		final Binding binding = (Binding) ibinding;
 		Formula<?> resultFormula = AstUtilities.parseFormula(pattern.toString(), pattern instanceof Expression, factory);
 		Formula<?> finalResultFormula = resultFormula.rewrite(new PredicateVariableSubstituter(binding.getPredicateMappings()));
 		finalResultFormula.typeCheck(binding.getTypeEnvironment());

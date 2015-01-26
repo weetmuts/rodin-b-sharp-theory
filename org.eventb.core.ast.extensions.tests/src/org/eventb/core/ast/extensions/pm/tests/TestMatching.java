@@ -7,8 +7,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.ast.extensions.tests.BasicAstExtTest;
 
 public class TestMatching extends BasicAstExtTest {
@@ -17,11 +17,11 @@ public class TestMatching extends BasicAstExtTest {
 		return new Matcher(factory);
 	}
 	
-	public IBinding match(Formula<?> formula, Formula<?> pattern, boolean apm){
-		return matcher().match(formula, pattern, apm);
+	public Binding match(Formula<?> formula, Formula<?> pattern, boolean apm){
+		return (Binding) matcher().match(formula, pattern, apm);
 	}
 	
-	public void bindingContains(IBinding binding, FreeIdentifier ident) throws CoreException{
+	public void bindingContains(Binding binding, FreeIdentifier ident) throws CoreException{
 		assertTrue("binding expected to exist and not be mutable",binding!= null && binding.isImmutable());
 		assertTrue("binding should contain "+ident +" but does not" , 
 				binding.getExpressionMappings().keySet().contains(ident));
@@ -53,7 +53,7 @@ public class TestMatching extends BasicAstExtTest {
 		}
 		
 		public void test() throws Exception{
-			IBinding binding = TestMatching.this.match(formula, pattern, isPMA);
+			Binding binding = TestMatching.this.match(formula, pattern, isPMA);
 			if (isFailure){
 				assertNull("binding expected to be null but was not", binding);
 			}
