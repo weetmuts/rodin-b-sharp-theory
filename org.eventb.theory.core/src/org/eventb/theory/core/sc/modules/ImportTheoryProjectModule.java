@@ -127,6 +127,7 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 					createProblemMarker(theoryProject,
 							TheoryAttributes.THEORY_PROJECT_ATTRIBUTE,
 							TheoryGraphProblem.ImportTheoryProjectMissing);
+					// FIXME set accuracy to false
 				}
 				else if(filterModules(theoryProject, repository, monitor)){
 					ISCImportTheoryProject scTheoryProject = saveSCTheoryProject((ISCTheoryRoot) target, theoryProject, index++, monitor);

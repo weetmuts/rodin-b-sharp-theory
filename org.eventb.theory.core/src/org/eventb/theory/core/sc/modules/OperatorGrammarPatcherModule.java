@@ -68,6 +68,7 @@ public class OperatorGrammarPatcherModule extends SCProcessorModule {
 						TheoryGraphProblem.OperatorWithSameSynJustBeenAddedError, syntax);
 				operatorInformation.setHasError();
 				operatorInformation.makeImmutable();
+				// FIXME set accuracy to false
 			}
 		}
 	}
