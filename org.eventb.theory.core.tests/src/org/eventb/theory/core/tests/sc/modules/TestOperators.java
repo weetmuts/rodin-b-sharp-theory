@@ -102,13 +102,13 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 	@Test
 	public void testOperators_005_SynExists() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
-		INewOperatorDefinition op1 = root.createChild(INewOperatorDefinition.ELEMENT_TYPE, null, null);
-		op1.setLabel("finite", null);
+		INewOperatorDefinition op1 = addOperatorDefinitionWithDirectDef(root, "finite", Notation.PREFIX , FormulaType.EXPRESSION, false, false,
+				makeSList(), makeSList(), makeSList(), "1+1");
 		saveRodinFileOf(root);
 		runBuilder();
-		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		isNotAccurate(scTheoryRoot);
-		// FIXME hasMarker(op1, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorSynExistsError, "finite");
+		// ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
+		// FIXME isNotAccurate(scTheoryRoot);
+		hasMarker(op1, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorWithSameSynJustBeenAddedError, "finite");
 	}
 
 	/**
@@ -229,7 +229,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		ISCNewOperatorDefinition scDef = getOperatorDefinition(scTheoryRoot, "seq");
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		hasError(scDef);
 		hasMarker(arg1, EventBAttributes.IDENTIFIER_ATTRIBUTE);
 		hasMarker(arg2, EventBAttributes.IDENTIFIER_ATTRIBUTE, TheoryGraphProblem.OperatorArgumentNameConflictError,
@@ -251,7 +251,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		ISCNewOperatorDefinition scDef = getOperatorDefinition(scTheoryRoot, "seq");
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		hasError(scDef);
 		hasMarker(arg, EventBAttributes.EXPRESSION_ATTRIBUTE, GraphProblem.ExpressionUndefError);
 	}
@@ -279,7 +279,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		ISCNewOperatorDefinition scDef = getOperatorDefinition(scTheoryRoot, "seq");
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		hasError(scDef);
 		hasMarker(arg1, EventBAttributes.EXPRESSION_ATTRIBUTE);
 		hasNotMarker(arg2);
@@ -303,7 +303,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		ISCNewOperatorDefinition scDef = getOperatorDefinition(scTheoryRoot, "size");
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		hasError(scDef);
 		hasMarker(wdCond1, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.WDPredMissingError);
 		hasMarker(wdCond2, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.WDPredMissingError);
@@ -332,12 +332,12 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
 		ISCNewOperatorDefinition scDef = getOperatorDefinition(scTheoryRoot, "size");
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		hasError(scDef);
 		hasMarker(wdCond1, EventBAttributes.PREDICATE_ATTRIBUTE);
 		hasNotMarker(wdCond2);
 		hasMarker(wdCond3, EventBAttributes.PREDICATE_ATTRIBUTE, GraphProblem.UndeclaredFreeIdentifierError, "S");
-		// FIXME hasMarker(wdCond4, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.OpCannotReferToTheseIdents, "W");
+		//hasMarker(wdCond4, EventBAttributes.PREDICATE_ATTRIBUTE, TheoryGraphProblem.OpCannotReferToTheseIdents, "W");
 	}
 
 	/**
@@ -351,7 +351,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "add");
 		hasError(scOp);
 		hasMarker(op, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorExpInfixNeedsAtLeastTwoArgs);
@@ -377,7 +377,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "equals");
 		hasError(scOp);
 		hasMarker(op, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredNeedOneOrMoreArgs);
@@ -396,7 +396,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "subset");
 		hasError(scOp);
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
@@ -412,7 +412,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "add");
 		hasError(scOp);
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotExpError, "add");
@@ -428,7 +428,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "equals");
 		hasError(scOp);
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OperatorDefNotPredError, "equals");
@@ -445,10 +445,10 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "equals");
 		hasError(scOp);
-		// FIXME hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OpCannotReferToTheseIdents, "T, c");
+		//hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OpCannotReferToTheseIdents, "T, c");
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.OpCannotReferToTheseIdents, "c");
 	}
 
@@ -462,7 +462,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "equals");
 		hasError(scOp);
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE);
@@ -478,7 +478,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "equals");
 		hasError(scOp);
 		hasMarker(directDef, TheoryAttributes.FORMULA_ATTRIBUTE);
@@ -504,7 +504,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "listSize");
 		ISCNewOperatorDefinition scOp1 = getOperatorDefinition(scTheoryRoot, "listSize1");
 		hasError(scOp);
@@ -535,7 +535,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "listSize");
 		hasError(scOp);
 		hasMarker(recDef, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE,
@@ -589,7 +589,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "listSize");
 		hasError(scOp);
 		hasMarker(recCase1, EventBAttributes.EXPRESSION_ATTRIBUTE, GraphProblem.ExpressionUndefError);
@@ -616,7 +616,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "listSize");
 		hasError(scOp);
 		hasMarker(recCase1, EventBAttributes.EXPRESSION_ATTRIBUTE);
@@ -646,7 +646,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "listSize");
 		hasError(scOp);
 		hasMarker(recCase1, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.ConsArgNotIdentInCase, "1");
@@ -680,7 +680,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "listSize");
 		hasError(scOp);
 		
@@ -705,7 +705,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "listSize");
 		hasError(scOp);
 		hasMarker(recDef, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE, TheoryGraphProblem.NoCoverageAllRecCase);

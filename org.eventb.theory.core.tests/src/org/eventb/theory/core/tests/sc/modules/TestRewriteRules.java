@@ -295,7 +295,7 @@ public class TestRewriteRules extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scRoot);
+		isNotAccurate(scRoot);
 		ISCRewriteRule scRule = getRewriteRule(scRoot, BLOCK_LABEL, REWRITE_LABEL);
 		isNotAccurate(scRule);
 		hasMarker(rew, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.RuleNoRhsError, REWRITE_LABEL);

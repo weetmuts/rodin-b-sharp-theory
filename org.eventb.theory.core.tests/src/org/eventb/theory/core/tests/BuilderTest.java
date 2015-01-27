@@ -1,6 +1,10 @@
 package org.eventb.theory.core.tests;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -14,11 +18,15 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IDeploymentResult;
 import org.eventb.theory.core.ISCTheoryRoot;
+import org.eventb.theory.core.ITheoryDeployer;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IInternalElement;
@@ -63,6 +71,25 @@ public abstract class BuilderTest {
 		final IDeployedTheoryRoot result = DatabaseUtilities.getDeployedTheory(bareName, rodinProject);
 		createRodinFileOf(result);
 		return result;
+	}
+	
+	protected IDeploymentResult createDeployedTheory(ISCTheoryRoot scTheoryRoot, IProgressMonitor monitor) throws CoreException, InterruptedException{
+		assertNotNull(scTheoryRoot);
+		ITheoryDeployer dep = null;
+		
+		if(!scTheoryRoot.hasDeployedVersion()){
+			Set<ISCTheoryRoot> set = new HashSet<ISCTheoryRoot>();
+			set.add(scTheoryRoot);
+			dep = TheoryHierarchyHelper.getDeployer(scTheoryRoot.getRodinProject(), set);
+			dep.deploy(monitor);
+			while(dep.getDeploymentResult()==null){
+				Thread.sleep(1000);
+			}
+		}
+		
+		assertNotNull(dep);
+		
+		return dep.getDeploymentResult();
 	}
 	
 	protected void createRodinFileOf(IInternalElement result)

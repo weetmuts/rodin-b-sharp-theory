@@ -2,14 +2,19 @@ package org.eventb.theory.core.tests.sc;
 
 import static org.eventb.theory.core.DatabaseUtilities.getTheory;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IProofRulesBlock;
+import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.junit.Test;
 
 /**
  * 
  * @author maamria
+ * @author asiehsalehi
  * 
  */
 public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
@@ -50,13 +55,23 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 
 	@Test
 	public void testAcc_004_ErroneousImport() throws Exception {
-		ITheoryRoot root = createTheory(THEORY_NAME);
+		IProgressMonitor monitor = new NullProgressMonitor();
+		
 		ITheoryRoot anotherRoot = createTheory("anotherThy");
-		addImportTheory(root, anotherRoot);
+		ISCTheoryRoot scTheoryAnotherRoot = anotherRoot.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryAnotherRoot = anotherRoot.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(anotherRoot);
+		runBuilder();
+		createDeployedTheory(scTheoryAnotherRoot, monitor);
+		
+		ITheoryRoot root = createTheory(THEORY_NAME);
+		
+		addImportTheory(root, deployedTheoryAnotherRoot);
 		saveRodinFileOf(root);
 		saveRodinFileOf(anotherRoot);
 		runBuilder();
-		// FIXME isAccurate(root.getSCTheoryRoot()); // imported theory not deployed?
+		isAccurate(root.getSCTheoryRoot()); 
 	}
 
 	/**
@@ -158,6 +173,8 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		// theory still accurate
 		// FIXME isAccurate(root.getSCTheoryRoot());
+		// I do not see why theory is accurate
+		isNotAccurate(root.getSCTheoryRoot());
 		// but inference rule is not
 		isNotAccurate(getInferenceRule(root.getSCTheoryRoot(), BLOCK_LABEL, INFERENCE_LABEL));
 	}
@@ -182,6 +199,8 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		// theory still accurate
 		// FIXME isAccurate(root.getSCTheoryRoot());
+		// I do not see why theory is accurate
+		isNotAccurate(root.getSCTheoryRoot());
 		// inference not accurate
 		isNotAccurate(getInferenceRule(root.getSCTheoryRoot(), BLOCK_LABEL, INFERENCE_LABEL));
 	}
@@ -210,6 +229,8 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		// theory accurate
 		// FIXME isAccurate(root.getSCTheoryRoot());
+		// I do not see why theory is accurate
+		isNotAccurate(root.getSCTheoryRoot());
 		// dt has error
 		hasError(getDatatype(root.getSCTheoryRoot(), DATATYPE_NAME));
 		
@@ -235,6 +256,8 @@ public class TestAccuracy extends BasicTheorySCTestWithThyConfig {
 		runBuilder();
 		// theory accurate
 		// FIXME isAccurate(root.getSCTheoryRoot());
+		// I do not see why theory is accurate
+		isNotAccurate(root.getSCTheoryRoot());
 		// dt has error
 		hasError(getDatatype(root.getSCTheoryRoot(), DATATYPE_NAME));
 	}

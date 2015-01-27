@@ -30,6 +30,7 @@ import org.junit.Test;
  * @see DatatypeConstructorModule
  * @see DatatypeDestructorModule
  * @author maamria
+ * @author asiehsalehi
  * 
  */
 public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
@@ -147,7 +148,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		containsMarkers(dt, true);
@@ -167,7 +168,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		containsMarkers(dt, true);
@@ -188,7 +189,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		containsMarkers(dt, true);
@@ -206,7 +207,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		hasMarker(dt, IDENTIFIER_ATTRIBUTE, DatatypeHasNoConsError, "DT");
@@ -224,7 +225,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		hasMarker(dt, IDENTIFIER_ATTRIBUTE, DatatypeHasNoBaseConsError, "DT");
@@ -242,7 +243,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		hasMarker(dt, EventBAttributes.IDENTIFIER_ATTRIBUTE);
@@ -260,7 +261,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		hasMarker(cons, IDENTIFIER_ATTRIBUTE, InvalidIdentForConstructor,
@@ -280,7 +281,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		hasMarker(cons, IDENTIFIER_ATTRIBUTE,
@@ -302,7 +303,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		getDatatypes(scTheoryRoot, "List", "DT");
@@ -325,7 +326,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		hasMarker(dest, EventBAttributes.IDENTIFIER_ATTRIBUTE);
@@ -345,7 +346,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		hasMarker(dest, IDENTIFIER_ATTRIBUTE, InvalidIdentForDestructor, "card");
@@ -365,7 +366,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		hasMarker(dest, IDENTIFIER_ATTRIBUTE,
@@ -384,7 +385,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		hasMarker(dest, TheoryAttributes.TYPE_ATTRIBUTE, TheoryGraphProblem.MissingDestructorTypeError, "head");
@@ -406,7 +407,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "DT");
 		hasError(scDt);
 		getDatatypes(scTheoryRoot, "List", "DT");
@@ -427,7 +428,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		hasMarker(dest, TheoryAttributes.TYPE_ATTRIBUTE);
@@ -443,7 +444,7 @@ public class TestDatatypes extends BasicTheorySCTestWithThyConfig {
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot);
+		isNotAccurate(scTheoryRoot);
 		ISCDatatypeDefinition scDt = getDatatype(scTheoryRoot, "List");
 		hasError(scDt);
 		hasMarker(dest, TheoryAttributes.TYPE_ATTRIBUTE, TheoryGraphProblem.TypeIsNotRefTypeError, "S");

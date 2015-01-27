@@ -19,6 +19,7 @@ import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.IConstructorArgument;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.IGiven;
 import org.eventb.theory.core.IImportTheory;
@@ -53,6 +54,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * 
  * @author maamria
+ * @author asiehsalehi
  * 
  */
 public abstract class TheoryTest extends BuilderTest {
@@ -79,9 +81,27 @@ public abstract class TheoryTest extends BuilderTest {
 		}
 	}
 
+	public IImportTheory addImportTheory(ITheoryRoot root, IDeployedTheoryRoot root1) throws RodinDBException {
+
+		IImportTheoryProject[] importTheoryProjects = root.getChildrenOfType(IImportTheoryProject.ELEMENT_TYPE);
+		for (IImportTheoryProject prj : importTheoryProjects) {
+			if (root1.getRodinProject().equals(prj.getRodinProject())) {
+				final IImportTheoryProject impThyPrj = prj;
+				IImportTheory importThy = impThyPrj.createChild(IImportTheory.ELEMENT_TYPE, null, null);
+				importThy.setImportTheory(root1, null);
+				return importThy;		
+			}
+		}
+			
+		final IImportTheoryProject impThyPrj = root.createChild(
+				IImportTheoryProject.ELEMENT_TYPE, null, null);
+		impThyPrj.setTheoryProject(root1.getRodinProject(), null);
+		IImportTheory importThy = impThyPrj.createChild(IImportTheory.ELEMENT_TYPE, null, null);
+		importThy.setImportTheory(root1, null);
+		return importThy;
+	}
+	
 	public IImportTheory addImportTheory(ITheoryRoot root, ITheoryRoot theory) throws RodinDBException {
-		//FIXME imported theories would need to be deployed: 
-		// take deployed theory as argument here and deploy in callers where relevant
 		final IImportTheoryProject impThyPrj = root.createChild(
 				IImportTheoryProject.ELEMENT_TYPE, null, null);
 		impThyPrj.setTheoryProject(theory.getRodinProject(), null);

@@ -124,26 +124,6 @@ public class TestTheoryPath extends BasicTestSCTheoryPath {
 	}
 	
 	/**
-	 * Error, deployed theory clashes with another in the same project
-	 */
-	@Test
-	public void testTheoryPath_006_DeployedTheoryClash() throws Exception {
-		IProgressMonitor monitor = new NullProgressMonitor();
-		String operatorName = "op1";
-		String theoryName = "thy";
-		ISCTheoryRoot scTheory1 = createSCTheory(operatorName, theoryName, rodinProject, monitor);
-		IDeploymentResult deployedResult = createDeployedTheory(scTheory1, monitor);
-		
-		assertTrue("Theory " + theoryName + " should have been deployed successfully", deployedResult.succeeded());
-		
-		// String theoryName2 = "thy2";
-		// ISCTheoryRoot scTheory2 = createSCTheory(operatorName, theoryName2, rodinProject, monitor);
-		// IDeploymentResult deployedResult2 = createDeployedTheory(scTheory2, monitor);
-
-		// FIXME assertEquals("Deployment should have failed:" + deployedResult2.getErrorMessage(), false, deployedResult2.succeeded());
-	}
-	
-	/**
 	 * Error, deployed theory clashes with another in the different projects
 	 */
 	@Test

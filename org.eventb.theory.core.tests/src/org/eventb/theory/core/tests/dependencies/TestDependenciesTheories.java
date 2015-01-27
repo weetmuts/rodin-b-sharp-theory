@@ -6,20 +6,24 @@ package org.eventb.theory.core.tests.dependencies;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-//import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
-//import org.eventb.theory.core.maths.extensions.dependencies.ProjectTheoryGraph;
+import org.eventb.theory.core.TheoryHierarchyHelper;
 import org.junit.Test;
 
 /**
  * Tests for theories dependencies (theories that import other theories)
  *
- * FIXME : Put back code using the appropriate replacement for ProjectTheoryGraph.
  *
  * @author renatosilva
+ * @author asiehsalehi
  *
  */
 public class TestDependenciesTheories extends BasicTestDependenciesTheories {
@@ -29,25 +33,34 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 */
 	@Test
 	public void testTheoryDependency_001_NoError() throws Exception {
+		IProgressMonitor monitor = new NullProgressMonitor();
+		
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
+		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot1 = root1.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(root1);
+		runBuilder();
+		createDeployedTheory(scTheoryRoot1, monitor);
+		
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
-		addImportTheory(root2, root1);
+		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
+		
+		addImportTheory(root2, deployedTheoryRoot1);
 
 		saveRodinFileOf(root1);
 		saveRodinFileOf(root2);
 		runBuilder();
 
-//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-
-		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
-		// ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
 		isAccurate(scTheoryRoot1);
-		// FIXME isAccurate(scTheoryRoot2);
+		isAccurate(scTheoryRoot2);
+		
+		SortedSet<ISCTheoryRoot> sortedTheories = 
+				new TreeSet<ISCTheoryRoot>(TheoryHierarchyHelper.getSCTheoryDependencyComparator());
+		sortedTheories.add(scTheoryRoot2);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot2));
+		correctOrder(sortedTheories, scTheoryRoot1,scTheoryRoot2);
 
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots2, scTheoryRoot1,scTheoryRoot2);
 	}
 
 	/**
@@ -55,46 +68,57 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 */
 	@Test
 	public void testTheoryDependency_002_NoError() throws Exception {
+		IProgressMonitor monitor = new NullProgressMonitor();
+		
 		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot0 = root0.getDeployedTheoryRoot();
+		
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
+		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot1 = root1.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(root0);
+		saveRodinFileOf(root1);
+		runBuilder();
+		createDeployedTheory(scTheoryRoot0, monitor);
+		createDeployedTheory(scTheoryRoot1, monitor);
+		
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
-		addImportTheory(root2, root0);
-		addImportTheory(root0, root1);
+		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
+		
+		addImportTheory(root2, deployedTheoryRoot0);
+		addImportTheory(root0, deployedTheoryRoot1);
 
 		saveRodinFileOf(root1);
 		saveRodinFileOf(root2);
 		saveRodinFileOf(root0);
 		runBuilder();
-
-		// ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot0);
-		// FIXME isAccurate(scTheoryRoot2);
+		
+		isAccurate(scTheoryRoot0);
+		isAccurate(scTheoryRoot2);
 		isAccurate(scTheoryRoot1);
 
 		importsTheories(scTheoryRoot1);
-		// FIXME importsTheories(scTheoryRoot2, root0.getDeployedTheoryRoot());
-		// FIXME importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot1});
-//		Set<ISCTheoryRoot> checkedRoots1 = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots1,scTheoryRoot1);
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-//		Set<ISCTheoryRoot> checkedRoots0 = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots0,scTheoryRoot1,scTheoryRoot0);
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots2,scTheoryRoot1,scTheoryRoot0,scTheoryRoot2);
+		importsTheories(scTheoryRoot2, deployedTheoryRoot0);
+		importsTheories(scTheoryRoot0, deployedTheoryRoot1);
+		
+		SortedSet<ISCTheoryRoot> sortedTheories = 
+				new TreeSet<ISCTheoryRoot>(TheoryHierarchyHelper.getSCTheoryDependencyComparator());
+		
+		sortedTheories.add(scTheoryRoot1);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot1));
+		correctOrder(sortedTheories, scTheoryRoot1);
+		
+		sortedTheories.clear();
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		correctOrder(sortedTheories, scTheoryRoot1, scTheoryRoot0);
+		
+		sortedTheories.clear();
+		sortedTheories.add(scTheoryRoot2);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot2));
+		// FIXME correctOrder(sortedTheories, scTheoryRoot1, scTheoryRoot0, scTheoryRoot2);
 	}
 
 	/**
@@ -102,13 +126,29 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 */
 	@Test
 	public void testTheoryDependency_003_CycleError() throws Exception {
+		IProgressMonitor monitor = new NullProgressMonitor();
+		
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
+		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot1 = root1.getDeployedTheoryRoot();
+		
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
-		addImportTheory(root2, root1);
-		addImportTheory(root1, root2);
+		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot2 = root2.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(root1);
+		saveRodinFileOf(root2);
+		runBuilder();
+		createDeployedTheory(scTheoryRoot1, monitor);
+		createDeployedTheory(scTheoryRoot2, monitor);
+		
+		
+		addImportTheory(root2, deployedTheoryRoot1);
+		addImportTheory(root1, deployedTheoryRoot2);
 
 		saveRodinFileOf(root1);
 		saveRodinFileOf(root2);
+		
 		IMarker[] runBuilderProblems = runBuilderProblems(rodinProject);
 		for(IMarker marker: runBuilderProblems){
 			String message = (String) marker.getAttribute(IMarker.MESSAGE);
@@ -124,13 +164,30 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 */
 	@Test
 	public void testTheoryDependency_004_IndependentGraphsNoError() throws Exception {
-		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		IProgressMonitor monitor = new NullProgressMonitor();
+		
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
-		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
+		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot1 = root1.getDeployedTheoryRoot();
+		
 		ITheoryRoot root3 = createTheory(THEORY_NAME+3);
+		ISCTheoryRoot scTheoryRoot3 = root3.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot3 = root3.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(root1);
+		saveRodinFileOf(root3);
+		runBuilder();
+		createDeployedTheory(scTheoryRoot1, monitor);
+		createDeployedTheory(scTheoryRoot3, monitor);	
+		
+		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
+		
+		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
+		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
 
-		addImportTheory(root0, root1);
-		addImportTheory(root2, root3);
+		addImportTheory(root0, deployedTheoryRoot1);
+		addImportTheory(root2, deployedTheoryRoot3);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
@@ -138,44 +195,47 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		saveRodinFileOf(root3);
 		runBuilder();
 
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot3 = root3.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot0);
-		// FIXME isAccurate(scTheoryRoot2);
+		isAccurate(scTheoryRoot0);
+		isAccurate(scTheoryRoot2);
 		isAccurate(scTheoryRoot1);
 		isAccurate(scTheoryRoot3);
 
 		importsTheories(scTheoryRoot1);
-		// FIXME importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot0, deployedTheoryRoot1);
 		importsTheories(scTheoryRoot3);
-		// FIXME importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot());
-
-//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots2,scTheoryRoot3,scTheoryRoot2);
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0,scTheoryRoot2});
-//		Set<ISCTheoryRoot> bothCheckedRoots = projectTheoryGraph.getCheckedRoots();
-
-//		correctPartialOrder(bothCheckedRoots,scTheoryRoot3,scTheoryRoot2);
-//		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot0);
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0, scTheoryRoot1, scTheoryRoot2, scTheoryRoot3});
-//		Set<ISCTheoryRoot> allCheckedRoots = projectTheoryGraph.getCheckedRoots();
-
-//		correctPartialOrder(allCheckedRoots,scTheoryRoot3,scTheoryRoot2);
-//		correctPartialOrder(allCheckedRoots,scTheoryRoot1,scTheoryRoot0);
+		importsTheories(scTheoryRoot2, deployedTheoryRoot3);
+		
+		SortedSet<ISCTheoryRoot> sortedTheories = 
+				new TreeSet<ISCTheoryRoot>(TheoryHierarchyHelper.getSCTheoryDependencyComparator());
+		
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		correctOrder(sortedTheories, scTheoryRoot1, scTheoryRoot0);
+		
+		sortedTheories.clear();
+		sortedTheories.add(scTheoryRoot2);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot2));
+		// FIXME correctOrder(sortedTheories, scTheoryRoot1, scTheoryRoot3, scTheoryRoot2);
+		
+		sortedTheories.clear();
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.add(scTheoryRoot2);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot2));
+		correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot3, scTheoryRoot2);
+		//FIXME correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot1, scTheoryRoot0);
+		
+		sortedTheories.clear();
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.add(scTheoryRoot1);
+		sortedTheories.add(scTheoryRoot2);
+		sortedTheories.add(scTheoryRoot3);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot1));
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot2));
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot3));
+		correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot3, scTheoryRoot2);
+		// FIXME correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot1, scTheoryRoot0);
 	}
 
 	/**
@@ -184,47 +244,57 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 */
 	@Test
 	public void testTheoryDependency_005_DependentGraphsNoError() throws Exception {
-		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		IProgressMonitor monitor = new NullProgressMonitor();
+		
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
+		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot1 = root1.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(root1);
+		runBuilder();
+		createDeployedTheory(scTheoryRoot1, monitor);
+		
+		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
+		
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
+		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
 
-		addImportTheory(root0, root1);
-		addImportTheory(root2, root1);
+		addImportTheory(root0, deployedTheoryRoot1);
+		addImportTheory(root2, deployedTheoryRoot1);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
 		saveRodinFileOf(root2);
 		runBuilder();
 
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot0);
-		// FIXME isAccurate(scTheoryRoot2);
+		isAccurate(scTheoryRoot0);
+		isAccurate(scTheoryRoot2);
 		isAccurate(scTheoryRoot1);
 
 		importsTheories(scTheoryRoot1);
-		// FIXME importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot());
-		// FIXME importsTheories(scTheoryRoot2, root1.getDeployedTheoryRoot());
-
-//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot2});
-//		Set<ISCTheoryRoot> checkedRoots2 = projectTheoryGraph.getCheckedRoots();
-
-//		correctOrder(checkedRoots2,scTheoryRoot1,scTheoryRoot2);
-
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0,scTheoryRoot2});
-//		Set<ISCTheoryRoot> bothCheckedRoots = projectTheoryGraph.getCheckedRoots();
-
-//		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot2);
-//		correctPartialOrder(bothCheckedRoots,scTheoryRoot1,scTheoryRoot0);
+		importsTheories(scTheoryRoot0, deployedTheoryRoot1);
+		importsTheories(scTheoryRoot2, deployedTheoryRoot1);
+		
+		SortedSet<ISCTheoryRoot> sortedTheories = 
+				new TreeSet<ISCTheoryRoot>(TheoryHierarchyHelper.getSCTheoryDependencyComparator());
+		
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		correctOrder(sortedTheories, scTheoryRoot1, scTheoryRoot0);
+		
+		sortedTheories.clear();
+		sortedTheories.add(scTheoryRoot2);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot2));
+		correctOrder(sortedTheories, scTheoryRoot1, scTheoryRoot2);
+		
+		sortedTheories.clear();
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.add(scTheoryRoot2);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot2));
+		correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot2);
+		correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot0);
 	}
 
 	/**
@@ -233,14 +303,34 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 */
 	@Test
 	public void testTheoryDependency_006_MultipleImports_NoError() throws Exception {
-		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		IProgressMonitor monitor = new NullProgressMonitor();
+	
 		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
+		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot1 = root1.getDeployedTheoryRoot();
+		
 		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
+		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot2 = root2.getDeployedTheoryRoot();
+		
 		ITheoryRoot root3 = createTheory(THEORY_NAME+3);
-
-		addImportTheory(root0, root1);
-		addImportTheory(root0, root2);
-		addImportTheory(root2, root3);
+		ISCTheoryRoot scTheoryRoot3 = root3.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot3 = root3.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(root1);
+		saveRodinFileOf(root2);
+		saveRodinFileOf(root3);
+		runBuilder();
+		createDeployedTheory(scTheoryRoot1, monitor);
+		createDeployedTheory(scTheoryRoot2, monitor);	
+		createDeployedTheory(scTheoryRoot3, monitor);
+		
+		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
+		
+		addImportTheory(root0, deployedTheoryRoot1);
+		addImportTheory(root0, deployedTheoryRoot2);
+		addImportTheory(root2, deployedTheoryRoot3);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
@@ -248,30 +338,25 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		saveRodinFileOf(root3);
 		runBuilder();
 
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot3 = root3.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot0);
+		isAccurate(scTheoryRoot0);
 		isAccurate(scTheoryRoot1);
-		// FIXME isAccurate(scTheoryRoot2);
+		isAccurate(scTheoryRoot2);
 		isAccurate(scTheoryRoot3);
 
 		importsTheories(scTheoryRoot3);
-		// FIXME importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot(), root2.getDeployedTheoryRoot());
-		// FIXME importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot());
-
-//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
-
-//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot2);
-//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot1);
-//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot0);
-//		correctPartialOrder(checkedRoots,scTheoryRoot2,scTheoryRoot0);
-//		correctPartialOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
+		importsTheories(scTheoryRoot0, deployedTheoryRoot1, deployedTheoryRoot2);
+		importsTheories(scTheoryRoot2, deployedTheoryRoot3);
+		
+		SortedSet<ISCTheoryRoot> sortedTheories = 
+				new TreeSet<ISCTheoryRoot>(TheoryHierarchyHelper.getSCTheoryDependencyComparator());
+		
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		//FIXME correctPartialOrder(sortedTheories, scTheoryRoot3, scTheoryRoot2);
+		//FIXME correctPartialOrder(sortedTheories, scTheoryRoot3, scTheoryRoot1);
+		//FIXME correctPartialOrder(sortedTheories, scTheoryRoot3, scTheoryRoot0);
+		correctPartialOrder(sortedTheories, scTheoryRoot2, scTheoryRoot0);
+		correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot0);
 	}
 
 	/**
@@ -280,18 +365,48 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 	 */
 	@Test
 	public void testTheoryDependency_006_1_MultipleImports_NoError() throws Exception {
-		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
-		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
-		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
-		ITheoryRoot root3 = createTheory(THEORY_NAME+3);
-		ITheoryRoot root4 = createTheory(THEORY_NAME+4);
-		ITheoryRoot root5 = createTheory(THEORY_NAME+5);
+		IProgressMonitor monitor = new NullProgressMonitor();
 
-		addImportTheory(root0, root1);
-		addImportTheory(root0, root2);
-		addImportTheory(root2, root3);
-		addImportTheory(root2, root4);
-		addImportTheory(root4, root5);
+		ITheoryRoot root1 = createTheory(THEORY_NAME+1);
+		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot1 = root1.getDeployedTheoryRoot();
+		
+		ITheoryRoot root2 = createTheory(THEORY_NAME+2);
+		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot2 = root2.getDeployedTheoryRoot();
+		
+		ITheoryRoot root3 = createTheory(THEORY_NAME+3);
+		ISCTheoryRoot scTheoryRoot3 = root3.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot3 = root3.getDeployedTheoryRoot();
+		
+		ITheoryRoot root4 = createTheory(THEORY_NAME+4);
+		ISCTheoryRoot scTheoryRoot4 = root4.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot4 = root4.getDeployedTheoryRoot();
+		
+		ITheoryRoot root5 = createTheory(THEORY_NAME+5);
+		ISCTheoryRoot scTheoryRoot5 = root5.getSCTheoryRoot();
+		IDeployedTheoryRoot deployedTheoryRoot5 = root5.getDeployedTheoryRoot();
+		
+		saveRodinFileOf(root1);
+		saveRodinFileOf(root2);
+		saveRodinFileOf(root3);
+		saveRodinFileOf(root4);
+		saveRodinFileOf(root5);
+		runBuilder();
+		createDeployedTheory(scTheoryRoot1, monitor);
+		createDeployedTheory(scTheoryRoot2, monitor);	
+		createDeployedTheory(scTheoryRoot3, monitor);
+		createDeployedTheory(scTheoryRoot4, monitor);
+		createDeployedTheory(scTheoryRoot5, monitor);
+		
+		ITheoryRoot root0 = createTheory(THEORY_NAME+0);
+		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
+
+		addImportTheory(root0, deployedTheoryRoot1);
+		addImportTheory(root0, deployedTheoryRoot2);
+		addImportTheory(root2, deployedTheoryRoot3);
+		addImportTheory(root2, deployedTheoryRoot4);
+		addImportTheory(root4, deployedTheoryRoot5);
 
 		saveRodinFileOf(root0);
 		saveRodinFileOf(root1);
@@ -300,37 +415,29 @@ public class TestDependenciesTheories extends BasicTestDependenciesTheories {
 		saveRodinFileOf(root4);
 		saveRodinFileOf(root5);
 		runBuilder();
-
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot0 = root0.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot1 = root1.getSCTheoryRoot();
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot2 = root2.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot3 = root3.getSCTheoryRoot();
-		@SuppressWarnings("unused")
-		ISCTheoryRoot scTheoryRoot4 = root4.getSCTheoryRoot();
-		ISCTheoryRoot scTheoryRoot5 = root5.getSCTheoryRoot();
-		// FIXME isAccurate(scTheoryRoot0);
+		
+		isAccurate(scTheoryRoot0);
 		isAccurate(scTheoryRoot1);
-		// FIXME isAccurate(scTheoryRoot2);
+		isAccurate(scTheoryRoot2);
 		isAccurate(scTheoryRoot3);
-		// FIXME isAccurate(scTheoryRoot4);
+		isAccurate(scTheoryRoot4);
 		isAccurate(scTheoryRoot5);
 
 		importsTheories(scTheoryRoot3);
 		importsTheories(scTheoryRoot5);
-		// FIXME importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot(), root2.getDeployedTheoryRoot());
-		// FIXME importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot(), root4.getDeployedTheoryRoot());
-		// FIXME importsTheories(scTheoryRoot4, root5.getDeployedTheoryRoot());
-
-//		ProjectTheoryGraph projectTheoryGraph = new ProjectTheoryGraph();
-//		projectTheoryGraph.setCheckedRoots(new ISCTheoryRoot[]{scTheoryRoot0});
-//		Set<ISCTheoryRoot> checkedRoots = projectTheoryGraph.getCheckedRoots();
-
-//		correctPartialOrder(checkedRoots,scTheoryRoot5,scTheoryRoot4, scTheoryRoot2, scTheoryRoot0);
-//		correctPartialOrder(checkedRoots,scTheoryRoot4,scTheoryRoot2, scTheoryRoot0);
-//		correctPartialOrder(checkedRoots,scTheoryRoot3,scTheoryRoot2, scTheoryRoot0);
-//		correctPartialOrder(checkedRoots,scTheoryRoot2,scTheoryRoot0);
-//		correctPartialOrder(checkedRoots,scTheoryRoot1,scTheoryRoot0);
+		importsTheories(scTheoryRoot0, root1.getDeployedTheoryRoot(), root2.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot2, root3.getDeployedTheoryRoot(), root4.getDeployedTheoryRoot());
+		importsTheories(scTheoryRoot4, root5.getDeployedTheoryRoot());
+		
+		SortedSet<ISCTheoryRoot> sortedTheories = 
+				new TreeSet<ISCTheoryRoot>(TheoryHierarchyHelper.getSCTheoryDependencyComparator());
+		
+		sortedTheories.add(scTheoryRoot0);
+		sortedTheories.addAll(TheoryHierarchyHelper.importClosure(scTheoryRoot0));
+		// FIXME correctPartialOrder(sortedTheories, scTheoryRoot5, scTheoryRoot4, scTheoryRoot2, scTheoryRoot0);
+		// FIXME correctPartialOrder(sortedTheories, scTheoryRoot4, scTheoryRoot2, scTheoryRoot0);
+		// FIXME correctPartialOrder(sortedTheories, scTheoryRoot3, scTheoryRoot2, scTheoryRoot0);
+		correctPartialOrder(sortedTheories, scTheoryRoot2, scTheoryRoot0);
+		correctPartialOrder(sortedTheories, scTheoryRoot1, scTheoryRoot0);
 	}
 }
