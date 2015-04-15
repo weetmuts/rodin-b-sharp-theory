@@ -127,11 +127,16 @@ public class AvailableTheoryAttributeManipulation extends AbstractAvailableTheor
 		return results.toArray(new String[results.size()]);
 	}
 	
+	// Returns all theories that are already referenced in the same project, except the one of theoryElement.
 	private Set<String> getAlreadySelectedTheories(IAvailableTheory theoryElement, IRodinProject rodinProject) throws RodinDBException{
 		final Set<String> results = new HashSet<String>();
 		IAvailableTheoryProject project = (IAvailableTheoryProject)theoryElement.getParent();
 		
 		for(IAvailableTheory availableTheory: project.getTheories()){
+			if (theoryElement.equals(availableTheory)) {
+				// Do not return our own theory
+				continue;
+			}
 			if(availableTheory.getAvailableTheoryProject()!=null && availableTheory.getAvailableTheoryProject().equals(rodinProject) && availableTheory.hasAvailableTheory())
 				results.add(availableTheory.getDeployedTheory().getComponentName());
 		}
