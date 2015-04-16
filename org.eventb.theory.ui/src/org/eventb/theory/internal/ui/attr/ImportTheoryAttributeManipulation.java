@@ -147,6 +147,10 @@ public class ImportTheoryAttributeManipulation extends AbstractImportTheoryAttri
 		
 		for(IImportTheoryProject prj: importProjects){
 			for(IImportTheory importTheory: prj.getImportTheories()){
+				if (theoryElement.equals(importTheory)) {
+					// Do not return our own theory
+					continue;
+				}
 				if(importTheory.getImportTheoryProject()!=null && importTheory.getImportTheoryProject().equals(prj.getTheoryProject()) && importTheory.hasImportTheory())
 						results.add(importTheory.getImportTheory().getComponentName());
 			}		
