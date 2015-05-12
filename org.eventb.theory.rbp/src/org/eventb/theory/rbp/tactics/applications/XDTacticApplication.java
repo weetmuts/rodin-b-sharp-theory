@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.applications;
 
+import org.eclipse.swt.graphics.Image;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -18,14 +19,14 @@ import org.eventb.theory.rbp.reasoners.XDReasoner;
 import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.POContext;
-import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.IPredicateApplication;
 
 /**
  * A special tactic application for the translation of all extended formulae to classical Event-B language.
  * @author maamria
  *
  */
-public class XDTacticApplication implements ITacticApplication {
+public class XDTacticApplication implements IPredicateApplication {
 	
 	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbPxd";
 
@@ -59,5 +60,17 @@ public class XDTacticApplication implements ITacticApplication {
 				return "Root already has children";
 			}
 		};
+	}
+
+	@Override
+	public Image getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getTooltip() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

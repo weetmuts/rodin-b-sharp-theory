@@ -10,6 +10,7 @@ package org.eventb.theory.rbp.tactics.applications;
 import java.util.List;
 
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.graphics.Image;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pm.IProofAttempt;
@@ -27,7 +28,7 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.POContext;
 import org.eventb.theory.rbp.tactics.ui.TheoremSelectorWizard;
 import org.eventb.theory.rbp.utils.ProverUtilities;
-import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.IPredicateApplication;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -35,7 +36,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  * 
  */
-public class THTacticApplication implements ITacticApplication {
+public class THTacticApplication implements IPredicateApplication {
 
 	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbPth";
 
@@ -96,5 +97,17 @@ public class THTacticApplication implements ITacticApplication {
 				return "Root already has children";
 			}
 		};
+	}
+
+	@Override
+	public Image getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getTooltip() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
