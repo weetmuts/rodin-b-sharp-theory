@@ -87,9 +87,12 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	 */
 	protected void select(Formula<?> formula, IAccumulator<ITacticApplication> accum) {
 		List<IGeneralRule> rules = manager.getRewriteRules(false, formula.getClass(), context);
+		FormulaFactory factory = context.getFormulaFactory();
 		for (IGeneralRule rule : rules) {
 			if (rule instanceof IDeployedRewriteRule) {
-				if (canFindABinding(formula, ( (IDeployedRewriteRule) rule).getLeftHandSide())) {
+				Formula<?> ruleLhs = ( (IDeployedRewriteRule) rule).getLeftHandSide();
+				ruleLhs = ruleLhs.translate(factory);
+				if (canFindABinding(formula, ruleLhs)) {
 					if (( (IDeployedRewriteRule) rule).isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {
 						continue;
 					}
@@ -97,7 +100,6 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 							( (IDeployedRewriteRule) rule).getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
 				}
 			} else { //if (rule instanceof ISCRewriteRule) {
-				FormulaFactory factory = context.getFormulaFactory();
 				try {
 					ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
 					if (canFindABinding(formula, ( (ISCRewriteRule) rule).getSCFormula(factory, typeEnvironment))) {

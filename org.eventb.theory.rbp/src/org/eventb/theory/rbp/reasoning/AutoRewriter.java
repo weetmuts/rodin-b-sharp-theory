@@ -92,14 +92,17 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 		Formula<?> result = original;
 		Formula<?> ruleLhs = null;
 		Formula<?> ruleRhs = null;
+		FormulaFactory factory = context.getFormulaFactory();
 		for(IGeneralRule rule: rules){
 			if (rule instanceof IDeployedRewriteRule) {
 				ruleLhs = ((IDeployedRewriteRule) rule).getLeftHandSide();
 				ruleRhs = ((IDeployedRewriteRule) rule).getRightHandSides().get(0).getRHSFormula();
+				ruleLhs = ruleLhs.translate(factory);
+				ruleRhs = ruleRhs.translate(factory);
+			
 			}
 			else { //if (rule instanceof ISCRewriteRule) {
 				try {
-				FormulaFactory factory = context.getFormulaFactory();
 				ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
 				ruleLhs = ((ISCRewriteRule) rule).getSCFormula(factory, typeEnvironment);
 				ruleRhs = Arrays.asList(((ISCRewriteRule) rule).getRuleRHSs()).get(0).getSCFormula(factory, typeEnvironment);
