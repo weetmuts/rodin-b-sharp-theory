@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.applications;
 
+import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
+
 import java.util.List;
 
 import org.eclipse.jface.wizard.WizardDialog;
@@ -15,9 +17,8 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCTheorem;
@@ -50,64 +51,65 @@ public class THTacticApplication implements IPredicateApplication {
 		return new ITactic() {
 			@Override
 			public Object apply(IProofTreeNode node, IProofMonitor pm) {
-				if (node != null && node.isOpen()) {
-					final Object origin = node.getProofTree().getOrigin();
-					if (origin instanceof IProofAttempt) {
-						final IProofAttempt pa = (IProofAttempt) origin;
-						int order = -1;
-						boolean axm = false;
-						try {
-							IPOSource[] sources = pa.getStatus().getPOSequent().getSources();
-							for (IPOSource source : sources){
-								if (source.getSource() instanceof ISCTheorem){
-									ISCTheorem scTheorem = (ISCTheorem) source.getSource();
-									order = scTheorem.getOrder();
-									if (scTheorem.getSource() instanceof ISCAxiomaticDefinitionAxiom)
-										axm = true;
-									break;
-								}
-							}
-						} catch (RodinDBException e) {
-							ProverUtilities.log(e, "uanbale to check sources of PO");
-							return "Unable to continue";
-						}
-				
-						final IPOContext context = new POContext(pa.getComponent().getPORoot(), order, axm);
-						ITypeEnvironment typeEnvironment = node.getSequent().typeEnvironment();
-						// Show wizard
-						TheoremSelectorWizard wizard = new TheoremSelectorWizard(context, typeEnvironment);
-						WizardDialog dialog = new WizardDialog(wizard.getShell(), wizard);
-						dialog.setTitle(wizard.getWindowTitle());
-						dialog.open();
-						// get the theorem if any
-						List<String> theorems = wizard.getTheorems();
-						if (theorems == null || theorems.isEmpty()) {
-							return "No theorem provided";
-						}
-						THReasoner reasoner = new THReasoner();
-						IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), 
-								new MultipleStringInput(context, theorems), pm);
-						if (reasonerOutput == null) return "! Plugin returned null !";
-						if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
-						IProofRule rule = (IProofRule)reasonerOutput;
-						if (node.applyRule(rule)) return null;
-						else return "Theorems cannot be added";
-					}
+				if (node == null || !node.isOpen()) {
+					return "Node already has children";
 				}
-				return "Root already has children";
+				final Object origin = node.getProofTree().getOrigin();
+				if (!(origin instanceof IProofAttempt)) {
+					return "Contextual information of PO is required";
+				}
+				final IProofAttempt pa = (IProofAttempt) origin;
+				int order = -1;
+				boolean axm = false;
+				try {
+					IPOSource[] sources = pa.getStatus().getPOSequent()
+							.getSources();
+					for (IPOSource source : sources) {
+						if (source.getSource() instanceof ISCTheorem) {
+							ISCTheorem scTheorem = (ISCTheorem) source
+									.getSource();
+							order = scTheorem.getOrder();
+							if (scTheorem.getSource() instanceof ISCAxiomaticDefinitionAxiom)
+								axm = true;
+							break;
+						}
+					}
+				} catch (RodinDBException e) {
+					ProverUtilities.log(e, "unable to check sources of PO");
+					return "Unable to continue";
+				}
+
+				final IPOContext context = new POContext(pa.getComponent()
+						.getPORoot(), order, axm);
+				ITypeEnvironment typeEnvironment = node.getSequent()
+						.typeEnvironment();
+				// Show wizard
+				TheoremSelectorWizard wizard = new TheoremSelectorWizard(
+						context, typeEnvironment);
+				WizardDialog dialog = new WizardDialog(wizard.getShell(),
+						wizard);
+				dialog.setTitle(wizard.getWindowTitle());
+				dialog.open();
+				// get the theorem if any
+				List<String> theorems = wizard.getTheorems();
+				if (theorems == null || theorems.isEmpty()) {
+					return "No theorem provided";
+				}
+				THReasoner reasoner = new THReasoner();
+				IReasonerInput input = new MultipleStringInput(context,
+						theorems);
+				return reasonerTac(reasoner, input).apply(node, pm);
 			}
 		};
 	}
 
 	@Override
 	public Image getIcon() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getTooltip() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

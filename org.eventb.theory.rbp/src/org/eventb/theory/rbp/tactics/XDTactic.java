@@ -7,9 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.Predicate;
@@ -31,6 +31,6 @@ public class XDTactic implements ITacticProvider {
 			ITacticApplication appli = new XDTacticApplication();
 			return singletonList(appli);
 		}
-		return new ArrayList<ITacticApplication>();
+		return emptyList();
 	}
 }

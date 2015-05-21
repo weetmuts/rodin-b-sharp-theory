@@ -7,12 +7,13 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.applications;
 
+import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
+
 import org.eclipse.swt.graphics.Image;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.XDReasoner;
@@ -40,37 +41,31 @@ public class XDTacticApplication implements IPredicateApplication {
 		return new ITactic() {
 			@Override
 			public Object apply(IProofTreeNode node, IProofMonitor pm) {
-				if (node != null && node.isOpen()) {
-					final Object origin = node.getProofTree().getOrigin();
-					if (origin instanceof IProofAttempt) {
-						final IProofAttempt pa = (IProofAttempt) origin;
-						final IPOContext context = new POContext(pa.getComponent().getPORoot());
-						XDReasoner reasoner = new XDReasoner();
-						IReasonerOutput reasonerOutput = reasoner.apply(node.getSequent(), new ContextualInput(context), pm);
-						if (reasonerOutput == null) return "! Plugin returned null !";
-						if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
-						IProofRule rule = (IProofRule)reasonerOutput;
-						if (node.applyRule(rule)) return null;
-						else return "Rule "+rule.getDisplayName()+" is not applicable";
-					}
-					else {
-						return "Contextual information of PO is required";
-					}
+				if (node == null || !node.isOpen()) {
+					return "Node already has children";
 				}
-				return "Root already has children";
+				final Object origin = node.getProofTree().getOrigin();
+				if (!(origin instanceof IProofAttempt)) {
+					return "Contextual information of PO is required";
+				}
+
+				final IProofAttempt pa = (IProofAttempt) origin;
+				final IPOContext context = new POContext(pa.getComponent()
+						.getPORoot());
+				XDReasoner reasoner = new XDReasoner();
+				IReasonerInput input = new ContextualInput(context);
+				return reasonerTac(reasoner, input).apply(node, pm);
 			}
 		};
 	}
 
 	@Override
 	public Image getIcon() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getTooltip() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
