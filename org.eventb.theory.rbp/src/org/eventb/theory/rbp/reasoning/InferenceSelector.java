@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
@@ -255,6 +256,8 @@ public class InferenceSelector {
 					}
 					IDeployedGiven firstGiven =givens.get(0);
 					Predicate givenPredicate = firstGiven.getGivenClause();
+					FormulaFactory factory = context.getFormulaFactory();
+					givenPredicate = givenPredicate.translate(factory);
 					IBinding binding = finder.match(predicate, givenPredicate,
 							true);
 					if (binding == null) {
