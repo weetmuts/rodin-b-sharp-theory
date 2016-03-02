@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.eventb.theory.oldrbp;singleton:=true
+Bundle-SymbolicName: org.eventb.theory.rbp;singleton:=true
 Bundle-Version: 3.0.0
 Bundle-Activator: org.eventb.theory.rbp.plugin.RbPPlugin
 Bundle-Vendor: %Bundle-Vendor
@@ -21,3 +21,8 @@ Import-Package: org.eclipse.jface.resource,
  org.eclipse.swt.graphics,
  org.eclipse.ui.plugin,
  org.eventb.ui.prover
+Export-Package: org.eventb.theory.rbp.plugin;x-friends:="org.eventb.theory.tests.rbp",
+ org.eventb.theory.rbp.reasoners;x-friends:="org.eventb.theory.tests.rbp",
+ org.eventb.theory.rbp.reasoners.input;x-friends:="org.eventb.theory.tests.rbp",
+ org.eventb.theory.rbp.rulebase;x-friends:="org.eventb.theory.tests.rbp",
+ org.eventb.theory.rbp.rulebase.basis;x-friends:="org.eventb.theory.tests.rbp"
