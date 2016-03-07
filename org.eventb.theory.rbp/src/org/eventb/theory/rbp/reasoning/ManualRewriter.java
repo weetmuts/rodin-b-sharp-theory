@@ -32,7 +32,8 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  * @author maamria
  *
  */
-public class ManualRewriter extends AbstractRulesApplyer{
+@Deprecated
+public class ManualRewriter extends AbstractRulesApplyer {
 	
 	public ManualRewriter(IPOContext context){
 		super(context);
@@ -55,13 +56,14 @@ public class ManualRewriter extends AbstractRulesApplyer{
 	 * @return the antecedents or <code>null</code> if the rule was not found or
 	 *         is inapplicable.
 	 */
-	public IAntecedent[] getAntecedents(Predicate predicate, IPosition position, boolean isGoal, String projectName,String theoryName, String ruleName){
+	public IAntecedent[] getAntecedents(Predicate predicate, IPosition position, boolean isGoal, String projectName, String theoryName, String ruleName){
 		// get the subformula
 		Formula<?> formula = predicate.getSubFormula(position);
 		if (formula == null) {
 			return null;
 		}
 		FormulaFactory factory = context.getFormulaFactory();
+		
 		// get the rule
 		IGeneralRule rule = manager.getRewriteRule(projectName, ruleName, theoryName, formula.getClass(), context);
 		if (rule == null) {
@@ -69,12 +71,17 @@ public class ManualRewriter extends AbstractRulesApplyer{
 		}
 		if (rule instanceof IDeployedRewriteRule) {
 			Formula<?> ruleLhs = ( (IDeployedRewriteRule) rule).getLeftHandSide();
+			ruleLhs = ruleLhs.translate(factory);
 			// calculate binding between rule lhs and subformula
 			IBinding binding = finder.match(formula, ruleLhs, true);
 			if (binding == null) {
 				return null;
 			}
 			List<IDeployedRuleRHS> ruleRHSs = ( (IDeployedRewriteRule) rule).getRightHandSides();
+			for (IDeployedRuleRHS ruleRHS : ruleRHSs) {
+				Formula<?> rhsFormula = ruleRHS.getRHSFormula();
+				rhsFormula.translate(factory);
+			}
 			// @BUG FIX: when rule is unconditional there is no need to generate
 			// extra antecedent
 			boolean doesNotRequiresAdditionalAntecedents = ( (IDeployedRewriteRule) rule).isComplete() || !( (IDeployedRewriteRule) rule).isConditional();

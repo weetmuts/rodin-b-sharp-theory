@@ -11,6 +11,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualRewriteReasoner;
+import org.eventb.theory.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.IPositionApplication;
@@ -27,7 +28,7 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 	private RewriteInput input;
 
 	public RewriteTacticApplication(RewriteInput input) {
-		super(input.predicate, input.position);
+		super(input.getPredicate(), input.getPosition());
 		this.input = input;
 	}
 
@@ -38,7 +39,8 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 	}
 
 	public String getHyperlinkLabel() {
-		return input.description;
+		IPRMetadata prMetadata = input.getPRMetadata();
+		return prMetadata.getDescription();
 	}
 
 	public ITactic getTactic(String[] inputs, String globalInput) {

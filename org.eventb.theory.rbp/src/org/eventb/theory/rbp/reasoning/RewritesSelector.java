@@ -42,6 +42,8 @@ import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.ISCRewriteRule;
+import org.eventb.theory.rbp.reasoners.input.IPRMetadata;
+import org.eventb.theory.rbp.reasoners.input.PRMetadata;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
@@ -93,21 +95,31 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 				Formula<?> ruleLhs = ( (IDeployedRewriteRule) rule).getLeftHandSide();
 				ruleLhs = ruleLhs.translate(factory);
 				if (canFindABinding(formula, ruleLhs)) {
-					if (( (IDeployedRewriteRule) rule).isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {
+					IDeployedRewriteRule deployedRule = (IDeployedRewriteRule) rule;
+					if (deployedRule.isConditional() && !predicate.isWDStrict(accum.getCurrentPosition())) {
 						continue;
 					}
-					accum.add(new RewriteTacticApplication(new RewriteInput(( (IDeployedRewriteRule) rule).getProjectName(), ( (IDeployedRewriteRule) rule).getTheoryName(), ( (IDeployedRewriteRule) rule).getRuleName(), 
-							( (IDeployedRewriteRule) rule).getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
+					String projectName = deployedRule.getProjectName();
+					String theoryName = deployedRule.getTheoryName();
+					String ruleName = deployedRule.getRuleName();
+					IPRMetadata prMetadata = new PRMetadata(projectName, theoryName, ruleName);
+					RewriteInput input = new RewriteInput(isGoal ? null : predicate, accum.getCurrentPosition(), prMetadata);
+					accum.add(new RewriteTacticApplication(input));
 				}
 			} else { //if (rule instanceof ISCRewriteRule) {
 				try {
-					ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
-					if (canFindABinding(formula, ( (ISCRewriteRule) rule).getSCFormula(factory, typeEnvironment))) {
-						if (ProverUtilities.isConditional((ISCRewriteRule) rule, factory, typeEnvironment) && !predicate.isWDStrict(accum.getCurrentPosition())) {
+					ISCRewriteRule scRule = (ISCRewriteRule) rule;
+					ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, scRule);
+					if (canFindABinding(formula, (scRule.getSCFormula(factory, typeEnvironment)))) {
+						if (ProverUtilities.isConditional(scRule, factory, typeEnvironment) && !predicate.isWDStrict(accum.getCurrentPosition())) {
 							continue;
 						}
-						accum.add(new RewriteTacticApplication(new RewriteInput(( (ISCRewriteRule) rule).getRoot().getRodinProject().getElementName(), ( (ISCRewriteRule) rule).getRoot().getElementName(), ( (ISCRewriteRule) rule).getLabel(), 
-								( (ISCRewriteRule) rule).getDescription(), isGoal ? null : predicate, accum.getCurrentPosition(), context)));
+						String projectName = scRule.getRoot().getRodinProject().getElementName();
+						String theoryName = scRule.getRoot().getElementName();
+						String ruleName = scRule.getLabel();
+						IPRMetadata prMetadata = new PRMetadata(projectName, theoryName, ruleName);
+						accum.add(new RewriteTacticApplication(new RewriteInput( 
+								isGoal ? null : predicate, accum.getCurrentPosition(), prMetadata)));
 					}
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block

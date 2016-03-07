@@ -11,168 +11,263 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extensions.pm.ComplexBinder;
+import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.SimpleBinder;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.IRepairableInputReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.core.IGeneralRule;
+import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.input.ContextualInput;
+import org.eventb.theory.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
-import org.eventb.theory.rbp.reasoning.ManualRewriter;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.rodinp.core.IRodinProject;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
+import org.eventb.theory.rbp.rulebase.basis.POContext;
+import org.eventb.theory.rbp.utils.ProverUtilities;
+import org.rodinp.core.IInternalElement;
 
 /**
  * <p>
  * An implementation of a manual reasoner for the rule base.
  * </p>
+ * <p>
+ * <i>htson</i>: This has been implemented based on the original version 1.0 and
+ * the (now deprecated) {@link org.eventb.theory.rbp.reasoning.ManualRewriter}
+ * class.
+ * </p>
  * 
  * @author maamria
- * 
+ * @author htson
+ * @version 1.0
+ * @see RewriteInput
+ * @see RewriteRuleContent
+ * @since 3.1.0
  */
-public class ManualRewriteReasoner extends ContextAwareReasoner implements IRepairableInputReasoner {
+public class ManualRewriteReasoner implements IReasoner {
 
-	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".manualRewriteReasoner";
-	
-	private static final String DESC_KEY = "ruleDesc";
-	private static final String POSITION_KEY = "pos";
-	private static final String RULE_KEY = "rewRule";
-	private static final String THEORY_KEY = "theory";
-	private static final String PROJECT_KEY = "project";
+	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID
+			+ ".manualRewriteReasoner";
 
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm) {
-		final RewriteInput input = (RewriteInput) reasonerInput;
-		final Predicate hyp = input.predicate;
-		final IPosition position = input.position;
-		final String theoryName = input.theoryName;
-		final String projectName = input.projectName;
-		final String ruleName = input.ruleName;
-		final String displayName = input.description;
-		final IPOContext context = input.context;
-
-		ManualRewriter rewriter = new ManualRewriter(context);
-
-		final Predicate goal = seq.goal();
-		if (hyp == null) {
-			IAntecedent[] antecedents = rewriter.getAntecedents(goal, position, true, projectName, theoryName, ruleName);
-			if (antecedents == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rule " + ruleName + " is not applicable to " + goal + " at position " + position);
-			}
-			return ProverFactory.makeProofRule(this, input, goal, displayName + " on goal", antecedents);
-		} else {
-			// Hypothesis rewriting
-			if (!seq.containsHypothesis(hyp)) {
-				return ProverFactory.reasonerFailure(this, input, "Nonexistent hypothesis: " + hyp);
-			}
-			IAntecedent[] antecedents = rewriter.getAntecedents(hyp, position, false, projectName, theoryName, ruleName);
-			if (antecedents == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rule " + ruleName + " is not applicable to " + hyp + " at position " + position);
-			}
-			return ProverFactory.makeProofRule(this, input, null, hyp, displayName + " on " + hyp, antecedents);
-		}
-	}
-
-	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) throws SerializeException {
-		super.serializeInput(input, writer); // processes CONTEXT_INPUT_KEY
-		writer.putString(POSITION_KEY, ((RewriteInput) input).position.toString());
-		writer.putString(THEORY_KEY, ((RewriteInput) input).theoryName);
-		writer.putString(RULE_KEY, ((RewriteInput) input).ruleName);
-		writer.putString(DESC_KEY, ((RewriteInput) input).description);
-		writer.putString(PROJECT_KEY, ((RewriteInput) input).projectName);
-	}
-
-	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
-		return deserializeInput(reader, false);
-	}
-
-	private static String findMissingProjectKey(IPOContext context,
-			String theoryString) {
-		final Set<IRodinProject> theoryProjects = BaseManager.getDefault()
-				.findTheoryProjects(context, theoryString);
-		if (theoryProjects.size() != 1) {
-			final String reason;
-			if (theoryProjects.size() == 0) {
-				reason = "no accessible project defines theory " + theoryString
-						+ ", might be caused by a missing theory path";
-			} else {
-				reason = "ambiguous theory " + theoryString
-						+ ", found in several projects: "
-						+ theoryProjects.toString();
-			}
-			final String message = "Failed to repair missing project key in "
-					+ context.getParentRoot().getPRRoot() + ": " + reason;
-			CoreUtilities.log(null, message);
-			return null;
-		}
-
-		final IRodinProject theoryProject = theoryProjects.iterator().next();
-		return theoryProject.getElementName();
-	}
-	
-	private IReasonerInput deserializeInput(IReasonerInputReader reader,
-			boolean repair) throws SerializeException {
-		final ContextualInput contextual = (ContextualInput) super.deserializeInput(reader);
-		final String posString = reader.getString(POSITION_KEY);
-		final String theoryString = reader.getString(THEORY_KEY);
-		final String ruleString = reader.getString(RULE_KEY);
-		final String ruleDesc = reader.getString(DESC_KEY);
-		final IPOContext context = contextual.context;
-		final IPosition position = FormulaFactory.makePosition(posString);
-
-		final String projectString;
-		if (repair) {
-			projectString = findMissingProjectKey(context, theoryString);
-			if (projectString == null) {
-				return null;
-			}
-		} else {
-			projectString = reader.getString(PROJECT_KEY);
-		}
-
-		Set<Predicate> neededHyps = reader.getNeededHyps();
-
-		final int length = neededHyps.size();
-		if (length == 0) {
-			// Goal rewriting
-			return new RewriteInput(projectString, theoryString, ruleString, ruleDesc, null, position, context);
-		}
-		// Hypothesis rewriting
-		if (length != 1) {
-			throw new SerializeException(new IllegalStateException("Expected exactly one needed hypothesis!"));
-		}
-		Predicate pred = null;
-		for (Predicate hyp : neededHyps) {
-			pred = hyp;
-		}
-		return new RewriteInput(projectString, theoryString, ruleString, ruleDesc, pred, position, context);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IReasoner#getReasonerID()
+	 */
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
-	@Override
-	public IReasonerInput repair(IReasonerInputReader reader) {
-		try {
-			return deserializeInput(reader, true);
-		} catch (Throwable t) {
-			// repair failed, log and resign
-			CoreUtilities.log(t, "While repairing broken input for reasoner " + getReasonerID());
+	public IReasonerOutput apply(IProverSequent seq,
+			IReasonerInput reasonerInput, IProofMonitor pm) {
+		// PRECONDITION
+		assert reasonerInput instanceof RewriteInput;
+
+		// Get information from the reasoner input
+		RewriteInput input = (RewriteInput) reasonerInput;
+		Predicate hyp = input.getPredicate();
+		IPosition position = input.getPosition();
+		IPRMetadata prMetadata = input.getPRMetadata();
+		final String projectName = prMetadata.getProjectName();
+		final String theoryName = prMetadata.getTheoryName();
+		final String ruleName = prMetadata.getRuleName();
+
+		// Get the PO Context from the sequent's origin.
+		Object origin = seq.getOrigin();
+		IPOContext context;
+		if (origin instanceof IInternalElement) {
+			IInternalElement root = ((IInternalElement) origin).getRoot();
+			if (root instanceof IEventBRoot) {
+				context = new POContext((IEventBRoot) root);
+			} else {
+				return ProverFactory.reasonerFailure(this, input,
+						"Cannot determine the context of the sequent");
+			}
+		} else {
+			return ProverFactory.reasonerFailure(this, input,
+					"Cannot determine the context of the sequent");
+		}
+
+		// Check if the it is goal or hypothesis rewriting.
+		boolean isGoal = (hyp == null);
+		Predicate predicate;
+		if (isGoal) { // Goal rewrite
+			predicate = seq.goal();
+		} else { // Hypothesis rewrite
+			predicate = hyp;
+		}
+
+		// Get the subformula at the specified location of the predicate
+		Formula<?> formula = predicate.getSubFormula(position);
+		if (formula == null) {
+			return ProverFactory.reasonerFailure(this, input,
+					"Invalid position " + position
+							+ (isGoal ? " for goal " : " for hypothesis ")
+							+ predicate);
+		}
+
+		// Get the rewrite rule (given the meta-data) from the current context
+		BaseManager manager = BaseManager.getDefault();
+		IGeneralRule rule = manager.getRewriteRule(projectName, ruleName,
+				theoryName, formula.getClass(), context);
+		if (rule == null) {
+			return ProverFactory.reasonerFailure(this, input,
+					"Cannot find rewrite rule " + projectName + "::"
+							+ theoryName + "::" + ruleName
+							+ " within the given context");
+		}
+
+		// Get the content of the found rewriting rule.
+		FormulaFactory factory = formula.getFactory();
+		IRewriteRuleContent ruleContent;
+		if (rule instanceof IDeployedRewriteRule) {
+			ruleContent = new RewriteRuleContent((IDeployedRewriteRule) rule);
+		} else {
+			try {
+				ruleContent = new RewriteRuleContent((ISCRewriteRule) rule,
+						factory);
+			} catch (CoreException e) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Error fetching content of " + projectName + "::"
+								+ theoryName + "::" + ruleName
+								+ " within the given context");
+			}
+		}
+
+		// calculate binding between rule lhs and subformula
+		Matcher finder = new Matcher(factory);
+		Formula<?> ruleLhs = ruleContent.getLeftHandSide();
+		IBinding binding = finder.match(formula, ruleLhs, true);
+		if (binding == null) {
 			return null;
 		}
+
+		// binder for the condition
+		SimpleBinder simpleBinder = new SimpleBinder(factory);
+		// binder for the rhs
+		ComplexBinder complexBinder = new ComplexBinder(factory);
+
+		Predicate[] conditions = ruleContent.getConditions();
+		Formula<?>[] ruleRhses = ruleContent.getRightHandSides();
+		boolean additionalAntecedntRequired = ruleContent
+				.additionalAntecendentRequired();
+
+		// may need to make an extra antecedent if rule incomplete
+		IAntecedent[] antecedents = (additionalAntecedntRequired ? new IAntecedent[conditions.length + 1]
+				: new IAntecedent[conditions.length]);
+		List<Predicate> allConditions = (additionalAntecedntRequired ? new ArrayList<Predicate>()
+				: null);
+		for (int i = 0; i != conditions.length; i++) {
+			// get the condition
+			Predicate condition = (Predicate) simpleBinder.bind(conditions[i],
+					binding);
+			// if rule is incomplete keep it till later as we will make negation
+			// of disjunction of all conditions
+			if (additionalAntecedntRequired)
+				allConditions.add(condition);
+
+			// get the new subformula
+			Formula<?> rhsFormula = complexBinder.bind(ruleRhses[i], binding,
+					true);
+			// apply the rewriting at the given position
+			Predicate newPred = predicate.rewriteSubFormula(position,
+					rhsFormula);
+			Predicate goal = (isGoal ? newPred : null);
+
+			// add interesting hyps only (no T)
+			Set<Predicate> addedHyps = new HashSet<Predicate>();
+			List<IHypAction> hypActions = new ArrayList<IHypAction>();
+
+			// If the condition is not T then add the condition as a hypothesis
+			// and select it.
+			if (!condition.equals(ProverUtilities.BTRUE)) {
+				addedHyps.add(condition);
+				hypActions.add(ProverFactory.makeSelectHypAction(Collections
+						.singleton(condition)));
+			}
+
+			// If the rewriting a hypothesis then:
+			// 1. Hide the original hypothesis.
+			// 2. If the rewritten hypothesis is not T then add the rewritten
+			// hypothesis and select it.
+			if (!isGoal) {
+				hypActions.add(ProverFactory.makeHideHypAction(Collections
+						.singleton(predicate)));
+				if (!newPred.equals(ProverUtilities.BTRUE)) {
+					addedHyps.add(newPred);
+					hypActions
+							.add(ProverFactory.makeSelectHypAction(Collections
+									.singleton(newPred)));
+				}
+			}
+			addedHyps = addedHyps.size() > 0 ? addedHyps : null;
+			antecedents[i] = ProverFactory.makeAntecedent(goal, addedHyps,
+					null, hypActions);
+		}
+
+		if (additionalAntecedntRequired) {
+			Predicate negOfDisj = factory.makeUnaryPredicate(
+					Formula.NOT,
+					allConditions.size() == 1 ? allConditions.get(0) : factory
+							.makeAssociativePredicate(Formula.LOR,
+									allConditions, null), null);
+			Predicate goal = (isGoal ? predicate : null);
+			antecedents[conditions.length] = ProverFactory.makeAntecedent(goal,
+					Collections.singleton(negOfDisj), ProverFactory
+							.makeSelectHypAction(Collections
+									.singleton(negOfDisj)));
+		}
+		String displayName = ruleContent.getDescription();
+		return ProverFactory.makeProofRule(this, input, isGoal ? predicate
+				: null, hyp, displayName + " on " + hyp, antecedents);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IReasoner#serializeInput(IReasonerInput, IReasonerInputWriter)
+	 */
+	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
+			throws SerializeException {
+		((RewriteInput) input).serialise(writer);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IReasoner#deserializeInput(IReasonerInputReader)
+	 */
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
+			throws SerializeException {
+		return deserializeInput(reader, false);
+	}
+
+	private IReasonerInput deserializeInput(IReasonerInputReader reader,
+			boolean repair) throws SerializeException {
+		return new RewriteInput(reader);
 	}
 
 }

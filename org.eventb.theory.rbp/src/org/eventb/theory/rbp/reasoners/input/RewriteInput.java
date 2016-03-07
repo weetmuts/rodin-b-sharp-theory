@@ -1,9 +1,15 @@
 package org.eventb.theory.rbp.reasoners.input;
 
+import java.util.Set;
+
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
-import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * <p>The input to this reasoner includes the predicate, the position as well as rule-related information.</p>
@@ -11,39 +17,104 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  *
  */
-public class RewriteInput extends ContextualInput{
+public class RewriteInput extends PRMetadataReasonerInput implements IReasonerInput {
 	
-	public IPosition position;
-	public String description;
-	public String ruleName;
-	public String theoryName;
-	public String projectName;
-	public Predicate predicate;
+	private static final String POSITION_KEY = "pos";
+
+	private IPosition position;
+	private Predicate predicate;
 	
 	/**
-	 * Constructs an input with the given parameters.
-	 * @param theoryName the parent theory
-	 * @param ruleName the name of the rule to apply
-	 * @param ruleDesc the description to display if rule applied successfully
-	 * @param pred the predicate
-	 * @param position the position
-	 * @param context the context
+	 * Constructs a rewrite reasoner input with the predicate to be rewritten,
+	 * the position where rewriting occurs, and the meta-data of the proof rule
+	 * that is used for rewriting.
+	 * 
+	 * @param predicate
+	 *            a predicate to be rewritten. A <code>non-null</code> indicates
+	 *            that it is a hypothesis. Otherwise, <code>null</code>
+	 *            indicates that the goal is rewritten.
+	 * @param position
+	 *            the position (within the hypothesis or goal) where rewriting
+	 *            occurs.
+	 * @param prMetadata
+	 *            the meta-data of the proof rule that is used for rewriting.
 	 */
-	public RewriteInput(String projectName, String theoryName, String ruleName, String ruleDesc,
-			Predicate predicate, IPosition position, IPOContext context){
-		super(context);
-		this.projectName = projectName;
+	public RewriteInput(Predicate predicate, IPosition position,
+			IPRMetadata prMetadata) {
+		super(prMetadata);
 		this.position = position;
-		this.description = ruleDesc;
-		this.ruleName = ruleName;
-		this.theoryName = theoryName;
 		this.predicate = predicate;
 	}
 	
+	/**
+	 * @param reader
+	 * @throws SerializeException 
+	 */
+	public RewriteInput(IReasonerInputReader reader) throws SerializeException {
+		super(reader);
+		String posString = reader.getString(POSITION_KEY);
+		this.position = FormulaFactory.makePosition(posString);
+		Set<Predicate> neededHyps = reader.getNeededHyps();
+
+		final int length = neededHyps.size();
+		if (length == 0) {
+			// Goal rewriting
+			this.predicate = null;
+		} else if (length != 1) {
+			throw new SerializeException(new IllegalStateException(
+					"Expected exactly one needed hypothesis!"));
+		} else {
+			this.predicate = neededHyps.iterator().next();
+		}
+
+	}
+
 	@Override
 	public void applyHints(ReplayHints renaming) {
 		if (predicate != null) {
 			predicate = renaming.applyHints(predicate);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IReasonerInput#getError()
+	 */
+	@Override
+	public String getError() {
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public Predicate getPredicate() {
+		return predicate;
+	}
+
+	/**
+	 * @return
+	 */
+	public IPosition getPosition() {
+		return position;
+	}
+	
+	public void serialise(IReasonerInputWriter writer)
+			throws SerializeException {
+		super.serialise(writer);
+		writer.putString(POSITION_KEY, this.position.toString());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return  predicate + "@" + position + " using " + super.toString();
+	}
+
+	
 }
