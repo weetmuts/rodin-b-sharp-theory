@@ -55,9 +55,9 @@ import org.rodinp.core.IInternalElement;
  * An implementation of a manual reasoner for the rule base.
  * </p>
  * <p>
- * <i>htson</i>: This has been implemented based on the original version 1.0 and
- * the (now deprecated) {@link org.eventb.theory.rbp.reasoning.ManualRewriter}
- * class.
+ * <i>htson</i>: This has been re-implemented based on the original version 1.0
+ * and the (now deprecated)
+ * {@link org.eventb.theory.rbp.reasoning.ManualRewriter} class.
  * </p>
  * 
  * @author maamria
@@ -118,6 +118,9 @@ public class ManualRewriteReasoner implements IReasoner {
 			predicate = seq.goal();
 		} else { // Hypothesis rewrite
 			predicate = hyp;
+			if (!seq.containsHypothesis(hyp)) {
+				return ProverFactory.reasonerFailure(this, input, "Nonexistent hypothesis: " + hyp);
+			}
 		}
 
 		// Get the subformula at the specified location of the predicate
@@ -137,7 +140,8 @@ public class ManualRewriteReasoner implements IReasoner {
 			return ProverFactory.reasonerFailure(this, input,
 					"Cannot find rewrite rule " + projectName + "::"
 							+ theoryName + "::" + ruleName
-							+ " within the given context");
+							+ " within the given context for "
+							+ formula.getClass());
 		}
 
 		// Get the content of the found rewriting rule.
