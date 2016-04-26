@@ -12,13 +12,17 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoning.AutoRewriter;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
@@ -27,7 +31,8 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  *
  */
-public class AutoRewriteReasoner extends ContextAwareReasoner {
+public class AutoRewriteReasoner extends AbstractContextDependentReasoner
+		implements IReasoner {
 
 	private static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".autoRewriteReasoner";
 	
@@ -38,9 +43,9 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 	}
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
-		ContextualInput contextualInput = (ContextualInput) input;
+		IPOContext context = getContext(seq);
 		final FormulaFactory ff = seq.getFormulaFactory();
-		final IFormulaRewriter rewriter = getRewriter(contextualInput.context);
+		final IFormulaRewriter rewriter = getRewriter(context);
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			// Rewrite the hypothesis
@@ -76,12 +81,12 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 
 		if (newGoal != goal) {
 			IAntecedent[] antecedent = new IAntecedent[] { ProverFactory.makeAntecedent(newGoal, null, null, hypActions) };
-			return ProverFactory.makeProofRule(this, contextualInput, goal, null, null, getDisplayName(), antecedent);
+			return ProverFactory.makeProofRule(this, input, goal, null, null, getDisplayName(), antecedent);
 		}
 		if (!hypActions.isEmpty()) {
-			return ProverFactory.makeProofRule(this, contextualInput, getDisplayName(), hypActions);
+			return ProverFactory.makeProofRule(this, input, getDisplayName(), hypActions);
 		}
-		return ProverFactory.reasonerFailure(this, contextualInput, "No rewrites applicable");
+		return ProverFactory.reasonerFailure(this, input, "No rewrites applicable");
 	}
 
 	// can be overridden to provide alternative display name
@@ -118,5 +123,17 @@ public class AutoRewriteReasoner extends ContextAwareReasoner {
 			resultPred = pred.rewrite(rewriter);
 		}
 		return resultPred;
+	}
+
+	@Override
+	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
+			throws SerializeException {
+		// Do nothing
+	}
+
+	@Override
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
+			throws SerializeException {
+		return new EmptyInput();
 	}
 }

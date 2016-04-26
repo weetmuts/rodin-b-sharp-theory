@@ -10,18 +10,24 @@ package org.eventb.theory.rbp.reasoners;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.SerializeException;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoning.AutoInferer;
+import org.eventb.theory.rbp.rulebase.IPOContext;
 
 /**
  * @author maamria
  * 
  */
-public class AutoInferenceReasoner extends ContextAwareReasoner {
+public class AutoInferenceReasoner extends AbstractContextDependentReasoner
+		implements IReasoner {
 
 	private static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".autoInferenceReasoner";
 	
@@ -35,19 +41,32 @@ public class AutoInferenceReasoner extends ContextAwareReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		ContextualInput contextualInput = (ContextualInput) input;
-		AutoInferer autoInferer = new AutoInferer(contextualInput.context);
+		IPOContext context = getContext(seq);
+		AutoInferer autoInferer = new AutoInferer(context);
 		IAntecedent[] antecedents = autoInferer.applyInferenceRules(seq);
 		if (antecedents == null) {
-			return ProverFactory.reasonerFailure(this, contextualInput, "Inference "
+			return ProverFactory.reasonerFailure(this, input, "Inference "
 					+ getReasonerID() + " is not applicable for "
 					+ seq.goal() + ".");
 		}
 		// Generate the successful reasoner output
-		return ProverFactory.makeProofRule(this, contextualInput, seq.goal(), getDisplayName(), antecedents);
+		return ProverFactory.makeProofRule(this, input, seq.goal(),
+				getDisplayName(), antecedents);
 	}
 	
 	protected String getDisplayName() {
 		return DISPLAY_NAME;
+	}
+
+	@Override
+	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
+			throws SerializeException {
+		// Do nothing
+	}
+
+	@Override
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
+			throws SerializeException {
+		return new EmptyInput();
 	}
 }
