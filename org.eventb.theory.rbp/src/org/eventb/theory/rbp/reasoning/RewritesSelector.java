@@ -25,6 +25,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaInspector;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -38,7 +39,6 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.ISCRewriteRule;
@@ -63,7 +63,6 @@ import org.eventb.ui.prover.ITacticApplication;
 public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 
 	protected final Predicate predicate;
-	protected final Matcher finder;
 	protected final BaseManager manager;
 	protected final boolean isGoal;
 
@@ -73,7 +72,6 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 		this.predicate = predicate;
 		this.isGoal = isGoal;
 		this.manager = BaseManager.getDefault();
-		this.finder = new Matcher(context.getFormulaFactory());
 		this.context = context;
 	}
 
@@ -141,11 +139,8 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	 *         <code>form</code>
 	 */
 	protected boolean canFindABinding(Formula<?> form, Formula<?> pattern) {
-		IBinding binding = finder.match(form, pattern, true);
-		if (binding == null) {
-			return false;
-		}
-		return true;
+		ISpecialization specialization = Matcher.match(form, pattern);
+		return (specialization != null);
 	}
 
 	@Override

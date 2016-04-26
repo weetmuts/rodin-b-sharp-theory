@@ -19,6 +19,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -31,8 +32,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.extensions.pm.ComplexBinder;
-import org.eventb.core.ast.extensions.pm.IBinding;
+import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.rbp.rulebase.IPOContext;
@@ -46,11 +46,11 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  */
 public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewriter{
 	
-	private ComplexBinder binder;
+//	private ComplexBinder binder;
 	
 	public AutoRewriter(IPOContext context){
 		super(context);
-		this.binder =  new ComplexBinder(context.getFormulaFactory());
+//		this.binder =  new ComplexBinder(context.getFormulaFactory());
 	}
 	
 	/**
@@ -111,12 +111,13 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 					e.printStackTrace();
 				};
 			}
-			IBinding binding = finder.match(original, ruleLhs, true);
-			if(binding == null){
+			ISpecialization specialization = Matcher.match(original, ruleLhs);
+			if (specialization == null){
 				continue;
 			}
 			// since rule is unconditional
-			Formula<?> boundRhs = binder.bind(ruleRhs, binding, true);
+			Formula<?> boundRhs = ruleRhs.specialize(specialization);
+//			Formula<?> boundRhs = binder.bind(ruleRhs, binding, true);
 			if (boundRhs == null){
 				continue;
 			}
