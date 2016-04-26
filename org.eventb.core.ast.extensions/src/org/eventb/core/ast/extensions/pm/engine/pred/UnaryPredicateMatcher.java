@@ -1,36 +1,61 @@
+/*******************************************************************************
+ * Copyright (c) 2011,2016 University of Southampton.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.engine.pred;
 
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
-import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
+import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.AbstractFormulaMatcher;
+import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
 
 /**
- * @since 1.0
- * @author maamria
+ * <p>
+ * Implementation for matching unary predicates.
+ * </p>
  *
+ * @author maamria
+ * @author htson: Re-implements using {@link IFormulaMatcher}.
+ * @version 2.0
+ * @since 1.0
+ * @noextend This class is not intended to be sub-classed by clients.
  */
-public class UnaryPredicateMatcher extends PredicateMatcher<UnaryPredicate> {
+public class UnaryPredicateMatcher extends
+		AbstractFormulaMatcher<UnaryPredicate> implements IFormulaMatcher {
 
-	public UnaryPredicateMatcher() {
-		super(UnaryPredicate.class);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#gatherBindings(ISpecialization, Formula, Formula)
+	 */
 	@Override
-	protected boolean gatherBindings(UnaryPredicate upForm, UnaryPredicate upPattern,
-			Binding existingBinding){
-		Predicate fChild = upForm.getChild();
-		Predicate pChild = upPattern.getChild();
+	protected ISpecialization gatherBindings(ISpecialization specialization,
+			UnaryPredicate formula, UnaryPredicate pattern) {
+		Predicate fChild = formula.getChild();
+		Predicate pChild = pattern.getChild();
 		if(pChild instanceof PredicateVariable){
-			return existingBinding.putPredicateMapping((PredicateVariable) pChild, fChild);
+			throw new UnsupportedOperationException(
+					"Predicate variable is unsupported");
 		}
-		return matchingFactory.match(fChild, pChild, existingBinding);
+		return Matcher.match(specialization, fChild, pChild);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#getFormula(Formula)
+	 */
 	@Override
-	protected UnaryPredicate getPredicate(Predicate p) {
-		return (UnaryPredicate) p;
+	protected UnaryPredicate getFormula(Formula<?> formula) {
+		return (UnaryPredicate) formula;
 	}
 
 }

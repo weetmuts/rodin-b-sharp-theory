@@ -1,51 +1,60 @@
+/*******************************************************************************
+ * Copyright (c) 2011,2016 University of Southampton.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.engine.pred;
 
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
-import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
-import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
+import org.eventb.core.ast.extensions.pm.assoc.IAssociativityProblem;
+import org.eventb.core.ast.extensions.pm.engine.AbstractFormulaMatcher;
+import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
 
 /**
- * TODO better matching
- * 
- * @since 1.0
- * @author maamria
+ * <p>
+ * Implementation for matching associative predicates.
+ * </p>
  *
+ * @author maamria
+ * @author htson: Re-implements using {@link IFormulaMatcher}.
+ * @version 2.0
+ * @since 1.0
+ * @noextend This class is not intended to be sub-classed by clients.
  */
-public class AssociativePredicateMatcher extends PredicateMatcher<AssociativePredicate> {
+public class AssociativePredicateMatcher extends
+		AbstractFormulaMatcher<AssociativePredicate> implements IFormulaMatcher {
 
 
-	public AssociativePredicateMatcher(){
-		super(AssociativePredicate.class);
-	}
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#gatherBindings(ISpecialization, Formula, Formula)
+	 */
 	@Override
-	protected boolean gatherBindings(AssociativePredicate form,
-			AssociativePredicate pattern, Binding existingBinding){
+	protected ISpecialization gatherBindings(ISpecialization specialization,
+			AssociativePredicate formula, AssociativePredicate pattern) {
 		// get the children
-		Predicate[] formChildren = form.getChildren();
+		Predicate[] formChildren = formula.getChildren();
 		Predicate[] patternChildren = pattern.getChildren();
-		ACProblem<Predicate> problem = new ACPredicateProblem(form.getTag(), formChildren, patternChildren, existingBinding);
-		boolean partialMatchAcceptable = existingBinding.isPartialMatchAcceptable();
-		Binding solution = (Binding) problem.solve(partialMatchAcceptable);
-		if(solution != null){
-			solution.makeImmutable();
-			if(existingBinding.insertBinding(solution)){
-				if(partialMatchAcceptable){
-					existingBinding.setAssociativePredicateComplement(solution.getAssociativePredicateComplement());
-				}
-			}
-			return true;
-		}
-		return false;
-		
+		IAssociativityProblem problem = new ACPredicateProblem(formula.getTag(), formChildren, patternChildren);
+		return problem.solve(specialization);		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#getFormula(Formula)
+	 */
 	@Override
-	protected AssociativePredicate getPredicate(Predicate p) {
-		return (AssociativePredicate) p;
+	protected AssociativePredicate getFormula(Formula<?> formula) {
+		return (AssociativePredicate) formula;
 	}
 
 }

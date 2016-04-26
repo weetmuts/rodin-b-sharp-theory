@@ -1,32 +1,54 @@
+/*******************************************************************************
+ * Copyright (c) 2011,2016 University of Southampton.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.engine.pred;
 
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
-import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.AbstractFormulaMatcher;
+import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
 
 /**
- * @since 1.0
- * @author maamria
+ * <p>
+ * Implementation for matching literal predicates.
+ * </p>
  *
+ * @author maamria
+ * @author htson: Re-implements using {@link IFormulaMatcher}.
+ * @version 2.0
+ * @since 1.0
+ * @noextend This class is not intended to be sub-classed by clients.
  */
-public class LiteralPredicateMatcher extends PredicateMatcher<LiteralPredicate> {
+public class LiteralPredicateMatcher extends
+		AbstractFormulaMatcher<LiteralPredicate> implements IFormulaMatcher {
 
-	public LiteralPredicateMatcher() {
-		super(LiteralPredicate.class);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#gatherBindings(ISpecialization, Formula, Formula)
+	 */
+	@Override
+	protected ISpecialization gatherBindings(ISpecialization specialization,
+			LiteralPredicate formula, LiteralPredicate pattern) {
+		if (formula.equals(pattern))
+			return specialization;
+		else
+			return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#getFormula(Formula)
+	 */
 	@Override
-	protected boolean gatherBindings(LiteralPredicate form,
-			LiteralPredicate pattern, Binding existingBinding){
-		if(!form.equals(pattern)){
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	protected LiteralPredicate getPredicate(Predicate p) {
-		return (LiteralPredicate) p;
+	protected LiteralPredicate getFormula(Formula<?> formula) {
+		return (LiteralPredicate) formula;
 	}
 }

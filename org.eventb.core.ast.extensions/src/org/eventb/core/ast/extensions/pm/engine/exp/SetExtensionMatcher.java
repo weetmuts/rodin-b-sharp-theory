@@ -1,47 +1,79 @@
+/*******************************************************************************
+ * Copyright (c) 2011,2016 University of Southampton.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.engine.exp;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
-import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.AbstractFormulaMatcher;
+import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
 
 /**
- * Simple matcher, expected to work only with singleton sets.
- * @since 1.0
- * @author maamria
+ * <p>
+ * Implementation for matching set extensions.
+ * </p>
  *
+ * @author maamria
+ * @author htson Re-implemented based on {@link IFormulaMatcher} interface.
+ * @version 2.0
+ * @since 1.0
  */
-public class SetExtensionMatcher extends ExpressionMatcher<SetExtension> {
+public class SetExtensionMatcher extends AbstractFormulaMatcher<SetExtension>
+		implements IFormulaMatcher {
 
-	public SetExtensionMatcher(){
-		super(SetExtension.class);
-	}
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#gatherBindings(ISpecialization, Formula, Formula)
+	 */
 	@Override
-	protected boolean gatherBindings(SetExtension form, SetExtension pattern,
-			Binding existingBinding)  {
+	protected ISpecialization gatherBindings(ISpecialization specialization,
+			SetExtension formula, SetExtension pattern) {
 		Expression[] patternMembers = pattern.getMembers();
-		Expression[] formMembers = form.getMembers();
-		// work with singleton
-		if(formMembers.length == 1 && patternMembers.length == 1){
-			Expression formMem = formMembers[0];
-			Expression patternMem = patternMembers[0];
-			if(patternMem instanceof FreeIdentifier){
-				if(existingBinding.putExpressionMapping((FreeIdentifier) patternMem, formMem)){
-					return true;
+		Expression[] formulaMembers = formula.getMembers();
+
+		if (patternMembers.length != formulaMembers.length) {
+			return null;
+		}
+		for (int i = 0; i != patternMembers.length; i++) {
+			Expression formulaMem = formulaMembers[i];
+			Expression patternMem = patternMembers[i];
+			// DO NOT NEED to unify the type for this since the type must be
+			// unified on the input formula and pattern. 
+			if (patternMem instanceof FreeIdentifier) {
+				specialization = Matcher.insert(specialization,
+						(FreeIdentifier) patternMem, formulaMem);
+				if (specialization == null) {
+					return null;
+				}
+			} else {
+				specialization = Matcher.match(specialization, formulaMem,
+						patternMem);
+				if (specialization == null) {
+					return null;
 				}
 			}
-			if(matchingFactory.match(formMem, patternMem, existingBinding)){
-				return true;
-			}
 		}
-		return false;
+		return specialization;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#getFormula(Formula)
+	 */
 	@Override
-	protected SetExtension getExpression(Expression e) {
-		return (SetExtension) e;
+	protected SetExtension getFormula(Formula<?> formula) {
+		return (SetExtension) formula;
 	}
 
 }

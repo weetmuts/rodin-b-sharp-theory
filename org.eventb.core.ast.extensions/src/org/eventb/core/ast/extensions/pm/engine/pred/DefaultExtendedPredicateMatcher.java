@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011,2016 University of Southampton.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,63 +8,33 @@
  *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.engine.pred;
 
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
-import org.eventb.core.ast.extensions.pm.engine.PredicateMatcher;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.extensions.pm.engine.AbstractExtendedFormulaMatcher;
+import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
 
 /**
- * 
- * @author maamria
+ * <p>
+ * Implementation for matching extended predicates.
+ * </p>
  *
+ * @author maamria
+ * @author htson: Re-implements using {@link IFormulaMatcher}.
+ * @version 2.0
+ * @since 1.0
+ * @noextend This class is not intended to be sub-classed by clients.
  */
-public class DefaultExtendedPredicateMatcher extends PredicateMatcher<ExtendedPredicate> {
+public class DefaultExtendedPredicateMatcher extends
+		AbstractExtendedFormulaMatcher<ExtendedPredicate> implements IFormulaMatcher {
 
-	public DefaultExtendedPredicateMatcher() {
-		super(ExtendedPredicate.class);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#getFormula(Formula)
+	 */
 	@Override
-	protected boolean gatherBindings(ExtendedPredicate form, ExtendedPredicate pattern, Binding existingBinding) {
-		Expression[] formulaExpressions = form.getChildExpressions();
-		Expression[] patternExpressions =  pattern.getChildExpressions();
-		if (formulaExpressions.length != patternExpressions.length){
-			return false;
-		}
-		for (int i = 0 ; i < formulaExpressions.length ; i++){
-			if (patternExpressions[i] instanceof FreeIdentifier){
-				if (! existingBinding.putExpressionMapping((FreeIdentifier) patternExpressions[i], formulaExpressions[i])){
-					return false;
-				}
-			}
-			else if (!matchingFactory.match(formulaExpressions[i], patternExpressions[i], existingBinding)){
-				return false;
-			}
-		}
-		Predicate[] formulaPredicates = form.getChildPredicates();
-		Predicate[] patternPredicates = pattern.getChildPredicates();
-		if (formulaPredicates.length != patternPredicates.length){
-			return false;
-		}
-		for (int i = 0 ; i < formulaPredicates.length ; i++){
-			if (patternPredicates[i] instanceof PredicateVariable){
-				if (!existingBinding.putPredicateMapping((PredicateVariable) patternPredicates[i], formulaPredicates[i])){
-					return false;
-				}
-			}
-			else if (!matchingFactory.match(formulaPredicates[i], patternPredicates[i], existingBinding)){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	protected ExtendedPredicate getPredicate(Predicate p) {
-		return (ExtendedPredicate) p;
+	protected ExtendedPredicate getFormula(Formula<?> formula) {
+		return (ExtendedPredicate) formula;
 	}
 
 }

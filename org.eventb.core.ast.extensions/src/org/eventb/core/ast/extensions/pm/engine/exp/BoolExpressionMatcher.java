@@ -1,36 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2011,2016 University of Southampton.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.engine.exp;
 
 import org.eventb.core.ast.BoolExpression;
-import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
-import org.eventb.core.ast.extensions.pm.engine.ExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.Matcher;
+import org.eventb.core.ast.extensions.pm.engine.AbstractFormulaMatcher;
+import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
 
 /**
- * @since 1.0
- * @author maamria
+ * <p>
+ * Implementation for matching bool expressions.
+ * </p>
  *
+ * @author maamria
+ * @author htson Re-implemented based on {@link IFormulaMatcher} interface.
+ * @version 2.0
+ * @since 1.0
  */
-public class BoolExpressionMatcher extends ExpressionMatcher<BoolExpression> {
+public class BoolExpressionMatcher extends AbstractFormulaMatcher<BoolExpression>
+		implements IFormulaMatcher {
 
-	public BoolExpressionMatcher() {
-		super(BoolExpression.class);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#gatherBindings(ISpecialization, Formula, Formula)
+	 */
 	@Override
-	protected boolean gatherBindings(BoolExpression beForm,
-			BoolExpression bePattern, Binding existingBinding) {
-		Predicate formPred = beForm.getPredicate();
-		Predicate patternPred = bePattern.getPredicate();
+	protected ISpecialization gatherBindings(ISpecialization specialization,
+			BoolExpression formula, BoolExpression pattern) {
+		Predicate formulaPred = formula.getPredicate();
+		Predicate patternPred = pattern.getPredicate();
 		if (patternPred instanceof PredicateVariable) {
-			return existingBinding.putPredicateMapping((PredicateVariable) patternPred, formPred);
-		} 
-		return matchingFactory.match(formPred, patternPred, existingBinding);
+			throw new UnsupportedOperationException("Predicate variable is unsupported");
+		}
+		return Matcher.match(specialization, formulaPred, patternPred);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see FormulaMatcher#getFormula(Formula)
+	 */
 	@Override
-	protected BoolExpression getExpression(Expression e) {
-		return (BoolExpression) e;
+	protected BoolExpression getFormula(Formula<?> formula) {
+		return (BoolExpression) formula;
 	}
+
 }

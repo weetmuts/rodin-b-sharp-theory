@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2011,2016 University of Southampton.
- * 
+ * Copyright (c) 2016 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.engine.exp;
 
-import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.extensions.pm.engine.AbstractFormulaMatcher;
@@ -16,17 +18,16 @@ import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
 
 /**
  * <p>
- * Implementation for matching bound identifiers.
+ * Implementation for matching bound identifier declarations.
  * </p>
  *
- * @author maamria
  * @author htson Re-implemented based on {@link IFormulaMatcher} interface.
- * @version 2.0
+ * @version 1.0
  * @since 1.0
  */
-public class BoundIdentifierMatcher extends AbstractFormulaMatcher<BoundIdentifier>
+public class BoundIdentDeclMatcher extends AbstractFormulaMatcher<BoundIdentDecl>
 		implements IFormulaMatcher {
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -34,21 +35,19 @@ public class BoundIdentifierMatcher extends AbstractFormulaMatcher<BoundIdentifi
 	 */
 	@Override
 	protected ISpecialization gatherBindings(ISpecialization specialization,
-			BoundIdentifier formula, BoundIdentifier pattern) {
-		if (formula.getBoundIndex() == pattern.getBoundIndex())
-			return specialization;
-		else
-			return null;
+			BoundIdentDecl formula, BoundIdentDecl pattern) {
+		// Nothing to do
+		return specialization;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see FormulaMatcher#getFormula(Formula)
 	 */
 	@Override
-	protected BoundIdentifier getFormula(Formula<?> formula) {
-		return (BoundIdentifier) formula;
+	protected BoundIdentDecl getFormula(Formula<?> formula) {
+		return (BoundIdentDecl) formula;
 	}
 
 }

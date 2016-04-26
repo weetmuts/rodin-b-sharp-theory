@@ -8,16 +8,10 @@
 package org.eventb.core.ast.extensions.pm.assoc;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.extensions.pm.Matcher;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
 import org.eventb.core.internal.ast.extensions.pm.assoc.IndexedFormula;
-import org.eventb.core.internal.ast.extensions.pm.assoc.Match;
-import org.eventb.core.internal.ast.extensions.pm.assoc.MatchEntry;
 
 /**
  * A basic implementation of an associative problem.
@@ -39,19 +33,16 @@ import org.eventb.core.internal.ast.extensions.pm.assoc.MatchEntry;
  * @since 1.0
  * 
  */
-public abstract class AssociativityProblem<F extends Formula<F>> {
+public abstract class AssociativityProblem<F extends Formula<F>> implements IAssociativityProblem {
 
 	protected int tag;
 	protected List<IndexedFormula<F>> indexedFormulae;
 	protected List<IndexedFormula<F>> indexedPatterns;
-	
-	protected Binding existingBinding;
-	
-	protected Matcher matcher;
-
-	protected List<MatchEntry<F>> searchSpace;
+		
 	protected List<IndexedFormula<F>> variables;
 
+	protected F[] formulae;
+	protected F[] patterns;
 	protected boolean isSolvable = true;
 
 	/**
@@ -66,28 +57,28 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	 * @param existinBinding
 	 *            the existing binding
 	 */
-	protected AssociativityProblem(int tag, F[] formulae, F[] patterns, Binding existinBinding) {
+	protected AssociativityProblem(int tag, F[] formulae, F[] patterns) {
 		this.tag = tag;
+		this.formulae = formulae;
+		this.patterns = patterns;
 		this.indexedFormulae = getIndexedFormulae(formulae);
 		this.indexedPatterns = getIndexedFormulae(patterns);
-		this.existingBinding = existinBinding.clone();
-		this.matcher = new Matcher(existinBinding.getFormulaFactory());
 		this.variables = new ArrayList<IndexedFormula<F>>();
-		this.searchSpace = generateSearchSpace();
+//		this.searchSpace = generateSearchSpace();
 		if (indexedFormulae.size() < indexedPatterns.size()) {
 			isSolvable = false;
 		}
 	}
 
-	/**
-	 * Calculates a binding that solves the associative problem.
-	 * 
-	 * @param acceptPartialMatch
-	 *            whether to accept a partial match
-	 * @return the matching result, or <code>null</code> if the problem cannot
-	 *         be solved [by this algorithm]
-	 */
-	public abstract Binding solve(boolean acceptPartialMatch);
+//	/**
+//	 * Calculates a binding that solves the associative problem.
+//	 * 
+//	 * @param acceptPartialMatch
+//	 *            whether to accept a partial match
+//	 * @return the matching result, or <code>null</code> if the problem cannot
+//	 *         be solved [by this algorithm]
+//	 */
+//	public abstract Binding solve(boolean acceptPartialMatch);
 
 	/**
 	 * Returns an indexed formula list based on the formulae supplied.
@@ -176,46 +167,45 @@ public abstract class AssociativityProblem<F extends Formula<F>> {
 	 * <p> The search space includes all possible matches for every pattern.
 	 * @return the search space
 	 */
-	protected List<MatchEntry<F>> generateSearchSpace() {
-		List<MatchEntry<F>> searchSpace = new ArrayList<MatchEntry<F>>();
-		for (IndexedFormula<F> indexedPattern : indexedPatterns) {
-			if (indexedPattern.isVariable()) {
-				variables.add(indexedPattern);
-				continue;
-			}
-			F pattern = indexedPattern.getFormula();
-			List<Match<F>> matches = new ArrayList<Match<F>>();
-			for (IndexedFormula<F> indexedFormula : indexedFormulae) {
-				F formula = indexedFormula.getFormula();
-				Binding binding = (Binding) matcher.match(formula, pattern, false);
-				if (binding != null) {
-					if(existingBinding.isBindingInsertable(binding))
-						matches.add(new Match<F>(indexedFormula, indexedPattern, binding));
-				}
-			}
-			searchSpace.add(new MatchEntry<F>(indexedPattern, matches));
-			if (matches.size() == 0) {
-				isSolvable = false;
-			}
-		}
-		// sort according to the number of matches, the entry with lowest number of matches comes first
-		Collections.sort(searchSpace, new Comparator<MatchEntry<F>>() {
-			@Override
-			public int compare(MatchEntry<F> o1, MatchEntry<F> o2) {
-				if (o1.equals(o2)) {
-					return 0;
-				}
-				if (o1.getRank() > o2.getRank()) {
-					return 1;
-				}
-				if (o1.getRank() < o2.getRank()) {
-					return -1;
-				}
-				return 1;
-			}
-		});
-		return searchSpace;
-	}
+//	protected List<MatchEntry<F>> generateSearchSpace() {
+//		List<MatchEntry<F>> searchSpace = new ArrayList<MatchEntry<F>>();
+//		for (IndexedFormula<F> indexedPattern : indexedPatterns) {
+//			if (indexedPattern.isVariable()) {
+//				variables.add(indexedPattern);
+//				continue;
+//			}
+//			F pattern = indexedPattern.getFormula();
+//			List<Match<F>> matches = new ArrayList<Match<F>>();
+//			for (IndexedFormula<F> indexedFormula : indexedFormulae) {
+//				F formula = indexedFormula.getFormula();
+//				ISpecialization newSpecialization = specialization.clone();
+//				if (Matcher.match(newSpecialization, formula, pattern))
+//					matches.add(new Match<F>(indexedFormula, indexedPattern, binding));
+//				}
+//			}
+//			searchSpace.add(new MatchEntry<F>(indexedPattern, matches));
+//			if (matches.size() == 0) {
+//				isSolvable = false;
+//			}
+//		}
+//		// sort according to the number of matches, the entry with lowest number of matches comes first
+//		Collections.sort(searchSpace, new Comparator<MatchEntry<F>>() {
+//			@Override
+//			public int compare(MatchEntry<F> o1, MatchEntry<F> o2) {
+//				if (o1.equals(o2)) {
+//					return 0;
+//				}
+//				if (o1.getRank() > o2.getRank()) {
+//					return 1;
+//				}
+//				if (o1.getRank() < o2.getRank()) {
+//					return -1;
+//				}
+//				return 1;
+//			}
+//		});
+//		return searchSpace;
+//	}
 
 	@Override
 	public String toString() {

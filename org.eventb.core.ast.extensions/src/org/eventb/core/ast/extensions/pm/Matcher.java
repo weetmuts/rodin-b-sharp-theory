@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011,2016 University of Southampton.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,135 +8,336 @@
  *******************************************************************************/
 package org.eventb.core.ast.extensions.pm;
 
-import static org.eventb.core.ast.Formula.LAND;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.BoolExpression;
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.pm.assoc.ACPredicateProblem;
-import org.eventb.core.ast.extensions.pm.assoc.ACProblem;
-import org.eventb.core.ast.extensions.pm.engine.Binding;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.extensions.pm.engine.IFormulaMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.AssociativeExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.AtomicExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.BinaryExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.BoolExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.BoundIdentDeclMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.BoundIdentifierMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.DefaultExtendedExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.IntegerLiteralMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.QuantifiedExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.SetExtensionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.exp.UnaryExpressionMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.BinaryPredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.DefaultExtendedPredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.LiteralPredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.MultiplePredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.QuantifiedPredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.RelationalPredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.SimplePredicateMatcher;
+import org.eventb.core.ast.extensions.pm.engine.pred.UnaryPredicateMatcher;
 
 /**
  * An implementation of a matching engine.
  * <p>
- * All matching processes are initiated from within a matcher. Each matcher
- * works with a an instance of a <code>FormulaFactory</code> to ensure
- * consistency of mathematical extensions used throughout a matching process.
+ * This class is use to start matching processes.
  * <p>
- * This class is not intended to be sub-classed by clients.
+ * 
  * 
  * @author maamria
+ * @author htson: Re-implements using ISpecialization
+ * @version 2.0
+ * @see #match(Formula, Formula)
+ * @see #match(ISpecialization, Formula, Formula)
+ * @see IFormulaMatcher
  * @since 1.0
- * 
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public final class Matcher {
 
-	private FormulaFactory factory;
-	private MatchingFactory matchingFactory;
+	// The map of matchers for different formula classes.
+	private static final Map<Class<?>, IFormulaMatcher> MATCHERS = new HashMap<Class<?>, IFormulaMatcher>();
+	
+	// Load the matchers for each formula class.
+	static {
+		MATCHERS.put(AssociativeExpression.class, new AssociativeExpressionMatcher());
+		MATCHERS.put(AtomicExpression.class, new AtomicExpressionMatcher());
+		MATCHERS.put(BinaryExpression.class, new BinaryExpressionMatcher());
+		MATCHERS.put(BoolExpression.class, new BoolExpressionMatcher());
+		MATCHERS.put(BoundIdentDecl.class, new BoundIdentDeclMatcher());
+		MATCHERS.put(BoundIdentifier.class, new BoundIdentifierMatcher());
+		MATCHERS.put(ExtendedExpression.class, new DefaultExtendedExpressionMatcher());
+		MATCHERS.put(IntegerLiteral.class, new IntegerLiteralMatcher());
+		MATCHERS.put(QuantifiedExpression.class, new QuantifiedExpressionMatcher());
+		MATCHERS.put(SetExtension.class, new SetExtensionMatcher());
+		MATCHERS.put(UnaryExpression.class, new UnaryExpressionMatcher());
+		
+		MATCHERS.put(BinaryPredicate.class, new BinaryPredicateMatcher());
+		MATCHERS.put(RelationalPredicate.class, new RelationalPredicateMatcher());
+		MATCHERS.put(ExtendedPredicate.class, new DefaultExtendedPredicateMatcher());
+		MATCHERS.put(LiteralPredicate.class, new LiteralPredicateMatcher());
+		MATCHERS.put(MultiplePredicate.class, new MultiplePredicateMatcher());
+		MATCHERS.put(QuantifiedPredicate.class, new QuantifiedPredicateMatcher());
+		MATCHERS.put(RelationalPredicate.class, new RelationalPredicateMatcher());
+		MATCHERS.put(SimplePredicate.class, new SimplePredicateMatcher());
+		MATCHERS.put(UnaryPredicate.class, new UnaryPredicateMatcher());
+	}
+	
+	/**
+	 * Matches the formula against the pattern and return the resulting
+	 * specialization.
+	 * 
+	 * @param formula
+	 *            The input formula
+	 * @param pattern
+	 *            The input pattern
+	 * @return the resulting specialization if successful. Return
+	 *         <code>null</code> otherwise.
+	 * @throws IllegalArgumentException
+	 *             if one of the argument is <code>null</code>, or the formula
+	 *             factories of the inputs are different.
+	 * @see #match(ISpecialization, Formula, Formula)
+	 */
+	public static ISpecialization match(Formula<?> formula, Formula<?> pattern) {
+		// Exceptions for preconditions.
+		if (formula == null)
+			throw new IllegalArgumentException("Input formula cannot be null");
+		if (pattern == null)
+			throw new IllegalArgumentException("Input pattern cannot be null");
 
-	public Matcher(FormulaFactory factory) {
-		this.factory = factory;
-		this.matchingFactory = MatchingFactory.getInstance();
+		if (!formula.getFactory().equals(pattern.getFactory()))
+			throw new IllegalArgumentException(
+					"Formula and pattern must have the same formula factory");
+
+		FormulaFactory factory = formula.getFactory();
+		ISpecialization specialization = factory.makeSpecialization();
+		return match(specialization, formula, pattern);
+	}
+
+	
+	/**
+	 * Matches the formula against the pattern and appending the result to the
+	 * input specialization. Any resulting match must be compatible with the
+	 * initial specialization.
+	 * 
+	 * @param specialization
+	 *            the initial specialization.
+	 * @param formula
+	 *            the input formula.
+	 * @param pattern
+	 *            the input pattern.
+	 * @return The resulting specialization if the matching is successful.
+	 *         Return <code>null</code> otherwise.
+	 * @throws IllegalArgumentException
+	 *             if one of the argument is <code>null</code>, or the formula
+	 *             factories of the inputs are different.
+	 */
+	public static ISpecialization match(ISpecialization specialization,
+			Formula<?> formula, Formula<?> pattern) {
+		// Exceptions for preconditions.
+		if (specialization == null)
+			throw new IllegalArgumentException("Initial specialization cannot be null");
+		if (formula == null)
+			throw new IllegalArgumentException("Input formula cannot be null");
+		if (pattern == null)
+			throw new IllegalArgumentException("Input pattern cannot be null");
+		
+		if (!formula.getFactory().equals(specialization.getFactory()))
+			throw new IllegalArgumentException(
+					"Formula and specialization must have the same formula factory");
+		if (!formula.getFactory().equals(pattern.getFactory()))
+			throw new IllegalArgumentException(
+					"Formula and pattern must have the same formula factory");
+		if (!specialization.getFactory().equals(pattern.getFactory()))
+			throw new IllegalArgumentException(
+					"Specialization and pattern must have the same formula factory");
+
+		// if they are not having the same tag, do not bother
+		if (formula.getTag() != (pattern.getTag())) {
+			return null;
+		}
+
+		// Get the actual formula matcher for the formula class to carry out the
+		// matching process. 
+		IFormulaMatcher formMatcher = MATCHERS.get(formula.getClass());
+		if (formMatcher == null) {
+			throw new UnsupportedOperationException("Cannot find matcher for "
+					+ formula.getClass());
+		}
+		return (formMatcher.match(specialization, formula, pattern));
 	}
 
 	/**
-	 * Matches the formula and the pattern and produces a matching result.
-	 * <p>
-	 * The matching process can be instructed to produce partial matches. This
-	 * is relevant when matching two associative expressions (or predicates).
+	 * Utility method to unify the formula type and the pattern type given some
+	 * initial specialization. The resulting matching information is returned.
 	 * 
-	 * @param form
-	 *            the formula
-	 * @param pattern
-	 *            the pattern
-	 * @param acceptPartialMatch
-	 *            whether to accept a partial match
-	 * @return the binding, or <code>null</code> if matching failed
+	 * @param specialization
+	 *            the input specialization.
+	 * @param fType
+	 *            the input formula type.
+	 * @param pType
+	 *            the input pattern type.
+	 * @return The resulting specialization if the types are unified-able given
+	 *         the initial specialization. Return <code>null</code> otherwise.
 	 */
-	public IBinding match(Formula<?> form, Formula<?> pattern, boolean acceptPartialMatch) {
-		// if they are not of the same class, do not bother
-		if (!form.getClass().equals(pattern.getClass())) {
+	public static ISpecialization unifyTypes(ISpecialization specialization,
+			Type fType, Type pType) {
+		if (pType instanceof IntegerType) {
+			if (fType instanceof IntegerType)
+				return specialization;
+			else
+				return null;
+		}
+		if (pType instanceof BooleanType) {
+			if (fType instanceof BooleanType)
+				return specialization;
+			else
+				return null;
+		}
+		if (pType instanceof GivenType) {
+			// Try to insert the type instantiation into the specialization.
+			return insert(specialization, (GivenType) pType, fType);
+		}
+		if (pType instanceof PowerSetType) {
+			if (fType instanceof PowerSetType) {
+				Type pBaseType = pType.getBaseType();
+				Type fBaseType = fType.getBaseType();
+				return unifyTypes(specialization, fBaseType, pBaseType);
+			}
 			return null;
 		}
-		Binding initialBinding = (Binding) matchingFactory.createBinding(form, pattern, acceptPartialMatch, factory);
-		if (matchingFactory.match(form, pattern, initialBinding)) {
-			initialBinding.makeImmutable();
-			return initialBinding;
+		if (pType instanceof ProductType) {
+			if (fType instanceof ProductType) {
+				Type pLeft = ((ProductType) pType).getLeft();
+				Type fLeft = ((ProductType) fType).getLeft();
+				specialization = unifyTypes(specialization, fLeft, pLeft);
+				if (specialization == null)
+					return null;
+				
+				Type pRight = ((ProductType) pType).getRight();
+				Type fRight = ((ProductType) fType).getRight();
+				return unifyTypes(specialization, fRight, pRight);
+			}
+			return null;
+		} else if (pType instanceof ParametricType) {
+			if (fType instanceof ParametricType) {
+				ParametricType pParametricType = (ParametricType) pType;
+				ParametricType fParametricType = (ParametricType) fType;
+				if (!pParametricType.getExprExtension().equals(
+						fParametricType.getExprExtension())) {
+					return null;
+				}
+				Type[] patTypes = pParametricType.getTypeParameters();
+				Type[] expTypes = fParametricType.getTypeParameters();
+				for (int i = 0; i < patTypes.length; i++) {
+					specialization = unifyTypes(specialization, expTypes[i],
+							patTypes[i]);
+					if (specialization == null) {
+						return null;
+					}
+				}
+				return specialization;
+			}
 		}
 		return null;
 	}
 
 	/**
-	 * Matches all the given patterns against some of the given formulas under
-	 * the constraint of an initial binding. Returns a new binding which is a
-	 * superset of the given binding. The returned binding is immutable.
+	 * Utility method to insert a type instantiation into the input
+	 * specialization.
+	 * 
+	 * @param specialization
+	 *            the input specialization.
+	 * @param type
+	 *            the given type to be instantiated.
+	 * @param value
+	 *            the instantiating value type.
+	 * @return The resulting specialization if the type substitution is
+	 *         compatible with the initial specialization. Return
+	 *         <code>null</code> otherwise.
+	 * @see #unifyTypes(ISpecialization, Type, Type)
+	 */
+	protected static ISpecialization insert(ISpecialization specialization,
+			GivenType type, Type value) {
+		ISpecialization clone = specialization.clone();
+		try {
+			clone.put(type, value);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+		return clone;
+	}
+
+	/**
+	 * Utility method to insert an instantiation into the input specialization.
+	 * 
+	 * @param specialization
+	 *            the initial specialization.
+	 * @param ident
+	 *            a typed identifier to be instantiated
+	 * @param value
+	 *            the instantiating value.
+	 * @return The resulting specialization if the instantiation is compatible
+	 *         with the initial specialization. Return <code>null</code>
+	 *         otherwise.
+	 * @see #unifyTypes(ISpecialization, Type, Type)
+	 * @precondition the type of the input identifier and its instantiating
+	 *               expression have been unified and the result is in the input
+	 *               specialization.
+	 */
+	public static ISpecialization insert(ISpecialization specialization,
+			FreeIdentifier ident, Expression value) {
+		ISpecialization clone = specialization.clone(); 
+		try {
+			clone.put(ident, value);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+		return clone;
+	}
+
+	/**
+	 * Utility method to match a list of formulae and a list of patterns.
 	 * 
 	 * @param formulae
-	 *            some formulae
+	 *            the input list of formulae.
 	 * @param patterns
-	 *            some patterns
-	 * @param binding
-	 *            an initial binding
-	 * @return the binding, or <code>null</code> if matching failed
+	 *            the input list of patterns.
+	 * @return the resulting specialization if the matching is successful.
+	 *         Otherwise, return <code>null</code>.
 	 */
-	public IBinding match(List<Predicate> formulae, List<Predicate> patterns,
-			IBinding binding) {
-		Predicate[] fs = formulae.toArray(new Predicate[formulae.size()]);
-		Predicate[] ps = patterns.toArray(new Predicate[patterns.size()]);
-		ACProblem<?> problem = new ACPredicateProblem(LAND, fs, ps, (Binding) binding);
-		return problem.solve(true);
-	}
-
-	/**
-	 * Returns the formula factory with which this matcher is working.
-	 * 
-	 * @return the formula factory
-	 */
-	public FormulaFactory getFactory() {
-		return factory;
-	}
-
-	/**
-	 * Returns the matching factory used by this matcher.
-	 * 
-	 * @return the matching factory
-	 */
-	public MatchingFactory getMatchingFactory() {
-		return matchingFactory;
-	}
-
-	/**
-	 * Returns whether the two arrays of declarations match (simple
-	 * implementation).
-	 * 
-	 * @param formulaDecs
-	 *            the formula declarations
-	 * @param patternDecs
-	 *            the pattern declarations
-	 * @param existingBinding
-	 *            the existing binding
-	 * @return whether the declarations match
-	 */
-	public static boolean boundIdentDecsMatch(BoundIdentDecl[] formulaDecs, BoundIdentDecl[] patternDecs,
-			Binding existingBinding) {
-		if (formulaDecs.length == patternDecs.length) {
-			int index = 0;
-			for (BoundIdentDecl pDec : patternDecs) {
-				BoundIdentDecl fDec = formulaDecs[index];
-				// type unification should gather any new information and put it
-				// in binding
-				if (!existingBinding.unifyTypes(fDec.getType(), pDec.getType(), true)) {
-					return false;
-				}
-				index++;
-			}
-			return true;
-		} else
-			return false;
+	public static ISpecialization match(List<Predicate> formulae,
+			List<Predicate> patterns) {
+		// TODO Implement the method recursively.
+		return null;
 	}
 
 }
