@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2010,2016 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.rbp.reasoners.input;
 
 import java.util.Set;
@@ -12,10 +19,15 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
- * <p>The input to this reasoner includes the predicate, the position as well as rule-related information.</p>
- * @since 1.0
+ * <p>
+ * An implementation of an rewrite reasoner input. The input to this reasoner
+ * includes the predicate, the position as well as rule-related information.
+ * </p>
+ * 
  * @author maamria
- *
+ * @author htson: Re-implemented based on {@link PRMetadataReasonerInput}.
+ * @version 2.0
+ * @since 1.0
  */
 public class RewriteInput extends PRMetadataReasonerInput implements IReasonerInput {
 	
@@ -113,7 +125,7 @@ public class RewriteInput extends PRMetadataReasonerInput implements IReasonerIn
 	 */
 	@Override
 	public String toString() {
-		return  predicate + "@" + position + " using " + super.toString();
+		return predicate + "@" + position + " using " + super.toString();
 	}
 
 	

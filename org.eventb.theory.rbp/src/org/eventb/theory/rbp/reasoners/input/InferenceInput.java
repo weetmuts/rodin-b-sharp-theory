@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010,2016 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,28 +8,31 @@
 package org.eventb.theory.rbp.reasoners.input;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
-import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.core.ast.extensions.pm.IBinding;
 
 /**
+ * <p>
  * An implementation of an inference reasoner input.
- * 
- * @since 1.0
+ * </p>
  * 
  * @author maamria
- * 
+ * @author htson: Re-implemented based on {@link PRMetadataReasonerInput}.
+ * @version 2.0
+ * @since 1.0
  */
-public class InferenceInput extends ContextualInput {
+public class InferenceInput extends PRMetadataReasonerInput {
 
-	public boolean forward;
-	public String description;
-	public String ruleName;
-	public String theoryName;
-	public String projectName;
-	public Predicate predicate;
-	public IBinding binding;
-
+	private boolean forward;
+	private Predicate[] hyps;
+	
+	private static final String FORWARD_VAL = "forward";
+	private static final String BACKWARD_VAL = "backward";
+	private static final String FORWARD_KEY = "isForward";
+	private static final String HYPS_KEY = "hyps";
+	
 	/**
 	 * Constructs an input with the given parameters.
 	 * 
@@ -46,21 +49,71 @@ public class InferenceInput extends ContextualInput {
 	 * @param context
 	 *            the PO context
 	 */
-	public InferenceInput(String projectName,String theoryName, String ruleName, String ruleDesc, Predicate predicate, boolean forward, IBinding binding, IPOContext context) {
-		super(context);
-		this.projectName = projectName;
+	public InferenceInput(IPRMetadata prMetadata, Predicate[] hyps, boolean forward) {
+		super(prMetadata);
+
+		assert hyps != null;
+		
 		this.forward = forward;
-		this.description = ruleDesc;
-		this.ruleName = ruleName;
-		this.theoryName = theoryName;
-		this.predicate = predicate;
-		this.binding = binding;
+		this.hyps = hyps;
+	}
+
+	/**
+	 * @param reader
+	 * @throws SerializeException
+	 */
+	public InferenceInput(IReasonerInputReader reader)
+			throws SerializeException {
+		super(reader);
+		this.forward = FORWARD_VAL.equals(reader.getString(FORWARD_KEY));
+		hyps = reader.getPredicates(HYPS_KEY);
+		if (hyps == null) {
+			throw new SecurityException("No inference hypotheses stored");
+		}
 	}
 
 	@Override
 	public void applyHints(ReplayHints renaming) {
-		if (predicate != null) {
-			predicate = renaming.applyHints(predicate);
+		Predicate[] translatedHyps = new Predicate[hyps.length];
+		for (int i = 0; i != hyps.length; ++i) {
+			translatedHyps[i] = renaming.applyHints(hyps[i]);
 		}
+		hyps = translatedHyps;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IReasonerInput#getError()
+	 */
+	@Override
+	public String getError() {
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isForward() {
+		return forward;
+	}
+
+	/**
+	 * @param writer 
+	 * @throws SerializeException 
+	 * 
+	 */
+	public void serialize(IReasonerInputWriter writer) throws SerializeException {
+		super.serialise(writer);
+		writer.putString(FORWARD_KEY, forward ? FORWARD_VAL : BACKWARD_VAL);
+		writer.putPredicates(HYPS_KEY, hyps);
+	}
+
+	/**
+	 * @return
+	 */
+	public Predicate[] getHyps() {
+		return hyps;
+	}
+
 }
