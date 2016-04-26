@@ -12,6 +12,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualInferenceReasoner;
+import org.eventb.theory.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
 import org.eventb.ui.prover.IPredicateApplication;
 
@@ -19,7 +20,7 @@ import org.eventb.ui.prover.IPredicateApplication;
  * @author maamria
  *
  */
-public class InferenceTacticApplication implements IPredicateApplication{
+public class InferenceTacticApplication implements IPredicateApplication {
 
 	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbP1";
 	
@@ -47,7 +48,12 @@ public class InferenceTacticApplication implements IPredicateApplication{
 
 	@Override
 	public String getTooltip() {
-		return input.description;
+		IPRMetadata prMetadata = input.getPRMetadata();
+		String projectName = prMetadata.getProjectName();
+		String theoryName = prMetadata.getTheoryName();
+		String ruleName = prMetadata.getRuleName();
+		return "RbP Inference using rule " + ruleName + " from theory "
+				+ theoryName + " of the " + projectName + " project";
 	}
 
 }
