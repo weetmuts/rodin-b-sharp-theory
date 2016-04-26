@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 University of Southampton and others.
+ * Copyright (c) 2010, 2016 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,15 +18,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.pm.ComplexBinder;
-import org.eventb.core.ast.extensions.pm.IBinding;
 import org.eventb.core.ast.extensions.pm.Matcher;
-import org.eventb.core.ast.extensions.pm.SimpleBinder;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -46,28 +43,27 @@ import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
-import org.eventb.theory.rbp.rulebase.basis.POContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
-import org.rodinp.core.IInternalElement;
 
 /**
  * <p>
- * An implementation of a manual reasoner for the rule base.
+ * An implementation of a manual rewrite reasoner for the rule-based prover.
  * </p>
  * <p>
  * <i>htson</i>: This has been re-implemented based on the original version 1.0
- * and the (now deprecated)
- * {@link org.eventb.theory.rbp.reasoning.ManualRewriter} class.
+ * and the (now removed)
+ * {org.eventb.theory.rbp.reasoning.ManualRewriter} class.
  * </p>
  * 
  * @author maamria
  * @author htson
- * @version 1.0
+ * @version 2.0
  * @see RewriteInput
  * @see RewriteRuleContent
  * @since 3.1.0
  */
-public class ManualRewriteReasoner implements IReasoner {
+public class ManualRewriteReasoner extends AbstractContextDependentReasoner
+		implements IReasoner {
 
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID
 			+ ".manualRewriteReasoner";
@@ -81,7 +77,7 @@ public class ManualRewriteReasoner implements IReasoner {
 		return REASONER_ID;
 	}
 
-	public IReasonerOutput apply(IProverSequent seq,
+	public IReasonerOutput apply(IProverSequent sequent,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 		// PRECONDITION
 		assert reasonerInput instanceof RewriteInput;
@@ -95,30 +91,21 @@ public class ManualRewriteReasoner implements IReasoner {
 		final String theoryName = prMetadata.getTheoryName();
 		final String ruleName = prMetadata.getRuleName();
 
-		// Get the PO Context from the sequent's origin.
-		Object origin = seq.getOrigin();
-		IPOContext context;
-		if (origin instanceof IInternalElement) {
-			IInternalElement root = ((IInternalElement) origin).getRoot();
-			if (root instanceof IEventBRoot) {
-				context = new POContext((IEventBRoot) root);
-			} else {
-				return ProverFactory.reasonerFailure(this, input,
-						"Cannot determine the context of the sequent");
-			}
-		} else {
+		// Get the PO Context for the input sequent.
+		IPOContext context = getContext(sequent);
+		if (context == null) {
 			return ProverFactory.reasonerFailure(this, input,
 					"Cannot determine the context of the sequent");
 		}
-
+		
 		// Check if the it is goal or hypothesis rewriting.
 		boolean isGoal = (hyp == null);
 		Predicate predicate;
 		if (isGoal) { // Goal rewrite
-			predicate = seq.goal();
+			predicate = sequent.goal();
 		} else { // Hypothesis rewrite
 			predicate = hyp;
-			if (!seq.containsHypothesis(hyp)) {
+			if (!sequent.containsHypothesis(hyp)) {
 				return ProverFactory.reasonerFailure(this, input, "Nonexistent hypothesis: " + hyp);
 			}
 		}
@@ -162,40 +149,39 @@ public class ManualRewriteReasoner implements IReasoner {
 		}
 
 		// calculate binding between rule lhs and subformula
-		Matcher finder = new Matcher(factory);
 		Formula<?> ruleLhs = ruleContent.getLeftHandSide();
-		IBinding binding = finder.match(formula, ruleLhs, true);
-		if (binding == null) {
+		if (ruleLhs.isTranslatable(factory)) {
+			ruleLhs = ruleLhs.translate(factory);
+		} else {
+			return null;
+		}
+		ISpecialization initialSpecialization = factory.makeSpecialization();
+		ISpecialization specialization = Matcher.match(initialSpecialization,
+				formula, ruleLhs);
+		if (specialization == null) {
 			return null;
 		}
 
-		// binder for the condition
-		SimpleBinder simpleBinder = new SimpleBinder(factory);
-		// binder for the rhs
-		ComplexBinder complexBinder = new ComplexBinder(factory);
-
 		Predicate[] conditions = ruleContent.getConditions();
 		Formula<?>[] ruleRhses = ruleContent.getRightHandSides();
-		boolean additionalAntecedntRequired = ruleContent
+		boolean additionalAntecedentRequired = ruleContent
 				.additionalAntecendentRequired();
 
 		// may need to make an extra antecedent if rule incomplete
-		IAntecedent[] antecedents = (additionalAntecedntRequired ? new IAntecedent[conditions.length + 1]
+		IAntecedent[] antecedents = (additionalAntecedentRequired ? new IAntecedent[conditions.length + 1]
 				: new IAntecedent[conditions.length]);
-		List<Predicate> allConditions = (additionalAntecedntRequired ? new ArrayList<Predicate>()
+		List<Predicate> allConditions = (additionalAntecedentRequired ? new ArrayList<Predicate>()
 				: null);
 		for (int i = 0; i != conditions.length; i++) {
 			// get the condition
-			Predicate condition = (Predicate) simpleBinder.bind(conditions[i],
-					binding);
+			Predicate condition = conditions[i].specialize(specialization);
 			// if rule is incomplete keep it till later as we will make negation
 			// of disjunction of all conditions
-			if (additionalAntecedntRequired)
+			if (additionalAntecedentRequired)
 				allConditions.add(condition);
 
-			// get the new subformula
-			Formula<?> rhsFormula = complexBinder.bind(ruleRhses[i], binding,
-					true);
+			// get the new sub-formula
+			Formula<?> rhsFormula = ruleRhses[i].specialize(specialization);
 			// apply the rewriting at the given position
 			Predicate newPred = predicate.rewriteSubFormula(position,
 					rhsFormula);
@@ -232,7 +218,7 @@ public class ManualRewriteReasoner implements IReasoner {
 					null, hypActions);
 		}
 
-		if (additionalAntecedntRequired) {
+		if (additionalAntecedentRequired) {
 			Predicate negOfDisj = factory.makeUnaryPredicate(
 					Formula.NOT,
 					allConditions.size() == 1 ? allConditions.get(0) : factory
