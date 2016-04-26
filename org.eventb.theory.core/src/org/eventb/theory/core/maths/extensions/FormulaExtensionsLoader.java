@@ -350,7 +350,12 @@ class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition
 		if (definitionElmnt.hasHasErrorAttribute() && definitionElmnt.hasError()) {
 			return null;
 		}
-		String theoryName = definitionElmnt.getParent().getElementName();
+		// (htson) Bug fix: Get the theory name from the source element's root
+		// (should the un-checked theory). Originally, getting the name of the
+		// parent is incorrect in the case for the formula factory from the proofs (getting the language "L").
+		// String theoryName = definitionElmnt.getParent().getElementName();
+		IInternalElement source = (IInternalElement) definitionElmnt.getSource();
+		String theoryName = source.getRoot().getElementName();
 		String syntax = definitionElmnt.getLabel();
 		String operatorID = AstUtilities.makeOperatorID(theoryName, syntax);
 		FormulaType formulaType = definitionElmnt.getFormulaType();
