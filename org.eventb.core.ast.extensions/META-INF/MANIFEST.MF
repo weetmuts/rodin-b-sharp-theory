@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eventb.core.ast.extensions;singleton:=true
-Bundle-Version: 3.0.0
+Bundle-Version: 4.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eventb.core.ast;bundle-version="3.0.0",
  org.eclipse.core.runtime
