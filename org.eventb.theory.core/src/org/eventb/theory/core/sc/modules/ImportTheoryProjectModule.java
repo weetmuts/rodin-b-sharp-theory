@@ -47,7 +47,7 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 	
 	private ITheoryRoot root;
 	private IImportProjectTable projectTable;
-	private static final String THEORY_PROJECT_NAME = "THPRJ";
+//	private static final String THEORY_PROJECT_NAME = "THPRJ";
 	
 	@Override
 	public void initModule(IRodinElement element,
@@ -157,8 +157,9 @@ public class ImportTheoryProjectModule extends SCProcessorModule {
 	private ISCImportTheoryProject saveSCTheoryProject(ISCTheoryRoot target,
 			IImportTheoryProject theoryProject, int index,
 			IProgressMonitor monitor) throws RodinDBException {
-		ISCImportTheoryProject scTheoryProject = target.getSCImportTheoryProject(THEORY_PROJECT_NAME+"_"+index);
-		scTheoryProject.create(null, monitor);
+		ISCImportTheoryProject scTheoryProject = target.createChild(ISCImportTheoryProject.ELEMENT_TYPE, null, monitor);
+//		ISCImportTheoryProject scTheoryProject = target.getSCImportTheoryProject(THEORY_PROJECT_NAME+"_"+index);
+//		scTheoryProject.create(null, monitor);
 		scTheoryProject.setSCTheoryProject(theoryProject.getTheoryProject(), monitor); 
 		scTheoryProject.setSource(theoryProject, monitor);
 		
