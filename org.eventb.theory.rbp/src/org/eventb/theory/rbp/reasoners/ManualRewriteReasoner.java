@@ -232,7 +232,7 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 		}
 		String displayName = ruleContent.getDescription();
 		return ProverFactory.makeProofRule(this, input, isGoal ? predicate
-				: null, hyp, displayName + " on " + hyp, antecedents);
+				: null, hyp, displayName + " on " + (isGoal ? "goal" : hyp), antecedents);
 	}
 
 	/*
