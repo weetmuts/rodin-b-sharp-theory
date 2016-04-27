@@ -203,8 +203,9 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			Object extensionElement = extension.getOrigin();
 			if (extensionElement instanceof ISCNewOperatorDefinition) {
 				ISCNewOperatorDefinition operator = (ISCNewOperatorDefinition) extensionElement;
-				if (!contains(element.getChildren(), operator))
-					operator.copy(element, null, null, false, monitor);
+				String name = element.getElementName();
+				name += operator.getLabel();
+				operator.copy(element, null, name, false, monitor);
 			}
 			else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
 				((ISCAxiomaticTypeDefinition) extensionElement).copy(element, null, null, false, monitor);
@@ -214,21 +215,15 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			}
 			else if (extensionElement instanceof IDatatype) {
 				ISCDatatypeDefinition datatype = (ISCDatatypeDefinition) ((IDatatype) extensionElement).getOrigin();
-				if (!contains(element.getChildren(), datatype))
-					datatype.copy(element, null, null, false, monitor);
+				String name = datatype.getElementName();
+				name += datatype.getIdentifierString();
+				datatype.copy(element, null, name, false, monitor);
 			}
 //			else {
 //				log(null, "Extension is not supported: " + extensionElement);
 //			}
 		}
 		
-	}
-	
-	private boolean contains(IRodinElement[] elementChildren, IRodinElement datatype) {
-		for (final IRodinElement e : elementChildren)
-			if (datatype != null && datatype.getElementName().equals(e.getElementName()))
-				return true;
-		return false;
 	}
 	
 }
