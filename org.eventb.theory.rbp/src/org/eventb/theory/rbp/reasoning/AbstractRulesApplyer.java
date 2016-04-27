@@ -25,6 +25,7 @@ public abstract class AbstractRulesApplyer {
 	protected IPOContext context;
 	
 	protected AbstractRulesApplyer(IPOContext context){
+		assert context != null;
 		this.manager = BaseManager.getDefault();
 		this.context = context;
 	}

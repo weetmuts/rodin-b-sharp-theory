@@ -17,9 +17,11 @@ public class XDAutoRewriter extends AutoRewriter{
 
 	public XDAutoRewriter(IPOContext context) {
 		super(context);
+		assert context != null;
 	}
 	
 	protected List<IGeneralRule> getRules(Formula<?> original){
+		assert context != null;
 		List<IGeneralRule> rules = manager.getDefinitionalRules(original.getClass(), context);
 		return rules;
 	}

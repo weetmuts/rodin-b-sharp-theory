@@ -44,6 +44,8 @@ public class AutoRewriteReasoner extends AbstractContextDependentReasoner
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
 		IPOContext context = getContext(seq);
+		assert context != null;
+		
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final IFormulaRewriter rewriter = getRewriter(context);
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
