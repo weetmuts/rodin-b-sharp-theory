@@ -34,7 +34,7 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 	
 	private ITheoryPathRoot root;
 	private ITheoryPathProjectTable projectTable;
-	private static final String THEORY_PROJECT_NAME = "THPRJ";
+//	private static final String THEORY_PROJECT_NAME = "THPRJ";
 	
 	@Override
 	public void initModule(IRodinElement element,
@@ -112,8 +112,9 @@ public class TheoryPathProjectModule extends SCProcessorModule {
 	private ISCAvailableTheoryProject saveSCTheoryProject(ISCTheoryPathRoot target,
 			IAvailableTheoryProject theoryProject, int index,
 			IProgressMonitor monitor) throws RodinDBException {
-		ISCAvailableTheoryProject scTheoryProject = target.getSCAvailableTheoryProject(THEORY_PROJECT_NAME+"_"+index);
-		scTheoryProject.create(null, monitor);
+		ISCAvailableTheoryProject scTheoryProject = target.createChild(ISCAvailableTheoryProject.ELEMENT_TYPE, null, monitor);
+//		ISCAvailableTheoryProject scTheoryProject = target.getSCAvailableTheoryProject(THEORY_PROJECT_NAME+"_"+index);
+//		scTheoryProject.create(null, monitor);
 		scTheoryProject.setSCTheoryProject(theoryProject.getTheoryProject(), monitor); 
 		scTheoryProject.setSource(theoryProject, monitor);
 		
