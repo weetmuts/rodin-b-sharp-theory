@@ -10,6 +10,7 @@ package org.eventb.theory.rbp.reasoning;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.Matcher;
@@ -86,15 +87,22 @@ public class InferenceSelector {
 	 */
 	private ITacticApplication forwardApplication(IDeployedInferenceRule rule,
 			IProverSequent sequent, Predicate predicate) {
+		FormulaFactory factory = sequent.getFormulaFactory();
 		List<IDeployedGiven> hypGivens = rule.getHypGivens();
+		List<Predicate> hypGivenPredicates = new ArrayList<Predicate>(hypGivens.size());
+		for (IDeployedGiven hypGiven : hypGivens) {
+			Predicate givenClause = hypGiven.getGivenClause();
+			givenClause = givenClause.translate(factory);
+			hypGivenPredicates.add(givenClause);
+		}
 		if (hypGivens.isEmpty())
 			return null;
 		ISpecialization specialization = null;
 		List<Predicate> hyps = new ArrayList<Predicate>();
-		for (IDeployedGiven hypGiven : hypGivens) {
+		for (Predicate hypGiven : hypGivenPredicates) {
 			if (specialization == null) {
 				specialization = Matcher.match(predicate,
-						hypGiven.getGivenClause());
+						hypGiven);
 				if (specialization != null)
 					hyps.add(predicate);
 			} else {
@@ -123,10 +131,10 @@ public class InferenceSelector {
 	 * @return
 	 */
 	private ISpecialization matchHypGiven(ISpecialization specialization,
-			IDeployedGiven hyp, IProverSequent sequent, List<Predicate> hyps) {
+			Predicate hyp, IProverSequent sequent, List<Predicate> hyps) {
 		for (Predicate selectHyp : sequent.selectedHypIterable()) {
 			ISpecialization clone = specialization.clone();
-			clone = Matcher.match(clone, selectHyp, hyp.getGivenClause());
+			clone = Matcher.match(clone, selectHyp, hyp);
 			if (clone != null) {
 				hyps.add(selectHyp);
 				return clone;
@@ -167,9 +175,12 @@ public class InferenceSelector {
 	private ITacticApplication backwardApplication(
 			IDeployedInferenceRule rule, IProverSequent sequent) {
 		Predicate goal = sequent.goal();
+		Predicate inferClause = rule.getInfer()
+				.getInferClause();
+		FormulaFactory factory = goal.getFactory();
+		inferClause = inferClause.translate(factory);
 		ISpecialization specialization = Matcher.match(goal,
-				rule.getInfer()
-						.getInferClause());
+				inferClause);
 		// if goal does not match infer clause then return the empty list.
 		if (specialization == null) {
 			return null;
