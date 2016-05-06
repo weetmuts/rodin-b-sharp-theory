@@ -25,6 +25,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.internal.ast.extensions.maths.AxiomaticTypeExtension;
+import org.eventb.core.internal.ast.extensions.maths.DatatypeOrigin;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorTypingRule;
 import org.eventb.core.internal.ast.extensions.maths.OperatorArgument;
@@ -116,11 +117,11 @@ public final class MathExtensionsFactory {
 	 * @param factory
 	 *            the formula factory
 	 * @param origin
-	 *            the origin of the datatype
+	 *            the datatype definition of the datatype 
 	 * @return the set of resulting extensions
 	 */
 	public static IDatatypeBuilder makeDatatypeBuilder(String identifier,
-			List<String> typeArguments, FormulaFactory factory, Object origin) {
+			List<String> typeArguments, FormulaFactory factory, IDatatypeOrigin origin) {
 		final List<GivenType> givenTypes = new ArrayList<GivenType>();
 		for (String typeArgument : typeArguments) {
 			givenTypes.add(factory.makeGivenType(typeArgument));
@@ -143,5 +144,16 @@ public final class MathExtensionsFactory {
 			String typeName, String id, Object origin) {
 		return AxiomaticTypeExtension.getAxiomaticTypeExtension(typeName, id,
 				origin);
+	}
+
+	/**
+	 * Creates a datatype origin for a datatype of a given name
+	 * 
+	 * @param name
+	 *            the name of the datatype.
+	 * @return the newly created datatype origin.
+	 */
+	public static IDatatypeOrigin makeDatatypeOrigin(String name) {
+		return new DatatypeOrigin(name);
 	}
 }

@@ -27,6 +27,7 @@ import org.eventb.core.ast.datatype.IConstructorBuilder;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extensions.maths.IDatatypeOrigin;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCState;
@@ -90,7 +91,7 @@ public class DatatypeTable extends State implements ISCState {
 		return true;
 	}
 	
-	public void addDatatype(String name, List<String> typeArgs, Object origin) throws CoreException{
+	public void addDatatype(String name, List<String> typeArgs, IDatatypeOrigin origin) throws CoreException{
 		assertMutable();
 		datatypes.put(name, new DatatypeEntry(name, typeArgs, origin));
 		currentDatatype = name;
@@ -143,7 +144,7 @@ public class DatatypeTable extends State implements ISCState {
 
 		boolean isErrorProne = false;
 		
-		public DatatypeEntry(String identifier, List<String> typeArgs, Object origin){
+		public DatatypeEntry(String identifier, List<String> typeArgs, IDatatypeOrigin origin){
 			this.dtBuilder = MathExtensionsFactory.makeDatatypeBuilder(identifier, typeArgs, initialFactory, origin);
 			this.identifier = identifier;
 			this.typeArguments = new ArrayList<String>(typeArgs);

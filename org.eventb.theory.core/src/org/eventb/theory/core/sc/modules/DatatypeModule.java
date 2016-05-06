@@ -25,6 +25,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.IDatatypeOrigin;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -36,6 +37,7 @@ import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.ITypeArgument;
 import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
@@ -134,11 +136,11 @@ public class DatatypeModule extends SCProcessorModule {
 			List<String> typeArguments = new ArrayList<String>();
 			boolean faithful = processTypeArguments(datatypeDefinition,
 					typeArguments, target, factory, typeEnvironment, monitor);
-			
+			IDatatypeOrigin origin = FormulaExtensionsLoader.makeDatatypeOrigin(target, factory);
 			try {
 				datatypeTable.addDatatype(
 						datatypeDefinition.getIdentifierString(),
-						typeArguments, target);
+						typeArguments, origin);
 			} catch (IllegalArgumentException e) {
 				createProblemMarker(datatypeDefinition, TheoryAttributes.TYPE_ATTRIBUTE, 
 						TheoryGraphProblem.DatatypeError, e.getMessage());

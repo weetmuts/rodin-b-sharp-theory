@@ -41,6 +41,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.AxiomaticDefinition;
 import org.eventb.core.ast.extensions.maths.DirectDefinition;
+import org.eventb.core.ast.extensions.maths.IDatatypeOrigin;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.ast.extensions.maths.OperatorExtensionProperties;
@@ -90,6 +91,45 @@ public class FormulaExtensionsLoader {
 		this.factory = factory;
 		this.typeEnvironment = factory.makeTypeEnvironment();
 	}
+
+	/**
+	 * Creates a datatype origin from a statically checked datatype definition
+	 * using the given formula factory.
+	 * 
+	 * @param definition
+	 *            the statically checked datatype definition.
+	 * @param factory
+	 *            the formula factory to build the datatype origin.
+	 * @return the newly created datatype origin.
+	 * @throws CoreException
+	 *             if some unexpected error occurs.
+	 */
+	public static IDatatypeOrigin makeDatatypeOrigin(
+			ISCDatatypeDefinition definition, FormulaFactory factory)
+			throws CoreException {
+		String name = definition.getIdentifierString();
+		IDatatypeOrigin origin = MathExtensionsFactory
+				.makeDatatypeOrigin(name);
+		ISCTypeArgument[] typeArguments = definition.getTypeArguments();
+		for (ISCTypeArgument typeArgument : typeArguments) {
+			origin.addTypeArgument(typeArgument.getElementName(),
+					typeArgument.getSCGivenType(factory));
+		}
+		
+		ISCDatatypeConstructor[] constructors = definition.getConstructors();
+		for (ISCDatatypeConstructor constructor : constructors) {
+			String constructorIdent = constructor.getIdentifierString();
+			origin.addConstructor(constructorIdent);
+			ISCConstructorArgument[] destructors = constructor.getConstructorArguments();
+			for (ISCConstructorArgument destructor : destructors) {
+				origin.addDestructor(constructorIdent,
+						destructor.getIdentifierString(),
+						destructor.getType(factory));
+			}
+		}
+		return origin;
+	}
+
 
 	public Set<IFormulaExtension> load() throws CoreException {
 
@@ -239,9 +279,10 @@ class DatatypeTransformer{
 		for (ISCTypeArgument scTypeArg : scTypeArguments) {
 			typeArguments.add(scTypeArg.getSCGivenType(factory).toString());
 		}
+		IDatatypeOrigin origin = FormulaExtensionsLoader.makeDatatypeOrigin(definition, factory);
 		final IDatatypeBuilder dtBuilder = MathExtensionsFactory
 				.makeDatatypeBuilder(typeName, typeArguments, factory,
-						definition);
+						origin);
 
 		for (ISCDatatypeConstructor cons : definition.getConstructors()) {
 			final IConstructorBuilder consBuilder = dtBuilder

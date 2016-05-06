@@ -21,20 +21,26 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.IDatatypeOrigin;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
 import org.eventb.theory.core.ISCAxiomaticOperatorDefinition;
 import org.eventb.theory.core.ISCAxiomaticTypeDefinition;
+import org.eventb.theory.core.ISCConstructorArgument;
+import org.eventb.theory.core.ISCDatatypeConstructor;
 import org.eventb.theory.core.ISCDatatypeDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryPathRoot;
+import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.internal.core.util.CoreUtilities;
@@ -120,23 +126,26 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		
  		factory = FormulaFactory.getDefault();
  		typeEnvironment = factory.makeTypeEnvironment();
-		for (IRodinElement extensionElement : element.getChildren()) {
+		IRodinElement[] children = element.getChildren();
+		for (IRodinElement extensionElement : children) {
+			if (extensionElement instanceof ISCDatatypeDefinition) {
+				loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
+			} else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
+				loadSCAxiomaticTypeDefinition((ISCAxiomaticTypeDefinition) extensionElement);
+			}
+		}
+		
+		for (IRodinElement extensionElement : children) {
 			
 			if (extensionElement instanceof ISCNewOperatorDefinition) {
 				loadSCNewOperatorDefinition((ISCNewOperatorDefinition) extensionElement);
 			}
-			else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
-				loadSCAxiomaticTypeDefinition((ISCAxiomaticTypeDefinition) extensionElement);
-			}
 			else if (extensionElement instanceof ISCAxiomaticOperatorDefinition) {
 				loadSCAxiomaticOperatorDefinition((ISCAxiomaticOperatorDefinition) extensionElement);
 			}
-			else if (extensionElement instanceof ISCDatatypeDefinition) {
-				loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
-			}
-			else {
-				log(null, "Extension is not supported: " + extensionElement);
-			}	
+//			else {
+//				log(null, "Extension is not supported: " + extensionElement);
+//			}	
 		}
 	
 		return factory;
@@ -148,11 +157,12 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
 		DatatypeTransformer transformer = new DatatypeTransformer();
 		IDatatype datatype = transformer.transform(extensionElement, factory);
+		
 		if (datatype != null) {
 			extensions.addAll(datatype.getExtensions());
+			factory = factory.withExtensions(extensions);
+			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 		}
-		factory = factory.withExtensions(extensions);
-		typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 	}
 
 	private void loadSCAxiomaticOperatorDefinition(ISCAxiomaticOperatorDefinition extensionElement) throws CoreException {
@@ -162,9 +172,9 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		IOperatorExtension addedExtensions = trans.transform(extensionElement, factory, typeEnvironment);
 		if (addedExtensions != null) {
 			extensions.add(addedExtensions);
+			factory = factory.withExtensions(extensions);
+			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 		}
-		factory = factory.withExtensions(extensions);
-		typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 	}
 
 	private void loadSCAxiomaticTypeDefinition(ISCAxiomaticTypeDefinition extensionElement) throws CoreException {
@@ -199,12 +209,17 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		final Set<IFormulaExtension> extensions = factory.getExtensions();
+		Set<Object> extensionElements = new HashSet<Object>();
 		for (IFormulaExtension extension : extensions) {
-			Object extensionElement = extension.getOrigin();
+			Object origin = extension.getOrigin();
+			if (origin != null)
+				extensionElements.add(origin);
+		}
+		
+		for (Object extensionElement : extensionElements) {
 			if (extensionElement instanceof ISCNewOperatorDefinition) {
 				ISCNewOperatorDefinition operator = (ISCNewOperatorDefinition) extensionElement;
-				String name = element.getElementName();
-				name += operator.getLabel();
+				String name = operator.getLabel();
 				operator.copy(element, null, name, false, monitor);
 			}
 			else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
@@ -214,16 +229,79 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 				((ISCAxiomaticOperatorDefinition) extensionElement).copy(element, null, null, false, monitor);
 			}
 			else if (extensionElement instanceof IDatatype) {
-				ISCDatatypeDefinition datatype = (ISCDatatypeDefinition) ((IDatatype) extensionElement).getOrigin();
-				String name = datatype.getElementName();
-				name += datatype.getIdentifierString();
-				datatype.copy(element, null, name, false, monitor);
+				IDatatypeOrigin origin = (IDatatypeOrigin) ((IDatatype) extensionElement).getOrigin();
+				makeSCDatatypeDefinition(element, origin, monitor);
 			}
 //			else {
 //				log(null, "Extension is not supported: " + extensionElement);
 //			}
 		}
 		
+	}
+
+	/**
+	 * Utility method to create a statically checked datatype definition from a
+	 * datatype origin.
+	 * 
+	 * @param element the language element.
+	 * @param origin the datatype origin.
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the
+	 *            user. It is the caller's responsibility to call done() on the
+	 *            given monitor. Accepts <code>null</code>, indicating that no
+	 *            progress should be reported and that the operation cannot be
+	 *            cancelled.
+	 * @throws RodinDBException if some unexpected error occurs.
+	 */
+	private void makeSCDatatypeDefinition(ILanguage element,
+			IDatatypeOrigin origin, IProgressMonitor monitor)
+			throws RodinDBException {
+		// Convert the progress monitor to 100%
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+		
+		// 1. (10%) Create the element
+		String name = origin.getName();
+		ISCDatatypeDefinition scDatatypeDefinition = element.getInternalElement(
+				ISCDatatypeDefinition.ELEMENT_TYPE, name);
+		scDatatypeDefinition.create(null, subMonitor.newChild(30));
+		
+		// 2. (30%) Create the type arguments.
+		String[] typeArguments = origin.getTypeArguments();
+		SubMonitor typeArgsMonitor = subMonitor.newChild(30).setWorkRemaining(
+				typeArguments.length * 2);
+		for (String typeArgument : typeArguments) {
+			ISCTypeArgument scTypeArgument = scDatatypeDefinition
+					.getInternalElement(ISCTypeArgument.ELEMENT_TYPE,
+							typeArgument);
+			scTypeArgument.create(null, typeArgsMonitor.newChild(1));
+			Type type = origin.getGivenType(typeArgument);
+			scTypeArgument.setSCGivenType(type, typeArgsMonitor.newChild(1));
+		}
+		
+		// 3. (60%) Create the constructors.
+		String[] constructors = origin.getConstructors();
+		SubMonitor consMonitor = subMonitor.newChild(60).setWorkRemaining(
+				constructors.length * 3);
+		for (String constructor : constructors) {
+			ISCDatatypeConstructor scDatatypeConstructor = scDatatypeDefinition
+					.getInternalElement(ISCDatatypeConstructor.ELEMENT_TYPE,
+							constructor);
+			scDatatypeConstructor.create(null, consMonitor.newChild(1));
+			String[] destructors = origin.getDestructors(constructor);
+			Type[] destructorTypes = origin.getDestructorTypes(constructor);
+			
+			SubMonitor destMonitor = consMonitor.newChild(2).setWorkRemaining(
+					destructors.length * 2);
+			for (int i = 0; i != destructors.length; ++i) {
+				String destructor = destructors[i];
+				Type destructorType = destructorTypes[i];
+				ISCConstructorArgument scDestructor = scDatatypeConstructor
+						.getInternalElement(
+								ISCConstructorArgument.ELEMENT_TYPE, destructor);
+				scDestructor.create(null, destMonitor.newChild(1));
+				scDestructor.setType(destructorType, destMonitor.newChild(1));
+			}
+		}
 	}
 	
 }
