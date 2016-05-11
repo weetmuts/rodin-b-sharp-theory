@@ -15,8 +15,10 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static org.eventb.theory.internal.core.util.CoreUtilities.log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -209,11 +211,15 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		final Set<IFormulaExtension> extensions = factory.getExtensions();
-		Set<Object> extensionElements = new HashSet<Object>();
+		// The order of the extensions' origins is important, but we do not want
+		// any duplication.
+		List<Object> extensionElements = new ArrayList<Object>();
 		for (IFormulaExtension extension : extensions) {
 			Object origin = extension.getOrigin();
-			if (origin != null)
-				extensionElements.add(origin);
+			if (origin != null) {
+				if (!extensionElements.contains(origin))
+					extensionElements.add(origin);
+			}
 		}
 		
 		for (Object extensionElement : extensionElements) {
