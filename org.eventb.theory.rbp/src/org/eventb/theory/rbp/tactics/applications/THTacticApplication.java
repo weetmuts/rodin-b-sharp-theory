@@ -96,8 +96,7 @@ public class THTacticApplication implements IPredicateApplication {
 					return "No theorem provided";
 				}
 				THReasoner reasoner = new THReasoner();
-				IReasonerInput input = new MultipleStringInput(context,
-						theorems);
+				IReasonerInput input = new MultipleStringInput(theorems);
 				return reasonerTac(reasoner, input).apply(node, pm);
 			}
 		};

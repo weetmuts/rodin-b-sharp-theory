@@ -14,20 +14,17 @@ package org.eventb.theory.tests.rbp.reasoners;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
-import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.UntranslatableException;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.ITheoryRoot;
-import org.eventb.theory.rbp.reasoners.input.ContextualInput;
-import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.rulebase.basis.POContext;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -103,10 +100,8 @@ public class AutoRewriteReasonerTests extends AbstractRBPReasonerTests {
 					"Auto Rewrite Reasoner Test", nullMonitor);
 			IProofTreeNode root = pa.getProofTree().getRoot();
 			IProverSequent sequent = root.getSequent();
-			IPORoot poRoot = ctxRoot.getPORoot();
-			IPOContext poContext = new POContext(poRoot);
 			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, new ContextualInput(poContext),
+					sequent, new EmptyInput(),
 					"{}[][][] |- 2 ∗ 1 = 3");
 			testSuccessfulReasonerApplications("", appl);
 		} catch (CoreException e) {

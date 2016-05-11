@@ -15,11 +15,9 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.XDReasoner;
-import org.eventb.theory.rbp.reasoners.input.ContextualInput;
-import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.rulebase.basis.POContext;
 import org.eventb.ui.prover.IPredicateApplication;
 
 /**
@@ -48,12 +46,8 @@ public class XDTacticApplication implements IPredicateApplication {
 				if (!(origin instanceof IProofAttempt)) {
 					return "Contextual information of PO is required";
 				}
-
-				final IProofAttempt pa = (IProofAttempt) origin;
-				final IPOContext context = new POContext(pa.getComponent()
-						.getPORoot());
 				XDReasoner reasoner = new XDReasoner();
-				IReasonerInput input = new ContextualInput(context);
+				IReasonerInput input = new EmptyInput();
 				return reasonerTac(reasoner, input).apply(node, pm);
 			}
 		};

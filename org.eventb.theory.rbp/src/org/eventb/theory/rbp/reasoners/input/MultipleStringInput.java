@@ -9,7 +9,8 @@ package org.eventb.theory.rbp.reasoners.input;
 
 import java.util.List;
 
-import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
  * An implementation of a multiple strings input for context-aware reasoners.
@@ -18,13 +19,37 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  * @author maamria
  *
  */
-public class MultipleStringInput extends ContextualInput{
+public class MultipleStringInput implements IReasonerInput {
 
 	public List<String> strings;
 	
-	public MultipleStringInput(IPOContext context, List<String> strings) {
-		super(context);
+	public MultipleStringInput(List<String> strings) {
 		this.strings = strings;
+	}
+
+	/* (non-Javadoc)
+	 * @see IReasonerInput#hasError()
+	 */
+	@Override
+	public boolean hasError() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see IReasonerInput#getError()
+	 */
+	@Override
+	public String getError() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see IReasonerInput#applyHints(org.eventb.core.seqprover.proofBuilder.ReplayHints)
+	 */
+	@Override
+	public void applyHints(ReplayHints renaming) {
+		// Do nothing
+		
 	}
 
 }

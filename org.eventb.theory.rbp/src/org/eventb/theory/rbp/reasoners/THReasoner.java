@@ -24,6 +24,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -31,9 +32,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.input.ContextualInput;
 import org.eventb.theory.rbp.reasoners.input.MultipleStringInput;
-import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
@@ -41,7 +40,7 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  * @author maamria
  * 
  */
-public class THReasoner extends ContextAwareReasoner {
+public class THReasoner implements IReasoner {
 
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".instantiateTheoremReasoner";
 
@@ -105,7 +104,6 @@ public class THReasoner extends ContextAwareReasoner {
 
 	@Override
 	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) throws SerializeException {
-		super.serializeInput(input, writer);
 		MultipleStringInput multipleStringInput = (MultipleStringInput) input;
 		int k = 0;
 		for (String str : multipleStringInput.strings) {
@@ -115,11 +113,6 @@ public class THReasoner extends ContextAwareReasoner {
 
 	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
-		final String contextStr = reader.getString(CONTEXT_INPUT_KEY);
-		IPOContext context = ContextualInput.deserialise(contextStr);
-		if (context == null) {
-			throw new SerializeException(new IllegalStateException("PO contextual information cannot be retrieved!"));
-		}
 		List<String> strings = new ArrayList<String>();
 		int k = 0;
 		String firstStr = reader.getString(STR_KEY + k++);
@@ -134,7 +127,7 @@ public class THReasoner extends ContextAwareReasoner {
 		} catch (Exception e) {
 			// do nothing
 		}
-		return new MultipleStringInput(context, strings);
+		return new MultipleStringInput(strings);
 	}
 
 }
