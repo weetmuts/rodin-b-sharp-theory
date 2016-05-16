@@ -265,6 +265,8 @@ public abstract class OperatorTypingRule {
 
 	protected boolean isValidTypeInstantiation(int argumentIndex,
 			Type proposedType, Map<GivenType, Type> calculatedInstantiations) {
+		if (proposedType == null)
+			return false;
 		Type argumentType = operatorArguments.get(argumentIndex).getArgumentType();
 		if (argumentType == null) {
 			return false;
