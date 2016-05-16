@@ -41,6 +41,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.AxiomaticDefinition;
 import org.eventb.core.ast.extensions.maths.DirectDefinition;
+import org.eventb.core.ast.extensions.maths.IAxiomaticTypeOrigin;
 import org.eventb.core.ast.extensions.maths.IDatatypeOrigin;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
@@ -130,6 +131,24 @@ public class FormulaExtensionsLoader {
 		return origin;
 	}
 
+
+	/**
+	 * Creates a new axiomatic type origin from a statically checked axiomatic
+	 * type definition.
+	 * 
+	 * @param definition
+	 *            the input axiomatic type definition.
+	 * @return the newly created axiomatic type definition.
+	 * @throws RodinDBException
+	 *             if some unexpected error occurs.
+	 */
+	public static IAxiomaticTypeOrigin makeAxiomaticTypeOrigin(
+			ISCAxiomaticTypeDefinition definition) throws RodinDBException {
+		String name = definition.getIdentifierString();
+		IAxiomaticTypeOrigin origin = MathExtensionsFactory
+				.makeAxiomaticTypeOrigin(name);
+		return origin;
+	}
 
 	public Set<IFormulaExtension> load() throws CoreException {
 
@@ -307,9 +326,10 @@ class AxiomaticTypeTransformer{
 	public IFormulaExtension transform(ISCAxiomaticTypeDefinition definition, FormulaFactory factory,
 			ITypeEnvironment typeEnvironment) {
 		try{
+			IAxiomaticTypeOrigin origin = FormulaExtensionsLoader.makeAxiomaticTypeOrigin(definition);
 		return (IFormulaExtension)
 				MathExtensionsFactory.getAxiomaticTypeExtension(definition.getIdentifierString(), 
-						definition.getIdentifierString() + " Axiomatic Type", definition);
+						definition.getIdentifierString() + " Axiomatic Type", origin);
 		} catch(CoreException exception){
 			return null;
 		}

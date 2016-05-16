@@ -32,6 +32,7 @@ import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.IAxiomaticTypeOrigin;
 
 /**
  * An implementation of an axiomatic type extension.
@@ -50,7 +51,7 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 
 	private final String typeName;
 	private final String id;
-	private final Object origin;
+	private final IAxiomaticTypeOrigin origin;
 
 	
 	/**
@@ -65,7 +66,7 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 	 * @return the axiomatic type extension
 	 */
 	public static synchronized IExpressionExtension getAxiomaticTypeExtension(
-			String typeName, String id, Object origin) {
+			String typeName, String id, IAxiomaticTypeOrigin origin) {
 		final AxiomaticTypeExtension typeExt = new AxiomaticTypeExtension(
 				typeName, id, origin);
 		final IExpressionExtension result = typeExtCache.get(typeExt);
@@ -78,9 +79,9 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 	
 	/**
 	 * THIS CONSTRUCTOR MUST NOT BE CALLED DIRECTLY. Only allowed inside
-	 * {@link #getAxiomaticTypeExtension(String, String, Object)}.
+	 * {@link #getAxiomaticTypeExtension(String, String, IAxiomaticTypeOrigin)}.
 	 */
-	private AxiomaticTypeExtension(String typeName, String id, Object origin) {
+	private AxiomaticTypeExtension(String typeName, String id, IAxiomaticTypeOrigin origin) {
 		AstUtilities.ensureNotNull(typeName, id);
 		this.typeName = typeName;
 		this.id = id;
@@ -221,13 +222,13 @@ public class AxiomaticTypeExtension implements IExpressionExtension {
 			return false;
 		}
 		AxiomaticTypeExtension other = (AxiomaticTypeExtension) obj;
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
+//		if (id == null) {
+//			if (other.id != null) {
+//				return false;
+//			}
+//		} else if (!id.equals(other.id)) {
+//			return false;
+//		}
 		if (origin == null) {
 			if (other.origin != null) {
 				return false;

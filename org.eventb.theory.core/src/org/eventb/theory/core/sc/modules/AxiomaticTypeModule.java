@@ -10,6 +10,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.IAxiomaticTypeOrigin;
 import org.eventb.core.ast.extensions.maths.MathExtensionsFactory;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
@@ -20,6 +21,7 @@ import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.ISCAxiomaticDefinitionsBlock;
 import org.eventb.theory.core.ISCAxiomaticTypeDefinition;
+import org.eventb.theory.core.maths.extensions.FormulaExtensionsLoader;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
@@ -55,10 +57,11 @@ public class AxiomaticTypeModule extends SCProcessorModule {
 			ISCAxiomaticTypeDefinition target = ModulesUtils.createSCIdentifierElement(
 					ISCAxiomaticTypeDefinition.ELEMENT_TYPE, typeDefinition, scBlock, monitor);
 			target.setSource(typeDefinition, monitor);
+			IAxiomaticTypeOrigin origin = FormulaExtensionsLoader.makeAxiomaticTypeOrigin(target);
 			// need to update ff and type environment
 			FormulaFactory newFf = repository.getFormulaFactory().withExtensions(
 					Collections.singleton((IFormulaExtension) MathExtensionsFactory.getAxiomaticTypeExtension(
-							typeDefinition.getIdentifierString(), typeDefinition.getIdentifierString(), typeDefinition)));
+							typeDefinition.getIdentifierString(), typeDefinition.getIdentifierString(), origin)));
 			repository.setFormulaFactory(newFf);
 			repository.setTypeEnvironment(AstUtilities.getTypeEnvironmentForFactory(repository.getTypeEnvironment(), newFf));
 		} else {

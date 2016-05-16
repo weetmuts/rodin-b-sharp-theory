@@ -25,6 +25,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.internal.ast.extensions.maths.AxiomaticTypeExtension;
+import org.eventb.core.internal.ast.extensions.maths.AxiomaticTypeOrigin;
 import org.eventb.core.internal.ast.extensions.maths.DatatypeOrigin;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorExtension;
 import org.eventb.core.internal.ast.extensions.maths.ExpressionOperatorTypingRule;
@@ -141,7 +142,7 @@ public final class MathExtensionsFactory {
 	 * @return the axiomatic type extension
 	 */
 	public static IExpressionExtension getAxiomaticTypeExtension(
-			String typeName, String id, Object origin) {
+			String typeName, String id, IAxiomaticTypeOrigin origin) {
 		return AxiomaticTypeExtension.getAxiomaticTypeExtension(typeName, id,
 				origin);
 	}
@@ -155,5 +156,13 @@ public final class MathExtensionsFactory {
 	 */
 	public static IDatatypeOrigin makeDatatypeOrigin(String name) {
 		return new DatatypeOrigin(name);
+	}
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	public static IAxiomaticTypeOrigin makeAxiomaticTypeOrigin(String name) {
+		return new AxiomaticTypeOrigin(name);
 	}
 }

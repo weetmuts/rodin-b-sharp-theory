@@ -32,6 +32,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
+import org.eventb.core.ast.extensions.maths.IAxiomaticTypeOrigin;
 import org.eventb.core.ast.extensions.maths.IDatatypeOrigin;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
@@ -228,11 +229,16 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 				String name = operator.getLabel();
 				operator.copy(element, null, name, false, monitor);
 			}
-			else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
-				((ISCAxiomaticTypeDefinition) extensionElement).copy(element, null, null, false, monitor);
+			else if (extensionElement instanceof IAxiomaticTypeOrigin) {
+				IAxiomaticTypeOrigin origin = (IAxiomaticTypeOrigin) extensionElement;
+				makeSCAxiomaticTypeDefinition(element, origin, monitor);
+//				((ISCAxiomaticTypeDefinition) extensionElement).copy(element, null, null, false, monitor);
 			}
 			else if (extensionElement instanceof ISCAxiomaticOperatorDefinition) {
-				((ISCAxiomaticOperatorDefinition) extensionElement).copy(element, null, null, false, monitor);
+				ISCAxiomaticOperatorDefinition operator = (ISCAxiomaticOperatorDefinition) extensionElement;
+				String name = operator.getLabel();
+				operator.copy(element, null, name, false, monitor);
+				
 			}
 			else if (extensionElement instanceof IDatatype) {
 				IDatatypeOrigin origin = (IDatatypeOrigin) ((IDatatype) extensionElement).getOrigin();
@@ -246,18 +252,51 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 	}
 
 	/**
-	 * Utility method to create a statically checked datatype definition from a
-	 * datatype origin.
+	 * Utility method to create a statically checked axiomatic type definition
+	 * from an axiomatic type origin. The new element is created as a child
+	 * element of the input language.
 	 * 
-	 * @param element the language element.
-	 * @param origin the datatype origin.
+	 * @param element
+	 *            the language element.
+	 * @param origin
+	 *            the axiomatic type origin.
 	 * @param monitor
 	 *            the progress monitor to use for reporting progress to the
 	 *            user. It is the caller's responsibility to call done() on the
 	 *            given monitor. Accepts <code>null</code>, indicating that no
 	 *            progress should be reported and that the operation cannot be
 	 *            cancelled.
-	 * @throws RodinDBException if some unexpected error occurs.
+	 * @throws RodinDBException
+	 *             if some unexpected error occurs.
+	 */
+	private void makeSCAxiomaticTypeDefinition(ILanguage element,
+			IAxiomaticTypeOrigin origin, IProgressMonitor monitor) throws RodinDBException {
+		// Convert the progress monitor to 100%
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+		
+		// 1. (100%) Create the element
+		String name = origin.getName();
+		ISCAxiomaticTypeDefinition scAxiomaticTypeDefinition = element.getInternalElement(
+				ISCAxiomaticTypeDefinition.ELEMENT_TYPE, name);
+		scAxiomaticTypeDefinition.create(null, subMonitor.newChild(100));
+	}
+
+	/**
+	 * Utility method to create a statically checked datatype definition from a
+	 * datatype origin.
+	 * 
+	 * @param element
+	 *            the language element.
+	 * @param origin
+	 *            the datatype origin.
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the
+	 *            user. It is the caller's responsibility to call done() on the
+	 *            given monitor. Accepts <code>null</code>, indicating that no
+	 *            progress should be reported and that the operation cannot be
+	 *            cancelled.
+	 * @throws RodinDBException
+	 *             if some unexpected error occurs.
 	 */
 	private void makeSCDatatypeDefinition(ILanguage element,
 			IDatatypeOrigin origin, IProgressMonitor monitor)
