@@ -40,6 +40,7 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
+import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo.CaseEntry;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
@@ -203,7 +204,8 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 						FreeIdentifier[] idents = formula.getFreeIdentifiers();
 						boolean hasError = false;
 						for (FreeIdentifier ident : idents) {
-							if (!typeEnvironment.contains(ident.getName())) {
+							ITypeEnvironment localTypeEnvironment = caseEntry.getLocalTypeEnvironment();
+							if (!localTypeEnvironment.contains(ident.getName())) {
 								createProblemMarker(defCase, TheoryAttributes.FORMULA_TYPE_ATTRIBUTE,
 										GraphProblem.UndeclaredFreeIdentifierError,
 										ident.getName());
