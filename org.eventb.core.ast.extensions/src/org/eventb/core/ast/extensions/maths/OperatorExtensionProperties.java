@@ -63,7 +63,8 @@ public class OperatorExtensionProperties {
 			return false;
 		}
 		OperatorExtensionProperties other = (OperatorExtensionProperties) o;
-		return operatorID.equals(other.getOperatorID()) &&
+		return 
+//				operatorID.equals(other.getOperatorID()) &&
 			syntax.equals(other.getSyntax()) &&
 			formulaType.equals(other.getFormulaType()) &&
 			notation.equals(other.getNotation()) &&
@@ -72,7 +73,9 @@ public class OperatorExtensionProperties {
 	
 	public int hashCode(){
 		final int prime = 17;
-		return prime * operatorID.hashCode() + prime * syntax.hashCode() + 
+		return 
+//				prime * operatorID.hashCode() + 
+				prime * syntax.hashCode() + 
 				prime * formulaType.hashCode() + prime * notation.hashCode()+ (groupID == null ? 0 : groupID.hashCode());
 	}
 	
