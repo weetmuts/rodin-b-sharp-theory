@@ -328,6 +328,7 @@ public class OperatorInformation extends State implements ISCState{
 				for (FreeIdentifier identifier : indCase.getFreeIdentifiers()) {
 					String name = identifier.getName();
 					Type type = identifier.getType();
+					type = type.translate(enhancedFactory);
 					if (!AstUtilities.isGivenSet(typeEnvironment, name)) {
 						ISCMetavariable scVar = newRulesbBlock.getMetavariable(name);
 						while (scVar.exists() && !scVar.getType(enhancedFactory).equals(type)) {
