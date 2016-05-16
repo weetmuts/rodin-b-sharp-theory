@@ -105,15 +105,15 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	private Set<IFormulaExtension> fetchExtensions(
 			IFormulaExtensionsSource source,
 			Set<IFormulaExtension> requiredExtns) throws CoreException {
-		Set<IFormulaExtension> extns = extensions.get(source);
-		if (extns == null) {
+//		Set<IFormulaExtension> extns = extensions.get(source);
+//		if (extns == null) {
 			final FormulaFactory factory = basicFactory
 					.withExtensions(requiredExtns);
 			final FormulaExtensionsLoader loader = new FormulaExtensionsLoader(
 					source, factory);
-			extns = loader.load();
+			Set<IFormulaExtension> extns = loader.load();
 			extensions.put(source, extns);
-		}
+//		}
 		return extns;
 	}
 
@@ -157,7 +157,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 
 	private Set<IFormulaExtension> getDeployedExtensionClosure(
 			IDeployedTheoryRoot deployedRoot) throws CoreException {
-		final Set<IFormulaExtension> extns = new HashSet<IFormulaExtension>();
+		final Set<IFormulaExtension> extns = new LinkedHashSet<IFormulaExtension>();
 		for (IDeployedTheoryRoot neededTheory : fetchDependencies(deployedRoot)) {
 			extns.addAll(fetchExtensions(neededTheory, extns));
 		}
@@ -167,7 +167,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 
 	private Set<IFormulaExtension> getExtensionClosure(
 			Iterable<IDeployedTheoryRoot> deployedRoots) throws CoreException {
-		final Set<IFormulaExtension> extns = new HashSet<IFormulaExtension>();
+		final Set<IFormulaExtension> extns = new LinkedHashSet<IFormulaExtension>();
 		for (IDeployedTheoryRoot deployedRoot : deployedRoots) {
 			extns.addAll(getDeployedExtensionClosure(deployedRoot));
 		}
