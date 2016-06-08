@@ -238,6 +238,9 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 		for (int i = 0; i != hyps.length; ++i) {
 			IDeployedGiven given = iterator.next();
 			Predicate formula = hyps[i];
+			// Need to translate the formula to have the same factory as the specialisation.
+			// TODO Need to check if the formula is translatable.
+			formula = formula.translate(specialization.getFactory());
 			Predicate pattern = given.getGivenClause();
 			specialization = Matcher.match(specialization, formula, pattern);
 			if (specialization == null) {
@@ -258,7 +261,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 			if (specialization.get(identifier) == null)
 				return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
