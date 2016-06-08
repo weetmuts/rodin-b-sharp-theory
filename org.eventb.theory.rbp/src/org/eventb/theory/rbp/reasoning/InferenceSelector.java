@@ -120,7 +120,7 @@ public class InferenceSelector {
 		InferenceInput input = new InferenceInput(prMetadata,
 				hyps.toArray(new Predicate[hyps.size()]), true);
 
-		return new InferenceTacticApplication(input);
+		return new InferenceTacticApplication(input, context);
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class InferenceSelector {
 			InferenceInput input = new InferenceInput(prMetadata,
 					hyps.toArray(new Predicate[hyps.size()]), false);
 
-			return new InferenceTacticApplication(input);
+			return new InferenceTacticApplication(input, context);
 		}
 		return null;
 	}

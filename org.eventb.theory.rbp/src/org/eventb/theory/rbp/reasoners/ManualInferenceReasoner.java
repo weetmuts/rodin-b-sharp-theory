@@ -169,7 +169,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 						Arrays.asList(hyps));
 				String description = deployedRule.getDescription();
 				return ProverFactory.makeProofRule(this, input, null, neededHyps,
-						"Forward reasoning using " + description, antecedents);
+						description + " (forward)", antecedents);
 
 			} else { // Statically checked theory
 				throw new UnsupportedOperationException(
@@ -220,7 +220,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 						deployedRule, specialization);
 				String description = deployedRule.getDescription();
 				return ProverFactory.makeProofRule(this, input, goal,
-						"Backward reasoning using " + description + " on goal", antecedents);
+						description + " (backward) on goal", antecedents);
 
 			} else { // Statically checked theory
 				throw new UnsupportedOperationException(

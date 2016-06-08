@@ -10,10 +10,14 @@ package org.eventb.theory.rbp.tactics.applications;
 import org.eclipse.swt.graphics.Image;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualInferenceReasoner;
 import org.eventb.theory.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.rbp.reasoners.input.InferenceInput;
+import org.eventb.theory.rbp.rulebase.BaseManager;
+import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRule;
 import org.eventb.ui.prover.IPredicateApplication;
 
 /**
@@ -26,8 +30,11 @@ public class InferenceTacticApplication implements IPredicateApplication {
 	
 	private InferenceInput input;
 	
-	public InferenceTacticApplication(InferenceInput input){
+	private IPOContext context;
+	
+	public InferenceTacticApplication(InferenceInput input, IPOContext context){
 		this.input = input;
+		this.context = context;
 	}
 	
 	@Override
@@ -52,8 +59,12 @@ public class InferenceTacticApplication implements IPredicateApplication {
 		String projectName = prMetadata.getProjectName();
 		String theoryName = prMetadata.getTheoryName();
 		String ruleName = prMetadata.getRuleName();
-		return "RbP Inference using rule " + ruleName + " from theory "
-				+ theoryName + " of the " + projectName + " project";
+		// Get the inference rule (given the meta-data) from the current context
+		BaseManager manager = BaseManager.getDefault();
+		IGeneralRule rule = manager.getInferenceRule(projectName, theoryName,
+				ruleName, context);
+		assert (rule instanceof IDeployedRule);
+		return "Inference using " + ((IDeployedRule) rule).getDescription();
 	}
 
 }
