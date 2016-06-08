@@ -148,15 +148,15 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	
 	public IGeneralRule getInferenceRule(String theoryName, String ruleName, 
 			IEventBRoot root, FormulaFactory factory){
-		if (originatedFromTheory(root.getRodinFile(), project)){
-			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
-			if (!scRoots.containsKey(scRoot)){
-				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
-				scRoots.put(scRoot, entry);
-			}
-			return scRoots.get(scRoot).getInferenceRule(ruleName, factory);
-		}
-		else {
+//		if (originatedFromTheory(root.getRodinFile(), project)){
+//			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
+//			if (!scRoots.containsKey(scRoot)){
+//				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
+//				scRoots.put(scRoot, entry);
+//			}
+//			return scRoots.get(scRoot).getInferenceRule(ruleName, factory);
+//		}
+//		else {
 			IDeployedTheoryRoot depRoot = DatabaseUtilities.getDeployedTheory(theoryName, project);
 			if (depRoot == null || !depRoot.exists()){
 				return null;
@@ -166,7 +166,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				deployedRoots.put(depRoot, entry);
 			}
 			return deployedRoots.get(depRoot).getInferenceRule(ruleName, factory);
-		}
+//		}
 	}
 	
 
