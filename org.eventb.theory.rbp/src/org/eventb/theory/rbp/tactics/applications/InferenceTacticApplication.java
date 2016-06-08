@@ -64,7 +64,7 @@ public class InferenceTacticApplication implements IPredicateApplication {
 		IGeneralRule rule = manager.getInferenceRule(projectName, theoryName,
 				ruleName, context);
 		assert (rule instanceof IDeployedRule);
-		return "Inference using " + ((IDeployedRule) rule).getDescription();
+		return ((IDeployedRule) rule).getDescription() + " (inference)";
 	}
 
 }

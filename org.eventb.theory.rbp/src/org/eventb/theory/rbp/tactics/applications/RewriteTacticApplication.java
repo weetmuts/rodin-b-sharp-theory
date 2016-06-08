@@ -9,12 +9,18 @@ import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.AstUtilities.PositionPoint;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.theory.core.IGeneralRule;
+import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoners.ManualRewriteReasoner;
 import org.eventb.theory.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.rbp.reasoners.input.RewriteInput;
+import org.eventb.theory.rbp.rulebase.BaseManager;
+import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRule;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.IPositionApplication;
+import org.rodinp.core.RodinDBException;
 
 /**
  * 
@@ -26,10 +32,16 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 	private static final String TACTIC_ID = RbPPlugin.PLUGIN_ID + ".RbP0";
 	
 	private RewriteInput input;
-
-	public RewriteTacticApplication(RewriteInput input) {
+	
+	private IPOContext context;
+	
+	private Class<?> clazz;
+	
+	public RewriteTacticApplication(RewriteInput input, IPOContext context, Class<?> clazz) {
 		super(input.getPredicate(), input.getPosition());
 		this.input = input;
+		this.context = context;
+		this.clazz = clazz;
 	}
 
 	public Point getHyperlinkBounds(String parsedString,
@@ -40,7 +52,27 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 
 	public String getHyperlinkLabel() {
 		IPRMetadata prMetadata = input.getPRMetadata();
-		return prMetadata.getDescription();
+		String projectName = prMetadata.getProjectName();
+		String theoryName = prMetadata.getTheoryName();
+		String ruleName = prMetadata.getRuleName();
+		// Get the inference rule (given the meta-data) from the current context
+		BaseManager manager = BaseManager.getDefault();
+		IGeneralRule rule = manager.getRewriteRule(projectName, ruleName,
+				theoryName, clazz, context);
+		if (rule == null) { // Definitional rule
+			return "Expand definition";
+		}
+		if (rule instanceof IDeployedRule) {
+			String description = ((IDeployedRule) rule).getDescription();
+			return description + " (rewrite)";
+		} else { // ISCRewriteRule
+			try {
+				return ((ISCRewriteRule) rule).getDescription() + " (rewrite)";
+			} catch (RodinDBException e) {
+				return "Rewrite (failed to get description)";
+			}
+		}
+		
 	}
 
 	public ITactic getTactic(String[] inputs, String globalInput) {

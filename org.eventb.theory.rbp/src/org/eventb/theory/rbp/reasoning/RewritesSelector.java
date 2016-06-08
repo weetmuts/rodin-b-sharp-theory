@@ -25,6 +25,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaInspector;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
@@ -86,7 +87,8 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 	 *            the accumulator
 	 */
 	protected void select(Formula<?> formula, IAccumulator<ITacticApplication> accum) {
-		List<IGeneralRule> rules = manager.getRewriteRules(false, formula.getClass(), context);
+		Class<?> clazz = formula.getClass();
+		List<IGeneralRule> rules = manager.getRewriteRules(false, clazz, context);
 		FormulaFactory factory = context.getFormulaFactory();
 		for (IGeneralRule rule : rules) {
 			if (rule instanceof IDeployedRewriteRule) {
@@ -101,8 +103,9 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 					String theoryName = deployedRule.getTheoryName();
 					String ruleName = deployedRule.getRuleName();
 					IPRMetadata prMetadata = new PRMetadata(projectName, theoryName, ruleName);
-					RewriteInput input = new RewriteInput(isGoal ? null : predicate, accum.getCurrentPosition(), prMetadata);
-					accum.add(new RewriteTacticApplication(input));
+					IPosition position = accum.getCurrentPosition();
+					RewriteInput input = new RewriteInput(isGoal ? null : predicate, position, prMetadata);
+					accum.add(new RewriteTacticApplication(input, context, predicate.getSubFormula(position).getClass()));
 				}
 			} else { //if (rule instanceof ISCRewriteRule) {
 				try {
@@ -116,8 +119,12 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 						String theoryName = scRule.getRoot().getElementName();
 						String ruleName = scRule.getLabel();
 						IPRMetadata prMetadata = new PRMetadata(projectName, theoryName, ruleName);
-						accum.add(new RewriteTacticApplication(new RewriteInput( 
-								isGoal ? null : predicate, accum.getCurrentPosition(), prMetadata)));
+						IPosition position = accum.getCurrentPosition();
+						RewriteInput rewriteInput = new RewriteInput( 
+								isGoal ? null : predicate, position, prMetadata);
+						accum.add(new RewriteTacticApplication(rewriteInput,
+								context, predicate.getSubFormula(position)
+										.getClass()));
 					}
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
