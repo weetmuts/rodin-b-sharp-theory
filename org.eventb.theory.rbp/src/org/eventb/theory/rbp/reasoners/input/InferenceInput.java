@@ -66,9 +66,13 @@ public class InferenceInput extends PRMetadataReasonerInput {
 			throws SerializeException {
 		super(reader);
 		this.forward = FORWARD_VAL.equals(reader.getString(FORWARD_KEY));
-		hyps = reader.getPredicates(HYPS_KEY);
-		if (hyps == null) {
-			throw new SecurityException("No inference hypotheses stored");
+		if (forward) {
+			hyps = reader.getPredicates(HYPS_KEY);
+			if (hyps == null) {
+				throw new SecurityException("No inference hypotheses stored");
+			}
+		} else {
+			hyps = new Predicate[0];
 		}
 	}
 
@@ -106,7 +110,8 @@ public class InferenceInput extends PRMetadataReasonerInput {
 	public void serialize(IReasonerInputWriter writer) throws SerializeException {
 		super.serialise(writer);
 		writer.putString(FORWARD_KEY, forward ? FORWARD_VAL : BACKWARD_VAL);
-		writer.putPredicates(HYPS_KEY, hyps);
+		if (forward)
+			writer.putPredicates(HYPS_KEY, hyps);
 	}
 
 	/**
