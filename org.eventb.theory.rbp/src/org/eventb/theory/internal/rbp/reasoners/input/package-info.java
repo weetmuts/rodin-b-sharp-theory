@@ -14,18 +14,18 @@
  * This package contains the interfaces and implementations of the reasoner
  * inputs for the Rule-based Reasoners.
  * <ul>
- * <li>{@link org.eventb.theory.rbp.reasoners.input.IPRMetadata}: A common
+ * <li>{@link org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata}: A common
  * interface for the proof-rule meta-data.</li>
  * 
- * <li>{@link org.eventb.theory.rbp.reasoners.input.PRMetadata}: An implementation 
+ * <li>{@link org.eventb.theory.internal.rbp.reasoners.input.PRMetadata}: An implementation 
  * for the proof-rule meta-data.</li>
  * </ul>
  * </p>
  *
  * @author htson
  * @version
- * @see org.eventb.theory.rbp.reasoners.input.IPRMetadata
- * @see org.eventb.theory.rbp.reasoners.input.PRMetadata
+ * @see org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata
+ * @see org.eventb.theory.internal.rbp.reasoners.input.PRMetadata
  * @since
  */
-package org.eventb.theory.rbp.reasoners.input;
+package org.eventb.theory.internal.rbp.reasoners.input;

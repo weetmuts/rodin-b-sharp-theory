@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.reasoners.input;
+package org.eventb.theory.internal.rbp.reasoners.input;
 
 import java.util.Set;
 

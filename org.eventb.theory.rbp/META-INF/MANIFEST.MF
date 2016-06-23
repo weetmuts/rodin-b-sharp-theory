@@ -21,8 +21,8 @@ Import-Package: org.eclipse.jface.resource,
  org.eclipse.swt.graphics,
  org.eclipse.ui.plugin,
  org.eventb.ui.prover
-Export-Package: org.eventb.theory.rbp.plugin;x-friends:="org.eventb.theory.tests.rbp",
+Export-Package: org.eventb.theory.internal.rbp.reasoners.input;x-friends:="org.eventb.theory.tests.rbp",
+ org.eventb.theory.rbp.plugin;x-friends:="org.eventb.theory.tests.rbp",
  org.eventb.theory.rbp.reasoners;x-friends:="org.eventb.theory.tests.rbp",
- org.eventb.theory.rbp.reasoners.input;x-friends:="org.eventb.theory.tests.rbp",
  org.eventb.theory.rbp.rulebase;x-friends:="org.eventb.theory.tests.rbp",
  org.eventb.theory.rbp.rulebase.basis;x-friends:="org.eventb.theory.tests.rbp"

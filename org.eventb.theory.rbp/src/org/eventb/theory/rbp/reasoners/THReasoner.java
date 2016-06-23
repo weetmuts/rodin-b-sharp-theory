@@ -31,8 +31,8 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.theory.internal.rbp.reasoners.input.MultipleStringInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.input.MultipleStringInput;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**

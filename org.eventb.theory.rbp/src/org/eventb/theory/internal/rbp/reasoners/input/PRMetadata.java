@@ -9,7 +9,7 @@
  *     University of Southampton - initial API and implementation
  *******************************************************************************/
 
-package org.eventb.theory.rbp.reasoners.input;
+package org.eventb.theory.internal.rbp.reasoners.input;
 
 /**
  * <p>

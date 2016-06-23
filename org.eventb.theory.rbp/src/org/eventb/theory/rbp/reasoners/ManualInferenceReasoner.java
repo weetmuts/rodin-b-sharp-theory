@@ -23,18 +23,18 @@ import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.theory.core.IGeneralRule;
+import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
+import org.eventb.theory.internal.rbp.reasoners.input.InferenceInput;
+import org.eventb.theory.internal.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.input.IPRMetadata;
-import org.eventb.theory.rbp.reasoners.input.InferenceInput;
-import org.eventb.theory.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedGiven;
@@ -58,7 +58,7 @@ import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
  * @since 3.1.0
  */
 public class ManualInferenceReasoner extends AbstractContextDependentReasoner
-		implements IReasoner {
+		implements IVersionedReasoner {
 
 	public static final String REASONER_ID = RbPPlugin.PLUGIN_ID
 			+ ".manualInferenceReasoner";
@@ -68,6 +68,19 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 		return REASONER_ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IVersionedReasoner#getVersion()
+	 */
+	@Override
+	public int getVersion() {
+		return 0;
+	}
+
+	/**
+	 * @precondition The reasoner input must be an {@link InferenceInput}.
+	 */
 	@Override
 	public IReasonerOutput apply(IProverSequent sequent,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
