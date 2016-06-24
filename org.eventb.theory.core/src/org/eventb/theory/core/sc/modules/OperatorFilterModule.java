@@ -30,7 +30,7 @@ import org.rodinp.core.IRodinElement;
 /**
  * 
  * @author maamria
- * 
+ * @author htson Support infix predicate operators.
  */
 public class OperatorFilterModule extends SCFilterModule {
 
@@ -105,14 +105,6 @@ public class OperatorFilterModule extends SCFilterModule {
 					TheoryAttributes.NOTATION_TYPE_ATTRIBUTE,
 					TheoryGraphProblem.OperatorCannotBePostfix);
 			return false;
-		}
-		// Infix predicates not supported
-		if (formType.equals(FormulaType.PREDICATE)
-				&& notation.equals(Notation.INFIX)) {
-			createProblemMarker(opDef,
-					EventBAttributes.LABEL_ATTRIBUTE,
-					TheoryGraphProblem.OperatorPredOnlyPrefix);
-			return false;	
 		}
 		if (!opDef.hasAssociativeAttribute()) {
 			createProblemMarker(opDef, TheoryAttributes.ASSOCIATIVE_ATTRIBUTE,
