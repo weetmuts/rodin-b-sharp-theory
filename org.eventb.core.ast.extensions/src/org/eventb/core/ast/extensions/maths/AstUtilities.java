@@ -41,6 +41,7 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.core.internal.ast.extensions.AstExtensionsPlugin;
@@ -246,8 +247,27 @@ public class AstUtilities {
 	 */
 	public static PositionPoint getPositionOfOperator(ExtendedPredicate epred, String predStr) {
 		PositionPoint point = null;
-		Expression pe1 = epred.getChildExpressions()[0];
-		point = getOperatorPosition(predStr, epred.getSourceLocation().getStart(), pe1.getSourceLocation().getStart());
+		final IPredicateExtension extension = epred.getExtension();
+		Notation notation = extension.getKind().getProperties().getNotation();
+
+		switch (notation) {
+		case INFIX:
+			Expression pe1 = epred.getChildExpressions()[0];
+			Expression pe2 = epred.getChildExpressions()[1];
+			point = getOperatorPosition(predStr, pe1.getSourceLocation().getEnd() + 1, pe2.getSourceLocation()
+					.getStart());
+			break;
+		default:
+			if (epred.getChildExpressions().length == 0) {
+				point = getOperatorPosition(predStr, epred.getSourceLocation().getStart(), epred.getSourceLocation()
+						.getEnd() + 1);
+			} else {
+				Expression ie1 = epred.getChildExpressions()[0];
+				point = getOperatorPosition(predStr, epred.getSourceLocation().getStart(), ie1.getSourceLocation()
+						.getStart());
+			}
+			break;
+		}
 		return point;
 	}
 
