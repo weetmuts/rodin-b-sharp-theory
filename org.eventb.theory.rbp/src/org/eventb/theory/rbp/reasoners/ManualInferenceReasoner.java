@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -89,8 +88,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 
 		// Get information from the reasoner input
 		final InferenceInput input = (InferenceInput) reasonerInput;
-		// final Predicate pred = input.predicate;
-		final Predicate[] hyps = input.getHyps();
+		final Predicate hyp = input.getHypothesis();
 		final boolean forward = input.isForward();
 		final IPRMetadata prMetadata = input.getPRMetadata();
 		final String theoryName = prMetadata.getTheoryName();
@@ -117,152 +115,272 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 							+ " within the given context for ");
 		}
 
-		// Check if all the input hypotheses are there
-		for (Predicate hyp : hyps) {
-			if (!sequent.containsHypothesis(hyp)) {
-				return ProverFactory.reasonerFailure(this, input,
-						"Cannot find hypothesis " + hyp);
-			}
-		}
-
-		final Predicate goal = sequent.goal();
 		if (forward) {
-			if (rule instanceof IDeployedInferenceRule) {
-				// if expected forward application but rule is not suitable
-				IDeployedInferenceRule deployedRule = (IDeployedInferenceRule) rule;
-				if (!deployedRule.isSuitableForForwardReasoning()) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Cannot use the inference rule " + projectName
-									+ "::" + theoryName + "::" + ruleName
-									+ " for forward reasoning");
-				}
-				List<IDeployedGiven> hypGivens = deployedRule.getHypGivens();
-				if (hypGivens.size() != hyps.length) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Incorrect number of given hypotheses");
-				}
-
-				FormulaFactory factory = sequent.getFormulaFactory();
-				ISpecialization specialization = factory.makeSpecialization();
-
-				// Match the input hypotheses with the hypothesis givens of the
-				// rule.
-				specialization = matchHypothesisGivens(specialization, hyps,
-						hypGivens);
-				if (specialization == null) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Fails to match input hypotheses " + hyps
-									+ " with hypothesis givens " + hypGivens);
-				}
-
-				// Ensure that we can specialize the other non-hypothesis givens
-				List<IDeployedGiven> givens = deployedRule.getGivens();
-				for (IDeployedGiven given : givens) {
-					Predicate pred = given.getGivenClause();
-					if (!canBeSpecialized(specialization, pred)) {
-						return ProverFactory.reasonerFailure(this, input,
-								"Fails to specialize " + pred + " with "
-										+ specialization);
-					}
-				}
-
-				// Ensure that we can specialize the infer
-				Predicate infer = deployedRule.getInfer().getInferClause();
-				if (!canBeSpecialized(specialization, infer)) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Fails to specialize " + infer + " with "
-									+ specialization);
-				}
-
-				// We will have (#givens+1) antecedents.
-				IAntecedent[] antecedents = forwardReason(sequent,
-						deployedRule, specialization);
-
-				Set<Predicate> neededHyps = new HashSet<Predicate>(
-						Arrays.asList(hyps));
-				String description = deployedRule.getDescription();
-				return ProverFactory.makeProofRule(this, input, null, neededHyps,
-						description + " (forward)", antecedents);
-
-			} else { // Statically checked theory
-				throw new UnsupportedOperationException(
-						"Rule from Statically checked theory is unsupported");
-			}
-
-		} else { // backward
-			if (rule instanceof IDeployedInferenceRule) {
-				// if expected backward application but rule is not suitable
-				IDeployedInferenceRule deployedRule = (IDeployedInferenceRule) rule;
-				if (!deployedRule.isSuitableForBackwardReasoning()) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Cannot use the inference rule " + projectName
-									+ "::" + theoryName + "::" + ruleName
-									+ " for backward reasoning");
-				}
-				List<IDeployedGiven> hypGivens = deployedRule.getHypGivens();
-				if (hypGivens.size() != hyps.length) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Incorrect number of given hypotheses");
-				}
-
-				FormulaFactory factory = sequent.getFormulaFactory();
-				ISpecialization specialization = factory.makeSpecialization();
-
-				// Match the goal and the infer clause
-				Predicate inferPredicate = deployedRule.getInfer()
-						.getInferClause();
-				specialization = Matcher.match(specialization, goal,
-						inferPredicate);
-				if (specialization == null) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Cannot match the goal " + goal
-									+ " with the infer predicate "
-									+ inferPredicate);
-				}
-
-				// Match the input hypotheses and the hypothesis givens.
-				specialization = matchHypothesisGivens(specialization, hyps,
-						hypGivens);
-				if (specialization == null) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Fails to match input hypotheses " + hyps
-									+ " with hypothesis givens " + hypGivens);
-				}
-
-				IAntecedent[] antecedents = backwardReason(sequent,
-						deployedRule, specialization);
-				String description = deployedRule.getDescription();
-				return ProverFactory.makeProofRule(this, input, goal,
-						description + " (backward) on goal", antecedents);
-
-			} else { // Statically checked theory
-				throw new UnsupportedOperationException(
-						"Rule from Statically checked theory is unsupported");
-			}
-
+			return applyForward(sequent, input, rule, projectName, theoryName,
+					ruleName, hyp);
+		} else {
+			return applyBackward(sequent, input, rule, projectName, theoryName,
+					ruleName);
 		}
 	}
 
 	/**
+	 * @param ruleName 
+	 * @param theoryName 
+	 * @param projectName 
+	 * @param rule 
+	 * @param sequent 
+	 * @param input 
+	 * @return
+	 */
+	private IReasonerOutput applyForward(IProverSequent sequent,
+			InferenceInput input, IGeneralRule rule, String projectName,
+			String theoryName, String ruleName, Predicate hyp) {
+	if (rule instanceof IDeployedInferenceRule) {
+			// if expected forward application but rule is not suitable
+			IDeployedInferenceRule deployedRule = (IDeployedInferenceRule) rule;
+			if (!deployedRule.isSuitableForForwardReasoning()) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Cannot use the inference rule " + projectName
+								+ "::" + theoryName + "::" + ruleName
+								+ " for forward reasoning");
+			}
+			
+			if (!sequent.containsHypothesis(hyp)) 
+				return ProverFactory.reasonerFailure(this, input,
+						"Hypothesis " + hyp + " does not exist");
+			
+			List<IDeployedGiven> hypGivens = deployedRule.getHypGivens();
+			if (hypGivens.size() == 0)
+				return ProverFactory
+						.reasonerFailure(this, input,
+								"Inference rule for forward reasoning must have at least one given hypothesis");
+			FormulaFactory factory = sequent.getFormulaFactory();
+			ISpecialization specialization = factory.makeSpecialization();
+			
+			Set<Predicate> neededHyps = new HashSet<Predicate>();
+			// Match the input hypotheses with the hypothesis givens of the
+			// rule.
+			specialization = matchHypothesisGivens(specialization, sequent, hyp,
+					hypGivens, neededHyps);
+	
+			if (specialization == null) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Fails to match input hypotheses with given hypotheses");
+			}
+	
+			// Ensure that we can specialize the other non-hypothesis givens
+			List<IDeployedGiven> givens = deployedRule.getGivens();
+			for (IDeployedGiven given : givens) {
+				Predicate pred = given.getGivenClause();
+				if (!canBeSpecialized(specialization, pred)) {
+					return ProverFactory.reasonerFailure(this, input,
+							"Fails to specialize " + pred + " with "
+									+ specialization);
+				}
+			}
+	
+			// Ensure that we can specialize the infer
+			Predicate infer = deployedRule.getInfer().getInferClause();
+			if (!canBeSpecialized(specialization, infer)) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Fails to specialize " + infer + " with "
+								+ specialization);
+			}
+	
+			// We will have (#givens+1) antecedents.
+			IAntecedent[] antecedents = forwardReasoning(sequent,
+					deployedRule, specialization);
+	
+			String description = deployedRule.getDescription();
+			return ProverFactory.makeProofRule(this, input, null, neededHyps,
+					description + " (forward)", antecedents);
+	
+		} else { // Statically checked theory
+			throw new UnsupportedOperationException(
+					"Rule from Statically checked theory is unsupported");
+		}
+	
+	}
+
+	private IAntecedent[] forwardReasoning(IProverSequent sequent,
+			IDeployedInferenceRule rule, ISpecialization specialization) {
+		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
+		List<IDeployedGiven> givens = rule.getGivens();
+		for (IDeployedGiven given : givens) {
+			Predicate givenPred = given.getGivenClause();
+			Predicate subGoal = givenPred.specialize(specialization);
+			antecedents.add(ProverFactory.makeAntecedent(subGoal));
+	
+			// // add the well-definedness conditions where appropriate
+			// Map<FreeIdentifier, Expression> expressionMappings =
+			// binding.getExpressionMappings();
+			// for (FreeIdentifier identifier : expressionMappings.keySet()){
+			// Expression mappedExpression = expressionMappings.get(identifier);
+			// Predicate wdPredicate = mappedExpression.getWDPredicate();
+			// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
+			// if (!sequent.containsHypothesis(wdPredicate))
+			// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+			// }
+			// }
+		}
+	
+		Predicate inferClause = rule.getInfer().getInferClause();
+		Predicate newHyp = inferClause.specialize(specialization);
+		// add the antecedent corresponding to the infer clause
+		IAntecedent mainAntecedent = ProverFactory.makeAntecedent(null,
+				Collections.singleton(newHyp), ProverFactory
+						.makeSelectHypAction(Collections.singleton(newHyp)));
+		antecedents.add(mainAntecedent);
+		// // add the well-definedness conditions where appropriate
+		// Map<FreeIdentifier, Expression> mappedIdents =
+		// finalBinding.getExpressionMappings();
+		// for (FreeIdentifier identifier : mappedIdents.keySet()){
+		// Expression mappedExpression = mappedIdents.get(identifier);
+		// Predicate wdPredicate = mappedExpression.getWDPredicate();
+		// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
+		// if (!sequent.containsHypothesis(wdPredicate))
+		// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+		// }
+		// }
+	
+		return antecedents.toArray(new IAntecedent[antecedents.size()]);
+	
+	}
+
+	/**
+	 * @param sequent
+	 * @param input
+	 * @param rule
+	 * @param projectName
+	 * @param theoryName
+	 * @param ruleName
+	 * @return
+	 */
+	private IReasonerOutput applyBackward(IProverSequent sequent,
+			InferenceInput input, IGeneralRule rule, String projectName,
+			String theoryName, String ruleName) {
+		if (rule instanceof IDeployedInferenceRule) {
+			// if expected backward application but rule is not suitable
+			IDeployedInferenceRule deployedRule = (IDeployedInferenceRule) rule;
+			if (!deployedRule.isSuitableForBackwardReasoning()) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Cannot use the inference rule " + projectName
+								+ "::" + theoryName + "::" + ruleName
+								+ " for backward reasoning");
+			}
+			FormulaFactory factory = sequent.getFormulaFactory();
+			ISpecialization specialization = factory.makeSpecialization();
+			Predicate goal = sequent.goal();
+			// Match the goal and the infer clause
+			Predicate inferPredicate = deployedRule.getInfer()
+					.getInferClause();
+			specialization = Matcher.match(specialization, goal,
+					inferPredicate);
+			if (specialization == null) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Cannot match the goal " + goal
+								+ " with the infer predicate "
+								+ inferPredicate);
+			}
+
+			List<IDeployedGiven> hypGivens = deployedRule.getHypGivens();
+			Set<Predicate> neededHyps = new HashSet<Predicate>();
+			// Match the input hypotheses with the hypothesis givens of the
+			// rule.
+			specialization = matchHypothesisGivens(specialization, sequent, null,
+					hypGivens, neededHyps);
+	
+			if (specialization == null) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Fails to match input hypotheses with given hypotheses");
+			}
+
+			IAntecedent[] antecedents = backwardReason(sequent,
+					deployedRule, specialization);
+			String description = deployedRule.getDescription();
+			return ProverFactory.makeProofRule(this, input, goal, neededHyps,
+					description + " (backward) on goal", antecedents);
+
+		} else { // Statically checked theory
+			throw new UnsupportedOperationException(
+					"Rule from Statically checked theory is unsupported");
+		}
+
+	}
+
+	private IAntecedent[] backwardReason(IProverSequent sequent,
+			IDeployedInferenceRule rule, ISpecialization specialization) {
+		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
+		List<IDeployedGiven> givens = rule.getGivens();
+		for (IDeployedGiven given : givens) {
+			Predicate givenPred = given.getGivenClause();
+			Predicate subGoal = givenPred.specialize(specialization);
+			antecedents.add(ProverFactory.makeAntecedent(subGoal));
+	
+			// // add the well-definedness conditions where appropriate
+			// Map<FreeIdentifier, Expression> expressionMappings =
+			// binding.getExpressionMappings();
+			// for (FreeIdentifier identifier : expressionMappings.keySet()){
+			// Expression mappedExpression = expressionMappings.get(identifier);
+			// Predicate wdPredicate = mappedExpression.getWDPredicate();
+			// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
+			// if (!sequent.containsHypothesis(wdPredicate))
+			// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+			// }
+			// }
+		}
+		return antecedents.toArray(new IAntecedent[antecedents.size()]);
+	}
+
+	/**
+	 * @param sequent 
+	 * @param neededHyps 
 	 * @return
 	 */
 	private ISpecialization matchHypothesisGivens(
-			ISpecialization specialization, Predicate[] hyps,
-			List<IDeployedGiven> hypGivens) {
+			ISpecialization specialization, IProverSequent sequent, Predicate hyp,
+			List<IDeployedGiven> hypGivens, Set<Predicate> neededHyps) {
 		Iterator<IDeployedGiven> iterator = hypGivens.iterator();
-		for (int i = 0; i != hyps.length; ++i) {
+		for (int i = 0; i != hypGivens.size(); ++i) {
 			IDeployedGiven given = iterator.next();
-			Predicate formula = hyps[i];
-			// Need to translate the formula to have the same factory as the specialisation.
-			// TODO Need to check if the formula is translatable.
-			formula = formula.translate(specialization.getFactory());
 			Predicate pattern = given.getGivenClause();
-			specialization = Matcher.match(specialization, formula, pattern);
-			if (specialization == null) {
-				return null;
+			if (i == 0 && hyp != null) {
+				// TODO Need to check if the formula is translatable.
+				hyp = hyp.translate(specialization.getFactory());
+				specialization = Matcher.match(specialization, hyp, pattern);
+				neededHyps.add(hyp);
+			} else {
+				specialization = matchGivenHypothesis(specialization, pattern, sequent, neededHyps);
+				if (specialization == null) {
+					return null;
+				}
 			}
 		}
 		return specialization;
+	}
+
+	/**
+	 * @param specialization
+	 * @param givenClause
+	 * @param sequent
+	 * @param neededHyps 
+	 * @return
+	 */
+	private ISpecialization matchGivenHypothesis(
+			ISpecialization specialization, Predicate givenClause,
+			IProverSequent sequent, Set<Predicate> neededHyps) {
+		Iterator<Predicate> iterator = sequent.hypIterable().iterator();
+		while (iterator.hasNext()) {
+			Predicate formula = iterator.next();
+			ISpecialization clone = specialization.clone();
+			clone = Matcher.match(clone, formula, givenClause);
+			if (clone != null) {
+				neededHyps.add(formula);
+				return clone;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -291,74 +409,5 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		return new InferenceInput(reader);
-	}
-
-	private IAntecedent[] forwardReason(IProverSequent sequent,
-			IDeployedInferenceRule rule, ISpecialization specialization) {
-		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
-		List<IDeployedGiven> givens = rule.getGivens();
-		for (IDeployedGiven given : givens) {
-			Predicate givenPred = given.getGivenClause();
-			Predicate subGoal = givenPred.specialize(specialization);
-			antecedents.add(ProverFactory.makeAntecedent(subGoal));
-
-			// // add the well-definedness conditions where appropriate
-			// Map<FreeIdentifier, Expression> expressionMappings =
-			// binding.getExpressionMappings();
-			// for (FreeIdentifier identifier : expressionMappings.keySet()){
-			// Expression mappedExpression = expressionMappings.get(identifier);
-			// Predicate wdPredicate = mappedExpression.getWDPredicate();
-			// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-			// if (!sequent.containsHypothesis(wdPredicate))
-			// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
-			// }
-			// }
-		}
-
-		Predicate inferClause = rule.getInfer().getInferClause();
-		Predicate newHyp = inferClause.specialize(specialization);
-		// add the antecedent corresponding to the infer clause
-		IAntecedent mainAntecedent = ProverFactory.makeAntecedent(null,
-				Collections.singleton(newHyp), ProverFactory
-						.makeSelectHypAction(Collections.singleton(newHyp)));
-		antecedents.add(mainAntecedent);
-		// // add the well-definedness conditions where appropriate
-		// Map<FreeIdentifier, Expression> mappedIdents =
-		// finalBinding.getExpressionMappings();
-		// for (FreeIdentifier identifier : mappedIdents.keySet()){
-		// Expression mappedExpression = mappedIdents.get(identifier);
-		// Predicate wdPredicate = mappedExpression.getWDPredicate();
-		// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-		// if (!sequent.containsHypothesis(wdPredicate))
-		// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
-		// }
-		// }
-
-		return antecedents.toArray(new IAntecedent[antecedents.size()]);
-
-	}
-
-	private IAntecedent[] backwardReason(IProverSequent sequent,
-			IDeployedInferenceRule rule, ISpecialization specialization) {
-		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
-		List<IDeployedGiven> givens = rule.getGivens();
-		for (IDeployedGiven given : givens) {
-			Predicate givenPred = given.getGivenClause();
-			Predicate subGoal = givenPred.specialize(specialization);
-			antecedents.add(ProverFactory.makeAntecedent(subGoal));
-
-			// // add the well-definedness conditions where appropriate
-			// Map<FreeIdentifier, Expression> expressionMappings =
-			// binding.getExpressionMappings();
-			// for (FreeIdentifier identifier : expressionMappings.keySet()){
-			// Expression mappedExpression = expressionMappings.get(identifier);
-			// Predicate wdPredicate = mappedExpression.getWDPredicate();
-			// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-			// if (!sequent.containsHypothesis(wdPredicate))
-			// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
-			// }
-			// }
-		}
-		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	}
 }

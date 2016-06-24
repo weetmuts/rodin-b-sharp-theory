@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.theory.internal.rbp.reasoners.input;
 
+import java.util.Set;
+
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -15,7 +17,15 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
  * <p>
- * An implementation of an inference reasoner input.
+ * An implementation of an inference reasoner input
+ * <ul>
+ * <li>Proof-rule metadata (inherited from {@link PRMetadataReasonerInput}).</li>
+ * 
+ * <li>{@link #hyp}: In the case of backward application, an additional
+ * predicate is required which will be used to match the first required "given"
+ * hypothesis of the rule.</li>
+ * </ul>
+ * 
  * </p>
  * 
  * @author maamria
@@ -25,64 +35,143 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  */
 public class InferenceInput extends PRMetadataReasonerInput {
 
-	private boolean forward;
-	private Predicate[] hyps;
+	/**
+	 * In the case of backward reasoning, this is the hypothesis that will be
+	 * matched with the first required given hypothesis of the rule. In the case
+	 * of forward reasoning, it is <code>null</code>.
+	 */ 
+	private Predicate hyp;
+
+	// Keys for version 0 of the reasoner. 
+	private static final String V0_FORWARD_VAL = "forward";
+	private static final String V0_FORWARD_KEY = "isForward";
 	
-	private static final String FORWARD_VAL = "forward";
-	private static final String BACKWARD_VAL = "backward";
-	private static final String FORWARD_KEY = "isForward";
-	private static final String HYPS_KEY = "hyps";
+	// Keys for version 1 of the reasoner.
+	private static final String V1_FORWARD_VAL = "forward";
+	private static final String V1_FORWARD_KEY = "isForward";
+	private static final String V1_HYPS_KEY = "hyps";
 	
+	// Keys for version 1 of the reasoner.
+	private static final String V2_HYP_KEY = "hyp";
+
 	/**
 	 * Constructs an input with the given parameters.
 	 * 
-	 * @param theoryName
-	 *            the parent theory
-	 * @param ruleName
-	 *            the name of the rule to apply
-	 * @param ruleDesc
-	 *            the description to display if rule applied successfully
-	 * @param pred
-	 *            the predicate
-	 * @param forward
-	 *            whether the rule is for forward reasoning
-	 * @param context
-	 *            the PO context
+	 * @param prMetadata
+	 *            the proof-rule metadata
+	 * @param hyp
+	 *            the hypothesis to be matched with the first required given
+	 *            hypothesis of the input rule in case of backward reasoning.
+	 *            Use <code>null</code> for forward reasoning.
 	 */
-	public InferenceInput(IPRMetadata prMetadata, Predicate[] hyps, boolean forward) {
+	public InferenceInput(IPRMetadata prMetadata, Predicate hyp) {
 		super(prMetadata);
 
-		assert hyps != null;
+		this.hyp = hyp;
+	}
+
+	/**
+	 * Constructor to construct an inference input from a reasoner input reader.
+	 * This constructor is used for the reasoner to deserialise the input.
+	 * 
+	 * @param reader
+	 *            the reasoner input reader.
+	 * @throws SerializeException
+	 *             if some unexpected error occurs during the deserialisation.
+	 */
+	public InferenceInput(IReasonerInputReader reader)
+			throws SerializeException {
+		// Call the super method to deserialise the proof-rule metadata.
+		super(reader);
+		if (deserializeV2(reader))
+			return;
+			
+		if (deserializeV1(reader))
+			return;
 		
-		this.forward = forward;
-		this.hyps = hyps;
+		if (deserializeV0(reader))
+			return;
+			
+		throw new SerializeException(new IllegalStateException(
+				"Error when deserialise inference reasoner input"));
 	}
 
 	/**
 	 * @param reader
-	 * @throws SerializeException
 	 */
-	public InferenceInput(IReasonerInputReader reader)
-			throws SerializeException {
-		super(reader);
-		this.forward = FORWARD_VAL.equals(reader.getString(FORWARD_KEY));
-		if (forward) {
-			hyps = reader.getPredicates(HYPS_KEY);
-			if (hyps == null) {
-				throw new SecurityException("No inference hypotheses stored");
+	private boolean deserializeV2(IReasonerInputReader reader) {
+		try {
+			Predicate[] predicates = reader.getPredicates(V2_HYP_KEY);
+			if (predicates.length == 0) {
+				this.hyp = null;
+				return true;
 			}
-		} else {
-			hyps = new Predicate[0];
+			if (predicates.length == 1) {
+				this.hyp = predicates[1];
+				return true;
+			}
+			throw new SerializeException(new IllegalStateException(
+					"Unexpected number of hypothesis: " + predicates));
+		} catch (SerializeException e) {
+			return false;
+		}
+			
+	
+	}
+
+	/**
+	 * @param reader
+	 * @return
+	 */
+	private boolean deserializeV1(IReasonerInputReader reader) {
+		try {
+			// Read the "forward" flag to see if it is forward or backward application.
+			boolean forward = V1_FORWARD_VAL.equals(reader.getString(V1_FORWARD_KEY));
+			if (forward) {
+				Predicate[] predicates = reader.getPredicates(V1_HYPS_KEY);
+				if (predicates.length == 0) {
+					return false;
+				}
+				hyp = predicates[0];
+				return true;
+			} else { // backward reasoning
+				hyp = null;
+				return true;
+			}
+		} catch (SerializeException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * @param reader
+	 * @return
+	 */
+	private boolean deserializeV0(IReasonerInputReader reader) {
+		try {
+			// Read the "forward" flag to see if it is forward or backward application.
+			boolean forward = V0_FORWARD_VAL.equals(reader.getString(V0_FORWARD_KEY));
+			if (forward) {
+				Set<Predicate> neededHyps = reader.getNeededHyps();
+				if (neededHyps.size() == 0) {
+					return false;
+				} else {
+					// The first needed hypothesis will be used.
+					hyp = neededHyps.iterator().next();
+					return false;
+				}
+			} else { // backward reasoning
+				hyp = null;
+				return true;
+			}
+		} catch (SerializeException e) {
+			return false;
 		}
 	}
 
 	@Override
 	public void applyHints(ReplayHints renaming) {
-		Predicate[] translatedHyps = new Predicate[hyps.length];
-		for (int i = 0; i != hyps.length; ++i) {
-			translatedHyps[i] = renaming.applyHints(hyps[i]);
-		}
-		hyps = translatedHyps;
+		hyp = renaming.applyHints(hyp);
 	}
 
 	/*
@@ -99,7 +188,7 @@ public class InferenceInput extends PRMetadataReasonerInput {
 	 * @return
 	 */
 	public boolean isForward() {
-		return forward;
+		return hyp != null;
 	}
 
 	/**
@@ -109,16 +198,17 @@ public class InferenceInput extends PRMetadataReasonerInput {
 	 */
 	public void serialize(IReasonerInputWriter writer) throws SerializeException {
 		super.serialise(writer);
-		writer.putString(FORWARD_KEY, forward ? FORWARD_VAL : BACKWARD_VAL);
-		if (forward)
-			writer.putPredicates(HYPS_KEY, hyps);
+		if (hyp == null)
+			writer.putPredicates(V2_HYP_KEY);
+		else
+			writer.putPredicates(V2_HYP_KEY, hyp);
 	}
 
 	/**
 	 * @return
 	 */
-	public Predicate[] getHyps() {
-		return hyps;
+	public Predicate getHypothesis() {
+		return hyp;
 	}
 
 }

@@ -87,30 +87,15 @@ public class InferenceSelector {
 	 */
 	private ITacticApplication forwardApplication(IDeployedInferenceRule rule,
 			IProverSequent sequent, Predicate predicate) {
-		FormulaFactory factory = sequent.getFormulaFactory();
 		List<IDeployedGiven> hypGivens = rule.getHypGivens();
-		List<Predicate> hypGivenPredicates = new ArrayList<Predicate>(hypGivens.size());
-		for (IDeployedGiven hypGiven : hypGivens) {
-			Predicate givenClause = hypGiven.getGivenClause();
-			givenClause = givenClause.translate(factory);
-			hypGivenPredicates.add(givenClause);
-		}
 		if (hypGivens.isEmpty())
 			return null;
-		ISpecialization specialization = null;
-		List<Predicate> hyps = new ArrayList<Predicate>();
-		for (Predicate hypGiven : hypGivenPredicates) {
-			if (specialization == null) {
-				specialization = Matcher.match(predicate,
-						hypGiven);
-				if (specialization != null)
-					hyps.add(predicate);
-			} else {
-				specialization = matchHypGiven(specialization, hypGiven, sequent, hyps);
-			}
-			if (specialization == null)
-				return null;
-		}
+		Predicate firstGivenClause = hypGivens.get(0).getGivenClause();
+		ISpecialization specialization = Matcher.match(predicate,
+				firstGivenClause);
+
+		if (specialization == null)
+			return null;
 		
 		String projectName = rule.getProjectName();
 		String theoryName = rule.getTheoryName();
@@ -118,29 +103,9 @@ public class InferenceSelector {
 		IPRMetadata prMetadata = new PRMetadata(projectName, theoryName,
 				ruleName);
 		InferenceInput input = new InferenceInput(prMetadata,
-				hyps.toArray(new Predicate[hyps.size()]), true);
+				predicate);
 
 		return new InferenceTacticApplication(input, context);
-	}
-
-	/**
-	 * @param specialization
-	 * @param hyp
-	 * @param sequent 
-	 * @param hyps 
-	 * @return
-	 */
-	private ISpecialization matchHypGiven(ISpecialization specialization,
-			Predicate hyp, IProverSequent sequent, List<Predicate> hyps) {
-		for (Predicate selectHyp : sequent.selectedHypIterable()) {
-			ISpecialization clone = specialization.clone();
-			clone = Matcher.match(clone, selectHyp, hyp);
-			if (clone != null) {
-				hyps.add(selectHyp);
-				return clone;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -185,39 +150,14 @@ public class InferenceSelector {
 		if (specialization == null) {
 			return null;
 		}	
-		// if goal matches infer clause
-		List<IDeployedGiven> hypGivens = ((IDeployedInferenceRule) rule)
-				.getHypGivens();
-		List<Predicate> hyps = new ArrayList<Predicate>(hypGivens.size());
-		Iterable<Predicate> selectedHypIterable = sequent.selectedHypIterable();
-		for (IDeployedGiven hypGiven : hypGivens) {
-			boolean match = false;
-			for (Predicate hyp : selectedHypIterable) {
-				ISpecialization clone = specialization.clone();
-				clone = Matcher.match(clone, hyp, hypGiven.getGivenClause());
-				if (clone != null) {
-					hyps.add(hyp);
-					specialization = clone;
-					match = true;
-					break;
-				}
-			}
-			if (match == false) {
-				break;
-			}
-		}
-		if (hyps.size() == hypGivens.size()) {
-			String projectName = rule.getProjectName();
-			String theoryName = rule.getTheoryName();
-			String ruleName = rule.getRuleName();
-			IPRMetadata prMetadata = new PRMetadata(projectName, theoryName,
-					ruleName);
-			InferenceInput input = new InferenceInput(prMetadata,
-					hyps.toArray(new Predicate[hyps.size()]), false);
+		String projectName = rule.getProjectName();
+		String theoryName = rule.getTheoryName();
+		String ruleName = rule.getRuleName();
+		IPRMetadata prMetadata = new PRMetadata(projectName, theoryName,
+				ruleName);
+		InferenceInput input = new InferenceInput(prMetadata, null);
 
-			return new InferenceTacticApplication(input, context);
-		}
-		return null;
+		return new InferenceTacticApplication(input, context);
 	}
 
 }

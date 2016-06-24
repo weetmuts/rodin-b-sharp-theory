@@ -22,15 +22,19 @@ import org.eventb.core.seqprover.SerializeException;
  * </p>
  *
  * @author htson
- * @version
+ * @version 1.0
  * @see
  * @since
  */
 public abstract class PRMetadataReasonerInput implements IReasonerInput {
 
-	private static final String RULE_KEY = "Rule";
-	private static final String THEORY_KEY = "Thy";
-	private static final String PROJECT_KEY = "ThyProject";
+	private static final String V0_RULE_KEY = "inferenceRule";
+	private static final String V0_THEORY_KEY = "theory";
+	private static final String V0_PROJECT_KEY = "project";
+
+	private static final String V1_RULE_KEY = "Rule";
+	private static final String V1_THEORY_KEY = "Thy";
+	private static final String V1_PROJECT_KEY = "ThyProject";
 
 	private IPRMetadata prMetadata;
 	
@@ -40,13 +44,47 @@ public abstract class PRMetadataReasonerInput implements IReasonerInput {
 	
 	public PRMetadataReasonerInput(IReasonerInputReader reader)
 			throws SerializeException {
-		String projectName = reader.getString(PROJECT_KEY);
-		String theoryName = reader.getString(THEORY_KEY);
-		String ruleName = reader.getString(RULE_KEY);
-
-		this.prMetadata = new PRMetadata(projectName, theoryName, ruleName);
+		if (deserializeV1(reader))
+			return;
+		if (deserializeV0(reader))
+			return;
+		
+		throw new SerializeException(new IllegalStateException(
+				"Error when deserialise proof-rule metadata: " + reader));
 	}
 	
+	/**
+	 * @param reader 
+	 * @return
+	 */
+	private boolean deserializeV1(IReasonerInputReader reader) {
+		try {
+			String projectName = reader.getString(V1_PROJECT_KEY);
+			String theoryName = reader.getString(V1_THEORY_KEY);
+			String ruleName = reader.getString(V1_RULE_KEY);
+			this.prMetadata = new PRMetadata(projectName, theoryName, ruleName);
+			return true;
+		} catch (SerializeException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * @param reader 
+	 * @return
+	 */
+	private boolean deserializeV0(IReasonerInputReader reader) {
+		try {
+			String projectName = reader.getString(V0_PROJECT_KEY);
+			String theoryName = reader.getString(V0_THEORY_KEY);
+			String ruleName = reader.getString(V0_RULE_KEY);
+			this.prMetadata = new PRMetadata(projectName, theoryName, ruleName);
+			return true;
+		} catch (SerializeException e) {
+			return false;
+		}
+	}
+
 	public IPRMetadata getPRMetadata() {
 		return prMetadata;
 	}
@@ -63,9 +101,9 @@ public abstract class PRMetadataReasonerInput implements IReasonerInput {
 
 	protected void serialise(IReasonerInputWriter writer)
 			throws SerializeException {
-		writer.putString(PROJECT_KEY, prMetadata.getProjectName());
-		writer.putString(THEORY_KEY, prMetadata.getTheoryName());
-		writer.putString(RULE_KEY, prMetadata.getRuleName());
+		writer.putString(V1_PROJECT_KEY, prMetadata.getProjectName());
+		writer.putString(V1_THEORY_KEY, prMetadata.getTheoryName());
+		writer.putString(V1_RULE_KEY, prMetadata.getRuleName());
 	}
 
 	/*
