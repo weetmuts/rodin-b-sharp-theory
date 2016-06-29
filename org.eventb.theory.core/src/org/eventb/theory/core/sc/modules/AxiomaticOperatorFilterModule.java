@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 University of Southampton and others.
+ * Copyright (c) 2011,2016 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,17 @@ import org.eventb.theory.core.sc.states.OperatorsLabelSymbolTable;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
 
+/**
+ * <p>
+ * A static checker filter module for axiomatic operators.
+ * </p>
+ *
+ * @author maamria Initial API and implementation.
+ * @author htson Support INFIX predicate operators.
+ * @version 1.1
+ * @see
+ * @since 3.0.1
+ */
 public class AxiomaticOperatorFilterModule extends SCFilterModule {
 
 	private final IModuleType<AxiomaticOperatorFilterModule> MODULE_TYPE = SCCore.getModuleType(TheoryPlugin.PLUGIN_ID
@@ -55,7 +66,7 @@ public class AxiomaticOperatorFilterModule extends SCFilterModule {
 			return false;
 		}
 		// check ID is unique
-//removed becuase we do not need to check the uniqueness of the operators 
+//removed because we do not need to check the uniqueness of the operators 
 /*		String operatorId = AstUtilities.makeOperatorID(theoryRoot.getComponentName(), opLabel);
 		if (!AstUtilities.checkOperatorID(operatorId, factory)) {
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorIDExistsError, opLabel);
@@ -72,7 +83,7 @@ public class AxiomaticOperatorFilterModule extends SCFilterModule {
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorInvalidSynError, syntax);
 			return false;
 		}
-//removed becuase we do not need to check the uniqueness of the operators 
+//removed because we do not need to check the uniqueness of the operators 
 /*		if (!AstUtilities.checkOperatorSyntaxSymbol(syntax, factory)) {
 			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorSynExistsError, syntax);
 			return false;
@@ -94,11 +105,6 @@ public class AxiomaticOperatorFilterModule extends SCFilterModule {
 		// check against use of POSTFIX as it is not supported yet
 		if (notation.equals(Notation.POSTFIX)) {
 			createProblemMarker(opDef, TheoryAttributes.NOTATION_TYPE_ATTRIBUTE, TheoryGraphProblem.OperatorCannotBePostfix);
-			return false;
-		}
-		// Infix predicates not supported
-		if (formType.equals(FormulaType.PREDICATE) && notation.equals(Notation.INFIX)) {
-			createProblemMarker(opDef, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredOnlyPrefix);
 			return false;
 		}
 		if (!opDef.hasAssociativeAttribute()) {
