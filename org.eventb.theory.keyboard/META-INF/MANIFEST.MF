@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundleName
+Bundle-SymbolicName: org.eventb.theory.keyboard;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: %bundleVendor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.rodinp.keyboard.core;bundle-version="2.0.0"
