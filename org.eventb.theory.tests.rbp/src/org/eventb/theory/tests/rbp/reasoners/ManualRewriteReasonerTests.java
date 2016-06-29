@@ -29,6 +29,7 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.internal.rbp.reasoners.input.PRMetadata;
 import org.eventb.theory.internal.rbp.reasoners.input.RewriteInput;
+import org.junit.Assert;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -126,7 +127,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testUnsuccessfulReasonerApplications("Invalid Position", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected core exception");
+			Assert.fail("Unexpected core exception");
 		}
 	}
 
@@ -172,7 +173,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testUnsuccessfulReasonerApplications("Invalid Position", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected core exception");
+			Assert.fail("Unexpected core exception");
 		}
 	}
 
@@ -218,7 +219,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testUnsuccessfulReasonerApplications("Invalid Position", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected core exception");
+			Assert.fail("Unexpected core exception");
 		}
 	}
 
@@ -268,7 +269,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testUnsuccessfulReasonerApplications("Invalid Position", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected core exception");
+			Assert.fail("Unexpected core exception");
 		}
 	}
 
@@ -321,7 +322,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testUnsuccessfulReasonerApplications("Invalid Position", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected core exception");
+			Assert.fail("Unexpected core exception");
 		}
 	}
 
@@ -363,10 +364,10 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected core exception");
+			Assert.fail("Unexpected core exception");
 		} catch (UntranslatableException e) {
 			e.printStackTrace();
-			fail("Unexpected untranslatable exception");
+			Assert.fail("Unexpected untranslatable exception");
 		}
 	}
 
@@ -411,10 +412,10 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected core exception");
+			Assert.fail("Unexpected core exception");
 		} catch (UntranslatableException e) {
 			e.printStackTrace();
-			fail("Unexpected untranslatable exception");
+			Assert.fail("Unexpected untranslatable exception");
 		}
 	}
 	

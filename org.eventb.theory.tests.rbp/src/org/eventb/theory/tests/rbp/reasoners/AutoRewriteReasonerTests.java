@@ -25,6 +25,7 @@ import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.ITheoryRoot;
+import org.junit.Assert;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -106,7 +107,7 @@ public class AutoRewriteReasonerTests extends AbstractRBPReasonerTests {
 			testSuccessfulReasonerApplications("", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Unexpected exception");
+			Assert.fail("Unexpected exception");
 		}
 	}
 }

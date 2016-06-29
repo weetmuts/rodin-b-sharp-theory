@@ -11,7 +11,7 @@
 
 package org.eventb.theory.tests.rbp.reasoners;
 
-import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
+import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 
 /**
  * <p>

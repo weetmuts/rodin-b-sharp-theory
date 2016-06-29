@@ -36,7 +36,7 @@ import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.UntranslatableException;
-import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
+import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
@@ -46,6 +46,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.basis.TheoryDeployer;
+import org.junit.After;
 import org.junit.Assert;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -204,14 +205,8 @@ public abstract class AbstractRBPReasonerTests extends AbstractReasonerTests {
 		proofAttempts = new HashSet<IProofAttempt>();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see TestCase#tearDown()
-	 */
-	@Override
+	@After
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		for (IProofAttempt proofAttempt : proofAttempts) {
 			proofAttempt.dispose();
 		}
