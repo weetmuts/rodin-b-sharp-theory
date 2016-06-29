@@ -3,22 +3,26 @@
       id="org.eventb.theory.feature"
       label="%featureName"
       version="4.0.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      plugin="org.eventb.theory.branding"
+      license-feature="org.rodinp.license"
+      license-feature-version="1.0.0.qualifier">
 
-   <description url="http://wiki.event-b.org/index.php/Theory_News_and_Support">
+   <description>
       %description
    </description>
 
-   <copyright url="http://www.example.com/copyright">
+   <copyright>
       %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license url="">
       %license
    </license>
 
    <url>
       <discovery label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/>
+      <discovery label="%theoryWikiSiteName" url="http://wiki.event-b.org/index.php/Theory_News_and_Support"/>
    </url>
 
    <requires>
@@ -71,6 +75,19 @@
 
    <plugin
          id="org.eventb.theory.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eventb.theory.branding"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eventb.theory.keyboard"
          download-size="0"
          install-size="0"
          version="0.0.0"
