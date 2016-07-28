@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 University of Southampton and others.
+ * Copyright (c) 2010, 2016 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,8 @@ import org.eventb.core.ast.extensions.maths.AstUtilities;
  * <p> The typing rule must be able to type check an extended expression.
  * 
  * @author maamria
- *
+ * @version 1.1
+ * @since 1.0
  */
 public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 
@@ -134,7 +135,15 @@ public class ExpressionOperatorTypingRule extends OperatorTypingRule{
 	protected Type synthesizeType(Type[] childrenTypes, FormulaFactory factory) {
 		if (isAssociative) {
 			// associative operators always have 2 or more children
-			return childrenTypes[0];
+			// @htson: Make sure that all children have the same non-null type.
+			Type type = childrenTypes[0];
+			if (type == null)
+				return null;
+			for (int i = 1; i != childrenTypes.length; ++i) {
+				if (!type.equals(childrenTypes[i]))
+					return null;
+			}
+			return type;
 		}
 
 		Expression typeExpression = resultantType.toExpression();
