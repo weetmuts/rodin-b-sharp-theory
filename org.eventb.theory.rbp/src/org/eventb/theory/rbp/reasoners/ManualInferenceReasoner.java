@@ -7,15 +7,12 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.Matcher;
@@ -38,6 +35,7 @@ import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedGiven;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * <p>
@@ -50,8 +48,8 @@ import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
  * </p>
  * 
  * @author maamria
- * @author htson
- * @version 2.0
+ * @author htson - re-implemented as a context dependent reasoner.
+ * @version 2.0.1
  * @see RewriteInput
  * @see RewriteRuleContent
  * @since 3.1.0
@@ -74,7 +72,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 	 */
 	@Override
 	public int getVersion() {
-		return 0;
+		return 2;
 	}
 
 	/**
@@ -94,11 +92,8 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 		final String theoryName = prMetadata.getTheoryName();
 		final String projectName = prMetadata.getProjectName();
 		final String ruleName = prMetadata.getRuleName();
-		// final String displayName = prMetadata.description;
-		// final IPOContext context = input.context;
-		// final IBinding binding = input.binding;
 
-		IPOContext context = getContext(sequent);
+		IPOContext context = ProverUtilities.getContext(sequent);
 		if (context == null) {
 			return ProverFactory.reasonerFailure(this, input,
 					"Cannot determine the context of the sequent");
@@ -173,7 +168,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 			List<IDeployedGiven> givens = deployedRule.getGivens();
 			for (IDeployedGiven given : givens) {
 				Predicate pred = given.getGivenClause();
-				if (!canBeSpecialized(specialization, pred)) {
+				if (!ProverUtilities.canBeSpecialized(specialization, pred)) {
 					return ProverFactory.reasonerFailure(this, input,
 							"Fails to specialize " + pred + " with "
 									+ specialization);
@@ -182,69 +177,24 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 	
 			// Ensure that we can specialize the infer
 			Predicate infer = deployedRule.getInfer().getInferClause();
-			if (!canBeSpecialized(specialization, infer)) {
+			if (!ProverUtilities.canBeSpecialized(specialization, infer)) {
 				return ProverFactory.reasonerFailure(this, input,
 						"Fails to specialize " + infer + " with "
 								+ specialization);
 			}
 	
-			// We will have (#givens+1) antecedents.
-			IAntecedent[] antecedents = forwardReasoning(sequent,
+			// We will have (#givens+2) antecedents (including a WD-subgoal).
+			IAntecedent[] antecedents = ProverUtilities.forwardReasoning(sequent,
 					deployedRule, specialization);
 	
 			String description = deployedRule.getDescription();
 			return ProverFactory.makeProofRule(this, input, null, neededHyps,
-					description + " (forward)", antecedents);
+					description + " (forward) with " + hyp, antecedents);
 	
 		} else { // Statically checked theory
 			throw new UnsupportedOperationException(
 					"Rule from Statically checked theory is unsupported");
 		}
-	
-	}
-
-	private IAntecedent[] forwardReasoning(IProverSequent sequent,
-			IDeployedInferenceRule rule, ISpecialization specialization) {
-		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
-		List<IDeployedGiven> givens = rule.getGivens();
-		for (IDeployedGiven given : givens) {
-			Predicate givenPred = given.getGivenClause();
-			Predicate subGoal = givenPred.specialize(specialization);
-			antecedents.add(ProverFactory.makeAntecedent(subGoal));
-	
-			// // add the well-definedness conditions where appropriate
-			// Map<FreeIdentifier, Expression> expressionMappings =
-			// binding.getExpressionMappings();
-			// for (FreeIdentifier identifier : expressionMappings.keySet()){
-			// Expression mappedExpression = expressionMappings.get(identifier);
-			// Predicate wdPredicate = mappedExpression.getWDPredicate();
-			// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-			// if (!sequent.containsHypothesis(wdPredicate))
-			// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
-			// }
-			// }
-		}
-	
-		Predicate inferClause = rule.getInfer().getInferClause();
-		Predicate newHyp = inferClause.specialize(specialization);
-		// add the antecedent corresponding to the infer clause
-		IAntecedent mainAntecedent = ProverFactory.makeAntecedent(null,
-				Collections.singleton(newHyp), ProverFactory
-						.makeSelectHypAction(Collections.singleton(newHyp)));
-		antecedents.add(mainAntecedent);
-		// // add the well-definedness conditions where appropriate
-		// Map<FreeIdentifier, Expression> mappedIdents =
-		// finalBinding.getExpressionMappings();
-		// for (FreeIdentifier identifier : mappedIdents.keySet()){
-		// Expression mappedExpression = mappedIdents.get(identifier);
-		// Predicate wdPredicate = mappedExpression.getWDPredicate();
-		// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-		// if (!sequent.containsHypothesis(wdPredicate))
-		// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
-		// }
-		// }
-	
-		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	
 	}
 
@@ -296,8 +246,8 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 						"Fails to match input hypotheses with given hypotheses");
 			}
 
-			IAntecedent[] antecedents = backwardReason(sequent,
-					deployedRule, specialization);
+			IAntecedent[] antecedents = ProverUtilities.backwardReasoning(
+					sequent, deployedRule, specialization);
 			String description = deployedRule.getDescription();
 			return ProverFactory.makeProofRule(this, input, goal, neededHyps,
 					description + " (backward) on goal", antecedents);
@@ -307,30 +257,6 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 					"Rule from Statically checked theory is unsupported");
 		}
 
-	}
-
-	private IAntecedent[] backwardReason(IProverSequent sequent,
-			IDeployedInferenceRule rule, ISpecialization specialization) {
-		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>();
-		List<IDeployedGiven> givens = rule.getGivens();
-		for (IDeployedGiven given : givens) {
-			Predicate givenPred = given.getGivenClause();
-			Predicate subGoal = givenPred.specialize(specialization);
-			antecedents.add(ProverFactory.makeAntecedent(subGoal));
-	
-			// // add the well-definedness conditions where appropriate
-			// Map<FreeIdentifier, Expression> expressionMappings =
-			// binding.getExpressionMappings();
-			// for (FreeIdentifier identifier : expressionMappings.keySet()){
-			// Expression mappedExpression = expressionMappings.get(identifier);
-			// Predicate wdPredicate = mappedExpression.getWDPredicate();
-			// if (!wdPredicate.equals(ProverUtilities.BTRUE)){
-			// if (!sequent.containsHypothesis(wdPredicate))
-			// antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
-			// }
-			// }
-		}
-		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	}
 
 	/**
@@ -381,20 +307,6 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @param specialization
-	 * @param pred
-	 * @return
-	 */
-	private boolean canBeSpecialized(ISpecialization specialization,
-			Predicate pred) {
-		for (FreeIdentifier identifier : pred.getFreeIdentifiers()) {
-			if (specialization.get(identifier) == null)
-				return false;
-		}
-		return true;
 	}
 
 	@Override

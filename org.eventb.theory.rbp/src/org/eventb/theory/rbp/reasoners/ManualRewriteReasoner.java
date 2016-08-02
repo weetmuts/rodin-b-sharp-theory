@@ -56,8 +56,8 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  * </p>
  * 
  * @author maamria
- * @author htson
- * @version 2.0
+ * @author htson - re-implemented as a context dependent reasoner
+ * @version 2.0.1
  * @see RewriteInput
  * @see RewriteRuleContent
  * @since 3.1.0
@@ -77,6 +77,11 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 		return REASONER_ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IReasoner#apply(IProverSequent, IReasonerInput, IProofMonitor)
+	 */
 	public IReasonerOutput apply(IProverSequent sequent,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 		// PRECONDITION
@@ -92,7 +97,7 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 		final String ruleName = prMetadata.getRuleName();
 
 		// Get the PO Context for the input sequent.
-		IPOContext context = getContext(sequent);
+		IPOContext context = ProverUtilities.getContext(sequent);
 		if (context == null) {
 			return ProverFactory.reasonerFailure(this, input,
 					"Cannot determine the context of the sequent");
@@ -106,7 +111,8 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 		} else { // Hypothesis rewrite
 			predicate = hyp;
 			if (!sequent.containsHypothesis(hyp)) {
-				return ProverFactory.reasonerFailure(this, input, "Nonexistent hypothesis: " + hyp);
+				return ProverFactory.reasonerFailure(this, input,
+						"Nonexistent hypothesis: " + hyp);
 			}
 		}
 

@@ -11,42 +11,17 @@
 
 package org.eventb.theory.rbp.reasoners;
 
-import org.eventb.core.IEventBRoot;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.theory.rbp.rulebase.IPOContext;
-import org.eventb.theory.rbp.rulebase.basis.POContext;
-import org.rodinp.core.IInternalElement;
-
 /**
  * <p>
  * Common abstract implementation for context dependent reasoners. 
  * </p>
  *
  * @author htson
- * @version 0.1
+ * @version 0.2
  * @see ManualInferenceReasoner
  * @see ManualRewriteReasoner
  * @since 4.0
  */
 public class AbstractContextDependentReasoner {
-
-	/**
-	 * Method for getting the PO Context of a prover sequent.
-	 * 
-	 * @param sequent
-	 *            the input prover sequent.
-	 * @return the PO context corresponding to the input sequent or
-	 *         <code>null</code> if the sequent does not have any context.
-	 */
-	protected IPOContext getContext(IProverSequent sequent) {
-		Object origin = sequent.getOrigin();
-		if (origin instanceof IInternalElement) {
-			IInternalElement root = ((IInternalElement) origin).getRoot();
-			if (root instanceof IEventBRoot) {
-				return new POContext((IEventBRoot) root);
-			}
-		}
-		return null;
-	}
 
 }

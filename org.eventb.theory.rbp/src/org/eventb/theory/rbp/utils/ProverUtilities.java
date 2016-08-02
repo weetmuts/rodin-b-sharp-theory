@@ -1,24 +1,41 @@
+/*******************************************************************************
+ * Copyright (c) 2010,2016 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.rbp.utils;
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCInferenceRule;
@@ -34,15 +51,21 @@ import org.eventb.theory.core.ISCTypeParameter;
 import org.eventb.theory.core.basis.NewOperatorDefinition;
 import org.eventb.theory.core.basis.SCRewriteRule;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
+import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedGiven;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedInferenceRule;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRule;
+import org.eventb.theory.rbp.rulebase.basis.POContext;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
  * Some utilities used by RbP.
  * 
- * @since 1.0
  * @author maamria
- *
+ * @author htson - added utility methods
+ * @version 1.2
+ * @since 1.0
  */
 public class ProverUtilities {
 
@@ -328,4 +351,241 @@ public class ProverUtilities {
 			return ReasoningType.FORWARD;
 		return ReasoningType.BACKWARD;
 	}
+
+	/**
+	 * Utility method for getting the PO Context of a prover sequent.
+	 * 
+	 * @param sequent
+	 *            the input prover sequent.
+	 * @return the PO context corresponding to the input sequent or
+	 *         <code>null</code> if the sequent does not have any context.
+	 * @precondition the input sequent must NOT be <code>null</code>.
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static IPOContext getContext(IProverSequent sequent) {
+		// Assert precondition
+		assert sequent != null;
+		
+		Object origin = sequent.getOrigin();
+		if (origin instanceof IInternalElement) {
+			IInternalElement root = ((IInternalElement) origin).getRoot();
+			if (root instanceof IEventBRoot) {
+				return new POContext((IEventBRoot) root);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Utility method to check if a formula can be specialized with a
+	 * specialization object.
+	 * 
+	 * @param specialization
+	 *            the input specialization object.
+	 * @param formula
+	 *            the input formula
+	 * @return <code>true</code> if the formula can be specialized with the
+	 *         input specialization object. Return <code>false</code> otherwise.
+	 * @precondition both input must NOT be <code>null</code>        
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static boolean canBeSpecialized(ISpecialization specialization,
+			Formula<?> formula) {
+		// Assert precondition
+		assert specialization != null;
+		assert formula != null;
+		
+		for (FreeIdentifier identifier : formula.getFreeIdentifiers()) {
+			if (specialization.get(identifier) == null)
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Utilities method to construct a forward reasoning for a given prover
+	 * sequent with the inference rule and the specialization object resulting
+	 * from matching the inference rule.
+	 * 
+	 * @param sequent
+	 *            the input prover sequent
+	 * @param rule
+	 *            the (deployed) inference rule
+	 * @param specialization
+	 *            the specialization object
+	 * @return an array of antecedents resulting from forward reasoning. The
+	 *         first antecedent is the WD-subgoal for all instantiation
+	 *         expressions of the specialization object. For each of given
+	 *         condition (not required) of the rule, generate a corresponding
+	 *         sub-goal. Finally, the infer clause of the rule is added as a
+	 *         hypothesis for the final sub-goal.
+	 * @precondition the specialization must be valid to instantiate the
+	 *               inference rule.
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static IAntecedent[] forwardReasoning(IProverSequent sequent,
+			IDeployedInferenceRule rule, ISpecialization specialization) {
+		List<IDeployedGiven> givens = rule.getGivens();
+		List<IAntecedent> antecedents = new ArrayList<IAntecedent>(
+				givens.size() + 2);		
+
+		// Add the WD sub-goal
+		Predicate wdPredicate = getWDPredicate(specialization);
+		antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+		
+		// Generate a sub-goal for each given (not required) of the inference rule.
+		Set<Predicate> addedHypotheses = Collections.singleton(wdPredicate);
+		for (IDeployedGiven given : givens) {
+			Predicate givenPred = given.getGivenClause();
+			givenPred = givenPred.translate(specialization.getFactory());
+			Predicate subGoal = givenPred.specialize(specialization);
+			IAntecedent antecedent = ProverFactory.makeAntecedent(subGoal,
+					addedHypotheses,
+					ProverFactory.makeSelectHypAction(addedHypotheses));
+			antecedents.add(antecedent);
+		}
+
+		// add the antecedent corresponding to the infer clause
+		Predicate inferClause = rule.getInfer().getInferClause();
+		Predicate newHyp = inferClause.specialize(specialization);
+		addedHypotheses.add(newHyp);
+		IAntecedent mainAntecedent = ProverFactory.makeAntecedent(null,
+				addedHypotheses,
+				ProverFactory.makeSelectHypAction(addedHypotheses));
+		antecedents.add(mainAntecedent);
+	
+		return antecedents.toArray(new IAntecedent[antecedents.size()]);
+	}
+
+	/**
+	 * Utilities method to construct a backward reasoning for a given prover
+	 * sequent with the inference rule and the specialization object resulting
+	 * from matching the inference rule.
+	 * 
+	 * @param sequent the input prover sequent.
+	 * @param rule the input inference rule.
+	 * @param specialization the specialization object.
+	 * @return an array of antecedents resulting from backward reasoning. The
+	 *         first antecedent is the WD-subgoal for all instantiation
+	 *         expressions of the specialization object. For each of given
+	 *         condition (not required) of the rule, a corresponding
+	 *         sub-goal is generated.
+	 * @precondition the specialization must be valid to instantiate the
+	 *               inference rule.
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static IAntecedent[] backwardReasoning(IProverSequent sequent,
+			IDeployedInferenceRule rule, ISpecialization specialization) {
+		List<IDeployedGiven> givens = rule.getGivens();
+		Set<IAntecedent> antecedents = new LinkedHashSet<IAntecedent>(
+				givens.size() + 1);
+
+		// Add the WD sub-goal
+		Predicate wdPredicate = getWDPredicate(specialization);
+		antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
+
+		// Generate a sub-goal for each given (not required) of the inference rule.
+		Set<Predicate> addedHypotheses = Collections.singleton(wdPredicate);
+		for (IDeployedGiven given : givens) {
+			Predicate givenPred = given.getGivenClause();
+			givenPred = givenPred.translate(specialization.getFactory());
+			Predicate subGoal = givenPred.specialize(specialization);
+			antecedents.add(ProverFactory.makeAntecedent(subGoal, addedHypotheses,
+					ProverFactory.makeSelectHypAction(addedHypotheses)));
+		}
+		return antecedents.toArray(new IAntecedent[antecedents.size()]);
+	}
+
+	/**
+	 * Utility method to return the WD predicate corresponding to a
+	 * specialization object. This is the conjunction of the WD-predicates of
+	 * all the instantiating expressions.
+	 * 
+	 * @param specialization
+	 *            the input specialization.
+	 * @return The WD predicate corresponding to the input specialization
+	 *         object.
+	 * @precondition the input must NOT be <code>null</code>
+	 * @author htson
+	 * @since 4.0
+	 */
+	private static Predicate getWDPredicate(ISpecialization specialization) {
+		// Assert PRECONDITION
+		assert specialization != null;
+		
+		FormulaFactory factory = specialization.getFactory();
+		FreeIdentifier[] freeIdentifiers = specialization.getFreeIdentifiers();
+		List<Predicate> wdPredicates = new ArrayList<Predicate>(
+				freeIdentifiers.length);
+		for (FreeIdentifier identifier : freeIdentifiers) {
+			Expression expr = specialization.get(identifier);
+			wdPredicates.add(expr.getWDPredicate());
+		}
+
+		if (wdPredicates.size() == 0) {
+			return BTRUE;
+		}
+		if (wdPredicates.size() == 1) {
+			return wdPredicates.get(0);
+		}
+		return factory.makeAssociativePredicate(Predicate.LAND, wdPredicates,
+				null);
+	}
+
+	/**
+	 * Utility method to get a list of all hypotheses of a prover sequent.
+	 * 
+	 * @param sequent
+	 *            the input prover sequent.
+	 * @return the list of all hypotheses of the input sequent.
+	 * @precondition the input must NOT be <code>null</code>.
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static List<Predicate> getAllHypothesis(IProverSequent sequent) {
+		// Assert PRECONDITION
+		assert sequent != null;
+
+		Iterable<Predicate> hypIterable = sequent.hypIterable();
+		List<Predicate> hypotheses = new ArrayList<Predicate>();
+		for (Predicate hyp : hypIterable)
+			hypotheses.add(hyp);
+		return hypotheses;
+	}
+
+	/**
+	 * Utility method to get a list of givens (not required) of a deployed
+	 * inference rule. Each given is translated to the input factory.
+	 * 
+	 * @param rule
+	 *            the input deployed inference rule.
+	 * @param factory
+	 *            the formula factory
+	 * @return the list of predicates correspond to the givens of the input
+	 *         rule.
+	 * @precondition the input must NOT be <code>null</code>.
+	 * @throw {@link UntranslatableException} if any given is untranslatable.
+	 * @see Formula#translate(FormulaFactory)
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static List<Predicate> getGivenPredicates(
+			FormulaFactory factory, IDeployedInferenceRule rule) {
+		// Assert PRECONDITION
+		assert rule != null;
+
+		List<IDeployedGiven> hypGivens = rule.getHypGivens();
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		for (IDeployedGiven hypGiven : hypGivens) {
+			Predicate given = hypGiven.getGivenClause();
+			given = given.translate(factory);
+			predicates.add(given);
+		}
+		return predicates;
+	}
+
 }

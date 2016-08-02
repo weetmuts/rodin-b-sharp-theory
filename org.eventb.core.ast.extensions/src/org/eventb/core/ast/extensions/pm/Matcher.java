@@ -8,6 +8,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extensions.pm;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -326,6 +327,7 @@ public final class Matcher {
 
 	/**
 	 * Utility method to match a list of formulae and a list of patterns.
+	 * @param neededHyps 
 	 * 
 	 * @param formulae
 	 *            the input list of formulae.
@@ -334,9 +336,45 @@ public final class Matcher {
 	 * @return the resulting specialization if the matching is successful.
 	 *         Otherwise, return <code>null</code>.
 	 */
-	public static ISpecialization match(List<Predicate> formulae,
-			List<Predicate> patterns) {
-		// TODO Implement the method recursively.
+	public static ISpecialization match(final ISpecialization specialization,
+			Collection<Predicate> matched, final List<Predicate> formulae,
+			final List<Predicate> patterns) {
+		return match(specialization, matched, formulae,
+				patterns.toArray(new Predicate[patterns.size()]), 0);
+	}
+
+	/**
+	 * @param formulae
+	 * @param array
+	 * @param specialization
+	 * @param matched 
+	 * @return
+	 */
+	private static ISpecialization match(ISpecialization specialization,
+			Collection<Predicate> matched, List<Predicate> formulae,
+			Predicate[] patterns, int index) {
+		if (patterns.length == index)
+			// Nothing to match, then return the specialization
+			return specialization;
+		
+		// Get the first pattern
+		Predicate pattern = patterns[index];
+		for (Predicate formula : formulae) { // For each formula
+			// Clone the input specialization
+			ISpecialization clone = specialization.clone();
+			// Match the pattern with the formula
+			clone = Matcher.match(clone, formula, pattern);
+			// If does not match then continue (to the next available formula)
+			if (clone == null)
+				continue;
+			
+			// If match then add to the list of matched and try recursively to
+			// match the rest of the pattern list.
+			matched.add(formula);
+			clone = match(clone, matched, formulae, patterns, index+1);
+			if (clone != null)
+				return clone;
+		}
 		return null;
 	}
 
