@@ -17,7 +17,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
  * <p>
- * An implementation of an inference reasoner input
+ * An implementation of an manual inference reasoner input
  * <ul>
  * <li>Proof-rule metadata (inherited from {@link PRMetadataReasonerInput}).</li>
  * 
@@ -98,10 +98,13 @@ public class InferenceInput extends PRMetadataReasonerInput {
 
 	/**
 	 * @param reader
+	 * @throws SerializeException
 	 */
-	private boolean deserializeV2(IReasonerInputReader reader) {
+	private boolean deserializeV2(IReasonerInputReader reader)
+			throws SerializeException {
+		Predicate[] predicates;
 		try {
-			Predicate[] predicates = reader.getPredicates(V2_HYP_KEY);
+			predicates = reader.getPredicates(V2_HYP_KEY);
 			if (predicates.length == 0) {
 				this.hyp = null;
 				return true;
@@ -110,13 +113,11 @@ public class InferenceInput extends PRMetadataReasonerInput {
 				this.hyp = predicates[1];
 				return true;
 			}
-			throw new SerializeException(new IllegalStateException(
-					"Unexpected number of hypothesis: " + predicates));
 		} catch (SerializeException e) {
 			return false;
 		}
-			
-	
+		throw new SerializeException(new IllegalStateException(
+				"Unexpected number of hypothesis: " + predicates));
 	}
 
 	/**
@@ -171,7 +172,8 @@ public class InferenceInput extends PRMetadataReasonerInput {
 
 	@Override
 	public void applyHints(ReplayHints renaming) {
-		hyp = renaming.applyHints(hyp);
+		if (hyp != null)
+			hyp = renaming.applyHints(hyp);
 	}
 
 	/*

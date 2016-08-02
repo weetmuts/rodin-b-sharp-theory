@@ -8,7 +8,6 @@
 package org.eventb.theory.rbp.reasoners;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +28,6 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.internal.rbp.reasoners.input.InferenceInput;
-import org.eventb.theory.internal.rbp.reasoners.input.RewriteInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
@@ -50,8 +48,7 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  * @author maamria
  * @author htson - re-implemented as a context dependent reasoner.
  * @version 2.0.1
- * @see RewriteInput
- * @see RewriteRuleContent
+ * @see InferenceInput
  * @since 3.1.0
  */
 public class ManualInferenceReasoner extends AbstractContextDependentReasoner
@@ -93,6 +90,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 		final String projectName = prMetadata.getProjectName();
 		final String ruleName = prMetadata.getRuleName();
 
+		// Get the context of the prover sequent.
 		IPOContext context = ProverUtilities.getContext(sequent);
 		if (context == null) {
 			return ProverFactory.reasonerFailure(this, input,
@@ -110,69 +108,97 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 							+ " within the given context for ");
 		}
 
+		// Check the flag and apply forward or backward respectively
 		if (forward) {
-			return applyForward(sequent, input, rule, projectName, theoryName,
-					ruleName, hyp);
+			return applyForward(sequent, rule, hyp, input, projectName, theoryName,
+					ruleName);
 		} else {
-			return applyBackward(sequent, input, rule, projectName, theoryName,
+			return applyBackward(sequent, rule, input, projectName, theoryName,
 					ruleName);
 		}
 	}
 
 	/**
-	 * @param ruleName 
-	 * @param theoryName 
-	 * @param projectName 
-	 * @param rule 
-	 * @param sequent 
-	 * @param input 
-	 * @return
+	 * Utility method to apply an inference rule forwardly to a prover sequent.
+	 * A predicate is passed to match the first given of the inference rule. The
+	 * inference input, and proof rule meta-data, i.e., project name, theory
+	 * name, rule name are passed to construct useful messages in the case of
+	 * failure applications.
+	 * 
+	 * @param sequent
+	 *            the prover sequent.
+	 * @param rule
+	 *            the inference rule
+	 * @param hyp
+	 *            the hypothesis to match the first given of the rule.
+	 * @param input
+	 *            the inference input.
+	 * @param projectName
+	 *            the project name.
+	 * @param theoryName
+	 *            the theory name.
+	 * @param ruleName
+	 *            the rule name.
+	 * @return result of apply an inference rule forwardly (can be a "failure")
+	 * @see ProverFactory
+	 * @see ProverUtilities
 	 */
 	private IReasonerOutput applyForward(IProverSequent sequent,
-			InferenceInput input, IGeneralRule rule, String projectName,
-			String theoryName, String ruleName, Predicate hyp) {
-	if (rule instanceof IDeployedInferenceRule) {
+			IGeneralRule rule, Predicate hyp, InferenceInput input, String projectName,
+			String theoryName, String ruleName) {
+		if (rule instanceof IDeployedInferenceRule) {
 			// if expected forward application but rule is not suitable
 			IDeployedInferenceRule deployedRule = (IDeployedInferenceRule) rule;
 			if (!deployedRule.isSuitableForForwardReasoning()) {
 				return ProverFactory.reasonerFailure(this, input,
-						"Cannot use the inference rule " + projectName
-								+ "::" + theoryName + "::" + ruleName
+						"Cannot use the inference rule " + projectName + "::"
+								+ theoryName + "::" + ruleName
 								+ " for forward reasoning");
 			}
-			
-			if (!sequent.containsHypothesis(hyp)) 
-				return ProverFactory.reasonerFailure(this, input,
-						"Hypothesis " + hyp + " does not exist");
-			
+
+			if (!sequent.containsHypothesis(hyp))
+				return ProverFactory.reasonerFailure(this, input, "Hypothesis "
+						+ hyp + " does not exist");
+
 			List<IDeployedGiven> hypGivens = deployedRule.getHypGivens();
 			if (hypGivens.size() == 0)
 				return ProverFactory
 						.reasonerFailure(this, input,
 								"Inference rule for forward reasoning must have at least one given hypothesis");
-			FormulaFactory factory = sequent.getFormulaFactory();
-			ISpecialization specialization = factory.makeSpecialization();
 			
+			// Match the input hypotheses with the givens of the rule.
+			FormulaFactory factory = sequent.getFormulaFactory();
+			List<Predicate> patterns = ProverUtilities
+					.getGivenPredicates(factory, deployedRule);
 			Set<Predicate> neededHyps = new HashSet<Predicate>();
-			// Match the input hypotheses with the hypothesis givens of the
-			// rule.
-			specialization = matchHypothesisGivens(specialization, sequent, hyp,
-					hypGivens, neededHyps);
-	
+
+			// Match the first given with the input hypothesis
+			Predicate firstGiven = patterns.remove(0);
+			ISpecialization specialization = Matcher.match(hyp, firstGiven);
+			if (specialization == null)
+				return ProverFactory
+						.reasonerFailure(this, input,
+								"Cannot match hypothesis " + hyp + " to " + firstGiven);
+			neededHyps.add(hyp);
+			
+			// Match the other givens
+			List<Predicate> formulae = ProverUtilities
+					.getAllHypothesis(sequent);
+			specialization = Matcher.match(specialization, neededHyps,
+					formulae, patterns);
+			
 			if (specialization == null) {
 				return ProverFactory.reasonerFailure(this, input,
-						"Fails to match input hypotheses with given hypotheses");
+						"Fails to match input hypotheses with givens");
 			}
 	
 			// Ensure that we can specialize the other non-hypothesis givens
-			List<IDeployedGiven> givens = deployedRule.getGivens();
-			for (IDeployedGiven given : givens) {
-				Predicate pred = given.getGivenClause();
-				if (!ProverUtilities.canBeSpecialized(specialization, pred)) {
-					return ProverFactory.reasonerFailure(this, input,
-							"Fails to specialize " + pred + " with "
-									+ specialization);
-				}
+			Predicate pred = ProverUtilities.canGivensBeSpecialized(
+					deployedRule, specialization);
+			if (pred != null) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Fails to specialize " + pred + " with "
+								+ specialization);
 			}
 	
 			// Ensure that we can specialize the infer
@@ -189,7 +215,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 	
 			String description = deployedRule.getDescription();
 			return ProverFactory.makeProofRule(this, input, null, neededHyps,
-					description + " (forward) with " + hyp, antecedents);
+					description + " (manual forward) with " + hyp, antecedents);
 	
 		} else { // Statically checked theory
 			throw new UnsupportedOperationException(
@@ -199,16 +225,29 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 	}
 
 	/**
+	 * Utility method to apply an inference rule backwardly to a prover sequent.
+	 * The inference input, and proof rule meta-data, i.e., project name, theory
+	 * name, rule name are passed to construct useful messages in the case of
+	 * failure applications.
+	 * 
 	 * @param sequent
-	 * @param input
+	 *            the prover sequent.
 	 * @param rule
+	 *            the inference rule
+	 * @param input
+	 *            the inference input.
 	 * @param projectName
+	 *            the project name.
 	 * @param theoryName
+	 *            the theory name.
 	 * @param ruleName
-	 * @return
+	 *            the rule name.
+	 * @return result of apply an inference rule backwardly (can be a "failure")
+	 * @see ProverFactory
+	 * @see ProverUtilities
 	 */
 	private IReasonerOutput applyBackward(IProverSequent sequent,
-			InferenceInput input, IGeneralRule rule, String projectName,
+			IGeneralRule rule, InferenceInput input, String projectName,
 			String theoryName, String ruleName) {
 		if (rule instanceof IDeployedInferenceRule) {
 			// if expected backward application but rule is not suitable
@@ -234,12 +273,14 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 								+ inferPredicate);
 			}
 
-			List<IDeployedGiven> hypGivens = deployedRule.getHypGivens();
+			// Match the input hypotheses with the givens of the rule.
+			List<Predicate> formulae = ProverUtilities
+					.getAllHypothesis(sequent);
+			List<Predicate> patterns = ProverUtilities
+					.getGivenPredicates(factory, deployedRule);
 			Set<Predicate> neededHyps = new HashSet<Predicate>();
-			// Match the input hypotheses with the hypothesis givens of the
-			// rule.
-			specialization = matchHypothesisGivens(specialization, sequent, null,
-					hypGivens, neededHyps);
+			specialization = Matcher.match(specialization, neededHyps,
+					formulae, patterns);
 	
 			if (specialization == null) {
 				return ProverFactory.reasonerFailure(this, input,
@@ -250,7 +291,7 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 					sequent, deployedRule, specialization);
 			String description = deployedRule.getDescription();
 			return ProverFactory.makeProofRule(this, input, goal, neededHyps,
-					description + " (backward) on goal", antecedents);
+					description + " (manual backward) on goal", antecedents);
 
 		} else { // Statically checked theory
 			throw new UnsupportedOperationException(
@@ -259,61 +300,12 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 
 	}
 
-	/**
-	 * @param sequent 
-	 * @param neededHyps 
-	 * @return
-	 */
-	private ISpecialization matchHypothesisGivens(
-			ISpecialization specialization, IProverSequent sequent, Predicate hyp,
-			List<IDeployedGiven> hypGivens, Set<Predicate> neededHyps) {
-		Iterator<IDeployedGiven> iterator = hypGivens.iterator();
-		for (int i = 0; i != hypGivens.size(); ++i) {
-			IDeployedGiven given = iterator.next();
-			Predicate pattern = given.getGivenClause();
-			if (i == 0 && hyp != null) {
-				// TODO Need to check if the formula is translatable.
-				hyp = hyp.translate(specialization.getFactory());
-				specialization = Matcher.match(specialization, hyp, pattern);
-				neededHyps.add(hyp);
-			} else {
-				specialization = matchGivenHypothesis(specialization, pattern, sequent, neededHyps);
-				if (specialization == null) {
-					return null;
-				}
-			}
-		}
-		return specialization;
-	}
-
-	/**
-	 * @param specialization
-	 * @param givenClause
-	 * @param sequent
-	 * @param neededHyps 
-	 * @return
-	 */
-	private ISpecialization matchGivenHypothesis(
-			ISpecialization specialization, Predicate givenClause,
-			IProverSequent sequent, Set<Predicate> neededHyps) {
-		Iterator<Predicate> iterator = sequent.hypIterable().iterator();
-		while (iterator.hasNext()) {
-			Predicate formula = iterator.next();
-			ISpecialization clone = specialization.clone();
-			clone = Matcher.match(clone, formula, givenClause);
-			if (clone != null) {
-				neededHyps.add(formula);
-				return clone;
-			}
-		}
-		return null;
-	}
-
 	@Override
 	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
 			throws SerializeException {
 		// PRECONDITION
 		assert input instanceof InferenceInput;
+		
 		((InferenceInput) input).serialize(writer);
 	}
 
