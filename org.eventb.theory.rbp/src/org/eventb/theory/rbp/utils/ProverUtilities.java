@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -437,7 +438,8 @@ public class ProverUtilities {
 		antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
 		
 		// Generate a sub-goal for each given (not required) of the inference rule.
-		Set<Predicate> addedHypotheses = Collections.singleton(wdPredicate);
+		Set<Predicate> addedHypotheses = new HashSet<Predicate>(
+				Collections.singleton(wdPredicate));
 		for (IDeployedGiven given : givens) {
 			Predicate givenPred = given.getGivenClause();
 			givenPred = givenPred.translate(specialization.getFactory());
@@ -489,7 +491,8 @@ public class ProverUtilities {
 		antecedents.add(ProverFactory.makeAntecedent(wdPredicate));
 
 		// Generate a sub-goal for each given (not required) of the inference rule.
-		Set<Predicate> addedHypotheses = Collections.singleton(wdPredicate);
+		Set<Predicate> addedHypotheses = new HashSet<Predicate>(
+				Collections.singleton(wdPredicate));
 		for (IDeployedGiven given : givens) {
 			Predicate givenPred = given.getGivenClause();
 			givenPred = givenPred.translate(specialization.getFactory());
@@ -586,6 +589,22 @@ public class ProverUtilities {
 			predicates.add(given);
 		}
 		return predicates;
+	}
+
+	/**
+	 * @param deployedRule
+	 * @return
+	 */
+	public static Predicate canGivensBeSpecialized(
+			IDeployedInferenceRule deployedRule, ISpecialization specialization) {
+		List<IDeployedGiven> givens = deployedRule.getGivens();
+		for (IDeployedGiven given : givens) {
+			Predicate pred = given.getGivenClause();
+			if (!ProverUtilities.canBeSpecialized(specialization, pred)) {
+				return pred;
+			}
+		}
+		return null;
 	}
 
 }

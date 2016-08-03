@@ -47,14 +47,14 @@ public abstract class ProofRuleTactic extends CombinableTactic implements
 	 * @return the PRMetadata reasoner input.
 	 */
 	public abstract PRMetadataReasonerInput getReasonerInput();
-	
+
 	/**
 	 * Abstract method to return the reasoner.
 	 * 
 	 * @return the reasoner.
 	 */
 	public abstract IReasoner getReasoner();
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -66,19 +66,23 @@ public abstract class ProofRuleTactic extends CombinableTactic implements
 		IReasoner reasoner = getReasoner();
 		IReasonerInput reasonerInput = getReasonerInput();
 		try {
-			reasonerOutput = reasoner.apply(ptNode.getSequent(),
-					reasonerInput, pm);
+			reasonerOutput = reasoner.apply(ptNode.getSequent(), reasonerInput,
+					pm);
 		} catch (Exception e) {
 			final String msg = "while applying the reasoner: "
 					+ reasoner.getReasonerID();
 			ProverUtilities.log(e, msg);
 			return "Reasoner failed unexpectedly, see error log";
 		}
-		if (reasonerOutput == null) return "! Plugin returned null !";
-		if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
-		IProofRule rule = (IProofRule)reasonerOutput;
-		if (ptNode.applyRule(rule)) return null;
-		else return "Rule "+rule.getDisplayName()+" is not applicable";
+		if (reasonerOutput == null)
+			return "! Plugin returned null !";
+		if (!(reasonerOutput instanceof IProofRule))
+			return reasonerOutput;
+		IProofRule rule = (IProofRule) reasonerOutput;
+		if (ptNode.applyRule(rule))
+			return null;
+		else
+			return "Rule " + rule.getDisplayName() + " is not applicable";
 	}
 
 }
