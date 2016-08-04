@@ -1,7 +1,8 @@
 package org.eventb.theory.rbp.reasoning;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.AssociativeExpression;
@@ -11,7 +12,6 @@ import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
@@ -35,6 +35,8 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.ISCRewriteRule;
+import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
+import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 import org.eventb.theory.rbp.utils.ProverUtilities;
@@ -42,15 +44,20 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
 /**
  * <p>An implementation of a rewrite rule automatic rewriter.</p>
  * @author maamria
- * @see DefaultRewriter
+ * @author htson
  */
-public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewriter{
+public class AutoRewriter implements IFormulaRewriter{
 	
-//	private ComplexBinder binder;
+	private Set<Expression> instantiations;
+	String ruleDescription;
+	private IPRMetadata prMetadata;
+	private IPOContext context;
 	
-	public AutoRewriter(IPOContext context){
-		super(context);
-//		this.binder =  new ComplexBinder(context.getFormulaFactory());
+	
+	public AutoRewriter(IPOContext context, IPRMetadata prMetadata){
+		this.context = context;
+		this.prMetadata = prMetadata;
+		this.instantiations = new LinkedHashSet<Expression>();
 	}
 	
 	/**
@@ -59,7 +66,7 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @return the rewritten expression
 	 */
 	protected Expression applyExpressionRewrites(Expression original){
-		Expression expression = ((Expression) applyRules(original));
+		Expression expression = ((Expression) applyRule(original));
 		if(original.equals(expression)){
 			return original;
 		}
@@ -73,7 +80,7 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @return the rewritten predicate
 	 */
 	protected Predicate applyPredicateRewrites(Predicate original){
-		Predicate pred = ((Predicate) applyRules(original));
+		Predicate pred = ((Predicate) applyRule(original));
 		if(original.equals(pred)){
 			return original;
 		}
@@ -87,43 +94,51 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @param original the formula to rewrite
 	 * @return the rewritten formula
 	 */
-	private Formula<?> applyRules(Formula<?> original){
-		List<IGeneralRule> rules = getRules(original);
-		Formula<?> result = original;
+	private Formula<?> applyRule(Formula<?> original){
+		IGeneralRule rule = getRule(original);
+		if (rule == null) 
+			return original;
+		
 		Formula<?> ruleLhs = null;
 		Formula<?> ruleRhs = null;
 		FormulaFactory factory = context.getFormulaFactory();
-		for(IGeneralRule rule: rules){
-			if (rule instanceof IDeployedRewriteRule) {
-				ruleLhs = ((IDeployedRewriteRule) rule).getLeftHandSide();
-				ruleRhs = ((IDeployedRewriteRule) rule).getRightHandSides().get(0).getRHSFormula();
-				ruleLhs = ruleLhs.translate(factory);
-				ruleRhs = ruleRhs.translate(factory);
-			
-			}
-			else { //if (rule instanceof ISCRewriteRule) {
-				try {
-				ITypeEnvironment typeEnvironment = ProverUtilities.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
-				ruleLhs = ((ISCRewriteRule) rule).getSCFormula(factory, typeEnvironment);
-				ruleRhs = Arrays.asList(((ISCRewriteRule) rule).getRuleRHSs()).get(0).getSCFormula(factory, typeEnvironment);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				};
-			}
-			ISpecialization specialization = Matcher.match(original, ruleLhs);
-			if (specialization == null){
-				continue;
-			}
-			// since rule is unconditional
-			Formula<?> boundRhs = ruleRhs.specialize(specialization);
-//			Formula<?> boundRhs = binder.bind(ruleRhs, binding, true);
-			if (boundRhs == null){
-				continue;
-			}
-			result = boundRhs;
+		
+		if (rule instanceof IDeployedRewriteRule) {
+			ruleLhs = ((IDeployedRewriteRule) rule).getLeftHandSide();
+			ruleRhs = ((IDeployedRewriteRule) rule).getRightHandSides().get(0).getRHSFormula();
+			ruleLhs = ruleLhs.translate(factory);
+			ruleRhs = ruleRhs.translate(factory);
+			ruleDescription = ((IDeployedRewriteRule) rule).getDescription();
 		}
-		return result;
+		else { //if (rule instanceof ISCRewriteRule) {
+			try {
+				ITypeEnvironment typeEnvironment = ProverUtilities
+						.makeTypeEnvironment(factory, (ISCRewriteRule) rule);
+				ruleLhs = ((ISCRewriteRule) rule).getSCFormula(factory,
+						typeEnvironment);
+				ruleRhs = Arrays.asList(((ISCRewriteRule) rule).getRuleRHSs())
+						.get(0).getSCFormula(factory, typeEnvironment);
+			} catch (CoreException e) {
+				e.printStackTrace();
+				return original;
+			}
+			;
+		}
+		
+		ISpecialization specialization = Matcher.match(original, ruleLhs);
+		if (specialization == null) {
+			return original;
+		}
+		// since rule is unconditional
+		if (!ProverUtilities.canBeSpecialized(specialization, ruleRhs)) {
+			return original;
+		}
+
+		Set<Expression> expressions = ProverUtilities
+				.getInstantiatingExpressions(specialization);
+		instantiations.addAll(expressions);
+		Formula<?> boundRhs = ruleRhs.specialize(specialization);
+		return boundRhs;
 	}
 	
 	/**
@@ -133,9 +148,14 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @param original
 	 * @return
 	 */
-	protected List<IGeneralRule> getRules(Formula<?> original){
-		List<IGeneralRule> rules = manager.getRewriteRules(true, original.getClass(), context);
-		return rules;
+	protected IGeneralRule getRule(Formula<?> original){
+		BaseManager manager = BaseManager.getDefault();
+		String projectName = prMetadata.getProjectName();
+		String theoryName = prMetadata.getTheoryName();
+		String ruleName = prMetadata.getRuleName();
+		IGeneralRule rule = manager.getRewriteRule(true, projectName, ruleName,
+				theoryName, original.getClass(), context);
+		return rule;
 	}
 	
 	@Override
@@ -253,5 +273,19 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	@Override
 	public void leavingQuantifier(int nbOfDeclarations) {
 		// nothing to do
+	}
+
+	/**
+	 * @return
+	 */
+	public Set<Expression> getInstantiations() {
+		return instantiations;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getDescription() {
+		return ruleDescription;
 	}
 }
