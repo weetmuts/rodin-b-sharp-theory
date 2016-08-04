@@ -1,12 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2010,2016 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -21,33 +30,53 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.theory.internal.rbp.reasoners.input.AutoRewriteInput;
+import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.reasoning.AutoRewriter;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
- * 
- * @author maamria
+ * <p>
+ * Reasoner used for automatic rewrite tactic.
+ * </p>
  *
+ * @author maamria
+ * @author htson - re-implemented as a context-dependent reasoner.
+ * @version 2.0
+ * @see AutoRewriter
+ * @since 1.0
  */
 public class AutoRewriteReasoner extends AbstractContextDependentReasoner
 		implements IReasoner {
 
 	private static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".autoRewriteReasoner";
+		
+	// The set of instantiation expressions, in order to generate WD subgoal
+	private Set<Expression> instantiations;
 	
-	private static final String DISPLAY_NAME = "RbP0";
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IReasoner#getReasonerID()
+	 */
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
-		IPOContext context = getContext(seq);
+		// Assert precondition
+		IPOContext context = ProverUtilities.getContext(seq);
 		assert context != null;
+		assert input instanceof AutoRewriteInput;
+		
+		instantiations = new LinkedHashSet<Expression>();
+		AutoRewriteInput rewriteInput = (AutoRewriteInput) input;
+		IPRMetadata prMetadata = rewriteInput.getPRMetadata();
 		
 		final FormulaFactory ff = seq.getFormulaFactory();
-		final IFormulaRewriter rewriter = getRewriter(context);
+		final AutoRewriter rewriter = getRewriter(context, prMetadata);
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			// Rewrite the hypothesis
@@ -59,6 +88,7 @@ public class AutoRewriteReasoner extends AbstractContextDependentReasoner
 			// Check if rewriting generated something interesting
 			inferredHyps.remove(DLib.True(ff));
 			Collection<Predicate> originalHyps = Collections.singleton(hyp);
+			
 			// Hide the original if the inferredHyps is empty, i.e. the
 			// hypothesis get rewritten to Lib.True.
 			if (inferredHyps.isEmpty()) {
@@ -82,23 +112,45 @@ public class AutoRewriteReasoner extends AbstractContextDependentReasoner
 		Predicate newGoal = recursiveRewrite(goal, rewriter);
 
 		if (newGoal != goal) {
-			IAntecedent[] antecedent = new IAntecedent[] { ProverFactory.makeAntecedent(newGoal, null, null, hypActions) };
-			return ProverFactory.makeProofRule(this, input, goal, null, null, getDisplayName(), antecedent);
+			// Add the WD sub-goal
+			Predicate wdPredicate = ProverUtilities.getWDPredicate(
+					seq.getFormulaFactory(), instantiations);
+			Set<Predicate> wdHypotheses = Collections.singleton(wdPredicate);
+			hypActions.add(ProverFactory.makeSelectHypAction(wdHypotheses));
+
+			IAntecedent[] antecedent = new IAntecedent[] {
+					ProverFactory.makeAntecedent(wdPredicate),
+					ProverFactory.makeAntecedent(newGoal, wdHypotheses, null,
+							hypActions) };
+			return ProverFactory.makeProofRule(this, input, goal, null, null,
+					rewriter.getDescription() + " " + getReasonerDisplayName(),
+					antecedent);
 		}
 		if (!hypActions.isEmpty()) {
-			return ProverFactory.makeProofRule(this, input, getDisplayName(), hypActions);
+			// Add the WD sub-goal
+			Predicate wdPredicate = ProverUtilities.getWDPredicate(
+					seq.getFormulaFactory(), instantiations);
+			Set<Predicate> wdHypotheses = Collections.singleton(wdPredicate);
+			hypActions.add(ProverFactory.makeSelectHypAction(wdHypotheses));
+			IAntecedent[] antecedent = new IAntecedent[] {
+					ProverFactory.makeAntecedent(wdPredicate),
+					ProverFactory.makeAntecedent(null, wdHypotheses, null, hypActions) };
+			return ProverFactory.makeProofRule(this, input, null, null, null,
+					rewriter.getDescription() + " " + getReasonerDisplayName(), antecedent);
 		}
-		return ProverFactory.reasonerFailure(this, input, "No rewrites applicable");
+		return ProverFactory.reasonerFailure(this, input,
+				"No rewrites applicable");
 	}
 
 	// can be overridden to provide alternative display name
-	protected String getDisplayName() {
-		return DISPLAY_NAME;
+	protected String getReasonerDisplayName() {
+		return " (auto rewrite)";
 	}
 	
 	// can be overridden to provide alternative rewriter
-	protected IFormulaRewriter getRewriter(IPOContext context){
-		 return new AutoRewriter(context);
+	protected AutoRewriter getRewriter(IPOContext context,
+			IPRMetadata prMetadata) {
+		return new AutoRewriter(context, prMetadata);
 	}
 
 	/**
@@ -117,10 +169,13 @@ public class AutoRewriteReasoner extends AbstractContextDependentReasoner
 	 *            the input predicate
 	 * @return the resulting predicate after rewrite.
 	 */
-	private Predicate recursiveRewrite(Predicate pred, IFormulaRewriter rewriter) {
+	private Predicate recursiveRewrite(Predicate pred, AutoRewriter rewriter) {
 		Predicate resultPred;
 		resultPred = pred.rewrite(rewriter);
+		Set<Expression> expressions;
 		while (resultPred != pred) {
+			expressions = rewriter.getInstantiations();
+			instantiations.addAll(expressions);
 			pred = resultPred;
 			resultPred = pred.rewrite(rewriter);
 		}
@@ -130,12 +185,14 @@ public class AutoRewriteReasoner extends AbstractContextDependentReasoner
 	@Override
 	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
 			throws SerializeException {
-		// Do nothing
+		assert input instanceof AutoRewriteInput;
+		
+		((AutoRewriteInput) input).serialize(writer);
 	}
 
 	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
-		return new EmptyInput();
+		return new AutoRewriteInput(reader);
 	}
 }
