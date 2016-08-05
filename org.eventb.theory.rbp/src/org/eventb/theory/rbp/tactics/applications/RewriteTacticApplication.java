@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2011,2016 University of Southampton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.rbp.tactics.applications;
 
 import org.eclipse.swt.graphics.Point;
@@ -25,7 +32,10 @@ import org.rodinp.core.RodinDBException;
 /**
  * 
  * @author maamria
- *
+ * @author htson - Minor fixes
+ * @version 1.1
+ * @see RewriteInput
+ * @since 1.0
  */
 public class RewriteTacticApplication extends DefaultPositionApplication implements IPositionApplication {
 
@@ -44,12 +54,20 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 		this.clazz = clazz;
 	}
 
+	/* (non-Javadoc)
+	 * @see DefaultPositionApplication#getHyperlinkBounds(String, Predicate)
+	 */
 	public Point getHyperlinkBounds(String parsedString,
 			Predicate parsedPredicate) {
 		return getOperatorPosition(parsedPredicate,
 				parsedString);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see DefaultPositionApplication#getHyperlinkLabel()
+	 */
 	public String getHyperlinkLabel() {
 		IPRMetadata prMetadata = input.getPRMetadata();
 		String projectName = prMetadata.getProjectName();
@@ -57,7 +75,7 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 		String ruleName = prMetadata.getRuleName();
 		// Get the inference rule (given the meta-data) from the current context
 		BaseManager manager = BaseManager.getDefault();
-		IGeneralRule rule = manager.getRewriteRule(projectName, ruleName,
+		IGeneralRule rule = manager.getRewriteRule(false, projectName, ruleName,
 				theoryName, clazz, context);
 		if (rule == null) { // Definitional rule
 			return "Expand definition";
@@ -75,35 +93,43 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see DefaultPositionApplication#getTactic(String[], String)
+	 */
 	public ITactic getTactic(String[] inputs, String globalInput) {
 		ManualRewriteReasoner reasoner = new ManualRewriteReasoner();
 		return BasicTactics.reasonerTac(reasoner, input);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see DefaultPositionApplication#getTacticID()
+	 */
 	public String getTacticID() {
 		return TACTIC_ID;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see DefaultPositionApplication#getOperatorPosition(Predicate, String)
+	 */
 	public Point getOperatorPosition(Predicate predicate, String predStr) {
 		Formula<?> subFormula = predicate.getSubFormula(position);
 		if (subFormula instanceof ExtendedExpression) {
 			ExtendedExpression exp = (ExtendedExpression) subFormula;
-			// TODO temporary fix to core issue about redlinks
-			// (can't handle rewriting with constructor/destructor at root) 
-			// Uncomment the lines below when core fixes it (DefaultTacticProvider)
-//			IFormulaExtension extension = exp.getExtension();
-//			if(AstUtilities.isATheoryExtension(extension)){
-				PositionPoint point = AstUtilities.getPositionOfOperator(exp, predStr);
-				return new Point(point.getX(), point.getY());
-//			}
+			PositionPoint point = AstUtilities.getPositionOfOperator(exp,
+					predStr);
+			return new Point(point.getX(), point.getY());
 		}
 		if (subFormula instanceof ExtendedPredicate) {
 			ExtendedPredicate pred = (ExtendedPredicate) subFormula;
-//			IFormulaExtension extension = pred.getExtension();
-//			if(AstUtilities.isATheoryExtension(extension)){
-				PositionPoint point = AstUtilities.getPositionOfOperator(pred, predStr);
-				return new Point(point.getX(), point.getY());
-//			}
+			PositionPoint point = AstUtilities.getPositionOfOperator(pred,
+					predStr);
+			return new Point(point.getX(), point.getY());
 		}
 		return super.getOperatorPosition(predicate, predStr);
 	}
