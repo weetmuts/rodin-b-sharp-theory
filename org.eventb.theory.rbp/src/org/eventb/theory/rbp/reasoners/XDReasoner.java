@@ -7,8 +7,9 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.reasoners;
 
-import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
+import org.eventb.theory.rbp.reasoning.AbstractRulesApplyer;
 import org.eventb.theory.rbp.reasoning.XDAutoRewriter;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
@@ -21,18 +22,18 @@ public class XDReasoner extends AutoRewriteReasoner {
 
 	private static final String REASONER_ID = RbPPlugin.PLUGIN_ID + ".reduceToClassicLanguageReasoner";
 	
-	private static final String DISPLAY_NAME = "RbPxd";
-
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
-	protected String getDisplayName() {
-		return DISPLAY_NAME;
+		
+	public AbstractRulesApplyer getRewriter(IPOContext context, IPRMetadata prMetadata) {
+		 return new XDAutoRewriter(context, prMetadata);
 	}
 	
-	protected IFormulaRewriter getRewriter(IPOContext context){
-		 return new XDAutoRewriter(context);
+	// can be overridden to provide alternative display name
+	public String getReasonerDisplayName() {
+		return "(exp. def.)";
 	}
+
 }
