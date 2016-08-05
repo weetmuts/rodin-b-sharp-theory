@@ -10,20 +10,45 @@ package org.eventb.theory.rbp.reasoning;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.theory.core.IGeneralRule;
+import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
+import org.eventb.theory.rbp.rulebase.BaseManager;
 import org.eventb.theory.rbp.rulebase.IPOContext;
+import org.eventb.theory.rbp.rulebase.basis.IDeployedRewriteRule;
 
-public class XDAutoRewriter extends AutoRewriter{
+public class XDAutoRewriter extends AbstractRulesApplyer implements IFormulaRewriter {
 
-	public XDAutoRewriter(IPOContext context) {
-		super(context);
-		assert context != null;
+	/**
+	 * @param context
+	 * @param prMetadata
+	 */
+	public XDAutoRewriter(IPOContext context, IPRMetadata prMetadata) {
+		super(context, prMetadata);
 	}
 	
-	protected List<IGeneralRule> getRules(Formula<?> original){
-		assert context != null;
-		List<IGeneralRule> rules = manager.getDefinitionalRules(original.getClass(), context);
-		return rules;
+	@Override
+	public IGeneralRule getRule(Formula<?> original){
+		BaseManager manager = BaseManager.getDefault();
+		String projectName = prMetadata.getProjectName();
+		String theoryName = prMetadata.getTheoryName();
+		String ruleName = prMetadata.getRuleName();
+		List<IGeneralRule> rules = manager.getDefinitionalRules(
+				original.getClass(), context);
+
+		for (IGeneralRule rule : rules) {
+			if (rule instanceof IDeployedRewriteRule) {
+				IDeployedRewriteRule deployedRule = (IDeployedRewriteRule) rule;
+				if (projectName.equals(deployedRule.getProjectName())
+						&& theoryName.equals(deployedRule.getTheoryName())
+						&& ruleName.equals(deployedRule.getRuleName()))
+					return deployedRule; 
+			} else { // (rule instanceof ISCRewriteRule)
+				throw new UnsupportedOperationException(
+						"Unsupported statically checked rule");
+			}
+		}
+		return null;
 	}
 
 }
