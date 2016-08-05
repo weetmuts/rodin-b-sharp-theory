@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011,2016 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,23 +7,20 @@
  *******************************************************************************/
 package org.eventb.theory.rbp.tactics.applications;
 
-import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
-
 import org.eclipse.swt.graphics.Image;
-import org.eventb.core.pm.IProofAttempt;
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.reasoners.XDReasoner;
+import org.eventb.theory.rbp.tactics.XDAutoTactic;
 import org.eventb.ui.prover.IPredicateApplication;
 
 /**
- * A special tactic application for the translation of all extended formulae to classical Event-B language.
+ * A special tactic application for the translation of all extended formulae to
+ * classical Event-B language.
+ * 
  * @author maamria
- *
+ * @htson - Use XDAutoTactic as the encapsulated tactic.
+ * @version 1.1
+ * @since 1.0
  */
 public class XDTacticApplication implements IPredicateApplication {
 	
@@ -34,23 +31,12 @@ public class XDTacticApplication implements IPredicateApplication {
 		return TACTIC_ID;
 	}
 
+	/**
+	 * @author htson
+	 */
 	@Override
 	public ITactic getTactic(String[] inputs, String globalInput) {
-		return new ITactic() {
-			@Override
-			public Object apply(IProofTreeNode node, IProofMonitor pm) {
-				if (node == null || !node.isOpen()) {
-					return "Node already has children";
-				}
-				final Object origin = node.getProofTree().getOrigin();
-				if (!(origin instanceof IProofAttempt)) {
-					return "Contextual information of PO is required";
-				}
-				XDReasoner reasoner = new XDReasoner();
-				IReasonerInput input = new EmptyInput();
-				return reasonerTac(reasoner, input).apply(node, pm);
-			}
-		};
+		return new XDAutoTactic();
 	}
 
 	@Override
