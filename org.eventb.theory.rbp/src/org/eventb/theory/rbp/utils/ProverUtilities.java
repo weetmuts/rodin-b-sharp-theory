@@ -504,42 +504,6 @@ public class ProverUtilities {
 	}
 
 	/**
-	 * Utility method to return the WD predicate corresponding to a
-	 * specialization object. This is the conjunction of the WD-predicates of
-	 * all the instantiating expressions.
-	 * 
-	 * @param specialization
-	 *            the input specialization.
-	 * @return The WD predicate corresponding to the input specialization
-	 *         object.
-	 * @precondition the input must NOT be <code>null</code>
-	 * @author htson
-	 * @since 4.0
-	 */
-	private static Predicate getWDPredicate(ISpecialization specialization) {
-		// Assert PRECONDITION
-		assert specialization != null;
-		
-		FormulaFactory factory = specialization.getFactory();
-		FreeIdentifier[] freeIdentifiers = specialization.getFreeIdentifiers();
-		List<Predicate> wdPredicates = new ArrayList<Predicate>(
-				freeIdentifiers.length);
-		for (FreeIdentifier identifier : freeIdentifiers) {
-			Expression expr = specialization.get(identifier);
-			wdPredicates.add(expr.getWDPredicate());
-		}
-
-		if (wdPredicates.size() == 0) {
-			return BTRUE;
-		}
-		if (wdPredicates.size() == 1) {
-			return wdPredicates.get(0);
-		}
-		return factory.makeAssociativePredicate(Predicate.LAND, wdPredicates,
-				null);
-	}
-
-	/**
 	 * Utility method to get a list of all hypotheses of a prover sequent.
 	 * 
 	 * @param sequent
@@ -605,6 +569,70 @@ public class ProverUtilities {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param specialization
+	 * @return
+	 */
+	public static Set<Expression> getInstantiatingExpressions(
+			ISpecialization specialization) {
+		FreeIdentifier[] freeIdentifiers = specialization.getFreeIdentifiers();
+		Set<Expression> expressions = new LinkedHashSet<Expression>(
+				freeIdentifiers.length);
+		for (FreeIdentifier freeIdentifier : freeIdentifiers) {
+			expressions.add(specialization.get(freeIdentifier));
+		}
+		return expressions;
+	}
+
+	/**
+	 * Utility method to return the WD predicate corresponding to a
+	 * specialization object. This is the conjunction of the WD-predicates of
+	 * all the instantiating expressions.
+	 * 
+	 * @param specialization
+	 *            the input specialization.
+	 * @return The WD predicate corresponding to the input specialization
+	 *         object.
+	 * @precondition the input must NOT be <code>null</code>
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static Predicate getWDPredicate(ISpecialization specialization) {
+		// Assert PRECONDITION
+		assert specialization != null;
+		
+		Set<Expression> expressions = getInstantiatingExpressions(specialization);
+		return getWDPredicate(specialization.getFactory(), expressions);
+	}
+
+	/**
+	 * Utilities method to get a WD predicate of a set of expressions. The
+	 * result is a conjunction of all WD predicate of each expression.
+	 * 
+	 * @param expressions
+	 *            the input set of expressions.
+	 * @return the WD predicate of the set of expressions.
+	 * @author htson
+	 * @since 4.0
+	 */
+	public static Predicate getWDPredicate(FormulaFactory factory,
+			Set<Expression> expressions) {
+		Set<Predicate> wdPredicates = new LinkedHashSet<Predicate>(
+				expressions.size());
+		for (Expression expression : expressions) {
+			wdPredicates.add(expression.getWDPredicate());
+		}
+
+		if (wdPredicates.size() == 0) {
+			return BTRUE;
+		}
+		if (wdPredicates.size() == 1) {
+			return wdPredicates.iterator().next();
+		}
+		return factory.makeAssociativePredicate(Predicate.LAND, wdPredicates,
+				null);
 	}
 
 }
