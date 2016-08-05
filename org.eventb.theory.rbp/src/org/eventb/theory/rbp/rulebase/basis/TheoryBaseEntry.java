@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011,2016 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,12 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.RodinDBException;
 
 /**
- * 
  * @author maamria
- * 
+ * @author htson - Changed
+ *         {@link #getRewriteRule(boolean, String, Class, FormulaFactory)}
+ *         allowing to get automatic rule.
+ * @version 1.1
+ * @since 1.0
  */
 public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & IExtensionRulesSource> implements ITheoryBaseEntry<R> {
 
@@ -280,12 +283,18 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	}
 
 	@Override
-	public IGeneralRule getRewriteRule(String ruleName, Class<?> clazz, FormulaFactory factory) {
+	public IGeneralRule getRewriteRule(boolean automatic, String ruleName, Class<?> clazz, FormulaFactory factory) {
 		checkStatus(factory);
-		if (interRewRules.get(clazz) == null) {
+		Map<Class<?>, List<IGeneralRule>> rules;
+		if (automatic)
+			rules = autoRewRules;
+		else
+			rules = interRewRules;
+		
+		if (rules.get(clazz) == null) {
 			return null;
 		}
-		for (IGeneralRule rule : interRewRules.get(clazz)) {
+		for (IGeneralRule rule : rules.get(clazz)) {
 			String name = null;
 			if (rule instanceof IDeployedRewriteRule) {
 				name = ((IDeployedRewriteRule) rule).getRuleName();

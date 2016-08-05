@@ -33,9 +33,13 @@ import org.rodinp.core.IRodinProject;
 
 /**
  * 
- * @author maamria, asiehsalehi
+ * @author maamria
+ * @author asiehsalehi
+ * @author htson - Changed
+ *         {@link #getRewriteRule(boolean, String, String, Class, IEventBRoot, FormulaFactory)}
+ *         allowing to get automatic rule.
+ * @version 1.1
  * @since 1.0
- * 
  */
 public class ProjectBaseEntry implements IProjectBaseEntry{
 
@@ -93,14 +97,14 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 	}
 
 	@Override
-	public IGeneralRule getRewriteRule(String theoryName, String ruleName, Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
+	public IGeneralRule getRewriteRule(boolean automatic, String theoryName, String ruleName, Class<?> clazz, IEventBRoot root, FormulaFactory factory) {
 		if (originatedFromTheory(root.getRodinFile(), project) && theoryName.equals(root.getElementName()) ){
 			ISCTheoryRoot scRoot = DatabaseUtilities.getSCTheory(theoryName, project);
 			if (!scRoots.containsKey(scRoot)){
 				TheoryBaseEntry<ISCTheoryRoot> entry = new TheoryBaseEntry<ISCTheoryRoot>(scRoot);
 				scRoots.put(scRoot, entry);
 			}
-			return scRoots.get(scRoot).getRewriteRule(ruleName, clazz, factory);
+			return scRoots.get(scRoot).getRewriteRule(automatic, ruleName, clazz, factory);
 		}
 		else {
 			IDeployedTheoryRoot depRoot = DatabaseUtilities.getDeployedTheory(theoryName, project);
@@ -111,7 +115,7 @@ public class ProjectBaseEntry implements IProjectBaseEntry{
 				TheoryBaseEntry<IDeployedTheoryRoot> entry = new TheoryBaseEntry<IDeployedTheoryRoot>(depRoot);
 				deployedRoots.put(depRoot, entry);
 			}
-			return deployedRoots.get(depRoot).getRewriteRule(ruleName, clazz, factory);
+			return deployedRoots.get(depRoot).getRewriteRule(automatic, ruleName, clazz, factory);
 		}
 	}
 	

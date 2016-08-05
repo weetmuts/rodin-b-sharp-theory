@@ -23,7 +23,13 @@ import org.rodinp.core.IRodinProject;
 /**
  * 
  * @author maamria
- *
+ * @author htson - Changed
+ *         {@link #getRewriteRule(boolean, String, String, Class, IEventBRoot, FormulaFactory)}
+ *         allowing to get automatic rule.
+ * @version 1.1
+ * @see BaseManager
+ * @see ITheoryBaseEntry
+ * @since 1.0
  */
 public interface IProjectBaseEntry {
 
@@ -62,7 +68,7 @@ public interface IProjectBaseEntry {
 	 * 
 	 * @return the rule or <code>null</code> if not found
 	 */
-	public IGeneralRule getRewriteRule(String theoryName, String ruleName, Class<?> clazz, 
+	public IGeneralRule getRewriteRule(boolean automatic, String theoryName, String ruleName, Class<?> clazz, 
 			IEventBRoot root, FormulaFactory factory);
 	/**
 	 * Returns the list of inference rules satisfying the given criteria. The rules must be available to use

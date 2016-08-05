@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 University of Southampton and others.
+ * Copyright (c) 2011,2016 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,16 @@ import org.rodinp.core.RodinDBException;
 /**
  * An implementation of the rule base manager.
  * 
- * @author maamria, nicolas, asiehsalehi
- * 
+ * @author maamria
+ * @author nicolas
+ * @author asiehsalehi
+ * @author htson - Changed
+ *         {@link #getRewriteRule(boolean, String, String, String, Class, IPOContext)}
+ *         allowing to get automatic rules.
+ * @version 1.1
+ * @see IProjectBaseEntry
+ * @see ITheoryBaseEntry
+ * @since 1.0
  */
 public class BaseManager implements IElementChangedListener {
 
@@ -172,6 +180,8 @@ public class BaseManager implements IElementChangedListener {
 	/**
 	 * Returns the deployed expression rewrite rule with the given parameters.
 	 * 
+	 * @param automatic
+	 *            flag indicating if the rule is automatic or interactive.
 	 * @param ruleName
 	 *            the name of the rule
 	 * @param theoryName
@@ -182,11 +192,11 @@ public class BaseManager implements IElementChangedListener {
 	 *            the obligation context
 	 * @return the deployed rule, or <code>null</code> if not found
 	 */
-	public IGeneralRule getRewriteRule(String projectName, String ruleName, String theoryName, Class<?> clazz, IPOContext context) {
+	public IGeneralRule getRewriteRule(boolean automatic, String projectName, String ruleName, String theoryName, Class<?> clazz, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(projectName);
 		check(rodinProject);
-		return projectEntries.get(rodinProject).getRewriteRule(theoryName, ruleName, clazz, parentRoot,
+		return projectEntries.get(rodinProject).getRewriteRule(automatic, theoryName, ruleName, clazz, parentRoot,
 				context.getFormulaFactory());
 
 	}

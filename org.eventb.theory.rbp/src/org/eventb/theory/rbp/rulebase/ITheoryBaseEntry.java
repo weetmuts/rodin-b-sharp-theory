@@ -18,15 +18,25 @@ import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCTheorem;
 
 /**
- * Common protocol for a theory entry that can be queried for various rules it holds.
+ * Common protocol for a theory entry that can be queried for various rules it
+ * holds.
  * 
- * <p> Each query must supply a <code>FormulaFactory</code> so that parsing is carried out if necessary.
+ * <p>
+ * Each query must supply a <code>FormulaFactory</code> so that parsing is
+ * carried out if necessary.
  * 
- * <p> It might be useful to just call <code>IEventbRoot.getFormulaFactory()</code> instead of passing a formula factory.
+ * <p>
+ * It might be useful to just call <code>IEventbRoot.getFormulaFactory()</code>
+ * instead of passing a formula factory.
  * 
  * @author maamria
+ * @author htson - Changed
+ *         {@link #getRewriteRule(boolean, String, Class, FormulaFactory)}
+ *         allowing to get automatic rule.
+ * @version 1.0
+ * @see BaseManager
+ * @see ITheoryBaseEntry
  * @since 1.0
- *
  */
 public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & IExtensionRulesSource> {
 
@@ -67,7 +77,7 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return the rule or <code>null</code> if not found
 	 */
-	public IGeneralRule getRewriteRule(String ruleName, Class<?> clazz, FormulaFactory factory);
+	public IGeneralRule getRewriteRule(boolean automatic, String ruleName, Class<?> clazz, FormulaFactory factory);
 	
 	/**
 	 * Returns all the definitional rules in the theory.
