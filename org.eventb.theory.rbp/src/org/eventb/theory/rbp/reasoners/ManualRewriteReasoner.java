@@ -25,6 +25,7 @@ import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -51,13 +52,13 @@ import org.eventb.theory.rbp.utils.ProverUtilities;
  * </p>
  * <p>
  * <i>htson</i>: This has been re-implemented based on the original version 1.0
- * and the (now removed)
- * {org.eventb.theory.rbp.reasoning.ManualRewriter} class.
+ * and the (now removed) {org.eventb.theory.rbp.reasoning.ManualRewriter} class.
  * </p>
  * 
  * @author maamria
- * @author htson - re-implemented as a context dependent reasoner
- * @version 2.0.1
+ * @author htson - re-implemented as a context dependent reasoner, added
+ *         WD-subgoal
+ * @version 2.0.2
  * @see RewriteInput
  * @see RewriteRuleContent
  * @since 3.1.0
@@ -127,7 +128,7 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 
 		// Get the rewrite rule (given the meta-data) from the current context
 		BaseManager manager = BaseManager.getDefault();
-		IGeneralRule rule = manager.getRewriteRule(projectName, ruleName,
+		IGeneralRule rule = manager.getRewriteRule(false, projectName, ruleName,
 				theoryName, formula.getClass(), context);
 		if (rule == null) {
 			return ProverFactory.reasonerFailure(this, input,
@@ -140,7 +141,7 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 		// Get the content of the found rewriting rule.
 		FormulaFactory factory = formula.getFactory();
 		IRewriteRuleContent ruleContent;
-		if (rule instanceof IDeployedRewriteRule) {
+		if (rule instanceof IDeployedRewriteRule) {	
 			ruleContent = new RewriteRuleContent((IDeployedRewriteRule) rule);
 		} else {
 			try {
@@ -174,10 +175,18 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 				.additionalAntecendentRequired();
 
 		// may need to make an extra antecedent if rule incomplete
-		IAntecedent[] antecedents = (additionalAntecedentRequired ? new IAntecedent[conditions.length + 1]
-				: new IAntecedent[conditions.length]);
+		IAntecedent[] antecedents = (additionalAntecedentRequired ? new IAntecedent[conditions.length + 2]
+				: new IAntecedent[conditions.length + 1]);
 		List<Predicate> allConditions = (additionalAntecedentRequired ? new ArrayList<Predicate>()
 				: null);
+		
+		// Add the WD sub-goal
+		Predicate wdPredicate = ProverUtilities.getWDPredicate(
+				specialization);
+		Set<Predicate> wdHypotheses = Collections.singleton(wdPredicate);
+		ISelectionHypAction selectWDHyp = ProverFactory.makeSelectHypAction(wdHypotheses);
+		antecedents[0] =ProverFactory.makeAntecedent(wdPredicate);
+
 		for (int i = 0; i != conditions.length; i++) {
 			// get the condition
 			Predicate condition = conditions[i].specialize(specialization);
@@ -197,6 +206,11 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 			Set<Predicate> addedHyps = new HashSet<Predicate>();
 			List<IHypAction> hypActions = new ArrayList<IHypAction>();
 
+			// add and select the WDHyp
+			addedHyps.add(wdPredicate);
+			hypActions.add(selectWDHyp);
+			
+			
 			// If the condition is not T then add the condition as a hypothesis
 			// and select it.
 			if (!condition.equals(ProverUtilities.BTRUE)) {
@@ -220,7 +234,7 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 				}
 			}
 			addedHyps = addedHyps.size() > 0 ? addedHyps : null;
-			antecedents[i] = ProverFactory.makeAntecedent(goal, addedHyps,
+			antecedents[i+1] = ProverFactory.makeAntecedent(goal, addedHyps,
 					null, hypActions);
 		}
 
@@ -230,11 +244,14 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 					allConditions.size() == 1 ? allConditions.get(0) : factory
 							.makeAssociativePredicate(Formula.LOR,
 									allConditions, null), null);
+			Set<Predicate> addedHyps = new HashSet<Predicate>();
+			addedHyps.add(wdPredicate);
+			addedHyps.add(negOfDisj);
+			
 			Predicate goal = (isGoal ? predicate : null);
-			antecedents[conditions.length] = ProverFactory.makeAntecedent(goal,
-					Collections.singleton(negOfDisj), ProverFactory
-							.makeSelectHypAction(Collections
-									.singleton(negOfDisj)));
+			antecedents[conditions.length+1] = ProverFactory.makeAntecedent(goal,
+					addedHyps, ProverFactory
+							.makeSelectHypAction(addedHyps));
 		}
 		String displayName = ruleContent.getDescription();
 		return ProverFactory.makeProofRule(this, input, isGoal ? predicate
