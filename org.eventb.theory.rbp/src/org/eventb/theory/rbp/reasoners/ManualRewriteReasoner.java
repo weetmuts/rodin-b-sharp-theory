@@ -213,7 +213,8 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 			
 			// If the condition is not T then add the condition as a hypothesis
 			// and select it.
-			if (!condition.equals(ProverUtilities.BTRUE)) {
+			if (!condition.equals(factory.makeLiteralPredicate(Predicate.BTRUE,
+					null))) {
 				addedHyps.add(condition);
 				hypActions.add(ProverFactory.makeSelectHypAction(Collections
 						.singleton(condition)));
@@ -226,7 +227,8 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 			if (!isGoal) {
 				hypActions.add(ProverFactory.makeHideHypAction(Collections
 						.singleton(predicate)));
-				if (!newPred.equals(ProverUtilities.BTRUE)) {
+				if (!newPred.equals(factory.makeLiteralPredicate(
+						Predicate.BTRUE, null))) {
 					addedHyps.add(newPred);
 					hypActions
 							.add(ProverFactory.makeSelectHypAction(Collections

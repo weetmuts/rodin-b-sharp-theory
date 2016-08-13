@@ -73,12 +73,6 @@ public class ProverUtilities {
 	public static boolean DEBUG = true;
 
 	/**
-	 * Literal predicate true.
-	 */
-	public static final Predicate BTRUE = FormulaFactory.getDefault()
-			.makeLiteralPredicate(Formula.BTRUE, null);
-
-	/**
 	 * <p>
 	 * Merges all the lists of rules in the <code>Map</code>
 	 * <code>allRules</code>.
@@ -338,7 +332,7 @@ public class ProverUtilities {
 		if(ruleRHSs.size() == 1){
 			ISCRewriteRuleRightHandSide rhs0 = ruleRHSs.get(0);
 			Predicate cond = rhs0.getPredicate(typeEnv);
-			if(cond.equals(ProverUtilities.BTRUE)){
+			if (cond.equals(factory.makeLiteralPredicate(Predicate.BTRUE, null))) {
 				isCond = false;
 			}
 		}
@@ -626,7 +620,7 @@ public class ProverUtilities {
 		}
 
 		if (wdPredicates.size() == 0) {
-			return BTRUE;
+			return factory.makeLiteralPredicate(Predicate.BTRUE, null);
 		}
 		if (wdPredicates.size() == 1) {
 			return wdPredicates.iterator().next();

@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.theory.rbp.utils.ProverUtilities;
@@ -74,7 +75,8 @@ public final class DeployedRewriteRule extends AbstractDeployedRule implements I
 		if(ruleRHSs.size() == 1){
 			IDeployedRuleRHS rhs0 = ruleRHSs.get(0);
 			Predicate cond = rhs0.getCondition();
-			if(cond.equals(ProverUtilities.BTRUE)){
+			FormulaFactory factory = cond.getFactory();
+			if (cond.equals(factory.makeLiteralPredicate(Predicate.BTRUE, null))) {
 				isCond = false;
 			}
 		}

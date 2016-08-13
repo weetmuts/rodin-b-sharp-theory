@@ -33,7 +33,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.theory.internal.rbp.reasoners.input.MultipleStringInput;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
-import org.eventb.theory.rbp.utils.ProverUtilities;
 
 /**
  * 
@@ -87,7 +86,8 @@ public class THReasoner implements IReasoner {
 
 			addedHyps.add(theoremPredicate);
 			Predicate wdPredicate = theoremPredicate.getWDPredicate();
-			if (!wdPredicate.equals(ProverUtilities.BTRUE)) {
+			if (!wdPredicate.equals(factory.makeLiteralPredicate(
+					Predicate.BTRUE, null))) {
 				addedHyps.add(wdPredicate);
 				addedWDHyps.add(wdPredicate);
 			}
