@@ -84,9 +84,9 @@ public abstract class CombinableTactic implements ICombinableTactic {
 	 * tree node.</li>
 	 * <li>If this is the only tactic then return the result.</li>
 	 * <li>If there are more tactics, apply their sequential composition to ALL
-	 * OPEN SUB-GOALS resulting from the first tactic application. Note that in
-	 * the case where the first tactic fails, this is reduced to just the
-	 * current proof tree node.</li>
+	 * OPEN SUB-GOALS resulting from the first tactic application (except the
+	 * first WD sub-goal). Note that in the case where the first tactic fails,
+	 * this is reduced to just the current proof tree node.</li>
 	 * </ol>
 	 * The combined tactic is successful if one of the sub-tactic application is
 	 * successful.
@@ -115,12 +115,21 @@ public abstract class CombinableTactic implements ICombinableTactic {
 
 				ICombinableTactic[] copy = Arrays.copyOfRange(tactics, 1, length);
 				ITactic restTactic = sequentialCompose(copy);
-				IProofTreeNode[] subGoals = ptNode.getOpenDescendants();
-				for (IProofTreeNode subGoal : subGoals) {
-					result = restTactic.apply(subGoal, pm);
+				
+				if (applicable) {
+					IProofTreeNode[] subGoals = ptNode.getOpenDescendants();
+					// Ignore the first subgoal which is a WD
+					for (int i = 1; i < subGoals.length; ++i) {
+						result = restTactic.apply(subGoals[i], pm);
+						if (result == null)
+							applicable = true;
+					}
+				} else {
+					result = restTactic.apply(ptNode, pm);
 					if (result == null)
 						applicable = true;
 				}
+				
 
 				// If one of the tactics succeeds then the composed tactic succeeds.
 				return applicable ? null : result;
@@ -135,7 +144,8 @@ public abstract class CombinableTactic implements ICombinableTactic {
 	 * <li>Apply the input tactic to the current proof tree node.</li>
 	 * <li>If this fails then return the result (i.e., the explanation).</li>
 	 * <li>Else (i.e., the application is successful), apply the composed tactic
-	 * to ALL OPEN SUB-GOALS resulting from the first tactic application.</li>
+	 * to ALL OPEN SUB-GOALS resulting from the first tactic application (except
+	 * the first WD sub-goal).</li>
 	 * </ol>
 	 * The combined tactic is successful if the first tactic application is
 	 * successful.
@@ -153,8 +163,9 @@ public abstract class CombinableTactic implements ICombinableTactic {
 				if (result != null)
 					return result;
 				IProofTreeNode[] subGoals = ptNode.getOpenDescendants();
-				for (IProofTreeNode subGoal : subGoals) {
-					this.apply(subGoal, pm);
+				// Ignore the first WD sub-goal
+				for (int i = 1; i < subGoals.length; ++i) {
+					this.apply(subGoals[i], pm);
 				}
 				return null;
 			}
