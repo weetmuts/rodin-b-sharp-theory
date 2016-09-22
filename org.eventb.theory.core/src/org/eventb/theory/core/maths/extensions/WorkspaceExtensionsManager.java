@@ -19,7 +19,6 @@ import static org.eventb.theory.core.TheoryHierarchyHelper.getTheoryPathImports;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +157,8 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	private Set<IFormulaExtension> getDeployedExtensionClosure(
 			IDeployedTheoryRoot deployedRoot) throws CoreException {
 		final Set<IFormulaExtension> extns = new LinkedHashSet<IFormulaExtension>();
-		for (IDeployedTheoryRoot neededTheory : fetchDependencies(deployedRoot)) {
+		List<IDeployedTheoryRoot> dependencies = fetchDependencies(deployedRoot);
+		for (IDeployedTheoryRoot neededTheory : dependencies) {
 			extns.addAll(fetchExtensions(neededTheory, extns));
 		}
 		extns.addAll(fetchExtensions(deployedRoot, extns));
@@ -176,7 +176,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 
 	private Set<IFormulaExtension> getSCExtensionClosure(ISCTheoryRoot scTheory)
 			throws CoreException {
-		final Set<IFormulaExtension> extns = new HashSet<IFormulaExtension>();
+		// @htson: (Bug fixed) Using LinkedHashSet instead of HashSet so that
+		// the order of extensions reflect the theory dependencies.
+		final Set<IFormulaExtension> extns = new LinkedHashSet<IFormulaExtension>();
 		final Set<IDeployedTheoryRoot> requiredTheories = fetchSCDependencies(scTheory);
 		extns.addAll(getExtensionClosure(requiredTheories));
 		extns.addAll(fetchExtensions(scTheory, extns));
