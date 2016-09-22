@@ -144,8 +144,9 @@ public final class Matcher {
 			throw new IllegalArgumentException("Input pattern cannot be null");
 
 		if (!formula.getFactory().equals(pattern.getFactory()))
-			throw new IllegalArgumentException(
-					"Formula and pattern must have the same formula factory");
+			throw new IllegalArgumentException("Formula " + formula
+					+ " and pattern " + pattern
+					+ " must have the same formula factory");
 
 		FormulaFactory factory = formula.getFactory();
 		ISpecialization specialization = factory.makeSpecialization();

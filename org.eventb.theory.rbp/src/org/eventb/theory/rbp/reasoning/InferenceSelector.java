@@ -91,6 +91,8 @@ public class InferenceSelector {
 		if (hypGivens.isEmpty())
 			return null;
 		Predicate firstGivenClause = hypGivens.get(0).getGivenClause();
+		// @htson: Translate the given clause to the formula factory of the input predicate.
+		firstGivenClause = firstGivenClause.translate(predicate.getFactory());
 		ISpecialization specialization = Matcher.match(predicate,
 				firstGivenClause);
 
