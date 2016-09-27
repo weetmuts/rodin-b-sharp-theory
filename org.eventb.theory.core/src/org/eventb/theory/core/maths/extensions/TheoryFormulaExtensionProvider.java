@@ -17,12 +17,14 @@ import static org.eventb.theory.internal.core.util.CoreUtilities.log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILanguage;
@@ -130,34 +132,52 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
  		factory = FormulaFactory.getDefault();
  		typeEnvironment = factory.makeTypeEnvironment();
 		IRodinElement[] children = element.getChildren();
-		for (IRodinElement extensionElement : children) {
-			if (extensionElement instanceof ISCDatatypeDefinition) {
-				loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
-			} else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
-				loadSCAxiomaticTypeDefinition((ISCAxiomaticTypeDefinition) extensionElement);
-			}
-		}
 		
-		for (IRodinElement extensionElement : children) {
-			
-			if (extensionElement instanceof ISCNewOperatorDefinition) {
-				loadSCNewOperatorDefinition((ISCNewOperatorDefinition) extensionElement);
+		boolean progress = true;
+		boolean complete = (children.length == 0);
+		
+		while (complete == false && progress == true) {
+			// Set complete to true (if no failure happen then it will stay true
+			complete = true;
+			// Reset progress to false (no progress yet)
+			progress = false;
+			for (IRodinElement extensionElement : children) {
+				try {
+					if (extensionElement instanceof ISCDatatypeDefinition) {
+						loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
+					} else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
+						loadSCAxiomaticTypeDefinition((ISCAxiomaticTypeDefinition) extensionElement);
+					} else if (extensionElement instanceof ISCNewOperatorDefinition) {
+						loadSCNewOperatorDefinition((ISCNewOperatorDefinition) extensionElement);
+					} else if (extensionElement instanceof ISCAxiomaticOperatorDefinition) {
+						loadSCAxiomaticOperatorDefinition((ISCAxiomaticOperatorDefinition) extensionElement);
+					} else {
+						log(null, "Extension is not supported: "
+								+ extensionElement);
+					}
+				} catch (CoreException e) {
+					// Fail to load the extension hence skip that
+					complete = false;
+					continue;
+				}
+				// Some progress has been made
+				progress = true;
 			}
-			else if (extensionElement instanceof ISCAxiomaticOperatorDefinition) {
-				loadSCAxiomaticOperatorDefinition((ISCAxiomaticOperatorDefinition) extensionElement);
-			}
-//			else {
-//				log(null, "Extension is not supported: " + extensionElement);
-//			}	
 		}
-	
-		return factory;
+		if (complete)
+			return factory;
+		else {
+			String msg = "Fail to load the formula factory from " + element;
+			log(null, msg);
+			throw new CoreException(new Status(IStatus.ERROR,
+					TheoryPlugin.PLUGIN_ID, IStatus.OK, msg, null));
+		}
 	}
 
 
 	private void loadSCDatatypeDefinition(ISCDatatypeDefinition extensionElement) throws CoreException {
 		
-		Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		DatatypeTransformer transformer = new DatatypeTransformer();
 		IDatatype datatype = transformer.transform(extensionElement, factory);
 		
@@ -170,7 +190,7 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 
 	private void loadSCAxiomaticOperatorDefinition(ISCAxiomaticOperatorDefinition extensionElement) throws CoreException {
 
-		Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		AxiomaticOperatorTransformer trans = new AxiomaticOperatorTransformer();
 		IOperatorExtension addedExtensions = trans.transform(extensionElement, factory, typeEnvironment);
 		if (addedExtensions != null) {
@@ -182,7 +202,7 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 
 	private void loadSCAxiomaticTypeDefinition(ISCAxiomaticTypeDefinition extensionElement) throws CoreException {
 		
-		Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		AxiomaticTypeTransformer trans = new AxiomaticTypeTransformer();
 		IFormulaExtension addedExtensions = trans.transform(extensionElement, factory, typeEnvironment);
 		if (addedExtensions != null) {
@@ -195,7 +215,7 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 
 	private void loadSCNewOperatorDefinition(ISCNewOperatorDefinition extensionElement) throws CoreException {
 	
-		Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
+		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		OperatorTransformer transformer = new OperatorTransformer();
 		ITypeEnvironmentBuilder localTypeEnvironment = typeEnvironment.makeBuilder();
 		IOperatorExtension addedExtensions = transformer.transform(extensionElement, factory, localTypeEnvironment);
