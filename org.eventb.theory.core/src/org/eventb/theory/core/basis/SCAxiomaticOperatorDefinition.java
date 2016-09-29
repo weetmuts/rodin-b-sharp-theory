@@ -62,6 +62,8 @@ public class SCAxiomaticOperatorDefinition extends TheoryElement implements ISCA
 	@Override
 	public Predicate getPredicate(ITypeEnvironment typenv) throws CoreException {
 		Predicate result = getPredicate(typenv.getFormulaFactory());
+		if (!result.isWellFormed())
+			throw newCoreException(database_SCPredicateTCFailure, this);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw newCoreException(database_SCPredicateTCFailure, this);

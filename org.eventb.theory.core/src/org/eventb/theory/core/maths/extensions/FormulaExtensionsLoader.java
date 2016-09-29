@@ -296,13 +296,17 @@ class DatatypeTransformer{
 		ISCTypeArgument[] scTypeArguments = definition.getTypeArguments();
 		final List<String> typeArguments = new ArrayList<String>(scTypeArguments.length);
 		for (ISCTypeArgument scTypeArg : scTypeArguments) {
-			typeArguments.add(scTypeArg.getSCGivenType(factory).toString());
+			try {
+				typeArguments.add(scTypeArg.getSCGivenType(factory).toString());
+			} catch (CoreException e) {
+				return null;
+			}
+			
 		}
 		IDatatypeOrigin origin = FormulaExtensionsLoader.makeDatatypeOrigin(definition, factory);
 		final IDatatypeBuilder dtBuilder = MathExtensionsFactory
 				.makeDatatypeBuilder(typeName, typeArguments, factory,
 						origin);
-
 		for (ISCDatatypeConstructor cons : definition.getConstructors()) {
 			final IConstructorBuilder consBuilder = dtBuilder
 					.addConstructor(cons.getIdentifierString());
@@ -312,8 +316,13 @@ class DatatypeTransformer{
 				// a parametric type as one could imagine).
 				// Hence not parsing with dtBuilder.parseType(),
 				// as this one looks for a parametric type.
-				final Type type = dest.getType(factory);
-				consBuilder.addArgument(dest.getIdentifierString(), type);
+				try {
+					final Type type = dest.getType(factory);
+
+					consBuilder.addArgument(dest.getIdentifierString(), type);
+				} catch (CoreException e) {
+					return null;
+				}
 			}
 		}
 		return dtBuilder.finalizeDatatype();
@@ -341,7 +350,7 @@ class AxiomaticOperatorTransformer extends DefinitionTransformer<ISCAxiomaticOpe
 	
 	@Override
 	public IOperatorExtension transform(ISCAxiomaticOperatorDefinition definitionElmnt, FormulaFactory factory,
-			ITypeEnvironmentBuilder typeEnvironment) throws CoreException {
+			ITypeEnvironmentBuilder typeEnvironment) throws RodinDBException  {
 		if (definitionElmnt == null || !definitionElmnt.exists()) {
 			return null;
 		}
@@ -361,7 +370,12 @@ class AxiomaticOperatorTransformer extends DefinitionTransformer<ISCAxiomaticOpe
 		Map<String, Type> operatorArguments = new LinkedHashMap<String, Type>();
 		List<GivenType> typeParameters = new ArrayList<GivenType>();
 		for (ISCOperatorArgument arg : scOperatorArguments) {
-			Type type = arg.getType(factory);
+			Type type;
+			try {
+				type = arg.getType(factory);
+			} catch (CoreException e) {
+				return null;
+			}
 			operatorArguments.put(arg.getIdentifierString(), type);
 			for (GivenType t : AstUtilities.getGivenTypes(type)) {
 				if (!typeParameters.contains(t)) {
@@ -374,14 +388,28 @@ class AxiomaticOperatorTransformer extends DefinitionTransformer<ISCAxiomaticOpe
 		for (String arg : operatorArguments.keySet()) {
 			tempTypeEnvironment.addName(arg, operatorArguments.get(arg));
 		}
-		Predicate wdCondition = definitionElmnt.getPredicate(tempTypeEnvironment);
-		Predicate dWdCondition = definitionElmnt.getWDCondition(factory, tempTypeEnvironment);
+		Predicate wdCondition;
+		Predicate dWdCondition;
+		try {
+			wdCondition = definitionElmnt
+					.getPredicate(tempTypeEnvironment);
+			dWdCondition = definitionElmnt.getWDCondition(factory,
+					tempTypeEnvironment);
+		} catch (CoreException e) {
+			return null;
+		}
 		IOperatorExtension extension = null;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType,
 				notation, groupID);
 		if (AstUtilities.isExpressionOperator(definitionElmnt.getFormulaType())) {
+			Type type;
+			try {
+				type = definitionElmnt.getType(factory);
+			} catch (CoreException e) {
+				return null;
+			}
 			extension = (IOperatorExtension)MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-					operatorArguments, definitionElmnt.getType(factory), wdCondition, dWdCondition, null,definitionElmnt);
+					operatorArguments, type, wdCondition, dWdCondition, null,definitionElmnt);
 		} else {
 			extension = (IOperatorExtension)MathExtensionsFactory.getPredicateExtension(properties, isCommutative, operatorArguments,
 					wdCondition, dWdCondition, null, definitionElmnt);
@@ -404,7 +432,7 @@ class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition
 
 	@Override
 	public IOperatorExtension transform(ISCNewOperatorDefinition definitionElmnt, FormulaFactory factory,
-			ITypeEnvironmentBuilder typeEnvironment) throws CoreException {
+			ITypeEnvironmentBuilder typeEnvironment) throws RodinDBException {
 		if (definitionElmnt == null || !definitionElmnt.exists()) {
 			return null;
 		}
@@ -429,7 +457,12 @@ class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition
 		Map<String, Type> operatorArguments = new LinkedHashMap<String, Type>();
 		List<GivenType> typeParameters = new ArrayList<GivenType>();
 		for (ISCOperatorArgument arg : scOperatorArguments) {
-			Type type = arg.getType(factory);
+			Type type;
+			try {
+				type = arg.getType(factory);
+			} catch (CoreException e) {
+				return null;
+			}
 			operatorArguments.put(arg.getIdentifierString(), type);
 			for (GivenType t : AstUtilities.getGivenTypes(type)) {
 				if (!typeParameters.contains(t)) {
@@ -440,14 +473,28 @@ class OperatorTransformer extends DefinitionTransformer<ISCNewOperatorDefinition
 		for (String arg : operatorArguments.keySet()) {
 			typeEnvironment.addName(arg, operatorArguments.get(arg));
 		}
-		Predicate wdCondition = definitionElmnt.getPredicate(typeEnvironment);
-		Predicate dWdCondition = definitionElmnt.getWDCondition(factory, typeEnvironment);
+		Predicate wdCondition;
+		Predicate dWdCondition;
+		try {
+			wdCondition = definitionElmnt
+					.getPredicate(typeEnvironment);
+			dWdCondition = definitionElmnt.getWDCondition(factory,
+					typeEnvironment);
+		} catch (CoreException e) {
+			return null;
+		}
 		final IOperatorExtension extension;
 		OperatorExtensionProperties properties = new OperatorExtensionProperties(operatorID, syntax, formulaType,
 				notation, groupID);
 		if (AstUtilities.isExpressionOperator(definitionElmnt.getFormulaType())) {
+			Type type;
+			try {
+				type = definitionElmnt.getType(factory);
+			} catch (CoreException e) {
+				return null;
+			}
 			extension = (IOperatorExtension) MathExtensionsFactory.getExpressionExtension(properties, isCommutative, isAssociative, 
-					operatorArguments, definitionElmnt.getType(factory), wdCondition, dWdCondition, null, definitionElmnt);
+					operatorArguments, type, wdCondition, dWdCondition, null, definitionElmnt);
 		} else {
 			extension = (IOperatorExtension)MathExtensionsFactory.getPredicateExtension(properties, isCommutative, operatorArguments,
 					wdCondition, dWdCondition, null,definitionElmnt);

@@ -17,6 +17,7 @@ import static org.eventb.theory.internal.core.util.CoreUtilities.log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -135,6 +136,7 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		
 		boolean progress = true;
 		boolean complete = (children.length == 0);
+		Set<IRodinElement> loaded = new HashSet<IRodinElement>(children.length);
 		
 		while (complete == false && progress == true) {
 			// Set complete to true (if no failure happen then it will stay true
@@ -142,26 +144,28 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			// Reset progress to false (no progress yet)
 			progress = false;
 			for (IRodinElement extensionElement : children) {
-				try {
-					if (extensionElement instanceof ISCDatatypeDefinition) {
-						loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
-					} else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
-						loadSCAxiomaticTypeDefinition((ISCAxiomaticTypeDefinition) extensionElement);
-					} else if (extensionElement instanceof ISCNewOperatorDefinition) {
-						loadSCNewOperatorDefinition((ISCNewOperatorDefinition) extensionElement);
-					} else if (extensionElement instanceof ISCAxiomaticOperatorDefinition) {
-						loadSCAxiomaticOperatorDefinition((ISCAxiomaticOperatorDefinition) extensionElement);
-					} else {
-						log(null, "Extension is not supported: "
-								+ extensionElement);
-					}
-				} catch (CoreException e) {
-					// Fail to load the extension hence skip that
+				if (loaded.contains(extensionElement)) {
+					continue;
+				}
+				boolean success = false;
+				if (extensionElement instanceof ISCDatatypeDefinition) {
+					success = loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
+				} else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
+					success = loadSCAxiomaticTypeDefinition((ISCAxiomaticTypeDefinition) extensionElement);
+				} else if (extensionElement instanceof ISCNewOperatorDefinition) {
+					success = loadSCNewOperatorDefinition((ISCNewOperatorDefinition) extensionElement);
+				} else if (extensionElement instanceof ISCAxiomaticOperatorDefinition) {
+					success = loadSCAxiomaticOperatorDefinition((ISCAxiomaticOperatorDefinition) extensionElement);
+				} else {
+					log(null, "Extension is not supported: " + extensionElement);
 					complete = false;
 					continue;
 				}
-				// Some progress has been made
-				progress = true;
+				if (success) {
+					// Some progress has been made
+					loaded.add(extensionElement);
+					progress = true;
+				}
 			}
 		}
 		if (complete)
@@ -175,7 +179,7 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 	}
 
 
-	private void loadSCDatatypeDefinition(ISCDatatypeDefinition extensionElement) throws CoreException {
+	private boolean loadSCDatatypeDefinition(ISCDatatypeDefinition extensionElement) throws CoreException {
 		
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		DatatypeTransformer transformer = new DatatypeTransformer();
@@ -185,10 +189,12 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			extensions.addAll(datatype.getExtensions());
 			factory = factory.withExtensions(extensions);
 			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			return true;
 		}
+		return false;
 	}
 
-	private void loadSCAxiomaticOperatorDefinition(ISCAxiomaticOperatorDefinition extensionElement) throws CoreException {
+	private boolean loadSCAxiomaticOperatorDefinition(ISCAxiomaticOperatorDefinition extensionElement) throws CoreException {
 
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		AxiomaticOperatorTransformer trans = new AxiomaticOperatorTransformer();
@@ -197,23 +203,27 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			extensions.add(addedExtensions);
 			factory = factory.withExtensions(extensions);
 			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			return true;
 		}
+		return false;
 	}
 
-	private void loadSCAxiomaticTypeDefinition(ISCAxiomaticTypeDefinition extensionElement) throws CoreException {
+	private boolean loadSCAxiomaticTypeDefinition(ISCAxiomaticTypeDefinition extensionElement) throws CoreException {
 		
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		AxiomaticTypeTransformer trans = new AxiomaticTypeTransformer();
 		IFormulaExtension addedExtensions = trans.transform(extensionElement, factory, typeEnvironment);
 		if (addedExtensions != null) {
 			extensions.add(addedExtensions);
+			factory = factory.withExtensions(extensions);
+			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			return true;
 		}
-		factory = factory.withExtensions(extensions);
-		typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+		return false;
 		
 	}
 
-	private void loadSCNewOperatorDefinition(ISCNewOperatorDefinition extensionElement) throws CoreException {
+	private boolean loadSCNewOperatorDefinition(ISCNewOperatorDefinition extensionElement) throws CoreException {
 	
 		Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		OperatorTransformer transformer = new OperatorTransformer();
@@ -221,10 +231,12 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		IOperatorExtension addedExtensions = transformer.transform(extensionElement, factory, localTypeEnvironment);
 		if (addedExtensions != null) {
 			extensions.add(addedExtensions);
+			factory = factory.withExtensions(extensions);
+			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
+			localTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(localTypeEnvironment, factory);
+			return true;
 		}
-		factory = factory.withExtensions(extensions);
-		typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
-		localTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(localTypeEnvironment, factory);
+		return false;
 	}
 
 	@Override
