@@ -196,8 +196,9 @@ public class BaseManager implements IElementChangedListener {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(projectName);
 		check(rodinProject);
+		FormulaFactory formulaFactory = context.getFormulaFactory();
 		return projectEntries.get(rodinProject).getRewriteRule(automatic, theoryName, ruleName, parentRoot,
-				context.getFormulaFactory());
+				formulaFactory);
 
 	}
 

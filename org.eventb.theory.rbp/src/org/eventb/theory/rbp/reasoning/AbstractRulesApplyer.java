@@ -114,19 +114,15 @@ public abstract class AbstractRulesApplyer implements IFormulaRewriter {
 	 * @return the rewritten formula
 	 */
 	private Formula<?> applyRule(Formula<?> original){
-		long startTime = System.currentTimeMillis();
 		IGeneralRule rule = getRule(original);
-		long stopTime = System.currentTimeMillis();
-		System.out.println("    + Take " + (stopTime - startTime)
-				+ " to get rule for " + original + " found " + rule);
 		
 		if (rule == null) 
 			return original;
 		
 		Formula<?> ruleLhs = null;
 		Formula<?> ruleRhs = null;
-		FormulaFactory factory = context.getFormulaFactory();
-		
+		FormulaFactory factory = original.getFactory();
+
 		if (rule instanceof IDeployedRewriteRule) {
 			ruleLhs = ((IDeployedRewriteRule) rule).getLeftHandSide();
 			ruleRhs = ((IDeployedRewriteRule) rule).getRightHandSides().get(0).getRHSFormula();

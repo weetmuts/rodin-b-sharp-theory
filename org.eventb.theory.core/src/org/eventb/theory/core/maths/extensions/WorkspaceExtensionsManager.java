@@ -19,6 +19,7 @@ import static org.eventb.theory.core.TheoryHierarchyHelper.getTheoryPathImports;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGrap
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -52,6 +54,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author maamria
  * @author beauger
+ * @author htson - Caching the formula factory
  */
 public class WorkspaceExtensionsManager implements IElementChangedListener {
 
@@ -74,12 +77,17 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	private final Map<IFormulaExtensionsSource, Set<IFormulaExtension>> extensions = new HashMap<IFormulaExtensionsSource, Set<IFormulaExtension>>();
 
 	// TODO add TheoryPath cache
-
+	// Cache for extensions for Event-B roots.
+	private final Map<IEventBRoot, Set<IFormulaExtension>> extensionsCache;
+	private final Queue<IEventBRoot> changedRoots;
+	
 	private final Queue<IDeployedTheoryRoot> changedDeployed = new ConcurrentLinkedQueue<IDeployedTheoryRoot>();
 	private final Queue<ISCTheoryRoot> changedSC = new ConcurrentLinkedQueue<ISCTheoryRoot>();
 
 	private WorkspaceExtensionsManager() {
 		RodinCore.addElementChangedListener(this);
+		extensionsCache = new LinkedHashMap<IEventBRoot, Set<IFormulaExtension>>();
+		changedRoots = new ConcurrentLinkedQueue<IEventBRoot>();
 		initDeployedGraph();
 	}
 
@@ -104,15 +112,15 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	private Set<IFormulaExtension> fetchExtensions(
 			IFormulaExtensionsSource source,
 			Set<IFormulaExtension> requiredExtns) throws CoreException {
-//		Set<IFormulaExtension> extns = extensions.get(source);
-//		if (extns == null) {
+		Set<IFormulaExtension> extns = extensions.get(source);
+		if (extns == null) {
 			final FormulaFactory factory = basicFactory
 					.withExtensions(requiredExtns);
 			final FormulaExtensionsLoader loader = new FormulaExtensionsLoader(
 					source, factory);
-			Set<IFormulaExtension> extns = loader.load();
+			extns = loader.load();
 			extensions.put(source, extns);
-//		}
+		}
 		return extns;
 	}
 
@@ -197,7 +205,14 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	 */
 	public synchronized Set<IFormulaExtension> getFormulaExtensions(
 			IEventBRoot root) throws CoreException {
-
+		if (changedRoots.contains(root)) {
+			extensionsCache.remove(root);
+			changedRoots.remove(root);
+		}
+		if (extensionsCache.containsKey(root)) {
+			return extensionsCache.get(root);
+		}
+		
 		if (!DatabaseUtilities.originatedFromTheory(root.getRodinFile())) {
 			final IRodinProject project = root.getRodinProject();
 			final ISCTheoryPathRoot[] paths = getNonTempSCTheoryPaths(project);
@@ -205,13 +220,18 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 			// theory path should not change the input language of a theory
 			if (paths.length == 1) {
 				final List<IDeployedTheoryRoot> deployedRoots = getTheoryPathImports(paths[0]);
-				return getExtensionClosure(deployedRoots);
+				Set<IFormulaExtension> allExtensions = getExtensionClosure(deployedRoots);
+				extensionsCache.put(root, allExtensions);
+				return allExtensions;
 			}
-			return Collections.emptySet();
+			Set<IFormulaExtension> emptySet = Collections.emptySet();
+			extensionsCache.put(root, emptySet);
+			return emptySet;
 		}
 
 		final Set<IFormulaExtension> extns = new LinkedHashSet<IFormulaExtension>(
 				COND_EXTS);
+		extensionsCache.put(root, extns);
 
 		// case unchecked Theory: no imports resolved => basic extension set
 		if (root instanceof ITheoryRoot) {
@@ -270,6 +290,10 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 			final IRodinFile file = (IRodinFile) element;
 			if (file.getRootElementType() == IDeployedTheoryRoot.ELEMENT_TYPE) {
 				changedDeployed.add((IDeployedTheoryRoot) file.getRoot());
+			}
+			IInternalElement root = file.getRoot();
+			if (root instanceof IEventBRoot) {
+				changedRoots.add((IEventBRoot) root);
 			}
 		} else {
 			for (IRodinElementDelta d : affected) {

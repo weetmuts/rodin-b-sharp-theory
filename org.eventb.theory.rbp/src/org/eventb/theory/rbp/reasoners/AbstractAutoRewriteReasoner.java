@@ -70,12 +70,7 @@ public abstract class AbstractAutoRewriteReasoner extends
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			// Rewrite the hypothesis
-			long startTime = System.currentTimeMillis();
 			Predicate inferredHyp = recursiveRewrite(hyp, rewriter);
-			long stopTime = System.currentTimeMillis();
-			System.out.println("  - Take " + (stopTime - startTime)
-					+ " ms to rewrite " + hyp + " using " + rewriter
-					+ " with input " + input);
 			Collection<Predicate> inferredHyps = Lib.breakPossibleConjunct(inferredHyp);
 			// Check if rewriting made a change
 			if (inferredHyp == hyp && inferredHyps.size() == 1)
@@ -104,12 +99,7 @@ public abstract class AbstractAutoRewriteReasoner extends
 			hypActions.add(ProverFactory.makeHideHypAction(originalHyps));
 		}
 		Predicate goal = seq.goal();
-		long startTime = System.currentTimeMillis();
 		Predicate newGoal = recursiveRewrite(goal, rewriter);
-		long stopTime = System.currentTimeMillis();
-		System.out.println("  - Take " + (stopTime - startTime)
-				+ " ms to rewrite " + goal + " using " + rewriter
-				+ " with input " + input);
 
 		if (newGoal != goal) {
 			// Add the WD sub-goal

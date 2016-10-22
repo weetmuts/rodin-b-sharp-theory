@@ -14,17 +14,8 @@ import org.eventb.theory.rbp.rulebase.IPOContext;
  */
 public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewriter{
 	
-	private IGeneralRule rule;
-	
 	public AutoRewriter(IPOContext context, IPRMetadata prMetadata){
 		super(context, prMetadata);
-		BaseManager manager = BaseManager.getDefault();
-		String projectName = prMetadata.getProjectName();
-		String theoryName = prMetadata.getTheoryName();
-		String ruleName = prMetadata.getRuleName();
-		rule = manager.getRewriteRule(true, projectName, ruleName,
-				theoryName, context);
-
 	}
 		
 	/**
@@ -35,7 +26,12 @@ public class AutoRewriter extends AbstractRulesApplyer implements IFormulaRewrit
 	 * @return
 	 */
 	public IGeneralRule getRule(Formula<?> original){
-		return rule;
+		BaseManager manager = BaseManager.getDefault();
+		String projectName = prMetadata.getProjectName();
+		String theoryName = prMetadata.getTheoryName();
+		String ruleName = prMetadata.getRuleName();
+		return manager.getRewriteRule(true, projectName, ruleName,
+				theoryName, context);
 	}
 
 	/*

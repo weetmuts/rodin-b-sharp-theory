@@ -66,11 +66,8 @@ public abstract class ProofRuleTactic extends CombinableTactic implements
 		IReasoner reasoner = getReasoner();
 		IReasonerInput reasonerInput = getReasonerInput();
 		try {
-			long startTime = System.currentTimeMillis();
 			reasonerOutput = reasoner.apply(ptNode.getSequent(), reasonerInput,
 					pm);
-			long stopTime = System.currentTimeMillis();
-			System.out.println("Take " + (stopTime - startTime) +" ms to apply " + reasoner + " to " + ptNode.getSequent() + " with " + reasonerInput);
 		} catch (Exception e) {
 			final String msg = "while applying the reasoner: "
 					+ reasoner.getReasonerID();

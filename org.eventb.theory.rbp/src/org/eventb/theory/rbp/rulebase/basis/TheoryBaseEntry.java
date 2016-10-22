@@ -327,27 +327,6 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 			rules = manualRewriteNameMap;
 		
 		return rules.get(ruleName);
-//		if (rules.get(ruleName) == null) {
-//			return null;
-//		}
-//		for (IGeneralRule rule : rules.get(clazz)) {
-//			String name = null;
-//			if (rule instanceof IDeployedRewriteRule) {
-//				name = ((IDeployedRewriteRule) rule).getRuleName();
-//			}
-//			else {
-//				try { // if (rule instanceof ISCRewriteRule)
-//					name = ((ISCRewriteRule) rule).getLabel();
-//				} catch (RodinDBException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			if (name.equals(ruleName)) {
-//				return rule;
-//			}
-//		}
-//		return null;
 	}
 	
 	@Override
