@@ -21,7 +21,7 @@ import org.rodinp.core.RodinDBException;
  * @author maamria
  *
  */
-public class SCGiven extends SCPredicateElement implements ISCGiven {
+public class SCGiven extends SCPredicatePatternElement implements ISCGiven {
 
 	public SCGiven(String name, IRodinElement parent) {
 		super(name, parent);

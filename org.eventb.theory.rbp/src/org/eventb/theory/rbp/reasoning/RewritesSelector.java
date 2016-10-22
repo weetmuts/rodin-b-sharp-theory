@@ -105,7 +105,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 					IPRMetadata prMetadata = new PRMetadata(projectName, theoryName, ruleName);
 					IPosition position = accum.getCurrentPosition();
 					RewriteInput input = new RewriteInput(isGoal ? null : predicate, position, prMetadata);
-					accum.add(new RewriteTacticApplication(input, context, predicate.getSubFormula(position).getClass()));
+					accum.add(new RewriteTacticApplication(input, context));
 				}
 			} else { //if (rule instanceof ISCRewriteRule) {
 				try {
@@ -123,8 +123,7 @@ public class RewritesSelector implements IFormulaInspector<ITacticApplication> {
 						RewriteInput rewriteInput = new RewriteInput( 
 								isGoal ? null : predicate, position, prMetadata);
 						accum.add(new RewriteTacticApplication(rewriteInput,
-								context, predicate.getSubFormula(position)
-										.getClass()));
+								context));
 					}
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block

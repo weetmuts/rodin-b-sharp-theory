@@ -169,6 +169,8 @@ public final class Messages {
 	public static String scuser_AxiomLabelProblemError;
 	public static String scuser_AxiomPredMissingError;
 	public static String scuser_TheoryPathProjectIsThisProject;
+	public static String database_SCPredicatePatternParseFailure;
+	public static String database_SCPredicatePatternTCFailure;
 
 	private static final String BUNDLE_NAME = "org.eventb.theory.core.sc.messages";
 

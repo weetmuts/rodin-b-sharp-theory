@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.theory.core;
 
-import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 
 /**
@@ -20,6 +19,6 @@ import org.eventb.core.ITraceableElement;
  * @author maamria
  *
  */
-public interface ISCInferenceClause extends ISCPredicateElement, ITraceableElement{
+public interface ISCInferenceClause extends ISCPredicatePatternElement, ITraceableElement{
 	
 }

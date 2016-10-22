@@ -114,7 +114,12 @@ public abstract class AbstractRulesApplyer implements IFormulaRewriter {
 	 * @return the rewritten formula
 	 */
 	private Formula<?> applyRule(Formula<?> original){
+		long startTime = System.currentTimeMillis();
 		IGeneralRule rule = getRule(original);
+		long stopTime = System.currentTimeMillis();
+		System.out.println("    + Take " + (stopTime - startTime)
+				+ " to get rule for " + original + " found " + rule);
+		
 		if (rule == null) 
 			return original;
 		
@@ -143,7 +148,6 @@ public abstract class AbstractRulesApplyer implements IFormulaRewriter {
 			}
 			;
 		}
-		
 		ISpecialization specialization = Matcher.match(original, ruleLhs);
 		if (specialization == null) {
 			return original;
@@ -300,4 +304,15 @@ public abstract class AbstractRulesApplyer implements IFormulaRewriter {
 		return ruleDescription;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "using " + prMetadata + " in the context of " + context;
+	}
+
+	
 }

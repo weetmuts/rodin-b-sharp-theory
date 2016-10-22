@@ -70,8 +70,8 @@ public class RewriteRuleFilterModule extends RuleFilterModule<IRewriteRule> {
 			createProblemMarker(rule, TheoryAttributes.FORMULA_ATTRIBUTE, TheoryGraphProblem.MissingFormulaError);
 			return false;
 		}
-		// parse the lhs
-		Formula<?> lhsForm = ModulesUtils.parseFormula(rule, repository.getFormulaFactory(), this);
+		// parse the lhs pattern
+		Formula<?> lhsForm = ModulesUtils.parseFormulaPattern(rule, repository.getFormulaFactory(), this);
 		if (lhsForm == null) {
 			return false;
 		}

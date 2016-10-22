@@ -192,11 +192,11 @@ public class BaseManager implements IElementChangedListener {
 	 *            the obligation context
 	 * @return the deployed rule, or <code>null</code> if not found
 	 */
-	public IGeneralRule getRewriteRule(boolean automatic, String projectName, String ruleName, String theoryName, Class<?> clazz, IPOContext context) {
+	public IGeneralRule getRewriteRule(boolean automatic, String projectName, String ruleName, String theoryName, IPOContext context) {
 		IEventBRoot parentRoot = context.getParentRoot();
 		IRodinProject rodinProject = RodinCore.getRodinDB().getRodinProject(projectName);
 		check(rodinProject);
-		return projectEntries.get(rodinProject).getRewriteRule(automatic, theoryName, ruleName, clazz, parentRoot,
+		return projectEntries.get(rodinProject).getRewriteRule(automatic, theoryName, ruleName, parentRoot,
 				context.getFormulaFactory());
 
 	}

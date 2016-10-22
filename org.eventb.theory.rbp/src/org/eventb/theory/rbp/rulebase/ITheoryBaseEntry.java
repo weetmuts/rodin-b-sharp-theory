@@ -70,14 +70,13 @@ public interface ITheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSour
 	public IGeneralRule getInferenceRule(String ruleName, FormulaFactory factory);
 	
 	/**
-	 * Returns the interactive rule specified by its name as well as the runtime class of its lhs.
+	 * Returns the interactive rule specified by its name.
 	 * 
 	 * @param ruleName name of the rule
-	 * @param clazz the class of the lhs of the rule
 	 * @param factory the formula factory in case a reload is necessary
 	 * @return the rule or <code>null</code> if not found
 	 */
-	public IGeneralRule getRewriteRule(boolean automatic, String ruleName, Class<?> clazz, FormulaFactory factory);
+	public IGeneralRule getRewriteRule(boolean automatic, String ruleName, FormulaFactory factory);
 	
 	/**
 	 * Returns all the definitional rules in the theory.

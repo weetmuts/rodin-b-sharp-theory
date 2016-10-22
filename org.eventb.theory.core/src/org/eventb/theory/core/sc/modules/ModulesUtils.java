@@ -240,7 +240,35 @@ public class ModulesUtils {
 		}
 		return result.getParsedExpression();
 	}
-	
+
+	/**
+	 * Parses the formula pattern stored in the given element.
+	 * 
+	 * @param element
+	 *            the formula element
+	 * @param ff
+	 *            the formula factory
+	 * @param markerDisplay
+	 *            the marker display
+	 * @return the parsed formula, or <code>null</code>
+	 * @throws CoreException
+	 */
+	public static Formula<?> parseFormulaPattern(IFormulaElement element,
+			FormulaFactory ff, IMarkerDisplay markerDisplay) throws CoreException {
+		IAttributeType.String attributeType = TheoryAttributes.FORMULA_ATTRIBUTE;
+		String form = element.getFormula();
+		IParseResult result = ff.parseExpressionPattern(form, null);
+		if(result.hasProblem()){
+			result = ff.parsePredicatePattern(form, null);
+			if (CoreUtilities.issueASTProblemMarkers(element,
+					attributeType, result, markerDisplay)){
+				return null;
+			}
+			return result.getParsedPredicate();
+		}
+		return result.getParsedExpression();
+	}
+
 	/**
 	 * Type checks the formula.
 	 * @param element the formula element
@@ -273,6 +301,38 @@ public class ModulesUtils {
 		IParseResult result = ff.parseExpression(form, null);
 		if(result.hasProblem()){
 			result = ff.parsePredicate(form, null);
+			if (result.hasProblem()){
+				return null;
+			}
+			formula = result.getParsedPredicate();
+		}
+		else {
+			formula = result.getParsedExpression();
+		}
+		ITypeCheckResult typeCheck = formula.typeCheck(env);
+		if (typeCheck.hasProblem()){
+			return null;
+		}
+		return formula;
+	}
+	
+	/**
+	 * Attempts to parse and check the formula string.
+	 * 
+	 * @param form
+	 *            the formula string
+	 * @param ff
+	 *            the formula factory
+	 * @param env
+	 *            the type environment
+	 * @return the parsed formula or <code>null</code> if the passed string
+	 *         cannot be parsed, or if parsed cannot be typechecked
+	 */
+	public static Formula<?> parseAndTypeCheckFormulaPattern(String form, FormulaFactory ff, ITypeEnvironment env) {
+		Formula<?> formula = null;
+		IParseResult result = ff.parseExpressionPattern(form, null);
+		if(result.hasProblem()){
+			result = ff.parsePredicatePattern(form, null);
 			if (result.hasProblem()){
 				return null;
 			}

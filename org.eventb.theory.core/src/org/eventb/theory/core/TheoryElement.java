@@ -284,7 +284,7 @@ public abstract class TheoryElement extends EventBElement implements
 	public Formula<?> getSCFormula(FormulaFactory ff,
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		String form = getFormula();
-		Formula<?> formula = parseFormula(form, ff, false);
+		Formula<?> formula = parseFormula(form, ff, true);
 		if (formula == null) {
 			throw newCoreException("Error parsing formula: " + form
 					+ "\nwith factory: " + ff.getExtensions());

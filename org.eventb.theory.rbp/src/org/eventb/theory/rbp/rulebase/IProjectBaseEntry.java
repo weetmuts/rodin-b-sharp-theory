@@ -62,13 +62,12 @@ public interface IProjectBaseEntry {
 	 * Returns the interactive rule specified by its name as well as the runtime class of its lhs.
 	 * @param theoryName the name of the theory
 	 * @param ruleName name of the rule
-	 * @param clazz the class of the lhs of the rule
 	 * @param root the Event-B root (PO context)
 	 * @param factory the formula factory in case a reload is necessary
 	 * 
 	 * @return the rule or <code>null</code> if not found
 	 */
-	public IGeneralRule getRewriteRule(boolean automatic, String theoryName, String ruleName, Class<?> clazz, 
+	public IGeneralRule getRewriteRule(boolean automatic, String theoryName, String ruleName, 
 			IEventBRoot root, FormulaFactory factory);
 	/**
 	 * Returns the list of inference rules satisfying the given criteria. The rules must be available to use

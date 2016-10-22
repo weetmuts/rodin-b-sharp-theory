@@ -129,7 +129,7 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 		// Get the rewrite rule (given the meta-data) from the current context
 		BaseManager manager = BaseManager.getDefault();
 		IGeneralRule rule = manager.getRewriteRule(false, projectName, ruleName,
-				theoryName, formula.getClass(), context);
+				theoryName, context);
 		if (rule == null) {
 			return ProverFactory.reasonerFailure(this, input,
 					"Cannot find rewrite rule " + projectName + "::"

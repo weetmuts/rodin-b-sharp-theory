@@ -46,7 +46,16 @@ import org.rodinp.core.RodinDBException;
  * @author htson - Changed
  *         {@link #getRewriteRule(boolean, String, Class, FormulaFactory)}
  *         allowing to get automatic rule.
- * @version 1.1
+ * @author htson - (v1.2) re-implemented the storage for rewrites rules for
+ *         efficiency. Two hashed map are used to store the rewrites rules.
+ *         <ul>
+ *         <li>(auto/manual)RewriteNameMap use rules' names as the keys. It
+ *         should be used to retrieve the rules using name.</li>
+ *         <li>(auto/manual)RewriteClassMapClass use rules' applicable class as the
+ *         keys. It should be used to retrieve the set of rules applicable to a
+ *         (formula) class.</li>
+ *         </ul>
+ * @version 1.2
  * @since 1.0
  */
 public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & IExtensionRulesSource> implements ITheoryBaseEntry<R> {
@@ -56,9 +65,14 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	private ITypeEnvironmentBuilder typeEnv;
 
 	/**
-	 * All rules.
+	 * All rewrite rules maps.
 	 */
-	private final List<IGeneralRule> rewriteRules;
+	private final Map<String, IGeneralRule> autoRewriteNameMap;
+	private final Map<String, IGeneralRule> manualRewriteNameMap;
+	private final Map<Class<?>, List<IGeneralRule>> autoRewriteClassMap;
+	private final Map<Class<?>, List<IGeneralRule>> manualRewriteClassMap;
+	
+	
 	private final List<IGeneralRule> inferenceRules;
 	private List<ISCTheorem> theorems;
 	/**
@@ -66,15 +80,6 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	 */
 	private List<IGeneralRule> definitionalRules;
 	
-	/**
-	 * Mapped automatic rules by runtime class of formula.
-	 */
-	private Map<Class<?>, List<IGeneralRule>> autoRewRules;
-
-	/**
-	 * Mapped interactive rules by runtime class of formula.
-	 */
-	private Map<Class<?>, List<IGeneralRule>> interRewRules;
 
 	/**
 	 * Mapped inference rules by reasoning type runtime class.
@@ -84,11 +89,12 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 
 	public TheoryBaseEntry(R theoryRoot) {
 		this.theoryRoot = theoryRoot;
-		rewriteRules = new ArrayList<IGeneralRule>();
-		inferenceRules = new ArrayList<IGeneralRule>();
-		autoRewRules = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
-		interRewRules = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
+		autoRewriteNameMap = new LinkedHashMap<String, IGeneralRule>();
+		manualRewriteNameMap = new LinkedHashMap<String, IGeneralRule>();
+		autoRewriteClassMap = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
+		manualRewriteClassMap = new LinkedHashMap<Class<?>, List<IGeneralRule>>();
 		
+		inferenceRules = new ArrayList<IGeneralRule>();
 		autoTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IGeneralRule>>();
 		interTypedInferenceMap = new LinkedHashMap<ReasoningType, List<IGeneralRule>>();
 		definitionalRules = new ArrayList<IGeneralRule>();
@@ -98,10 +104,11 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 
 	protected void reload(FormulaFactory factory) {
 		// clear all
-		rewriteRules.clear();
+		autoRewriteNameMap.clear();
+		manualRewriteNameMap.clear();
+		autoRewriteClassMap.clear();
+		manualRewriteClassMap.clear();
 		inferenceRules.clear();
-		autoRewRules.clear();
-		interRewRules.clear();
 		autoTypedInferenceMap.clear();
 		interTypedInferenceMap.clear();
 		definitionalRules.clear();
@@ -113,56 +120,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		
 		if (theoryRoot instanceof IDeployedTheoryRoot) {
 			IDeployedTheoryFile file = new DeployedTheoryFile<R>(theoryRoot, factory);
-			rewriteRules.addAll(file.getRewriteRules());
-			inferenceRules.addAll(file.getInferenceRules());
-			try {
-				theorems = Arrays.asList(theoryRoot.getTheorems());
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-
-			for (IGeneralRule rule : rewriteRules) {
-				if(((IDeployedRewriteRule) rule).isDefinitional()){
-					definitionalRules.add(rule);
-				}
-				Formula<?> leftHandSide = ((IDeployedRewriteRule) rule).getLeftHandSide();
-				// only automatic + unconditional rewrites
-				if (((IDeployedRewriteRule) rule).isAutomatic() && !((IDeployedRewriteRule) rule).isConditional()) {
-					if (autoRewRules.get(leftHandSide.getClass()) == null) {
-						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
-						autoRewRules.put(leftHandSide.getClass(), list);
-					}
-					autoRewRules.get(leftHandSide.getClass()).add(rule);
-				} 
-				// interactive rewrites + conditional
-				if (((IDeployedRewriteRule) rule).isInteracive() || ((IDeployedRewriteRule) rule).isConditional()) {
-					if (interRewRules.get(leftHandSide.getClass()) == null) {
-						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
-						interRewRules.put(leftHandSide.getClass(), list);
-					}
-					interRewRules.get(leftHandSide.getClass()).add(rule);
-				}
-			}
-			for (IGeneralRule rule : inferenceRules) {
-				// automatic inference
-				if (( (IDeployedInferenceRule) rule).isAutomatic()) {
-					ReasoningType type = ( (IDeployedInferenceRule) rule).getReasoningType();
-					if (!autoTypedInferenceMap.containsKey(type)) {
-						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
-						autoTypedInferenceMap.put(type, list);
-					}
-					autoTypedInferenceMap.get(type).add(rule);
-				} 
-				// interactive inference
-				if(( (IDeployedInferenceRule) rule).isInteracive()){
-					ReasoningType type = ( (IDeployedInferenceRule) rule).getReasoningType();
-					if (!interTypedInferenceMap.containsKey(type)) {
-						List<IGeneralRule> list = new ArrayList<IGeneralRule>();
-						interTypedInferenceMap.put(type, list);
-					}
-					interTypedInferenceMap.get(type).add(rule);
-				}
-			}
+			loadRewriteRules(file);
+			loadInferenceRules(file);
 		}
 		else {// if (theoryRoot instanceof ISCTheoryRoot))
 			try {
@@ -173,8 +132,9 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 					typeEnv.addGivenSet(par.getIdentifier(factory).getName());
 				}
 				ISCProofRulesBlock[] blocks = theoryRoot.getProofRulesBlocks();
+				List<IGeneralRule> allRewriteRules = new ArrayList<IGeneralRule>();
 				for (ISCProofRulesBlock block : blocks) {
-					rewriteRules.addAll(Arrays.asList(block.getRewriteRules()));
+					allRewriteRules.addAll(Arrays.asList(block.getRewriteRules()));
 					inferenceRules.addAll(Arrays.asList(block.getInferenceRules()));
 //					ISCMetavariable[] vars = block.getMetavariables();
 //					for (ISCMetavariable var : vars) {
@@ -185,8 +145,8 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 				
 				theorems = Arrays.asList(theoryRoot.getTheorems());
 
-				for (IGeneralRule rule : rewriteRules) {
-					
+				for (IGeneralRule rule : allRewriteRules) {
+
 					//update typeEnv
 					ITypeEnvironmentBuilder augTypeEnvironment = typeEnv.makeBuilder();
 					SCProofRulesBlock block = (SCProofRulesBlock) ((SCRewriteRule) rule).getParent();
@@ -207,25 +167,30 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 						}
 					}
 					
-					if(( (ISCRewriteRule) rule).hasDefinitionalAttribute() && ( (ISCRewriteRule) rule).isDefinitional()){
+					ISCRewriteRule rewriteRule = (ISCRewriteRule) rule;
+					if (rewriteRule.hasDefinitionalAttribute() && rewriteRule.isDefinitional()){
 						definitionalRules.add(rule);
 					}
-					Formula<?> leftHandSide = ( (ISCRewriteRule) rule).getSCFormula(factory, augTypeEnvironment);
+					Formula<?> leftHandSide = rewriteRule.getSCFormula(factory, augTypeEnvironment);
+					Class<?> lhsClass = leftHandSide.getClass();
+					String ruleName = rewriteRule.getLabel();
 					// only automatic + unconditional rewrites
 					if (( (ISCRewriteRule) rule).isAutomatic() && !ProverUtilities.isConditional((ISCRewriteRule)rule, factory, augTypeEnvironment)) {
-						if (autoRewRules.get(leftHandSide.getClass()) == null) {
+						autoRewriteNameMap.put(ruleName, rewriteRule);
+						if (autoRewriteClassMap.get(lhsClass) == null) {
 							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
-							autoRewRules.put(leftHandSide.getClass(), list);
+							autoRewriteClassMap.put(lhsClass, list);
 						}
-						autoRewRules.get(leftHandSide.getClass()).add(rule);
+						autoRewriteClassMap.get(lhsClass).add(rule);
 					} 
 					// interactive rewrites + conditional
-					if (( (ISCRewriteRule) rule).isInteractive() || ProverUtilities.isConditional((ISCRewriteRule)rule, factory, augTypeEnvironment)) {
-						if (interRewRules.get(leftHandSide.getClass()) == null) {
+					if (rewriteRule.isInteractive() || ProverUtilities.isConditional(rewriteRule, factory, augTypeEnvironment)) {
+						manualRewriteNameMap.put(ruleName, rewriteRule);
+						if (manualRewriteClassMap.get(lhsClass) == null) {
 							List<IGeneralRule> list = new ArrayList<IGeneralRule>();
-							interRewRules.put(leftHandSide.getClass(), list);
+							manualRewriteClassMap.put(lhsClass, list);
 						}
-						interRewRules.get(leftHandSide.getClass()).add(rule);
+						manualRewriteClassMap.get(lhsClass).add(rule);
 					}
 				}
 				for (IGeneralRule rule : inferenceRules) {
@@ -254,6 +219,74 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		}
 	}
 
+	/**
+	 * @param file
+	 */
+	private void loadRewriteRules(IDeployedTheoryFile file) {
+		List<IDeployedRewriteRule> allRewriteRules = file.getRewriteRules();
+		for (IGeneralRule rule : allRewriteRules) {
+			IDeployedRewriteRule rewriteRule = (IDeployedRewriteRule) rule;
+			if (rewriteRule.isDefinitional()) {
+				definitionalRules.add(rule);
+			}
+			Formula<?> leftHandSide = rewriteRule.getLeftHandSide();
+			Class<?> lhsClass = leftHandSide.getClass();
+			String ruleName = rewriteRule.getRuleName();
+			// only automatic + unconditional rewrites
+			if (rewriteRule.isAutomatic() && !rewriteRule.isConditional()) {
+				autoRewriteNameMap.put(ruleName, rewriteRule);
+				if (autoRewriteClassMap.get(lhsClass) == null) {
+					List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+					autoRewriteClassMap.put(lhsClass, list);
+				}
+				autoRewriteClassMap.get(lhsClass).add(rule);
+			} 
+			// interactive rewrites + conditional
+			if (rewriteRule.isInteracive() || rewriteRule.isConditional()) {
+				manualRewriteNameMap.put(ruleName, rewriteRule);
+				if (manualRewriteClassMap.get(lhsClass) == null) {
+					List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+					manualRewriteClassMap.put(lhsClass, list);
+				}
+				manualRewriteClassMap.get(lhsClass).add(rule);
+			}
+		}
+	
+	}
+
+	/**
+	 * @param file
+	 */
+	private void loadInferenceRules(IDeployedTheoryFile file) {
+		inferenceRules.addAll(file.getInferenceRules());
+		try {
+			theorems = Arrays.asList(theoryRoot.getTheorems());
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+
+		for (IGeneralRule rule : inferenceRules) {
+			// automatic inference
+			if (( (IDeployedInferenceRule) rule).isAutomatic()) {
+				ReasoningType type = ( (IDeployedInferenceRule) rule).getReasoningType();
+				if (!autoTypedInferenceMap.containsKey(type)) {
+					List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+					autoTypedInferenceMap.put(type, list);
+				}
+				autoTypedInferenceMap.get(type).add(rule);
+			} 
+			// interactive inference
+			if(( (IDeployedInferenceRule) rule).isInteracive()){
+				ReasoningType type = ( (IDeployedInferenceRule) rule).getReasoningType();
+				if (!interTypedInferenceMap.containsKey(type)) {
+					List<IGeneralRule> list = new ArrayList<IGeneralRule>();
+					interTypedInferenceMap.put(type, list);
+				}
+				interTypedInferenceMap.get(type).add(rule);
+			}
+		}
+	}
+
 	protected void checkStatus(FormulaFactory factory) {
 		if (hasChanged) {
 			reload(factory);
@@ -272,46 +305,49 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 	@Override
 	public List<IGeneralRule> getRewriteRules(boolean automatic, Class<?> clazz, FormulaFactory factory) {
 		checkStatus(factory);
+		Map<Class<?>, List<IGeneralRule>> map; 
 		if (automatic) {
-			if (autoRewRules.containsKey(clazz))
-				return getList(autoRewRules.get(clazz));
+			map = autoRewriteClassMap;
 		} else {
-			if (interRewRules.containsKey(clazz))
-				return getList(interRewRules.get(clazz));
+			map = manualRewriteClassMap;
 		}
-		return new ArrayList<IGeneralRule>();
+		if (map.containsKey(clazz))
+			return new ArrayList<IGeneralRule>(map.get(clazz));
+		else
+			return new ArrayList<IGeneralRule>();
 	}
 
 	@Override
-	public IGeneralRule getRewriteRule(boolean automatic, String ruleName, Class<?> clazz, FormulaFactory factory) {
+	public IGeneralRule getRewriteRule(boolean automatic, String ruleName, FormulaFactory factory) {
 		checkStatus(factory);
-		Map<Class<?>, List<IGeneralRule>> rules;
+		Map<String, IGeneralRule> rules;
 		if (automatic)
-			rules = autoRewRules;
+			rules = autoRewriteNameMap;
 		else
-			rules = interRewRules;
+			rules = manualRewriteNameMap;
 		
-		if (rules.get(clazz) == null) {
-			return null;
-		}
-		for (IGeneralRule rule : rules.get(clazz)) {
-			String name = null;
-			if (rule instanceof IDeployedRewriteRule) {
-				name = ((IDeployedRewriteRule) rule).getRuleName();
-			}
-			else {
-				try { // if (rule instanceof ISCRewriteRule)
-					name = ((ISCRewriteRule) rule).getLabel();
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (name.equals(ruleName)) {
-				return rule;
-			}
-		}
-		return null;
+		return rules.get(ruleName);
+//		if (rules.get(ruleName) == null) {
+//			return null;
+//		}
+//		for (IGeneralRule rule : rules.get(clazz)) {
+//			String name = null;
+//			if (rule instanceof IDeployedRewriteRule) {
+//				name = ((IDeployedRewriteRule) rule).getRuleName();
+//			}
+//			else {
+//				try { // if (rule instanceof ISCRewriteRule)
+//					name = ((ISCRewriteRule) rule).getLabel();
+//				} catch (RodinDBException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			if (name.equals(ruleName)) {
+//				return rule;
+//			}
+//		}
+//		return null;
 	}
 	
 	@Override
@@ -460,16 +496,4 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 		return rewriteRules;
 	}
 	
-	/**
-	 * Returns a list with same element but different reference.
-	 * 
-	 * @param <E>
-	 *            the type of elements
-	 * @param list
-	 *            the original list
-	 * @return same list with different reference
-	 */
-	private <E> List<E> getList(List<E> list) {
-		return new ArrayList<E>(list);
-	}
 }

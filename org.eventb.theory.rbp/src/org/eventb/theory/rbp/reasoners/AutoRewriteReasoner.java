@@ -50,4 +50,15 @@ public class AutoRewriteReasoner extends AbstractAutoRewriteReasoner
 		return new AutoRewriter(context, prMetadata);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Object#toString()
+	 */
+	@Override
+	public String toString() {	
+		return REASONER_ID;
+	}
+
+	
 }

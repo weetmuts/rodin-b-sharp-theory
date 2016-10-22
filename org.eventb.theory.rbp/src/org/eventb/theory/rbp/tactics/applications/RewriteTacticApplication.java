@@ -45,13 +45,10 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 	
 	private IPOContext context;
 	
-	private Class<?> clazz;
-	
-	public RewriteTacticApplication(RewriteInput input, IPOContext context, Class<?> clazz) {
+	public RewriteTacticApplication(RewriteInput input, IPOContext context) {
 		super(input.getPredicate(), input.getPosition());
 		this.input = input;
 		this.context = context;
-		this.clazz = clazz;
 	}
 
 	/* (non-Javadoc)
@@ -76,7 +73,7 @@ public class RewriteTacticApplication extends DefaultPositionApplication impleme
 		// Get the inference rule (given the meta-data) from the current context
 		BaseManager manager = BaseManager.getDefault();
 		IGeneralRule rule = manager.getRewriteRule(false, projectName, ruleName,
-				theoryName, clazz, context);
+				theoryName, context);
 		if (rule == null) { // Definitional rule
 			return "Expand definition";
 		}

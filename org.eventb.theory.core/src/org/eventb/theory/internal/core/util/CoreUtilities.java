@@ -261,6 +261,51 @@ public class CoreUtilities {
 	}
 
 	/**
+	 * Parses and type checks the predicate occurring as an attribute to the
+	 * given element
+	 * 
+	 * @param element
+	 *            the rodin element
+	 * @param ff
+	 *            the formula factory
+	 * @param typeEnvironment
+	 *            the type environment
+	 * @param display
+	 *            the marker display for error reporting
+	 * @return the parsed predicate
+	 * @throws CoreException
+	 */
+	public static Predicate parseAndCheckPredicatePattern(IPredicateElement element, FormulaFactory ff, ITypeEnvironment typeEnvironment, IMarkerDisplay display) throws CoreException {
+		IAttributeType.String attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
+		String pred = element.getPredicateString();
+		IParseResult result = ff.parsePredicatePattern(pred, null);
+		if (issueASTProblemMarkers(element, attributeType, result, display)) {
+			return null;
+		}
+		Predicate predicate = result.getParsedPredicate();
+		FreeIdentifier[] idents = predicate.getFreeIdentifiers();
+		for (FreeIdentifier ident : idents) {
+			if (!typeEnvironment.contains(ident.getName())) {
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, ident.getName());
+				return null;
+			}
+		}
+		
+		ITypeCheckResult tcResult = predicate.typeCheck(typeEnvironment);
+		if (issueASTProblemMarkers(element, attributeType, tcResult, display)) {
+			return null;
+		}
+		Set<GivenType> givenTypes = predicate.getGivenTypes();
+		for (GivenType type : givenTypes){
+			if (!typeEnvironment.contains(type.getName())) {
+				display.createProblemMarker(element, attributeType, GraphProblem.UndeclaredFreeIdentifierError, type.getName());
+				return null;
+			}
+		}
+		return predicate;
+	}
+
+	/**
 	 * Parses and type checks the expression occurring as an attribute to the
 	 * given element
 	 * 

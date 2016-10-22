@@ -48,7 +48,7 @@ public class SCRewriteRuleRightHandSide extends TheoryElement implements
 			source = null;
 		}
 		IParseResult parserResult = factory
-				.parsePredicate(contents, source);
+				.parsePredicatePattern(contents, source);
 		if (parserResult.getProblems().size() != 0) {
 			throw newCoreException(database_SCPredicateParseFailure, this);
 		}

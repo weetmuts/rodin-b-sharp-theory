@@ -76,7 +76,7 @@ extends SCProcessorModule{
 				accurate = false;
 				continue;
 			}
-			Predicate predicate = CoreUtilities.parseAndCheckPredicate(clause, factory, typeEnvironment, this);
+			Predicate predicate = CoreUtilities.parseAndCheckPredicatePattern(clause, factory, typeEnvironment, this);
 			if(predicate != null && checkPredicate(predicate, clause)){
 				S scClause = createSCClause(predicate, clause, scRule, repository, monitor);
 				if(scClause != null){

@@ -84,9 +84,9 @@ public class RewriteRulePOGModule extends UtilityPOGModule {
 			}
 			Formula<?> lhs = rule.getSCFormula(factory, typeEnvironment);
 			// if lhs contains predicate variables, DONOT generate POs
-			if (lhs.hasPredicateVariable()) {
-				continue;
-			}
+//			if (lhs.hasPredicateVariable()) {
+//				continue;
+//			}
 			Predicate lhsWD = getDWDCondition(lhs);
 			
 			ArrayList<Predicate> allConditions = new ArrayList<Predicate>();

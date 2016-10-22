@@ -17,7 +17,7 @@ import org.rodinp.core.IRodinElement;
  * @author maamria
  *
  */
-public class SCInfer extends SCPredicateElement implements ISCInfer{
+public class SCInfer extends SCPredicatePatternElement implements ISCInfer {
 
 	public SCInfer(String name, IRodinElement parent) {
 		super(name, parent);
@@ -25,7 +25,6 @@ public class SCInfer extends SCPredicateElement implements ISCInfer{
 
 	@Override
 	public IInternalElementType<? extends IInternalElement> getElementType() {
-		// TODO Auto-generated method stub
 		return ELEMENT_TYPE;
 	}
 
