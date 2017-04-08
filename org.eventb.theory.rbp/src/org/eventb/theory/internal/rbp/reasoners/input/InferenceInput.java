@@ -110,7 +110,7 @@ public class InferenceInput extends PRMetadataReasonerInput {
 				return true;
 			}
 			if (predicates.length == 1) {
-				this.hyp = predicates[1];
+				this.hyp = predicates[0];
 				return true;
 			}
 		} catch (SerializeException e) {
