@@ -43,6 +43,8 @@ import org.eventb.internal.core.pog.POGNatureFactory;
 import org.eventb.theory.core.ISCDirectOperatorDefinition;
 import org.eventb.theory.core.ISCNewOperatorDefinition;
 import org.eventb.theory.core.ISCOperatorArgument;
+import org.eventb.theory.core.ISCRecursiveDefinitionCase;
+import org.eventb.theory.core.ISCRecursiveOperatorDefinition;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.rodinp.core.IRodinElement;
@@ -120,6 +122,19 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		final ISCDirectOperatorDefinition[] directDefinitions = definition
 				.getDirectOperatorDefinitions();
 		if (directDefinitions.length != 1) {
+			ISCRecursiveOperatorDefinition[] recursiveDefs = definition.getRecursiveOperatorDefinitions();
+			for (ISCRecursiveOperatorDefinition recursiveDef : recursiveDefs) {
+				String inductiveArgument = recursiveDef.getInductiveArgument();
+				ISCRecursiveDefinitionCase[] recursiveDefinitionCases = recursiveDef
+						.getRecursiveDefinitionCases();
+				for (ISCRecursiveDefinitionCase recursiveDefinitionCase : recursiveDefinitionCases) {
+					// @htson: (TODO) Commentted out at the moment as the expression string needs to be typed check. 
+					// String expressionString = recursiveDefinitionCase.getExpressionString();
+					// Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(localTypeEnvironment.getFormulaFactory(), localTypeEnvironment);
+					// Predicate wdPredicate = scFormula.getWDPredicate();
+					
+				}
+			}
 			return;
 		}
 		Formula<?> defFormula = directDefinitions[0].getSCFormula(
