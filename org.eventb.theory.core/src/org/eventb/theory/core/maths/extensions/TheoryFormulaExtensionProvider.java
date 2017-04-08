@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 University of Southampton and others.
+ * Copyright (c) 2011, 2017 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * 
  * @author maamria
+ * @author htson - Ensure that COND is added to all loaded formula factory.
  *
  */
 public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider {
@@ -130,7 +131,13 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			IProgressMonitor monitor) throws CoreException {
 		// optimisation: if all of extensions of element is syntax and semantic same as the extensions of current ff (getFormulaExtensions), dont need to create new ff
 		
- 		factory = FormulaFactory.getDefault();
+		factory = FormulaFactory.getDefault();
+ 		// @htson: Add COND. This is to ensure that COND is added to all loaded formula factory,
+		// since COND is not saved in the language.
+		Set<IFormulaExtension> cond = new HashSet<IFormulaExtension>(1);
+		cond.add(FormulaFactory.getCond());
+		factory = factory.withExtensions(cond);
+
  		typeEnvironment = factory.makeTypeEnvironment();
 		IRodinElement[] children = element.getChildren();
 		
