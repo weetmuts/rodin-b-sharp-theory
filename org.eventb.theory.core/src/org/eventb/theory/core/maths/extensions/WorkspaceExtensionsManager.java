@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 University of Southampton and others.
+ * Copyright (c) 2010, 2017 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     University of Southampton - initial API and implementation
  *     Systerel -  refactored after imports only concern deployed theories
+ *     University of Southampton - Caching the formula factory
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
@@ -54,17 +55,25 @@ import org.rodinp.core.RodinCore;
  * 
  * @author maamria
  * @author beauger
- * @author htson - Caching the formula factory
+ * @author htson - Caching the formula factory for Event-B roots
+ *               - Added debugging option
+ * @version
+ * @see
+ * @since 1.0
  */
 public class WorkspaceExtensionsManager implements IElementChangedListener {
 
+	// Extension for conditional expression COND.
 	private static final Set<IFormulaExtension> COND_EXTS = Collections
 			.<IFormulaExtension> singleton(FormulaFactory.getCond());
 
-	private static final WorkspaceExtensionsManager INSTANCE = new WorkspaceExtensionsManager();
 
+	// The basic formula factory which contains only COND extension. 
 	private final FormulaFactory basicFactory = FormulaFactory
 			.getInstance(COND_EXTS);
+
+	// The private singleton instance.
+	private static final WorkspaceExtensionsManager INSTANCE = new WorkspaceExtensionsManager();
 
 	// cache for SC theory direct dependencies (not a closure, ask deployedGraph
 	// for that)
@@ -84,6 +93,23 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	private final Queue<IDeployedTheoryRoot> changedDeployed = new ConcurrentLinkedQueue<IDeployedTheoryRoot>();
 	private final Queue<ISCTheoryRoot> changedSC = new ConcurrentLinkedQueue<ISCTheoryRoot>();
 
+	/**
+	 * The debug flag. This is set by the option when the plug-in is launched.
+	 * Client should not try to reset this flag.
+	 * @author htson
+	 * @since 4.0.0
+	 */
+	public static boolean DEBUG = false;
+
+	/**
+	 * <p>
+	 * Private default constructor for singleton class.
+	 * </p>
+	 * <ol>
+	 * <li>Register itself as a element-changed listener of the Rodin Database.</li>
+	 * <li>Initialise the deployed graph.
+	 * </ol>
+	 */
 	private WorkspaceExtensionsManager() {
 		RodinCore.addElementChangedListener(this);
 		extensionsCache = new LinkedHashMap<IEventBRoot, Set<IFormulaExtension>>();
@@ -91,6 +117,9 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 		initDeployedGraph();
 	}
 
+	/**
+	 * Utility method to initialise the deployed graph.
+	 */
 	private void initDeployedGraph() {
 		try {
 			for (IRodinProject project : RodinCore.getRodinDB()
@@ -104,6 +133,10 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 		}
 	}
 
+	/**
+	 * Returns the shared instance.
+	 * @return the shared instance.
+	 */
 	public static WorkspaceExtensionsManager getInstance() {
 		return INSTANCE;
 	}
