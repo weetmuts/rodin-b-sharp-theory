@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.theory.feature"
       label="%featureName"
-      version="4.0.0.qualifier"
+      version="4.0.0.RC1"
       provider-name="%providerName"
       plugin="org.eventb.theory.branding"
       license-feature="org.rodinp.license"
@@ -21,29 +21,29 @@
    </license>
 
    <url>
-      <discovery label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/>
       <discovery label="%theoryWikiSiteName" url="http://wiki.event-b.org/index.php/Theory_News_and_Support"/>
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.rodinp.core" version="1.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eventb.core.ast" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eventb.core.seqprover" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eventb.core" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eventb.core.ast" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="compatible"/>
+      <import plugin="org.rodinp.core" version="1.7.0" match="compatible"/>
+      <import plugin="org.eventb.core.ast" version="3.0.0" match="compatible"/>
+      <import plugin="org.eventb.core.seqprover" version="3.0.0" match="compatible"/>
+      <import plugin="org.eventb.core" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eventb.ui" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eventb.ui" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="fr.systerel.explorer" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="fr.systerel.explorer" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.navigator"/>
-      <import plugin="org.eventb.core.ast" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.rodinp.keyboard.core" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin
