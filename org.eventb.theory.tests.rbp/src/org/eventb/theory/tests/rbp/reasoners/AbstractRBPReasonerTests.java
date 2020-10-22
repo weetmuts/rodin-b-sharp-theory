@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 University of Southampton.
+ * Copyright (c) 2015, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,7 @@ public abstract class AbstractRBPReasonerTests extends AbstractReasonerTests {
 	}
 	
 	@After
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		for (IProofAttempt proofAttempt : proofAttempts) {
 			proofAttempt.dispose();
 		}
