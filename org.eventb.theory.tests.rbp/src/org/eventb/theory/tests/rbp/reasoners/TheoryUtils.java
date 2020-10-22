@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 University of Southampton.
+ * Copyright (c) 2015, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,11 @@ import org.eventb.theory.core.IConstructorArgument;
 import org.eventb.theory.core.IDatatypeConstructor;
 import org.eventb.theory.core.IDatatypeDefinition;
 import org.eventb.theory.core.IDeployedTheoryRoot;
+import org.eventb.theory.core.IGiven;
 import org.eventb.theory.core.IImportTheory;
 import org.eventb.theory.core.IImportTheoryProject;
+import org.eventb.theory.core.IInfer;
+import org.eventb.theory.core.IInferenceRule;
 import org.eventb.theory.core.IMetavariable;
 import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IOperatorArgument;
@@ -179,6 +182,36 @@ public class TheoryUtils {
 		rhs.setFormula(formula, subMonitor.newChild(10));
 
 		return rhs;
+	}
+
+	public static IInferenceRule createAutoInferenceRule(
+			IProofRulesBlock prfRuleBlk, String label,
+			RuleApplicability applicability, String description,
+			String[] infers, String givens[], boolean[] hyps,
+			IProgressMonitor monitor) throws RodinDBException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor,
+				100 * (1 + givens.length + infers.length));
+
+		IInferenceRule rule = prfRuleBlk.createChild(IInferenceRule.ELEMENT_TYPE,
+				null, subMonitor.newChild(70));
+		rule.setLabel(label, subMonitor.newChild(10));
+		rule.setApplicability(applicability, subMonitor.newChild(10));
+		rule.setDescription(description, subMonitor.newChild(10));
+
+		for (int i = 0; i < givens.length; i++) {
+			IGiven given = rule.createChild(IGiven.ELEMENT_TYPE, null, subMonitor.newChild(90));
+			given.setPredicateString(givens[i], subMonitor.newChild(10));
+			if (hyps[i]) {
+				given.setHyp(true, null);
+			}
+		}
+
+		for (int i = 0; i < infers.length; i++) {
+			IInfer infer = rule.createChild(IInfer.ELEMENT_TYPE, null, subMonitor.newChild(90));
+			infer.setPredicateString(infers[i], subMonitor.newChild(10));
+		}
+
+		return rule;
 	}
 
 	/**
