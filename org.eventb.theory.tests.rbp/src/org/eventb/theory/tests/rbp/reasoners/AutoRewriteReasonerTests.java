@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 University of Southampton.
+ * Copyright (c) 2015, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,11 +20,13 @@ import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.UntranslatableException;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.internal.rbp.reasoners.input.AutoRewriteInput;
+import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
+import org.eventb.theory.internal.rbp.reasoners.input.PRMetadata;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
@@ -101,8 +103,11 @@ public class AutoRewriteReasonerTests extends AbstractRBPReasonerTests {
 					"Auto Rewrite Reasoner Test", nullMonitor);
 			IProofTreeNode root = pa.getProofTree().getRoot();
 			IProverSequent sequent = root.getSequent();
+			IPRMetadata prMetadata = new PRMetadata("Theories",
+					"AutoRewrite", "rewrite");
+			AutoRewriteInput rewriteInput = new AutoRewriteInput(prMetadata);
 			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, new EmptyInput(),
+					sequent, rewriteInput,
 					"{}[][][] |- 2 ∗ 1 = 3");
 			testSuccessfulReasonerApplications("", appl);
 		} catch (CoreException e) {
