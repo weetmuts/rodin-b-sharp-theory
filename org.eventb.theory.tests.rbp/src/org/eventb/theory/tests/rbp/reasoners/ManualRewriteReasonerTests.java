@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 University of Southampton.
+ * Copyright (c) 2016, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -337,6 +337,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * <li><b>Expected result</b>: A successful application.</li>
 	 * </ul>
 	 */
+	@Test
 	public void testContext_Successful_Goal1() {
 		try {
 			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
