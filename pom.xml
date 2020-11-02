@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.eventb.theory</groupId>
+	<artifactId>root</artifactId>
+	<version>4.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<tycho-version>2.0.0</tycho-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<rodinTargetSiteUrl>file://path/to/rodin/core/dev</rodinTargetSiteUrl>
+	</properties>
+
+	<modules>
+		<module>org.eventb.core.ast.extensions</module>
+		<module>org.eventb.theory.core</module>
+		<module>org.eventb.theory.keyboard</module>
+		<module>org.eventb.theory.rbp</module>
+		<module>org.eventb.theory.ui</module>
+		<module>org.eventb.theory.help</module>
+		<module>org.eventb.theory.branding</module>
+
+		<module>org.eventb.theory.feature</module>
+
+		<module>org.eventb.theory.core.tests</module>
+		<module>org.eventb.theory.tests.rbp</module>
+		<module>org.eventb.core.ast.extensions.tests</module>
+
+		<module>org.eventb.theory.repository</module>
+	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>Rodin Core</id>
+			<layout>p2</layout>
+			<url>${rodinTargetSiteUrl}</url>
+		</repository>
+		<repository>
+			<id>Rodin Plug-ins</id>
+			<layout>p2</layout>
+			<url>http://rodin-b-sharp.sourceforge.net/updates</url>
+		</repository>
+		<repository>
+			<id>Rodin Licence</id>
+			<layout>p2</layout>
+			<url>http://eventb-soton.github.io/media_bin/org.rodinp.licence.updateSite</url>
+		</repository>
+	</repositories>
+</project>
