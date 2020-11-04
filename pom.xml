@@ -25,9 +25,9 @@
 
 		<module>org.eventb.theory.feature</module>
 
+		<module>org.eventb.core.ast.extensions.tests</module>
 		<module>org.eventb.theory.core.tests</module>
 		<module>org.eventb.theory.tests.rbp</module>
-		<module>org.eventb.core.ast.extensions.tests</module>
 
 		<module>org.eventb.theory.repository</module>
 	</modules>
