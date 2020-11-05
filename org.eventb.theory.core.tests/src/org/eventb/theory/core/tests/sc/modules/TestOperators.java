@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.core.tests.sc.modules;
 
 import org.eventb.core.EventBAttributes;
@@ -357,16 +364,21 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasMarker(op, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorExpInfixNeedsAtLeastTwoArgs);
 	}
 
+	/**
+	 * Check that infix predicates can be defined, which used to be forbidden.
+	 */
 	@Test
-	public void testOperators_018_PredOnlyPrefix() throws Exception {
+	public void testOperators_018_InfixPredicate() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		INewOperatorDefinition op = addRawOperatorDefinition(root, "equals", Notation.INFIX, FormulaType.PREDICATE,
 				false, false, makeSList("a", "b"), makeSList("ℤ", "ℤ"), makeSList());
+		IDirectOperatorDefinition def = op.createChild(IDirectOperatorDefinition.ELEMENT_TYPE, null, null);
+		def.setFormula("a=b", null);
 		saveRodinFileOf(root);
 		runBuilder();
 		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
-		isNotAccurate(scTheoryRoot);
-		hasMarker(op, EventBAttributes.LABEL_ATTRIBUTE, TheoryGraphProblem.OperatorPredOnlyPrefix);
+		isAccurate(scTheoryRoot);
+		containsMarkers(op, false);
 	}
 
 	@Test

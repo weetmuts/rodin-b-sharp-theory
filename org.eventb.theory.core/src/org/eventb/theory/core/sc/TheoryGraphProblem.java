@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.core.sc;
 
 import java.text.MessageFormat;
@@ -81,7 +88,7 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			RewriteRuleLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_RewriteRuleLabelConflict), 
 			InferenceRuleLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_InferenceRuleLabelConflict), 
 			OperatorExpPrefixCannotBeAssos(IMarker.SEVERITY_ERROR,Messages.scuser_OperatorExpPrefixCannotBeAssos),
-			OperatorPredOnlyPrefix(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorPredOnlyPrefix), 
+			@Deprecated OperatorPredOnlyPrefix(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorPredOnlyPrefix),
 			OperatorExpCannotBePostfix(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorExpCannotBePostfix),
 			OperatorPredNeedOneOrMoreArgs(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorPredNeedOneOrMoreArgs), 
 			OperatorPredCannotBeAssos(IMarker.SEVERITY_ERROR, Messages.scuser_OperatorPredCannotBeAssos), 
