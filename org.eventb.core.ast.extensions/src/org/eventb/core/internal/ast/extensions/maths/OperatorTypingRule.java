@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 University of Southampton and others.
+ * Copyright (c) 2010, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,7 +285,8 @@ public abstract class OperatorTypingRule {
 		final String[] freshNames = QuantifiedUtil.resolveIdents(bidArray, usedNames, factory);
 		
 		for (int i = 0; i < givenTypesArray.length; i++) {
-			specialization.put(givenTypesArray[i], factory.makeGivenType(freshNames[i]));
+			GivenType givenType = (GivenType)givenTypesArray[i].translate(factory);
+			specialization.put(givenType, factory.makeGivenType(freshNames[i]));
 		}
 		final Type modifiedArgumentType = argumentType.specialize(specialization);
 		
