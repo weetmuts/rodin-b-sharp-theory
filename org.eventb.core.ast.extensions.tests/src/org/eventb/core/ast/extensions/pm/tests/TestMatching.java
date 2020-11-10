@@ -1,7 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.pm.tests;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -9,8 +15,11 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.pm.Matcher;
 import org.eventb.core.ast.extensions.tests.BasicAstExtTest;
@@ -75,14 +84,19 @@ public class TestMatching extends BasicAstExtTest {
 			assertEquals(msg + ": Incorrect format for expected string", 2,
 					split.length);
 			
-			List<String> actualSubts;
-			String actual = specialization.toString();
-			if (actual.equals("")) {
-				actualSubts = new ArrayList<String>();
-			} else {
-				actualSubts = new ArrayList<String>(
-					Arrays.asList(actual.split(
-							"\\s*\\|\\|\\s*")));
+			GivenType[] specTypes = specialization.getTypes();
+			FreeIdentifier[] specIdents = specialization.getFreeIdentifiers();
+			PredicateVariable[] specVariables = specialization.getPredicateVariables();
+			List<String> actualSubts = new ArrayList<String>(
+					specTypes.length + specIdents.length + specVariables.length);
+			for (GivenType givenType : specTypes) {
+				actualSubts.add(givenType + "=" + specialization.get(givenType));
+			}
+			for (FreeIdentifier ident : specIdents) {
+				actualSubts.add(ident + "=" + specialization.get(ident));
+			}
+			for (PredicateVariable variable : specVariables) {
+				actualSubts.add(variable + "=" + specialization.get(variable));
 			}
 			
 			String[] expectedTypeSubsts;
