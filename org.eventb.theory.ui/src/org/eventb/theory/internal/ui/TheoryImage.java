@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2010, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.internal.ui;
 
 import org.eclipse.core.resources.IMarker;
@@ -8,13 +12,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.OverlayIcon;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
@@ -190,16 +195,14 @@ public class TheoryImage {
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
-			OverlayIcon icon = new OverlayIcon(desc);
+			ImageDescriptor[] overlays = new ImageDescriptor[6];
 			if ((overlay & F_COMMENT) != 0)
-				icon
-						.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
+				overlays[IDecoration.TOP_LEFT] = getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH);
 			if ((overlay & F_ERROR) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_ERROR_OVERLAY_PATH));
+				overlays[IDecoration.BOTTOM_LEFT] = getImageDescriptor(IEventBSharedImages.IMG_ERROR_OVERLAY_PATH);
 			else if ((overlay & F_WARNING) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH));
+				overlays[IDecoration.BOTTOM_LEFT] = getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH);
+			DecorationOverlayIcon icon = new DecorationOverlayIcon(desc.createImage(), overlays);
 			image = icon.createImage();
 			imageRegistry.put(key, image);
 		}
@@ -390,21 +393,19 @@ public class TheoryImage {
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
-			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
+			ImageDescriptor[] overlays = new ImageDescriptor[6];
 			if ((overlay & F_AUTO) != 0)
-				icon
-						.addTopRight(getImageDescriptor(ITheoryImages.IMG_AUTO_OVERLAY_PATH));
+				overlays[IDecoration.TOP_RIGHT] = getImageDescriptor(ITheoryImages.IMG_AUTO_OVERLAY_PATH);
 			if ((overlay & F_INACCURATE) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(ITheoryImages.IMG_WARNING_OVERLAY_PATH));
+				overlays[IDecoration.BOTTOM_LEFT] = getImageDescriptor(ITheoryImages.IMG_WARNING_OVERLAY_PATH);
 			if ((overlay & F_REVIEWED_BROKEN) != 0) {
-				icon
-						.addBottomRight(getImageDescriptor(ITheoryImages.IMG_REVIEWED_OVERLAY_PATH));
+				overlays[IDecoration.BOTTOM_RIGHT] = getImageDescriptor(ITheoryImages.IMG_REVIEWED_OVERLAY_PATH);
 			}
 			if ((overlay & F_DISCHARGED_BROKEN) != 0) {
-				icon
-						.addBottomRight(getImageDescriptor(ITheoryImages.IMG_DISCHARGED_OVERLAY_PATH));
+				overlays[IDecoration.BOTTOM_RIGHT] = getImageDescriptor(ITheoryImages.IMG_DISCHARGED_OVERLAY_PATH);
 			}
+			Image base_image = getImageDescriptor(base_path).createImage();
+			DecorationOverlayIcon icon = new DecorationOverlayIcon(base_image, overlays);
 			image = icon.createImage();
 			registry.put(key, image);
 		}
