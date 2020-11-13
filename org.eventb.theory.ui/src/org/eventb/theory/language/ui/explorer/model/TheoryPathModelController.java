@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.language.ui.explorer.model;
 
 import java.util.ArrayList;
@@ -34,7 +38,7 @@ public class TheoryPathModelController implements IElementChangedListener {
 	private static TheoryPathModelController instance;
 	private static HashMap<IRodinProject, TheoryPathModelProject> projects = new HashMap<IRodinProject, TheoryPathModelProject>();
 	
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<IModelListener> listeners = new ListenerList<IModelListener>();
 
 
 	/* (non-Javadoc)
@@ -198,8 +202,8 @@ public class TheoryPathModelController implements IElementChangedListener {
 	}
 
 	private void notifyListeners(List<IRodinElement> toRefresh) {
-		for (Object listener : listeners.getListeners()) {
-			safeNotify((IModelListener) listener, toRefresh);
+		for (IModelListener listener : listeners) {
+			safeNotify(listener, toRefresh);
 		}
 	}
 

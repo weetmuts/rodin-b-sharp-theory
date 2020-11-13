@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2010, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.ui.explorer.model;
 
 import java.util.ArrayList;
@@ -34,7 +38,7 @@ public class TheoryModelController implements IElementChangedListener {
 	private static TheoryModelController instance;
 	private static HashMap<IRodinProject, TheoryModelProject> projects = new HashMap<IRodinProject, TheoryModelProject>();
 
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<IModelListener> listeners = new ListenerList<IModelListener>();
 
 	/**
 	 * Create this controller and register it in the DataBase for changes.
@@ -158,8 +162,8 @@ public class TheoryModelController implements IElementChangedListener {
 	}
 
 	private void notifyListeners(List<IRodinElement> toRefresh) {
-		for (Object listener : listeners.getListeners()) {
-			safeNotify((IModelListener) listener, toRefresh);
+		for (IModelListener listener : listeners) {
+			safeNotify(listener, toRefresh);
 		}
 	}
 
