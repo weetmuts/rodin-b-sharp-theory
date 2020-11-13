@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package org.eventb.theory.core.basis;
 import static org.eventb.theory.core.TheoryAttributes.HYP_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.basis.SCPredicateElement;
 import org.eventb.theory.core.ISCGiven;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;

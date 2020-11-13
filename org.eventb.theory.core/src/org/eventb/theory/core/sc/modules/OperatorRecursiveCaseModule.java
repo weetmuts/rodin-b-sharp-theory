@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.core.sc.modules;
 
 import static org.eventb.core.ast.extensions.maths.AstUtilities.makeBTRUE;
@@ -40,7 +47,6 @@ import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.sc.states.OperatorInformation;
 import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo;
-import org.eventb.theory.core.sc.states.RecursiveDefinitionInfo.CaseEntry;
 import org.eventb.theory.core.sc.states.TheoryAccuracyInfo;
 import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.rodinp.core.IInternalElement;
