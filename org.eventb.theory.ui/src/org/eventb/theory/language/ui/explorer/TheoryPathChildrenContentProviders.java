@@ -1,13 +1,17 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.language.ui.explorer;
 
 import java.text.Collator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eventb.theory.core.IAvailableTheory;
 import org.eventb.theory.core.IAvailableTheoryProject;
 import org.eventb.theory.core.ITheoryPathRoot;
@@ -28,7 +32,7 @@ import fr.systerel.internal.explorer.model.IModelElement;
 @SuppressWarnings("restriction")
 public class TheoryPathChildrenContentProviders {
 
-	public static class AntiSorter extends ViewerSorter {
+	public static class AntiSorter extends ViewerComparator {
 
 		public AntiSorter() {
 		}
