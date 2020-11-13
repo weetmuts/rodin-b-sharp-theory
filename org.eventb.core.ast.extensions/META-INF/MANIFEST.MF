@@ -6,7 +6,7 @@ Bundle-Version: 4.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eventb.core.ast;bundle-version="3.2.0",
  org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eventb.core.ast.extensions.maths,
  org.eventb.core.ast.extensions.pm,
  org.eventb.core.ast.extensions.pm.assoc;x-friends:="org.eventb.core.ast.extensions.tests",

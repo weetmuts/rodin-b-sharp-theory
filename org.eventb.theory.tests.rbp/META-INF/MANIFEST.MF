@@ -4,7 +4,7 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eventb.theory.tests.rbp
 Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="4.11.0",
  org.eventb.core.seqprover.tests;bundle-version="3.1.0",
  org.eventb.core.seqprover;bundle-version="3.1.0",

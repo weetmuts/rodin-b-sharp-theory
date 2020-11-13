@@ -4,7 +4,7 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eventb.theory.core;singleton:=true
 Bundle-Version: 4.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: org.eventb.theory.core.plugin.TheoryPlugin
 Require-Bundle: org.eventb.core.ast.extensions,
  org.rodinp.core;bundle-version="1.7.0",
