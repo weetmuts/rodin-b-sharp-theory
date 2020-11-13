@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.ui.explorer.actions;
 
 import org.eclipse.core.resources.IProject;
@@ -9,6 +16,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.theory.ui.wizard.NewTheoryWizard;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinCore;
@@ -34,7 +42,7 @@ public class NewTheoryActionDelegate implements IViewActionDelegate {
 					
 				}
 				NewTheoryWizard wizard = new NewTheoryWizard();
-				wizard.init(EventBUIPlugin.getDefault().getWorkbench(),sel);
+				wizard.init(PlatformUI.getWorkbench(),sel);
 				WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchWindow().getShell(), wizard);
 				dialog.open();
 			}

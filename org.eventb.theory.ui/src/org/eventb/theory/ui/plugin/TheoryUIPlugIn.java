@@ -1,7 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.ui.plugin;
 
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.theory.internal.ui.TheoryImage;
 import org.osgi.framework.BundleContext;
@@ -44,7 +52,7 @@ public class TheoryUIPlugIn extends AbstractUIPlugin {
 	 * @return current active workbench page
 	 */
 	private IWorkbenchPage internalGetActivePage() {
-		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 	
 	/**
