@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 University of Southampton and others.
+ * Copyright (c) 2010, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,7 +104,7 @@ public abstract class DependenciesGraph<E extends IEventBRoot> implements
 
 	@Override
 	public boolean contains(E element) {
-		return verticesMap.containsKey(element.getComponentName());
+		return verticesMap.containsKey(element);
 	}
 
 }
