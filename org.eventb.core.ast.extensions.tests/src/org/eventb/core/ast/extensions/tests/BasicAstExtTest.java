@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.tests;
 
 import java.util.ArrayList;
@@ -579,11 +586,12 @@ public abstract class BasicAstExtTest extends TestCase {
 		}
 	}
 
+	@SafeVarargs
 	public static <E> Set<E> set(E... es) {
 		return new LinkedHashSet<E>(Arrays.asList(es));
 	}
 
-	public static <E> E[] array(E... es) {
+	public static <E> E[] array(@SuppressWarnings("unchecked") E... es) {
 		return es;
 	}
 
@@ -591,11 +599,13 @@ public abstract class BasicAstExtTest extends TestCase {
 		return set.toArray(new IFormulaExtension[set.size()]);
 	}
 
+	@SafeVarargs
 	public static <E> void assertContains(Collection<E> col, E... es) {
 		for (E e : es)
 			assertTrue("collection should contain " + e + " but does not", col.contains(e));
 	}
 
+	@SafeVarargs
 	public static <E> void assertNotContain(Collection<E> col, E... es) {
 		for (E e : es)
 			assertFalse("collection should not contain " + e + " but does", col.contains(e));
