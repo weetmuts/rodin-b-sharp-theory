@@ -1,7 +1,5 @@
-package org.eventb.core.ast.extensions.wd;
-
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +9,7 @@ package org.eventb.core.ast.extensions.wd;
  *     Systerel - initial API and implementation
  *     University of Southampton - Adaptation for the D-library
  *******************************************************************************/
+package org.eventb.core.internal.ast.extensions.wd;
 
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DIV;
@@ -61,7 +60,6 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.internal.ast.extensions.wd.FormulaBuilder;
 
 /**
  * An implementation of well-definedness conditions computer for the D operator.

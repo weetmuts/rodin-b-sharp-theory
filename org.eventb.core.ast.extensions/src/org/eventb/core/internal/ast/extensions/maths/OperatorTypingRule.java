@@ -41,7 +41,7 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
-import org.eventb.core.ast.extensions.wd.YMediator;
+import org.eventb.core.internal.ast.extensions.wd.YMediator;
 
 /**
  * 

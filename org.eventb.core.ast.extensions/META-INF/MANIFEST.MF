@@ -14,7 +14,7 @@ Export-Package: org.eventb.core.ast.extensions.maths,
  org.eventb.core.ast.extensions.pm.engine;x-friends:="org.eventb.core.ast.extensions.tests",
  org.eventb.core.ast.extensions.pm.engine.exp;x-friends:="org.eventb.core.ast.extensions.tests",
  org.eventb.core.ast.extensions.pm.engine.pred;x-friends:="org.eventb.core.ast.extensions.tests",
- org.eventb.core.ast.extensions.wd;x-friends:="org.eventb.core.ast.extensions.tests",
+ org.eventb.core.ast.extensions.wd,
  org.eventb.core.internal.ast.extensions.maths;x-friends:="org.eventb.core.ast.extensions.tests"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eventb.core.internal.ast.extensions.AstExtensionsPlugin

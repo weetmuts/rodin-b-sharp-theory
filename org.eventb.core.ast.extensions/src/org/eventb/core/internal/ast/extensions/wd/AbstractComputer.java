@@ -27,7 +27,6 @@ import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.ast.extensions.wd.YComputer;
 
 /**
  * 

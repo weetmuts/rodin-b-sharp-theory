@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,11 @@
  *     Systerel - initial API and implementation
  *     University of Southampton - Adaptation for the D-library
  *******************************************************************************/
-package org.eventb.core.ast.extensions.wd;
+package org.eventb.core.internal.ast.extensions.wd;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.internal.ast.extensions.wd.FormulaBuilder;
 
 /**
  * An implementation of a well-definedness mediator for Y.

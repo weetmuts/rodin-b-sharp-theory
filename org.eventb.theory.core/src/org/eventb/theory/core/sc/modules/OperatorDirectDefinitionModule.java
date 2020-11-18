@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.DirectDefinition;
-import org.eventb.core.ast.extensions.wd.YComputer;
+import org.eventb.core.ast.extensions.wd.WDComputer;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -184,7 +184,6 @@ public class OperatorDirectDefinitionModule extends SCProcessorModule {
 	}
 
 	private Predicate getDWDPredicate(Formula<?> formula) {
-		YComputer computer = new YComputer(factory);
-		return computer.getWDLemma(formula);
+		return WDComputer.getYLemma(formula);
 	}
 }

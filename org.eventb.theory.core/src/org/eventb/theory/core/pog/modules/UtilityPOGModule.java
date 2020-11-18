@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extensions.wd.YComputer;
+import org.eventb.core.ast.extensions.wd.WDComputer;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
@@ -131,7 +131,6 @@ public abstract class UtilityPOGModule extends POGProcessorModule {
 	 */
 	protected Predicate getDWDCondition(Formula<?> formula){
 		assert formula != null && formula.isTypeChecked();
-		YComputer computer = new YComputer(factory);
-		return computer.getWDLemma(formula);
+		return WDComputer.getYLemma(formula);
 	}
 }
