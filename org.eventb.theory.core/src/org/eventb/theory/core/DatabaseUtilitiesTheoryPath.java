@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.core;
 
 import java.util.List;
@@ -96,9 +100,10 @@ public class DatabaseUtilitiesTheoryPath{
 					//In case the project is deleted or it is closed
 					if(affectedProject.getAffectedChildren().length==0){
 						for(IRodinFile file: files){
-							if(file.getRodinProject().equals(affectedProject.getElement()))
+							if(file.getRodinProject().equals(affectedProject.getElement())) {
 								notifyDependency(root);
-							break;
+								break;
+							}
 						}
 					}
 					else {
