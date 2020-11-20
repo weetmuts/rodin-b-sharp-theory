@@ -25,25 +25,25 @@
    </url>
 
    <requires>
-      <import plugin="org.eventb.core.ast" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="compatible"/>
-      <import plugin="org.rodinp.core" version="1.7.0" match="compatible"/>
-      <import plugin="org.eventb.core.ast" version="3.0.0" match="compatible"/>
-      <import plugin="org.eventb.core.seqprover" version="3.0.0" match="compatible"/>
-      <import plugin="org.eventb.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eventb.core.ast"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.rodinp.core"/>
+      <import plugin="org.eventb.core.ast"/>
+      <import plugin="org.eventb.core.seqprover"/>
+      <import plugin="org.eventb.core"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eventb.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eventb.ui"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="fr.systerel.explorer" version="2.0.0" match="compatible"/>
+      <import plugin="fr.systerel.explorer"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.navigator"/>
-      <import plugin="org.rodinp.keyboard.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.rodinp.keyboard.core"/>
    </requires>
 
    <plugin

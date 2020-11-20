@@ -8,10 +8,10 @@ Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: org.eventb.theory.core.plugin.TheoryPlugin
 Require-Bundle: org.eventb.core.ast.extensions,
- org.rodinp.core;bundle-version="1.7.0",
- org.eventb.core.ast;bundle-version="3.0.0",
- org.eventb.core.seqprover;bundle-version="3.0.0",
- org.eventb.core;bundle-version="3.0.0",
+ org.rodinp.core,
+ org.eventb.core.ast,
+ org.eventb.core.seqprover,
+ org.eventb.core,
  org.eclipse.core.runtime,
  org.eclipse.core.resources
 Export-Package: org.eventb.theory.core,
