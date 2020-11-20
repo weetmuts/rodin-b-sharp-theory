@@ -20,12 +20,16 @@ import org.eventb.core.internal.ast.extensions.wd.YComputer;
  *
  * @author Guillaume Verdier
  *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class WDComputer {
 
 	/**
 	 * Compute the well-definedness condition of a formula with the Y operator.
 	 *
+	 * @param formula the formula on which the well-definedness condition is computed
+	 * @return the well-definedness condition
 	 * @see YComputer
 	 */
 	public static Predicate getYLemma(Formula<?> formula) {
@@ -36,6 +40,8 @@ public class WDComputer {
 	/**
 	 * Compute the well-definedness condition of a formula with the D operator.
 	 *
+	 * @param formula the formula on which the well-definedness condition is computed
+	 * @return the well-definedness condition
 	 * @see DComputer
 	 */
 	public static Predicate getDLemma(Formula<?> formula) {
