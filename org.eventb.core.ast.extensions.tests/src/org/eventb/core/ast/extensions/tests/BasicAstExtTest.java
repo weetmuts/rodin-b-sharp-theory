@@ -591,7 +591,7 @@ public abstract class BasicAstExtTest extends TestCase {
 		return new LinkedHashSet<E>(Arrays.asList(es));
 	}
 
-	public static <E> E[] array(@SuppressWarnings("unchecked") E... es) {
+	public static IFormulaExtension[] makeEList(IFormulaExtension... es) {
 		return es;
 	}
 

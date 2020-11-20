@@ -85,7 +85,8 @@ public abstract class AssociativityProblem<F extends Formula<F>> implements IAss
 	 * @param list the formulae list
 	 * @return list of indexed formulae
 	 */
-	protected List<IndexedFormula<F>> getIndexedFormulae(@SuppressWarnings("unchecked") F... list) {
+	@SafeVarargs
+	protected final List<IndexedFormula<F>> getIndexedFormulae(F... list) {
 		if (list == null) {
 			return null;
 		}

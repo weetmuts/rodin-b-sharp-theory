@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.extensions.maths.tests;
 
 import static org.eventb.core.ast.extensions.maths.AstUtilities.getNotation;
@@ -59,7 +66,7 @@ public class TestBasicASTMaths extends BasicAstExtTest{
 	}
 	
 	public void testUtilities_004_isAssociative() throws Exception{
-		addExtensions(array(seqConcatExtension(), andExtension()));
+		addExtensions(makeEList(seqConcatExtension(), andExtension()));
 		assertFalse("extension, 'null', expected not to be associative but is",AstUtilities.isAssociative(null));
 		assertTrue("extension expected to be associative but is not", AstUtilities.isAssociative((ExtendedExpression)expression("s1 seqConcat s2")));
 		assertTrue("extension expected to be associative but is not", AstUtilities.isAssociative((ExtendedExpression)expression("TRUE AND b")));
@@ -67,7 +74,7 @@ public class TestBasicASTMaths extends BasicAstExtTest{
 	}
 	
 	public void testUtilities_005_isAC() throws Exception{
-		addExtensions(array(seqConcatExtension(), andExtension()));
+		addExtensions(makeEList(seqConcatExtension(), andExtension()));
 		assertTrue("extension expected to be AC but is not", AstUtilities.isAC((ExtendedExpression)expression("a AND b")));
 		assertFalse("extension expected not to be AC but is", AstUtilities.isAC((ExtendedExpression) expression("seq(A)")));
 		assertFalse("extension expected not to be AC but is", AstUtilities.isAC((ExtendedExpression) expression("s1 seqConcat s2")));
