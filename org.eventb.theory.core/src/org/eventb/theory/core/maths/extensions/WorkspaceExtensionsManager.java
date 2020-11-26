@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 University of Southampton and others.
+ * Copyright (c) 2010, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     University of Southampton - initial API and implementation
  *     Systerel -  refactored after imports only concern deployed theories
  *     University of Southampton - Caching the formula factory
+ *     CentraleSupélec - rewrite cache using FormulaExtensionCache
  *******************************************************************************/
 package org.eventb.theory.core.maths.extensions;
 
@@ -20,7 +21,6 @@ import static org.eventb.theory.core.TheoryHierarchyHelper.getTheoryPathImports;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +40,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGraph;
 import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.internal.core.util.FormulaExtensionCache;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -87,8 +88,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 
 	// TODO add TheoryPath cache
 	// Cache for extensions for Event-B roots.
-	private final Map<IEventBRoot, Set<IFormulaExtension>> extensionsCache;
-	private final Queue<IEventBRoot> changedRoots;
+	private final FormulaExtensionCache extensionsCache = new FormulaExtensionCache();
 	
 	private final Queue<IDeployedTheoryRoot> changedDeployed = new ConcurrentLinkedQueue<IDeployedTheoryRoot>();
 	private final Queue<ISCTheoryRoot> changedSC = new ConcurrentLinkedQueue<ISCTheoryRoot>();
@@ -112,8 +112,6 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	 */
 	private WorkspaceExtensionsManager() {
 		RodinCore.addElementChangedListener(this);
-		extensionsCache = new LinkedHashMap<IEventBRoot, Set<IFormulaExtension>>();
-		changedRoots = new ConcurrentLinkedQueue<IEventBRoot>();
 		initDeployedGraph();
 	}
 
@@ -238,10 +236,6 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	 */
 	public synchronized Set<IFormulaExtension> getFormulaExtensions(
 			IEventBRoot root) throws CoreException {
-		if (changedRoots.contains(root)) {
-			extensionsCache.remove(root);
-			changedRoots.remove(root);
-		}
 		if (extensionsCache.containsKey(root)) {
 			return extensionsCache.get(root);
 		}
@@ -326,7 +320,7 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 			}
 			IInternalElement root = file.getRoot();
 			if (root instanceof IEventBRoot) {
-				changedRoots.add((IEventBRoot) root);
+				extensionsCache.remove((IEventBRoot)root);
 			}
 		} else {
 			for (IRodinElementDelta d : affected) {

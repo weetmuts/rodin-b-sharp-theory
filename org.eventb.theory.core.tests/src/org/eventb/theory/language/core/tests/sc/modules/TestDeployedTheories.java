@@ -28,9 +28,7 @@ import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.language.core.tests.sc.BasicTestSCTheoryPath;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.rodinp.core.RodinDBException;
 
 import ch.ethz.eventb.utils.EventBUtils;
@@ -48,14 +46,6 @@ public class TestDeployedTheories extends BasicTestSCTheoryPath {
 
 	protected IEventBProject eventBProject;
 
-	/**
-	 * Name of the current test.
-	 *
-	 * Used in setUp() to get around a testing bug.
-	 */
-	@Rule
-	public TestName testName = new TestName();
-
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -63,13 +53,8 @@ public class TestDeployedTheories extends BasicTestSCTheoryPath {
 		 * We need an Event-B Project for our tests, but the super class only creates a
 		 * Rodin Project, so we create the Event-B project and overwrite the Rodin
 		 * project with the new one.
-		 *
-		 * Even though the workspace is cleared between tests, it appears that some data
-		 * remains cached somewhere. It causes some test failures when running multiples
-		 * tests, despite each test passing when executed alone. We bypass this by
-		 * adding the name of the current test to the name of the project.
 		 */
-		eventBProject = EventBUtils.createEventBProject(EVENT_B_PROJECT_BASE_NAME + testName.getMethodName(), null);
+		eventBProject = EventBUtils.createEventBProject(EVENT_B_PROJECT_BASE_NAME, null);
 		rodinProject = eventBProject.getRodinProject();
 	}
 
@@ -114,8 +99,9 @@ public class TestDeployedTheories extends BasicTestSCTheoryPath {
 	 * @param argumentTypeExpressions Types of the arguments
 	 * @param wdConditions            Well-definedness conditions
 	 * @param definition              Definition of the operator
+	 * @return the created theory
 	 */
-	protected void createAndDeployTheoryWithOperator(String label, Notation notation, FormulaType type,
+	protected ITheoryRoot createAndDeployTheoryWithOperator(String label, Notation notation, FormulaType type,
 			String[] arguments, String[] argumentTypeExpressions, String[] wdConditions, String definition)
 			throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
@@ -123,6 +109,20 @@ public class TestDeployedTheories extends BasicTestSCTheoryPath {
 				argumentTypeExpressions, wdConditions);
 		addDirectOperatorDefinition(op, definition);
 		deployAndAddToTheoryPath(root);
+		return root;
+	}
+
+	/**
+	 * Saves a context and checks that it passes static checking without errors.
+	 *
+	 * @param ctxRoot Context to save and check
+	 */
+	protected void saveAndCheckContext(IContextRoot ctxRoot) throws Exception {
+		saveRodinFileOf(ctxRoot);
+		runBuilder();
+		ISCContextRoot scCtxRoot = ctxRoot.getSCContextRoot();
+		isAccurate(scCtxRoot);
+		containsMarkers(scCtxRoot, false);
 	}
 
 	/**
@@ -136,11 +136,7 @@ public class TestDeployedTheories extends BasicTestSCTheoryPath {
 	protected IContextRoot createAndBuildContextWithTheorem(String theoremDefinition) throws Exception {
 		IContextRoot ctxRoot = EventBUtils.createContext(eventBProject, CONTEXT_NAME, null);
 		EventBUtils.createAxiom(ctxRoot, THEOREM_LABEL, theoremDefinition, true, null, null);
-		saveRodinFileOf(ctxRoot);
-		runBuilder();
-		ISCContextRoot scCtxRoot = ctxRoot.getSCContextRoot();
-		isAccurate(scCtxRoot);
-		containsMarkers(scCtxRoot, false);
+		saveAndCheckContext(ctxRoot);
 		return ctxRoot;
 	}
 
@@ -201,4 +197,40 @@ public class TestDeployedTheories extends BasicTestSCTheoryPath {
 		checkPOForTheoremAndWD(ctxRoot.getSCContextRoot());
 	}
 
+	/**
+	 * Tests creating a theory after a context and using it in the context.
+	 */
+	@Test
+	public void test_createTheoryAfterContext() throws Exception {
+		// Step 1: create a basic Rodin context
+		IContextRoot ctxRoot = createAndBuildContextWithTheorem("0 = 0");
+		// Step 2: create a theory, deploy it and add a theory path
+		createAndDeployTheoryWithOperator("ident", Notation.PREFIX, FormulaType.EXPRESSION, makeSList("x"),
+				makeSList("ℤ"), makeSList(), "x");
+		// Step 3: use something from this theory in the already existing context
+		EventBUtils.createAxiom(ctxRoot, THEOREM_LABEL + "2", "ident(0) = 0", true, null, null);
+		// Result: there should be no errors in the context
+		saveAndCheckContext(ctxRoot);
+	}
+
+	/**
+	 * Tests editing a theory after it was deployed.
+	 */
+	@Test
+	public void test_editTheoryAfterDeployment() throws Exception {
+		// Step 1: create a theory, deploy it and add a theory path
+		ITheoryRoot thyRoot = createAndDeployTheoryWithOperator("ident", Notation.PREFIX, FormulaType.EXPRESSION,
+				makeSList("x"), makeSList("ℤ"), makeSList(), "x");
+		// Step 2: create a context that uses this theory
+		IContextRoot ctxRoot = createAndBuildContextWithTheorem("ident(0) = 0");
+		// Step 3: modify the theory
+		INewOperatorDefinition op = addRawOperatorDefinition(thyRoot, "ident2", Notation.PREFIX, FormulaType.EXPRESSION,
+				false, false, makeSList("y"), makeSList("ℤ"), makeSList());
+		addDirectOperatorDefinition(op, "y");
+		deployAndAddToTheoryPath(thyRoot);
+		// Step 4: use the updated theory
+		EventBUtils.createAxiom(ctxRoot, THEOREM_LABEL + "2", "ident(0) = ident2(0)", true, null, null);
+		// Result: there should be no errors in the context
+		saveAndCheckContext(ctxRoot);
+	}
 }

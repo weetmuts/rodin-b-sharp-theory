@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.language.core.tests.sc;
 
 import static org.junit.Assert.assertNotNull;
@@ -106,17 +110,13 @@ public class BasicTestSCTheoryPath extends BuilderTestTheoryPath {
 		assertNotNull(scTheoryRoot);
 		ITheoryDeployer dep = null;
 		
-		if(!scTheoryRoot.hasDeployedVersion()){
-			Set<ISCTheoryRoot> set = new HashSet<ISCTheoryRoot>();
-			set.add(scTheoryRoot);
-			dep = TheoryHierarchyHelper.getDeployer(scTheoryRoot.getRodinProject(), set);
-			dep.deploy(monitor);
-			while(dep.getDeploymentResult()==null){
-				Thread.sleep(1000);
-			}
+		Set<ISCTheoryRoot> set = new HashSet<ISCTheoryRoot>();
+		set.add(scTheoryRoot);
+		dep = TheoryHierarchyHelper.getDeployer(scTheoryRoot.getRodinProject(), set);
+		dep.deploy(monitor);
+		while(dep.getDeploymentResult()==null){
+			Thread.sleep(1000);
 		}
-		
-		assertNotNull(dep);
 		
 		return dep.getDeploymentResult();
 	}
