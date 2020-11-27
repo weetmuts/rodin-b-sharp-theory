@@ -158,7 +158,8 @@ public class WorkspaceExtensionsManager implements IElementChangedListener {
 	// unique access point for 'scDependencies' field
 	private Set<IDeployedTheoryRoot> fetchSCDependencies(ISCTheoryRoot scTheory)
 			throws CoreException {
-		for (ISCTheoryRoot changedRoot : changedSC) {
+		while (!changedSC.isEmpty()) {
+			final ISCTheoryRoot changedRoot = changedSC.remove();
 			// forget what we used to know about that theory
 			extensions.remove(changedRoot);
 			scDependencies.put(changedRoot, getImportedTheories(changedRoot));
