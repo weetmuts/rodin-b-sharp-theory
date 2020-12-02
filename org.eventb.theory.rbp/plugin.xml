@@ -75,7 +75,7 @@
             interrupt="true"
             name="%rbpRewTactics"
             priority="5"
-            tacticProvider="org.eventb.theory.rbp.tactics.RewritesManualTactic"
+            tacticProvider="org.eventb.theory.rbp.tactics.CachedRewritesManualTactic"
             target="any"
             tooltip="%applyRew">
       </tactic>
