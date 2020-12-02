@@ -361,7 +361,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			RewriteInput rewriteInput = new RewriteInput(predicate, position,
 					prMetadata);
 			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, rewriteInput, "{}[][][] |- 2 ∗ 1 = 3");
+					sequent, rewriteInput, "{}[][][] |- ⊤", "{}[][][⊤] |- 2 ∗ 1 = 3");
 			testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -409,7 +409,7 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 			RewriteInput rewriteInput = new RewriteInput(predicate, position,
 					prMetadata);
 			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, rewriteInput, "{}[1+1=3][][2∗1=3] |- ⊥");
+					sequent, rewriteInput, "{}[][][1+1=3] |- ⊤", "{}[1+1=3][][⊤;;2∗1=3] |- ⊥");
 			testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();

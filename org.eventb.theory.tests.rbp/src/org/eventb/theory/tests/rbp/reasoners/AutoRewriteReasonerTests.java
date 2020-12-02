@@ -108,7 +108,8 @@ public class AutoRewriteReasonerTests extends AbstractRBPReasonerTests {
 			AutoRewriteInput rewriteInput = new AutoRewriteInput(prMetadata);
 			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
 					sequent, rewriteInput,
-					"{}[][][] |- 2 ∗ 1 = 3");
+					"{}[][][] |- ⊤",
+					"{}[][][⊤] |- 2 ∗ 1 = 3");
 			testSuccessfulReasonerApplications("", appl);
 		} catch (CoreException e) {
 			e.printStackTrace();
