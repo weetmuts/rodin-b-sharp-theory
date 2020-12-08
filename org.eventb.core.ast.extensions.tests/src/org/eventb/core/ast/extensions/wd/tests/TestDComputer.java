@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2020 University of Southampton and others.
+ * Copyright (c) 2020 CentraleSupélec.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,19 +14,18 @@ import org.eventb.core.ast.extensions.wd.WDComputer;
  * Tests well-definedness conditions computed with the D operator.
  *
  * Actual tests are inherited from {@link AbstractWDTest}.
- * 
- * @author maamria
  *
+ * @author Guillaume Verdier
  */
-public class TestYComputer extends AbstractWDTest {
+public class TestDComputer extends AbstractWDTest {
 
 	/**
 	 * Returns a well-definedness conditions computed with
-	 * {@link WDComputer#getYLemma(org.eventb.core.ast.Formula)}.
+	 * {@link WDComputer#getDLemma(org.eventb.core.ast.Formula)}.
 	 */
 	@Override
 	protected Predicate getWDLemma(Predicate pred) {
-		return WDComputer.getYLemma(pred);
+		return WDComputer.getDLemma(pred);
 	}
 
 }
