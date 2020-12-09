@@ -30,9 +30,8 @@ import org.eventb.ui.prover.ITacticProvider;
  * The tactic applications are cached based on four parameters:
  * <ul>
  * <li>the current proof attempt;</li>
- * <li>a predicate that is either the {@code hyp} parameter of
- * {@link ITacticProvider#getPossibleApplications(IProofTreeNode, Predicate, String)}
- * or the goal, if {@code hyp} if {@code null};</li>
+ * <li>a predicate that is either an hypothesis or the goal depending on the
+ * value of the next parameter;</li>
  * <li>a boolean indicating whether the predicate is an hypothesis or the
  * goal;</li>
  * <li>the {@code globalInput} parameter of
@@ -132,7 +131,7 @@ public class CachedApplicationTactic implements ITacticProvider, IUserSupportMan
 		 * and the globalInput string. This makes is easier and faster to remove all
 		 * cached results associated to a specific proof attempt when it is disposed.
 		 */
-		protected final Map<IProofAttempt, Map<TacticCacheKey, List<ITacticApplication>>> cache = new HashMap<IProofAttempt, Map<TacticCacheKey, List<ITacticApplication>>>();
+		private final Map<IProofAttempt, Map<TacticCacheKey, List<ITacticApplication>>> cache = new HashMap<IProofAttempt, Map<TacticCacheKey, List<ITacticApplication>>>();
 
 		/**
 		 * Retrieves a cached result.
