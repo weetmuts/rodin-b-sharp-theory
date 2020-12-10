@@ -7,10 +7,10 @@
  *******************************************************************************/
 package org.eventb.theory.language.core.tests.sc;
 
+import static java.util.Collections.singleton;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -110,8 +110,7 @@ public class BasicTestSCTheoryPath extends BuilderTestTheoryPath {
 		assertNotNull(scTheoryRoot);
 		ITheoryDeployer dep = null;
 		
-		Set<ISCTheoryRoot> set = new HashSet<ISCTheoryRoot>();
-		set.add(scTheoryRoot);
+		Set<ISCTheoryRoot> set = singleton(scTheoryRoot);
 		dep = TheoryHierarchyHelper.getDeployer(scTheoryRoot.getRodinProject(), set);
 		dep.deploy(monitor);
 		while(dep.getDeploymentResult()==null){
