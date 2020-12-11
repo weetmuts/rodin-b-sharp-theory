@@ -26,5 +26,6 @@ Export-Package: org.eventb.theory.internal.rbp.reasoners.input;x-friends:="org.e
  org.eventb.theory.rbp.plugin;x-friends:="org.eventb.theory.tests.rbp",
  org.eventb.theory.rbp.reasoners;x-friends:="org.eventb.theory.tests.rbp",
  org.eventb.theory.rbp.tactics;x-friends:="org.eventb.theory.tests.rbp",
+ org.eventb.theory.rbp.tactics.ui;x-friends:="org.eventb.theory.tests.rbp",
  org.eventb.theory.rbp.rulebase;x-friends:="org.eventb.theory.tests.rbp",
  org.eventb.theory.rbp.rulebase.basis;x-friends:="org.eventb.theory.tests.rbp"
