@@ -11,7 +11,6 @@
 
 package org.eventb.theory.tests.rbp.reasoners;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
@@ -20,7 +19,6 @@ import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
@@ -31,7 +29,6 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.internal.rbp.reasoners.input.PRMetadata;
 import org.eventb.theory.internal.rbp.reasoners.input.RewriteInput;
-import org.junit.Assert;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -102,35 +99,30 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testContext_InvalidPosition_Goal() {
-		try {
-			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "thm1", "1 + 1 = 3", true, null,
-					nullMonitor);
-			ctxRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
+	public void testContext_InvalidPosition_Goal() throws Exception {
+		IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "thm1", "1 + 1 = 3", true, null,
+				nullMonitor);
+		ctxRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
 
-			IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
-					"Manual Rewrite Reasoner Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
+		IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
+				"Manual Rewrite Reasoner Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
 
-			Predicate predicate = null;
-			IPosition position = FormulaFactory.makePosition("0.0.1");
+		Predicate predicate = null;
+		IPosition position = FormulaFactory.makePosition("0.0.1");
 
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualRewrite", "rewrite");
-			RewriteInput rewriteInput = new RewriteInput(predicate, position,
-					prMetadata);
-			UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
-					sequent, rewriteInput,
-					"Invalid position 0.0.1 for goal 1+1=3");
-			testUnsuccessfulReasonerApplications("Invalid Position", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
-		}
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualRewrite", "rewrite");
+		RewriteInput rewriteInput = new RewriteInput(predicate, position,
+				prMetadata);
+		UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
+				sequent, rewriteInput,
+				"Invalid position 0.0.1 for goal 1+1=3");
+		testUnsuccessfulReasonerApplications("Invalid Position", appl);
 	}
 
 	/**
@@ -146,37 +138,32 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testContext_InvalidPosition_Hypothesis() {
-		try {
-			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "axm1", "1 + 1 = 3", false, null,
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "thm1", "⊥", true, null,
-					nullMonitor);
-			ctxRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
+	public void testContext_InvalidPosition_Hypothesis() throws Exception {
+		IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "axm1", "1 + 1 = 3", false, null,
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "thm1", "⊥", true, null,
+				nullMonitor);
+		ctxRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
 
-			IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
-					"RbP Manual Rewriter Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
+		IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
+				"RbP Manual Rewriter Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
 
-			Predicate predicate = TestLib.genPred("1 + 1 = 3", ff);
-			IPosition position = FormulaFactory.makePosition("0.0.1");
+		Predicate predicate = TestLib.genPred("1 + 1 = 3", ff);
+		IPosition position = FormulaFactory.makePosition("0.0.1");
 
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualRewrite", "rewrite");
-			RewriteInput rewriteInput = new RewriteInput(predicate, position,
-					prMetadata);
-			UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
-					sequent, rewriteInput,
-					"Invalid position 0.0.1 for hypothesis 1+1=3");
-			testUnsuccessfulReasonerApplications("Invalid Position", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
-		}
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualRewrite", "rewrite");
+		RewriteInput rewriteInput = new RewriteInput(predicate, position,
+				prMetadata);
+		UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
+				sequent, rewriteInput,
+				"Invalid position 0.0.1 for hypothesis 1+1=3");
+		testUnsuccessfulReasonerApplications("Invalid Position", appl);
 	}
 
 	/**
@@ -192,37 +179,32 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testContext_InvalidHypothesis() {
-		try {
-			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "axm1", "1 + 1 = 3", false, null,
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "thm1", "⊥", true, null,
-					nullMonitor);
-			ctxRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
+	public void testContext_InvalidHypothesis() throws Exception {
+		IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "axm1", "1 + 1 = 3", false, null,
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "thm1", "⊥", true, null,
+				nullMonitor);
+		ctxRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
 
-			IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
-					"RbP Manual Rewriter Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
+		IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
+				"RbP Manual Rewriter Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
 
-			Predicate predicate = TestLib.genPred("1 + 1 = 4", ff);
-			IPosition position = FormulaFactory.makePosition("0");
+		Predicate predicate = TestLib.genPred("1 + 1 = 4", ff);
+		IPosition position = FormulaFactory.makePosition("0");
 
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualRewrite", "rewrite");
-			RewriteInput rewriteInput = new RewriteInput(predicate, position,
-					prMetadata);
-			UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
-					sequent, rewriteInput,
-					"Nonexistent hypothesis: 1+1=4");
-			testUnsuccessfulReasonerApplications("Invalid Position", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
-		}
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualRewrite", "rewrite");
+		RewriteInput rewriteInput = new RewriteInput(predicate, position,
+				prMetadata);
+		UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
+				sequent, rewriteInput,
+				"Nonexistent hypothesis: 1+1=4");
+		testUnsuccessfulReasonerApplications("Invalid Position", appl);
 	}
 
 	/**
@@ -238,41 +220,36 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testTheory_InvalidPosition_Goal() {
-		try {
-			ITheoryRoot thyRoot = TheoryUtils.createTheory(
-					ebPrj.getRodinProject(), "TestTheory", nullMonitor);
-			IImportTheoryProject importThyPrj = TheoryUtils
-					.createImportTheoryProject(thyRoot, thyPrj, nullMonitor);
-			for (ITheoryRoot root : thyRoots) {
-				TheoryUtils.createImportTheory(importThyPrj, root, nullMonitor);
-			}
-
-			TheoryUtils
-					.createTheorem(thyRoot, "thm1", "1 + 1 = 3", nullMonitor);
-			thyRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
-
-			IProofAttempt pa = createProofAttempt(thyRoot, "thm1/S-THM",
-					"Manual Rewrite Reasoner Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
-
-			Predicate predicate = null;
-			IPosition position = FormulaFactory.makePosition("0.0.1");
-
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualRewrite", "rewrite");
-			RewriteInput rewriteInput = new RewriteInput(predicate, position,
-					prMetadata);
-			UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
-					sequent, rewriteInput,
-					"Invalid position 0.0.1 for goal 1+1=3");
-			testUnsuccessfulReasonerApplications("Invalid Position", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
+	public void testTheory_InvalidPosition_Goal() throws Exception {
+		ITheoryRoot thyRoot = TheoryUtils.createTheory(
+				ebPrj.getRodinProject(), "TestTheory", nullMonitor);
+		IImportTheoryProject importThyPrj = TheoryUtils
+				.createImportTheoryProject(thyRoot, thyPrj, nullMonitor);
+		for (ITheoryRoot root : thyRoots) {
+			TheoryUtils.createImportTheory(importThyPrj, root, nullMonitor);
 		}
+
+		TheoryUtils
+				.createTheorem(thyRoot, "thm1", "1 + 1 = 3", nullMonitor);
+		thyRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
+
+		IProofAttempt pa = createProofAttempt(thyRoot, "thm1/S-THM",
+				"Manual Rewrite Reasoner Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
+
+		Predicate predicate = null;
+		IPosition position = FormulaFactory.makePosition("0.0.1");
+
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualRewrite", "rewrite");
+		RewriteInput rewriteInput = new RewriteInput(predicate, position,
+				prMetadata);
+		UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
+				sequent, rewriteInput,
+				"Invalid position 0.0.1 for goal 1+1=3");
+		testUnsuccessfulReasonerApplications("Invalid Position", appl);
 	}
 
 	/**
@@ -288,46 +265,41 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testTheory_InvalidPosition_Hypothesis() {
-		try {
-			ITheoryRoot thyRoot = TheoryUtils.createTheory(
-					ebPrj.getRodinProject(), "TestTheory", nullMonitor);
-			IImportTheoryProject importThyPrj = TheoryUtils
-					.createImportTheoryProject(thyRoot, thyPrj, nullMonitor);
-			for (ITheoryRoot root : thyRoots) {
-				TheoryUtils.createImportTheory(importThyPrj, root, nullMonitor);
-			}
-
-			TheoryUtils.createTheorem(thyRoot, "thm1", "1 + 1 = 3 ⇒ ⊥", nullMonitor);
-			thyRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
-
-			IProofAttempt pa = createProofAttempt(thyRoot, "thm1/S-THM",
-					"Manual Rewrite Reasoner Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-
-			// move the left part of the implication to the hypotheses
-			ITactic impI = Tactics.impI();
-			impI.apply(root, null);
-			root = root.getFirstOpenDescendant();
-
-			IProverSequent sequent = root.getSequent();
-
-			Predicate predicate = TestLib.genPred("1 + 1 = 3");
-			IPosition position = FormulaFactory.makePosition("0.0.1");
-
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualRewrite", "rewrite");
-			RewriteInput rewriteInput = new RewriteInput(predicate, position,
-					prMetadata);
-			UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
-					sequent, rewriteInput,
-					"Invalid position 0.0.1 for hypothesis 1+1=3");
-			testUnsuccessfulReasonerApplications("Invalid Position", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
+	public void testTheory_InvalidPosition_Hypothesis() throws Exception {
+		ITheoryRoot thyRoot = TheoryUtils.createTheory(
+				ebPrj.getRodinProject(), "TestTheory", nullMonitor);
+		IImportTheoryProject importThyPrj = TheoryUtils
+				.createImportTheoryProject(thyRoot, thyPrj, nullMonitor);
+		for (ITheoryRoot root : thyRoots) {
+			TheoryUtils.createImportTheory(importThyPrj, root, nullMonitor);
 		}
+
+		TheoryUtils.createTheorem(thyRoot, "thm1", "1 + 1 = 3 ⇒ ⊥", nullMonitor);
+		thyRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
+
+		IProofAttempt pa = createProofAttempt(thyRoot, "thm1/S-THM",
+				"Manual Rewrite Reasoner Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+
+		// move the left part of the implication to the hypotheses
+		ITactic impI = Tactics.impI();
+		impI.apply(root, null);
+		root = root.getFirstOpenDescendant();
+
+		IProverSequent sequent = root.getSequent();
+
+		Predicate predicate = TestLib.genPred("1 + 1 = 3");
+		IPosition position = FormulaFactory.makePosition("0.0.1");
+
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualRewrite", "rewrite");
+		RewriteInput rewriteInput = new RewriteInput(predicate, position,
+				prMetadata);
+		UnsuccessfullReasonerApplication appl = new UnsuccessfullReasonerApplication(
+				sequent, rewriteInput,
+				"Invalid position 0.0.1 for hypothesis 1+1=3");
+		testUnsuccessfulReasonerApplications("Invalid Position", appl);
 	}
 
 	/**
@@ -342,38 +314,30 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testContext_Successful_Goal1() {
-		try {
-			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "thm1", "1 + 1 = 3", true, null,
-					nullMonitor);
-			ctxRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
+	public void testContext_Successful_Goal1() throws Exception {
+		IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "thm1", "1 + 1 = 3", true, null,
+				nullMonitor);
+		ctxRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
 
-			IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
-					"Manual Rewrite Reasoner Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
+		IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
+				"Manual Rewrite Reasoner Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
 
-			Predicate predicate = null;
-			IPosition position = FormulaFactory.makePosition("0");
+		Predicate predicate = null;
+		IPosition position = FormulaFactory.makePosition("0");
 
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualRewrite", "rewrite");
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualRewrite", "rewrite");
 
-			RewriteInput rewriteInput = new RewriteInput(predicate, position,
-					prMetadata);
-			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, rewriteInput, "{}[][][] |- ⊤", "{}[][][⊤] |- 2 ∗ 1 = 3");
-			testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
-		} catch (UntranslatableException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected untranslatable exception");
-		}
+		RewriteInput rewriteInput = new RewriteInput(predicate, position,
+				prMetadata);
+		SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
+				sequent, rewriteInput, "{}[][][] |- ⊤", "{}[][][⊤] |- 2 ∗ 1 = 3");
+		testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
 	}
 
 	/**
@@ -388,40 +352,32 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testContext_Successful_Hypothesis1() {
-		try {
-			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "axm1", "1 + 1 = 3", false, null,
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "thm1", "⊥", true, null,
-					nullMonitor);
-			ctxRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
+	public void testContext_Successful_Hypothesis1() throws Exception {
+		IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "axm1", "1 + 1 = 3", false, null,
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "thm1", "⊥", true, null,
+				nullMonitor);
+		ctxRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
 
-			IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
-					"Manual Rewrite Reasoner Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
+		IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
+				"Manual Rewrite Reasoner Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
 
-			Predicate predicate = TestLib.genPred("1 + 1 = 3", ff);
-			IPosition position = FormulaFactory.makePosition("0");
+		Predicate predicate = TestLib.genPred("1 + 1 = 3", ff);
+		IPosition position = FormulaFactory.makePosition("0");
 
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualRewrite", "rewrite");
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualRewrite", "rewrite");
 
-			RewriteInput rewriteInput = new RewriteInput(predicate, position,
-					prMetadata);
-			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, rewriteInput, "{}[][][1+1=3] |- ⊤", "{}[1+1=3][][⊤;;2∗1=3] |- ⊥");
-			testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
-		} catch (UntranslatableException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected untranslatable exception");
-		}
+		RewriteInput rewriteInput = new RewriteInput(predicate, position,
+				prMetadata);
+		SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
+				sequent, rewriteInput, "{}[][][1+1=3] |- ⊤", "{}[1+1=3][][⊤;;2∗1=3] |- ⊥");
+		testSuccessfulReasonerApplications("RbP Manual Rewrite", appl);
 	}
 	
 }

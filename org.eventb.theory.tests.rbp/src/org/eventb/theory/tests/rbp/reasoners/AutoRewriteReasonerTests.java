@@ -11,7 +11,6 @@
 
 package org.eventb.theory.tests.rbp.reasoners;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.pm.IProofAttempt;
@@ -19,7 +18,6 @@ import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
@@ -27,7 +25,6 @@ import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.rbp.reasoners.input.AutoRewriteInput;
 import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.internal.rbp.reasoners.input.PRMetadata;
-import org.junit.Assert;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -88,32 +85,27 @@ public class AutoRewriteReasonerTests extends AbstractRBPReasonerTests {
 	}
 
 	@Test
-	public void testRewrite() throws UntranslatableException {
-		try {
-			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "thm1", "1 + 1 = 3", true, null,
-					nullMonitor);
-			ctxRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
+	public void testRewrite() throws Exception {
+		IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "thm1", "1 + 1 = 3", true, null,
+				nullMonitor);
+		ctxRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
 
-			IProofManager pm = EventBPlugin.getProofManager();
-			IProofComponent proofComponent = pm.getProofComponent(ctxRoot);
-			IProofAttempt pa = proofComponent.createProofAttempt("thm1/THM",
-					"Auto Rewrite Reasoner Test", nullMonitor);
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"AutoRewrite", "rewrite");
-			AutoRewriteInput rewriteInput = new AutoRewriteInput(prMetadata);
-			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, rewriteInput,
-					"{}[][][] |- ⊤",
-					"{}[][][⊤] |- 2 ∗ 1 = 3");
-			testSuccessfulReasonerApplications("", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception");
-		}
+		IProofManager pm = EventBPlugin.getProofManager();
+		IProofComponent proofComponent = pm.getProofComponent(ctxRoot);
+		IProofAttempt pa = proofComponent.createProofAttempt("thm1/THM",
+				"Auto Rewrite Reasoner Test", nullMonitor);
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"AutoRewrite", "rewrite");
+		AutoRewriteInput rewriteInput = new AutoRewriteInput(prMetadata);
+		SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
+				sequent, rewriteInput,
+				"{}[][][] |- ⊤",
+				"{}[][][⊤] |- 2 ∗ 1 = 3");
+		testSuccessfulReasonerApplications("", appl);
 	}
 }

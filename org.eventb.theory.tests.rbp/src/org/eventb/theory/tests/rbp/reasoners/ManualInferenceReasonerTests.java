@@ -11,19 +11,16 @@
 
 package org.eventb.theory.tests.rbp.reasoners;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.internal.rbp.reasoners.input.IPRMetadata;
 import org.eventb.theory.internal.rbp.reasoners.input.InferenceInput;
 import org.eventb.theory.internal.rbp.reasoners.input.PRMetadata;
-import org.junit.Assert;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -67,35 +64,27 @@ public class ManualInferenceReasonerTests extends AbstractRBPReasonerTests {
 	 * </ul>
 	 */
 	@Test
-	public void testContext_Successful_Goal1() {
-		try {
-			IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
-					nullMonitor);
-			EventBUtils.createAxiom(ctxRoot, "thm1", "2 ∗ 1 = 3", true, null,
-					nullMonitor);
-			ctxRoot.getRodinFile().save(nullMonitor, true);
-			runBuilder(ebPrj.getRodinProject());
+	public void testContext_Successful_Goal1() throws Exception {
+		IContextRoot ctxRoot = EventBUtils.createContext(ebPrj, "c",
+				nullMonitor);
+		EventBUtils.createAxiom(ctxRoot, "thm1", "2 ∗ 1 = 3", true, null,
+				nullMonitor);
+		ctxRoot.getRodinFile().save(nullMonitor, true);
+		runBuilder(ebPrj.getRodinProject());
 
-			IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
-					"Manual Inference Reasoner Test");
-			IProofTreeNode root = pa.getProofTree().getRoot();
-			IProverSequent sequent = root.getSequent();
+		IProofAttempt pa = createProofAttempt(ctxRoot, "thm1/THM",
+				"Manual Inference Reasoner Test");
+		IProofTreeNode root = pa.getProofTree().getRoot();
+		IProverSequent sequent = root.getSequent();
 
-			IPRMetadata prMetadata = new PRMetadata("Theories",
-					"ManualInference", "infer");
-			InferenceInput input = new InferenceInput(prMetadata, null);
-			SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
-					sequent, input,
-					"{}[][][] |- ⊤",
-					"{}[][][⊤] |- 1 + 1 = 3");
-			testSuccessfulReasonerApplications("RbP Manual Inference", appl);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected core exception");
-		} catch (UntranslatableException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected untranslatable exception");
-		}
+		IPRMetadata prMetadata = new PRMetadata("Theories",
+				"ManualInference", "infer");
+		InferenceInput input = new InferenceInput(prMetadata, null);
+		SuccessfullReasonerApplication appl = new SuccessfullReasonerApplication(
+				sequent, input,
+				"{}[][][] |- ⊤",
+				"{}[][][⊤] |- 1 + 1 = 3");
+		testSuccessfulReasonerApplications("RbP Manual Inference", appl);
 	}
 
 }
