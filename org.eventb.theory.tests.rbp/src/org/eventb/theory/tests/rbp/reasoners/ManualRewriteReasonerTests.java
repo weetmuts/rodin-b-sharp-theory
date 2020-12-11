@@ -19,7 +19,9 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.UntranslatableException;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IImportTheoryProject;
@@ -287,8 +289,6 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 */
 	@Test
 	public void testTheory_InvalidPosition_Hypothesis() {
-		// TODO At the moment, the theorem 1 + 1 = 3 is not yet taken into
-		// account for proving the second theorem.
 		try {
 			ITheoryRoot thyRoot = TheoryUtils.createTheory(
 					ebPrj.getRodinProject(), "TestTheory", nullMonitor);
@@ -298,15 +298,19 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 				TheoryUtils.createImportTheory(importThyPrj, root, nullMonitor);
 			}
 
-			TheoryUtils
-					.createTheorem(thyRoot, "thm1", "1 + 1 = 3", nullMonitor);
-			TheoryUtils.createTheorem(thyRoot, "thm2", "⊥", nullMonitor);
+			TheoryUtils.createTheorem(thyRoot, "thm1", "1 + 1 = 3 ⇒ ⊥", nullMonitor);
 			thyRoot.getRodinFile().save(nullMonitor, true);
 			runBuilder(ebPrj.getRodinProject());
 
-			IProofAttempt pa = createProofAttempt(thyRoot, "thm2/S-THM",
+			IProofAttempt pa = createProofAttempt(thyRoot, "thm1/S-THM",
 					"Manual Rewrite Reasoner Test");
 			IProofTreeNode root = pa.getProofTree().getRoot();
+
+			// move the left part of the implication to the hypotheses
+			ITactic impI = Tactics.impI();
+			impI.apply(root, null);
+			root = root.getFirstOpenDescendant();
+
 			IProverSequent sequent = root.getSequent();
 
 			Predicate predicate = TestLib.genPred("1 + 1 = 3");
