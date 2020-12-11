@@ -48,14 +48,13 @@ public class TestDeployedTheories extends BasicTestSCTheoryPath {
 
 	@Override
 	public void setUp() throws Exception {
-		super.setUp();
 		/*
 		 * We need an Event-B Project for our tests, but the super class only creates a
-		 * Rodin Project, so we create the Event-B project and overwrite the Rodin
-		 * project with the new one.
+		 * Rodin Project, so we first create what we need.
 		 */
 		eventBProject = EventBUtils.createEventBProject(EVENT_B_PROJECT_BASE_NAME, null);
 		rodinProject = eventBProject.getRodinProject();
+		super.setUp();
 	}
 
 	/**

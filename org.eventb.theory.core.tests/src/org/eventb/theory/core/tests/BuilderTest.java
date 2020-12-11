@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.core.tests;
 
 import static org.junit.Assert.assertNotNull;
@@ -138,7 +145,10 @@ public abstract class BuilderTest {
 			workspace.setDescription(wsDescription);
 		}
 		
-		rodinProject = createRodinProject("P");
+		// if subclasses did not create their own project, create one
+		if (rodinProject == null) {
+			rodinProject = createRodinProject("P");
+		}
 		
 		disableIndexing();
 	}
