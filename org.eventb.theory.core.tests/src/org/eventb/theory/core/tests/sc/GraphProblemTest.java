@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.core.tests.sc;
 
 import static org.junit.Assert.assertEquals;
@@ -59,6 +66,11 @@ public class GraphProblemTest {
 		return new Spec(problem, arity);
 	}
 	
+	/*
+	 * We list and test all error messages, including deprecated ones, so we disable
+	 * the corresponding warning.
+	 */
+	@SuppressWarnings("deprecation")
 	private static Spec[] specs = new Spec[] {
 		spec(TheoryGraphProblem.MetavariableNameConflictError, 1),
 		spec(TheoryGraphProblem.TypeParameterNameConflictError, 1),
@@ -231,7 +243,7 @@ public class GraphProblemTest {
 				assertTrue("No spec for problem " + problem, found);
 				
 			}
-			//assertEquals("wrong number of problems", specs.length, GraphProblem.values().length);
+			assertEquals("wrong number of problems", specs.length, TheoryGraphProblem.values().length);
 		}
 
 		
