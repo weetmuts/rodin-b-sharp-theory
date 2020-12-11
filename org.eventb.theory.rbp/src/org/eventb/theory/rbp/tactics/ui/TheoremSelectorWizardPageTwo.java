@@ -1,3 +1,10 @@
+/*******************************************************************************
+* Copyright (c) 2011, 2020 University of Southampton and others.
+* All rights reserved. This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v10.html
+*******************************************************************************/
 package org.eventb.theory.rbp.tactics.ui;
 
 import java.util.ArrayList;
@@ -181,7 +188,7 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 			for (ISCTheorem deployedTheorem : SCTheorems){
 				Predicate theorem;
 					theorem = deployedTheorem.getPredicate(typeEnvironment);
-					Predicate substitutedTheorem = (Predicate) subtitute(theorem.toString(), subs);
+					Predicate substitutedTheorem = (Predicate) substitute(theorem.toString(), subs);
 					strings.add(substitutedTheorem.toString());
 			}
 		} catch (CoreException e) {
@@ -191,7 +198,7 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 		return strings;
 	}
 
-	private Formula<?> subtitute(String srcStr, Map<FreeIdentifier, String> substs) {
+	private Formula<?> substitute(String srcStr, Map<FreeIdentifier, String> substs) {
 		Formula<?> result = parseFormula(srcStr);
 		Map<FreeIdentifier, Expression> exprSubsts = convert(substs);
 		return result.substituteFreeIdents(exprSubsts);
