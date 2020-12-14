@@ -1448,6 +1448,10 @@
             class="org.eventb.theory.ui.explorer.handlers.NewTheoryHandler"
             commandId="org.eventb.theory.ui.newTheory">
       </handler>
+      <handler
+            class="org.eventb.theory.ui.explorer.handlers.RenameHandler"
+            commandId="org.eventb.theory.ui.rename">
+      </handler>
    </extension>
       <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
@@ -1722,6 +1726,23 @@
       </objectContribution>
    </extension>
    <extension
+        point="org.eclipse.core.expressions.definitions">
+     <definition
+           id="org.eventb.theory.ui.definition.isITheoryRoot">
+       <and>
+          <count
+                value="1">
+          </count>
+          <iterate
+                operator="or">
+             <instanceof
+                   value="org.eventb.theory.core.ITheoryRoot">
+             </instanceof>
+          </iterate>
+       </and>
+     </definition>
+   </extension>
+   <extension
          point="org.eclipse.ui.commands">
       <command
             id="org.eventb.theory.ui.newTheoryPath"
@@ -1732,6 +1753,11 @@
             id="org.eventb.theory.ui.newTheory"
             name="New Theory"
             description="Create a new theory">
+      </command>
+      <command
+            id="org.eventb.theory.ui.rename"
+            name="Rename theory"
+            description="Rename this theory">
       </command>
    </extension>
    <extension
@@ -1749,6 +1775,21 @@
                icon="icons/thyNew.gif"
                mnemonic="T"
                tooltip="Create new theory">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=group.edit">
+         <command
+               commandId="org.eventb.theory.ui.rename"
+               mnemonic="R"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.theory.ui.definition.isITheoryRoot">
+               </reference>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
