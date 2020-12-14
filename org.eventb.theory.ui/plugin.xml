@@ -895,19 +895,6 @@
                tooltip="%viewActions.deployTheoryTooltip">
          </action>
       </viewContribution> -->
-      <viewContribution
-            id="org.eventb.theory.ui.newTheory"
-            targetID="fr.systerel.explorer.navigator.view">
-         <action
-               class="org.eventb.theory.ui.explorer.actions.NewTheoryActionDelegate"
-               icon="icons/thyNew.gif"
-               id="org.eventb.theory.ui.newTheory"
-               label="%viewActions.newTheoryLabel"
-               style="push"
-               toolbarPath="new"
-               tooltip="%viewActions.newTheoryTooltip">
-         </action>
-      </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
@@ -1474,6 +1461,10 @@
             class="org.eventb.theory.ui.explorer.handlers.NewTheoryPathHandler"
             commandId="org.eventb.theory.ui.newTheoryPath">
       </handler>
+      <handler
+            class="org.eventb.theory.ui.explorer.handlers.NewTheoryHandler"
+            commandId="org.eventb.theory.ui.newTheory">
+      </handler>
    </extension>
       <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
@@ -1754,6 +1745,11 @@
             name="New TheoryPath"
             description="Create a new TheoryPath">
       </command>
+      <command
+            id="org.eventb.theory.ui.newTheory"
+            name="New Theory"
+            description="Create a new theory">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -1764,6 +1760,12 @@
                icon="icons/thyPath.gif"
                mnemonic="P"
                tooltip="Create TheoryPath file">
+         </command>
+         <command
+               commandId="org.eventb.theory.ui.newTheory"
+               icon="icons/thyNew.gif"
+               mnemonic="T"
+               tooltip="Create new theory">
          </command>
       </menuContribution>
    </extension>
