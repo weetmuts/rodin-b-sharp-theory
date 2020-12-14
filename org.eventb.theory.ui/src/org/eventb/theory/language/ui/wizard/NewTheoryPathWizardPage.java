@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2020 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.language.ui.wizard;
 
 import static org.rodinp.core.RodinCore.asRodinElement;
@@ -44,7 +51,6 @@ public class NewTheoryPathWizardPage extends WizardPage {
 	// Some text areas.
 	private Text projectText;
 	private ISelection selection;
-	private Text theoryText;
 	
 	private final String DEFAULT_THEORY_PATH_NAME = "TheoryPath";
 
@@ -87,17 +93,6 @@ public class NewTheoryPathWizardPage extends WizardPage {
 				handleBrowse();
 			}
 		});
-		label = new Label(container, SWT.NULL);
-		label.setText("&TheoryPath Name:");
-		theoryText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		theoryText.setLayoutData(gd);
-		theoryText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
-		theoryText.setEnabled(false);
 		initialize();
 		dialogChanged();
 		setControl(container);
@@ -115,7 +110,7 @@ public class NewTheoryPathWizardPage extends WizardPage {
 	}
 	
 	public String getTheoryName() {
-		return theoryText.getText();
+		return DEFAULT_THEORY_PATH_NAME;
 	}
 
 	/**
@@ -222,12 +217,9 @@ public class NewTheoryPathWizardPage extends WizardPage {
 		
 		if (project != null) {
 			projectText.setText(project.getElementName());
-			theoryText.setFocus();
-			theoryText.selectAll();
 		} else {
 			projectText.setFocus();
 		}
-		theoryText.setText(DEFAULT_THEORY_PATH_NAME);
 	}
 
 	private IRodinProject getProjectFromSelection() {
