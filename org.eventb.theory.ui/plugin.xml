@@ -1470,6 +1470,10 @@
             </and>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eventb.theory.ui.explorer.handlers.NewTheoryPathHandler"
+            commandId="org.eventb.theory.ui.newTheoryPath">
+      </handler>
    </extension>
       <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
@@ -1729,22 +1733,6 @@
       </viewerActionBinding>
    </extension>
    <extension
-         point="org.eclipse.ui.viewActions">
-      <viewContribution
-            id="org.eventb.theory.language.ui.createTheoryPath"
-            targetID="fr.systerel.explorer.navigator.view">
-         <action
-               class="org.eventb.theory.language.ui.explorer.actions.CreateTheoryPathActionDelegate"
-               icon="icons/thyPath.gif"
-               id="org.eventb.theory.language.ui.createTheoryPath"
-               label="TheoryPath"
-               style="push"
-               toolbarPath="new"
-               tooltip="Create TheoryPath file">
-         </action>
-      </viewContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="false"
@@ -1758,5 +1746,25 @@
                tooltip="Rename theoryPath file">
          </action>
       </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eventb.theory.ui.newTheoryPath"
+            name="New TheoryPath"
+            description="Create a new TheoryPath">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:fr.systerel.explorer.navigator.view">
+         <command
+               commandId="org.eventb.theory.ui.newTheoryPath"
+               icon="icons/thyPath.gif"
+               mnemonic="P"
+               tooltip="Create TheoryPath file">
+         </command>
+      </menuContribution>
    </extension>
 </plugin>
