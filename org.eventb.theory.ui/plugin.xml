@@ -879,23 +879,6 @@
             namePrefix="axm">
       </autoNaming>
    </extension>
-
-	<extension
-         point="org.eclipse.ui.viewActions">
-<!--      <viewContribution
-            id="org.eventb.theory.ui.deployTheory"
-            targetID="fr.systerel.explorer.navigator.view">
-         <action
-               class="org.eventb.theory.ui.explorer.actions.DeployActionDelegate"
-               icon="icons/thyDep.gif"
-               id="org.eventb.theory.ui.deployTheory"
-               label="%viewActions.deployTheoryLabel"
-               style="push"
-               toolbarPath="new"
-               tooltip="%viewActions.deployTheoryTooltip">
-         </action>
-      </viewContribution> -->
-   </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
