@@ -21,5 +21,5 @@ Export-Package: org.eventb.theory.core,
  org.eventb.theory.core.sc,
  org.eventb.theory.core.sc.modules,
  org.eventb.theory.core.sc.states,
- org.eventb.theory.internal.core.util
+ org.eventb.theory.core.util
 Bundle-ActivationPolicy: lazy

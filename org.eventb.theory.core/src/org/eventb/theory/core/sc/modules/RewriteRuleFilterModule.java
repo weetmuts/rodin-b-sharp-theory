@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
 package org.eventb.theory.core.sc.modules;
 
 import static org.eventb.theory.core.TheoryAttributes.FORMULA_ATTRIBUTE;
-import static org.eventb.theory.internal.core.util.CoreUtilities.checkAgainstTypeParameters;
+import static org.eventb.theory.core.util.CoreUtilities.checkAgainstTypeParameters;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

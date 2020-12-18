@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011,2016 University of Southampton and others.
+ * Copyright (c) 2011, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,12 @@ import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.IGeneralRule;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
+import org.eventb.theory.core.util.CoreUtilities;
 import org.eventb.theory.core.ISCAvailableTheory;
 import org.eventb.theory.core.ISCAvailableTheoryProject;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
-import org.eventb.theory.internal.core.util.CoreUtilities;
 import org.eventb.theory.rbp.rulebase.basis.ProjectBaseEntry;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 import org.rodinp.core.ElementChangedEvent;

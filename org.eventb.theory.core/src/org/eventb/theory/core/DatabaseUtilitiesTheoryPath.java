@@ -21,7 +21,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
 import org.eventb.theory.core.sc.Messages;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.core.util.CoreUtilities;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElementDelta;

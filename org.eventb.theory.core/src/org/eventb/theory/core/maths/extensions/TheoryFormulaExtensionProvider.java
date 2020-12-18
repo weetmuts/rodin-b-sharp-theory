@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 University of Southampton and others.
+ * Copyright (c) 2011, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eventb.theory.core.maths.extensions;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
-import static org.eventb.theory.internal.core.util.CoreUtilities.log;
+import static org.eventb.theory.core.util.CoreUtilities.log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTypeArgument;
 import org.eventb.theory.core.ITheoryPathRoot;
 import org.eventb.theory.core.plugin.TheoryPlugin;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.core.util.CoreUtilities;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;

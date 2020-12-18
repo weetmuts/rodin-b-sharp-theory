@@ -39,7 +39,7 @@ import org.eventb.theory.core.ISCTheoryPathRoot;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ITheoryRoot;
 import org.eventb.theory.core.maths.extensions.dependencies.DeployedTheoriesGraph;
-import org.eventb.theory.internal.core.util.CoreUtilities;
+import org.eventb.theory.core.util.CoreUtilities;
 import org.eventb.theory.internal.core.util.FormulaExtensionCache;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
