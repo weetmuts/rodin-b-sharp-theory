@@ -257,9 +257,10 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 	 * <li><b>Purpose</b>: An unsuccessful test where an invalid rewriting
 	 * position is given.</li>
 	 * 
-	 * <li><b>Setting</b>: A proof attempt for a theorem "⊥" in the theory
-	 * "TestTheory". A theorem "1 + 1 = 3" is declared before. An reasoner input
-	 * for rewriting at an (invalid) position "0.0.1".</li>
+	 * <li><b>Setting</b>: A proof attempt for a theorem "1 + 1 = 3 ⇒ ⊥" in the
+	 * theory "TestTheory"; the left part of the implication in the theorem is moved
+	 * from the goal to the hypotheses. A reasoner input for rewriting at an
+	 * (invalid) position "0.0.1".</li>
 	 * 
 	 * <li><b>Expected result</b>: A reasoner failure for invalid position.</li>
 	 * </ul>
