@@ -14,7 +14,7 @@
  *     Systerel - refactored to use commands and handlers
  *     CentraleSupélec - imported in theory plug-in and adapted
  *******************************************************************************/
-package org.eventb.theory.ui.explorer.handlers;
+package org.eventb.theory.internal.ui.handlers;
 
 import static org.eclipse.core.runtime.SubMonitor.convert;
 import static org.eclipse.ui.PlatformUI.getWorkbench;

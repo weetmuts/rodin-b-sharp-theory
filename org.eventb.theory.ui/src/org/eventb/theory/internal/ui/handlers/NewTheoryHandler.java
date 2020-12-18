@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.ui.explorer.handlers;
+package org.eventb.theory.internal.ui.handlers;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.handlers.HandlerUtil.getActiveShell;

@@ -1441,15 +1441,15 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eventb.theory.ui.explorer.handlers.NewTheoryPathHandler"
+            class="org.eventb.theory.internal.ui.handlers.NewTheoryPathHandler"
             commandId="org.eventb.theory.ui.newTheoryPath">
       </handler>
       <handler
-            class="org.eventb.theory.ui.explorer.handlers.NewTheoryHandler"
+            class="org.eventb.theory.internal.ui.handlers.NewTheoryHandler"
             commandId="org.eventb.theory.ui.newTheory">
       </handler>
       <handler
-            class="org.eventb.theory.ui.explorer.handlers.RenameHandler"
+            class="org.eventb.theory.internal.ui.handlers.RenameHandler"
             commandId="org.eventb.theory.ui.rename">
       </handler>
    </extension>
