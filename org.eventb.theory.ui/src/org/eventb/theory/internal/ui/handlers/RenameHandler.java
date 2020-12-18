@@ -259,10 +259,9 @@ public class RenameHandler extends AbstractHandler {
 			monitor.subTask("Performing renaming...");
 			// Two default renamings + one per occurrence to rename
 			final int nbOccurrences = occurrences.size();
-			final SubMonitor subMonitor = convert(monitor, 3 + nbOccurrences);
+			final SubMonitor subMonitor = convert(monitor, 2 + nbOccurrences);
 			renameTheoryFile(subMonitor.newChild(1));
 			renamePRFile(subMonitor.newChild(1));
-			renameDeployFile(subMonitor.newChild(1));
 			renameInOccurrences(subMonitor.newChild(nbOccurrences));
 		}
 
@@ -307,14 +306,6 @@ public class RenameHandler extends AbstractHandler {
 				} else {
 					proofFile.rename(newName, false, monitor);
 				}
-			}
-		}
-
-		private void renameDeployFile(IProgressMonitor monitor) throws RodinDBException {
-			IRodinFile deployFile = root.getDeployedTheoryFile(root.getElementName());
-			if (deployFile.exists()) {
-				final String newName = DatabaseUtilities.getDeployedTheoryFullName(newBareName);
-				deployFile.rename(newName, true, monitor);
 			}
 		}
 
