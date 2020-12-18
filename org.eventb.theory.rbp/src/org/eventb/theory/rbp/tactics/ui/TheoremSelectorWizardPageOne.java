@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eventb.theory.core.ISCTheorem;
+import org.eventb.theory.internal.rbp.rulebase.TheoremsRetriever;
 import org.rodinp.core.RodinDBException;
 
 public class TheoremSelectorWizardPageOne extends WizardPage {

@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.theory.rbp.tactics.ui;
+package org.eventb.theory.internal.rbp.rulebase;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

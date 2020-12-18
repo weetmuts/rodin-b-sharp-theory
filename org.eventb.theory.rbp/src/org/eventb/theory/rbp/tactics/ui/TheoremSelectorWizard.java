@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 University of Southampton.
+ * Copyright (c) 2011, 2020 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.theory.internal.rbp.rulebase.TheoremsRetriever;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 
 public class TheoremSelectorWizard extends Wizard {
