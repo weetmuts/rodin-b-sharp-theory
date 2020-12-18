@@ -25,25 +25,7 @@
    </url>
 
    <requires>
-      <import plugin="org.eventb.core.ast"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.rodinp.core"/>
-      <import plugin="org.eventb.core.ast"/>
-      <import plugin="org.eventb.core.seqprover"/>
-      <import plugin="org.eventb.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eventb.ui"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="fr.systerel.explorer"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.views.properties.tabbed"/>
-      <import plugin="org.eclipse.core.expressions"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.navigator"/>
-      <import plugin="org.rodinp.keyboard.core"/>
+      <import feature="org.rodinp.platform"/>
    </requires>
 
    <plugin
