@@ -22,8 +22,6 @@ import static org.eclipse.ui.handlers.HandlerUtil.getActiveShell;
 import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelection;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -31,7 +29,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -40,70 +37,22 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBProject;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ITheoryRoot;
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributeType.Handle;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.indexer.IDeclaration;
-import org.rodinp.core.indexer.IIndexQuery;
-import org.rodinp.core.indexer.IOccurrence;
-import org.rodinp.core.location.IAttributeLocation;
-import org.rodinp.core.location.IAttributeSubstringLocation;
 
 /**
  * The handler for the 'rename' command on theories.
  */
 public class RenameHandler extends AbstractHandler {
-
-	private static class RenamesTheoryDialog extends InputDialog {
-
-		private Button checkbox;
-		private boolean selected;
-
-		public RenamesTheoryDialog(Shell parentShell, String initialValue, boolean initialSelected,
-				IInputValidator validator) {
-			super(parentShell, "Rename theory", "Rename theory", initialValue, validator);
-			selected = initialSelected;
-		}
-
-		public boolean updateReferences() {
-			return selected;
-		}
-
-		@Override
-		protected Control createDialogArea(Composite parent) {
-			final Composite composite = (Composite) super.createDialogArea(parent);
-			checkbox = new Button(composite, SWT.CHECK);
-			checkbox.setText("Update references");
-			checkbox.setSelection(selected);
-			return composite;
-		}
-
-		@Override
-		protected void buttonPressed(int buttonId) {
-			if (buttonId == IDialogConstants.OK_ID) {
-				selected = checkbox.getSelection();
-			} else {
-				selected = false;
-			}
-			super.buttonPressed(buttonId);
-		}
-
-	}
 
 	private static class TheoryNameValidator implements IInputValidator {
 
@@ -139,7 +88,7 @@ public class RenameHandler extends AbstractHandler {
 		}
 		final IRodinProject prj = root.getRodinProject();
 		final String fileName = root.getElementName();
-		final RenamesTheoryDialog dialog = new RenamesTheoryDialog(shell, fileName, true, new TheoryNameValidator(prj));
+		final InputDialog dialog = new InputDialog(shell, "Rename theory", "New name of the theory:", fileName, new TheoryNameValidator(prj));
 		dialog.open();
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return null;
@@ -148,7 +97,7 @@ public class RenameHandler extends AbstractHandler {
 		assert newBareName != null;
 
 		final ProgressMonitorDialog progress = new ProgressMonitorDialog(shell);
-		runWithRunnableContext(progress, shell, new RenameTask(root, newBareName, dialog.updateReferences()));
+		runWithRunnableContext(progress, shell, new RenameTask(root, newBareName));
 
 		return null;
 	}
@@ -188,26 +137,21 @@ public class RenameHandler extends AbstractHandler {
 
 	private static class RenameTask implements IRunnableWithProgress {
 
-		private static final Set<IOccurrence> NO_OCCURRENCES = Collections.emptySet();
-
 		private final ITheoryRoot root;
 		private final String newBareName;
-		private final boolean updateReferences;
 
-		public RenameTask(ITheoryRoot root, String newBareName, boolean updateReferences) {
+		public RenameTask(ITheoryRoot root, String newBareName) {
 			this.root = root;
 			this.newBareName = newBareName;
-			this.updateReferences = updateReferences;
 		}
 
 		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			final String msg = "Renaming " + root.getElementName() + " to " + newBareName;
-			final SubMonitor subMonitor = convert(monitor, msg, 2 + 8);
-			final Set<IOccurrence> occurrences = getOccurrences(subMonitor.newChild(2));
+			final SubMonitor subMonitor = convert(monitor, msg, 8);
 			if (monitor.isCanceled())
 				return;
-			final IWorkspaceRunnable op = new RenameOperation(root, newBareName, occurrences);
+			final IWorkspaceRunnable op = new RenameOperation(root, newBareName);
 			try {
 				RodinCore.run(op, subMonitor.newChild(8));
 			} catch (RodinDBException e) {
@@ -217,52 +161,29 @@ public class RenameHandler extends AbstractHandler {
 			}
 		}
 
-		private Set<IOccurrence> getOccurrences(SubMonitor monitor) throws InterruptedException {
-			monitor.subTask("Indexing components...");
-			monitor.worked(1);
-			if (!updateReferences) {
-				return NO_OCCURRENCES;
-			}
-			final IIndexQuery query = RodinCore.makeIndexQuery();
-			query.waitUpToDate(monitor);
-			if (monitor.isCanceled())
-				return NO_OCCURRENCES;
-			final IDeclaration decl = query.getDeclaration(root);
-			if (decl == null) {
-				return NO_OCCURRENCES;
-			}
-			return query.getOccurrences(decl);
-		}
-
 	}
 
 	private static class RenameOperation implements IWorkspaceRunnable {
 
-		private final Set<IOccurrence> occurrences;
 		private final IRodinProject prj;
 		private final IRodinFile file;
 		private final ITheoryRoot root;
-		private final String fileName;
 		private final String newBareName;
 
-		public RenameOperation(ITheoryRoot root, String newBareName, Set<IOccurrence> occurrences) {
-			this.occurrences = occurrences;
+		public RenameOperation(ITheoryRoot root, String newBareName) {
 			this.prj = root.getRodinProject();
 			this.file = root.getRodinFile();
 			this.root = root;
-			this.fileName = root.getElementName();
 			this.newBareName = newBareName;
 		}
 
 		@Override
 		public void run(IProgressMonitor monitor) throws RodinDBException {
 			monitor.subTask("Performing renaming...");
-			// Two default renamings + one per occurrence to rename
-			final int nbOccurrences = occurrences.size();
-			final SubMonitor subMonitor = convert(monitor, 2 + nbOccurrences);
+			// Two default renamings
+			final SubMonitor subMonitor = convert(monitor, 2);
 			renameTheoryFile(subMonitor.newChild(1));
 			renamePRFile(subMonitor.newChild(1));
-			renameInOccurrences(subMonitor.newChild(nbOccurrences));
 		}
 
 		public boolean cancelRenaming(String newName) {
@@ -309,68 +230,6 @@ public class RenameHandler extends AbstractHandler {
 			}
 		}
 
-		/**
-		 * Replace the occurrence of old file name specified by location by the new name
-		 *
-		 * @throws RodinDBException
-		 */
-		private void replaceStringOccurrence(String oldName, String newName, IAttributeLocation location,
-				IAttributeType.String type, IProgressMonitor monitor) throws RodinDBException {
-			final IInternalElement element = location.getElement();
-			final String attribute = element.getAttributeValue(type);
-
-			// new value of attribute
-			final String newAttribute;
-			// value of occurrence specified by location
-			final String occurrence;
-			if (location instanceof IAttributeSubstringLocation) {
-				// the new value of attribute is result from replacing
-				// the occurrence by newName in old value of attribute
-				final IAttributeSubstringLocation subStringLoc = (IAttributeSubstringLocation) location;
-				final int start = subStringLoc.getCharStart();
-				final int end = subStringLoc.getCharEnd();
-				occurrence = attribute.substring(start, end);
-				newAttribute = attribute.substring(0, start) + newName + attribute.substring(start);
-			} else {
-				occurrence = attribute;
-				newAttribute = newName;
-			}
-
-			if (occurrence.equals(oldName)) {
-				element.setAttributeValue(type, newAttribute, monitor);
-				element.getRodinFile().save(monitor, false);
-			}
-		}
-
-		/**
-		 * Replace the occurrence of old handle specified by location by the new handle
-		 *
-		 * @throws RodinDBException
-		 */
-		private void replaceHandleOccurrence(IAttributeLocation loc, Handle type, IProgressMonitor monitor)
-				throws RodinDBException {
-			final IInternalElement element = loc.getElement();
-			final IRodinElement attribute = element.getAttributeValue(type);
-			if (attribute.equals(file)) {
-				element.setAttributeValue(type, root.getSimilarElement(file), monitor);
-				element.getRodinFile().save(monitor, false);
-			}
-		}
-
-		private void renameInOccurrences(SubMonitor monitor) throws RodinDBException {
-			for (IOccurrence occ : occurrences) {
-				if (occ.getLocation() instanceof IAttributeLocation) {
-					final IAttributeLocation loc = (IAttributeLocation) occ.getLocation();
-					final IAttributeType type = loc.getAttributeType();
-					if (type instanceof IAttributeType.String) {
-						replaceStringOccurrence(fileName, newBareName, loc, (IAttributeType.String) type, monitor);
-					} else if (type instanceof IAttributeType.Handle) {
-						replaceHandleOccurrence(loc, (IAttributeType.Handle) type, monitor);
-					}
-				}
-				monitor.worked(1);
-			}
-		}
 	}
 
 }
