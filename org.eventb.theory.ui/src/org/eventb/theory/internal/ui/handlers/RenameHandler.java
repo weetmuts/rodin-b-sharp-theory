@@ -17,7 +17,6 @@
 package org.eventb.theory.internal.ui.handlers;
 
 import static org.eclipse.core.runtime.SubMonitor.convert;
-import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.handlers.HandlerUtil.getActiveShell;
 import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelection;
 
@@ -38,9 +37,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.IEventBProject;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.ITheoryRoot;
 import org.rodinp.core.IInternalElement;
@@ -158,75 +154,6 @@ public class RenameHandler extends AbstractHandler {
 				throw new InvocationTargetException(e);
 			} finally {
 				monitor.done();
-			}
-		}
-
-	}
-
-	private static class RenameOperation implements IWorkspaceRunnable {
-
-		private final IRodinProject prj;
-		private final IRodinFile file;
-		private final ITheoryRoot root;
-		private final String newBareName;
-
-		public RenameOperation(ITheoryRoot root, String newBareName) {
-			this.prj = root.getRodinProject();
-			this.file = root.getRodinFile();
-			this.root = root;
-			this.newBareName = newBareName;
-		}
-
-		@Override
-		public void run(IProgressMonitor monitor) throws RodinDBException {
-			monitor.subTask("Performing renaming...");
-			// Two default renamings
-			final SubMonitor subMonitor = convert(monitor, 2);
-			renameTheoryFile(subMonitor.newChild(1));
-			renamePRFile(subMonitor.newChild(1));
-		}
-
-		public boolean cancelRenaming(String newName) {
-			final String message = "There are already proofs for theory " + newName + " in this project.\\n"
-					+ "By continuing this rename operation, these proofs will be lost.\\n"
-					+ "Do you want to preserve these proofs and cancel this renaming?";
-			class Question implements Runnable {
-				private boolean response;
-
-				@Override
-				public void run() {
-					response = MessageDialog.openQuestion(getWorkbench().getModalDialogShellProvider().getShell(), null,
-							message);
-				}
-
-				public boolean getResponse() {
-					return response;
-				}
-			}
-			final Question question = new Question();
-			PlatformUI.getWorkbench().getDisplay().syncExec(question);
-			return question.getResponse();
-		}
-
-		private void renameTheoryFile(SubMonitor monitor) throws RodinDBException {
-			final String newName = DatabaseUtilities.getTheoryFullName(newBareName);
-			file.rename(newName, false, monitor);
-		}
-
-		private void renamePRFile(IProgressMonitor monitor) throws RodinDBException {
-			final IEventBProject evbProject = prj.getAdapter(IEventBProject.class);
-			final IRodinFile proofFile = evbProject.getPRFile(root.getElementName());
-			if (proofFile.exists()) {
-				final String newName = EventBPlugin.getPRFileName(newBareName);
-				final IRodinFile pRFile = evbProject.getPRFile(newBareName);
-				if (pRFile.exists()) {
-					if (cancelRenaming(newBareName)) {
-						return;
-					}
-					proofFile.rename(newName, true, monitor);
-				} else {
-					proofFile.rename(newName, false, monitor);
-				}
 			}
 		}
 
