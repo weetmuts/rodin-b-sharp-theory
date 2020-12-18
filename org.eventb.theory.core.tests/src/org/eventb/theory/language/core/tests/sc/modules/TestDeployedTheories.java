@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IContextRoot;
-import org.eventb.core.IEventBProject;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
@@ -41,21 +40,7 @@ import ch.ethz.eventb.utils.EventBUtils;
  */
 public class TestDeployedTheories extends BasicTestSCTheoryPath {
 
-	public static final String EVENT_B_PROJECT_BASE_NAME = "Prj";
 	public static final String CONTEXT_NAME = "ctx";
-
-	protected IEventBProject eventBProject;
-
-	@Override
-	public void setUp() throws Exception {
-		/*
-		 * We need an Event-B Project for our tests, but the super class only creates a
-		 * Rodin Project, so we first create what we need.
-		 */
-		eventBProject = EventBUtils.createEventBProject(EVENT_B_PROJECT_BASE_NAME, null);
-		rodinProject = eventBProject.getRodinProject();
-		super.setUp();
-	}
 
 	/**
 	 * Deploys a theory and adds it to the Theory Path.

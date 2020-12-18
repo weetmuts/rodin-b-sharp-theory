@@ -26,6 +26,7 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IEventBProject;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IDeployedTheoryRoot;
@@ -42,11 +43,15 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
+import ch.ethz.eventb.utils.EventBUtils;
+
 public abstract class BuilderTest {
 
 	public static final String PLUGIN_ID = "org.eventb.theory.core.tests";
 	
 	protected static final FormulaFactory defaultFactory = FormulaFactory.getDefault();
+
+	protected IEventBProject eventBProject;
 	
 	protected IRodinProject rodinProject;
 
@@ -145,10 +150,8 @@ public abstract class BuilderTest {
 			workspace.setDescription(wsDescription);
 		}
 		
-		// if subclasses did not create their own project, create one
-		if (rodinProject == null) {
-			rodinProject = createRodinProject("P");
-		}
+		eventBProject = EventBUtils.createEventBProject("P", null);
+		rodinProject = eventBProject.getRodinProject();
 		
 		disableIndexing();
 	}
