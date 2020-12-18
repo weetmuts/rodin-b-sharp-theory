@@ -29,6 +29,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 
 /**
+ * Base class for the T and F computers.
  * 
  * @author im06r
  *
