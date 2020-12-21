@@ -1,11 +1,16 @@
 Procedure to build the Theory plug-in with Maven:
 
 1. Download the Rodin target platform bundle (org.rodinp.dev-VERSION.zip) from
-Sourceforge and unzip it in a new folder, for example /tmp/rodin.
+Sourceforge and put it in /var/tmp (if it is not possible, update the path to
+it in org.eventb.theory.feature/org.eventb.theory.feature.target)
 
 2. Run the following command from the directory containing this README:
 
-mvn -DrodinTargetSiteUrl=file:///tmp/rodin package
+mvn package
+
+You can also add the hash of the latest git commit to the version with:
+
+mvn package -Dversion-suffix=-$(git rev-parse --short HEAD)
 
 3. Upload the files in org.eventb.theory.repository/target/repository to the
 server of the update site or add the folder as a local update site in your
