@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 CentraleSupélec.
+ * Copyright (c) 2020, 2021 CentraleSupélec.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,7 +123,7 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void test_operatorDefinitionRewrite_singleInGoal() throws Exception {
-		testTheorem("ident(0)=0", false, new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 0=0" });
+		testTheorem("ident(0)=0", false, new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 0=0" });
 	}
 
 	/**
@@ -132,8 +132,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_operatorDefinitionRewrite_twoInGoal() throws Exception {
 		testTheorem("ident(0)=ident(0)", false, //
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 0=ident(0)" },
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- ident(0)=0" });
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 0=ident(0)" },
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- ident(0)=0" });
 	}
 
 	/**
@@ -142,8 +142,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_operatorDefinitionRewrite_twoDifferentInGoal() throws Exception {
 		testTheorem("plusOne(0)=ident(1)", false, //
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 0+1=ident(1)" },
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- plusOne(0)=1" });
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 0+1=ident(1)" },
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- plusOne(0)=1" });
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_operatorDefinitionRewrite_singleInHypothesis() throws Exception {
 		testTheorem("ident(0)=0 ⇒ ⊤", true,
-				new String[] { "{}[][][ident(0)=0] |- ⊤", "{}[ident(0)=0][][⊤;;0=0] |- ⊤" });
+				new String[] { ";H; ;S; ident(0)=0 |- ⊤", ";H; ident(0)=0 ;S; ⊤;;0=0 |- ⊤" });
 	}
 
 	/**
@@ -161,8 +161,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_operatorDefinitionRewrite_twoInHypothesis() throws Exception {
 		testTheorem("ident(0)=ident(0) ⇒ ⊤", true, //
-				new String[] { "{}[][][ident(0)=ident(0)] |- ⊤", "{}[ident(0)=ident(0)][][⊤;;0=ident(0)] |- ⊤" },
-				new String[] { "{}[][][ident(0)=ident(0)] |- ⊤", "{}[ident(0)=ident(0)][][⊤;;ident(0)=0] |- ⊤" });
+				new String[] { ";H; ;S; ident(0)=ident(0) |- ⊤", ";H; ident(0)=ident(0) ;S; ⊤;;0=ident(0) |- ⊤" },
+				new String[] { ";H; ;S; ident(0)=ident(0) |- ⊤", ";H; ident(0)=ident(0) ;S; ⊤;;ident(0)=0 |- ⊤" });
 	}
 
 	/**
@@ -171,8 +171,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_operatorDefinitionRewrite_twoDifferentInHypothesis() throws Exception {
 		testTheorem("plusOne(0)=ident(1) ⇒ ⊤", true, //
-				new String[] { "{}[][][plusOne(0)=ident(1)] |- ⊤", "{}[plusOne(0)=ident(1)][][⊤;;0+1=ident(1)] |- ⊤" },
-				new String[] { "{}[][][plusOne(0)=ident(1)] |- ⊤", "{}[plusOne(0)=ident(1)][][⊤;;plusOne(0)=1] |- ⊤" });
+				new String[] { ";H; ;S; plusOne(0)=ident(1) |- ⊤", ";H; plusOne(0)=ident(1) ;S; ⊤;;0+1=ident(1) |- ⊤" },
+				new String[] { ";H; ;S; plusOne(0)=ident(1) |- ⊤", ";H; plusOne(0)=ident(1) ;S; ⊤;;plusOne(0)=1 |- ⊤" });
 	}
 
 	/* Second set of tests: use user-defined rewrite rules */
@@ -182,7 +182,7 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void test_ruleRewrite_singleInGoal() throws Exception {
-		testTheorem("1+1=2", false, new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 2∗1=2" });
+		testTheorem("1+1=2", false, new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 2∗1=2" });
 	}
 
 	/**
@@ -191,8 +191,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_ruleRewrite_twoInGoal() throws Exception {
 		testTheorem("1+1=1+1", false, //
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 2∗1=1+1" },
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 1+1=2∗1" });
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 2∗1=1+1" },
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 1+1=2∗1" });
 	}
 
 	/**
@@ -201,8 +201,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_ruleRewrite_twoDifferentInGoal() throws Exception {
 		testTheorem("0+0=1−1", false, //
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 2∗0=1−1" },
-				new String[] { "{}[][][] |- ⊤", "{}[][][⊤] |- 0+0=0" });
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 2∗0=1−1" },
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 0+0=0" });
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void test_ruleRewrite_singleInHypothesis() throws Exception {
-		testTheorem("1+1=2 ⇒ ⊤", true, new String[] { "{}[][][1+1=2] |- ⊤", "{}[1+1=2][][⊤;;2∗1=2] |- ⊤" });
+		testTheorem("1+1=2 ⇒ ⊤", true, new String[] { ";H; ;S; 1+1=2 |- ⊤", ";H; 1+1=2 ;S; ⊤;;2∗1=2 |- ⊤" });
 	}
 
 	/**
@@ -219,8 +219,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_ruleRewrite_twoInHypothesis() throws Exception {
 		testTheorem("1+1=1+1 ⇒ ⊤", true, //
-				new String[] { "{}[][][1+1=1+1] |- ⊤", "{}[1+1=1+1][][⊤;;2∗1=1+1] |- ⊤" },
-				new String[] { "{}[][][1+1=1+1] |- ⊤", "{}[1+1=1+1][][⊤;;1+1=2∗1] |- ⊤" });
+				new String[] { ";H; ;S; 1+1=1+1 |- ⊤", ";H; 1+1=1+1 ;S; ⊤;;2∗1=1+1 |- ⊤" },
+				new String[] { ";H; ;S; 1+1=1+1 |- ⊤", ";H; 1+1=1+1 ;S; ⊤;;1+1=2∗1 |- ⊤" });
 	}
 
 	/**
@@ -229,8 +229,8 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	@Test
 	public void test_ruleRewrite_twoDifferentInHypothesis() throws Exception {
 		testTheorem("0+0=1−1 ⇒ ⊤", true, //
-				new String[] { "{}[][][0+0=1−1] |- ⊤", "{}[0+0=1−1][][⊤;;2∗0=1−1] |- ⊤" },
-				new String[] { "{}[][][0+0=1−1] |- ⊤", "{}[0+0=1−1][][⊤;;0+0=0] |- ⊤" });
+				new String[] { ";H; ;S; 0+0=1−1 |- ⊤", ";H; 0+0=1−1 ;S; ⊤;;2∗0=1−1 |- ⊤" },
+				new String[] { ";H; ;S; 0+0=1−1 |- ⊤", ";H; 0+0=1−1 ;S; ⊤;;0+0=0 |- ⊤" });
 	}
 
 }

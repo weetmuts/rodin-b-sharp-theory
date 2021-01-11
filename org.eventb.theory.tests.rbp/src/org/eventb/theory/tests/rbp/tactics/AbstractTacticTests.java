@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 CentraleSupélec.
+ * Copyright (c) 2020, 2021 CentraleSupélec.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -154,27 +152,6 @@ public abstract class AbstractTacticTests {
 	}
 
 	/**
-	 * Parses a sequent string.
-	 *
-	 * The syntax of the string is
-	 * {@code {typeEnv}[hiddenHyps][defaultHyps][selectedHyps] |- goal}. If there
-	 * are several hypotheses in a given set, they should be separated by
-	 * {@code ;;}.
-	 *
-	 * @param ff      formula factory to use to create the sequent
-	 * @param sequent the sequent string
-	 * @return the parsed sequent
-	 * @see TestLib#genFullSeq(String, FormulaFactory)
-	 */
-	protected IProverSequent parseSequent(FormulaFactory ff, String sequent) {
-		Pattern pattern = Pattern.compile("^\\{([^}]*)\\}\\[(.*)\\]\\[(.*)\\]\\[(.*)\\]\\s*\\|-\\s*(.*)$");
-		Matcher matcher = pattern.matcher(sequent);
-		assertTrue("failed to match expected sequent", matcher.matches());
-		return TestLib.genFullSeq(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4),
-				matcher.group(5), ff);
-	}
-
-	/**
 	 * Checks the results of the application of the tactic provider to a theorem
 	 * proof.
 	 *
@@ -242,11 +219,11 @@ public abstract class AbstractTacticTests {
 					IProofTreeNode[] children = copy.getChildNodes();
 					assertEquals("wrong number of child nodes", expectedSequents[i].length, children.length);
 					for (int j = 0; j < expectedSequents[i].length; j++) {
+						IProverSequent expected = TestLib.genFullSeq(expectedSequents[i][j], attempt.getFormulaFactory());
 						assertTrue(
-								"wrong sequent after application (expected " + expectedSequents[i][j] + "; got "
+								"wrong sequent after application (expected " + expected + "; got "
 										+ children[j].getSequent() + ")",
-								ProverLib.deepEquals(parseSequent(attempt.getFormulaFactory(), expectedSequents[i][j]),
-										children[j].getSequent()));
+								ProverLib.deepEquals(expected, children[j].getSequent()));
 					}
 				}
 			}
