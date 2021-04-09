@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 CentraleSupélec.
+ * Copyright (c) 2020, 2021 CentraleSupélec.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,11 +187,7 @@ public class CachedApplicationTactic implements ITacticProvider, IUserSupportMan
 		 * This method is thread-safe.
 		 */
 		public synchronized void clean() {
-			for (IProofAttempt key : cache.keySet()) {
-				if (key.isDisposed()) {
-					cache.remove(key);
-				}
-			}
+			cache.keySet().removeIf(IProofAttempt::isDisposed);
 		}
 
 	}
