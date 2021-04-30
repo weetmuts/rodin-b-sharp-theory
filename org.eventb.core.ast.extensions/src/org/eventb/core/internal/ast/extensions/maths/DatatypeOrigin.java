@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 University of Southampton.
+ * Copyright (c) 2016, 2021 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +61,7 @@ public class DatatypeOrigin implements IDatatypeOrigin {
 	 */
 	public DatatypeOrigin(String name) {
 		this.name = name;
-		this.typeArguments = new HashMap<String, Type>();
+		this.typeArguments = new LinkedHashMap<String, Type>();
 		this.constructors = new ArrayList<String>();
 		this.destructors = new HashMap<String, List<String>>();
 		this.destructorTypes = new HashMap<String, List<Type>>();
