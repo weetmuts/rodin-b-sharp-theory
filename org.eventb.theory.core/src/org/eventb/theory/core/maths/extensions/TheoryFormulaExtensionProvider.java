@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2020 University of Southampton and others.
+ * Copyright (c) 2011, 2021 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extensions.maths.AstUtilities;
 import org.eventb.core.ast.extensions.maths.IAxiomaticTypeOrigin;
 import org.eventb.core.ast.extensions.maths.IDatatypeOrigin;
 import org.eventb.core.ast.extensions.maths.IOperatorExtension;
@@ -139,8 +138,6 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		cond.add(FormulaFactory.getCond());
 		factory = factory.withExtensions(cond);
 
- 		typeEnvironment = factory.makeTypeEnvironment();
-
 		List<IRodinElement> extsToLoad = new ArrayList<IRodinElement>(Arrays.asList(element.getChildren()));
 		while (!extsToLoad.isEmpty()) {
 			boolean progress = false;
@@ -148,6 +145,7 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 			while (it.hasNext()) {
 				IRodinElement extensionElement = it.next();
 				boolean success = false;
+				typeEnvironment = factory.makeTypeEnvironment();
 				if (extensionElement instanceof ISCDatatypeDefinition) {
 					success = loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
 				} else if (extensionElement instanceof ISCAxiomaticTypeDefinition) {
@@ -184,7 +182,6 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		if (datatype != null) {
 			extensions.addAll(datatype.getExtensions());
 			factory = factory.withExtensions(extensions);
-			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			return true;
 		}
 		return false;
@@ -198,7 +195,6 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		if (addedExtensions != null) {
 			extensions.add(addedExtensions);
 			factory = factory.withExtensions(extensions);
-			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			return true;
 		}
 		return false;
@@ -212,7 +208,6 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		if (addedExtensions != null) {
 			extensions.add(addedExtensions);
 			factory = factory.withExtensions(extensions);
-			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
 			return true;
 		}
 		return false;
@@ -228,8 +223,6 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		if (addedExtensions != null) {
 			extensions.add(addedExtensions);
 			factory = factory.withExtensions(extensions);
-			typeEnvironment = AstUtilities.getTypeEnvironmentForFactory(typeEnvironment, factory);
-			localTypeEnvironment = AstUtilities.getTypeEnvironmentForFactory(localTypeEnvironment, factory);
 			return true;
 		}
 		return false;
