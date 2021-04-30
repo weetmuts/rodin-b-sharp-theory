@@ -18,6 +18,7 @@ import static org.eventb.theory.core.util.CoreUtilities.log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -139,21 +140,13 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 		factory = factory.withExtensions(cond);
 
  		typeEnvironment = factory.makeTypeEnvironment();
-		IRodinElement[] children = element.getChildren();
-		
-		boolean progress = true;
-		boolean complete = (children.length == 0);
-		Set<IRodinElement> loaded = new HashSet<IRodinElement>(children.length);
-		
-		while (complete == false && progress == true) {
-			// Set complete to true (if no failure happen then it will stay true
-			complete = true;
-			// Reset progress to false (no progress yet)
-			progress = false;
-			for (IRodinElement extensionElement : children) {
-				if (loaded.contains(extensionElement)) {
-					continue;
-				}
+
+		List<IRodinElement> extsToLoad = new ArrayList<IRodinElement>(Arrays.asList(element.getChildren()));
+		while (!extsToLoad.isEmpty()) {
+			boolean progress = false;
+			Iterator<IRodinElement> it = extsToLoad.iterator();
+			while (it.hasNext()) {
+				IRodinElement extensionElement = it.next();
 				boolean success = false;
 				if (extensionElement instanceof ISCDatatypeDefinition) {
 					success = loadSCDatatypeDefinition((ISCDatatypeDefinition) extensionElement);
@@ -165,24 +158,20 @@ public class TheoryFormulaExtensionProvider implements IFormulaExtensionProvider
 					success = loadSCAxiomaticOperatorDefinition((ISCAxiomaticOperatorDefinition) extensionElement);
 				} else {
 					log(null, "Extension is not supported: " + extensionElement);
-					complete = false;
-					continue;
 				}
 				if (success) {
-					// Some progress has been made
-					loaded.add(extensionElement);
+					it.remove();
 					progress = true;
 				}
 			}
+			if (!progress) {
+				String msg = "Failed to load the formula factory from " + element + "(the following extensions failed: "
+						+ extsToLoad + ")";
+				log(null, msg);
+				throw new CoreException(new Status(IStatus.ERROR, TheoryPlugin.PLUGIN_ID, IStatus.OK, msg, null));
+			}
 		}
-		if (complete)
-			return factory;
-		else {
-			String msg = "Fail to load the formula factory from " + element;
-			log(null, msg);
-			throw new CoreException(new Status(IStatus.ERROR,
-					TheoryPlugin.PLUGIN_ID, IStatus.OK, msg, null));
-		}
+		return factory;
 	}
 
 
