@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 University of Southampton and others.
+ * Copyright (c) 2010, 2021 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,14 @@ public class ManualRewriteReasoner extends AbstractContextDependentReasoner
 		// Get information from the reasoner input
 		RewriteInput input = (RewriteInput) reasonerInput;
 		Predicate hyp = input.getPredicate();
+		if (hyp != null && hyp.getFactory() != sequent.getFormulaFactory()) {
+			try {
+				hyp = hyp.translate(sequent.getFormulaFactory());
+			} catch (IllegalArgumentException e) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Rewrite hypothesis has a mathematical language incompatible with the one of the proof sequent");
+			}
+		}
 		IPosition position = input.getPosition();
 		IPRMetadata prMetadata = input.getPRMetadata();
 		final String projectName = prMetadata.getProjectName();

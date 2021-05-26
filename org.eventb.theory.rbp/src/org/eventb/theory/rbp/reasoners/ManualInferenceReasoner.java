@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 University of Southampton and others.
+ * Copyright (c) 2010, 2021 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,12 +83,15 @@ public class ManualInferenceReasoner extends AbstractContextDependentReasoner
 
 		// Get information from the reasoner input
 		final InferenceInput input = (InferenceInput) reasonerInput;
-		final Predicate hyp = input.getHypothesis();
-		// @htson This is to check that the input hypothesis has the same formula factory as the proof sequent.
-		// An alternative is to convert the hypothesis automatically to the sequent's formula factory.
-		if (hyp != null && !hyp.getFactory().equals(sequent.getFormulaFactory())) {
-			return ProverFactory.reasonerFailure(this, input,
-					"Inferencing hypothesis does not have the same mathematical language as the proof sequent");
+		Predicate hyp = input.getHypothesis();
+		// Convert the hypothesis automatically to the sequent's formula factory.
+		if (hyp != null && hyp.getFactory() != sequent.getFormulaFactory()) {
+			try {
+				hyp = hyp.translate(sequent.getFormulaFactory());
+			} catch (IllegalArgumentException e) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Inferencing hypothesis has a mathematical language incompatible with the one of the proof sequent");
+			}
 		}
 		
 		final boolean forward = input.isForward();
