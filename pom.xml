@@ -5,7 +5,7 @@
 
 	<groupId>org.eventb.theory</groupId>
 	<artifactId>root</artifactId>
-	<version>4.0.1-SNAPSHOT</version>
+	<version>4.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -57,7 +57,7 @@
 						<artifact>
 							<groupId>org.eventb.theory</groupId>
 							<artifactId>org.eventb.theory.feature</artifactId>
-							<version>4.0.1-SNAPSHOT</version>
+							<version>4.0.2-SNAPSHOT</version>
 						</artifact>
 					</target>
 					<environments>

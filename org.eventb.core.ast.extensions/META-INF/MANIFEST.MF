@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eventb.core.ast.extensions
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eventb.core.ast.extensions;singleton:=true
-Bundle-Version: 4.0.0.qualifier
+Bundle-Version: 4.0.2.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eventb.core.ast,
  org.eclipse.core.runtime
