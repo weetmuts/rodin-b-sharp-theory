@@ -16,20 +16,16 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
-import org.eventb.theory.core.IDeployedTheoryRoot;
 import org.eventb.theory.core.IExtensionRulesSource;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCGiven;
 import org.eventb.theory.core.ISCInfer;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCTheorem;
-import org.eventb.theory.core.basis.NewOperatorDefinition;
 import org.eventb.theory.rbp.utils.ProverUtilities;
 
 
@@ -79,19 +75,6 @@ public class DeployedObjectsFactory {
 			}
 			ISCRewriteRule[] rules = block.getRewriteRules();
 			for (ISCRewriteRule rule : rules) {
-				if (rule.getSource() instanceof NewOperatorDefinition) {
-					IDeployedTheoryRoot deployedRoot = (IDeployedTheoryRoot) block.getParent();
-					ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
-					for (ISCNewOperatorDefinition definition : operatorDefinitions) {
-						if (definition.getLabel().equals(rule.getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-							ISCOperatorArgument[] args = definition.getOperatorArguments();
-							for (ISCOperatorArgument var : args) {
-								augTypeEnvironment.add(var.getIdentifier(factory));
-							}
-							break;
-						}
-					}
-				}
 				IDeployedRewriteRule deployedRewriteRule = getDeployedRewriteRule(
 						rule, factory, augTypeEnvironment);
 				if (deployedRewriteRule != null)
