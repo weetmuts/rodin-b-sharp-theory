@@ -298,7 +298,7 @@ public class OperatorInformation extends State implements ISCState{
 				String newName = var.getIdentifierString() + "_";
 				var = newRulesbBlock.getMetavariable(newName);	
 			}
-			possibleSubstitution.put(argIdent, enhancedFactory.makeFreeIdentifier(arg, null, argType));
+			possibleSubstitution.put(argIdent, enhancedFactory.makeFreeIdentifier(var.getIdentifierString(), null, argType));
 			if (!var.exists()) {
 				var.create(null, null);
 				var.setType(argType, null);
