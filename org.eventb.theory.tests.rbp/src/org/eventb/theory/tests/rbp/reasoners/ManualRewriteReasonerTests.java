@@ -15,6 +15,8 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -22,7 +24,9 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
+import org.eventb.theory.core.IDirectOperatorDefinition;
 import org.eventb.theory.core.IImportTheoryProject;
+import org.eventb.theory.core.INewOperatorDefinition;
 import org.eventb.theory.core.IProofRulesBlock;
 import org.eventb.theory.core.IRewriteRule;
 import org.eventb.theory.core.ITheoryRoot;
@@ -58,6 +62,20 @@ public class ManualRewriteReasonerTests extends AbstractRBPReasonerTests {
 		// Create the "ManualRewrite" theory
 		ITheoryRoot thyRoot = TheoryUtils.createTheory(
 				thyPrj.getRodinProject(), "ManualRewrite", nullMonitor);
+
+		/*
+		 * Having two operators with arguments that have the same name but different
+		 * types used to break things. Keeping these definitions ensures that there are
+		 * no regressions.
+		 */
+		INewOperatorDefinition opIdentZ = TheoryUtils.createOperator(thyRoot, "identZ", false, false,
+				FormulaType.EXPRESSION, Notation.PREFIX, null, null);
+		TheoryUtils.createArgument(opIdentZ, "x", "ℤ", null, null);
+		opIdentZ.createChild(IDirectOperatorDefinition.ELEMENT_TYPE, null, null).setFormula("x", null);
+		INewOperatorDefinition opIdentZZ = TheoryUtils.createOperator(thyRoot, "identZZ", false, false,
+				FormulaType.EXPRESSION, Notation.PREFIX, null, null);
+		TheoryUtils.createArgument(opIdentZZ, "x", "ℤ×ℤ", null, null);
+		opIdentZZ.createChild(IDirectOperatorDefinition.ELEMENT_TYPE, null, null).setFormula("x", null);
 
 		IProofRulesBlock prfRulesBlk = TheoryUtils.createProofRulesBlock(
 				thyRoot, "ManualRewrite", nullMonitor);
