@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2011, 2020 University of Southampton and others.
+* Copyright (c) 2011, 2021 University of Southampton and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -188,8 +188,8 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 			for (ISCTheorem deployedTheorem : SCTheorems){
 				Predicate theorem;
 					theorem = deployedTheorem.getPredicate(typeEnvironment);
-					Predicate substitutedTheorem = (Predicate) substitute(theorem.toString(), subs);
-					strings.add(substitutedTheorem.toString());
+					Predicate substitutedTheorem = (Predicate) substitute(theorem.toStringWithTypes(), subs);
+					strings.add(substitutedTheorem.toStringWithTypes());
 			}
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
