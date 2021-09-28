@@ -26,6 +26,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class RewritesManualTacticTests extends AbstractTacticTests {
 
+	/*
+	 * The default tests put the definitions in a theory and the tested theorem in
+	 * another theory that imports the first one. However, some bugs are only
+	 * triggered if the theorem is in the same theory as the definitions. To test
+	 * these bugs, set this attribute to {@code true}.
+	 */
+	protected boolean testTheoremInSameTheory = false;
+
 	/**
 	 * Initializes {@link AbstractTacticTests#tacticProvider} to the tested tactic
 	 * provider.
@@ -46,11 +54,17 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	 * </ul>
 	 */
 	protected void createTestDefinitions() throws RodinDBException {
-		// ident(x) = x
+		// ident(x : ℤ) = x
 		INewOperatorDefinition opIdent = TheoryUtils.createOperator(theoryRoot, "ident", false, false,
 				FormulaType.EXPRESSION, Notation.PREFIX, null, null);
 		TheoryUtils.createArgument(opIdent, "x", "ℤ", null, null);
 		opIdent.createChild(IDirectOperatorDefinition.ELEMENT_TYPE, null, null).setFormula("x", null);
+
+		// ident2(x : ℤ × ℤ) = x
+		INewOperatorDefinition opIdent2 = TheoryUtils.createOperator(theoryRoot, "ident2", false, false,
+				FormulaType.EXPRESSION, Notation.PREFIX, null, null);
+		TheoryUtils.createArgument(opIdent2, "x", "ℤ × ℤ", null, null);
+		opIdent2.createChild(IDirectOperatorDefinition.ELEMENT_TYPE, null, null).setFormula("x", null);
 
 		// plusOne(x) = x + 1
 		INewOperatorDefinition opPlusOne = TheoryUtils.createOperator(theoryRoot, "plusOne", false, false,
@@ -93,8 +107,14 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 	 */
 	protected void testTheorem(String theorem, boolean hypothesis, String[]... expectedSequents) throws Exception {
 		createTestDefinitions();
-		TheoryUtils.createTheorem(testTheoryRoot, "thm1", theorem, null);
-		buildAndDeploy();
+		if (testTheoremInSameTheory) {
+			TheoryUtils.createTheorem(theoryRoot, "thm1", theorem, null);
+			buildAndDeploy();
+			testTheoryRoot = theoryRoot;
+		} else {
+			TheoryUtils.createTheorem(testTheoryRoot, "thm1", theorem, null);
+			buildAndDeploy();
+		}
 		checkTacticsApplication("org.eventb.theory.rbp.RbP0", "thm1/S-THM", hypothesis, expectedSequents);
 	}
 
@@ -173,6 +193,19 @@ public class RewritesManualTacticTests extends AbstractTacticTests {
 		testTheorem("plusOne(0)=ident(1) ⇒ ⊤", true, //
 				new String[] { ";H; ;S; plusOne(0)=ident(1) |- ⊤", ";H; plusOne(0)=ident(1) ;S; ⊤;;0+1=ident(1) |- ⊤" },
 				new String[] { ";H; ;S; plusOne(0)=ident(1) |- ⊤", ";H; plusOne(0)=ident(1) ;S; ⊤;;plusOne(0)=1 |- ⊤" });
+	}
+
+	/**
+	 * Tests a bug related to typing conflicts when two operators have arguments
+	 * with the same name but different types.
+	 */
+	@Test
+	public void test_operatorDefinitionRewrite_argumentTypeConflict() throws Exception {
+		testTheoremInSameTheory = true;
+		testTheorem("ident2(0↦0)=ident(0)↦ident(0)", false, //
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- 0↦0=ident(0)↦ident(0)" },
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- ident2(0↦0)=0↦ident(0)" },
+				new String[] { ";H; ;S; |- ⊤", ";H; ;S; ⊤ |- ident2(0↦0)=ident(0)↦0" });
 	}
 
 	/* Second set of tests: use user-defined rewrite rules */

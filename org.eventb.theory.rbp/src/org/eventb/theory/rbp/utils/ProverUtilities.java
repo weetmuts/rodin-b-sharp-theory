@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010,2016 University of Southampton.
+ * Copyright (c) 2010, 2021 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,16 +41,12 @@ import org.eventb.theory.core.DatabaseUtilities;
 import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCRewriteRuleRightHandSide;
 import org.eventb.theory.core.ISCRule;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.basis.NewOperatorDefinition;
-import org.eventb.theory.core.basis.SCRewriteRule;
 import org.eventb.theory.rbp.plugin.RbPPlugin;
 import org.eventb.theory.rbp.rulebase.IPOContext;
 import org.eventb.theory.rbp.rulebase.basis.IDeployedGiven;
@@ -303,19 +299,6 @@ public class ProverUtilities {
 		ISCMetavariable[] vars = block.getMetavariables();
 		for (ISCMetavariable var : vars) {
 			typeEnvironment.add(var.getIdentifier(factory));
-		}
-		if (block.getSource() instanceof NewOperatorDefinition) {
-			ISCTheoryRoot deployedRoot = (ISCTheoryRoot) block.getParent();
-			ISCNewOperatorDefinition[] operatorDefinitions = deployedRoot.getSCNewOperatorDefinitions();
-			for (ISCNewOperatorDefinition definition : operatorDefinitions) {
-				if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-					ISCOperatorArgument[] args = definition.getOperatorArguments();
-					for (ISCOperatorArgument var : args) {
-						typeEnvironment.add(var.getIdentifier(factory));
-					}
-					break;
-				}
-			}
 		}
 		
 		} catch (RodinDBException e) {

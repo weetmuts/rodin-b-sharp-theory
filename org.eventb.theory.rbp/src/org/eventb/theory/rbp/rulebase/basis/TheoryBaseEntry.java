@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011,2016 University of Southampton.
+ * Copyright (c) 2011, 2021 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,11 @@ import org.eventb.theory.core.IReasoningTypeElement.ReasoningType;
 import org.eventb.theory.core.ISCAxiomaticDefinitionAxiom;
 import org.eventb.theory.core.ISCInferenceRule;
 import org.eventb.theory.core.ISCMetavariable;
-import org.eventb.theory.core.ISCNewOperatorDefinition;
-import org.eventb.theory.core.ISCOperatorArgument;
 import org.eventb.theory.core.ISCProofRulesBlock;
 import org.eventb.theory.core.ISCRewriteRule;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.core.ISCTheoryRoot;
 import org.eventb.theory.core.ISCTypeParameter;
-import org.eventb.theory.core.basis.NewOperatorDefinition;
 import org.eventb.theory.core.basis.SCProofRulesBlock;
 import org.eventb.theory.core.basis.SCRewriteRule;
 import org.eventb.theory.rbp.rulebase.ITheoryBaseEntry;
@@ -153,18 +150,6 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 					ISCMetavariable[] vars = block.getMetavariables();
 					for (ISCMetavariable var : vars) {
 						augTypeEnvironment.add(var.getIdentifier(factory));
-					}
-					if (block.getSource() instanceof NewOperatorDefinition) {
-						ISCNewOperatorDefinition[] operatorDefinitions = theoryRoot.getSCNewOperatorDefinitions();
-						for (ISCNewOperatorDefinition definition : operatorDefinitions) {
-							if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-								ISCOperatorArgument[] args = definition.getOperatorArguments();
-								for (ISCOperatorArgument var : args) {
-									augTypeEnvironment.add(var.getIdentifier(factory));
-								}
-								break;
-							}
-						}
 					}
 					
 					ISCRewriteRule rewriteRule = (ISCRewriteRule) rule;
@@ -449,18 +434,6 @@ public class TheoryBaseEntry<R extends IEventBRoot & IFormulaExtensionsSource & 
 					ISCMetavariable[] vars = block.getMetavariables();
 					for (ISCMetavariable var : vars) {
 						augTypeEnvironment.add(var.getIdentifier(factory));
-					}
-					if (block.getSource() instanceof NewOperatorDefinition) {
-						ISCNewOperatorDefinition[] operatorDefinitions = theoryRoot.getSCNewOperatorDefinitions();
-						for (ISCNewOperatorDefinition definition : operatorDefinitions) {
-							if (definition.getLabel().equals(((SCRewriteRule) rule).getLabel().replaceFirst(block.getParent().getElementName()+".", ""))) {
-								ISCOperatorArgument[] args = definition.getOperatorArguments();
-								for (ISCOperatorArgument var : args) {
-									augTypeEnvironment.add(var.getIdentifier(factory));
-								}
-								break;
-							}
-						}
 					}
 					lhs = ((ISCRewriteRule) rule).getSCFormula(factory, augTypeEnvironment);
 				} catch (CoreException e) {
