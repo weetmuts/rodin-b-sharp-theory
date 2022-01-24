@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2011, 2021 University of Southampton and others.
+* Copyright (c) 2011, 2022 University of Southampton and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
 package org.eventb.theory.rbp.tactics.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,12 +26,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.theory.core.ISCTheorem;
@@ -180,48 +178,24 @@ public class TheoremSelectorWizardPageTwo extends WizardPage {
 		}
 		List<String> strings = new ArrayList<String>();
 		// do the subs here
-		Map<FreeIdentifier, String> subs = new LinkedHashMap<FreeIdentifier, String>();
+		ISpecialization spec = factory.makeSpecialization();
 		for (GivenType gType : instantiations.keySet()){
-			subs.put(factory.makeFreeIdentifier(gType.getName(), null, factory.makePowerSetType(gType)), instantiations.get(gType));
+			IParseResult parseRes = factory.parseType(instantiations.get(gType));
+			if (parseRes.hasProblem()) {
+				updateStatus("error parsing provided type");
+				return null;
+			}
+			spec.put(gType, parseRes.getParsedType());
 		}
 		try {
 			for (ISCTheorem deployedTheorem : SCTheorems){
-				Predicate theorem;
-					theorem = deployedTheorem.getPredicate(typeEnvironment);
-					Predicate substitutedTheorem = (Predicate) substitute(theorem.toStringWithTypes(), subs);
-					strings.add(substitutedTheorem.toStringWithTypes());
+				strings.add(deployedTheorem.getPredicate(typeEnvironment).specialize(spec).toStringWithTypes());
 			}
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return strings;
-	}
-
-	private Formula<?> substitute(String srcStr, Map<FreeIdentifier, String> substs) {
-		Formula<?> result = parseFormula(srcStr);
-		Map<FreeIdentifier, Expression> exprSubsts = convert(substs);
-		return result.substituteFreeIdents(exprSubsts);
-	}
-
-	private Map<FreeIdentifier, Expression> convert(Map<FreeIdentifier, String> substs) {
-		Map<FreeIdentifier, Expression> result = new HashMap<FreeIdentifier, Expression>(
-				substs.size());
-		for (FreeIdentifier key : substs.keySet()) {
-			FreeIdentifier ident = factory.makeFreeIdentifier(key.getName(), null);
-			Expression expr = factory.parseExpression(substs.get(key), null).getParsedExpression();
-			result.put(ident, expr);
-		}
-		return result;
-	}
-	
-	private Formula<?> parseFormula(String formStr) {
-		Formula<?> result = 
-				factory.parsePredicate(formStr, null).getParsedPredicate();
-		if (result == null) {
-			result = factory.parseExpression(formStr, null).getParsedExpression();
-		}
-		return result;
 	}
 	
 	private Set<GivenType> getGivenTypes(){
