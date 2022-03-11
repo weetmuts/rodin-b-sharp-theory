@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 University of Southampton.
+ * Copyright (c) 2010, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,7 +190,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		// ////////Commutativity
 		if (definition.isCommutative()) {
 			Predicate commutChecker = getCommutativityChecker(
-					(Expression) defFormula, identifiers,
+					defFormula, identifiers,
 					localTypeEnvironment);
 			if (!isTrivial(commutChecker)) {
 				poName = definition.getLabel()
