@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,6 +166,7 @@ public final class Messages {
 	public static String scuser_TheoryPathProjectNotExistError;
 	public static String scuser_AxiomaticTypeNameAlreadyATypeParError;
 	public static String scuser_AxiomaticPredicateOpDoesNotReqTypeWarn;
+	public static String scuser_AxiomaticInvalidTypeError;
 	public static String scuser_AxiomLabelProblemError;
 	public static String scuser_AxiomPredMissingError;
 	public static String scuser_TheoryPathProjectIsThisProject;

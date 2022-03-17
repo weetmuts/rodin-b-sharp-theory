@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 University of Southampton and others.
+ * Copyright (c) 2010, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,7 +144,8 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			MultipleTheoryPathProjectError(IMarker.SEVERITY_ERROR, Messages.scuser_MultipleTheoryPathProjectError),
 			TheoryProjectDoesNotExistError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoryPathProjectNotExistError),
 			AxiomaticTypeNameAlreadyATypeParError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomaticTypeNameAlreadyATypeParError),
-			AxiomaticPredicateOpDoesNotReqTypeWarn(IMarker.SEVERITY_WARNING, Messages.scuser_AxiomaticPredicateOpDoesNotReqTypeWarn)
+			AxiomaticPredicateOpDoesNotReqTypeWarn(IMarker.SEVERITY_WARNING, Messages.scuser_AxiomaticPredicateOpDoesNotReqTypeWarn),
+			AxiomaticInvalidTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomaticInvalidTypeError)
 		;
 
 	private int arity;

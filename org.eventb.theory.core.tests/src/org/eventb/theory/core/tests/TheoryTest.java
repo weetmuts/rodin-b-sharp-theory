@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2022 University of Southampton and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.theory.core.tests;
 
 import static org.junit.Assert.assertTrue;
@@ -15,6 +22,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.theory.core.IApplicabilityElement.RuleApplicability;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.IAxiomaticOperatorDefinition;
 import org.eventb.theory.core.IAxiomaticTypeDefinition;
 import org.eventb.theory.core.IConstructorArgument;
 import org.eventb.theory.core.IDatatypeConstructor;
@@ -175,6 +183,27 @@ public abstract class TheoryTest extends BuilderTest {
 	public IAxiomaticTypeDefinition addAxiomaticTypeDefinition(IAxiomaticDefinitionsBlock block, String identifier) throws RodinDBException{
 		IAxiomaticTypeDefinition def = block.createChild(IAxiomaticTypeDefinition.ELEMENT_TYPE, null, null);
 		def.setIdentifierString(identifier, null);
+		return def;
+	}
+
+	public IAxiomaticOperatorDefinition addAxiomaticOperatorDefinition(IAxiomaticDefinitionsBlock block,
+			String identifier, Notation notation, FormulaType formulaType, boolean associative, boolean commutative,
+			String[] arguments, String[] argumentsTypes, String type) throws RodinDBException {
+		IAxiomaticOperatorDefinition def = block.createChild(IAxiomaticOperatorDefinition.ELEMENT_TYPE, null, null);
+		def.setLabel(identifier, null);
+		def.setFormulaType(formulaType, null);
+		def.setNotationType(notation.toString(), null);
+		def.setAssociative(associative, null);
+		def.setCommutative(commutative, null);
+		assert arguments.length == argumentsTypes.length;
+		for (int i = 0; i < arguments.length; i++) {
+			IOperatorArgument opArg = def.createChild(IOperatorArgument.ELEMENT_TYPE, null, null);
+			opArg.setIdentifierString(arguments[i], null);
+			opArg.setExpressionString(argumentsTypes[i], null);
+		}
+		if (formulaType == FormulaType.EXPRESSION) {
+			def.setType(type, null);
+		}
 		return def;
 	}
 	

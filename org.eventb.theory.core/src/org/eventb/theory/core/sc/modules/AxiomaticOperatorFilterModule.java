@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2020 University of Southampton and others.
+ * Copyright (c) 2011, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,10 @@ package org.eventb.theory.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
@@ -128,11 +130,21 @@ public class AxiomaticOperatorFilterModule extends SCFilterModule {
 					TheoryGraphProblem.AxiomaticPredicateOpDoesNotReqTypeWarn, opDef.getLabel());
 		}
 		if (formType.equals(FormulaType.EXPRESSION)) {
-			IParseResult result = factory.parseType(opDef.getType());
+			IParseResult result = factory.parseExpression(opDef.getType(), opDef);
 			if (CoreUtilities.issueASTProblemMarkers(opDef, TheoryAttributes.TYPE_ATTRIBUTE, result, this)) {
 				return false;
 			}
-			Type opType = result.getParsedType();
+			Expression opExpr = result.getParsedExpression();
+			ITypeCheckResult tcResult = opExpr.typeCheck(typeEnvironment);
+			if (CoreUtilities.issueASTProblemMarkers(opDef, TheoryAttributes.TYPE_ATTRIBUTE, tcResult, this)) {
+				return false;
+			}
+			if (!opExpr.isATypeExpression()) {
+				createProblemMarker(opDef, TheoryAttributes.TYPE_ATTRIBUTE,
+						TheoryGraphProblem.AxiomaticInvalidTypeError, opDef.getLabel());
+				return false;
+			}
+			Type opType = opExpr.toType();
 			symbolInfo.setAttributeValue(TheoryAttributes.TYPE_ATTRIBUTE, opType.toString());
 		}
 		return true;

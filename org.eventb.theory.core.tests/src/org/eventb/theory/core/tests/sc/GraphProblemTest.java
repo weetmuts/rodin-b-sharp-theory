@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2020 University of Southampton and others.
+ * Copyright (c) 2012, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -208,6 +208,7 @@ public class GraphProblemTest {
 		spec(TheoryGraphProblem.TheoryProjectDoesNotExistError, 1),
 		spec(TheoryGraphProblem.AxiomaticTypeNameAlreadyATypeParError, 1),
 		spec(TheoryGraphProblem.AxiomaticPredicateOpDoesNotReqTypeWarn, 1),
+		spec(TheoryGraphProblem.AxiomaticInvalidTypeError, 1),
 	};
 	
 	private static Map<TheoryGraphProblem, Spec> specMap = 
