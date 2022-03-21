@@ -12,8 +12,11 @@ import static org.eventb.core.seqprover.eventbExtensions.DLib.makeConj;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeEq;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeImp;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeUnivQuant;
+import static org.eventb.theory.core.util.CoreUtilities.newCoreException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -82,13 +85,6 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		typeEnvironment = repository.getTypeEnvironment();
 		target = repository.getTarget();
 		natureFactory = POGNatureFactory.getInstance();
-		IRodinFile file = (IRodinFile) element;
-		ISCTheoryRoot theory = (ISCTheoryRoot) file.getRoot();
-		ISCNewOperatorDefinition definitions[] = theory
-				.getSCNewOperatorDefinitions();
-		for (ISCNewOperatorDefinition definition : definitions) {
-			generateCorrespondingPOs(definition, monitor);
-		}
 	}
 
 	@Override
@@ -118,27 +114,36 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		}
 		// get the well-definedness condition
 		final Predicate wdCondition = definition.getPredicate(localTypeEnvironment);
+		Predicate wdDefinition = null;
 		// get the definition
 		final ISCDirectOperatorDefinition[] directDefinitions = definition
 				.getDirectOperatorDefinitions();
-		if (directDefinitions.length != 1) {
-			ISCRecursiveOperatorDefinition[] recursiveDefs = definition.getRecursiveOperatorDefinitions();
-			for (ISCRecursiveOperatorDefinition recursiveDef : recursiveDefs) {
-				String inductiveArgument = recursiveDef.getInductiveArgument();
-				ISCRecursiveDefinitionCase[] recursiveDefinitionCases = recursiveDef
-						.getRecursiveDefinitionCases();
-				for (ISCRecursiveDefinitionCase recursiveDefinitionCase : recursiveDefinitionCases) {
-					// @htson: (TODO) Commentted out at the moment as the expression string needs to be typed check. 
-					// String expressionString = recursiveDefinitionCase.getExpressionString();
-					// Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(localTypeEnvironment.getFormulaFactory(), localTypeEnvironment);
-					// Predicate wdPredicate = scFormula.getWDPredicate();
-					
+		final ISCRecursiveOperatorDefinition[] recursiveDefs = definition.getRecursiveOperatorDefinitions();
+		if (directDefinitions.length == 1) {
+			wdDefinition = directDefinitions[0].getSCFormula(factory, localTypeEnvironment).getWDPredicate();
+		} else if (recursiveDefs.length == 1) {
+			ISCRecursiveOperatorDefinition recursiveDef = recursiveDefs[0];
+			String inductiveArgument = recursiveDef.getInductiveArgument();
+			FreeIdentifier inductiveArg = factory.makeFreeIdentifier(inductiveArgument, null,
+					localTypeEnvironment.getType(inductiveArgument));
+			ISCRecursiveDefinitionCase[] recursiveDefinitionCases = recursiveDef
+					.getRecursiveDefinitionCases();
+			List<Predicate> casesWD = new ArrayList<>();
+			for (ISCRecursiveDefinitionCase recursiveDefinitionCase : recursiveDefinitionCases) {
+				ITypeEnvironmentBuilder extendedTypeEnv = localTypeEnvironment.makeBuilder();
+				Expression caseExpression = recursiveDefinitionCase.getSCCaseExpression(extendedTypeEnv, inductiveArg);
+				Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(factory, extendedTypeEnv);
+				Predicate wdPredicate = scFormula.getWDPredicate();
+				if (wdPredicate.getTag() != Formula.BTRUE) {
+					Predicate caseWD = makeImp(makeEq(inductiveArg, caseExpression), wdPredicate);
+					caseWD = bindWithUnivQuant(caseWD, Arrays.asList(caseExpression.getFreeIdentifiers()));
+					casesWD.add(caseWD);
 				}
 			}
-			return;
+			wdDefinition = makeConj(factory, casesWD);
+		} else {
+			throw newCoreException("Invalid operator: should have a direct or a recursive definition");
 		}
-		Formula<?> defFormula = directDefinitions[0].getSCFormula(
-				factory, localTypeEnvironment);
 		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, definition),
 				makeSource(IPOSource.DEFAULT_ROLE, definition.getSource()) };
@@ -149,7 +154,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		String poName = definition.getLabel()
 				+ OPERATOR_WD_POSTFIX;
 		Predicate wdStrengthPredicate = getClosedPOPredicate(
-				wdCondition, defFormula.getWDPredicate(),
+				wdCondition, wdDefinition,
 				identifiers, localTypeEnvironment);
 		if (!isTrivial(wdStrengthPredicate)) {
 			createPO(
@@ -164,6 +169,12 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 							new IPOGHint[] { getLocalHypothesisSelectionHint(
 									target, poName, hyp) }, true, null);
 		}
+		if (directDefinitions.length != 1) {
+			// Following PO generation only works on direct definitions (bug #41)
+			return;
+		}
+		Formula<?> defFormula = directDefinitions[0].getSCFormula(
+				factory, localTypeEnvironment);
 		// ///////////////////////////////////
 		// ////////Associativity
 		if (definition.isAssociative()) {
@@ -213,8 +224,13 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		// All done in initialisation of module
-
+		IRodinFile file = (IRodinFile) element;
+		ISCTheoryRoot theory = (ISCTheoryRoot) file.getRoot();
+		ISCNewOperatorDefinition definitions[] = theory
+				.getSCNewOperatorDefinitions();
+		for (ISCNewOperatorDefinition definition : definitions) {
+			generateCorrespondingPOs(definition, monitor);
+		}
 	}
 
 	@Override
@@ -231,29 +247,27 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		}
 		Predicate boundPred = makeImp(wdCondition, otherPredicate);
 		List<Predicate> typingPreds = new ArrayList<Predicate>();
-		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();
 		for (FreeIdentifier identifier : identifiers) {
 			typingPreds.add(factory.makeRelationalPredicate(Formula.IN,
 					identifier, identifier.getType().toExpression(),
 					null));
-			identifiers.add(identifier);
-			decls.add(factory.makeBoundIdentDecl(identifier.getName(), null,
-					identifier.getType()));
 		}
 		Predicate initial = makeImp(makeConj(factory, typingPreds),
 				boundPred);
-
-		initial = initial.bindTheseIdents(identifiers);
-		Predicate pred = null;
-		if (decls.size() == 0) {
-			pred = initial;
-		} else {
-			pred = makeUnivQuant(
-					decls.toArray(new BoundIdentDecl[decls.size()]), initial);
-		}
+		Predicate pred = bindWithUnivQuant(initial, identifiers);
 		ITypeCheckResult result = pred.typeCheck(typeEnvironment);
 		assert !result.hasProblem();
 		return pred;
+	}
+
+	protected Predicate bindWithUnivQuant(Predicate predicate, Collection<FreeIdentifier> identifiers) {
+		if (identifiers.isEmpty()) {
+			return predicate;
+		}
+		// Identifiers become bound identifiers of the predicate and an universal
+		// quantifier is created with these identifiers
+		return makeUnivQuant(identifiers.stream().map(i -> factory.makeBoundIdentDecl(i.getName(), null, i.getType()))
+				.toArray(BoundIdentDecl[]::new), predicate.bindTheseIdents(identifiers));
 	}
 
 	private static String VAR_TEMP_NAME = "_z_";
@@ -305,25 +319,20 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 
 		List<FreeIdentifier> identsToBind = new ArrayList<FreeIdentifier>();
 		Predicate[] typingPreds = new Predicate[3];
-		BoundIdentDecl[] decls = new BoundIdentDecl[3];
 		identsToBind.add(x);
-		decls[0] = factory.makeBoundIdentDecl(x.getName(), null, x.getType());
 		typingPreds[0] = factory.makeRelationalPredicate(Formula.IN, x, x
 				.getType().toExpression(), null);
 		identsToBind.add(y);
-		decls[1] = factory.makeBoundIdentDecl(y.getName(), null, y.getType());
 		typingPreds[1] = factory.makeRelationalPredicate(Formula.IN, y, y
 				.getType().toExpression(), null);
 		identsToBind.add(z);
-		decls[2] = factory.makeBoundIdentDecl(z.getName(), null, z.getType());
 		typingPreds[2] = factory.makeRelationalPredicate(Formula.IN, z, z
 				.getType().toExpression(), null);
 
 		Predicate rawCondition = makeImp(makeConj(factory, typingPreds),
 				makeImp(assocCond.getWDPredicate(), assocCond));
 
-		rawCondition = rawCondition.bindTheseIdents(identsToBind);
-		rawCondition = makeUnivQuant(decls, rawCondition);
+		rawCondition = bindWithUnivQuant(rawCondition, identsToBind);
 		ITypeCheckResult result = rawCondition.typeCheck(typeEnvironment);
 		assert !result.hasProblem();
 		return rawCondition;
