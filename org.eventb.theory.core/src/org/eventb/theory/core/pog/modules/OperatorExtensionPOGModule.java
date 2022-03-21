@@ -12,8 +12,10 @@ import static org.eventb.core.seqprover.eventbExtensions.DLib.makeConj;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeEq;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeImp;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeUnivQuant;
+import static org.eventb.theory.core.util.CoreUtilities.newCoreException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,10 +32,12 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -118,27 +122,48 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		}
 		// get the well-definedness condition
 		final Predicate wdCondition = definition.getPredicate(localTypeEnvironment);
+		Predicate wdDefinition = null;
 		// get the definition
 		final ISCDirectOperatorDefinition[] directDefinitions = definition
 				.getDirectOperatorDefinitions();
-		if (directDefinitions.length != 1) {
-			ISCRecursiveOperatorDefinition[] recursiveDefs = definition.getRecursiveOperatorDefinitions();
-			for (ISCRecursiveOperatorDefinition recursiveDef : recursiveDefs) {
-				String inductiveArgument = recursiveDef.getInductiveArgument();
-				ISCRecursiveDefinitionCase[] recursiveDefinitionCases = recursiveDef
-						.getRecursiveDefinitionCases();
-				for (ISCRecursiveDefinitionCase recursiveDefinitionCase : recursiveDefinitionCases) {
-					// @htson: (TODO) Commentted out at the moment as the expression string needs to be typed check. 
-					// String expressionString = recursiveDefinitionCase.getExpressionString();
-					// Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(localTypeEnvironment.getFormulaFactory(), localTypeEnvironment);
-					// Predicate wdPredicate = scFormula.getWDPredicate();
-					
+		final ISCRecursiveOperatorDefinition[] recursiveDefs = definition.getRecursiveOperatorDefinitions();
+		if (directDefinitions.length == 1) {
+			wdDefinition = directDefinitions[0].getSCFormula(factory, localTypeEnvironment).getWDPredicate();
+		} else if (recursiveDefs.length == 1) {
+			ISCRecursiveOperatorDefinition recursiveDef = recursiveDefs[0];
+			String inductiveArgument = recursiveDef.getInductiveArgument();
+			FreeIdentifier inductiveArg = factory.makeFreeIdentifier(inductiveArgument, null,
+					localTypeEnvironment.getType(inductiveArgument));
+			ISCRecursiveDefinitionCase[] recursiveDefinitionCases = recursiveDef
+					.getRecursiveDefinitionCases();
+			List<Predicate> casesWD = new ArrayList<>();
+			for (ISCRecursiveDefinitionCase recursiveDefinitionCase : recursiveDefinitionCases) {
+				String expressionString = recursiveDefinitionCase.getExpressionString();
+				IParseResult parseRes = factory.parseExpression(expressionString, recursiveDefinitionCase);
+				assert !parseRes.hasProblem();
+				Expression caseExpression = parseRes.getParsedExpression();
+				RelationalPredicate predicate = factory.makeRelationalPredicate(Formula.EQUAL, inductiveArg,
+						caseExpression, null);
+				ITypeCheckResult tcRes = predicate.typeCheck(localTypeEnvironment);
+				assert !tcRes.hasProblem();
+				ITypeEnvironmentBuilder extendedTypeEnv = localTypeEnvironment.makeBuilder();
+				extendedTypeEnv.addAll(tcRes.getInferredEnvironment());
+				Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(factory, extendedTypeEnv);
+				Predicate wdPredicate = scFormula.getWDPredicate();
+				Predicate caseWD = makeImp(makeEq(inductiveArg, caseExpression), wdPredicate);
+				List<FreeIdentifier> boundIdents = Arrays.asList(caseExpression.getFreeIdentifiers());
+				if (!boundIdents.isEmpty()) {
+					caseWD = makeUnivQuant(
+							boundIdents.stream().map(i -> factory.makeBoundIdentDecl(i.getName(), null, i.getType()))
+									.toArray(BoundIdentDecl[]::new),
+							caseWD.bindTheseIdents(boundIdents));
 				}
+				casesWD.add(caseWD);
 			}
-			return;
+			wdDefinition = makeConj(factory, casesWD);
+		} else {
+			throw newCoreException("Invalid operator: should have a direct or a recursive definition");
 		}
-		Formula<?> defFormula = directDefinitions[0].getSCFormula(
-				factory, localTypeEnvironment);
 		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, definition),
 				makeSource(IPOSource.DEFAULT_ROLE, definition.getSource()) };
@@ -149,7 +174,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		String poName = definition.getLabel()
 				+ OPERATOR_WD_POSTFIX;
 		Predicate wdStrengthPredicate = getClosedPOPredicate(
-				wdCondition, defFormula.getWDPredicate(),
+				wdCondition, wdDefinition,
 				identifiers, localTypeEnvironment);
 		if (!isTrivial(wdStrengthPredicate)) {
 			createPO(
@@ -164,6 +189,12 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 							new IPOGHint[] { getLocalHypothesisSelectionHint(
 									target, poName, hyp) }, true, null);
 		}
+		if (directDefinitions.length != 1) {
+			// Following PO generation only works on direct definitions (bug #41)
+			return;
+		}
+		Formula<?> defFormula = directDefinitions[0].getSCFormula(
+				factory, localTypeEnvironment);
 		// ///////////////////////////////////
 		// ////////Associativity
 		if (definition.isAssociative()) {
