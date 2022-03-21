@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2020 University of Southampton and others.
+ * Copyright (c) 2011, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,15 @@ import static org.eventb.theory.core.util.CoreUtilities.newCoreException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.basis.SCExpressionElement;
 import org.eventb.theory.core.ISCRecursiveDefinitionCase;
 import org.eventb.theory.core.TheoryAttributes;
@@ -72,6 +77,27 @@ public class SCRecursiveDefinitionCase extends SCExpressionElement implements
 		return ELEMENT_TYPE;
 	}
 
-	
+	@Override
+	public Expression getSCCaseExpression(ITypeEnvironmentBuilder typeEnv, FreeIdentifier inductiveArgument)
+			throws CoreException {
+		final FormulaFactory ff = typeEnv.getFormulaFactory();
+		String expressionString = getExpressionString();
+		IParseResult parseRes = ff.parseExpression(expressionString, this);
+		if (parseRes.hasProblem()) {
+			throw newCoreException("Error parsing case expression: " + expressionString + "\nwith factory: "
+					+ ff.getExtensions() + "\nresult: " + parseRes);
+		}
+		Expression caseExpression = parseRes.getParsedExpression();
+		// We must use a predicate like inductiveArgument = caseExpression for type inference
+		RelationalPredicate predicate = ff.makeRelationalPredicate(Formula.EQUAL, inductiveArgument, caseExpression,
+				null);
+		ITypeCheckResult tcRes = predicate.typeCheck(typeEnv);
+		if (tcRes.hasProblem()) {
+			throw newCoreException("Error typechecking case expression: " + expressionString + "\nwith factory: "
+					+ ff.getExtensions() + "\nresult: " + tcRes);
+		}
+		typeEnv.addAll(tcRes.getInferredEnvironment());
+		return caseExpression;
+	}
 
 }

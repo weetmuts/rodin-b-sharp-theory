@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 University of Southampton and others.
+ * Copyright (c) 2011, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,13 +24,9 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IInferredTypeEnvironment;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IConstructorBuilder;
 import org.eventb.core.ast.datatype.IDatatype;
@@ -192,23 +188,10 @@ public class FormulaExtensionsLoader {
 				FreeIdentifier inductiveArg = factory.makeFreeIdentifier(recDef.getInductiveArgument(),
 						null, localTypeEnvironment.getType(recDef.getInductiveArgument()));
 				for (ISCRecursiveDefinitionCase recCase : recDef.getRecursiveDefinitionCases()){
-					String expressionString = recCase.getExpressionString();
-					IParseResult parseRes = factory.parseExpression(expressionString, null);
-					if (!parseRes.hasProblem()){
-						Expression caseExp = parseRes.getParsedExpression();
-						RelationalPredicate predicate = factory.makeRelationalPredicate(Formula.EQUAL, inductiveArg, caseExp, null);
-						ITypeCheckResult typeCheckRes = predicate.typeCheck(localTypeEnvironment);
-						if(!typeCheckRes.hasProblem()){
-							IInferredTypeEnvironment inferredEnvironment = typeCheckRes.getInferredEnvironment();
-							// We cannot directly use an inferred type environment for type-checking a formula,
-							// as it only exposes the newly inferred identifiers. Hence using a new type environment.
-							final ITypeEnvironmentBuilder typeEnv = localTypeEnvironment.makeBuilder();
-							typeEnv.addAll(inferredEnvironment);
-							Formula<?> caseDef = recCase.getSCFormula(factory, typeEnv);
-							recursiveCases.put(predicate.getRight(), caseDef);
-						}
-					}
-					
+					ITypeEnvironmentBuilder typeEnv = localTypeEnvironment.makeBuilder();
+					Expression caseExp = recCase.getSCCaseExpression(typeEnv, inductiveArg);
+					Formula<?> caseDef = recCase.getSCFormula(factory, typeEnv);
+					recursiveCases.put(caseExp, caseDef);
 				}
 				
 				addedExtensions.setDefinition(new RecursiveDefinition(inductiveArg, recursiveCases));

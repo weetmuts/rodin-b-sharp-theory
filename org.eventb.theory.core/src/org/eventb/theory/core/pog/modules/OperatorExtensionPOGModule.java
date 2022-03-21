@@ -33,12 +33,10 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -132,16 +130,8 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 					.getRecursiveDefinitionCases();
 			List<Predicate> casesWD = new ArrayList<>();
 			for (ISCRecursiveDefinitionCase recursiveDefinitionCase : recursiveDefinitionCases) {
-				String expressionString = recursiveDefinitionCase.getExpressionString();
-				IParseResult parseRes = factory.parseExpression(expressionString, recursiveDefinitionCase);
-				assert !parseRes.hasProblem();
-				Expression caseExpression = parseRes.getParsedExpression();
-				RelationalPredicate predicate = factory.makeRelationalPredicate(Formula.EQUAL, inductiveArg,
-						caseExpression, null);
-				ITypeCheckResult tcRes = predicate.typeCheck(localTypeEnvironment);
-				assert !tcRes.hasProblem();
 				ITypeEnvironmentBuilder extendedTypeEnv = localTypeEnvironment.makeBuilder();
-				extendedTypeEnv.addAll(tcRes.getInferredEnvironment());
+				Expression caseExpression = recursiveDefinitionCase.getSCCaseExpression(extendedTypeEnv, inductiveArg);
 				Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(factory, extendedTypeEnv);
 				Predicate wdPredicate = scFormula.getWDPredicate();
 				Predicate caseWD = makeImp(makeEq(inductiveArg, caseExpression), wdPredicate);
