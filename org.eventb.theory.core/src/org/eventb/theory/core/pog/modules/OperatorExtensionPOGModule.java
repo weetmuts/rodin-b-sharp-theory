@@ -16,6 +16,7 @@ import static org.eventb.theory.core.util.CoreUtilities.newCoreException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -151,13 +152,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 				Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(factory, extendedTypeEnv);
 				Predicate wdPredicate = scFormula.getWDPredicate();
 				Predicate caseWD = makeImp(makeEq(inductiveArg, caseExpression), wdPredicate);
-				List<FreeIdentifier> boundIdents = Arrays.asList(caseExpression.getFreeIdentifiers());
-				if (!boundIdents.isEmpty()) {
-					caseWD = makeUnivQuant(
-							boundIdents.stream().map(i -> factory.makeBoundIdentDecl(i.getName(), null, i.getType()))
-									.toArray(BoundIdentDecl[]::new),
-							caseWD.bindTheseIdents(boundIdents));
-				}
+				caseWD = bindWithUnivQuant(caseWD, Arrays.asList(caseExpression.getFreeIdentifiers()));
 				casesWD.add(caseWD);
 			}
 			wdDefinition = makeConj(factory, casesWD);
@@ -262,28 +257,27 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		}
 		Predicate boundPred = makeImp(wdCondition, otherPredicate);
 		List<Predicate> typingPreds = new ArrayList<Predicate>();
-		List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>();
 		for (FreeIdentifier identifier : identifiers) {
 			typingPreds.add(factory.makeRelationalPredicate(Formula.IN,
 					identifier, identifier.getType().toExpression(),
 					null));
-			decls.add(factory.makeBoundIdentDecl(identifier.getName(), null,
-					identifier.getType()));
 		}
 		Predicate initial = makeImp(makeConj(factory, typingPreds),
 				boundPred);
-
-		initial = initial.bindTheseIdents(identifiers);
-		Predicate pred = null;
-		if (decls.size() == 0) {
-			pred = initial;
-		} else {
-			pred = makeUnivQuant(
-					decls.toArray(new BoundIdentDecl[decls.size()]), initial);
-		}
+		Predicate pred = bindWithUnivQuant(initial, identifiers);
 		ITypeCheckResult result = pred.typeCheck(typeEnvironment);
 		assert !result.hasProblem();
 		return pred;
+	}
+
+	protected Predicate bindWithUnivQuant(Predicate predicate, Collection<FreeIdentifier> identifiers) {
+		if (identifiers.isEmpty()) {
+			return predicate;
+		}
+		// Identifiers become bound identifiers of the predicate and an universal
+		// quantifier is created with these identifiers
+		return makeUnivQuant(identifiers.stream().map(i -> factory.makeBoundIdentDecl(i.getName(), null, i.getType()))
+				.toArray(BoundIdentDecl[]::new), predicate.bindTheseIdents(identifiers));
 	}
 
 	private static String VAR_TEMP_NAME = "_z_";
@@ -335,25 +329,20 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 
 		List<FreeIdentifier> identsToBind = new ArrayList<FreeIdentifier>();
 		Predicate[] typingPreds = new Predicate[3];
-		BoundIdentDecl[] decls = new BoundIdentDecl[3];
 		identsToBind.add(x);
-		decls[0] = factory.makeBoundIdentDecl(x.getName(), null, x.getType());
 		typingPreds[0] = factory.makeRelationalPredicate(Formula.IN, x, x
 				.getType().toExpression(), null);
 		identsToBind.add(y);
-		decls[1] = factory.makeBoundIdentDecl(y.getName(), null, y.getType());
 		typingPreds[1] = factory.makeRelationalPredicate(Formula.IN, y, y
 				.getType().toExpression(), null);
 		identsToBind.add(z);
-		decls[2] = factory.makeBoundIdentDecl(z.getName(), null, z.getType());
 		typingPreds[2] = factory.makeRelationalPredicate(Formula.IN, z, z
 				.getType().toExpression(), null);
 
 		Predicate rawCondition = makeImp(makeConj(factory, typingPreds),
 				makeImp(assocCond.getWDPredicate(), assocCond));
 
-		rawCondition = rawCondition.bindTheseIdents(identsToBind);
-		rawCondition = makeUnivQuant(decls, rawCondition);
+		rawCondition = bindWithUnivQuant(rawCondition, identsToBind);
 		ITypeCheckResult result = rawCondition.typeCheck(typeEnvironment);
 		assert !result.hasProblem();
 		return rawCondition;
