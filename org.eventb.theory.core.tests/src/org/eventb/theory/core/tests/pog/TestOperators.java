@@ -90,4 +90,33 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 				sequents[0].getGoals()[0].getPredicateString());
 	}
 
+	/*
+	 * Test that no unneeded PO is generated for the WD condition of an operator
+	 * with a recursive definition that does not require it.
+	 */
+	@Test
+	public void test_recursiveDefNoWD() throws CoreException {
+		ITheoryRoot root = createTheory(THEORY_NAME);
+		addTypeParameters(root, "T");
+		addDatatypeDefinition(root, "List", makeSList("T"), makeSList("nil", "cons"),
+				new String[][] { makeSList(), makeSList("head", "tail") },
+				new String[][] { makeSList(), makeSList("T", "List(T)") });
+		INewOperatorDefinition opDef = addRawOperatorDefinition(root, "listSize", Notation.PREFIX,
+				FormulaType.EXPRESSION, false, false, makeSList("l"), makeSList("List(T)"), makeSList());
+		IRecursiveOperatorDefinition recDef = opDef.createChild(IRecursiveOperatorDefinition.ELEMENT_TYPE, null, null);
+		recDef.setInductiveArgument("l", null);
+		IRecursiveDefinitionCase recCase1 = recDef.createChild(IRecursiveDefinitionCase.ELEMENT_TYPE, null, null);
+		recCase1.setExpressionString("nil", null);
+		recCase1.setFormula("0", null);
+		IRecursiveDefinitionCase recCase2 = recDef.createChild(IRecursiveDefinitionCase.ELEMENT_TYPE, null, null);
+		recCase2.setExpressionString("cons(x, l2)", null);
+		recCase2.setFormula("listSize(l2)+1", null);
+		saveRodinFileOf(root);
+		runBuilder();
+		isAccurate(root.getSCTheoryRoot());
+		IPORoot poRoot = root.getPORoot();
+		IPOSequent[] sequents = poRoot.getChildrenOfType(IPOSequent.ELEMENT_TYPE);
+		assertEquals("expected no PO", 0, sequents.length);
+	}
+
 }

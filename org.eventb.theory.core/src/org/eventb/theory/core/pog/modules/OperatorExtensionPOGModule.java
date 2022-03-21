@@ -134,9 +134,11 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 				Expression caseExpression = recursiveDefinitionCase.getSCCaseExpression(extendedTypeEnv, inductiveArg);
 				Formula<?> scFormula = recursiveDefinitionCase.getSCFormula(factory, extendedTypeEnv);
 				Predicate wdPredicate = scFormula.getWDPredicate();
-				Predicate caseWD = makeImp(makeEq(inductiveArg, caseExpression), wdPredicate);
-				caseWD = bindWithUnivQuant(caseWD, Arrays.asList(caseExpression.getFreeIdentifiers()));
-				casesWD.add(caseWD);
+				if (wdPredicate.getTag() != Formula.BTRUE) {
+					Predicate caseWD = makeImp(makeEq(inductiveArg, caseExpression), wdPredicate);
+					caseWD = bindWithUnivQuant(caseWD, Arrays.asList(caseExpression.getFreeIdentifiers()));
+					casesWD.add(caseWD);
+				}
 			}
 			wdDefinition = makeConj(factory, casesWD);
 		} else {
