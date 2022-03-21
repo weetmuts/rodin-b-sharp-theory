@@ -87,13 +87,6 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 		typeEnvironment = repository.getTypeEnvironment();
 		target = repository.getTarget();
 		natureFactory = POGNatureFactory.getInstance();
-		IRodinFile file = (IRodinFile) element;
-		ISCTheoryRoot theory = (ISCTheoryRoot) file.getRoot();
-		ISCNewOperatorDefinition definitions[] = theory
-				.getSCNewOperatorDefinitions();
-		for (ISCNewOperatorDefinition definition : definitions) {
-			generateCorrespondingPOs(definition, monitor);
-		}
 	}
 
 	@Override
@@ -239,8 +232,13 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		// All done in initialisation of module
-
+		IRodinFile file = (IRodinFile) element;
+		ISCTheoryRoot theory = (ISCTheoryRoot) file.getRoot();
+		ISCNewOperatorDefinition definitions[] = theory
+				.getSCNewOperatorDefinitions();
+		for (ISCNewOperatorDefinition definition : definitions) {
+			generateCorrespondingPOs(definition, monitor);
+		}
 	}
 
 	@Override
