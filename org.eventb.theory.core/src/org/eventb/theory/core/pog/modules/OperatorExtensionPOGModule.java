@@ -267,7 +267,6 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 			typingPreds.add(factory.makeRelationalPredicate(Formula.IN,
 					identifier, identifier.getType().toExpression(),
 					null));
-			identifiers.add(identifier);
 			decls.add(factory.makeBoundIdentDecl(identifier.getName(), null,
 					identifier.getType()));
 		}
