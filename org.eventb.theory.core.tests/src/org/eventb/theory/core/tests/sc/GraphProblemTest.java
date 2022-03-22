@@ -184,6 +184,7 @@ public class GraphProblemTest {
 		spec(TheoryGraphProblem.InductiveCaseNotAppropriateExp, 1),
 		spec(TheoryGraphProblem.ConsArgNotIdentInCase, 1),
 		spec(TheoryGraphProblem.IdentCannotBeUsedAsConsArg, 1),
+		spec(TheoryGraphProblem.IdentAlreadyUsedInCase, 1),
 		spec(TheoryGraphProblem.UnableToTypeCase, 0),
 		spec(TheoryGraphProblem.RecCaseAlreadyCovered, 0),
 		

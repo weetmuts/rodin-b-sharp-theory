@@ -140,6 +140,7 @@ public final class Messages {
 	public static String scuser_InductiveCaseNotAppropriateExp;
 	public static String scuser_ConsArgNotIdentInCase;
 	public static String scuser_IdentCannotBeUsedAsConsArg;
+	public static String scuser_IdentAlreadyUsedInCase;
 	public static String scuser_UnableToTypeCase;
 	public static String scuser_RecCaseAlreadyCovered;
 	public static String scuser_TypeMissmatchOfRecDef;

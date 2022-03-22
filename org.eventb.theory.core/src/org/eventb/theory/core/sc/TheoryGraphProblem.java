@@ -122,6 +122,7 @@ public enum TheoryGraphProblem implements IRodinProblem {
 			InductiveCaseNotAppropriateExp(IMarker.SEVERITY_ERROR, Messages.scuser_InductiveCaseNotAppropriateExp), 
 			ConsArgNotIdentInCase(IMarker.SEVERITY_ERROR, Messages.scuser_ConsArgNotIdentInCase), 
 			IdentCannotBeUsedAsConsArg(IMarker.SEVERITY_ERROR, Messages.scuser_IdentCannotBeUsedAsConsArg), 
+			IdentAlreadyUsedInCase(IMarker.SEVERITY_ERROR, Messages.scuser_IdentAlreadyUsedInCase),
 			UnableToTypeCase(IMarker.SEVERITY_ERROR, Messages.scuser_UnableToTypeCase), 
 			RecCaseAlreadyCovered(IMarker.SEVERITY_ERROR, Messages.scuser_RecCaseAlreadyCovered), 
 			TypeMissmatchOfRecDef(IMarker.SEVERITY_ERROR, Messages.scuser_TypeMissmatchOfRecDef), 

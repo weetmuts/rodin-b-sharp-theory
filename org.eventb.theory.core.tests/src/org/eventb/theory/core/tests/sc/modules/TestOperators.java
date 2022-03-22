@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2020 University of Southampton and others.
+ * Copyright (c) 2012, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -722,4 +722,28 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		hasError(scOp);
 		hasMarker(recDef, TheoryAttributes.INDUCTIVE_ARGUMENT_ATTRIBUTE, TheoryGraphProblem.NoCoverageAllRecCase);
 	}
+
+	@Test
+	public void testOperators_034_DupRecCaseVariable() throws Exception {
+		ITheoryRoot root = createTheory(THEORY_NAME);
+		addDatatypeDefinition(root, "Pair", makeSList(), makeSList("mkPair"), new String[][] {
+				makeSList("fst", "snd") }, new String[][] { makeSList("ℤ", "ℤ") });
+		INewOperatorDefinition opDef = addRawOperatorDefinition(root, "pairSum", Notation.PREFIX,
+				FormulaType.EXPRESSION, false, false, makeSList("p"), makeSList("Pair"), makeSList());
+		IRecursiveOperatorDefinition recDef = opDef.createChild(IRecursiveOperatorDefinition.ELEMENT_TYPE, null, null);
+		recDef.setInductiveArgument("p", null);
+
+		IRecursiveDefinitionCase recCase1 = recDef.createChild(IRecursiveDefinitionCase.ELEMENT_TYPE, null, null);
+		recCase1.setExpressionString("mkPair(x, x)", null);
+		recCase1.setFormula("x", null);
+
+		saveRodinFileOf(root);
+		runBuilder();
+		ISCTheoryRoot scTheoryRoot = root.getSCTheoryRoot();
+		isNotAccurate(scTheoryRoot);
+		ISCNewOperatorDefinition scOp = getOperatorDefinition(scTheoryRoot, "pairSum");
+		hasError(scOp);
+		hasMarker(recCase1, EventBAttributes.EXPRESSION_ATTRIBUTE, TheoryGraphProblem.IdentAlreadyUsedInCase, "x");
+	}
+
 }

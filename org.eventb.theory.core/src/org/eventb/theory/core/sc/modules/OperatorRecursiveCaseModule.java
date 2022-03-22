@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2020 University of Southampton and others.
+ * Copyright (c) 2011, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@ package org.eventb.theory.core.sc.modules;
 import static org.eventb.core.ast.extensions.maths.AstUtilities.makeBTRUE;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -122,6 +124,7 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 			ExtendedExpression constructorExp = (ExtendedExpression) caseExpression;
 			Expression[] childExpressions = constructorExp.getChildExpressions();
 			boolean illegalConsArg = false;
+			Set<String> usedIdentifiers = new HashSet<>();
 			for (Expression childExpression : childExpressions) {
 				if (!(childExpression instanceof FreeIdentifier)) {
 					illegalConsArg = true;
@@ -135,6 +138,13 @@ public class OperatorRecursiveCaseModule extends SCProcessorModule {
 					theoryAccuracyInfo.setNotAccurate();
 					createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
 							TheoryGraphProblem.IdentCannotBeUsedAsConsArg,
+							((FreeIdentifier) childExpression).toString());
+				} else if (!usedIdentifiers.add(((FreeIdentifier) childExpression).getName())) {
+					illegalConsArg = true;
+					recursiveDefinitionInfo.setNotAccurate();
+					theoryAccuracyInfo.setNotAccurate();
+					createProblemMarker(definitionCase, EventBAttributes.EXPRESSION_ATTRIBUTE,
+							TheoryGraphProblem.IdentAlreadyUsedInCase,
 							((FreeIdentifier) childExpression).toString());
 				}
 			}
