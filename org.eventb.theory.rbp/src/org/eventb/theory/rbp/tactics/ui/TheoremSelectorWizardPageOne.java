@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2020 University of Southampton and others.
+ * Copyright (c) 2011, 2022 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,26 @@ package org.eventb.theory.rbp.tactics.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eventb.theory.core.ISCTheorem;
 import org.eventb.theory.internal.rbp.rulebase.TheoremsRetriever;
 import org.rodinp.core.RodinDBException;
@@ -35,9 +41,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 	
 	private Combo projectCombo;
 	private Combo theoryCombo;
-	private Table table;
-	private TableColumn nameColumn;
-	private TableColumn theoremColumn;
+	private TreeViewer treeViewer;
 	
 	private TheoremsRetriever retriever;
 	private String selectedProject = null;
@@ -101,50 +105,64 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 				}
 				selectedTheory = value;
 				selectedTheorems = null;
-				table.removeAll();
-				try {
-					for (ISCTheorem thy : retriever.getSCTheorems(selectedProject, selectedTheory)){
-						TableItem item = new TableItem(table, SWT.NONE);
-						item.setText(0, thy.getLabel());
-						item.setText(1, thy.getPredicateString());
+				treeViewer.setInput(retriever.getSCTheorems(selectedProject, selectedTheory).toArray());
+				dialogChanged();
+			}
+		});
+
+		new Label(container, SWT.NONE);
+		FilteredTree filteredTree = new FilteredTree(container, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI,
+				new PatternFilter() {
+					@Override
+					protected boolean isLeafMatch(Viewer viewer, Object element) {
+						try {
+							return wordMatches(((ISCTheorem) element).getLabel());
+						} catch (RodinDBException e) {
+							return false;
+						}
 					}
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				dialogChanged();
-			}
-		});
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		
-		ScrolledComposite scrolledComposite = new ScrolledComposite(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
-		
-		table = new Table(scrolledComposite, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
-		table.addSelectionListener(new SelectionAdapter() {
-			
+				}, true, true);
+		filteredTree.setInitialText("Filter by theorem name...");
+		treeViewer = filteredTree.getViewer();
+		treeViewer.getTree().setHeaderVisible(true);
+		treeViewer.getTree().setLinesVisible(true);
+		TreeViewerColumn colName = new TreeViewerColumn(treeViewer, SWT.NONE);
+		colName.getColumn().setText(NAME_COL);
+		colName.getColumn().setWidth(150);
+		TreeViewerColumn colThm = new TreeViewerColumn(treeViewer, SWT.NONE);
+		colThm.getColumn().setText(THEOREM_COL);
+		colThm.getColumn().setWidth(550);
+		treeViewer.setContentProvider(new ITreeContentProvider() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				selectedTheorems = getTheorems(table.getSelection());
-				dialogChanged();
+			public boolean hasChildren(Object element) {
+				return false;
+			}
+			@Override
+			public Object getParent(Object element) {
+				return null;
+			}
+			@Override
+			public Object[] getElements(Object inputElement) {
+				return (Object[]) inputElement;
+			}
+			@Override
+			public Object[] getChildren(Object parentElement) {
+				return null;
 			}
 		});
-		
-		nameColumn = new TableColumn(table, SWT.LEFT);
-		nameColumn.setWidth(150);
-		nameColumn.setText(NAME_COL);
-		
-		theoremColumn = new TableColumn(table, SWT.LEFT);
-		theoremColumn.setWidth(550);
-		theoremColumn.setText(THEOREM_COL);
-		scrolledComposite.setContent(table);
+		treeViewer.setLabelProvider(new TheoremLabelProvider());
+		treeViewer.addSelectionChangedListener(event -> {
+			ISelection sel = event.getSelection();
+			if (sel.isEmpty()) {
+				selectedTheorems = null;
+			} else if (sel instanceof IStructuredSelection) {
+				selectedTheorems = new ArrayList<ISCTheorem>();
+				for (Object o : (IStructuredSelection) sel) {
+					selectedTheorems.add((ISCTheorem) o);
+				}
+			}
+			dialogChanged();
+		});
 		
 		dialogChanged();
 		setControl(container);
@@ -156,17 +174,14 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 	protected void dialogChanged() {
 		if(selectedProject == null){
 			theoryCombo.setEnabled(false);
-			table.setEnabled(false);
 			updateStatus("Project must be specified");
 			return;
 		}
 		theoryCombo.setEnabled(true);
 		if (selectedTheory == null) {
-			table.setEnabled(false);
 			updateStatus("Theory must be specified");
 			return;
 		}
-		table.setEnabled(true);
 		if(selectedTheorems == null){
 			updateStatus("Theorem must be specified");
 			return;
@@ -192,20 +207,32 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 		return selectedTheorems;
 	}
 	
-	private List<ISCTheorem> getTheorems(TableItem[] items){
-		List<ISCTheorem> l = new ArrayList<ISCTheorem>();
-		for (TableItem item : items){
-			String name = item.getText(0);
-			ISCTheorem deployedTheorem = retriever.getSCTheorem(selectedProject, selectedTheory, name);
-			if (deployedTheorem != null)
-				l.add(deployedTheorem);
-		}
-		return l;
-	}
-	
 	@Override
 	public TheoremSelectorWizard getWizard() {
 		return (TheoremSelectorWizard) super.getWizard();
+	}
+
+	private static class TheoremLabelProvider extends BaseLabelProvider implements ITableLabelProvider {
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			try {
+				switch (columnIndex) {
+				case 0:
+					return ((ISCTheorem) element).getLabel();
+				case 1:
+					return ((ISCTheorem) element).getPredicateString();
+				default:
+					return "Unknown column";
+				}
+			} catch (RodinDBException e) {
+				return "Error: " + e.getLocalizedMessage();
+			}
+		}
 	}
 	
 }
