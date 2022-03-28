@@ -50,7 +50,7 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		IPOSequent[] sequents = poRoot.getChildrenOfType(IPOSequent.ELEMENT_TYPE);
 		assertEquals("expected one PO", 1, sequents.length);
 		assertEquals("unexpected PO name", "div/Op-WD", sequents[0].getElementName());
-		assertEquals("unexpected PO goal", "∀a⦂ℤ,b⦂ℤ·a∈ℤ∧b∈ℤ⇒(b>0⇒b≠0)",
+		assertEquals("unexpected PO goal", "∀a⦂ℤ,b⦂ℤ·b>0⇒b≠0",
 				sequents[0].getGoals()[0].getPredicateString());
 	}
 
@@ -84,9 +84,9 @@ public class TestOperators extends BasicTheorySCTestWithThyConfig {
 		IPOSequent[] sequents = poRoot.getChildrenOfType(IPOSequent.ELEMENT_TYPE);
 		assertEquals("expected one PO", 1, sequents.length);
 		assertEquals("unexpected PO name", "testOp/Op-WD", sequents[0].getElementName());
-		assertEquals("unexpected PO goal", "∀n⦂ℤ,l⦂List(T)·n∈ℤ∧l∈List(T)⇒(n>0⇒" /* Hypothesis: type info + user WD */
+		assertEquals("unexpected PO goal", "∀n⦂ℤ,l⦂List(T)·n>0⇒" /* Hypothesis: user WD */
 				+ "(l=(nil ⦂ List(T))⇒n≠0)∧" /* Base case */
-				+ "(∀l2⦂List(T),x⦂T·l=cons(x,l2)⇒n>0∧n+1≠0))", /* Recursive case */
+				+ "(∀l2⦂List(T),x⦂T·l=cons(x,l2)⇒n>0∧n+1≠0)", /* Recursive case */
 				sequents[0].getGoals()[0].getPredicateString());
 	}
 

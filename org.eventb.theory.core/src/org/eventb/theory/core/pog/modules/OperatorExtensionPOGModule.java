@@ -249,15 +249,7 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 			return True(factory);
 		}
 		Predicate boundPred = makeImp(wdCondition, otherPredicate);
-		List<Predicate> typingPreds = new ArrayList<Predicate>();
-		for (FreeIdentifier identifier : identifiers) {
-			typingPreds.add(factory.makeRelationalPredicate(Formula.IN,
-					identifier, identifier.getType().toExpression(),
-					null));
-		}
-		Predicate initial = makeImp(makeConj(factory, typingPreds),
-				boundPred);
-		Predicate pred = bindWithUnivQuant(initial, identifiers);
+		Predicate pred = bindWithUnivQuant(boundPred, identifiers);
 		ITypeCheckResult result = pred.typeCheck(typeEnvironment);
 		assert !result.hasProblem();
 		return pred;
