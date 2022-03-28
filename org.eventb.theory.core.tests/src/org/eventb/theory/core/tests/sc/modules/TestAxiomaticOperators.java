@@ -9,8 +9,12 @@ package org.eventb.theory.core.tests.sc.modules;
 
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.sc.ParseProblem;
 import org.eventb.theory.core.IAxiomaticDefinitionsBlock;
+import org.eventb.theory.core.IAxiomaticOperatorDefinition;
 import org.eventb.theory.core.ITheoryRoot;
+import org.eventb.theory.core.TheoryAttributes;
+import org.eventb.theory.core.sc.TheoryGraphProblem;
 import org.eventb.theory.core.tests.sc.BasicTheorySCTestWithThyConfig;
 import org.junit.Test;
 
@@ -36,17 +40,33 @@ public class TestAxiomaticOperators extends BasicTheorySCTestWithThyConfig {
 	}
 
 	/**
-	 * invalid type
+	 * invalid type (provided type does not exist)
 	 */
 	@Test
 	public void testAxiomaticOperators_002_InvalidType() throws Exception {
 		ITheoryRoot root = createTheory(THEORY_NAME);
 		IAxiomaticDefinitionsBlock block = addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);
-		addAxiomaticOperatorDefinition(block, "op1", Notation.PREFIX, FormulaType.EXPRESSION, false, false,
-				makeSList("x"), makeSList("ℤ"), "Anything");
+		IAxiomaticOperatorDefinition opDef = addAxiomaticOperatorDefinition(block, "op1", Notation.PREFIX,
+				FormulaType.EXPRESSION, false, false, makeSList("x"), makeSList("ℤ"), "Anything");
 		saveRodinFileOf(root);
 		runBuilder();
 		isNotAccurate(root.getSCTheoryRoot());
+		hasMarker(opDef, TheoryAttributes.TYPE_ATTRIBUTE, ParseProblem.TypeUnknownError);
+	}
+
+	/**
+	 * invalid type (expression provided instead of type)
+	 */
+	@Test
+	public void testAxiomaticOperators_003_InvalidType() throws Exception {
+		ITheoryRoot root = createTheory(THEORY_NAME);
+		IAxiomaticDefinitionsBlock block = addAxiomaticDefinitionsBlock(root, BLOCK_LABEL);
+		IAxiomaticOperatorDefinition opDef = addAxiomaticOperatorDefinition(block, "op1", Notation.PREFIX,
+				FormulaType.EXPRESSION, false, false, makeSList("x"), makeSList("ℤ"), "0");
+		saveRodinFileOf(root);
+		runBuilder();
+		isNotAccurate(root.getSCTheoryRoot());
+		hasMarker(opDef, TheoryAttributes.TYPE_ATTRIBUTE, TheoryGraphProblem.AxiomaticInvalidTypeError, "op1");
 	}
 
 }
