@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -136,7 +137,9 @@ public class OperatorExtensionPOGModule extends UtilityPOGModule {
 				Predicate wdPredicate = scFormula.getWDPredicate();
 				if (wdPredicate.getTag() != Formula.BTRUE) {
 					Predicate caseWD = makeImp(makeEq(inductiveArg, caseExpression), wdPredicate);
-					caseWD = bindWithUnivQuant(caseWD, Arrays.asList(caseExpression.getFreeIdentifiers()));
+					// Bind free identifiers of the case expression that are not in the environment
+					caseWD = bindWithUnivQuant(caseWD, Arrays.stream(caseExpression.getFreeIdentifiers())
+							.filter(ident -> !localTypeEnvironment.contains(ident)).collect(Collectors.toList()));
 					casesWD.add(caseWD);
 				}
 			}
