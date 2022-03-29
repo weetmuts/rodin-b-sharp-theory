@@ -88,7 +88,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 				lastSelectedProject = value;
 				selectedTheorems = null;
 				selectedTheory = null;
-				theoryCombo.setItems(retriever.getTheories(selectedProject));
+				setTheoryComboItemsFromProject();
 				dialogChanged();
 			}
 		});
@@ -192,9 +192,29 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 				}
 			}
 		}
+		// Auto-select project if there is only one option
+		if (selectedProject == null && projects.length == 1) {
+			projectCombo.select(0);
+			selectedProject = projects[0];
+			lastSelectedProject = selectedProject;
+			setTheoryComboItemsFromProject();
+		}
 		
 		dialogChanged();
 		setControl(container);
+	}
+
+	protected void setTheoryComboItemsFromProject() {
+		if (selectedProject == null) {
+			return;
+		}
+		String[] theories = retriever.getTheories(selectedProject);
+		theoryCombo.setItems(theories);
+		if (theories.length == 1) {
+			theoryCombo.select(0);
+			selectedTheory = theories[0];
+			lastSelectedTheory = selectedTheory;
+		}
 	}
 	
 	/**
