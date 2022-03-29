@@ -45,7 +45,9 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 	
 	private TheoremsRetriever retriever;
 	private String selectedProject = null;
+	private static String lastSelectedProject = null;
 	private String selectedTheory = null;
+	private static String lastSelectedTheory = null;
 	private List<ISCTheorem> selectedTheorems = null;
 
 	public TheoremSelectorWizardPageOne(TheoremsRetriever retriever) {
@@ -72,7 +74,8 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 		projectCombo = new Combo(container, SWT.READ_ONLY | SWT.BORDER
 				| SWT.SINGLE);
 		projectCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		projectCombo.setItems(retriever.getRodinProjects());
+		final String[] projects = retriever.getRodinProjects();
+		projectCombo.setItems(projects);
 		projectCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -82,6 +85,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 					return;
 				}
 				selectedProject = value;
+				lastSelectedProject = value;
 				selectedTheorems = null;
 				selectedTheory = null;
 				theoryCombo.setItems(retriever.getTheories(selectedProject));
@@ -104,6 +108,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 					return;
 				}
 				selectedTheory = value;
+				lastSelectedTheory = value;
 				selectedTheorems = null;
 				treeViewer.setInput(retriever.getSCTheorems(selectedProject, selectedTheory).toArray());
 				dialogChanged();
@@ -163,6 +168,30 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 			}
 			dialogChanged();
 		});
+
+		// Restore previous selection if available
+		if (lastSelectedProject != null) {
+			String[] theories = null;
+			for (int i = 0; i < projects.length; i++) {
+				if (lastSelectedProject.equals(projects[i])) {
+					projectCombo.select(i);
+					selectedProject = lastSelectedProject;
+					theories = retriever.getTheories(selectedProject);
+					theoryCombo.setItems(theories);
+					break;
+				}
+			}
+			if (lastSelectedTheory != null && theories != null) {
+				for (int i = 0; i < theories.length; i++) {
+					if (lastSelectedTheory.equals(theories[i])) {
+						theoryCombo.select(i);
+						selectedTheory = lastSelectedTheory;
+						treeViewer.setInput(retriever.getSCTheorems(selectedProject, selectedTheory).toArray());
+						break;
+					}
+				}
+			}
+		}
 		
 		dialogChanged();
 		setControl(container);
