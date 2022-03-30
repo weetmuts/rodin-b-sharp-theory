@@ -79,16 +79,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 		projectCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String value = projectCombo.getItem(projectCombo
-						.getSelectionIndex());
-				if (selectedProject != null && selectedProject.equals(value)) {
-					return;
-				}
-				selectedProject = value;
-				lastSelectedProject = value;
-				selectedTheorems = null;
-				selectedTheory = null;
-				setTheoryComboItemsFromProject();
+				selectProjectItem(projectCombo.getSelectionIndex());
 				dialogChanged();
 			}
 		});
@@ -103,14 +94,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 		theoryCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String value = theoryCombo.getItem(theoryCombo.getSelectionIndex());
-				if (selectedTheory != null && selectedTheory.equals(value)) {
-					return;
-				}
-				selectedTheory = value;
-				lastSelectedTheory = value;
-				selectedTheorems = null;
-				treeViewer.setInput(retriever.getSCTheorems(selectedProject, selectedTheory).toArray());
+				selectTheoryItem(theoryCombo.getSelectionIndex());
 				dialogChanged();
 			}
 		});
@@ -171,22 +155,17 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 
 		// Restore previous selection if available
 		if (lastSelectedProject != null) {
-			String[] theories = null;
 			for (int i = 0; i < projects.length; i++) {
 				if (lastSelectedProject.equals(projects[i])) {
-					projectCombo.select(i);
-					selectedProject = lastSelectedProject;
-					theories = retriever.getTheories(selectedProject);
-					theoryCombo.setItems(theories);
+					selectProjectItem(i);
 					break;
 				}
 			}
-			if (lastSelectedTheory != null && theories != null) {
+			if (lastSelectedTheory != null) {
+				String[] theories = theoryCombo.getItems();
 				for (int i = 0; i < theories.length; i++) {
 					if (lastSelectedTheory.equals(theories[i])) {
-						theoryCombo.select(i);
-						selectedTheory = lastSelectedTheory;
-						treeViewer.setInput(retriever.getSCTheorems(selectedProject, selectedTheory).toArray());
+						selectTheoryItem(i);
 						break;
 					}
 				}
@@ -194,26 +173,61 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 		}
 		// Auto-select project if there is only one option
 		if (selectedProject == null && projects.length == 1) {
-			projectCombo.select(0);
-			selectedProject = projects[0];
-			lastSelectedProject = selectedProject;
-			setTheoryComboItemsFromProject();
+			selectProjectItem(0);
 		}
 		
 		dialogChanged();
 		setControl(container);
 	}
 
-	protected void setTheoryComboItemsFromProject() {
-		if (selectedProject == null) {
+	protected void selectProjectItem(int i) {
+		if (projectCombo.getSelectionIndex() != i) {
+			projectCombo.select(i);
+		}
+		String value = projectCombo.getItem(i);
+		if (value.equals(selectedProject)) {
 			return;
 		}
-		String[] theories = retriever.getTheories(selectedProject);
-		theoryCombo.setItems(theories);
-		if (theories.length == 1) {
-			theoryCombo.select(0);
-			selectedTheory = theories[0];
-			lastSelectedTheory = selectedTheory;
+		selectedProject = value;
+		lastSelectedProject = value;
+		setTheoryComboItemsFromProject();
+	}
+
+	protected void setTheoryComboItemsFromProject() {
+		selectedTheory = null;
+		if (selectedProject != null) {
+			String[] theories = retriever.getTheories(selectedProject);
+			theoryCombo.setItems(theories);
+			if (theories.length == 1) {
+				theoryCombo.select(0);
+				selectedTheory = theories[0];
+				lastSelectedTheory = selectedTheory;
+			}
+		} else {
+			theoryCombo.removeAll();
+		}
+		setTheoremListFromTheory();
+	}
+
+	protected void selectTheoryItem(int i) {
+		if (theoryCombo.getSelectionIndex() != i) {
+			theoryCombo.select(i);
+		}
+		String value = theoryCombo.getItem(i);
+		if (value.equals(selectedTheory)) {
+			return;
+		}
+		selectedTheory = value;
+		lastSelectedTheory = value;
+		setTheoremListFromTheory();
+	}
+
+	protected void setTheoremListFromTheory() {
+		selectedTheorems = null;
+		if (selectedProject != null && selectedTheory != null) {
+			treeViewer.setInput(retriever.getSCTheorems(selectedProject, selectedTheory).toArray());
+		} else {
+			treeViewer.setInput(null);
 		}
 	}
 	
