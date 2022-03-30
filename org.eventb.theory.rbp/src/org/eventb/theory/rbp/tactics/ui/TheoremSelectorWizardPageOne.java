@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eventb.theory.core.ISCTheorem;
+import org.eventb.theory.core.util.CoreUtilities;
 import org.eventb.theory.internal.rbp.rulebase.TheoremsRetriever;
 import org.rodinp.core.RodinDBException;
 
@@ -107,6 +108,7 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 						try {
 							return wordMatches(((ISCTheorem) element).getLabel());
 						} catch (RodinDBException e) {
+							CoreUtilities.log(e, "Error while filtering theorems in theorem instantiation dialog");
 							return false;
 						}
 					}
@@ -293,7 +295,8 @@ public class TheoremSelectorWizardPageOne extends WizardPage {
 					return "Unknown column";
 				}
 			} catch (RodinDBException e) {
-				return "Error: " + e.getLocalizedMessage();
+				CoreUtilities.log(e, "Error while generating table labels in theorem instantiation dialog");
+				return "Internal error, see log";
 			}
 		}
 	}
