@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eventb.theory.branding
-Bundle-Version: 4.0.2.qualifier
+Bundle-Version: 4.0.4.qualifier
 Bundle-Vendor: %bundleVendor

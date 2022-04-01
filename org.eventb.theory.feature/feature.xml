@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.theory.feature"
       label="%featureName"
-      version="4.0.3.qualifier"
+      version="4.0.4.qualifier"
       provider-name="%providerName"
       plugin="org.eventb.theory.branding"
       license-feature="org.rodinp.licence"

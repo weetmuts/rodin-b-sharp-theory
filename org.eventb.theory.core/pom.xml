@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>org.eventb.theory</groupId>
 		<artifactId>root</artifactId>
-		<version>4.0.3-SNAPSHOT</version>
+		<version>4.0.4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>org.eventb.theory.core</artifactId>
-	<version>4.0.3-SNAPSHOT</version>
+	<version>4.0.4-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 </project>
